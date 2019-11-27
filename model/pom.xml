@@ -17,9 +17,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>${parent.groupId}</groupId>
+			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>datatype</artifactId>
-			<version>${parent.version}</version>
 		</dependency>
 
 		<dependency>

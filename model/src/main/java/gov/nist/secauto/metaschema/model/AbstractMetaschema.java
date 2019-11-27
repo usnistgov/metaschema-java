@@ -127,7 +127,7 @@ public abstract class AbstractMetaschema implements Metaschema {
 		for (FlagInstance instance : container.getFlagInstances().values()) {
 			logger.trace("Analyzing use of flag '{}'", Util.toCoordinates(instance));
 			if (instance.isReference()) {
-				FlagDefinition flagDefinition = instance.getFlagDefinition();
+				FlagDefinition flagDefinition = instance.getDefinition();
 				if (isNewDefinition(flagDefinition, usedDefinitions)) {
 					usedDefinitions.put(flagDefinition.getName(), flagDefinition);
 					logger.debug("Using definition '{}'", Util.toCoordinates(flagDefinition));
@@ -144,7 +144,7 @@ public abstract class AbstractMetaschema implements Metaschema {
 	private void processUsedDefinitions(ModelContainer modelContainer, Map<String, InfoElementDefinition> usedDefinitions) throws MetaschemaException {
 		for (InfoElementInstance instance : modelContainer.getInstances()) {
 			logger.trace("Processing model instance '{}'", Util.toCoordinates(instance));
-			InfoElementDefinition definition = instance.getInfoElementDefinition();
+			InfoElementDefinition definition = instance.getDefinition();
 			if (instance.isReference()) {
 				if (!isNewDefinition(definition, usedDefinitions)) {
 					logger.debug("  Skipping known definition '{}'", Util.toCoordinates(definition));
@@ -165,11 +165,11 @@ public abstract class AbstractMetaschema implements Metaschema {
 				usedDefinitions.put(definition.getName(), definition);
 				logger.debug("Using definition '{}'", Util.toCoordinates(definition));
 				FieldInstance fieldInstance = (FieldInstance)instance;
-				processUsedDefinitions((FlagContainer)fieldInstance.getFieldDefinition(), usedDefinitions);
+				processUsedDefinitions((FlagContainer)fieldInstance.getDefinition(), usedDefinitions);
 				break;
 			case ASSEMBLY:
 				AssemblyInstance assemblyInstance = (AssemblyInstance)instance;
-				processUsedDefinitions(assemblyInstance.getAssemblyDefinition(), usedDefinitions);
+				processUsedDefinitions(assemblyInstance.getDefinition(), usedDefinitions);
 				break;
 			case CHOICE:
 				ChoiceInstance choiceInstance = (ChoiceInstance)instance;

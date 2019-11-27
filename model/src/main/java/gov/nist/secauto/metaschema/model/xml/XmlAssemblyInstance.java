@@ -3,9 +3,11 @@ package gov.nist.secauto.metaschema.model.xml;
 import java.math.BigInteger;
 
 import gov.nist.csrc.ns.oscal.metaschema.x10.AssemblyDocument;
+import gov.nist.csrc.ns.oscal.metaschema.x10.XmlGroupBehavior;
 import gov.nist.secauto.metaschema.datatype.MarkupString;
 import gov.nist.secauto.metaschema.model.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.model.InfoElementDefinition;
+import gov.nist.secauto.metaschema.model.JsonGroupBehavior;
 
 public class XmlAssemblyInstance extends AbstractAssemblyInstance {
 //	private static final Logger logger = LogManager.getLogger(XmlAssemblyInstance.class);
@@ -25,7 +27,7 @@ public class XmlAssemblyInstance extends AbstractAssemblyInstance {
 
 	@Override
 	public String getFormalName() {
-		return getAssemblyDefinition().getFormalName();
+		return getDefinition().getFormalName();
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class XmlAssemblyInstance extends AbstractAssemblyInstance {
 		if (getXmlAssembly().isSetDescription()) {
 			retval = MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription());
 		} else if (isReference()) {
-			retval = getAssemblyDefinition().getDescription();
+			retval = getDefinition().getDescription();
 		}
 		return retval;
 	}
@@ -64,11 +66,30 @@ public class XmlAssemblyInstance extends AbstractAssemblyInstance {
 	}
 
 	@Override
-	public String getGroupAsName() {
-		return getXmlAssembly().isSetGroupAs() ? getXmlAssembly().getGroupAs().getName() : null;
+	public String getInstanceName() {
+		return getXmlAssembly().isSetGroupAs() ? getXmlAssembly().getGroupAs().getName() : getName();
 	}
 
 	protected AssemblyDocument.Assembly getXmlAssembly() {
 		return xAssembly;
+	}
+
+	@Override
+	public JsonGroupBehavior getGroupBehaviorJson() {
+		JsonGroupBehavior retval = JsonGroupBehavior.SINGLETON_OR_LIST;
+		if (getXmlAssembly().isSetGroupAs() && getXmlAssembly().getGroupAs().isSetInJson()) {
+			retval = JsonGroupBehavior.lookup(getXmlAssembly().getGroupAs().getInJson());
+		}
+		return retval;
+	}
+
+	@Override
+	public boolean isGroupBehaviorXmlGrouped() {
+		// the default
+		boolean retval = true;
+		if (getXmlAssembly().isSetGroupAs() && getXmlAssembly().getGroupAs().isSetInXml()) {
+			retval = XmlGroupBehavior.GROUPED.equals(getXmlAssembly().getGroupAs().getInXml());
+		}
+		return retval;
 	}
 }

@@ -23,13 +23,8 @@ public abstract class AbstractAssemblyInstance implements AssemblyInstance, Asse
 	}
 
 	@Override
-	public AssemblyDefinition getAssemblyDefinition() {
+	public AssemblyDefinition getDefinition() {
 		return getContainingMetaschema().getAssemblyDefinitionByName(getName());
-	}
-
-	@Override
-	public AssemblyDefinition getInfoElementDefinition() {
-		return getAssemblyDefinition();
 	}
 
 	@Override

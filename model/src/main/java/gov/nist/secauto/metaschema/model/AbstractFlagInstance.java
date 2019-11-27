@@ -26,14 +26,9 @@ public abstract class AbstractFlagInstance implements FlagInstance {
 	}
 
 	@Override
-	public FlagDefinition getFlagDefinition() {
+	public FlagDefinition getDefinition() {
 		FlagDefinition localFlagDefinition = getLocalFlagDefinition();
 		return localFlagDefinition == null ? getContainingMetaschema().getFlagDefinitionByName(getName()) : localFlagDefinition;
-	}
-
-	@Override
-	public FlagDefinition getInfoElementDefinition() {
-		return getFlagDefinition();
 	}
 
 	@Override

@@ -38,7 +38,7 @@ public abstract class AbstractChoiceInstance implements ChoiceInstance {
 	}
 
 	@Override
-	public InfoElementDefinition getInfoElementDefinition() {
+	public InfoElementDefinition getDefinition() {
 		return null;
 	}
 

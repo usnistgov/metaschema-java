@@ -1,11 +1,15 @@
 package gov.nist.secauto.metaschema.model.xml;
 
+import java.util.Collections;
+import java.util.Map;
+
 import gov.nist.csrc.ns.oscal.metaschema.x10.Boolean;
 import gov.nist.csrc.ns.oscal.metaschema.x10.FlagDocument;
 import gov.nist.secauto.metaschema.datatype.MarkupString;
 import gov.nist.secauto.metaschema.model.AbstractFlagInstance;
 import gov.nist.secauto.metaschema.model.DataType;
 import gov.nist.secauto.metaschema.model.FlagDefinition;
+import gov.nist.secauto.metaschema.model.FlagInstance;
 import gov.nist.secauto.metaschema.model.InfoElementDefinition;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.Type;
@@ -42,7 +46,7 @@ public class XmlFlagInstance extends AbstractFlagInstance {
 		if (getXmlFlag().isSetFormalName()) {
 			retval = getXmlFlag().getFormalName();
 		} else if (isReference()) {
-			retval = getFlagDefinition().getFormalName();
+			retval = getDefinition().getFormalName();
 		}
 		return retval;
 	}
@@ -53,22 +57,12 @@ public class XmlFlagInstance extends AbstractFlagInstance {
 		if (getXmlFlag().isSetDescription()) {
 			retval = MarkupStringConverter.toMarkupString(getXmlFlag().getDescription());
 		} else if (isReference()) {
-			retval = getFlagDefinition().getDescription();
+			retval = getDefinition().getDescription();
 		}
 		return retval;
 	}
 
 /* TODO: implement
-	@Override
-	public String getDescription() {
-		String retval = null;
-		if (xFlag.isSetDescription()) {
-			retval = xFlag.getDescription();
-		} else if (isReference()) {
-			retval = getFlagDefinition().getDescription();
-		}
-		return retval;
-	}
 
 	@Override
 	public String getRemarks() {
@@ -101,7 +95,7 @@ public class XmlFlagInstance extends AbstractFlagInstance {
 		if (getXmlFlag().isSetAsType()) {
 			retval = DataType.lookup(getXmlFlag().getAsType());
 		} else if (isReference()) {
-			retval = getFlagDefinition().getDatatype();
+			retval = getDefinition().getDatatype();
 		} else {
 			// the default
 			retval = DataType.STRING;
@@ -163,6 +157,16 @@ public class XmlFlagInstance extends AbstractFlagInstance {
 		@Override
 		public MarkupString getDescription() {
 			return XmlFlagInstance.this.getDescription();
+		}
+
+		@Override
+		public FlagInstance getFlagInstanceByName(String name) {
+			return null;
+		}
+
+		@Override
+		public Map<String, ? extends FlagInstance> getFlagInstances() {
+			return Collections.emptyMap();
 		}
 
 	}

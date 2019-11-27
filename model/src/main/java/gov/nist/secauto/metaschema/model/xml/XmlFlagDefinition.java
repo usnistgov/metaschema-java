@@ -1,10 +1,14 @@
 package gov.nist.secauto.metaschema.model.xml;
 
+import java.util.Collections;
+import java.util.Map;
+
 import gov.nist.csrc.ns.oscal.metaschema.x10.DefineFlagDocument;
 import gov.nist.secauto.metaschema.datatype.MarkupString;
 import gov.nist.secauto.metaschema.model.AbstractFlagDefinition;
 import gov.nist.secauto.metaschema.model.DataType;
 import gov.nist.secauto.metaschema.model.FlagDefinition;
+import gov.nist.secauto.metaschema.model.FlagInstance;
 
 public class XmlFlagDefinition extends AbstractFlagDefinition<XmlMetaschema> implements FlagDefinition {
 	private final DefineFlagDocument.DefineFlag xFlag;
@@ -43,5 +47,15 @@ public class XmlFlagDefinition extends AbstractFlagDefinition<XmlMetaschema> imp
 
 	protected DefineFlagDocument.DefineFlag getXmlFlag() {
 		return xFlag;
+	}
+
+	@Override
+	public FlagInstance getFlagInstanceByName(String name) {
+		return null;
+	}
+
+	@Override
+	public Map<String, ? extends FlagInstance> getFlagInstances() {
+		return Collections.emptyMap();
 	}
 }

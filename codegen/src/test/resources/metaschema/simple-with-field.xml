@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<top-level xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://csrc.nist.gov/ns/metaschema/testing/simple simple-with-field_schema.xsd"
+ xmlns="http://csrc.nist.gov/ns/metaschema/testing/simple" id="test">
+	<field>field-value</field>
+  <p>text1</p>
+  <p>text2</p>
+  <field3><p>field-value3</p></field3>
+</top-level>

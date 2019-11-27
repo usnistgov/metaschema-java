@@ -6,11 +6,13 @@ import java.util.Map;
 
 import gov.nist.csrc.ns.oscal.metaschema.x10.DefineFieldDocument;
 import gov.nist.csrc.ns.oscal.metaschema.x10.DefineFieldDocument.DefineField;
+import gov.nist.csrc.ns.oscal.metaschema.x10.FlagDocument;
+import gov.nist.csrc.ns.oscal.metaschema.x10.JsonValueKeyDocument.JsonValueKey;
 import gov.nist.secauto.metaschema.datatype.MarkupString;
 import gov.nist.secauto.metaschema.model.AbstractFieldDefinition;
 import gov.nist.secauto.metaschema.model.DataType;
 import gov.nist.secauto.metaschema.model.FieldDefinition;
-import gov.nist.csrc.ns.oscal.metaschema.x10.FlagDocument;
+import gov.nist.secauto.metaschema.model.FlagInstance;
 
 public class XmlFieldDefinition extends AbstractFieldDefinition<XmlMetaschema> implements FieldDefinition {
 	private final DefineFieldDocument.DefineField xField;
@@ -68,5 +70,79 @@ public class XmlFieldDefinition extends AbstractFieldDefinition<XmlMetaschema> i
 	protected DefineFieldDocument.DefineField getXmlField() {
 		return xField;
 	}
+
+	@Override
+	public boolean hasJsonValueKey() {
+		return getXmlField().isSetJsonValueKey();
+	}
+
+	@Override
+	public Object getJsonValueKey() {
+		Object retval = null;
+		if (getXmlField().isSetJsonValueKey()) {
+			JsonValueKey jvk = getXmlField().getJsonValueKey();
+			if (jvk.isSetFlagName()) {
+				retval = getFlagInstances().get(jvk.getFlagName());
+			} else {
+				retval = jvk.getStringValue();
+			}
+		}
+		return retval;
+	}
+
+	@Override
+	public FlagInstance getJsonValueKeyFlagInstance() {
+		FlagInstance retval = null;
+		if (getXmlField().isSetJsonValueKey()) {
+			retval = getFlagInstanceByName(getXmlField().getJsonValueKey().getFlagName());
+		}
+		return retval;
+	}
+
+	@Override
+	public String getJsonValueKeyName() {
+		String retval = null;
+		
+		if (getXmlField().isSetJsonValueKey()) {
+			retval = getXmlField().getJsonValueKey().getStringValue();
+		}
+
+		if (retval == null || retval.isEmpty()) {
+			switch (getDatatype()) {
+			case MARKUP_LINE:
+				retval = "RICHTEXT";
+				break;
+			case MARKUP_MULTILINE:
+				retval = "PROSE";
+				break;
+			default:
+				retval = "STRVALUE";
+			}
+		}
+		return retval;
+	}
+
+	@Override
+	public boolean hasJsonKey() {
+		return getXmlField().isSetJsonKey();
+	}
 	
+	@Override
+	public FlagInstance getJsonKeyFlagInstance() {
+		FlagInstance retval = null;
+		if (hasJsonKey()) {
+			retval = getFlagInstanceByName(getXmlField().getJsonKey().getFlagName());
+		}
+		return retval;
+	}
+
+	@Override
+	public boolean isCollapsible() {
+		// default value
+		boolean retval = true;
+		if (getXmlField().isSetCollapsible()) {
+			retval = gov.nist.csrc.ns.oscal.metaschema.x10.Boolean.YES.equals(getXmlField().getCollapsible());
+		}
+		return retval;
+	}
 }

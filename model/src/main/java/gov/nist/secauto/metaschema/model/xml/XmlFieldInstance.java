@@ -3,10 +3,13 @@ package gov.nist.secauto.metaschema.model.xml;
 import java.math.BigInteger;
 
 import gov.nist.csrc.ns.oscal.metaschema.x10.FieldDocument;
+import gov.nist.csrc.ns.oscal.metaschema.x10.FieldDocument.Field.InXml;
+import gov.nist.csrc.ns.oscal.metaschema.x10.XmlGroupBehavior;
 import gov.nist.secauto.metaschema.datatype.MarkupString;
 import gov.nist.secauto.metaschema.model.AbstractFieldInstance;
 import gov.nist.secauto.metaschema.model.DataType;
 import gov.nist.secauto.metaschema.model.InfoElementDefinition;
+import gov.nist.secauto.metaschema.model.JsonGroupBehavior;
 
 public class XmlFieldInstance extends AbstractFieldInstance {
 //	private static final Logger logger = LogManager.getLogger(XmlFieldInstance.class);
@@ -25,7 +28,7 @@ public class XmlFieldInstance extends AbstractFieldInstance {
 
 	@Override
 	public String getFormalName() {
-		return getFieldDefinition().getFormalName();
+		return getDefinition().getFormalName();
 	}
 
 	@Override
@@ -34,14 +37,14 @@ public class XmlFieldInstance extends AbstractFieldInstance {
 		if (getXmlField().isSetDescription()) {
 			retval = MarkupStringConverter.toMarkupString(getXmlField().getDescription());
 		} else if (isReference()) {
-			retval = getFieldDefinition().getDescription();
+			retval = getDefinition().getDescription();
 		}
 		return retval;
 	}
 
 	@Override
 	public DataType getDatatype() {
-		return getFieldDefinition().getDatatype();
+		return getDefinition().getDatatype();
 	}
 
 	@Override
@@ -69,11 +72,41 @@ public class XmlFieldInstance extends AbstractFieldInstance {
 	}
 
 	@Override
-	public String getGroupAsName() {
-		return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : null;
+	public String getInstanceName() {
+		return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : getName();
 	}
 
 	protected FieldDocument.Field getXmlField() {
 		return xField;
 	}
+
+	@Override
+	public boolean hasXmlWrapper() {
+		// default value
+		boolean retval = true;
+		if (getXmlField().isSetInXml()) {
+			retval = InXml.WITH_WRAPPER.equals(getXmlField().getInXml());
+		}
+		return retval;
+	}
+
+	@Override
+	public JsonGroupBehavior getGroupBehaviorJson() {
+		JsonGroupBehavior retval = JsonGroupBehavior.SINGLETON_OR_LIST;
+		if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInJson()) {
+			retval = JsonGroupBehavior.lookup(getXmlField().getGroupAs().getInJson());
+		}
+		return retval;
+	}
+
+	@Override
+	public boolean isGroupBehaviorXmlGrouped() {
+		// the default
+		boolean retval = true;
+		if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInXml()) {
+			retval = XmlGroupBehavior.GROUPED.equals(getXmlField().getGroupAs().getInXml());
+		}
+		return retval;
+	}
+
 }

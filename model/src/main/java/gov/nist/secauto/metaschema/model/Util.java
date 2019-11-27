@@ -7,7 +7,7 @@ public class Util {
 				instance.getType(),
 				instance.getName(),
 				instance.hashCode(),
-				instance.isReference() ? instance.getInfoElementDefinition().hashCode() : 0);
+				instance.isReference() ? instance.getDefinition().hashCode() : 0);
 	}
 
 	public static String toCoordinates(InfoElementDefinition definition) {

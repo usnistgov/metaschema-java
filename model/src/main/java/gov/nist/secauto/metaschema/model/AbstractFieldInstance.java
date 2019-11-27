@@ -23,13 +23,8 @@ public abstract class AbstractFieldInstance implements FieldInstance {
 	}
 
 	@Override
-	public FieldDefinition getFieldDefinition() {
+	public FieldDefinition getDefinition() {
 		return getContainingMetaschema().getFieldDefinitionByName(getName());
-	}
-
-	@Override
-	public FieldDefinition getInfoElementDefinition() {
-		return getFieldDefinition();
 	}
 
 	@Override

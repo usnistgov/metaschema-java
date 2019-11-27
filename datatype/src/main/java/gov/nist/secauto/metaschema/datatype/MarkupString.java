@@ -17,7 +17,6 @@ import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 
-import gov.nist.secauto.metaschema.datatype.flexmark.AstCollectingVisitor;
 import gov.nist.secauto.metaschema.datatype.flexmark.insertanchor.InsertAnchorExtension;
 
 public class MarkupString {
@@ -81,9 +80,9 @@ public class MarkupString {
 		if (htmlParser == null) {
 			htmlParser = getHtmlConverterInstance();
 		}
-		logger.info("html: {}", html);
+		logger.trace("html: {}", html);
 		String markdown = htmlParser.convert(html);
-		logger.info("markdown: {}", markdown);
+		logger.trace("markdown: {}", markdown);
 		return fromMarkdown(markdown, markdownParser);
 	}
 
@@ -131,22 +130,5 @@ public class MarkupString {
 
 	public String toMarkdown() {
 		return getFormatterInstance().render(node);
-	}
-
-	public static void main(String[] args) {
-		MarkupString ms = fromMarkdown("Example\n=======\n\nSome \\**more* **text**\n\nA param: {{ insert }}.");
-		AstCollectingVisitor visitor = new AstCollectingVisitor();
-		visitor.collect(ms.getNode());
-		System.out.println(visitor.getAst());
-		System.out.println(ms.toHTML());
-		System.out.println(ms.toMarkdown());
-
-		ms = fromHTML(
-				"<h1>Example</h1><table><tr><th>Heading 1</th></tr><tr><td>data1 <insert param-id=\"insert\" /></td></tr></table><p>Some <em>more</em> <strong>text</strong></p>");
-		visitor = new AstCollectingVisitor();
-		visitor.collect(ms.getNode());
-		System.out.println(visitor.getAst());
-		System.out.println(ms.toHTML());
-		System.out.println(ms.toMarkdown());
 	}
 }

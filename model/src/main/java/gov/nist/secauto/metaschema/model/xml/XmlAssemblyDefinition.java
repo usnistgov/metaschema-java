@@ -19,6 +19,7 @@ import gov.nist.secauto.metaschema.datatype.MarkupString;
 import gov.nist.secauto.metaschema.model.AbstractAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.ChoiceInstance;
+import gov.nist.secauto.metaschema.model.FlagInstance;
 import gov.nist.secauto.metaschema.model.InfoElementInstance;
 import gov.nist.secauto.metaschema.model.ModelInstance;
 import gov.nist.secauto.metaschema.model.Type;
@@ -141,5 +142,18 @@ public class XmlAssemblyDefinition extends AbstractAssemblyDefinition<XmlMetasch
 	protected DefineAssemblyDocument.DefineAssembly getXmlAssembly() {
 		return xAssembly;
 	}
-	
+
+	@Override
+	public boolean hasJsonKey() {
+		return getXmlAssembly().isSetJsonKey();
+	}
+
+	@Override
+	public FlagInstance getJsonKeyFlagInstance() {
+		FlagInstance retval = null;
+		if (hasJsonKey()) {
+			retval = getFlagInstanceByName(getXmlAssembly().getJsonKey().getFlagName());
+		}
+		return retval;
+	}
 }

@@ -9,6 +9,6 @@ public interface FlagInstance extends InfoElementInstance, Flag {
 	 * 
 	 * @return the corresponding flag definition
 	 */
-	FlagDefinition getFlagDefinition();
+	FlagDefinition getDefinition();
 	boolean isRequired();
 }
