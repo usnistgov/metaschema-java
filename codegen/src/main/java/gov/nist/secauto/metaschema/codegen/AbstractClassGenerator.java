@@ -17,12 +17,10 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import gov.nist.secauto.metaschema.codegen.context.FlagInstanceContext;
-import gov.nist.secauto.metaschema.codegen.context.InstanceContext;
 import gov.nist.secauto.metaschema.model.FlagInstance;
 import gov.nist.secauto.metaschema.model.ManagedObject;
 
-public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> {
+public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> implements ClassGenerator {
 	private static final Logger logger = LogManager.getLogger(AbstractClassGenerator.class);
 
 	private static final Set<String> DEFAULT_IMPORTS;
@@ -35,7 +33,7 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> {
 	}
 
 	private final DEFINITION definition;
-	private final Map<String, InstanceContext> instanceNameToContextMap = new LinkedHashMap<>();
+	private final Map<String, InstanceGenerator> instanceNameToContextMap = new LinkedHashMap<>();
 	private String className;
 	private String packageName;
 	private String qualifiedClassName;
@@ -98,17 +96,17 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> {
 		return qualifiedClassName;
 	}
 
-	protected void addInstance(InstanceContext context) {
+	protected void addInstance(InstanceGenerator context) {
 		String name = context.getPropertyName();
-		InstanceContext oldContext = instanceNameToContextMap.put(name, context);
+		InstanceGenerator oldContext = instanceNameToContextMap.put(name, context);
 		if (oldContext != null) {
 			logger.error("Unexpected duplicate instance property name '{}'", name);
 			throw new RuntimeException(String.format("Unexpected duplicate instance property name '%s'", name));
 		}
 	}
 
-	public FlagInstanceContext newFlagInstance(FlagInstance instance) {
-		FlagInstanceContext context = new FlagInstanceContext(instance, this);
+	public FlagInstanceGenerator newFlagInstance(FlagInstance instance) {
+		FlagInstanceGenerator context = new FlagInstanceGenerator(instance, this);
 		addInstance(context);
 		return context;
 	}
@@ -117,7 +115,7 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> {
 		return instanceNameToContextMap.containsKey(newName);
 	}
 
-	public Collection<InstanceContext> getInstanceContexts() {
+	public Collection<InstanceGenerator> getInstanceContexts() {
 		return instanceNameToContextMap.values();
 	}
 
@@ -125,7 +123,7 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> {
 	
 		// Handle Imports
 		Set<String> imports = new HashSet<>();
-		for (InstanceContext instance : getInstanceContexts()) {
+		for (InstanceGenerator instance : getInstanceContexts()) {
 			imports.addAll(instance.getImports());
 		}
 		imports.addAll(getAdditionalImports());
@@ -152,7 +150,7 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> {
 		writer.printf("public class %s {%n", getClassName());
 	
 		// handle instance variables
-		for (InstanceContext instance : getInstanceContexts()) {
+		for (InstanceGenerator instance : getInstanceContexts()) {
 			instance.writeVariable(writer);
 		}
 		
@@ -163,7 +161,7 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> {
 		writeConstructors(writer);
 
 		// handle flag getters/setters
-		for (InstanceContext instance : getInstanceContexts()) {
+		for (InstanceGenerator instance : getInstanceContexts()) {
 			instance.writeGetter(writer);
 			instance.writeSetter(writer);
 		}

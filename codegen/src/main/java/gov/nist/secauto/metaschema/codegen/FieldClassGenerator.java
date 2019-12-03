@@ -5,13 +5,12 @@ import java.io.PrintWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import gov.nist.secauto.metaschema.codegen.context.FieldValueInstanceContext;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.model.FieldDefinition;
 
 public class FieldClassGenerator extends AbstractClassGenerator<FieldDefinition> {
 	private static final Logger logger = LogManager.getLogger(FieldClassGenerator.class);
-	private final FieldValueInstanceContext fieldInstance;
+	private final FieldValueInstanceGenerator fieldInstance;
 
 	public FieldClassGenerator(FieldDefinition definition) {
 		super(definition);
@@ -22,8 +21,8 @@ public class FieldClassGenerator extends AbstractClassGenerator<FieldDefinition>
 		}
 	}
 
-	public FieldValueInstanceContext newFieldInstance(FieldClassGenerator field) {
-		FieldValueInstanceContext context = new FieldValueInstanceContext(field, this);
+	public FieldValueInstanceGenerator newFieldInstance(FieldClassGenerator field) {
+		FieldValueInstanceGenerator context = new FieldValueInstanceGenerator(field, this);
 		addInstance(context);
 		return context;
 	}
@@ -38,7 +37,7 @@ public class FieldClassGenerator extends AbstractClassGenerator<FieldDefinition>
 		return e;
 	}
 
-	public FieldValueInstanceContext getFieldInstance() {
+	public FieldValueInstanceGenerator getFieldInstance() {
 		return fieldInstance;
 	}
 
@@ -56,7 +55,7 @@ public class FieldClassGenerator extends AbstractClassGenerator<FieldDefinition>
 	protected void writeConstructors(PrintWriter writer) {
 		super.writeConstructors(writer);
 
-		FieldValueInstanceContext fieldInsatnce = getFieldInstance();
+		FieldValueInstanceGenerator fieldInsatnce = getFieldInstance();
 		// no-arg constructor
 		writer.println("\t@JsonCreator");
 		writer.printf("\tpublic %s(%s value) {%n", getClassName(), fieldInsatnce.getJavaType().getType(this));

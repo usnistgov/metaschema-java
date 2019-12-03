@@ -1,24 +1,26 @@
-package gov.nist.secauto.metaschema.codegen.context.model.item;
+package gov.nist.secauto.metaschema.codegen.item;
 
 import java.io.PrintWriter;
 
 import gov.nist.secauto.metaschema.codegen.AssemblyClassGenerator;
-import gov.nist.secauto.metaschema.codegen.context.AbstractInstanceContext;
-import gov.nist.secauto.metaschema.codegen.context.model.ModelItemInstanceContext;
-import gov.nist.secauto.metaschema.codegen.type.JavaType;
 import gov.nist.secauto.metaschema.datatype.MarkupString;
 import gov.nist.secauto.metaschema.model.ModelInstance;
 
-public abstract class AbstractModelItemInstanceContext<INSTANCE extends ModelInstance> extends AbstractInstanceContext<AssemblyClassGenerator> implements ModelItemInstanceContext {
+public abstract class AbstractInstanceItemContext<INSTANCE extends ModelInstance> implements InstanceItemContext {
+	private final AssemblyClassGenerator containingClassGenerator;
 	private final INSTANCE modelInstance;
 
-	public AbstractModelItemInstanceContext(INSTANCE instance, AssemblyClassGenerator classContext) {
-		super(classContext);
+	public AbstractInstanceItemContext(INSTANCE instance, AssemblyClassGenerator classContext) {
 		this.modelInstance = instance;
+		this.containingClassGenerator = classContext;
 	}
 
 	protected INSTANCE getModelInstance() {
 		return modelInstance;
+	}
+
+	protected AssemblyClassGenerator getContainingClassGenerator() {
+		return containingClassGenerator;
 	}
 
 	@Override

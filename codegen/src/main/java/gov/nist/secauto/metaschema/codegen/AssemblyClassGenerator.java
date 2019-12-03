@@ -6,14 +6,10 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import gov.nist.secauto.metaschema.codegen.context.model.ListModelInstanceContext;
-import gov.nist.secauto.metaschema.codegen.context.model.MapModelInstanceContext;
-import gov.nist.secauto.metaschema.codegen.context.model.ModelInstanceContext;
-import gov.nist.secauto.metaschema.codegen.context.model.ModelItemInstanceContext;
-import gov.nist.secauto.metaschema.codegen.context.model.SimpleModelInstanceContext;
-import gov.nist.secauto.metaschema.codegen.context.model.item.AssemblyItemInstance;
-import gov.nist.secauto.metaschema.codegen.context.model.item.DataTypeItemInstance;
-import gov.nist.secauto.metaschema.codegen.context.model.item.FieldItemInstance;
+import gov.nist.secauto.metaschema.codegen.item.AssemblyInstanceItemContext;
+import gov.nist.secauto.metaschema.codegen.item.DataTypeInstanceItemContext;
+import gov.nist.secauto.metaschema.codegen.item.FieldInstanceItemContext;
+import gov.nist.secauto.metaschema.codegen.item.InstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.model.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.AssemblyInstance;
@@ -46,33 +42,33 @@ public class AssemblyClassGenerator extends AbstractClassGenerator<AssemblyDefin
 		}
 	}
 
-	public ModelInstanceContext newModelInstance(ModelInstance instance) {
-		ModelItemInstanceContext itemInstanceContext;
+	public CardinalityInstanceGenerator newModelInstance(ModelInstance instance) {
+		InstanceItemContext itemInstanceContext;
 		if (instance instanceof FieldInstance) {
 			FieldInstance fieldInstance = (FieldInstance)instance;
 			if (fieldInstance.getDefinition().getFlagInstances().isEmpty()) {
 				// this is a simple value
-				itemInstanceContext = new DataTypeItemInstance(fieldInstance, this, DataType.lookupByDatatype(fieldInstance.getDatatype()));
+				itemInstanceContext = new DataTypeInstanceItemContext(fieldInstance, this, DataType.lookupByDatatype(fieldInstance.getDatatype()));
 			} else {
-				itemInstanceContext = new FieldItemInstance(fieldInstance, this);
+				itemInstanceContext = new FieldInstanceItemContext(fieldInstance, this);
 			}
 		} else if (instance instanceof AssemblyInstance) {
-			itemInstanceContext = new AssemblyItemInstance((AssemblyInstance)instance, this);
+			itemInstanceContext = new AssemblyInstanceItemContext((AssemblyInstance)instance, this);
 		} else {
 			String msg = String.format("Unknown model instance type: %s", instance.getClass().getCanonicalName());
 			logger.error(msg);
 			throw new RuntimeException(msg);
 		}
 
-		ModelInstanceContext context;
+		CardinalityInstanceGenerator context;
 		if (instance.getMaxOccurs() > 1) {
 			if (JsonGroupBehavior.KEYED.equals(instance.getGroupBehaviorJson())) {
-				context = new MapModelInstanceContext(itemInstanceContext, this);
+				context = new MapInstanceGenerator(itemInstanceContext, this);
 			} else {
-				context = new ListModelInstanceContext(itemInstanceContext, this);
+				context = new ListInstanceGenerator(itemInstanceContext, this);
 			}
 		} else {
-			context = new SimpleModelInstanceContext(itemInstanceContext, this);
+			context = new SingletonInstanceGenerator(itemInstanceContext, this);
 		}
 		
 		addInstance(context);

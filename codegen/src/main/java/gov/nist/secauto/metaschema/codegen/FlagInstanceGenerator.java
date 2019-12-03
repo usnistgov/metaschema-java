@@ -1,23 +1,22 @@
-package gov.nist.secauto.metaschema.codegen.context;
+package gov.nist.secauto.metaschema.codegen;
 
 import java.io.PrintWriter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import gov.nist.secauto.metaschema.codegen.AbstractClassGenerator;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
 import gov.nist.secauto.metaschema.datatype.MarkupString;
 import gov.nist.secauto.metaschema.model.FlagInstance;
 
-public class FlagInstanceContext extends AbstractInstanceContext<AbstractClassGenerator<?>> {
-	private static final Logger logger = LogManager.getLogger(FlagInstanceContext.class);
+public class FlagInstanceGenerator extends AbstractInstanceGenerator<AbstractClassGenerator<?>> {
+	private static final Logger logger = LogManager.getLogger(FlagInstanceGenerator.class);
 
 	private final FlagInstance instance;
 	private final DataType dataType;
 
-	public FlagInstanceContext(FlagInstance instance, AbstractClassGenerator<?> classContext) {
+	public FlagInstanceGenerator(FlagInstance instance, AbstractClassGenerator<?> classContext) {
 		super(classContext);
 		this.instance = instance;
 

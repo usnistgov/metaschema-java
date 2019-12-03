@@ -1,4 +1,4 @@
-package gov.nist.secauto.metaschema.codegen.context;
+package gov.nist.secauto.metaschema.codegen;
 
 import java.io.PrintWriter;
 import java.util.Collections;
@@ -8,24 +8,22 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import gov.nist.secauto.metaschema.codegen.FieldClassGenerator;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
 import gov.nist.secauto.metaschema.datatype.MarkupString;
-import gov.nist.secauto.metaschema.model.FieldDefinition;
-import gov.nist.secauto.metaschema.model.FlagInstance;
+import gov.nist.secauto.metaschema.model.JsonValueKeyEnum;
 
 /**
  * Represents the "value" of a field object.
  * @author davidwal
  *
  */
-public class FieldValueInstanceContext extends AbstractInstanceContext<FieldClassGenerator> {
-	private static final Logger logger = LogManager.getLogger(FieldValueInstanceContext.class);
+public class FieldValueInstanceGenerator extends AbstractInstanceGenerator<FieldClassGenerator> {
+	private static final Logger logger = LogManager.getLogger(FieldValueInstanceGenerator.class);
 
 	private FieldClassGenerator generator;
 
-	public FieldValueInstanceContext(FieldClassGenerator generator, FieldClassGenerator classContext) {
+	public FieldValueInstanceGenerator(FieldClassGenerator generator, FieldClassGenerator classContext) {
 		super(classContext);
 		this.generator = generator;
 	}
@@ -61,24 +59,10 @@ public class FieldValueInstanceContext extends AbstractInstanceContext<FieldClas
 		return retval;
 	}
 
-	public JsonValueKeyEnum getJsonValueKeyType() {
-		JsonValueKeyEnum retval = JsonValueKeyEnum.NONE;
-		FieldDefinition definition = getGenerator().getDefinition();
-		if (definition.hasJsonValueKey()) {
-			FlagInstance valueKeyFlag = definition.getJsonValueKeyFlagInstance();
-			if (valueKeyFlag != null) {
-				retval = JsonValueKeyEnum.FLAG;
-			} else {
-				retval = JsonValueKeyEnum.LABEL;
-			}
-		}
-		return retval;
-	}
-
 	@Override
 	public Set<String> getImports() {
 		Set<String> retval = new HashSet<>(super.getImports());
-		if (!JsonValueKeyEnum.FLAG.equals(getJsonValueKeyType())) {
+		if (!JsonValueKeyEnum.FLAG.equals(getGenerator().getDefinition().getJsonValueKeyType())) {
 			boolean addDatabind = false;
 
 			Class<?> serializer = getValueDataType().getSerializerClass();
@@ -111,7 +95,7 @@ public class FieldValueInstanceContext extends AbstractInstanceContext<FieldClas
 		}
 		
 		// if the value key type is "FLAG", we need to use the any getter/setter, so ignore this field
-		boolean useJsonPropertyAnnotations = !JsonValueKeyEnum.FLAG.equals(getJsonValueKeyType());
+		boolean useJsonPropertyAnnotations = !JsonValueKeyEnum.FLAG.equals(getGenerator().getDefinition().getJsonValueKeyType());
 
 		if (useJsonPropertyAnnotations) {
 			// we need to use an argument constructor

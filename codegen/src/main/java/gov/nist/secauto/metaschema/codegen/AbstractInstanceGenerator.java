@@ -1,4 +1,4 @@
-package gov.nist.secauto.metaschema.codegen.context;
+package gov.nist.secauto.metaschema.codegen;
 
 import java.io.PrintWriter;
 import java.util.Collections;
@@ -7,17 +7,15 @@ import java.util.Set;
 
 import com.sun.xml.bind.api.impl.NameConverter;
 
-import gov.nist.secauto.metaschema.codegen.AbstractClassGenerator;
-import gov.nist.secauto.metaschema.codegen.ClassUtils;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
 import gov.nist.secauto.metaschema.datatype.MarkupString;
 
-public abstract class AbstractInstanceContext<GENERATOR extends AbstractClassGenerator<?>> implements InstanceContext {
+public abstract class AbstractInstanceGenerator<GENERATOR extends AbstractClassGenerator<?>> implements InstanceGenerator {
 	private final GENERATOR classContext;
 	private String propertyName;
 	private String variableName;
 
-	public AbstractInstanceContext(GENERATOR classContext) {
+	public AbstractInstanceGenerator(GENERATOR classContext) {
 		this.classContext = classContext;
 	}
 

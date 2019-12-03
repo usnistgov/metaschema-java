@@ -7,6 +7,7 @@ public interface FieldDefinition extends ManagedObject, Field {
 	 * @return a string or a FlagInstance value
 	 */
 	Object getJsonValueKey();
+	JsonValueKeyEnum getJsonValueKeyType();
 	FlagInstance getJsonValueKeyFlagInstance();
 	String getJsonValueKeyName();
 	boolean isCollapsible();

@@ -39,7 +39,7 @@ public class BasicMetaschema {
 			throws IOException, ClassNotFoundException, MetaschemaException {
 		Metaschema metaschema = loadMetaschema(metaschemaFile);
 
-		String rootClassName = new JavaGenerator(metaschema).generate(classDir).get(metaschema);
+		String rootClassName = JavaGenerator.generate(metaschema, classDir).get(metaschema);
 
 		return new DynamicClassLoader(classDir).loadClass(rootClassName);
 	}
@@ -56,9 +56,9 @@ public class BasicMetaschema {
 		}
 		findobject:
 		while (!JsonToken.END_OBJECT.equals(parser.nextToken())) {
-			logger.trace("token: {}", parser.getCurrentToken());
+//			logger.trace("token: {}", parser.getCurrentToken());
 			if (JsonToken.FIELD_NAME.equals(parser.getCurrentToken())) {
-				logger.trace("{}: {}",parser.getCurrentToken(), parser.getText());
+//				logger.trace("{}: {}",parser.getCurrentToken(), parser.getText());
 				switch (parser.getText()) {
 
 				case "$schema":
@@ -84,6 +84,7 @@ public class BasicMetaschema {
 		return mapper.readValue(parser, rootClass);
 	}
 
+	@SuppressWarnings("unused")
 	private static Object readXml(File file, Class<?> rootClass) throws JAXBException {
 		JAXBContext jaxbContext = JAXBContext.newInstance(rootClass);
 		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();

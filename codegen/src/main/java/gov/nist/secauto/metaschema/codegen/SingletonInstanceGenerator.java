@@ -1,16 +1,16 @@
-package gov.nist.secauto.metaschema.codegen.context.model;
+package gov.nist.secauto.metaschema.codegen;
 
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import gov.nist.secauto.metaschema.codegen.AssemblyClassGenerator;
+import gov.nist.secauto.metaschema.codegen.item.InstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
 
-public class SimpleModelInstanceContext extends AbstractModelInstanceContext<JavaType> implements ModelInstanceContext {
+public class SingletonInstanceGenerator extends AbstractCardinalityInstanceGenerator<JavaType> implements CardinalityInstanceGenerator {
 
-	public SimpleModelInstanceContext(ModelItemInstanceContext itemInstanceContext, AssemblyClassGenerator assemblyClassGenerator) {
+	public SingletonInstanceGenerator(InstanceItemContext itemInstanceContext, AssemblyClassGenerator assemblyClassGenerator) {
 		super(itemInstanceContext, assemblyClassGenerator, itemInstanceContext.getJavaType());
 	}
 

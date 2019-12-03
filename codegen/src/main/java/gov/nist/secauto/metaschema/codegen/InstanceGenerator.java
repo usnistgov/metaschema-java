@@ -1,11 +1,11 @@
-package gov.nist.secauto.metaschema.codegen.context;
+package gov.nist.secauto.metaschema.codegen;
 
 import java.io.PrintWriter;
 import java.util.Collection;
 
 import gov.nist.secauto.metaschema.datatype.MarkupString;
 
-public interface InstanceContext {
+public interface InstanceGenerator {
 
 	String getPropertyName();
 	Collection<String> getImports();

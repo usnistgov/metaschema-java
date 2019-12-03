@@ -27,35 +27,29 @@ public class JavaGenerator {
 		File metaschemaFile = new File("target/src/metaschema/oscal_catalog_metaschema.xml");
 		Metaschema metaschema = MetaschemaFactory.loadMetaschemaFromXml(metaschemaFile);
 
-		new JavaGenerator(Collections.singletonList(metaschema)).generate(new File(args[0]));
+		JavaGenerator.generate(metaschema, new File(args[0]));
 	}
 
-	private final List<Metaschema> metaschemas;
-
-	public JavaGenerator(Metaschema metaschema) {
-		this(Collections.singletonList(metaschema));
+	private  JavaGenerator() {
+		// disable construction
 	}
 
-	public JavaGenerator(List<Metaschema> metaschemas) {
-		this.metaschemas = metaschemas;
+	public static  Map<Metaschema, String> generate(Metaschema metaschema, File dir) throws IOException {
+		return generate(Collections.singletonList(metaschema), dir);
 	}
 
-	protected List<Metaschema> getMetaschemas() {
-		return metaschemas;
-	}
-
-	public Map<Metaschema, String> generate(File dir) throws IOException {
+	public static  Map<Metaschema, String> generate(List<Metaschema> metaschemas, File dir) throws IOException {
 		logger.info("Generating Java classes in: {}", dir.getPath());
 
 		Map<Metaschema, String> rootClassMap = new HashMap<>();
 
-		Map<Metaschema, List<InfoElementDefinition>> metaschemaToInformationElementsMap = buildMetaschemaMap();
+		Map<Metaschema, List<InfoElementDefinition>> metaschemaToInformationElementsMap = buildMetaschemaMap(metaschemas);
 		for (Map.Entry<Metaschema, List<InfoElementDefinition>> entry : metaschemaToInformationElementsMap.entrySet()) {
 			Metaschema metaschema = entry.getKey();
 			AssemblyDefinition rootAssembly = metaschema.getRootAssemblyDefinition();
 
 			for (InfoElementDefinition definition : entry.getValue()) {
-				AbstractClassGenerator<?> classGenerator = null;
+				ClassGenerator classGenerator = null;
 				if (definition instanceof AssemblyDefinition) {
 					classGenerator = new AssemblyClassGenerator((AssemblyDefinition)definition);
 					classGenerator.generateClass(dir);
@@ -79,16 +73,16 @@ public class JavaGenerator {
 		return Collections.unmodifiableMap(rootClassMap);
 	}
 
-	private Map<Metaschema, List<InfoElementDefinition>> buildMetaschemaMap() {
+	private static Map<Metaschema, List<InfoElementDefinition>> buildMetaschemaMap(List<Metaschema> metaschemas) {
 		Map<Metaschema, List<InfoElementDefinition>> retval = new HashMap<>();
 
-		for (Metaschema metaschema : getMetaschemas()) {
+		for (Metaschema metaschema : metaschemas) {
 			processMetaschema(metaschema, retval);
 		}
 		return retval;
 	}
 
-	private void processMetaschema(Metaschema metaschema, Map<Metaschema, List<InfoElementDefinition>> map) {
+	private static void processMetaschema(Metaschema metaschema, Map<Metaschema, List<InfoElementDefinition>> map) {
 		for (Metaschema importedMetaschema : metaschema.getImportedMetaschema().values()) {
 			processMetaschema(importedMetaschema, map);
 		}

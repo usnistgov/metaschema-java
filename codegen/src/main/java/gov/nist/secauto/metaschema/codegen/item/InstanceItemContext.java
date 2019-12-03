@@ -1,11 +1,11 @@
-package gov.nist.secauto.metaschema.codegen.context.model;
+package gov.nist.secauto.metaschema.codegen.item;
 
 import java.io.PrintWriter;
 
-import gov.nist.secauto.metaschema.codegen.context.InstanceContext;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
+import gov.nist.secauto.metaschema.datatype.MarkupString;
 
-public interface ModelItemInstanceContext extends InstanceContext {
+public interface InstanceItemContext {
 
 	JavaType getJavaType();
 	String getInstanceName();
@@ -13,4 +13,5 @@ public interface ModelItemInstanceContext extends InstanceContext {
 	void writeVariableAnnotations(PrintWriter writer);
 	Class<?> getSerializerClass();
 	Class<?> getDeserializerClass();
+	MarkupString getDescription();
 }

@@ -1,17 +1,16 @@
-package gov.nist.secauto.metaschema.codegen.context.model;
+package gov.nist.secauto.metaschema.codegen;
 
 import java.io.PrintWriter;
 
-import gov.nist.secauto.metaschema.codegen.AssemblyClassGenerator;
-import gov.nist.secauto.metaschema.codegen.context.AbstractInstanceContext;
+import gov.nist.secauto.metaschema.codegen.item.InstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
 import gov.nist.secauto.metaschema.datatype.MarkupString;
 
-public abstract class AbstractModelInstanceContext<JAVA_TYPE extends JavaType> extends AbstractInstanceContext<AssemblyClassGenerator> implements ModelInstanceContext {
-	private final ModelItemInstanceContext itemInstanceContext;
+public abstract class AbstractCardinalityInstanceGenerator<JAVA_TYPE extends JavaType> extends AbstractInstanceGenerator<AssemblyClassGenerator> implements CardinalityInstanceGenerator {
+	private final InstanceItemContext itemInstanceContext;
 	private final JAVA_TYPE javaType;
 
-	public AbstractModelInstanceContext(ModelItemInstanceContext itemInstanceContext, AssemblyClassGenerator classContext, JAVA_TYPE javaType) {
+	public AbstractCardinalityInstanceGenerator(InstanceItemContext itemInstanceContext, AssemblyClassGenerator classContext, JAVA_TYPE javaType) {
 		super(classContext);
 		this.itemInstanceContext = itemInstanceContext;
 		this.javaType = javaType;
@@ -36,7 +35,7 @@ public abstract class AbstractModelInstanceContext<JAVA_TYPE extends JavaType> e
 //	}
 
 
-	protected ModelItemInstanceContext getItemInstanceContext() {
+	protected InstanceItemContext getItemInstanceContext() {
 		return itemInstanceContext;
 	}
 
