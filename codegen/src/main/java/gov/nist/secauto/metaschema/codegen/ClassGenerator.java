@@ -2,6 +2,9 @@ package gov.nist.secauto.metaschema.codegen;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+
+import gov.nist.secauto.metaschema.codegen.type.JavaType;
 
 public interface ClassGenerator {
 
@@ -13,7 +16,8 @@ public interface ClassGenerator {
 	 * @throws IOException if an error IO occurred while generating the class
 	 */
 	String generateClass(File dir) throws IOException;
-
-	String getQualifiedClassName();
-
+	JavaType getJavaType();
+	boolean hasInstanceWithName(String name);
+	URI getXmlNamespace();
+	String getPackageName();
 }

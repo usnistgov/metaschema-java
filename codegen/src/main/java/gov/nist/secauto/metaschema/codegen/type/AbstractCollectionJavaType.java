@@ -5,33 +5,81 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import gov.nist.secauto.metaschema.codegen.AbstractClassGenerator;
-
 public abstract class AbstractCollectionJavaType extends AbstractJavaType {
-	private final JavaType itemClass;
+	private final JavaType collectionClass;
+	private final JavaType valueClass;
 
-	public AbstractCollectionJavaType(Class<?> collectionClass, JavaType itemClass) {
-		super(collectionClass);
+	public AbstractCollectionJavaType(Class<?> collectionClass, JavaType valueClass) {
 		Objects.requireNonNull(collectionClass, "collectionClass");
-		Objects.requireNonNull(itemClass, "itemClass");
-		this.itemClass = itemClass;
+		Objects.requireNonNull(valueClass, "itemClass");
+		this.collectionClass = new ClassJavaType(collectionClass);
+		this.valueClass = valueClass;
+	}
+
+	protected JavaType getCollectionClass() {
+		return collectionClass;
+	}
+
+	protected JavaType getValueClass() {
+		return valueClass;
 	}
 
 	@Override
-	public String getType(AbstractClassGenerator<?> classContext) {
-		return String.format("%s<%s>", super.getType(classContext), getGenerics(classContext));
+	public String getType(JavaType classType) {
+		return String.format("%s<%s>", super.getType(classType), getGenerics(classType));
 	}
 
 	@Override
-	public Set<String> getImports(AbstractClassGenerator<?> classContext) {
-		Set<String> retval = new HashSet<>(super.getImports(classContext));
-		retval.addAll(getItemClass().getImports(classContext));
+	public Set<JavaType> getImports(JavaType classType) {
+		Set<JavaType> retval = new HashSet<>(super.getImports(classType));
+		retval.addAll(getValueClass().getImports(classType));
+		retval.addAll(getCollectionClass().getImports(classType));
 		return Collections.unmodifiableSet(retval);
 	}
 
-	protected JavaType getItemClass() {
-		return itemClass;
+	protected abstract Object getGenerics(JavaType classType);
+
+
+	@Override
+	public String getClassName() {
+		return getCollectionClass().getClassName();
 	}
 
-	protected abstract Object getGenerics(AbstractClassGenerator<?> classContext);
+	@Override
+	public String getPackageName() {
+		return getCollectionClass().getPackageName();
+	}
+
+	@Override
+	public String getQualifiedClassName() {
+		return getCollectionClass().getQualifiedClassName();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + collectionClass.hashCode();
+		result = prime * result + valueClass.hashCode();
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof AbstractCollectionJavaType)) {
+			return false;
+		}
+		AbstractCollectionJavaType other = (AbstractCollectionJavaType) obj;
+		if (!collectionClass.equals(other.collectionClass)) {
+			return false;
+		}
+		if (!valueClass.equals(other.valueClass)) {
+			return false;
+		}
+		return true;
+	}
+
 }

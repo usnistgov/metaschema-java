@@ -1,10 +1,13 @@
 package gov.nist.secauto.metaschema.codegen;
 
-import java.io.PrintWriter;
+import javax.xml.bind.annotation.XmlAttribute;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
 import gov.nist.secauto.metaschema.datatype.MarkupString;
@@ -53,23 +56,26 @@ public class FlagInstanceGenerator extends AbstractInstanceGenerator<AbstractCla
 	}
 
 	@Override
-	protected void writeVariableAnnotations(PrintWriter writer) {
-		boolean isRequired = getInstance().isRequired();
-		writer.print("\t@JsonProperty(value = \"");
-		writer.print(instance.getName());
-		writer.print("\"");
-		if (isRequired) {
-			writer.print(", required = true");
+	protected void buildField(FieldBuilder builder) {
+		StringBuilder arguments = new StringBuilder();
+		arguments.append("value = \"");
+		arguments.append(instance.getName());
+		arguments.append('"');
+		if (getInstance().isRequired()) {
+			arguments.append(", required = true");
 		}
-		writer.println(")");
-//		
-//		writer.print("\t@XmlAttribute(name = \"");
-//		writer.print(instance.getName());
-//		writer.print("\"");
-//		if (isRequired) {
-//			writer.print(", required = true");
-//		}
-//		writer.println(")");
+
+		builder.annotation(JsonProperty.class, arguments.toString());
+
+		arguments = new StringBuilder();
+		arguments.append("name = \"");
+		arguments.append(instance.getName());
+		arguments.append('"');
+		if (getInstance().isRequired()) {
+			arguments.append(", required = true");
+		}
+		builder.annotation(XmlAttribute.class, arguments.toString());
+		super.buildField(builder);
 	}
 
 }

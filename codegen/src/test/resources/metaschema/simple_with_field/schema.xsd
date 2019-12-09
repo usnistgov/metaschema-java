@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:m="http://csrc.nist.gov/ns/oscal/metaschema/1.0"
-           xmlns:simple="http://csrc.nist.gov/ns/metaschema/testing/simple"
-           xmlns:oscal-prose="http://csrc.nist.gov/ns/metaschema/testing/simple"
+           xmlns:simple="http://csrc.nist.gov/ns/metaschema/testing/simple/with/field"
+           xmlns:oscal-prose="http://csrc.nist.gov/ns/metaschema/testing/simple/with/field"
            elementFormDefault="qualified"
-           targetNamespace="http://csrc.nist.gov/ns/metaschema/testing/simple"
+           targetNamespace="http://csrc.nist.gov/ns/metaschema/testing/simple/with/field"
            version="1.0">
    <xs:annotation>
       <xs:appinfo>

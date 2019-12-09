@@ -2,20 +2,22 @@ package gov.nist.secauto.metaschema.codegen.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.file.Path;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.commons.lang3.builder.RecursiveToStringStyle;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -30,6 +32,8 @@ import gov.nist.secauto.metaschema.model.MetaschemaFactory;
 
 public class BasicMetaschema {
 	private static final Logger logger = LogManager.getLogger(BasicMetaschema.class);
+	
+	private static final JsonFactory jsonFactory = new JsonFactory();
 
 	private static Metaschema loadMetaschema(File metaschemaFile) throws MetaschemaException, IOException {
 		return MetaschemaFactory.loadMetaschemaFromXml(metaschemaFile);
@@ -46,8 +50,8 @@ public class BasicMetaschema {
 
 	private static Object readJson(File file, Class<?> rootClass)
 			throws JsonParseException, JsonMappingException, IOException {
-		JsonFactory factory = new JsonFactory();
-		JsonParser  parser  = factory.createParser(file);
+		
+		JsonParser parser = jsonFactory.createParser(file);
 		
 		if (!JsonToken.START_OBJECT.equals(parser.nextToken())) {
 			String msg = String.format("Expected START_OBJECT. Invalid token: %s",parser.getCurrentToken());
@@ -77,47 +81,68 @@ public class BasicMetaschema {
 			}
 		}
 
-		ObjectMapper mapper = new ObjectMapper(factory);
+		ObjectMapper mapper = new ObjectMapper(jsonFactory);
 //		mapper.addHandler(new CustomDeserializationProblemHandler());
 //		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 		mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 		return mapper.readValue(parser, rootClass);
 	}
 
-	@SuppressWarnings("unused")
+	private static String writeJson(Object rootObject) throws JsonGenerationException, JsonMappingException, IOException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		StringWriter writer = new StringWriter();
+		JsonGenerator jsonGenerator = jsonFactory.createGenerator(writer);
+		
+		objectMapper.writeValue(jsonGenerator, rootObject);
+		return writer.toString();
+	}
+
 	private static Object readXml(File file, Class<?> rootClass) throws JAXBException {
-		JAXBContext jaxbContext = JAXBContext.newInstance(rootClass);
+		JAXBContext jaxbContext = org.eclipse.persistence.jaxb.JAXBContext.newInstance(rootClass);
 		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 		return jaxbUnmarshaller.unmarshal(file);
+	}
+
+	private static Object writeXml(Object rootObject) throws JAXBException {
+		JAXBContext jaxbContext = org.eclipse.persistence.jaxb.JAXBContext.newInstance(rootObject.getClass());
+		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+		StringWriter writer = new StringWriter();
+		jaxbMarshaller.marshal(rootObject, writer);
+		return writer.toString();
+	}
+
+	private void runTests(String testPath, File classDir) throws ClassNotFoundException, IOException, MetaschemaException, JAXBException {
+		Class<?> rootClass = compileMetaschema(new File(String.format("src/test/resources/metaschema/%s/metaschema.xml",testPath)),
+				classDir);
+
+		File jsonExample = new File(String.format("src/test/resources/metaschema/%s/example.json", testPath));
+		logger.info("Testing JSON file: {}", jsonExample.getName());
+		if (jsonExample.exists()) {
+			Object root = readJson(jsonExample, rootClass);
+			logger.info("Read JSON: Object: {}", root.toString());
+			logger.info("Write JSON: Object: {}", writeJson(root));
+		}
+		File xmlExample = new File(String.format("src/test/resources/metaschema/%s/example.xml", testPath));
+		logger.info("Testing XML file: {}", xmlExample.getName());
+		if (xmlExample.exists()) {
+			Object root = readXml(xmlExample, rootClass);
+			logger.info("Read XML: Object: {}", root.toString());
+			logger.info("Write XML: Object: {}", writeXml(root));
+		}
 	}
 
 	@Test
 	public void testSimpleMetaschema(@TempDir Path tempDir) throws MetaschemaException, IOException, ClassNotFoundException, JAXBException {
 		File classDir = tempDir.toFile();
 //		File classDir = new File("target/generated-sources/metaschema");
-
-		Class<?> rootClass = compileMetaschema(new File("src/test/resources/metaschema/simple_metaschema.xml"),
-				classDir);
-
-		Object root = readJson(new File("src/test/resources/metaschema/simple.json"), rootClass);
-		logger.info("JSON: Object: {}", ToStringBuilder.reflectionToString(root));
-//		root = readXml(new File("src/test/resources/metaschema/simple.xml"), rootClass);
-//		logger.info("XML: Object: {}", ToStringBuilder.reflectionToString(root));
+		runTests("simple", classDir);
 	}
 
 	@Test
-	public void testSimpleWithFlagMetaschema(@TempDir Path tempDir) throws MetaschemaException, IOException, ClassNotFoundException, JAXBException {
-//		File classDir = tempDir.toFile();
-		File classDir = new File("target/generated-sources/metaschema");
-
-		Class<?> rootClass = compileMetaschema(new File("src/test/resources/metaschema/simple-with-field_metaschema.xml"),
-				classDir);
-//		Class<?> rootClass = TopLevel.class;
-
-		Object root = readJson(new File("src/test/resources/metaschema/simple-with-field.json"), rootClass);
-		logger.info("JSON: Object: {}", ToStringBuilder.reflectionToString(root, new RecursiveToStringStyle()));
-//		root = readXml(new File("src/test/resources/metaschema/simple-with-field.xml"), rootClass);
-//		logger.info("XML: Object: {}", ToStringBuilder.reflectionToString(root, new RecursiveToStringStyle()));
+	public void testSimpleWithFieldMetaschema(@TempDir Path tempDir) throws MetaschemaException, IOException, ClassNotFoundException, JAXBException {
+		File classDir = tempDir.toFile();
+//		File classDir = new File("target/generated-sources/metaschema");
+		runTests("simple_with_field", classDir);
 	}
 
 }

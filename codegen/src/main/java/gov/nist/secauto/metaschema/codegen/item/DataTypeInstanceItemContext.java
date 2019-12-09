@@ -1,5 +1,8 @@
 package gov.nist.secauto.metaschema.codegen.item;
 
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
+
 import gov.nist.secauto.metaschema.codegen.AssemblyClassGenerator;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
@@ -13,7 +16,7 @@ public class DataTypeInstanceItemContext extends AbstractInstanceItemContext<Fie
 		this.dataType = dataType;
 	}
 
-	protected DataType getDataType() {
+	public DataType getDataType() {
 		return dataType;
 	}
 
@@ -23,13 +26,13 @@ public class DataTypeInstanceItemContext extends AbstractInstanceItemContext<Fie
 	}
 
 	@Override
-	public Class<?> getSerializerClass() {
-		return getDataType().getSerializerClass();
+	public Class<? extends JsonSerializer<?>> getJsonSerializerClass() {
+		return getDataType().getJsonSerializerClass();
 	}
 
 	@Override
-	public Class<?> getDeserializerClass() {
-		return getDataType().getDeserializerClass();
+	public Class<? extends JsonDeserializer<?>> getJsonDeserializerClass() {
+		return getDataType().getJsonDeserializerClass();
 	}
-
+	
 }

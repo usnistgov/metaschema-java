@@ -17,6 +17,7 @@ import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 
+import gov.nist.secauto.metaschema.datatype.flexmark.AstCollectingVisitor;
 import gov.nist.secauto.metaschema.datatype.flexmark.insertanchor.InsertAnchorExtension;
 
 public class MarkupString {
@@ -106,6 +107,11 @@ public class MarkupString {
 	private final Node node;
 	private final Type type;
 
+//
+//	public MarkupString() {
+//		this(null);
+//	}
+	
 	public MarkupString(Node node) {
 		this(node, Type.MARKUP_MULTILINE);
 	}
@@ -115,7 +121,7 @@ public class MarkupString {
 		this.type = type;
 	}
 
-	protected Node getNode() {
+	public Node getNode() {
 		return node;
 	}
 
@@ -130,5 +136,12 @@ public class MarkupString {
 
 	public String toMarkdown() {
 		return getFormatterInstance().render(node);
+	}
+
+	@Override
+	public String toString() {
+		AstCollectingVisitor visitor = new AstCollectingVisitor();
+		visitor.collect(getNode());
+		return visitor.getAst();
 	}
 }

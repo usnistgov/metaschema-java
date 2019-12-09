@@ -1,11 +1,15 @@
 package gov.nist.secauto.metaschema.codegen;
 
-import java.io.PrintWriter;
 import java.util.Objects;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
+import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
 import gov.nist.secauto.metaschema.codegen.item.AssemblyInstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.item.DataTypeInstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.item.FieldInstanceItemContext;
@@ -76,14 +80,14 @@ public class AssemblyClassGenerator extends AbstractClassGenerator<AssemblyDefin
 	}
 
 	@Override
-	protected void writeClassJava(PrintWriter writer) {
+	protected void buildClass(ClassBuilder builder) {
+		super.buildClass(builder);
+
 		AssemblyDefinition definition = getDefinition();
 		if (Objects.equals(definition, definition.getContainingMetaschema().getRootAssemblyDefinition())) {
-			writer.printf("@JsonRootName(value=\"%s\", namespace=\"%s\")%n", getDefinition().getName(), getDefinition().getContainingMetaschema().getXmlNamespace());
-			writer.println("@JsonIgnoreProperties({ \"$schema\" })");
-			writer.printf("@XmlRootElement(name=\"%s\", namespace=\"%s\")%n", getDefinition().getName(), getDefinition().getContainingMetaschema().getXmlNamespace());
+			builder.annotation(JsonRootName.class, String.format("value=\"%s\", namespace=\"%s\"", getDefinition().getName(), getXmlNamespace()));
+			builder.annotation(XmlRootElement.class, String.format("name=\"%s\", namespace=\"%s\"", getDefinition().getName(), getXmlNamespace()));
 		}
-		super.writeClassJava(writer);
 	}
 
 }

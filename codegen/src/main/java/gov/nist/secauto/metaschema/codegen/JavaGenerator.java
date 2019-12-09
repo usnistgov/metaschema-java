@@ -1,7 +1,10 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +45,7 @@ public class JavaGenerator {
 		logger.info("Generating Java classes in: {}", dir.getPath());
 
 		Map<Metaschema, String> rootClassMap = new HashMap<>();
+		Map<URI, String> xmlNamespaceToPackageNameMap = new HashMap<>();
 
 		Map<Metaschema, List<InfoElementDefinition>> metaschemaToInformationElementsMap = buildMetaschemaMap(metaschemas);
 		for (Map.Entry<Metaschema, List<InfoElementDefinition>> entry : metaschemaToInformationElementsMap.entrySet()) {
@@ -54,7 +58,7 @@ public class JavaGenerator {
 					classGenerator = new AssemblyClassGenerator((AssemblyDefinition)definition);
 					classGenerator.generateClass(dir);
 					if (Objects.equals(rootAssembly, definition)) {
-						rootClassMap.put(metaschema, classGenerator.getQualifiedClassName());
+						rootClassMap.put(metaschema, classGenerator.getJavaType().getQualifiedClassName());
 					}
 				} else if (definition instanceof FieldDefinition) {
 					FieldDefinition fieldDefinition = (FieldDefinition)definition;
@@ -68,6 +72,27 @@ public class JavaGenerator {
 					// Skip others
 					continue;
 				}
+
+				if (classGenerator != null) {
+					URI xmlNamespace = classGenerator.getXmlNamespace();
+					String packageName = classGenerator.getPackageName();
+					xmlNamespaceToPackageNameMap.put(xmlNamespace, packageName);
+				}
+			}
+		}
+
+		for (Map.Entry<URI, String> entry : xmlNamespaceToPackageNameMap.entrySet()) {
+			String packageName = entry.getValue();
+			String packagePath = packageName.replace(".", "/");
+			File packageInfo = new File(dir, packagePath+"/package-info.java");
+			URI namespace = entry.getKey();
+			String namespaceString = namespace.toString();
+
+			try (FileWriter fileWriter = new FileWriter(packageInfo)) {
+				PrintWriter writer = new PrintWriter(fileWriter);
+
+				writer.format("@javax.xml.bind.annotation.XmlSchema(namespace = \"%s\", xmlns = {@javax.xml.bind.annotation.XmlNs(prefix = \"\", namespaceURI = \"%s\")}, elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)%n", namespaceString, namespaceString);
+				writer.format("package %s;%n", packageName);
 			}
 		}
 		return Collections.unmodifiableMap(rootClassMap);

@@ -21,7 +21,6 @@ class MarkupStringTest {
 		MarkupString ms = MarkupString.fromHTML(
 				"<h1>Example</h1><table><tr><th>Heading 1</th></tr><tr><td>data1 <insert param-id=\"insert\" /></td></tr></table><p>Some <em>more</em> <strong>text</strong></p>");
 		AstCollectingVisitor visitor = new AstCollectingVisitor();
-		visitor = new AstCollectingVisitor();
 		visitor.collect(ms.getNode());
 		System.out.println(visitor.getAst());
 		System.out.println(ms.toHTML());

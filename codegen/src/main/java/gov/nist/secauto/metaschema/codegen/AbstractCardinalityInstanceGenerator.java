@@ -1,18 +1,16 @@
 package gov.nist.secauto.metaschema.codegen;
 
-import java.io.PrintWriter;
-
 import gov.nist.secauto.metaschema.codegen.item.InstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
 import gov.nist.secauto.metaschema.datatype.MarkupString;
 
 public abstract class AbstractCardinalityInstanceGenerator<JAVA_TYPE extends JavaType> extends AbstractInstanceGenerator<AssemblyClassGenerator> implements CardinalityInstanceGenerator {
-	private final InstanceItemContext itemInstanceContext;
+	private final InstanceItemContext instanceItemContext;
 	private final JAVA_TYPE javaType;
 
-	public AbstractCardinalityInstanceGenerator(InstanceItemContext itemInstanceContext, AssemblyClassGenerator classContext, JAVA_TYPE javaType) {
+	public AbstractCardinalityInstanceGenerator(InstanceItemContext instanceItemContext, AssemblyClassGenerator classContext, JAVA_TYPE javaType) {
 		super(classContext);
-		this.itemInstanceContext = itemInstanceContext;
+		this.instanceItemContext = instanceItemContext;
 		this.javaType = javaType;
 //
 //		
@@ -35,8 +33,8 @@ public abstract class AbstractCardinalityInstanceGenerator<JAVA_TYPE extends Jav
 //	}
 
 
-	protected InstanceItemContext getItemInstanceContext() {
-		return itemInstanceContext;
+	protected InstanceItemContext getInstanceItemContext() {
+		return instanceItemContext;
 	}
 
 
@@ -46,17 +44,12 @@ public abstract class AbstractCardinalityInstanceGenerator<JAVA_TYPE extends Jav
 	
 	@Override
 	protected String getInstanceName() {
-		return getItemInstanceContext().getInstanceName();
+		return getInstanceItemContext().getInstanceName();
 	}
 
 	@Override
 	public MarkupString getDescription() {
-		return getItemInstanceContext().getDescription();
-	}
-
-	@Override
-	protected void writeVariableAnnotations(PrintWriter writer) {
-		writer.printf("\t@XmlElement(name = \"%s\", namespace=\"%s\", required = true)%n", getInstanceName(), getItemInstanceContext().getXmlNamespace());
+		return getInstanceItemContext().getDescription();
 	}
 
 }

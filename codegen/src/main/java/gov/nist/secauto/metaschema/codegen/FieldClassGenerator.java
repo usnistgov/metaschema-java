@@ -1,10 +1,9 @@
 package gov.nist.secauto.metaschema.codegen;
 
-import java.io.PrintWriter;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.model.FieldDefinition;
 
@@ -42,25 +41,15 @@ public class FieldClassGenerator extends AbstractClassGenerator<FieldDefinition>
 	}
 
 	@Override
-	public String getPackageName() {
-		return ClassUtils.toPackageName(getDefinition());
-	}
+	protected void buildClass(ClassBuilder builder) {
+		super.buildClass(builder);
 
-	@Override
-	public String getClassName() {
-		return ClassUtils.toClassName(getDefinition());
-	}
-
-	@Override
-	protected void writeConstructors(PrintWriter writer) {
-		super.writeConstructors(writer);
-
-		FieldValueInstanceGenerator fieldInsatnce = getFieldInstance();
-		// no-arg constructor
-		writer.println("\t@JsonCreator");
-		writer.printf("\tpublic %s(%s value) {%n", getClassName(), fieldInsatnce.getJavaType().getType(this));
-		writer.printf("\t\tthis.%s = value;%n", fieldInsatnce.getVariableName());
-		writer.println("\t}");
-		writer.println();
+//		FieldValueInstanceGenerator fieldInsatnce = getFieldInstance();
+//		// no-arg constructor
+//		writer.println("\t@JsonCreator");
+//		writer.printf("\tpublic %s(%s value) {%n", getJavaType().getClassName(), fieldInsatnce.getJavaType().getType(getJavaType()));
+//		writer.printf("\t\tthis.%s = value;%n", fieldInsatnce.getVariableName());
+//		writer.println("\t}");
+//		writer.println();
 	}
 }

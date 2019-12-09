@@ -2,17 +2,33 @@ package gov.nist.secauto.metaschema.codegen.type;
 
 import java.util.List;
 
-import gov.nist.secauto.metaschema.codegen.AbstractClassGenerator;
-
 public class ListJavaType extends AbstractCollectionJavaType {
 
-	public ListJavaType(JavaType itemClass) {
+	ListJavaType(JavaType itemClass) {
 		super(List.class, itemClass);
 	}
 
 	@Override
-	protected String getGenerics(AbstractClassGenerator<?> classContext) {
-		return getItemClass().getType(classContext);
+	protected String getGenerics(JavaType classType) {
+		return getValueClass().getType(classType);
 	}
 
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof ListJavaType)) {
+			return false;
+		}
+		return true;
+	}
 }

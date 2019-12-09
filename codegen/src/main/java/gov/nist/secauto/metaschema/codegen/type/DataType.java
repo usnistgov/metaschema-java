@@ -3,6 +3,9 @@ package gov.nist.secauto.metaschema.codegen.type;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
+
 import gov.nist.secauto.metaschema.datatype.Base64;
 import gov.nist.secauto.metaschema.datatype.Date;
 import gov.nist.secauto.metaschema.datatype.DateTime;
@@ -60,20 +63,20 @@ public enum DataType {
 
 	private final gov.nist.secauto.metaschema.model.DataType dataType;
 	private final Class<?> javaClass;
-	private final SimpleJavaType javaType;
-	private final Class<?> serializerClass;
-	private final Class<?> deserializerClass;
+	private final ClassJavaType javaType;
+	private final Class<? extends JsonSerializer<?>> jsonSerializerClass;
+	private final Class<? extends JsonDeserializer<?>> jsonDeserializerClass;
 
 	private DataType(gov.nist.secauto.metaschema.model.DataType dataType, Class<?> javaClass) {
 		this(dataType, javaClass, null, null);
 	}
 
-	private DataType(gov.nist.secauto.metaschema.model.DataType dataType, Class<?> javaClass, Class<?> serializerClass, Class<?> deserializerClass) {
+	private DataType(gov.nist.secauto.metaschema.model.DataType dataType, Class<?> javaClass, Class<? extends JsonSerializer<?>> jsonSerializerClass, Class<? extends JsonDeserializer<?>> jsonDeserializerClass) {
 		this.dataType = dataType;
 		this.javaClass = javaClass;
-		this.javaType = new SimpleJavaType(getJavaClass());
-		this.serializerClass = serializerClass;
-		this.deserializerClass = deserializerClass;
+		this.javaType = new ClassJavaType(getJavaClass());
+		this.jsonSerializerClass = jsonSerializerClass;
+		this.jsonDeserializerClass = jsonDeserializerClass;
 	}
 
 	public gov.nist.secauto.metaschema.model.DataType getDataType() {
@@ -84,15 +87,15 @@ public enum DataType {
 		return javaClass;
 	}
 
-	public SimpleJavaType getJavaType() {
+	public ClassJavaType getJavaType() {
 		return javaType;
 	}
 
-	public Class<?> getSerializerClass() {
-		return serializerClass;
+	public Class<? extends JsonSerializer<?>> getJsonSerializerClass() {
+		return jsonSerializerClass;
 	}
 
-	public Class<?> getDeserializerClass() {
-		return deserializerClass;
+	public Class<? extends JsonDeserializer<?>> getJsonDeserializerClass() {
+		return jsonDeserializerClass;
 	}
 }

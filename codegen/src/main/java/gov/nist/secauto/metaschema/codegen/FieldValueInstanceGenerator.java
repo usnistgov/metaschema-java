@@ -1,13 +1,15 @@
 package gov.nist.secauto.metaschema.codegen;
 
-import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import javax.xml.bind.annotation.XmlElement;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
+import gov.nist.secauto.metaschema.codegen.support.JsonSerializationSupport;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
 import gov.nist.secauto.metaschema.datatype.MarkupString;
@@ -15,6 +17,7 @@ import gov.nist.secauto.metaschema.model.JsonValueKeyEnum;
 
 /**
  * Represents the "value" of a field object.
+ * 
  * @author davidwal
  *
  */
@@ -60,57 +63,30 @@ public class FieldValueInstanceGenerator extends AbstractInstanceGenerator<Field
 	}
 
 	@Override
-	public Set<String> getImports() {
-		Set<String> retval = new HashSet<>(super.getImports());
-		if (!JsonValueKeyEnum.FLAG.equals(getGenerator().getDefinition().getJsonValueKeyType())) {
-			boolean addDatabind = false;
+	protected void buildField(FieldBuilder builder) {
+		// TODO Auto-generated method stub
+		super.buildField(builder);
 
-			Class<?> serializer = getValueDataType().getSerializerClass();
-			if (serializer != null) {
-				retval.add(serializer.getCanonicalName());
-				addDatabind = true;
-			}
-
-			Class<?> deserializer = getValueDataType().getDeserializerClass();
-			if (deserializer != null) {
-				retval.add(deserializer.getCanonicalName());
-				addDatabind = true;
-			}
-
-			if (addDatabind) {
-				retval.add("com.fasterxml.jackson.databind.annotation.*");
-			}
-		}
-		return Collections.unmodifiableSet(retval);
-	}
-
-	@Override
-	protected void writeVariableAnnotations(PrintWriter writer) {
 		// --- JSON ---
 		// a field object always has a single value
 		if (DataType.EMPTY.equals(getGenerator().getValueDatatype())) {
-			String msg = String.format("In class '%s', the field has an empty value, but an instance was generated", generator.getQualifiedClassName());
+			String msg = String.format("In class '%s', the field has an empty value, but an instance was generated", getGenerator().getJavaType().getQualifiedClassName());
 			logger.error(msg);
 			throw new RuntimeException(msg);
 		}
 		
 		// if the value key type is "FLAG", we need to use the any getter/setter, so ignore this field
 		boolean useJsonPropertyAnnotations = !JsonValueKeyEnum.FLAG.equals(getGenerator().getDefinition().getJsonValueKeyType());
-
 		if (useJsonPropertyAnnotations) {
-			// we need to use an argument constructor
-			Class<?> serializer = getValueDataType().getSerializerClass();
-			if (serializer != null) {
-				writer.printf("\t@JsonSerialize(using = %s.class)%n", serializer.getSimpleName());
-			}
+			builder.annotation(JsonProperty.class,String.format("value = \"%s\", required = true", getJsonPropertyName()));
 
-			Class<?> deserializer = getValueDataType().getDeserializerClass();
-			if (deserializer != null) {
-				writer.printf("\t@JsonDeserialize(using = %s.class)%n", deserializer.getSimpleName());
-			}
-			writer.printf("\t@JsonProperty(value = \"%s\", required = true)%n", getJsonPropertyName());
+			// we need to use an argument constructor
+			JsonSerializationSupport.generateJsonSerializerAnnotations(builder, getValueDataType().getJsonSerializerClass());
+			JsonSerializationSupport.generateJsonDeserializerAnnotations(builder, getValueDataType().getJsonDeserializerClass());
+
+			builder.annotation(XmlElement.class,String.format("name = \"%s\", namespace = \"%s\", required = true", getJsonPropertyName(), getGenerator().getDefinition().getContainingMetaschema().getXmlNamespace()));
 		} else {
-			writer.println("\t@JsonIgnore");
+			builder.annotation(JsonIgnore.class);
 		}
 	}
 }

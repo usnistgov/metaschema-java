@@ -43,9 +43,9 @@ public class DynamicClassLoader extends ClassLoader {
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
 		Class<?> retval = null;
-		try {
-			retval = super.findClass(name);
-		} catch (ClassNotFoundException ex) {
+//		try {
+//			retval = super.findClass(name);
+//		} catch (ClassNotFoundException ex) {
 			
 			File classFile = new File(getClassDir(), name.replace(".", "/") + ".java");
 			try {
@@ -53,7 +53,7 @@ public class DynamicClassLoader extends ClassLoader {
 			} catch (IOException e) {
 				throw new ClassNotFoundException("An IO error occured while loading java class code",e);
 			}
-		}
+//		}
 		if (retval == null) {
 			throw new ClassNotFoundException(name);
 		}

@@ -1,6 +1,7 @@
 package gov.nist.secauto.metaschema.codegen.item;
 
-import java.io.PrintWriter;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
 
 import gov.nist.secauto.metaschema.codegen.AssemblyClassGenerator;
 import gov.nist.secauto.metaschema.datatype.MarkupString;
@@ -15,7 +16,7 @@ public abstract class AbstractInstanceItemContext<INSTANCE extends ModelInstance
 		this.containingClassGenerator = classContext;
 	}
 
-	protected INSTANCE getModelInstance() {
+	public INSTANCE getModelInstance() {
 		return modelInstance;
 	}
 
@@ -39,16 +40,12 @@ public abstract class AbstractInstanceItemContext<INSTANCE extends ModelInstance
 	}
 
 	@Override
-	public void writeVariableAnnotations(PrintWriter writer) {
-	}
-
-	@Override
-	public Class<?> getSerializerClass() {
+	public Class<? extends JsonSerializer<?>> getJsonSerializerClass() {
 		return null;
 	}
 
 	@Override
-	public Class<?> getDeserializerClass() {
+	public Class<? extends JsonDeserializer<?>> getJsonDeserializerClass() {
 		return null;
 	}
 	

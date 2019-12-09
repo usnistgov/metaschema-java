@@ -1,26 +1,21 @@
 package gov.nist.secauto.metaschema.codegen;
 
-import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import com.sun.xml.bind.api.impl.NameConverter;
-
+import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
+import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
+import gov.nist.secauto.metaschema.codegen.builder.MethodBuilder;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.datatype.MarkupString;
 
-public abstract class AbstractInstanceGenerator<GENERATOR extends AbstractClassGenerator<?>> implements InstanceGenerator {
-	private final GENERATOR classContext;
+public abstract class AbstractInstanceGenerator<GENERATOR extends ClassGenerator> implements InstanceGenerator {
+	private final GENERATOR classGenerator;
 	private String propertyName;
 	private String variableName;
 
 	public AbstractInstanceGenerator(GENERATOR classContext) {
-		this.classContext = classContext;
+		this.classGenerator = classContext;
 	}
 
-	protected AbstractClassGenerator<?> getClassContext() {
-		return classContext;
+	protected ClassGenerator getClassGenerator() {
+		return classGenerator;
 	}
 
 	/**
@@ -30,16 +25,16 @@ public abstract class AbstractInstanceGenerator<GENERATOR extends AbstractClassG
 	 */
 	public String getPropertyName() {
 		if (this.propertyName == null) {
-			String name = NameConverter.standard.toPropertyName(getInstanceName());
+			String name = ClassUtils.toPropertyName(getInstanceName());
 			// first check if a property already exists with the same name
-			if (classContext.hasInstanceWithName(name)) {
+			if (classGenerator.hasInstanceWithName(name)) {
 				// append an integer value to make the name unique
 				String newName;
 				int i = 1;
 				do {
-					newName = NameConverter.standard.toPropertyName(name + Integer.toString(i));
+					newName = ClassUtils.toPropertyName(name + Integer.toString(i));
 					i++;
-				} while (classContext.hasInstanceWithName(newName));
+				} while (classGenerator.hasInstanceWithName(newName));
 				name = newName;
 			}
 
@@ -50,7 +45,7 @@ public abstract class AbstractInstanceGenerator<GENERATOR extends AbstractClassG
 
 	public String getVariableName() {
 		if (this.variableName == null) {
-			this.variableName = NameConverter.standard.toVariableName("_" + getPropertyName());
+			this.variableName = ClassUtils.toVariableName("_" + getPropertyName());
 		}
 		return this.variableName;
 	}
@@ -59,39 +54,32 @@ public abstract class AbstractInstanceGenerator<GENERATOR extends AbstractClassG
 
 	protected abstract String getInstanceName();
 
-	public Set<String> getImports() {
-		Set<String> retval = new HashSet<>(getJavaType().getImports(getClassContext()));
-		retval.add("com.fasterxml.jackson.annotation.*");
-		retval.add("javax.xml.bind.annotation.*");
-		return Collections.unmodifiableSet(retval);
+//	protected void writeVariableJavadoc(PrintWriter writer) {
+//		MarkupString description = getDescription();
+//		if (description != null) {
+//			writer.println("\t/**");
+//			writer.println("\t * " + description.toHTML());
+//			writer.println("\t */");
+//		}
+//	}
+
+	@Override
+	public void buildInstance(ClassBuilder builder) {
+		buildField(builder.newFieldBuilder(getJavaType(), getVariableName()));
+
+		buildGetter(builder.newMethodBuilder("get" + getPropertyName()).returnType(getJavaType()));
+		buildSetter(builder.newMethodBuilder("set" + getPropertyName())
+				.arguments(String.format("%s value", getJavaType().getType(getClassGenerator().getJavaType()))));
 	}
 
-	public void writeVariable(PrintWriter writer) {
-		writeVariableJavadoc(writer);
-		writeVariableAnnotations(writer);
-		writeVariableJava(writer);
+	protected void buildField(@SuppressWarnings("unused") FieldBuilder builder) {
 	}
 
-	protected void writeVariableJavadoc(PrintWriter writer) {
-		MarkupString description = getDescription();
-		if (description != null) {
-			writer.println("\t/**");
-			writer.println("\t * " + description.toHTML());
-			writer.println("\t */");
-		}
-	}
-	protected abstract void writeVariableAnnotations(PrintWriter writer);
-
-	protected void writeVariableJava(PrintWriter writer) {
-		ClassUtils.writeVariable(writer, getJavaType().getType(getClassContext()), getVariableName());
+	protected void buildGetter(MethodBuilder builder) {
+		builder.getBodyWriter().format("return %s;%n", getVariableName());
 	}
 
-	public void writeGetter(PrintWriter writer) {
-		ClassUtils.writeGetter(writer, getPropertyName(), getJavaType().getType(getClassContext()), getVariableName());
+	private void buildSetter(MethodBuilder builder) {
+		builder.getBodyWriter().format("this.%s = value;%n", getVariableName());
 	}
-
-	public void writeSetter(PrintWriter writer) {
-		ClassUtils.writeSetter(writer, getPropertyName(), getJavaType().getType(getClassContext()), getVariableName());
-	}
-
 }

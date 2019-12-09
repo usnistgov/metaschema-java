@@ -1,45 +1,25 @@
 package gov.nist.secauto.metaschema.codegen.type;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
-import gov.nist.secauto.metaschema.codegen.AbstractClassGenerator;
-
 public abstract class AbstractJavaType implements JavaType {
-	private final String className;
-	private final String packageName;
-	private final String qualifiedClassName;
 
-	public AbstractJavaType(Class<?> clazz) {
-		this(clazz.getPackageName(),clazz.getSimpleName());
+	public AbstractJavaType() {
 	}
 
-	public AbstractJavaType(String packageName, String className) {
-		Objects.requireNonNull(packageName, "packageName");
-		Objects.requireNonNull(className, "className");
+	public abstract String getClassName();
 
-		this.packageName = packageName;
-		this.className = className;
-		this.qualifiedClassName = getPackageName() + "." + getClassName();
-	}
+	public abstract String getPackageName();
 
-	protected String getClassName() {
-		return className;
-	}
+	public abstract String getQualifiedClassName();
 
-	protected String getPackageName() {
-		return packageName;
-	}
+	public abstract int hashCode();
+	public abstract boolean equals(Object obj);
 
-	protected String getQualifiedClassName() {
-		return qualifiedClassName;
-	}
-
-	public String getType(AbstractClassGenerator<?> classContext) {
+	public String getType(JavaType classType) {
 		String retval;
-		if (getClassName().equals(classContext.getClassName())) {
+		if (getClassName().equals(classType.getClassName())) {
 			// qualify the type
 			retval = getQualifiedClassName();
 		} else {
@@ -49,14 +29,18 @@ public abstract class AbstractJavaType implements JavaType {
 		return retval;
 	}
 
-	@Override
-	public Set<String> getImports(AbstractClassGenerator<?> classContext) {
-		Set<String> retval = new HashSet<>();
-
-		// check if the class name is the same as the containing class, if not add an import
-		if (!getClassName().equals(classContext.getClassName()) && !"java.lang".equals(getPackageName())) {
-			retval.add(getQualifiedClassName());
-		}
-		return Collections.unmodifiableSet(retval);
+	public Set<JavaType> getImports(JavaType classType) {
+		return Collections.singleton(this);
 	}
+
+	@Override
+	public String getImportValue(JavaType classJavaType) {
+		// check if the class name is the same as the containing class, if not add an import
+		if (!getClassName().equals(classJavaType.getClassName())) {
+			return getQualifiedClassName();
+		}
+		return null;
+	}
+
+	
 }
