@@ -10,7 +10,7 @@ public class FieldBuilder extends AbstractMemberBuilder<FieldBuilder> {
 	private final JavaType javaType;
 	private final String name;
 
-	FieldBuilder(ClassBuilder classBuilder, JavaType javaType, String name) {
+	FieldBuilder(AbstractClassBuilder<?> classBuilder, JavaType javaType, String name) {
 		super(classBuilder);
 		Objects.requireNonNull(javaType, "javaType");
 		Objects.requireNonNull(name, "name");
@@ -30,6 +30,6 @@ public class FieldBuilder extends AbstractMemberBuilder<FieldBuilder> {
 	@Override
 	public void build(PrintWriter out) {
 		buildAnnotations(out);
-		out.printf("%s%s %s %s;%n",getPadding(), getVisibilityValue(DEFAULT_VISIBILITY), getJavaType().getType(getClassBuilder().getJavaType()), getName());
+		out.printf("%s%s%s %s;%n",getPadding(), getVisibilityValue(DEFAULT_VISIBILITY), getJavaType().getType(getClashEvaluator()), getName());
 	}
 }

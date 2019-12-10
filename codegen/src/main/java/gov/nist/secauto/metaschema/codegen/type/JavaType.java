@@ -1,6 +1,7 @@
 package gov.nist.secauto.metaschema.codegen.type;
 
 import java.util.Set;
+import java.util.function.Function;
 
 import gov.nist.secauto.metaschema.model.ManagedObject;
 
@@ -30,10 +31,17 @@ public interface JavaType {
 	 * Get the actual Java type. This will qualify the Java type if it has the same
 	 * name as the containing class, or will add an import otherwise.
 	 * 
-	 * @param classType the Java type of the containing class
+	 * @param clashEvaluator a functional interface used to determine if this Java type clashes with another in the this types context
 	 * @return the type name
 	 */
-	String getType(JavaType classType);
+	/**
+	 * 
+	 * @param clashEvaluator
+	 * @return
+	 */
+	String getType(Function<String, Boolean> clashEvaluator);
+
+	String getType();
 
 	/**
 	 * Get the set of imports needed for this Java type.

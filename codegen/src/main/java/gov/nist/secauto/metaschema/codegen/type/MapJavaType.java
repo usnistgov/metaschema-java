@@ -2,9 +2,10 @@ package gov.nist.secauto.metaschema.codegen.type;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 public class MapJavaType extends AbstractCollectionJavaType {
 	private final JavaType keyClass;
@@ -14,7 +15,7 @@ public class MapJavaType extends AbstractCollectionJavaType {
 	}
 
 	MapJavaType(JavaType keyClass, JavaType itemClass) {
-		super(Map.class, itemClass);
+		super(LinkedHashMap.class, itemClass);
 		Objects.requireNonNull(keyClass);
 		this.keyClass = keyClass;
 	}
@@ -31,8 +32,8 @@ public class MapJavaType extends AbstractCollectionJavaType {
 	}
 
 	@Override
-	protected String getGenerics(JavaType classType) {
-		return getKeyClass().getType(classType) + "," + getValueClass().getType(classType);
+	protected String getGenericArguments(Function<String, Boolean> clashEvaluator) {
+		return getKeyClass().getType(clashEvaluator) + "," + getValueClass().getType(clashEvaluator);
 	}
 
 	@Override

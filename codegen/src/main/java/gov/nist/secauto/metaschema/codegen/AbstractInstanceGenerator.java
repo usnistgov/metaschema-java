@@ -69,7 +69,7 @@ public abstract class AbstractInstanceGenerator<GENERATOR extends ClassGenerator
 
 		buildGetter(builder.newMethodBuilder("get" + getPropertyName()).returnType(getJavaType()));
 		buildSetter(builder.newMethodBuilder("set" + getPropertyName())
-				.arguments(String.format("%s value", getJavaType().getType(getClassGenerator().getJavaType()))));
+				.arguments(String.format("%s value", getJavaType().getType(builder.getClashEvaluator()))));
 	}
 
 	protected void buildField(@SuppressWarnings("unused") FieldBuilder builder) {

@@ -1,6 +1,7 @@
 package gov.nist.secauto.metaschema.codegen.type;
 
 import java.util.List;
+import java.util.function.Function;
 
 public class ListJavaType extends AbstractCollectionJavaType {
 
@@ -9,8 +10,8 @@ public class ListJavaType extends AbstractCollectionJavaType {
 	}
 
 	@Override
-	protected String getGenerics(JavaType classType) {
-		return getValueClass().getType(classType);
+	protected String getGenericArguments(Function<String, Boolean> clashEvaluator) {
+		return getValueClass().getType(clashEvaluator);
 	}
 
 	@Override

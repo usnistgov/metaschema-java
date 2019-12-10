@@ -8,7 +8,7 @@ public abstract class AbstractMethodBuilder<T extends AbstractMethodBuilder<T>> 
 	private String arguments;
 	private StringWriter bodyWriter = new StringWriter();
 
-	public AbstractMethodBuilder(ClassBuilder classBuilder) {
+	public AbstractMethodBuilder(AbstractClassBuilder<?> classBuilder) {
 		super(classBuilder);
 	}
 

@@ -1,9 +1,19 @@
 package gov.nist.secauto.metaschema.codegen.test;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -12,8 +22,10 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.platform.commons.util.ReflectionUtils;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -21,9 +33,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import gov.nist.secauto.metaschema.codegen.JavaGenerator;
 import gov.nist.secauto.metaschema.model.Metaschema;
@@ -32,8 +44,18 @@ import gov.nist.secauto.metaschema.model.MetaschemaFactory;
 
 public class BasicMetaschema {
 	private static final Logger logger = LogManager.getLogger(BasicMetaschema.class);
-	
-	private static final JsonFactory jsonFactory = new JsonFactory();
+
+	private static final JsonFactory jsonFactory;
+	private static final ObjectMapper mapper;
+
+	static {
+		jsonFactory = new JsonFactory();
+		mapper = new ObjectMapper(jsonFactory);
+		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+//		mapper.addHandler(new CustomDeserializationProblemHandler());
+//		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
+//		mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+	}
 
 	private static Metaschema loadMetaschema(File metaschemaFile) throws MetaschemaException, IOException {
 		return MetaschemaFactory.loadMetaschemaFromXml(metaschemaFile);
@@ -48,18 +70,17 @@ public class BasicMetaschema {
 		return new DynamicClassLoader(classDir).loadClass(rootClassName);
 	}
 
-	private static Object readJson(File file, Class<?> rootClass)
+	private static Object readJson(Reader reader, Class<?> rootClass)
 			throws JsonParseException, JsonMappingException, IOException {
-		
-		JsonParser parser = jsonFactory.createParser(file);
-		
+
+		JsonParser parser = jsonFactory.createParser(reader);
+
 		if (!JsonToken.START_OBJECT.equals(parser.nextToken())) {
-			String msg = String.format("Expected START_OBJECT. Invalid token: %s",parser.getCurrentToken());
+			String msg = String.format("Expected START_OBJECT. Invalid token: %s", parser.getCurrentToken());
 			logger.error(msg);
 			throw new RuntimeException(msg);
 		}
-		findobject:
-		while (!JsonToken.END_OBJECT.equals(parser.nextToken())) {
+		findobject: while (!JsonToken.END_OBJECT.equals(parser.nextToken())) {
 //			logger.trace("token: {}", parser.getCurrentToken());
 			if (JsonToken.FIELD_NAME.equals(parser.getCurrentToken())) {
 //				logger.trace("{}: {}",parser.getCurrentToken(), parser.getText());
@@ -68,7 +89,8 @@ public class BasicMetaschema {
 				case "$schema":
 					// skip the value string
 					if (!JsonToken.VALUE_STRING.equals(parser.nextToken())) {
-						String msg = String.format("Expected VALUE_STRING. Invalid token: %s",parser.getCurrentToken());
+						String msg = String.format("Expected VALUE_STRING. Invalid token: %s",
+								parser.getCurrentToken());
 						logger.error(msg);
 						throw new RuntimeException(msg);
 					}
@@ -81,29 +103,26 @@ public class BasicMetaschema {
 			}
 		}
 
-		ObjectMapper mapper = new ObjectMapper(jsonFactory);
-//		mapper.addHandler(new CustomDeserializationProblemHandler());
-//		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
-		mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
-		return mapper.readValue(parser, rootClass);
+		return parser.readValueAs(rootClass);
+//		return mapper.readValue(parser, rootClass);
 	}
 
-	private static String writeJson(Object rootObject) throws JsonGenerationException, JsonMappingException, IOException {
-		ObjectMapper objectMapper = new ObjectMapper();
+	private static String writeJson(Object rootObject)
+			throws JsonGenerationException, JsonMappingException, IOException {
 		StringWriter writer = new StringWriter();
 		JsonGenerator jsonGenerator = jsonFactory.createGenerator(writer);
-		
-		objectMapper.writeValue(jsonGenerator, rootObject);
+		jsonGenerator.writeObject(rootObject);
+//		mapper.writeValue(jsonGenerator, rootObject);
 		return writer.toString();
 	}
 
-	private static Object readXml(File file, Class<?> rootClass) throws JAXBException {
+	private static Object readXml(Reader reader, Class<?> rootClass) throws JAXBException {
 		JAXBContext jaxbContext = org.eclipse.persistence.jaxb.JAXBContext.newInstance(rootClass);
 		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-		return jaxbUnmarshaller.unmarshal(file);
+		return jaxbUnmarshaller.unmarshal(reader);
 	}
 
-	private static Object writeXml(Object rootObject) throws JAXBException {
+	private static String writeXml(Object rootObject) throws JAXBException {
 		JAXBContext jaxbContext = org.eclipse.persistence.jaxb.JAXBContext.newInstance(rootObject.getClass());
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 		StringWriter writer = new StringWriter();
@@ -111,38 +130,140 @@ public class BasicMetaschema {
 		return writer.toString();
 	}
 
-	private void runTests(String testPath, File classDir) throws ClassNotFoundException, IOException, MetaschemaException, JAXBException {
-		Class<?> rootClass = compileMetaschema(new File(String.format("src/test/resources/metaschema/%s/metaschema.xml",testPath)),
-				classDir);
+	private void runTests(String testPath, File classDir)
+			throws ClassNotFoundException, IOException, MetaschemaException, JAXBException {
+		runTests(testPath, classDir, null);
+	}
+
+	private void runTests(String testPath, File classDir,  java.util.function.Consumer<Object> assertions)
+			throws ClassNotFoundException, IOException, MetaschemaException, JAXBException {
+		Class<?> rootClass = compileMetaschema(
+				new File(String.format("src/test/resources/metaschema/%s/metaschema.xml", testPath)), classDir);
 
 		File jsonExample = new File(String.format("src/test/resources/metaschema/%s/example.json", testPath));
 		logger.info("Testing JSON file: {}", jsonExample.getName());
 		if (jsonExample.exists()) {
-			Object root = readJson(jsonExample, rootClass);
-			logger.info("Read JSON: Object: {}", root.toString());
-			logger.info("Write JSON: Object: {}", writeJson(root));
+			String json;
+			{
+				final Object root = readJson(new FileReader(jsonExample), rootClass);
+				logger.info("Read JSON: Object: {}", root.toString());
+				if (assertions != null) {
+					assertAll("Deserialize JSON", () -> assertions.accept(root));
+				}
+				json = writeJson(root);
+				logger.info("Write JSON: Object: {}", json);
+			}
+
+			final Object root = readJson(new StringReader(json), rootClass);
+			if (assertions != null) {
+				assertAll("Deserialize JSON (roundtrip)", () -> assertions.accept(root));
+			}
 		}
 		File xmlExample = new File(String.format("src/test/resources/metaschema/%s/example.xml", testPath));
 		logger.info("Testing XML file: {}", xmlExample.getName());
 		if (xmlExample.exists()) {
-			Object root = readXml(xmlExample, rootClass);
-			logger.info("Read XML: Object: {}", root.toString());
-			logger.info("Write XML: Object: {}", writeXml(root));
+			String xml;
+			{
+				Object root = readXml(new FileReader(xmlExample), rootClass);
+				logger.info("Read XML: Object: {}", root.toString());
+				if (assertions != null) {
+					assertAll("Deserialize XML", () -> assertions.accept(root));
+				}
+				xml = writeXml(root);
+				logger.info("Write XML: Object: {}", xml);
+			}
+
+			Object root = readXml(new StringReader(xml), rootClass);
+			if (assertions != null) {
+				assertAll("Deserialize XML (roundtrip)", () -> assertions.accept(root));
+			}
 		}
 	}
 
 	@Test
-	public void testSimpleMetaschema(@TempDir Path tempDir) throws MetaschemaException, IOException, ClassNotFoundException, JAXBException {
+	public void testSimpleMetaschema(@TempDir Path tempDir)
+			throws MetaschemaException, IOException, ClassNotFoundException, JAXBException {
 		File classDir = tempDir.toFile();
 //		File classDir = new File("target/generated-sources/metaschema");
+
 		runTests("simple", classDir);
 	}
 
 	@Test
-	public void testSimpleWithFieldMetaschema(@TempDir Path tempDir) throws MetaschemaException, IOException, ClassNotFoundException, JAXBException {
+	public void testSimpleWithFieldMetaschema(@TempDir Path tempDir)
+			throws MetaschemaException, IOException, ClassNotFoundException, JAXBException {
 		File classDir = tempDir.toFile();
 //		File classDir = new File("target/generated-sources/metaschema");
 		runTests("simple_with_field", classDir);
+	}
+
+	private static Object reflectMethod(Object obj, String name) throws NoSuchMethodException, SecurityException {
+		return ReflectionUtils.invokeMethod(obj.getClass().getMethod(name), obj);
+	}
+
+	@Test
+	public void testFieldWithFlagMetaschema(@TempDir Path tempDir)
+			throws MetaschemaException, IOException, ClassNotFoundException, JAXBException {
+//		File classDir = tempDir.toFile();
+		File classDir = new File("target/generated-sources/metaschema");
+		runTests("field_with_flags", classDir, (obj) -> {
+			try {
+				Assertions.assertEquals("test", reflectMethod(obj, "getId"));
+				Object field1 = ReflectionUtils.invokeMethod(obj.getClass().getMethod("getComplexField1"), obj);
+				Assertions.assertNotNull(field1);
+				Assertions.assertEquals("complex-field1", reflectMethod(field1, "getId"));
+				Assertions.assertEquals("test-string", reflectMethod(field1, "getValue"));
+
+				@SuppressWarnings("unchecked")
+				List<Object> field2s = (List<Object>) ReflectionUtils
+						.invokeMethod(obj.getClass().getMethod("getComplexFields2"), obj);
+				Assertions.assertEquals(1, field2s.size());
+				Object field2 = field2s.get(0);
+				Assertions.assertEquals("complex-field2-1", reflectMethod(field2, "getId"));
+				Assertions.assertEquals("test-string2", reflectMethod(field2, "getValue"));
+
+				@SuppressWarnings("unchecked")
+				List<Object> field3s = (List<Object>) ReflectionUtils
+						.invokeMethod(obj.getClass().getMethod("getComplexFields3"), obj);
+				Assertions.assertEquals(2, field3s.size());
+				Assertions.assertAll("ComplexFields4 item", () -> {
+					Object item = field3s.get(0);
+					assertEquals("complex-field3-1", reflectMethod(item, "getId2"));
+					assertEquals("test-string3", reflectMethod(item, "getValue"));
+				});
+				Assertions.assertAll("ComplexFields4 item", () -> {
+					Object item = field3s.get(1);
+					assertEquals("complex-field3-2", reflectMethod(item, "getId2"));
+					assertEquals("test-string4", reflectMethod(item, "getValue"));
+				});
+
+				Assertions.assertAll("ComplexFields4", () -> {
+					@SuppressWarnings("unchecked")
+					Map<String, Object> collection = (Map<String, Object>) ReflectionUtils
+							.invokeMethod(obj.getClass().getMethod("getComplexFields4"), obj);
+					Assertions.assertNotNull(collection);
+					Assertions.assertEquals(2, collection.size());
+					Set<Map.Entry<String, Object>> entries = collection.entrySet();
+					Iterator<Map.Entry<String, Object>> iter = entries.iterator();
+
+					Assertions.assertAll("ComplexFields4 item", () -> {
+						Map.Entry<String, Object> entry = iter.next();
+						assertEquals("complex-field4-1", entry.getKey());
+						assertEquals("complex-field4-1", reflectMethod(entry.getValue(), "getId2"));
+						assertEquals("test-string5", reflectMethod(entry.getValue(), "getValue"));
+					});
+
+					Assertions.assertAll("ComplexFields4 item", () -> {
+						Map.Entry<String, Object> entry = iter.next();
+						assertEquals("complex-field4-2", entry.getKey());
+						assertEquals("complex-field4-2", reflectMethod(entry.getValue(), "getId2"));
+						assertEquals("test-string6", reflectMethod(entry.getValue(), "getValue"));
+					});
+				});
+			} catch (NoSuchMethodException | SecurityException e) {
+				Assertions.fail(e);
+			}
+		});
 	}
 
 }

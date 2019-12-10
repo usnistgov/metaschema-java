@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 public abstract class AbstractCollectionJavaType extends AbstractJavaType {
 	private final JavaType collectionClass;
@@ -25,8 +26,8 @@ public abstract class AbstractCollectionJavaType extends AbstractJavaType {
 	}
 
 	@Override
-	public String getType(JavaType classType) {
-		return String.format("%s<%s>", super.getType(classType), getGenerics(classType));
+	public String getType(Function<String, Boolean> clashEvaluator) {
+		return String.format("%s<%s>", super.getType(clashEvaluator), getGenericArguments(clashEvaluator));
 	}
 
 	@Override
@@ -37,7 +38,7 @@ public abstract class AbstractCollectionJavaType extends AbstractJavaType {
 		return Collections.unmodifiableSet(retval);
 	}
 
-	protected abstract Object getGenerics(JavaType classType);
+	protected abstract Object getGenericArguments(Function<String, Boolean> clashEvaluator);
 
 
 	@Override

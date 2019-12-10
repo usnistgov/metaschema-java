@@ -3,6 +3,7 @@ package gov.nist.secauto.metaschema.codegen;
 import gov.nist.secauto.metaschema.codegen.item.InstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
 import gov.nist.secauto.metaschema.datatype.MarkupString;
+import gov.nist.secauto.metaschema.model.ModelInstance;
 
 public abstract class AbstractCardinalityInstanceGenerator<JAVA_TYPE extends JavaType> extends AbstractInstanceGenerator<AssemblyClassGenerator> implements CardinalityInstanceGenerator {
 	private final InstanceItemContext instanceItemContext;
@@ -32,6 +33,10 @@ public abstract class AbstractCardinalityInstanceGenerator<JAVA_TYPE extends Jav
 //		return instance;
 //	}
 
+
+	protected ModelInstance getModelInstance() {
+		return getInstanceItemContext().getModelInstance();
+	}
 
 	protected InstanceItemContext getInstanceItemContext() {
 		return instanceItemContext;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <METASCHEMA xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../../../../schema/metaschema.xsd"
+ xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../../../../../schema/metaschema.xsd"
  xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0" root="top-level">
   <schema-name>Simple Metaschema</schema-name>
   <schema-version>1.0</schema-version>
@@ -15,14 +15,14 @@
       <field ref="field" min-occurs="1"/>
       <field ref="field2" min-occurs="1" in-xml="UNWRAPPED"/>
       <field ref="field3" min-occurs="1"/>
-      <!--
+     
       <field ref="field4" max-occurs="unbounded">
         <group-as name="field4s" in-xml="GROUPED" in-json="SINGLETON_OR_ARRAY"/>
       </field>
       <field ref="field5" max-occurs="unbounded">
         <group-as name="field5s" in-xml="UNGROUPED" in-json="SINGLETON_OR_ARRAY"/>
       </field>
-      -->
+     
     </model>
   </define-assembly>
   
@@ -55,7 +55,7 @@
     <json-value-key>text4</json-value-key>
   </define-field>
   
-  <define-field name="field5">
+  <define-field name="field5" collapsible="yes">
     <formal-name>A Field</formal-name>
     <description>A field with no flags.</description>
     <json-value-key>text5</json-value-key>

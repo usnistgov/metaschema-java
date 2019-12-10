@@ -108,7 +108,7 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> i
 	}
 
 	protected void buildClass(ClassBuilder builder) {
-		builder.annotation(XmlAccessorType.class, "XmlAccessType.FIELD");
+		builder.annotation(XmlAccessorType.class, "javax.xml.bind.annotation.XmlAccessType.FIELD");
 		builder.importEntry(XmlAccessType.class);
 
 		// no-arg constructor
@@ -119,7 +119,7 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> i
 		}
 
 		MethodBuilder toStringMethod = builder.newMethodBuilder("toString").returnType(String.class);
-		toStringMethod.getBodyWriter().println("return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();");
+		toStringMethod.getBodyWriter().println("return new org.apache.commons.lang3.builder.ReflectionToStringBuilder(this, org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE).toString();");
 		toStringMethod.importEntry(ReflectionToStringBuilder.class);
 		toStringMethod.importEntry(ToStringStyle.class);
 	}

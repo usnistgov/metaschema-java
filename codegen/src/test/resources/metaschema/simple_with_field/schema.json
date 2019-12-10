@@ -1,6 +1,6 @@
 
   { "$schema" : "http://json-schema.org/draft-07/schema#",
-    "$id" : "http://csrc.nist.gov/ns/metaschema/testing/simple-schema.json",
+    "$id" : "http://csrc.nist.gov/ns/metaschema/testing/simple/with/field-schema.json",
     "$comment" : "Simple Metaschema: JSON Schema",
     "type" : "object",
     "definitions" : 
@@ -19,7 +19,25 @@
           "field2" : 
           { "$ref" : "#/definitions/field2" },
           "field3" : 
-          { "$ref" : "#/definitions/field3" } },
+          { "$ref" : "#/definitions/field3" },
+          "field4s" : 
+          { "anyOf" : 
+            [ 
+              { "$ref" : "#/definitions/field4" },
+              
+              { "type" : "array",
+                "items" : 
+                { "$ref" : "#/definitions/field4" },
+                "minItems" : 2 } ] },
+          "field5s" : 
+          { "anyOf" : 
+            [ 
+              { "$ref" : "#/definitions/field5" },
+              
+              { "type" : "array",
+                "items" : 
+                { "$ref" : "#/definitions/field5" },
+                "minItems" : 2 } ] } },
         "required" : 
         [ "field",
           "field2",
@@ -39,6 +57,16 @@
       { "title" : "A Field",
         "description" : "A field with no flags.",
         "$id" : "#/definitions/field3",
+        "type" : "string" },
+      "field4" : 
+      { "title" : "A Field",
+        "description" : "A field with no flags.",
+        "$id" : "#/definitions/field4",
+        "type" : "string" },
+      "field5" : 
+      { "title" : "A Field",
+        "description" : "A field with no flags.",
+        "$id" : "#/definitions/field5",
         "type" : "string" } },
     "properties" : 
     { "top-level" : 

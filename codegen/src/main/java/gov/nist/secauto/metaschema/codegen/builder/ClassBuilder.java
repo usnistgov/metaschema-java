@@ -5,65 +5,44 @@ import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
 
-public class ClassBuilder extends AbstractBuilder<ClassBuilder>{
+public class ClassBuilder extends AbstractClassBuilder<ClassBuilder>{
 	private static final Visibility DEFAULT_VISIBILITY = Visibility.PUBLIC;
 
-	private final JavaType javaType;
-	private Map<String, FieldBuilder> fields = new LinkedHashMap<>();
-	private List<ConstructorBuilder> constructors = new LinkedList<>();
-	private Map<String, MethodBuilder> methods = new LinkedHashMap<>();
-
+	private Map<String, InnerClassBuilder> innerClasses = new LinkedHashMap<>();
 	
 	public ClassBuilder(JavaType classJavaType) {
-		this.javaType = classJavaType;
+		super(classJavaType);
 	}
 
-	public JavaType getJavaType() {
-		return javaType;
-	}
-
-	public FieldBuilder newFieldBuilder(JavaType javaType, String name) {
-		FieldBuilder retval = new FieldBuilder(this, javaType, name);
-		fields.put(retval.getName(), retval);
+	public InnerClassBuilder newInnerClassBuilder(String name) {
+		InnerClassBuilder retval = new InnerClassBuilder(this, name);
+		innerClasses.put(retval.getClassName(), retval);
 		return retval;
 	}
 
-	public ConstructorBuilder newConstructorBuilder() {
-		ConstructorBuilder retval = new ConstructorBuilder(this);
-		constructors.add(retval);
-		return retval;
+	protected Map<String, InnerClassBuilder> getInnerClasses() {
+		return Collections.unmodifiableMap(innerClasses);
 	}
 
-	public MethodBuilder newMethodBuilder(String name) {
-		MethodBuilder retval = new MethodBuilder(this, name);
-		methods.put(retval.getName(), retval);
-		return retval;
+	protected void setInnerClasses(Map<String, InnerClassBuilder> innerClasses) {
+		this.innerClasses = innerClasses;
 	}
 
-	protected Map<String, FieldBuilder> getFields() {
-		return Collections.unmodifiableMap(fields);
+	private boolean needsImport(JavaType javaType) {
+//		String classPackageName = getJavaType().getPackageName();
+//		String packageName = javaType.getPackageName();
+//		return !"java.lang".equals(packageName) && !classPackageName.equals(packageName);
+		return false;
 	}
-
-	protected List<ConstructorBuilder> getConstructors() {
-		return Collections.unmodifiableList(constructors);
-	}
-
-	protected Map<String, MethodBuilder> getMethods() {
-		return Collections.unmodifiableMap(methods);
-	}
-
 	@Override
 	public void build(PrintWriter out) throws IOException {
 
@@ -84,23 +63,26 @@ public class ClassBuilder extends AbstractBuilder<ClassBuilder>{
 		}
 	
 		if (!imports.isEmpty()) {
-			// sort
-			imports = imports.stream().sorted((JavaType s1,JavaType s2)->{       
-			    return s1.getQualifiedClassName().compareTo(s2.getQualifiedClassName());
-			}).collect(Collectors.toCollection(LinkedHashSet::new));
-	
-			JavaType classJavaType = getJavaType();
-			boolean hasImport = false;
-			for (JavaType importEntry : imports) {
-				String importValue = importEntry.getImportValue(classJavaType);
-				if (importValue != null && !importValue.startsWith("java.lang.")) {
-					out.printf("import %s;%n", importValue);
-					hasImport = true;
-				}
-			}
-			if (hasImport) {
-				out.println();
-			}
+			imports.stream().filter(this::needsImport).map(a -> a.getQualifiedClassName()).sorted().distinct().forEachOrdered(a -> out.printf("import %s;%n", a));
+			out.println();
+//			// filter
+//			
+//
+//			// sort
+//			imports.stream().filter(this::needsImport).map(a -> a.getQualifiedClassName()).sorted().forEachOrdered(a -> out.printf("import %s;%n", a));
+//	
+//			JavaType classJavaType = getJavaType();
+//			boolean hasImport = false;
+//			for (JavaType importEntry : imports) {
+//				String importValue = importEntry.getImportValue(classJavaType);
+//				if (importValue != null && !importValue.startsWith("java.lang.")) {
+//					out.printf("import %s;%n", importValue);
+//					hasImport = true;
+//				}
+//			}
+//			if (hasImport) {
+//				out.println();
+//			}
 		}
 
 		// class declaration
@@ -122,6 +104,11 @@ public class ClassBuilder extends AbstractBuilder<ClassBuilder>{
 			method.build(out);
 			out.println();
 		}
+
+		for (InnerClassBuilder innerClass : getInnerClasses().values()) {
+			innerClass.build(out);
+			out.println();
+		}
 		
 		out.println("}");
 		out.flush();
@@ -137,7 +124,7 @@ public class ClassBuilder extends AbstractBuilder<ClassBuilder>{
 		if (retval == null) {
 			retval = newMethodBuilder("afterUnmarshal");
 			retval.visibility(Visibility.PRIVATE);
-			retval.arguments("Unmarshaller unmarshaller, Object parent");
+			retval.arguments("javax.xml.bind.Unmarshaller unmarshaller, Object parent");
 			retval.importEntry(Unmarshaller.class);
 			retval.annotation(SuppressWarnings.class, "\"unused\"");
 		}
@@ -149,12 +136,29 @@ public class ClassBuilder extends AbstractBuilder<ClassBuilder>{
 		if (retval == null) {
 			retval = newMethodBuilder("beforeMarshal");
 			retval.visibility(Visibility.PRIVATE);
-			retval.arguments("Marshaller marshaller");
+			retval.arguments("javax.xml.bind.Marshaller marshaller");
 			retval.importEntry(Marshaller.class);
 			retval.annotation(SuppressWarnings.class, "\"unused\"");
 		}
 		return retval;
 	}
 
-	
+	@Override
+	public Function<String, Boolean> getClashEvaluator() {
+		return this::evaluateClash;
+	}
+
+	private boolean evaluateClash(String className) {
+//		boolean retval = false;
+//		if (getJavaType().getClassName().equals(className)) {
+//			retval = true;
+//		}
+//		return retval;
+		return true;
+	}
+
+	@Override
+	public ClassBuilder getActualClassBuilder() {
+		return this;
+	}
 }

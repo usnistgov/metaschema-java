@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<METASCHEMA xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../../../../../schema/metaschema.xsd"
+ xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0" root="top-level">
+  <schema-name>Metaschema with complex field</schema-name>
+  <schema-version>1.0</schema-version>
+  <short-name>complex-field</short-name>
+  <namespace>http://csrc.nist.gov/ns/metaschema/testing/field/with/flags</namespace>
+  
+  <define-assembly name="top-level">
+    <formal-name>Root</formal-name>
+    <description>Root assembly</description>
+    <flag ref="id"/>
+    <model>
+      <field ref="complex-field1"/>
+      <field ref="complex-field2" min-occurs="1" max-occurs="unbounded">
+        <group-as name="complex-fields2" in-xml="UNGROUPED" />
+      </field>
+      <field ref="complex-field3" min-occurs="2" max-occurs="unbounded">
+        <group-as name="complex-fields3" in-json="ARRAY" in-xml="GROUPED" />
+      </field>
+      <field ref="complex-field4" max-occurs="unbounded">
+        <group-as name="complex-fields4" in-json="BY_KEY" />
+      </field>
+      <field ref="complex-field5" max-occurs="unbounded">
+        <group-as name="complex-fields5" />
+      </field>
+    </model>
+  </define-assembly>
+
+  <define-field name="complex-field1">
+    <formal-name>Complex Field 1</formal-name>
+    <description>A complex field with a flag</description>
+    <flag ref="id"/>
+  </define-field>
+  
+  <define-field name="complex-field2">
+    <formal-name>Complex Field 1</formal-name>
+    <description>A complex field with a flag</description>
+    <flag ref="id"/>
+  </define-field>
+  
+  <define-field name="complex-field3">
+    <formal-name>Complex Field 3</formal-name>
+    <description>A complex field with a flag</description>
+    <flag name="id2">
+      <formal-name>A flag</formal-name>
+      <description>A simple flag</description>
+    </flag>
+  </define-field>
+  
+  <define-field name="complex-field4">
+    <formal-name>Complex Field 4</formal-name>
+    <description>A complex field with a flag</description>
+    <json-key flag-name="id2"/>
+    <flag name="id2">
+      <formal-name>A flag</formal-name>
+      <description>A simple flag</description>
+    </flag>
+  </define-field>
+  
+  <define-field name="complex-field5" collapsible="yes">
+    <formal-name>Complex Field 5</formal-name>
+    <description>A complex field with a flag that is collapsible</description>
+    <flag name="name">
+      <formal-name>A flag</formal-name>
+      <description>A simple flag</description>
+    </flag>
+  </define-field>
+  
+  <define-flag name="id">
+    <formal-name>Identifier</formal-name>
+    <description>The document identifier</description>
+  </define-flag>
+</METASCHEMA>

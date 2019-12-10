@@ -1,14 +1,21 @@
 package gov.nist.secauto.metaschema.codegen.builder;
 
-public abstract class AbstractMemberBuilder<T extends AbstractMemberBuilder<T>> extends AbstractBuilder<T> {
-	private final ClassBuilder classBuilder;
+import java.util.function.Function;
 
-	public AbstractMemberBuilder(ClassBuilder classBuilder) {
+public abstract class AbstractMemberBuilder<T extends AbstractMemberBuilder<T>> extends AbstractBuilder<T> {
+	private final AbstractClassBuilder<?> classBuilder;
+
+	public AbstractMemberBuilder(AbstractClassBuilder<?> classBuilder) {
 		this.classBuilder = classBuilder;
 	}
 
 	@Override
-	public ClassBuilder getClassBuilder() {
+	public Function<String, Boolean> getClashEvaluator() {
+		return getClassBuilder().getClashEvaluator();
+	}
+
+	@Override
+	public AbstractClassBuilder<?> getClassBuilder() {
 		return classBuilder;
 	}
 

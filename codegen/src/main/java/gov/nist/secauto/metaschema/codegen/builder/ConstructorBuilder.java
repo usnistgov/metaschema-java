@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 public class ConstructorBuilder extends AbstractMethodBuilder<ConstructorBuilder> {
 	private static final Visibility DEFAULT_VISIBILITY = Visibility.PUBLIC;
 
-	public ConstructorBuilder(ClassBuilder classBuilder) {
+	public ConstructorBuilder(AbstractClassBuilder<?> classBuilder) {
 		super(classBuilder);
 	}
 

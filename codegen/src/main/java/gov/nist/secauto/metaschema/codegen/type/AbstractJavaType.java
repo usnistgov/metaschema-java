@@ -2,6 +2,7 @@ package gov.nist.secauto.metaschema.codegen.type;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.function.Function;
 
 public abstract class AbstractJavaType implements JavaType {
 
@@ -16,6 +17,25 @@ public abstract class AbstractJavaType implements JavaType {
 
 	public abstract int hashCode();
 	public abstract boolean equals(Object obj);
+
+	
+	@Override
+	public String getType() {
+		return getQualifiedClassName();
+	}
+
+	@Override
+	public String getType(Function<String, Boolean> clashEvaluator) {
+		String retval;
+		if (clashEvaluator.apply(this.getClassName())) {
+			// qualify the type
+			retval = getQualifiedClassName();
+		} else {
+			// use import
+			retval = getClassName();
+		}
+		return retval;
+	}
 
 	public String getType(JavaType classType) {
 		String retval;

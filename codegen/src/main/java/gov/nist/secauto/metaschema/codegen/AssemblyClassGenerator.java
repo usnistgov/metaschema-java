@@ -65,7 +65,8 @@ public class AssemblyClassGenerator extends AbstractClassGenerator<AssemblyDefin
 		}
 
 		CardinalityInstanceGenerator context;
-		if (instance.getMaxOccurs() > 1) {
+		int maxOccurance = instance.getMaxOccurs();
+		if (maxOccurance == -1 || maxOccurance > 1) {
 			if (JsonGroupBehavior.KEYED.equals(instance.getGroupBehaviorJson())) {
 				context = new MapInstanceGenerator(itemInstanceContext, this);
 			} else {

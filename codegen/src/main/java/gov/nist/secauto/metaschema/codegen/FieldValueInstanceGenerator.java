@@ -1,6 +1,6 @@
 package gov.nist.secauto.metaschema.codegen;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -83,10 +83,10 @@ public class FieldValueInstanceGenerator extends AbstractInstanceGenerator<Field
 			// we need to use an argument constructor
 			JsonSerializationSupport.generateJsonSerializerAnnotations(builder, getValueDataType().getJsonSerializerClass());
 			JsonSerializationSupport.generateJsonDeserializerAnnotations(builder, getValueDataType().getJsonDeserializerClass());
-
-			builder.annotation(XmlElement.class,String.format("name = \"%s\", namespace = \"%s\", required = true", getJsonPropertyName(), getGenerator().getDefinition().getContainingMetaschema().getXmlNamespace()));
 		} else {
 			builder.annotation(JsonIgnore.class);
 		}
+
+		builder.annotation(XmlValue.class);
 	}
 }

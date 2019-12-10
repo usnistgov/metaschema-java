@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
 
@@ -42,7 +43,10 @@ public abstract class AbstractBuilder<T extends AbstractBuilder<T>> {
 		return (T) this;
 	}
 
-	public abstract ClassBuilder getClassBuilder();
+	public abstract AbstractClassBuilder<?> getClassBuilder();
+
+	public abstract Function<String, Boolean> getClashEvaluator();
+
 
 	public <A extends Annotation> T annotation(Class<A> annotation) {
 		return annotation(annotation, null);
@@ -54,14 +58,14 @@ public abstract class AbstractBuilder<T extends AbstractBuilder<T>> {
 		
 		StringBuilder builder = new StringBuilder();
 		builder.append('@');
-		builder.append(annotationType.getType(getClassBuilder().getJavaType()));
+		builder.append(annotationType.getType());
 		if (arguments != null && !arguments.isBlank()) {
 			builder.append('(');
 			builder.append(arguments);
 			builder.append(')');
 		}
 		this.annotations.add(builder.toString());
-		importEntry(annotationType);
+//		importEntry(annotationType);
 		return (T) this;
 	}
 

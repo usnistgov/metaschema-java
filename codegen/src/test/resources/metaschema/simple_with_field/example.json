@@ -1,9 +1,11 @@
 {
-  "$schema": "file:/home/davidwal/github/david-waltermire-nist/metaschema/toolchains/java/codegen/src/test/resources/metaschema/simple-with-field_schema.json",
+  "$schema": "schema.json",
   "top-level": {
     "id": "test",
     "field": "field-value",
     "field2": "field-value2",
-    "field3": "field-value3"
+    "field3": "field-value3",
+    "field4s": [ "markdown-string1", "markdown-string2" ],
+    "field5s": [ "string1", "string2" ] 
   }
 }

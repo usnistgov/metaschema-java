@@ -1,5 +1,7 @@
 package gov.nist.secauto.metaschema.codegen.type;
 
+import java.util.function.Function;
+
 public class ClassJavaType extends AbstractJavaType {
 	private final Class<?> clazz;
 
@@ -52,5 +54,4 @@ public class ClassJavaType extends AbstractJavaType {
 		}
 		return true;
 	}
-
 }
