@@ -9,9 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
 
 public class ClassBuilder extends AbstractClassBuilder<ClassBuilder>{
@@ -117,30 +114,6 @@ public class ClassBuilder extends AbstractClassBuilder<ClassBuilder>{
 	@Override
 	public ClassBuilder getClassBuilder() {
 		return this;
-	}
-
-	public MethodBuilder getAfterUnmarshalMethod() {
-		MethodBuilder retval = getMethods().get("afterUnmarshal");
-		if (retval == null) {
-			retval = newMethodBuilder("afterUnmarshal");
-			retval.visibility(Visibility.PRIVATE);
-			retval.arguments("javax.xml.bind.Unmarshaller unmarshaller, Object parent");
-			retval.importEntry(Unmarshaller.class);
-			retval.annotation(SuppressWarnings.class, "\"unused\"");
-		}
-		return retval;
-	}
-
-	public MethodBuilder getBeforeMarshalMethod() {
-		MethodBuilder retval = getMethods().get("beforeMarshal");
-		if (retval == null) {
-			retval = newMethodBuilder("beforeMarshal");
-			retval.visibility(Visibility.PRIVATE);
-			retval.arguments("javax.xml.bind.Marshaller marshaller");
-			retval.importEntry(Marshaller.class);
-			retval.annotation(SuppressWarnings.class, "\"unused\"");
-		}
-		return retval;
 	}
 
 	@Override

@@ -9,13 +9,18 @@ public abstract class AbstractJavaType implements JavaType {
 	public AbstractJavaType() {
 	}
 
+	@Override
 	public abstract String getClassName();
 
+	@Override
 	public abstract String getPackageName();
 
+	@Override
 	public abstract String getQualifiedClassName();
 
+	@Override
 	public abstract int hashCode();
+	@Override
 	public abstract boolean equals(Object obj);
 
 	
@@ -49,6 +54,7 @@ public abstract class AbstractJavaType implements JavaType {
 		return retval;
 	}
 
+	@Override
 	public Set<JavaType> getImports(JavaType classType) {
 		return Collections.singleton(this);
 	}

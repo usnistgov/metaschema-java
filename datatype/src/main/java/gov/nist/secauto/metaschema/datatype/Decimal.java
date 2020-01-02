@@ -4,4 +4,8 @@ import java.math.BigDecimal;
 
 public class Decimal extends AbstractDatatype<BigDecimal> {
 
+	public Decimal(BigDecimal value) {
+		super(value);
+	}
+
 }

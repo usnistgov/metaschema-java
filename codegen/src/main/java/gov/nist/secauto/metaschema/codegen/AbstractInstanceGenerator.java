@@ -23,6 +23,7 @@ public abstract class AbstractInstanceGenerator<GENERATOR extends ClassGenerator
 	 * 
 	 * @return the name
 	 */
+	@Override
 	public String getPropertyName() {
 		if (this.propertyName == null) {
 			String name = ClassUtils.toPropertyName(getInstanceName());
@@ -43,9 +44,9 @@ public abstract class AbstractInstanceGenerator<GENERATOR extends ClassGenerator
 		return this.propertyName;
 	}
 
-	public String getVariableName() {
+	public final String getVariableName() {
 		if (this.variableName == null) {
-			this.variableName = ClassUtils.toVariableName("_" + getPropertyName());
+			this.variableName = "_" + ClassUtils.toVariableName(getPropertyName());
 		}
 		return this.variableName;
 	}
@@ -72,8 +73,7 @@ public abstract class AbstractInstanceGenerator<GENERATOR extends ClassGenerator
 				.arguments(String.format("%s value", getJavaType().getType(builder.getClashEvaluator()))));
 	}
 
-	protected void buildField(@SuppressWarnings("unused") FieldBuilder builder) {
-	}
+	protected abstract void buildField(@SuppressWarnings("unused") FieldBuilder builder);
 
 	protected void buildGetter(MethodBuilder builder) {
 		builder.getBodyWriter().format("return %s;%n", getVariableName());

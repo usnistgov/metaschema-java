@@ -16,6 +16,7 @@ public abstract class AbstractFieldDefinition<METASCHEMA extends Metaschema> ext
 		return getFlagInstances().get(name);
 	}
 
+	@Override
 	public JsonValueKeyEnum getJsonValueKeyType() {
 		JsonValueKeyEnum retval = JsonValueKeyEnum.NONE;
 		if (hasJsonValueKey()) {

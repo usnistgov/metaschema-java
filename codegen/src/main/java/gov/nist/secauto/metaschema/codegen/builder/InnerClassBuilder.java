@@ -60,6 +60,7 @@ public class InnerClassBuilder extends AbstractClassBuilder<InnerClassBuilder> {
 		return outerClassBuilder;
 	}
 
+	@Override
 	public Set<JavaType> getImports() {
 		// Handle Imports
 		Set<JavaType> imports = new HashSet<>(getImports());

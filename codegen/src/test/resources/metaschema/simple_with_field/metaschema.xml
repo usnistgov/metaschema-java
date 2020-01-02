@@ -13,7 +13,7 @@
     <flag ref="id"/>
     <model>
       <field ref="field" min-occurs="1"/>
-      <field ref="field2" min-occurs="1" in-xml="UNWRAPPED"/>
+      <field ref="field2" min-occurs="1"/>
       <field ref="field3" min-occurs="1"/>
      
       <field ref="field4" max-occurs="unbounded">

@@ -2,12 +2,8 @@ package gov.nist.secauto.metaschema.codegen;
 
 import java.util.Objects;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.fasterxml.jackson.annotation.JsonRootName;
 
 import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
 import gov.nist.secauto.metaschema.codegen.item.AssemblyInstanceItemContext;
@@ -15,12 +11,13 @@ import gov.nist.secauto.metaschema.codegen.item.DataTypeInstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.item.FieldInstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.item.InstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
+import gov.nist.secauto.metaschema.datatype.annotations.RootWrapper;
 import gov.nist.secauto.metaschema.model.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.AssemblyInstance;
 import gov.nist.secauto.metaschema.model.ChoiceInstance;
 import gov.nist.secauto.metaschema.model.FieldInstance;
 import gov.nist.secauto.metaschema.model.InfoElementInstance;
-import gov.nist.secauto.metaschema.model.JsonGroupBehavior;
+import gov.nist.secauto.metaschema.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.ModelContainer;
 import gov.nist.secauto.metaschema.model.ModelInstance;
 
@@ -67,7 +64,7 @@ public class AssemblyClassGenerator extends AbstractClassGenerator<AssemblyDefin
 		CardinalityInstanceGenerator context;
 		int maxOccurance = instance.getMaxOccurs();
 		if (maxOccurance == -1 || maxOccurance > 1) {
-			if (JsonGroupBehavior.KEYED.equals(instance.getGroupBehaviorJson())) {
+			if (JsonGroupAsBehavior.KEYED.equals(instance.getJsonGroupAsBehavior())) {
 				context = new MapInstanceGenerator(itemInstanceContext, this);
 			} else {
 				context = new ListInstanceGenerator(itemInstanceContext, this);
@@ -81,13 +78,31 @@ public class AssemblyClassGenerator extends AbstractClassGenerator<AssemblyDefin
 	}
 
 	@Override
+	protected boolean isRootClass() {
+		return Objects.equals(getDefinition(), getDefinition().getContainingMetaschema().getRootAssemblyDefinition());
+	}
+
+	@Override
 	protected void buildClass(ClassBuilder builder) {
 		super.buildClass(builder);
 
 		AssemblyDefinition definition = getDefinition();
 		if (Objects.equals(definition, definition.getContainingMetaschema().getRootAssemblyDefinition())) {
-			builder.annotation(JsonRootName.class, String.format("value=\"%s\", namespace=\"%s\"", getDefinition().getName(), getXmlNamespace()));
-			builder.annotation(XmlRootElement.class, String.format("name=\"%s\", namespace=\"%s\"", getDefinition().getName(), getXmlNamespace()));
+			
+			StringBuilder instanceBuilder = new StringBuilder();
+			instanceBuilder.append("name = \"");
+			instanceBuilder.append(getDefinition().getName());
+			instanceBuilder.append("\"");
+
+			String namespace = getXmlNamespace().toString();
+			String containingNamespace = getDefinition().getContainingMetaschema().getXmlNamespace().toString();
+			if (!containingNamespace.equals(namespace)) {
+				instanceBuilder.append(", namespace = \"");
+				instanceBuilder.append(namespace);
+				instanceBuilder.append("\"");
+			}
+
+			builder.annotation(RootWrapper.class, instanceBuilder.toString());
 		}
 	}
 

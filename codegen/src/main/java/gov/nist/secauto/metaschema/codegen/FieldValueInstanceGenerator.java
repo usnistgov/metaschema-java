@@ -1,19 +1,13 @@
 package gov.nist.secauto.metaschema.codegen;
 
-import javax.xml.bind.annotation.XmlValue;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
-import gov.nist.secauto.metaschema.codegen.support.JsonSerializationSupport;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.datatype.MarkupString;
-import gov.nist.secauto.metaschema.model.JsonValueKeyEnum;
+import gov.nist.secauto.metaschema.datatype.annotations.FieldValue;
+import gov.nist.secauto.metaschema.markup.MarkupString;
 
 /**
  * Represents the "value" of a field object.
@@ -64,29 +58,13 @@ public class FieldValueInstanceGenerator extends AbstractInstanceGenerator<Field
 
 	@Override
 	protected void buildField(FieldBuilder builder) {
-		// TODO Auto-generated method stub
-		super.buildField(builder);
-
-		// --- JSON ---
 		// a field object always has a single value
 		if (DataType.EMPTY.equals(getGenerator().getValueDatatype())) {
 			String msg = String.format("In class '%s', the field has an empty value, but an instance was generated", getGenerator().getJavaType().getQualifiedClassName());
 			logger.error(msg);
 			throw new RuntimeException(msg);
 		}
-		
-		// if the value key type is "FLAG", we need to use the any getter/setter, so ignore this field
-		boolean useJsonPropertyAnnotations = !JsonValueKeyEnum.FLAG.equals(getGenerator().getDefinition().getJsonValueKeyType());
-		if (useJsonPropertyAnnotations) {
-			builder.annotation(JsonProperty.class,String.format("value = \"%s\", required = true", getJsonPropertyName()));
 
-			// we need to use an argument constructor
-			JsonSerializationSupport.generateJsonSerializerAnnotations(builder, getValueDataType().getJsonSerializerClass());
-			JsonSerializationSupport.generateJsonDeserializerAnnotations(builder, getValueDataType().getJsonDeserializerClass());
-		} else {
-			builder.annotation(JsonIgnore.class);
-		}
-
-		builder.annotation(XmlValue.class);
+		builder.annotation(FieldValue.class);
 	}
 }

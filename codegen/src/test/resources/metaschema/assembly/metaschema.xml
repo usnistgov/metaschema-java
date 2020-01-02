@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<METASCHEMA xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../../../../../schema/metaschema.xsd"
+ xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0" root="top-level">
+  <schema-name>Metaschema with assembly</schema-name>
+  <schema-version>1.0</schema-version>
+  <short-name>assembly</short-name>
+  <namespace>http://csrc.nist.gov/ns/metaschema/testing/assembly</namespace>
+
+  <define-assembly name="top-level">
+    <formal-name>Root</formal-name>
+    <description>Root assembly</description>
+    <flag ref="id"/>
+    <model>
+      <assembly ref="child" min-occurs="1" max-occurs="unbounded">
+      	<group-as name="children"/>
+      </assembly>
+    </model>
+  </define-assembly>
+
+  <define-assembly name="child">
+    <formal-name>Child</formal-name>
+    <description>Child assembly</description>
+    <flag ref="id" required="yes"/>
+    <model>
+      <assembly ref="grandchild" min-occurs="1" max-occurs="unbounded">
+        <group-as name="grandchildren" in-json="SINGLETON_OR_ARRAY" in-xml="UNGROUPED"/>
+      </assembly>
+      <assembly ref="grandchild" min-occurs="1" max-occurs="unbounded">
+        <group-as name="grandchildren2" in-json="ARRAY" in-xml="GROUPED"/>
+      </assembly>
+      <assembly ref="grandchild" min-occurs="1"/>
+    </model>
+  </define-assembly>
+
+  <define-assembly name="grandchild">
+    <formal-name>Child</formal-name>
+    <description>Child assembly</description>
+    <flag ref="id"/>
+    <model>
+      <field ref="field" max-occurs="unbounded">
+        <group-as name="fields" />
+      </field>
+    </model>
+  </define-assembly>
+
+  <define-field name="field">
+    <formal-name>Complex Field</formal-name>
+    <description>A complex field with a flag</description>
+    <flag ref="id"/>
+  </define-field>
+  
+  <define-flag name="id">
+    <formal-name>Identifier</formal-name>
+    <description>The document identifier</description>
+  </define-flag>
+</METASCHEMA>

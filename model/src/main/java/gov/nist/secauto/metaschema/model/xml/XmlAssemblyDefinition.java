@@ -15,7 +15,7 @@ import gov.nist.csrc.ns.oscal.metaschema.x10.ChoiceDocument;
 import gov.nist.csrc.ns.oscal.metaschema.x10.DefineAssemblyDocument;
 import gov.nist.csrc.ns.oscal.metaschema.x10.FieldDocument;
 import gov.nist.csrc.ns.oscal.metaschema.x10.FlagDocument;
-import gov.nist.secauto.metaschema.datatype.MarkupString;
+import gov.nist.secauto.metaschema.markup.MarkupString;
 import gov.nist.secauto.metaschema.model.AbstractAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.ChoiceInstance;

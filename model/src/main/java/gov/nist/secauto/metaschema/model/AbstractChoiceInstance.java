@@ -3,7 +3,7 @@ package gov.nist.secauto.metaschema.model;
 import java.util.Collections;
 import java.util.Map;
 
-import gov.nist.secauto.metaschema.datatype.MarkupString;
+import gov.nist.secauto.metaschema.markup.MarkupString;
 
 public abstract class AbstractChoiceInstance implements ChoiceInstance {
 	private final AssemblyDefinition containingAssembly;

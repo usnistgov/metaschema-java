@@ -1,9 +1,9 @@
 package gov.nist.secauto.metaschema.model;
 
 public abstract class AbstractFlagInstance implements FlagInstance {
-	private final InfoElementDefinition parent;
+	private final ManagedObject parent;
 
-	public AbstractFlagInstance(InfoElementDefinition parent) {
+	public AbstractFlagInstance(ManagedObject parent) {
 		super();
 		this.parent = parent;
 	}
@@ -32,7 +32,7 @@ public abstract class AbstractFlagInstance implements FlagInstance {
 	}
 
 	@Override
-	public InfoElementDefinition getContainingDefinition() {
+	public ManagedObject getContainingDefinition() {
 		return parent;
 	}
 }

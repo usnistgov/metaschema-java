@@ -10,17 +10,13 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
 import gov.nist.secauto.metaschema.codegen.builder.MethodBuilder;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
+import gov.nist.secauto.metaschema.datatype.annotations.MetaschemaModel;
 import gov.nist.secauto.metaschema.model.FlagInstance;
 import gov.nist.secauto.metaschema.model.ManagedObject;
 
@@ -43,6 +39,7 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> i
 		return definition;
 	}
 
+	@Override
 	public JavaType getJavaType() {
 		return javaType;
 	}
@@ -57,7 +54,8 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> i
 		return getJavaType().getPackageName();
 	}
 
-	public String generateClass(File outputDir)
+	@Override
+	public JavaGenerator.GeneratedClass generateClass(File outputDir)
 			throws IOException {
 		String className = getJavaType().getClassName();
 		String qualifiedClassName = getJavaType().getQualifiedClassName();
@@ -81,7 +79,11 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> i
 			builder.build(writer);
 		}
 
-		return qualifiedClassName;
+		return new JavaGenerator.GeneratedClass(classFile, qualifiedClassName, isRootClass());
+	}
+
+	protected boolean isRootClass() {
+		return false;
 	}
 
 	protected void addInstance(InstanceGenerator context) {
@@ -99,6 +101,7 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> i
 		return context;
 	}
 
+	@Override
 	public boolean hasInstanceWithName(String newName) {
 		return instanceNameToContextMap.containsKey(newName);
 	}
@@ -108,8 +111,7 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> i
 	}
 
 	protected void buildClass(ClassBuilder builder) {
-		builder.annotation(XmlAccessorType.class, "javax.xml.bind.annotation.XmlAccessType.FIELD");
-		builder.importEntry(XmlAccessType.class);
+		builder.annotation(MetaschemaModel.class);
 
 		// no-arg constructor
 		builder.newConstructorBuilder();
@@ -120,7 +122,5 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> i
 
 		MethodBuilder toStringMethod = builder.newMethodBuilder("toString").returnType(String.class);
 		toStringMethod.getBodyWriter().println("return new org.apache.commons.lang3.builder.ReflectionToStringBuilder(this, org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE).toString();");
-		toStringMethod.importEntry(ReflectionToStringBuilder.class);
-		toStringMethod.importEntry(ToStringStyle.class);
 	}
 }

@@ -6,14 +6,14 @@ import java.io.StringWriter;
 import org.apache.xmlbeans.XmlOptions;
 
 import gov.nist.csrc.ns.oscal.metaschema.x10.MarkupContentType;
-import gov.nist.secauto.metaschema.datatype.MarkupString;
+import gov.nist.secauto.metaschema.markup.MarkupMultiline;
 
 public class MarkupStringConverter {
 	private MarkupStringConverter() {
 		// disable construction
 	}
 
-	public static MarkupString toMarkupString(MarkupContentType content) {
+	public static MarkupMultiline toMarkupString(MarkupContentType content) {
 		XmlOptions options = new XmlOptions();
 		options.setSaveInner();
 		options.setSaveUseOpenFrag();
@@ -24,6 +24,6 @@ public class MarkupStringConverter {
 			throw new RuntimeException(e);
 		}
 		String retval = writer.toString().replaceFirst("^<frag\\:fragment[^>]+>", "").replaceFirst("</frag\\:fragment>$", "");
-		return MarkupString.fromHTML(retval);
+		return MarkupMultiline.fromHtml(retval);
 	}
 }

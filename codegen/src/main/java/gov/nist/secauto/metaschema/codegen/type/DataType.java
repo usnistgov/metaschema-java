@@ -3,9 +3,6 @@ package gov.nist.secauto.metaschema.codegen.type;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonSerializer;
-
 import gov.nist.secauto.metaschema.datatype.Base64;
 import gov.nist.secauto.metaschema.datatype.Date;
 import gov.nist.secauto.metaschema.datatype.DateTime;
@@ -17,14 +14,13 @@ import gov.nist.secauto.metaschema.datatype.Hostname;
 import gov.nist.secauto.metaschema.datatype.IPv4;
 import gov.nist.secauto.metaschema.datatype.IPv6;
 import gov.nist.secauto.metaschema.datatype.Integer;
-import gov.nist.secauto.metaschema.datatype.MarkupString;
 import gov.nist.secauto.metaschema.datatype.NCName;
 import gov.nist.secauto.metaschema.datatype.NonNegativeInteger;
 import gov.nist.secauto.metaschema.datatype.PositiveInteger;
 import gov.nist.secauto.metaschema.datatype.URI;
 import gov.nist.secauto.metaschema.datatype.URIReference;
-import gov.nist.secauto.metaschema.datatype.jackson.MarkupStringDeserializer;
-import gov.nist.secauto.metaschema.datatype.jackson.MarkupStringSerializer;
+import gov.nist.secauto.metaschema.markup.MarkupLine;
+import gov.nist.secauto.metaschema.markup.MarkupMultiline;
 
 public enum DataType {
 	NCNAME(gov.nist.secauto.metaschema.model.DataType.NCNAME, NCName.class),
@@ -43,8 +39,8 @@ public enum DataType {
 	IP_V6_ADDRESS(gov.nist.secauto.metaschema.model.DataType.IP_V6_ADDRESS, IPv6.class),
 	URI(gov.nist.secauto.metaschema.model.DataType.URI, URI.class),
 	URI_REFERENCE(gov.nist.secauto.metaschema.model.DataType.URI_REFERENCE, URIReference.class),
-	MARKUP_LINE(gov.nist.secauto.metaschema.model.DataType.MARKUP_LINE, MarkupString.class, MarkupStringSerializer.class, MarkupStringDeserializer.class),
-	MARKUP_MULTILINE(gov.nist.secauto.metaschema.model.DataType.MARKUP_MULTILINE, MarkupString.class, MarkupStringSerializer.class, MarkupStringDeserializer.class),
+	MARKUP_LINE(gov.nist.secauto.metaschema.model.DataType.MARKUP_LINE, MarkupLine.class),
+	MARKUP_MULTILINE(gov.nist.secauto.metaschema.model.DataType.MARKUP_MULTILINE, MarkupMultiline.class),
 	EMPTY(gov.nist.secauto.metaschema.model.DataType.EMPTY, Void.class),
 	BOOLEAN(gov.nist.secauto.metaschema.model.DataType.BOOLEAN, Boolean.class),
 	STRING(gov.nist.secauto.metaschema.model.DataType.STRING, String.class);
@@ -64,19 +60,11 @@ public enum DataType {
 	private final gov.nist.secauto.metaschema.model.DataType dataType;
 	private final Class<?> javaClass;
 	private final ClassJavaType javaType;
-	private final Class<? extends JsonSerializer<?>> jsonSerializerClass;
-	private final Class<? extends JsonDeserializer<?>> jsonDeserializerClass;
 
 	private DataType(gov.nist.secauto.metaschema.model.DataType dataType, Class<?> javaClass) {
-		this(dataType, javaClass, null, null);
-	}
-
-	private DataType(gov.nist.secauto.metaschema.model.DataType dataType, Class<?> javaClass, Class<? extends JsonSerializer<?>> jsonSerializerClass, Class<? extends JsonDeserializer<?>> jsonDeserializerClass) {
 		this.dataType = dataType;
 		this.javaClass = javaClass;
 		this.javaType = new ClassJavaType(getJavaClass());
-		this.jsonSerializerClass = jsonSerializerClass;
-		this.jsonDeserializerClass = jsonDeserializerClass;
 	}
 
 	public gov.nist.secauto.metaschema.model.DataType getDataType() {
@@ -89,13 +77,5 @@ public enum DataType {
 
 	public ClassJavaType getJavaType() {
 		return javaType;
-	}
-
-	public Class<? extends JsonSerializer<?>> getJsonSerializerClass() {
-		return jsonSerializerClass;
-	}
-
-	public Class<? extends JsonDeserializer<?>> getJsonDeserializerClass() {
-		return jsonDeserializerClass;
 	}
 }

@@ -31,6 +31,11 @@
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
+				<artifactId>markup</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
 				<artifactId>datatype</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -63,11 +68,11 @@
 				<version>2.3.1</version>
 			</dependency>
 
-<!-- 			<dependency> -->
-<!-- 				<groupId>com.sun.xml.bind</groupId> -->
-<!-- 				<artifactId>jaxb-core</artifactId> -->
-<!-- 				<version>2.3.0.1</version> -->
-<!-- 			</dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>com.sun.xml.bind</groupId> -->
+			<!-- <artifactId>jaxb-core</artifactId> -->
+			<!-- <version>2.3.0.1</version> -->
+			<!-- </dependency> -->
 			<dependency>
 				<groupId>com.sun.xml.bind</groupId>
 				<artifactId>jaxb-impl</artifactId>
@@ -115,6 +120,12 @@
 				<version>${dependency.jackson.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>com.fasterxml.jackson.dataformat</groupId>
+				<artifactId>jackson-dataformat-xml</artifactId>
+				<version>${dependency.jackson.version}</version>
+			</dependency>
+
+			<dependency>
 				<groupId>xml-resolver</groupId>
 				<artifactId>xml-resolver</artifactId>
 				<version>1.2</version>
@@ -161,6 +172,12 @@
 				<version>${dependency.junit5.version}</version>
 				<scope>test</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.jmock</groupId>
+				<artifactId>jmock-junit5</artifactId>
+				<version>2.12.0</version>
+				<scope>test</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -190,5 +207,6 @@
 		<module>model</module>
 		<module>codegen</module>
 		<module>datatype</module>
+		<module>markup</module>
 	</modules>
 </project>

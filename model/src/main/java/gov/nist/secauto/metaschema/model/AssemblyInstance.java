@@ -6,5 +6,6 @@ public interface AssemblyInstance extends ModelInstance, Assembly {
 	 * 
 	 * @return the referenced assembly definition
 	 */
+	@Override
 	AssemblyDefinition getDefinition();
 }

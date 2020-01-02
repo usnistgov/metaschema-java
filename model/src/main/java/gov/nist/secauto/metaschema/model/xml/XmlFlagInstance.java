@@ -5,12 +5,12 @@ import java.util.Map;
 
 import gov.nist.csrc.ns.oscal.metaschema.x10.Boolean;
 import gov.nist.csrc.ns.oscal.metaschema.x10.FlagDocument;
-import gov.nist.secauto.metaschema.datatype.MarkupString;
+import gov.nist.secauto.metaschema.markup.MarkupString;
 import gov.nist.secauto.metaschema.model.AbstractFlagInstance;
 import gov.nist.secauto.metaschema.model.DataType;
 import gov.nist.secauto.metaschema.model.FlagDefinition;
 import gov.nist.secauto.metaschema.model.FlagInstance;
-import gov.nist.secauto.metaschema.model.InfoElementDefinition;
+import gov.nist.secauto.metaschema.model.ManagedObject;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.Type;
 
@@ -18,7 +18,7 @@ public class XmlFlagInstance extends AbstractFlagInstance {
 	private final FlagDocument.Flag xFlag;
 	private final LocalFlagDefinition localFlagDefinition;
 
-	public XmlFlagInstance(FlagDocument.Flag xFlag, InfoElementDefinition parent) {
+	public XmlFlagInstance(FlagDocument.Flag xFlag, ManagedObject parent) {
 		super(parent);
 		this.xFlag = xFlag;
 

@@ -1,10 +1,9 @@
 package gov.nist.secauto.metaschema.codegen.item;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonSerializer;
+import java.net.URI;
 
 import gov.nist.secauto.metaschema.codegen.AssemblyClassGenerator;
-import gov.nist.secauto.metaschema.datatype.MarkupString;
+import gov.nist.secauto.metaschema.markup.MarkupString;
 import gov.nist.secauto.metaschema.model.ModelInstance;
 
 public abstract class AbstractInstanceItemContext<INSTANCE extends ModelInstance> implements InstanceItemContext {
@@ -16,6 +15,7 @@ public abstract class AbstractInstanceItemContext<INSTANCE extends ModelInstance
 		this.containingClassGenerator = classContext;
 	}
 
+	@Override
 	public INSTANCE getModelInstance() {
 		return modelInstance;
 	}
@@ -25,7 +25,7 @@ public abstract class AbstractInstanceItemContext<INSTANCE extends ModelInstance
 	}
 
 	@Override
-	public Object getXmlNamespace() {
+	public URI getXmlNamespace() {
 		return getModelInstance().getContainingMetaschema().getXmlNamespace();
 	}
 
@@ -37,16 +37,6 @@ public abstract class AbstractInstanceItemContext<INSTANCE extends ModelInstance
 	@Override
 	public String getInstanceName() {
 		return getModelInstance().getInstanceName();
-	}
-
-	@Override
-	public Class<? extends JsonSerializer<?>> getJsonSerializerClass() {
-		return null;
-	}
-
-	@Override
-	public Class<? extends JsonDeserializer<?>> getJsonDeserializerClass() {
-		return null;
 	}
 	
 }

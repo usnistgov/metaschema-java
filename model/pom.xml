@@ -17,10 +17,10 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>datatype</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>markup</artifactId>
 		</dependency>
-
+	
 		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
 			<artifactId>xmlbeans</artifactId>

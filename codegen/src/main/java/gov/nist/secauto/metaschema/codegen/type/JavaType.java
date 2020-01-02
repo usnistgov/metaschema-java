@@ -57,8 +57,10 @@ public interface JavaType {
 	 */
 	String getImportValue(JavaType classJavaType);
 
+	@Override
 	int hashCode();
 
+	@Override
 	boolean equals(Object obj);
 
 	public static JavaType create(Class<?> clazz) {

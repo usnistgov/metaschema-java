@@ -15,7 +15,7 @@ public interface ClassGenerator {
 	 * @return the qualified class name for the generated class
 	 * @throws IOException if an error IO occurred while generating the class
 	 */
-	String generateClass(File dir) throws IOException;
+	JavaGenerator.GeneratedClass generateClass(File dir) throws IOException;
 	JavaType getJavaType();
 	boolean hasInstanceWithName(String name);
 	URI getXmlNamespace();

@@ -8,7 +8,7 @@ import gov.nist.csrc.ns.oscal.metaschema.x10.DefineFieldDocument;
 import gov.nist.csrc.ns.oscal.metaschema.x10.DefineFieldDocument.DefineField;
 import gov.nist.csrc.ns.oscal.metaschema.x10.FlagDocument;
 import gov.nist.csrc.ns.oscal.metaschema.x10.JsonValueKeyDocument.JsonValueKey;
-import gov.nist.secauto.metaschema.datatype.MarkupString;
+import gov.nist.secauto.metaschema.markup.MarkupString;
 import gov.nist.secauto.metaschema.model.AbstractFieldDefinition;
 import gov.nist.secauto.metaschema.model.DataType;
 import gov.nist.secauto.metaschema.model.FieldDefinition;

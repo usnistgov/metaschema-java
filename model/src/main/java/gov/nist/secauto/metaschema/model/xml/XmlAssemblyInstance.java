@@ -3,11 +3,11 @@ package gov.nist.secauto.metaschema.model.xml;
 import java.math.BigInteger;
 
 import gov.nist.csrc.ns.oscal.metaschema.x10.AssemblyDocument;
-import gov.nist.csrc.ns.oscal.metaschema.x10.XmlGroupBehavior;
-import gov.nist.secauto.metaschema.datatype.MarkupString;
+import gov.nist.secauto.metaschema.markup.MarkupString;
 import gov.nist.secauto.metaschema.model.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.model.InfoElementDefinition;
-import gov.nist.secauto.metaschema.model.JsonGroupBehavior;
+import gov.nist.secauto.metaschema.model.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.XmlGroupAsBehavior;
 
 public class XmlAssemblyInstance extends AbstractAssemblyInstance {
 //	private static final Logger logger = LogManager.getLogger(XmlAssemblyInstance.class);
@@ -75,20 +75,19 @@ public class XmlAssemblyInstance extends AbstractAssemblyInstance {
 	}
 
 	@Override
-	public JsonGroupBehavior getGroupBehaviorJson() {
-		JsonGroupBehavior retval = JsonGroupBehavior.SINGLETON_OR_LIST;
+	public JsonGroupAsBehavior getJsonGroupAsBehavior() {
+		JsonGroupAsBehavior retval = JsonGroupAsBehavior.SINGLETON_OR_LIST;
 		if (getXmlAssembly().isSetGroupAs() && getXmlAssembly().getGroupAs().isSetInJson()) {
-			retval = JsonGroupBehavior.lookup(getXmlAssembly().getGroupAs().getInJson());
+			retval = JsonGroupAsBehavior.lookup(getXmlAssembly().getGroupAs().getInJson());
 		}
 		return retval;
 	}
 
 	@Override
-	public boolean isGroupBehaviorXmlGrouped() {
-		// the default
-		boolean retval = true;
+	public XmlGroupAsBehavior getXmlGroupAsBehavior() {
+		XmlGroupAsBehavior retval = XmlGroupAsBehavior.UNGROUPED;
 		if (getXmlAssembly().isSetGroupAs() && getXmlAssembly().getGroupAs().isSetInXml()) {
-			retval = XmlGroupBehavior.GROUPED.equals(getXmlAssembly().getGroupAs().getInXml());
+			retval = XmlGroupAsBehavior.lookup(getXmlAssembly().getGroupAs().getInXml());
 		}
 		return retval;
 	}

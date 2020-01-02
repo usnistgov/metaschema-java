@@ -1,17 +1,16 @@
 package gov.nist.secauto.metaschema.codegen;
 
-import javax.xml.bind.annotation.XmlAttribute;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.datatype.MarkupString;
+import gov.nist.secauto.metaschema.datatype.annotations.Flag;
+import gov.nist.secauto.metaschema.datatype.annotations.JsonKey;
+import gov.nist.secauto.metaschema.markup.MarkupString;
 import gov.nist.secauto.metaschema.model.FlagInstance;
+import gov.nist.secauto.metaschema.model.ManagedObject;
 
 public class FlagInstanceGenerator extends AbstractInstanceGenerator<AbstractClassGenerator<?>> {
 	private static final Logger logger = LogManager.getLogger(FlagInstanceGenerator.class);
@@ -58,24 +57,20 @@ public class FlagInstanceGenerator extends AbstractInstanceGenerator<AbstractCla
 	@Override
 	protected void buildField(FieldBuilder builder) {
 		StringBuilder arguments = new StringBuilder();
-		arguments.append("value = \"");
-		arguments.append(instance.getName());
-		arguments.append('"');
-		if (getInstance().isRequired()) {
-			arguments.append(", required = true");
-		}
-
-		builder.annotation(JsonProperty.class, arguments.toString());
-
-		arguments = new StringBuilder();
 		arguments.append("name = \"");
 		arguments.append(instance.getName());
 		arguments.append('"');
 		if (getInstance().isRequired()) {
 			arguments.append(", required = true");
 		}
-		builder.annotation(XmlAttribute.class, arguments.toString());
-		super.buildField(builder);
+
+		builder.annotation(Flag.class, arguments.toString());
+
+		FlagInstance instance = getInstance();
+		ManagedObject parent = instance.getContainingDefinition();
+		if (parent.hasJsonKey() && instance.equals(parent.getJsonKeyFlagInstance())) {
+			builder.annotation(JsonKey.class);
+		}
 	}
 
 }

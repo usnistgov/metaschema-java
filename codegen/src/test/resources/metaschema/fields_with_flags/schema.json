@@ -1,0 +1,154 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://csrc.nist.gov/ns/metaschema/testing/fields/with/flags-schema.json",
+  "$comment": "Metaschema with complex field: JSON Schema",
+  "type": "object",
+  "definitions": {
+    "top-level": {
+      "title": "Root",
+      "description": "Root assembly",
+      "$id": "#/definitions/top-level",
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Identifier",
+          "description": "The document identifier",
+          "type": "string"
+        },
+        "complex-field1": {"$ref": "#/definitions/complex-field1"},
+        "complex-fields2": {
+          "anyOf": [
+            {"$ref": "#/definitions/complex-field2"},
+            {
+              "type": "array",
+              "items": {"$ref": "#/definitions/complex-field2"},
+              "minItems": 2
+            }
+          ]
+        },
+        "complex-fields3": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"$ref": "#/definitions/complex-field3"}
+        },
+        "complex-fields4": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "allOf": [
+              {
+                "type": "object",
+                "$ref": "#/definitions/complex-field4"
+              },
+              {
+                "not": {"type": "string"}
+              }
+            ]
+          }
+        },
+        "complex-fields5": {
+          "anyOf": [
+            {"$ref": "#/definitions/complex-field5"},
+            {
+              "type": "array",
+              "items": {"$ref": "#/definitions/complex-field5"},
+              "minItems": 2
+            }
+          ]
+        }
+      },
+      "required": [
+        "complex-fields2",
+        "complex-fields3"
+      ],
+      "additionalProperties": false
+    },
+    "complex-field1": {
+      "title": "Complex Field 1",
+      "description": "A complex field with a flag",
+      "$id": "#/definitions/complex-field1",
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Identifier",
+          "description": "The document identifier",
+          "type": "string"
+        },
+        "STRVALUE": {"type": "string"}
+      },
+      "required": ["STRVALUE"],
+      "additionalProperties": false
+    },
+    "complex-field2": {
+      "title": "Complex Field 1",
+      "description": "A complex field with a flag",
+      "$id": "#/definitions/complex-field2",
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Identifier",
+          "description": "The document identifier",
+          "type": "string"
+        },
+        "STRVALUE": {"type": "string"}
+      },
+      "required": ["STRVALUE"],
+      "additionalProperties": false
+    },
+    "complex-field3": {
+      "title": "Complex Field 3",
+      "description": "A complex field with a flag",
+      "$id": "#/definitions/complex-field3",
+      "type": "object",
+      "properties": {
+        "id2": {
+          "title": "A flag",
+          "description": "A simple flag",
+          "type": "string"
+        },
+        "STRVALUE": {"type": "string"}
+      },
+      "required": ["STRVALUE"],
+      "additionalProperties": false
+    },
+    "complex-field4": {
+      "title": "Complex Field 4",
+      "description": "A complex field with a flag",
+      "$id": "#/definitions/complex-field4",
+      "type": "object",
+      "properties": {
+        "STRVALUE": {"type": "string"}
+      },
+      "required": ["STRVALUE"],
+      "additionalProperties": false
+    },
+    "complex-field5": {
+      "title": "Complex Field 5",
+      "description": "A complex field with a flag that is collapsible",
+      "$id": "#/definitions/complex-field5",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "A flag",
+          "description": "A simple flag",
+          "type": "string"
+        },
+        "STRVALUE": {
+          "anyOf": [
+            {"type": "string"},
+            {
+              "type": "array",
+              "items": {"type": "string"},
+              "minItems": 2
+            }
+          ]
+        }
+      },
+      "required": ["STRVALUE"],
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "top-level": {"$ref": "#/definitions/top-level"}
+  }
+}

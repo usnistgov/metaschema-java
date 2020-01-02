@@ -9,6 +9,7 @@ public interface FieldInstance extends ModelInstance, Field {
 	 * 
 	 * @return the corresponding field definition
 	 */
+	@Override
 	FieldDefinition getDefinition();
 	boolean hasXmlWrapper();
 }

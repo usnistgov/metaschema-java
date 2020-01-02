@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:m="http://csrc.nist.gov/ns/oscal/metaschema/1.0"
+           xmlns:assembly="http://csrc.nist.gov/ns/metaschema/testing/assembly"
+           xmlns:oscal-prose="http://csrc.nist.gov/ns/metaschema/testing/assembly"
+           elementFormDefault="qualified"
+           targetNamespace="http://csrc.nist.gov/ns/metaschema/testing/assembly"
+           version="1.0">
+   <xs:annotation>
+      <xs:appinfo>
+         <m:schema-name>Metaschema with assembly</m:schema-name>
+         <m:schema-version>1.0</m:schema-version>
+         <m:short-name>assembly</m:short-name>
+         <m:root>top-level</m:root>
+      </xs:appinfo>
+   </xs:annotation>
+   <xs:element name="top-level" m:root="yes">
+      <xs:annotation>
+         <xs:appinfo>
+            <m:formal-name>Root</m:formal-name>
+            <m:description>Root assembly</m:description>
+         </xs:appinfo>
+         <xs:documentation>
+            <b>Root</b>: Root assembly</xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element ref="assembly:child" minOccurs="1" maxOccurs="unbounded"/>
+         </xs:sequence>
+         <xs:attribute name="id" type="xs:string">
+            <xs:annotation>
+               <xs:appinfo>
+                  <m:formal-name>Identifier</m:formal-name>
+                  <m:description>The document identifier</m:description>
+               </xs:appinfo>
+               <xs:documentation>
+                  <b>Identifier</b>: The document identifier</xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="child">
+      <xs:annotation>
+         <xs:appinfo>
+            <m:formal-name>Child</m:formal-name>
+            <m:description>Child assembly</m:description>
+         </xs:appinfo>
+         <xs:documentation>
+            <b>Child</b>: Child assembly</xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element ref="assembly:grandchild" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="grandchildren2" minOccurs="1" maxOccurs="1">
+               <xs:annotation>
+                  <xs:appinfo>
+                     <m:formal-name>Child</m:formal-name>
+                     <m:description>Child assembly</m:description>
+                  </xs:appinfo>
+                  <xs:documentation>
+                     <b>Child</b>: Child assembly</xs:documentation>
+               </xs:annotation>
+               <xs:complexType>
+                  <xs:sequence>
+                     <xs:element ref="assembly:grandchild" minOccurs="1" maxOccurs="unbounded"/>
+                  </xs:sequence>
+               </xs:complexType>
+            </xs:element>
+            <xs:element ref="assembly:grandchild" minOccurs="1" maxOccurs="1"/>
+         </xs:sequence>
+         <xs:attribute name="id" use="required" type="xs:string">
+            <xs:annotation>
+               <xs:appinfo>
+                  <m:formal-name>Identifier</m:formal-name>
+                  <m:description>The document identifier</m:description>
+               </xs:appinfo>
+               <xs:documentation>
+                  <b>Identifier</b>: The document identifier</xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="grandchild">
+      <xs:annotation>
+         <xs:appinfo>
+            <m:formal-name>Child</m:formal-name>
+            <m:description>Child assembly</m:description>
+         </xs:appinfo>
+         <xs:documentation>
+            <b>Child</b>: Child assembly</xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element ref="assembly:field" minOccurs="0" maxOccurs="unbounded"/>
+         </xs:sequence>
+         <xs:attribute name="id" type="xs:string">
+            <xs:annotation>
+               <xs:appinfo>
+                  <m:formal-name>Identifier</m:formal-name>
+                  <m:description>The document identifier</m:description>
+               </xs:appinfo>
+               <xs:documentation>
+                  <b>Identifier</b>: The document identifier</xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="field">
+      <xs:annotation>
+         <xs:appinfo>
+            <m:formal-name>Complex Field</m:formal-name>
+            <m:description>A complex field with a flag</m:description>
+         </xs:appinfo>
+         <xs:documentation>
+            <b>Complex Field</b>: A complex field with a flag</xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:simpleContent>
+            <xs:extension base="xs:string">
+               <xs:attribute name="id" type="xs:string">
+                  <xs:annotation>
+                     <xs:appinfo>
+                        <m:formal-name>Identifier</m:formal-name>
+                        <m:description>The document identifier</m:description>
+                     </xs:appinfo>
+                     <xs:documentation>
+                        <b>Identifier</b>: The document identifier</xs:documentation>
+                  </xs:annotation>
+               </xs:attribute>
+            </xs:extension>
+         </xs:simpleContent>
+      </xs:complexType>
+   </xs:element>
+</xs:schema>
