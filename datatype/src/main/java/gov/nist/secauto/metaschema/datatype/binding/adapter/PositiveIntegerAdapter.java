@@ -4,7 +4,7 @@ import java.math.BigInteger;
 
 import gov.nist.secauto.metaschema.datatype.PositiveInteger;
 
-public class PositiveIntegerAdapter extends SimpleTypeAdapter<PositiveInteger> {
+public class PositiveIntegerAdapter extends SimpleJavaTypeAdapter<PositiveInteger> {
 
 	@Override
 	public PositiveInteger parseValue(String value) {

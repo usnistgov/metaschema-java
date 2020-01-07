@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
-import gov.nist.secauto.metaschema.datatype.parser.xml.XmlFieldParsePlanTest.Value;
 
 class XmlAssemblyParsePlanTest {
 	private static final String NS = "namespace";
@@ -62,12 +61,11 @@ class XmlAssemblyParsePlanTest {
 	private States readerState;
 
 	@Mock
-	private XmlParser xmlParser;
+	private XmlParsingContext parsingContext;
 	@Mock
 	private XMLEventReader2 reader;
-
 	@Mock
-	FieldValueXmlPropertyParser fieldValueXmlPropertyParser;
+	private FieldValueXmlPropertyParser fieldValueXmlPropertyParser;
 
 	@Test
 	void testModelWithAttributes() throws BindingException, XMLStreamException {
@@ -105,6 +103,9 @@ class XmlAssemblyParsePlanTest {
 				MockXmlSupport.mockAttributeXMLEvent(this, attributeB, new QName(ATTRIBUTE_B_LOCAL_NAME), CHARACTERS);
 				MockXmlSupport.mockCharactersXMLEvent(this, CHARACTERS_EVENT, CHARACTERS);
 
+				allowing(parsingContext).getEventReader();
+				will(returnValue(reader));
+				
 				oneOf(OBJECT_START_ELEMENT_EVENT).getAttributes();
 				will(returnValue(attributes.iterator()));
 
@@ -164,14 +165,14 @@ class XmlAssemblyParsePlanTest {
 				inSequence(parseStream);
 
 				// parse the attributes
-				oneOf(attributeParserA).parse(with(any(Value.class)), with(same(attributeA)));
+				oneOf(attributeParserA).parse(with(any(Value.class)), with(same(parsingContext)), with(same(attributeA)));
 				inSequence(parseStream);
-				oneOf(attributeParserB).parse(with(any(Value.class)), with(same(attributeB)));
+				oneOf(attributeParserB).parse(with(any(Value.class)), with(same(parsingContext)), with(same(attributeB)));
 				inSequence(parseStream);
 
 				// Parse child1
 				// transition to end element state to mimick parsing
-				oneOf(child1Parser).parse(with(any(Value.class)), with(same(reader)));
+				oneOf(child1Parser).parse(with(any(Value.class)), with(same(parsingContext)));
 				then(readerState.is(P_START_ELEMENT));
 				inSequence(parseStream);
 //
@@ -183,7 +184,7 @@ class XmlAssemblyParsePlanTest {
 
 				// Parse the MarkupMultiline
 				// transition to end element state to mimick parsing
-				oneOf(markupMultilineParser).parse(with(any(Value.class)), with(same(reader)));
+				oneOf(markupMultilineParser).parse(with(any(Value.class)), with(same(parsingContext)));
 				then(readerState.is(OBJECT_END_ELEMENT));
 				inSequence(parseStream);
 
@@ -207,10 +208,10 @@ class XmlAssemblyParsePlanTest {
 		modelParsers.add(child1Parser);
 		modelParsers.add(markupMultilineParser);
 
-		AssemblyXmlParsePlan<Value> parsePlan = new AssemblyXmlParsePlan<Value>(xmlParser, Value.class,
+		AssemblyXmlParsePlan<Value> parsePlan = new AssemblyXmlParsePlan<Value>(Value.class,
 				attributeParsers, modelParsers);
 
-		parsePlan.parse(reader);
+		parsePlan.parse(parsingContext);
 
 		context.assertIsSatisfied();
 	}

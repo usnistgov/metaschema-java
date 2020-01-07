@@ -1,5 +1,7 @@
 package gov.nist.secauto.metaschema.datatype.parser.xml;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -14,6 +16,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLEventReader2;
 
+import gov.nist.secauto.metaschema.datatype.binding.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.datatype.binding.BindingContext;
+import gov.nist.secauto.metaschema.datatype.binding.property.ModelItemPropertyBinding;
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
 
 public class AssemblyXmlParsePlan<CLASS> extends AbstractXmlParsePlan<CLASS> {
@@ -21,9 +26,12 @@ public class AssemblyXmlParsePlan<CLASS> extends AbstractXmlParsePlan<CLASS> {
 
 	private final List<XmlObjectPropertyParser> modelParsers;
 
-	public AssemblyXmlParsePlan(XmlParser parser, Class<CLASS> clazz,
-			Map<QName, XmlAttributePropertyParser> attributeParsers, List<XmlObjectPropertyParser> modelParsers) {
-		super(parser, clazz, attributeParsers);
+	public AssemblyXmlParsePlan(AssemblyClassBinding<CLASS> classBinding, BindingContext bindingContext) throws BindingException {
+		this(classBinding.getClazz(), newXmlAttributeParsers(classBinding, bindingContext), newModelParsers(classBinding, bindingContext));
+	}
+
+	public AssemblyXmlParsePlan(Class<CLASS> clazz, Map<QName, XmlAttributePropertyParser> attributeParsers, List<XmlObjectPropertyParser> modelParsers) throws BindingException {
+		super(clazz, attributeParsers);
 		Objects.requireNonNull(modelParsers, "modelParsers");
 		this.modelParsers = modelParsers;
 	}
@@ -32,13 +40,29 @@ public class AssemblyXmlParsePlan<CLASS> extends AbstractXmlParsePlan<CLASS> {
 		return modelParsers;
 	}
 
+	protected static <CLASS> List<XmlObjectPropertyParser> newModelParsers(AssemblyClassBinding<CLASS> classBinding, BindingContext bindingContext) throws BindingException {
+		List<ModelItemPropertyBinding> bindings = classBinding.getModelItemPropertyBindings();
+		List<XmlObjectPropertyParser> retval;
+		if (bindings.isEmpty()) {
+			retval = Collections.emptyList();
+		} else {
+			retval = new ArrayList<>(bindings.size());
+			for (ModelItemPropertyBinding binding : bindings) {
+				retval.add(binding.newXmlPropertyParser(bindingContext));
+			}
+			retval = Collections.unmodifiableList(retval);
+		}
+		return retval;
+	}
+
 	/**
 	 * This will be called on the next element after the assembly START_ELEMENT
 	 * after any attributes have been parsed. The parser will continue until the end
 	 * element for the assembly is reached.
 	 */
 	@Override
-	protected void parseBody(CLASS obj, XMLEventReader2 reader, StartElement start) throws BindingException {
+	protected void parseBody(CLASS obj, XmlParsingContext parsingContext, StartElement start) throws BindingException {
+		XMLEventReader2 reader = parsingContext.getEventReader();
 		try {
 			XMLEvent nextEvent;
 			for (XmlObjectPropertyParser modelParser : getModelParsers()) {
@@ -59,7 +83,7 @@ public class AssemblyXmlParsePlan<CLASS> extends AbstractXmlParsePlan<CLASS> {
 
 				if (modelParser.canConsume(nextName)) {
 					// the parser will consume the START_ELEMENT event
-					modelParser.parse(obj, reader);
+					modelParser.parse(obj, parsingContext);
 					nextEvent = reader.peek();
 //				} else {
 //					logger.debug("Assembly Body Element(skipping): {}", nextName.toString());

@@ -1,12 +1,12 @@
 package gov.nist.secauto.metaschema.codegen.test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Path;
 import java.util.Iterator;
@@ -27,9 +27,8 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.platform.commons.util.ReflectionUtils;
 
 import gov.nist.secauto.metaschema.codegen.JavaGenerator;
+import gov.nist.secauto.metaschema.datatype.binding.BindingContext;
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
-import gov.nist.secauto.metaschema.datatype.parser.xml.XmlParser;
-import gov.nist.secauto.metaschema.datatype.parser.xml.XmlParserFactory;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaFactory;
@@ -88,8 +87,9 @@ public class BasicMetaschema {
 	}
 
 	private static Object readXml(Reader reader, Class<?> rootClass) throws IOException, BindingException {
-		XmlParser parser = new XmlParserFactory().newXmlParser();
-		return parser.parse(reader, rootClass);
+		BindingContext context = BindingContext.newInstance();
+		Object value = context.parseXml(reader, rootClass);
+		return value;
 	}
 
 	private static String writeXml(Object rootObject) throws IOException {
@@ -269,8 +269,8 @@ public class BasicMetaschema {
 		logger.info("Testing XML file: {}", xmlExample.getName());
 		if (xmlExample.exists()) {
 			Object root = readXml(new FileReader(xmlExample), rootClass);
-			logger.info("Read XML: Object: {}", root.toString());
-//			logger.info("done");
+			logger.debug("Read XML: Object: {}", root.toString());
+			logger.info("done");
 		}
 	}
 }

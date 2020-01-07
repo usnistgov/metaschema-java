@@ -23,6 +23,7 @@ import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import gov.nist.secauto.metaschema.datatype.binding.ClassBinding;
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
 
 class AbstractXmlParsePlanTest {
@@ -34,8 +35,8 @@ class AbstractXmlParsePlanTest {
 	private static final String OBJECT_START_ELEMENT = "object-start-element";
 	private static final String CHARACTERS = "characters";
 	private static final String OBJECT_END_ELEMENT = "object-end-element";
-	private static final String ATTRIBUTE_A = "attribute-a";
-	private static final String ATTRIBUTE_B = "attribute-b";
+//	private static final String ATTRIBUTE_A = "attribute-a";
+//	private static final String ATTRIBUTE_B = "attribute-b";
 
 	@Mock
 	private StartElement OBJECT_START_ELEMENT_EVENT;
@@ -50,7 +51,9 @@ class AbstractXmlParsePlanTest {
 	private States readerState;
 
 	@Mock
-	private XmlParser xmlParser;
+	private ClassBinding<Value> classBinding;
+	@Mock
+	private XmlParsingContext parsingContext;
 	@Mock
 	private XMLEventReader2 reader;
 
@@ -62,8 +65,12 @@ class AbstractXmlParsePlanTest {
 
 		context.checking(new Expectations() {
 			{
+				allowing(parsingContext).getEventReader();
+				will(returnValue(reader));
+
 				MockXmlSupport.mockElementXMLEvent(this, OBJECT_START_ELEMENT_EVENT, OBJECT_END_ELEMENT_EVENT,
 						new QName(NS, OBJECT_LOCAL_NAME));
+
 				oneOf(OBJECT_START_ELEMENT_EVENT).getAttributes();
 				will(returnValue(Collections.emptyList().iterator()));
 
@@ -95,16 +102,16 @@ class AbstractXmlParsePlanTest {
 			}
 		});
 
-		AbstractXmlParsePlan<Value> parsePlan = new AbstractXmlParsePlan<Value>(xmlParser, Value.class,
-				Collections.emptyMap()) {
+		AbstractXmlParsePlan<Value> parsePlan = new AbstractXmlParsePlan<>(Value.class, Collections.emptyMap()) {
 
 			@Override
-			protected void parseBody(Value obj, XMLEventReader2 reader, StartElement start) throws BindingException {
+			protected void parseBody(Value obj, XmlParsingContext parsingContext, StartElement start)
+					throws BindingException {
 			}
 
 		};
 
-		parsePlan.parse(reader);
+		parsePlan.parse(parsingContext);
 
 		context.assertIsSatisfied();
 	}
@@ -128,6 +135,11 @@ class AbstractXmlParsePlanTest {
 
 		context.checking(new Expectations() {
 			{
+				allowing(classBinding).getClazz();
+				will(returnValue(Value.class));
+				allowing(parsingContext).getEventReader();
+				will(returnValue(reader));
+
 				MockXmlSupport.mockElementXMLEvent(this, OBJECT_START_ELEMENT_EVENT, OBJECT_END_ELEMENT_EVENT,
 						new QName(NS, OBJECT_LOCAL_NAME));
 
@@ -156,9 +168,11 @@ class AbstractXmlParsePlanTest {
 				inSequence(parseStream);
 
 				// parse the attributes
-				oneOf(attributeParserA).parse(with(any(Value.class)), with(same(attributeA)));
+				oneOf(attributeParserA).parse(with(any(Value.class)), with(same(parsingContext)),
+						with(same(attributeA)));
 				inSequence(parseStream);
-				oneOf(attributeParserB).parse(with(any(Value.class)), with(same(attributeB)));
+				oneOf(attributeParserB).parse(with(any(Value.class)), with(same(parsingContext)),
+						with(same(attributeB)));
 				inSequence(parseStream);
 
 				// end of document
@@ -171,16 +185,16 @@ class AbstractXmlParsePlanTest {
 		attributeParsers.put(attributeA.getName(), attributeParserA);
 		attributeParsers.put(attributeB.getName(), attributeParserB);
 
-		AbstractXmlParsePlan<Value> parsePlan = new AbstractXmlParsePlan<Value>(xmlParser, Value.class,
-				attributeParsers) {
+		AbstractXmlParsePlan<Value> parsePlan = new AbstractXmlParsePlan<>(Value.class, attributeParsers) {
 
 			@Override
-			protected void parseBody(Value obj, XMLEventReader2 reader, StartElement start) throws BindingException {
+			protected void parseBody(Value obj, XmlParsingContext parsingContext, StartElement start)
+					throws BindingException {
 			}
 
 		};
 
-		parsePlan.parse(reader);
+		parsePlan.parse(parsingContext);
 
 		context.assertIsSatisfied();
 	}

@@ -1,6 +1,6 @@
 package gov.nist.secauto.metaschema.datatype.parser;
 
-public interface ParsePlan<READER, CLASS> {
+public interface ParsePlan<CONTEXT extends ParsingContext<READER>, READER, CLASS> {
 
-	CLASS parse(READER reader) throws BindingException;
+	CLASS parse(CONTEXT parser) throws BindingException;
 }

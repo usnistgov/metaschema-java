@@ -9,12 +9,13 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLEventReader2;
 
 import gov.nist.secauto.metaschema.datatype.annotations.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.datatype.binding.CollectionPropertyInfo;
-import gov.nist.secauto.metaschema.datatype.binding.FieldPropertyBinding;
-import gov.nist.secauto.metaschema.datatype.binding.ModelItemPropertyBinding;
+import gov.nist.secauto.metaschema.datatype.binding.BindingContext;
 import gov.nist.secauto.metaschema.datatype.binding.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatype.binding.property.CollectionPropertyInfo;
+import gov.nist.secauto.metaschema.datatype.binding.property.FieldPropertyBinding;
+import gov.nist.secauto.metaschema.datatype.binding.property.ModelItemPropertyBinding;
+import gov.nist.secauto.metaschema.datatype.binding.property.PropertyCollector;
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
-import gov.nist.secauto.metaschema.datatype.parser.PropertyCollector;
 import gov.nist.secauto.metaschema.markup.MarkupMultiline;
 
 public class DefaultXmlObjectPropertyParser extends AbstractXmlPropertyParser<ModelItemPropertyBinding>
@@ -25,16 +26,18 @@ public class DefaultXmlObjectPropertyParser extends AbstractXmlPropertyParser<Mo
 	private final QName itemWrapperQName;
 	private JavaTypeAdapter<?> typeAdapter;
 
-	public DefaultXmlObjectPropertyParser(ModelItemPropertyBinding propertyBinding, XmlParser parser)
+	public DefaultXmlObjectPropertyParser(ModelItemPropertyBinding propertyBinding, BindingContext bindingContext)
 			throws BindingException {
-		super(propertyBinding, parser);
+		super(propertyBinding, bindingContext);
 		groupWrapperQName = getGroupWrapperQName();
 		itemWrapperQName = getItemWrapperQName();
 	}
 
 	@Override
-	public <CLASS> void parse(CLASS obj, XMLEventReader2 reader) throws BindingException {
+	public <CLASS> void parse(CLASS obj, XmlParsingContext parsingContext) throws BindingException {
 		PropertyCollector collector = getPropertyBinding().newPropertyCollector();
+		XMLEventReader2 reader = parsingContext.getEventReader();
+
 
 		if (groupWrapperQName != null) {
 			consumeStartElement(reader, groupWrapperQName);
@@ -63,7 +66,7 @@ public class DefaultXmlObjectPropertyParser extends AbstractXmlPropertyParser<Mo
 				}
 
 				// Pass in the start element if it exists to allow attributes to be parsed
-				Object value = typeAdapter.parseType(reader);
+				Object value = typeAdapter.parseType(parsingContext);
 				if (value != null) {
 					collector.add(value);
 				} else {
@@ -98,8 +101,8 @@ public class DefaultXmlObjectPropertyParser extends AbstractXmlPropertyParser<Mo
 	protected JavaTypeAdapter<?> getTypeAdapter() throws BindingException {
 		synchronized (this) {
 			if (typeAdapter == null) {
-				typeAdapter = getParser()
-						.getXmlTypeAdapter((Class<?>) getPropertyBinding().getPropertyInfo().getItemType());
+				typeAdapter = getBindingContext()
+						.getJavaTypeAdapter((Class<?>) getPropertyBinding().getPropertyInfo().getItemType());
 			}
 			return typeAdapter;
 		}

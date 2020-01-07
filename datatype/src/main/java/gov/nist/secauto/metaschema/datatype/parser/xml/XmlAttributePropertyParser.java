@@ -7,5 +7,5 @@ import gov.nist.secauto.metaschema.datatype.parser.BindingException;
 
 public interface XmlAttributePropertyParser extends XmlPropertyParser {
 	QName getHandledQName();
-	<CLASS> void parse(CLASS obj, Attribute attribue) throws BindingException;
+	<CLASS> void parse(CLASS obj, XmlParsingContext parser, Attribute attribue) throws BindingException;
 }

@@ -9,7 +9,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import gov.nist.secauto.metaschema.datatype.annotations.GroupAs;
-import gov.nist.secauto.metaschema.datatype.binding.FieldPropertyBinding;
+import gov.nist.secauto.metaschema.datatype.binding.property.FieldPropertyBinding;
+import gov.nist.secauto.metaschema.datatype.binding.property.PropertyCollector;
 
 // TODO: test map
 class PropertyCollectorTest {

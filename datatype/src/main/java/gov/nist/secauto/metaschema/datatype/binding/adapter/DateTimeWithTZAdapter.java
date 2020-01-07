@@ -5,7 +5,7 @@ import java.time.ZonedDateTime;
 import gov.nist.secauto.metaschema.datatype.DateTimeTimeZone;
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
 
-public class DateTimeWithTZAdapter extends SimpleTypeAdapter<DateTimeTimeZone> {
+public class DateTimeWithTZAdapter extends SimpleJavaTypeAdapter<DateTimeTimeZone> {
 
 	@Override
 	public DateTimeTimeZone parseValue(String value) throws BindingException {

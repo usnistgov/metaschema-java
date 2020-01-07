@@ -3,9 +3,8 @@ package gov.nist.secauto.metaschema.datatype.binding.adapter;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
-import org.codehaus.stax2.XMLEventReader2;
-
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
+import gov.nist.secauto.metaschema.datatype.parser.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.markup.MarkupMultiline;
 
 public class MarkupMultilineAdapter implements JavaTypeAdapter<MarkupMultiline> {
@@ -27,9 +26,9 @@ public class MarkupMultilineAdapter implements JavaTypeAdapter<MarkupMultiline> 
 	}
 
 	@Override
-	public MarkupMultiline parseType(XMLEventReader2 reader) throws BindingException {
+	public MarkupMultiline parseType(XmlParsingContext parsingContext) throws BindingException {
 		try {
-			return markupParser.parseMarkupMultiline(reader);
+			return markupParser.parseMarkupMultiline(parsingContext.getEventReader());
 		} catch (XMLStreamException ex) {
 			throw new BindingException(ex);
 		}

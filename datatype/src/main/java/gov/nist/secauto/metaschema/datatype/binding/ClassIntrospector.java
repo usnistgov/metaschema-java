@@ -7,6 +7,14 @@ import java.util.List;
 
 import gov.nist.secauto.metaschema.datatype.annotations.JsonKey;
 import gov.nist.secauto.metaschema.datatype.annotations.XmlSchema;
+import gov.nist.secauto.metaschema.datatype.binding.property.AssemblyPropertyBinding;
+import gov.nist.secauto.metaschema.datatype.binding.property.FieldPropertyBinding;
+import gov.nist.secauto.metaschema.datatype.binding.property.FieldValuePropertyBinding;
+import gov.nist.secauto.metaschema.datatype.binding.property.FlagPropertyBinding;
+import gov.nist.secauto.metaschema.datatype.binding.property.JavaFieldPropertyAccessor;
+import gov.nist.secauto.metaschema.datatype.binding.property.ModelItemPropertyBinding;
+import gov.nist.secauto.metaschema.datatype.binding.property.PropertyAccessor;
+import gov.nist.secauto.metaschema.datatype.binding.property.SingletonPropertyInfo;
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
 
 public class ClassIntrospector {

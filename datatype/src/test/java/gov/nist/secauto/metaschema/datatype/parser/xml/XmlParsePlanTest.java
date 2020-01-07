@@ -12,6 +12,7 @@ import gov.nist.secauto.metaschema.datatype.annotations.FieldValue;
 import gov.nist.secauto.metaschema.datatype.annotations.Flag;
 import gov.nist.secauto.metaschema.datatype.annotations.GroupAs;
 import gov.nist.secauto.metaschema.datatype.annotations.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.datatype.binding.BindingContext;
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
 
 class XmlParsePlanTest {
@@ -22,8 +23,8 @@ class XmlParsePlanTest {
 				"<top-level\n" + 
 				"	xmlns=\"http://csrc.nist.gov/ns/metaschema/testing\" id=\"top-level-id\"/>\n";
 		
-		XmlParserFactory factory = new XmlParserFactory();
-		TopLevel topLevel = factory.newXmlParser().parse(new StringReader(xml), TopLevel.class);
+		BindingContext context = BindingContext.newInstance();
+		TopLevel topLevel = context.parseXml(new StringReader(xml), TopLevel.class);
 		Assertions.assertEquals("top-level-id", topLevel.id);
 	}
 
@@ -41,8 +42,8 @@ class XmlParsePlanTest {
 				"  <child3 id=\"child3\">value5</child3>\n"+
 				"</top-level>\n";
 		
-		XmlParserFactory factory = new XmlParserFactory();
-		TopLevel topLevel = factory.newXmlParser().parse(new StringReader(xml), TopLevel.class);
+		BindingContext context = BindingContext.newInstance();
+		TopLevel topLevel = context.parseXml(new StringReader(xml), TopLevel.class);
 		Assertions.assertEquals("top-level-id", topLevel.id);
 		List<String> children = new ArrayList<>(2);
 		children.add("value1");

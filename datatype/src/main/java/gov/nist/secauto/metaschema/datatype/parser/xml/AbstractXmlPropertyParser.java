@@ -10,18 +10,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLEventReader2;
 
-import gov.nist.secauto.metaschema.datatype.binding.PropertyBinding;
+import gov.nist.secauto.metaschema.datatype.binding.BindingContext;
+import gov.nist.secauto.metaschema.datatype.binding.property.PropertyBinding;
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
 
 public abstract class AbstractXmlPropertyParser<BINDING extends PropertyBinding> implements XmlPropertyParser {
 	private static final Logger logger = LogManager.getLogger(AbstractXmlPropertyParser.class);
 
 	private final BINDING propertyBinding;
-	private final XmlParser parser;
+	private final BindingContext bindingContext;
 
-	public AbstractXmlPropertyParser(BINDING propertyBinding, XmlParser parser) {
+	public AbstractXmlPropertyParser(BINDING propertyBinding, BindingContext bindingContext) {
 		this.propertyBinding = propertyBinding;
-		this.parser = parser;
+		this.bindingContext = bindingContext;
 	}
 
 	@Override
@@ -29,8 +30,8 @@ public abstract class AbstractXmlPropertyParser<BINDING extends PropertyBinding>
 		return propertyBinding;
 	}
 
-	protected XmlParser getParser() {
-		return parser;
+	protected BindingContext getBindingContext() {
+		return bindingContext;
 	}
 
 	protected StartElement consumeStartElement(XMLEventReader2 reader, QName name) throws BindingException {

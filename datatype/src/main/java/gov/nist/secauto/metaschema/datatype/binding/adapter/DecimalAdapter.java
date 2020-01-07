@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import gov.nist.secauto.metaschema.datatype.Decimal;
 
-public class DecimalAdapter extends SimpleTypeAdapter<Decimal> {
+public class DecimalAdapter extends SimpleJavaTypeAdapter<Decimal> {
 
 	@Override
 	public Decimal parseValue(String value) {

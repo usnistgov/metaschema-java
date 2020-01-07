@@ -1,10 +1,10 @@
 package gov.nist.secauto.metaschema.datatype.binding.adapter;
 
 import javax.xml.namespace.QName;
-
-import org.codehaus.stax2.XMLEventReader2;
+import javax.xml.stream.events.XMLEvent;
 
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
+import gov.nist.secauto.metaschema.datatype.parser.xml.XmlParsingContext;
 
 public interface JavaTypeAdapter<TYPE> {
 	boolean isParsingStartElement();
@@ -29,9 +29,9 @@ public interface JavaTypeAdapter<TYPE> {
 	 * {@link #isParsingStartElement() is {@code true}, then this method is expected
 	 * to parse the END_ELEMENT event as well.
 	 * 
-	 * @param reader the parser
+	 * @param parsingContext the XML parser and binding info
 	 * @return the parsed value
 	 * @throws BindingException if a parsing error occurs
 	 */
-	TYPE parseType(XMLEventReader2 reader) throws BindingException;
+	TYPE parseType(XmlParsingContext parsingContext) throws BindingException;
 }

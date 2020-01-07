@@ -18,6 +18,7 @@ public class MockXmlSupport {
 
 	static void mockElementXMLEvent(Expectations expectations, StartElement startEvent, EndElement endEvent,
 			QName name) {
+
 		expectations.allowing(startEvent).getEventType();
 		expectations.will(Expectations.returnValue(XMLEvent.START_ELEMENT));
 		expectations.allowing(startEvent).asStartElement();

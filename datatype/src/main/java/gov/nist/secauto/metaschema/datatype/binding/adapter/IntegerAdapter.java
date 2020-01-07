@@ -2,7 +2,7 @@ package gov.nist.secauto.metaschema.datatype.binding.adapter;
 
 import java.math.BigInteger;
 
-public class IntegerAdapter extends SimpleTypeAdapter<gov.nist.secauto.metaschema.datatype.Integer> {
+public class IntegerAdapter extends SimpleJavaTypeAdapter<gov.nist.secauto.metaschema.datatype.Integer> {
 
 	@Override
 	public gov.nist.secauto.metaschema.datatype.Integer parseValue(String value) {

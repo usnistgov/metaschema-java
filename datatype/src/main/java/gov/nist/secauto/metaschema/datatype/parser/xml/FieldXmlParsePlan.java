@@ -1,6 +1,7 @@
 package gov.nist.secauto.metaschema.datatype.parser.xml;
 
 import java.util.Map;
+import java.util.Objects;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
@@ -12,6 +13,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLEventReader2;
 
+import gov.nist.secauto.metaschema.datatype.binding.BindingContext;
+import gov.nist.secauto.metaschema.datatype.binding.FieldClassBinding;
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
 
 public class FieldXmlParsePlan<CLASS> extends AbstractXmlParsePlan<CLASS> {
@@ -19,9 +22,13 @@ public class FieldXmlParsePlan<CLASS> extends AbstractXmlParsePlan<CLASS> {
 
 	private final FieldValueXmlPropertyParser fieldValueParser;
 
-	public FieldXmlParsePlan(XmlParser parser, Class<CLASS> clazz,
-			Map<QName, XmlAttributePropertyParser> attributeParsers, FieldValueXmlPropertyParser fieldValueParser) {
-		super(parser, clazz, attributeParsers);
+	public FieldXmlParsePlan(FieldClassBinding<CLASS> classBinding, BindingContext bindingContext) throws BindingException {
+		this(classBinding.getClazz(), newXmlAttributeParsers(classBinding, bindingContext), classBinding.getFieldValuePropertyBinding().newXmlPropertyParser(bindingContext));
+	}
+
+	public FieldXmlParsePlan(Class<CLASS> clazz, Map<QName, XmlAttributePropertyParser> attributeParsers, FieldValueXmlPropertyParser fieldValueParser) throws BindingException {
+		super(clazz, attributeParsers);
+		Objects.requireNonNull(fieldValueParser, "fieldValueParser");
 		this.fieldValueParser = fieldValueParser;
 	}
 
@@ -35,7 +42,8 @@ public class FieldXmlParsePlan<CLASS> extends AbstractXmlParsePlan<CLASS> {
 	 * element for the field is reached.
 	 */
 	@Override
-	protected void parseBody(CLASS obj, XMLEventReader2 reader, StartElement start) throws BindingException {
+	protected void parseBody(CLASS obj, XmlParsingContext parsingContext, StartElement start) throws BindingException {
+		XMLEventReader2 reader = parsingContext.getEventReader();
 		try {
 			XMLEvent nextEvent = XmlEventUtil.skipWhitespace(reader);
 			if (logger.isDebugEnabled()) {
@@ -43,7 +51,7 @@ public class FieldXmlParsePlan<CLASS> extends AbstractXmlParsePlan<CLASS> {
 			}
 
 			FieldValueXmlPropertyParser fieldValueParser = getFieldValueParser();
-			fieldValueParser.parse(obj, reader);
+			fieldValueParser.parse(obj, parsingContext);
 
 			nextEvent = reader.peek();
 

@@ -1,21 +1,39 @@
 package gov.nist.secauto.metaschema.datatype.binding.adapter;
 
+import java.util.Objects;
+
 import javax.xml.namespace.QName;
 
-import org.codehaus.stax2.XMLEventReader2;
-
+import gov.nist.secauto.metaschema.datatype.binding.BindingContext;
+import gov.nist.secauto.metaschema.datatype.binding.ClassBinding;
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
-import gov.nist.secauto.metaschema.datatype.parser.ParsePlan;
+import gov.nist.secauto.metaschema.datatype.parser.xml.XmlParsePlan;
+import gov.nist.secauto.metaschema.datatype.parser.xml.XmlParsingContext;
 
 public class ObjectJavaTypeAdapter<CLASS> implements JavaTypeAdapter<CLASS> {
-	private final ParsePlan<XMLEventReader2, CLASS> parsePlan;
+	private final ClassBinding<CLASS> classBinding;
+	private final BindingContext bindingContext;
 
-	public ObjectJavaTypeAdapter(Class<CLASS> itemClass, ParsePlan<XMLEventReader2, CLASS> parsePlan) {
-		this.parsePlan = parsePlan;
+	private XmlParsePlan<CLASS> xmlParsePlan;
+
+	public ObjectJavaTypeAdapter(ClassBinding<CLASS> classBinding, BindingContext bindingContext) {
+		Objects.requireNonNull(classBinding, "classBinding");
+		Objects.requireNonNull(bindingContext, "bindingContext");
+		this.classBinding = classBinding;
+		this.bindingContext = bindingContext;
 	}
 
-	protected ParsePlan<XMLEventReader2, CLASS> getParsePlan() {
-		return parsePlan;
+	protected ClassBinding<CLASS> getClassBinding() {
+		return classBinding;
+	}
+
+	protected XmlParsePlan<CLASS> getXmlParsePlan() throws BindingException {
+		synchronized (this) {
+			if (xmlParsePlan == null) {
+				xmlParsePlan = bindingContext.getXmlParsePlan(getClassBinding().getClazz());
+			}
+			return xmlParsePlan;
+		}
 	}
 
 	@Override
@@ -34,9 +52,10 @@ public class ObjectJavaTypeAdapter<CLASS> implements JavaTypeAdapter<CLASS> {
 	}
 
 	@Override
-	public CLASS parseType(XMLEventReader2 reader) throws BindingException {
+	public CLASS parseType(XmlParsingContext parsingContext) throws BindingException {
 		// delegates all parsing to the parse plan
-		return getParsePlan().parse(reader);
+		XmlParsePlan<CLASS> plan = getXmlParsePlan();
+		return plan.parse(parsingContext);
 	}
 
 	@Override

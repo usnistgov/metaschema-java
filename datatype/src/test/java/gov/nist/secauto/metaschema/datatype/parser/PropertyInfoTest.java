@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Test;
 
 import gov.nist.secauto.metaschema.datatype.annotations.GroupAs;
 import gov.nist.secauto.metaschema.datatype.annotations.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.datatype.binding.CollectionPropertyInfo;
-import gov.nist.secauto.metaschema.datatype.binding.MapPropertyInfo;
-import gov.nist.secauto.metaschema.datatype.binding.PropertyInfo;
+import gov.nist.secauto.metaschema.datatype.binding.property.CollectionPropertyInfo;
+import gov.nist.secauto.metaschema.datatype.binding.property.MapPropertyInfo;
+import gov.nist.secauto.metaschema.datatype.binding.property.PropertyInfo;
 
 class PropertyInfoTest {
 //	@RegisterExtension

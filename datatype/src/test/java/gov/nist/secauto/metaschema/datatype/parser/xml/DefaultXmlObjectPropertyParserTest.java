@@ -17,11 +17,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import gov.nist.secauto.metaschema.datatype.annotations.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.datatype.binding.CollectionPropertyInfo;
-import gov.nist.secauto.metaschema.datatype.binding.FieldPropertyBinding;
+import gov.nist.secauto.metaschema.datatype.binding.BindingContext;
 import gov.nist.secauto.metaschema.datatype.binding.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatype.binding.property.CollectionPropertyInfo;
+import gov.nist.secauto.metaschema.datatype.binding.property.FieldPropertyBinding;
+import gov.nist.secauto.metaschema.datatype.binding.property.PropertyCollector;
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
-import gov.nist.secauto.metaschema.datatype.parser.PropertyCollector;
 import gov.nist.secauto.metaschema.markup.MarkupMultiline;
 
 class DefaultXmlObjectPropertyParserTest {
@@ -53,13 +54,15 @@ class DefaultXmlObjectPropertyParserTest {
 	private Characters CHARACTERS_EVENT;
 
 	@Mock
+	private BindingContext bindingContext;
+	@Mock
 	private CollectionPropertyInfo propertyInfo;
 	@Mock
 	private FieldPropertyBinding propertyBinding;
 	@Mock
 	private PropertyCollector propertyCollector;
 	@Mock
-	private XmlParser xmlParser;
+	private XmlParsingContext parsingContext;
 	@Mock
 	private JavaTypeAdapter<String> typeAdapter;
 //	@Mock
@@ -103,8 +106,10 @@ class DefaultXmlObjectPropertyParserTest {
 				will(returnValue(NS));
 
 				// setup XmlParser behavior
-				oneOf(xmlParser).getXmlTypeAdapter(String.class);
+				oneOf(bindingContext).getJavaTypeAdapter(String.class);
 				will(returnValue(typeAdapter));
+				allowing(parsingContext).getEventReader();
+				will(returnValue(reader));
 				allowing(typeAdapter).isParsingStartElement();
 				will(returnValue(false));
 
@@ -146,7 +151,7 @@ class DefaultXmlObjectPropertyParserTest {
 
 				// parse character contents
 				// transition to end element state to mimick parsing
-				oneOf(typeAdapter).parseType(with(reader));
+				oneOf(typeAdapter).parseType(with(same(parsingContext)));
 				will(returnValue(CHARACTERS));
 				then(readerState.is(OBJECT_END_ELEMENT));
 				inSequence(parseStream);
@@ -167,7 +172,7 @@ class DefaultXmlObjectPropertyParserTest {
 
 				// parse character contents
 				// transition to end element state to mimick parsing
-				oneOf(typeAdapter).parseType(with(reader));
+				oneOf(typeAdapter).parseType(with(same(parsingContext)));
 				will(returnValue(CHARACTERS));
 				then(readerState.is(OBJECT_END_ELEMENT));
 				inSequence(parseStream);
@@ -194,8 +199,8 @@ class DefaultXmlObjectPropertyParserTest {
 			}
 		});
 
-		DefaultXmlObjectPropertyParser propertyParser = new DefaultXmlObjectPropertyParser(propertyBinding, xmlParser);
-		propertyParser.parse(value, reader);
+		DefaultXmlObjectPropertyParser propertyParser = new DefaultXmlObjectPropertyParser(propertyBinding, bindingContext);
+		propertyParser.parse(value, parsingContext);
 
 		context.assertIsSatisfied();
 	}
@@ -234,8 +239,10 @@ class DefaultXmlObjectPropertyParserTest {
 				will(returnValue(NS));
 
 				// setup XmlParser behavior
-				oneOf(xmlParser).getXmlTypeAdapter(String.class);
+				oneOf(bindingContext).getJavaTypeAdapter(String.class);
 				will(returnValue(typeAdapter));
+				allowing(parsingContext).getEventReader();
+				will(returnValue(reader));
 				allowing(typeAdapter).isParsingStartElement();
 				will(returnValue(false));
 				
@@ -278,7 +285,7 @@ class DefaultXmlObjectPropertyParserTest {
 
 				// parse character contents
 				// transition to end element state to mimick parsing
-				oneOf(typeAdapter).parseType(with(reader));
+				oneOf(typeAdapter).parseType(with(same(parsingContext)));
 				will(returnValue(CHARACTERS));
 				then(readerState.is(OBJECT_END_ELEMENT));
 				inSequence(parseStream);
@@ -299,7 +306,7 @@ class DefaultXmlObjectPropertyParserTest {
 
 				// parse character contents
 				// transition to end element state to mimick parsing
-				oneOf(typeAdapter).parseType(with(reader));
+				oneOf(typeAdapter).parseType(with(same(parsingContext)));
 				will(returnValue(CHARACTERS));
 				then(readerState.is(OBJECT_END_ELEMENT));
 				inSequence(parseStream);
@@ -327,8 +334,8 @@ class DefaultXmlObjectPropertyParserTest {
 			}
 		});
 
-		DefaultXmlObjectPropertyParser propertyParser = new DefaultXmlObjectPropertyParser(propertyBinding, xmlParser);
-		propertyParser.parse(value, reader);
+		DefaultXmlObjectPropertyParser propertyParser = new DefaultXmlObjectPropertyParser(propertyBinding, bindingContext);
+		propertyParser.parse(value, parsingContext);
 
 		context.assertIsSatisfied();
 	}
@@ -362,8 +369,10 @@ class DefaultXmlObjectPropertyParserTest {
 //				will(returnValue(NS));
 
 				// setup XmlParser behavior
-				oneOf(xmlParser).getXmlTypeAdapter(MarkupMultiline.class);
+				oneOf(bindingContext).getJavaTypeAdapter(MarkupMultiline.class);
 				will(returnValue(typeAdapter));
+				allowing(parsingContext).getEventReader();
+				will(returnValue(reader));
 
 				// setup reader peeking behavior based on states
 				allowing(reader).peek();
@@ -396,7 +405,7 @@ class DefaultXmlObjectPropertyParserTest {
 
 				// parse character contents
 				// transition to end element state to mimick parsing
-				oneOf(typeAdapter).parseType(with(reader));
+				oneOf(typeAdapter).parseType(with(same(parsingContext)));
 				will(returnValue(CHARACTERS));
 				then(readerState.is(OBJECT_END_ELEMENT));
 				inSequence(parseStream);
@@ -444,8 +453,8 @@ class DefaultXmlObjectPropertyParserTest {
 			}
 		});
 
-		DefaultXmlObjectPropertyParser propertyParser = new DefaultXmlObjectPropertyParser(propertyBinding, xmlParser);
-		propertyParser.parse(value, reader);
+		DefaultXmlObjectPropertyParser propertyParser = new DefaultXmlObjectPropertyParser(propertyBinding, bindingContext);
+		propertyParser.parse(value, parsingContext);
 
 		context.assertIsSatisfied();
 	}

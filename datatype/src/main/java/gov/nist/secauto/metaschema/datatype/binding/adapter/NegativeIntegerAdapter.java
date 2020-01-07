@@ -4,7 +4,7 @@ import java.math.BigInteger;
 
 import gov.nist.secauto.metaschema.datatype.NonNegativeInteger;
 
-public class NegativeIntegerAdapter extends SimpleTypeAdapter<NonNegativeInteger> {
+public class NegativeIntegerAdapter extends SimpleJavaTypeAdapter<NonNegativeInteger> {
 
 	@Override
 	public NonNegativeInteger parseValue(String value) {

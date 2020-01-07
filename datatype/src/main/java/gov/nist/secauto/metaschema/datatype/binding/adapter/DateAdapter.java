@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import gov.nist.secauto.metaschema.datatype.Date;
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
 
-public class DateAdapter extends SimpleTypeAdapter<Date> {
+public class DateAdapter extends SimpleJavaTypeAdapter<Date> {
 	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-ddXXX");
 	private static final DateFormat dateFormatWithoutTZ = new SimpleDateFormat("yyyy-MM-dd");
 

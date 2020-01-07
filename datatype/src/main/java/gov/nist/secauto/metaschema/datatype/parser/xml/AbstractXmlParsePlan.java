@@ -1,6 +1,9 @@
 package gov.nist.secauto.metaschema.datatype.parser.xml;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -15,30 +18,48 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLEventReader2;
 
+import gov.nist.secauto.metaschema.datatype.binding.BindingContext;
+import gov.nist.secauto.metaschema.datatype.binding.ClassBinding;
+import gov.nist.secauto.metaschema.datatype.binding.property.FlagPropertyBinding;
 import gov.nist.secauto.metaschema.datatype.parser.AbstractParsePlan;
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
 import gov.nist.secauto.metaschema.datatype.util.Util;
 
-public abstract class AbstractXmlParsePlan<CLASS> extends AbstractParsePlan<XMLEventReader2, CLASS> {
+public abstract class AbstractXmlParsePlan<CLASS> extends AbstractParsePlan<XmlParsingContext, XMLEventReader2, CLASS> implements XmlParsePlan<CLASS>{
 	private static final Logger logger = LogManager.getLogger(AbstractXmlParsePlan.class);
 
-	private final XmlParser parser;
 	private final Map<QName, XmlAttributePropertyParser> attributeParsers;
 
-	public AbstractXmlParsePlan(XmlParser parser, Class<CLASS> clazz,
-			Map<QName, XmlAttributePropertyParser> attributeParsers) {
-		super(clazz);
-		Objects.requireNonNull(attributeParsers, "attributeParsers");
-		this.parser = parser;
-		this.attributeParsers = attributeParsers;
+	public AbstractXmlParsePlan(ClassBinding<CLASS> classBinding, BindingContext bindingContext) throws BindingException {
+		this(classBinding.getClazz(), newXmlAttributeParsers(classBinding, bindingContext));
 	}
 
-	public XmlParser getXmlParser() {
-		return parser;
+	public AbstractXmlParsePlan(Class<CLASS> clazz, Map<QName, XmlAttributePropertyParser> attributeParsers) throws BindingException {
+		super(clazz);
+		Objects.requireNonNull(attributeParsers, "attributeParsers");
+		this.attributeParsers = attributeParsers;
 	}
 
 	protected Map<QName, XmlAttributePropertyParser> getAttributeParsers() {
 		return attributeParsers;
+	}
+
+	protected static <CLASS> Map<QName, XmlAttributePropertyParser> newXmlAttributeParsers(ClassBinding<CLASS> classBinding, BindingContext bindingContext) throws BindingException {
+		List<FlagPropertyBinding> bindings = classBinding.getFlagPropertyBindings();
+		Map<QName, XmlAttributePropertyParser> retval;
+		if (bindings.isEmpty()) {
+			retval = Collections.emptyMap();
+		} else {
+			retval = new LinkedHashMap<>();
+			for (FlagPropertyBinding binding : bindings) {
+				XmlAttributePropertyParser propertyParser = binding.newXmlPropertyParser(bindingContext);
+				// for an attribute, only a single QName should be handled
+				QName handledQName = propertyParser.getHandledQName();
+				retval.put(handledQName, propertyParser);
+			}
+			retval = Collections.unmodifiableMap(retval);
+		}
+		return retval;
 	}
 
 	/**
@@ -47,8 +68,8 @@ public abstract class AbstractXmlParsePlan<CLASS> extends AbstractParsePlan<XMLE
 	 * position after the END_ELEMENT corresponding to the parsed START_ELEMENT.
 	 */
 	@Override
-	public CLASS parse(XMLEventReader2 reader) throws BindingException {
-
+	public CLASS parse(XmlParsingContext parsingContext) throws BindingException {
+		XMLEventReader2 reader = parsingContext.getEventReader();
 		CLASS obj = newInstance();
 		try {
 
@@ -73,22 +94,23 @@ public abstract class AbstractXmlParsePlan<CLASS> extends AbstractParsePlan<XMLE
 			for (Attribute attribute : Util.toIterable(start.getAttributes())) {
 				QName attributeName = attribute.getName();
 
+//				parseAttribute(obj, parsingContext, attribute);
 				XmlAttributePropertyParser propertyParser = getAttributeParsers().get(attributeName);
 				if (propertyParser == null) {
-					XmlProblemHandler handler = getXmlParser().getProblemHandler();
-					if (!handler.handleUnknownAttribute(attributeName, getXmlParser(), reader)) {
+					XmlProblemHandler handler = parsingContext.getProblemHandler();
+					if (!handler.handleUnknownAttribute(attributeName, parsingContext)) {
 						throw new BindingException(
 								String.format("Unknown attribute '%s' for class '%s' at location: %s", attributeName,
 										getClazz().getName(), XmlEventUtil.toString(event.getLocation())));
 					}
 				} else {
-					propertyParser.parse(obj, attribute);
+					propertyParser.parse(obj, parsingContext, attribute);
 				}
 				matchedAttributes.add(attributeName);
 			}
 			// TODO: handle unmatched attributes
 
-			parseBody(obj, reader, start);
+			parseBody(obj, parsingContext, start);
 
 			// Check for the END_ELEMENT of the assembly/field
 			if (logger.isDebugEnabled()) {
@@ -108,13 +130,26 @@ public abstract class AbstractXmlParsePlan<CLASS> extends AbstractParsePlan<XMLE
 		return obj;
 	}
 
+//	private void parseAttribute(CLASS obj, XmlParsingContext parsingContext, Attribute attribute) {
+//		
+//		JavaTypeAdapter<?> typeAdapter = parsingContext.getBindingContext().getJavaTypeAdapter((Class<?>)getPropertyBinding().getPropertyInfo().getItemType());
+//		try {
+//			Object value = typeAdapter.parseValue(attribue.getValue());
+//			getPropertyBinding().getPropertyInfo().getPropertyAccessor().setValue(obj, value);
+//		} catch (IllegalArgumentException | IllegalAccessException ex) {
+//			throw new BindingException(ex);
+//		} catch (UnsupportedOperationException ex) {
+//			throw new BindingException(ex);
+//		}
+//	}
+
 	/**
 	 * Parse the contents of the field or assembly.
 	 * 
 	 * @param obj    the instance to parse into
-	 * @param reader the parser
+	 * @param parsingContext the XML parser
 	 * @param start  the START_ELEMENT of the field or assembly
 	 * @throws BindingException if a parse error occurs
 	 */
-	protected abstract void parseBody(CLASS obj, XMLEventReader2 reader, StartElement start) throws BindingException;
+	protected abstract void parseBody(CLASS obj, XmlParsingContext parsingContext, StartElement start) throws BindingException;
 }

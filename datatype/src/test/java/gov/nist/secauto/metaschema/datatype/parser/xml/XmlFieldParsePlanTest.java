@@ -23,6 +23,7 @@ import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import gov.nist.secauto.metaschema.datatype.binding.BindingContext;
 import gov.nist.secauto.metaschema.datatype.parser.BindingException;
 
 class XmlFieldParsePlanTest {
@@ -53,12 +54,15 @@ class XmlFieldParsePlanTest {
 	private States readerState;
 
 	@Mock
-	private XmlParser xmlParser;
+	private XmlParsingContext parsingContext;
 	@Mock
 	private XMLEventReader2 reader;
 
+
 	@Mock
-	FieldValueXmlPropertyParser fieldValueXmlPropertyParser;
+	private BindingContext bindingContext;
+	@Mock
+	private FieldValueXmlPropertyParser fieldValueXmlPropertyParser;
 
 	@Test
 	void testStringValueWithAttributes() throws BindingException, XMLStreamException {
@@ -87,6 +91,10 @@ class XmlFieldParsePlanTest {
 				MockXmlSupport.mockAttributeXMLEvent(this, attributeB, new QName(ATTRIBUTE_B_LOCAL_NAME), CHARACTERS);
 				MockXmlSupport.mockCharactersXMLEvent(this, CHARACTERS_EVENT, CHARACTERS);
 
+
+				allowing(parsingContext).getEventReader();
+				will(returnValue(reader));
+
 				oneOf(OBJECT_START_ELEMENT_EVENT).getAttributes();
 				will(returnValue(attributes.iterator()));
 
@@ -114,13 +122,13 @@ class XmlFieldParsePlanTest {
 				inSequence(parseStream);
 
 				// parse the attributes
-				oneOf(attributeParserA).parse(with(any(Value.class)), with(same(attributeA)));
+				oneOf(attributeParserA).parse(with(any(Value.class)), with(same(parsingContext)), with(same(attributeA)));
 				inSequence(parseStream);
-				oneOf(attributeParserB).parse(with(any(Value.class)), with(same(attributeB)));
+				oneOf(attributeParserB).parse(with(any(Value.class)), with(same(parsingContext)), with(same(attributeB)));
 				inSequence(parseStream);
 
 				// parse the field value
-				oneOf(fieldValueXmlPropertyParser).parse(with(any(Value.class)), with(same(reader)));
+				oneOf(fieldValueXmlPropertyParser).parse(with(any(Value.class)), with(same(parsingContext)));
 				inSequence(parseStream);
 				// this simulates parsing
 				then(readerState.is(OBJECT_END_ELEMENT));
@@ -137,10 +145,10 @@ class XmlFieldParsePlanTest {
 		attributeParsers.put(attributeA.getName(), attributeParserA);
 		attributeParsers.put(attributeB.getName(), attributeParserB);
 
-		FieldXmlParsePlan<Value> parsePlan = new FieldXmlParsePlan<Value>(xmlParser, Value.class,
+		FieldXmlParsePlan<Value> parsePlan = new FieldXmlParsePlan<Value>(Value.class,
 				attributeParsers, fieldValueXmlPropertyParser);
 
-		parsePlan.parse(reader);
+		parsePlan.parse(parsingContext);
 
 		context.assertIsSatisfied();
 	}
