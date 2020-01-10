@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>gov.nist.secauto.metaschema</groupId>
 	<artifactId>parent</artifactId>
@@ -12,8 +14,7 @@
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<dependency.commonmark.version>0.13.0</dependency.commonmark.version>
-		<dependency.flexmark.version>0.50.40</dependency.flexmark.version>
+		<dependency.flexmark.version>0.50.46</dependency.flexmark.version>
 		<dependency.jackson.version>2.10.1</dependency.jackson.version>
 		<dependency.log4j2.version>2.12.1</dependency.log4j2.version>
 		<dependency.junit5.version>5.5.2</dependency.junit5.version>
@@ -34,7 +35,7 @@
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>datatype</artifactId>
+				<artifactId>binding</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -97,6 +98,12 @@
 				<artifactId>flexmark-ext-gfm-strikethrough</artifactId>
 				<version>${dependency.flexmark.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.vladsch.flexmark</groupId>
+				<artifactId>flexmark-ext-typographic</artifactId>
+				<version>${dependency.flexmark.version}</version>
+			</dependency>
+
 			<dependency>
 				<groupId>com.vladsch.flexmark</groupId>
 				<artifactId>flexmark-formatter</artifactId>
@@ -198,9 +205,9 @@
 	</build>
 	<modules>
 		<module>model</module>
+		<module>binding</module>
 		<module>codegen</module>
-		<module>datatype</module>
 		<module>markup</module>
-    <module>metaschema-maven-plugin</module>
-  </modules>
+		<module>metaschema-maven-plugin</module>
+	</modules>
 </project>

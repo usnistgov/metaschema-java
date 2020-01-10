@@ -12,7 +12,7 @@
 
 	<artifactId>codegen</artifactId>
 
-	<name>codegen</name>
+	<name>Metaschema Java Code Generator</name>
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>datatype</artifactId>
+			<artifactId>binding</artifactId>
 		</dependency>
 
 		<dependency>

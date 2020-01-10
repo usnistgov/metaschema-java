@@ -18,6 +18,9 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import gov.nist.secauto.metaschema.binding.annotations.XmlNs;
+import gov.nist.secauto.metaschema.binding.annotations.XmlNsForm;
+import gov.nist.secauto.metaschema.binding.annotations.XmlSchema;
 import gov.nist.secauto.metaschema.model.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.FieldDefinition;
 import gov.nist.secauto.metaschema.model.InfoElementDefinition;
@@ -105,7 +108,7 @@ public class JavaGenerator {
 			try (FileWriter fileWriter = new FileWriter(packageInfo)) {
 				PrintWriter writer = new PrintWriter(fileWriter);
 
-				writer.format("@gov.nist.secauto.metaschema.datatype.annotations.XmlSchema(namespace = \"%1$s\", xmlns = {@gov.nist.secauto.metaschema.datatype.annotations.XmlNs(prefix = \"\", namespace = \"%1$s\")}, xmlElementFormDefault = gov.nist.secauto.metaschema.datatype.annotations.XmlNsForm.QUALIFIED)%n", namespaceString);
+				writer.format("@%1$s(namespace = \"%2$s\", xmlns = {@%3$s(prefix = \"\", namespace = \"%2$s\")}, xmlElementFormDefault = %4$s.QUALIFIED)%n", XmlSchema.class.getName(), namespaceString, XmlNs.class.getName(), XmlNsForm.class.getName());
 				writer.format("package %s;%n", packageName);
 			}
 

@@ -3,9 +3,9 @@ package gov.nist.secauto.metaschema.codegen;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import gov.nist.secauto.metaschema.binding.annotations.Collapsible;
 import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
-import gov.nist.secauto.metaschema.datatype.annotations.Collapsible;
 import gov.nist.secauto.metaschema.model.FieldDefinition;
 
 public class FieldClassGenerator extends AbstractClassGenerator<FieldDefinition> {

@@ -5,9 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -26,9 +28,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.platform.commons.util.ReflectionUtils;
 
+import gov.nist.secauto.metaschema.binding.BindingContext;
+import gov.nist.secauto.metaschema.binding.parser.BindingException;
 import gov.nist.secauto.metaschema.codegen.JavaGenerator;
-import gov.nist.secauto.metaschema.datatype.binding.BindingContext;
-import gov.nist.secauto.metaschema.datatype.parser.BindingException;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaFactory;
@@ -64,6 +66,7 @@ public class BasicMetaschema {
 		Class<?> retval = null;
 		if (!compiler.compileGeneratedClasses(classesToCompile, diagnostics)) {
 			logger.error(diagnostics.getDiagnostics().toString());
+			throw new IllegalStateException("failed to compile classes");
 		} else {
 			retval = compiler.getClassLoader().loadClass(rootClassName);
 		}
@@ -92,9 +95,14 @@ public class BasicMetaschema {
 		return value;
 	}
 
-	private static String writeXml(Object rootObject) throws IOException {
+	private static void writeXml(Writer writer, Object rootObject) throws IOException, BindingException {
+		BindingContext context = BindingContext.newInstance();
+		context.writeXml(writer, rootObject);
+	}
+
+	private static String writeXml(Object rootObject) throws IOException, BindingException {
 		StringWriter writer = new StringWriter();
-//		JacksonUtil.writeXml(writer, rootObject);
+		writeXml(writer, rootObject);
 		return writer.toString();
 	}
 
@@ -137,8 +145,8 @@ public class BasicMetaschema {
 				if (assertions != null) {
 					assertAll("Deserialize XML", () -> assertions.accept(root));
 				}
-//				xml = writeXml(root);
-//				logger.info("Write XML: Object: {}", xml);
+				xml = writeXml(root);
+				logger.info("Write XML: Object: {}", xml);
 			}
 
 //			Object root = readXml(new StringReader(xml), rootClass);
@@ -271,6 +279,13 @@ public class BasicMetaschema {
 			Object root = readXml(new FileReader(xmlExample), rootClass);
 			logger.debug("Read XML: Object: {}", root.toString());
 			logger.info("done");
+
+//			String xml = writeXml(root);
+//			logger.info("Write XML: Object: {}", xml);
+			File out = new File("target/oscal-catalog.xml");
+			writeXml(new FileWriter(out), root);
+			logger.info("Write XML: Saved as: {}", out.getPath());
 		}
+
 	}
 }

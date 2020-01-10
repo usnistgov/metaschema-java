@@ -3,10 +3,10 @@ package gov.nist.secauto.metaschema.codegen;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import gov.nist.secauto.metaschema.binding.annotations.FieldValue;
 import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.datatype.annotations.FieldValue;
 import gov.nist.secauto.metaschema.markup.MarkupString;
 
 /**

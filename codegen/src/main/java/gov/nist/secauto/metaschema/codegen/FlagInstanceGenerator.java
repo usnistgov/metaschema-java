@@ -3,11 +3,11 @@ package gov.nist.secauto.metaschema.codegen;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import gov.nist.secauto.metaschema.binding.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.annotations.JsonKey;
 import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.datatype.annotations.Flag;
-import gov.nist.secauto.metaschema.datatype.annotations.JsonKey;
 import gov.nist.secauto.metaschema.markup.MarkupString;
 import gov.nist.secauto.metaschema.model.FlagInstance;
 import gov.nist.secauto.metaschema.model.ManagedObject;

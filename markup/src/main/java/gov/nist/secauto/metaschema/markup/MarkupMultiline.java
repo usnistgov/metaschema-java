@@ -1,6 +1,6 @@
 package gov.nist.secauto.metaschema.markup;
 
-import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.Document;
 
 public class MarkupMultiline extends MarkupString {
 
@@ -12,7 +12,7 @@ public class MarkupMultiline extends MarkupString {
 		return new MarkupMultiline(FlexmarkFactory.instance().fromMarkdown(html));
 	}
 
-	public MarkupMultiline(Node astNode) {
+	public MarkupMultiline(Document astNode) {
 		super(astNode);
 	}
 

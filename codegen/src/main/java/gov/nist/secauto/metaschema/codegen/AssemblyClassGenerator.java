@@ -5,13 +5,13 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import gov.nist.secauto.metaschema.binding.annotations.RootWrapper;
 import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
 import gov.nist.secauto.metaschema.codegen.item.AssemblyInstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.item.DataTypeInstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.item.FieldInstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.item.InstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
-import gov.nist.secauto.metaschema.datatype.annotations.RootWrapper;
 import gov.nist.secauto.metaschema.model.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.AssemblyInstance;
 import gov.nist.secauto.metaschema.model.ChoiceInstance;

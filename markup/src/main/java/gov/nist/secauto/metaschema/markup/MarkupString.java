@@ -2,24 +2,24 @@ package gov.nist.secauto.metaschema.markup;
 
 import com.vladsch.flexmark.formatter.Formatter;
 import com.vladsch.flexmark.html.HtmlRenderer;
-import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.Document;
 
 import gov.nist.secauto.metaschema.markup.flexmark.AstCollectingVisitor;
 
 public class MarkupString {
-	private final Node node;
+	private final Document document;
 
 //
 //	public MarkupString() {
 //		this(null);
 //	}
 	
-	public MarkupString(Node node) {
-		this.node = node;
+	public MarkupString(Document document) {
+		this.document = document;
 	}
 
-	public Node getNode() {
-		return node;
+	public Document getDocument() {
+		return document;
 	}
 
 	public String toHtml() {
@@ -27,7 +27,7 @@ public class MarkupString {
 	}
 
 	protected String toHTML(HtmlRenderer renderer) {
-		return renderer.render(getNode());
+		return renderer.render(getDocument());
 	}
 
 	public String toMarkdown() {
@@ -35,13 +35,13 @@ public class MarkupString {
 	}
 
 	protected String toMarkdown(Formatter formatter) {
-		return formatter.render(getNode());
+		return formatter.render(getDocument());
 	}
 
 	@Override
 	public String toString() {
 		AstCollectingVisitor visitor = new AstCollectingVisitor();
-		visitor.collect(getNode());
+		visitor.collect(getDocument());
 		return visitor.getAst();
 	}
 }

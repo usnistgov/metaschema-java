@@ -1,11 +1,11 @@
 package gov.nist.secauto.metaschema.codegen;
 
+import gov.nist.secauto.metaschema.binding.annotations.Assembly;
+import gov.nist.secauto.metaschema.binding.annotations.Field;
+import gov.nist.secauto.metaschema.binding.annotations.GroupAs;
 import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
 import gov.nist.secauto.metaschema.codegen.item.InstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.datatype.annotations.Assembly;
-import gov.nist.secauto.metaschema.datatype.annotations.Field;
-import gov.nist.secauto.metaschema.datatype.annotations.GroupAs;
 import gov.nist.secauto.metaschema.markup.MarkupString;
 import gov.nist.secauto.metaschema.model.AssemblyInstance;
 import gov.nist.secauto.metaschema.model.FieldInstance;
@@ -125,11 +125,11 @@ public abstract class AbstractCardinalityInstanceGenerator<JAVA_TYPE extends Jav
 			}
 	
 			if (!JsonGroupAsBehavior.SINGLETON_OR_LIST.equals(jsonGroupAsBehavior)) {
-				groupAs.append(", inJson = gov.nist.secauto.metaschema.datatype.annotations.JsonGroupAsBehavior.");
+				groupAs.append(", inJson = "+gov.nist.secauto.metaschema.binding.annotations.JsonGroupAsBehavior.class.getName()+".");
 				groupAs.append(jsonGroupAsBehavior.toString());
 			}
 			if (!XmlGroupAsBehavior.UNGROUPED.equals(xmlGroupAsBehavior)) {
-				groupAs.append(", inXml = gov.nist.secauto.metaschema.datatype.annotations.XmlGroupAsBehavior.");
+				groupAs.append(", inXml = "+gov.nist.secauto.metaschema.binding.annotations.XmlGroupAsBehavior.class.getName()+".");
 				groupAs.append(xmlGroupAsBehavior.toString());
 			}
 			builder.annotation(GroupAs.class, groupAs.toString());

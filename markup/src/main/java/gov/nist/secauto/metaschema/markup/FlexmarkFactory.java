@@ -1,6 +1,9 @@
 package gov.nist.secauto.metaschema.markup;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
@@ -9,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import com.vladsch.flexmark.ext.escaped.character.EscapedCharacterExtension;
 import com.vladsch.flexmark.ext.gfm.strikethrough.SubscriptExtension;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
+import com.vladsch.flexmark.ext.typographic.TypographicExtension;
 import com.vladsch.flexmark.formatter.Formatter;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
@@ -25,7 +29,30 @@ public class FlexmarkFactory {
 	private static final Logger logger = LogManager.getLogger(FlexmarkFactory.class);
 	private static final FlexmarkFactory instance = new FlexmarkFactory();
 	
-	public static FlexmarkFactory instance() {
+	static Map<String, String> specialCharsMap = new HashMap<>();
+    static {
+//        specialCharsMap.put("“", "\"");
+//        specialCharsMap.put("”", "\"");
+        specialCharsMap.put("&ldquo;", "\"");
+        specialCharsMap.put("&rdquo;", "\"");
+//        specialCharsMap.put("‘", "'");
+//        specialCharsMap.put("’", "'");
+        specialCharsMap.put("&lsquo;", "'");
+        specialCharsMap.put("&rsquo;", "'");
+        specialCharsMap.put("&apos;", "'");
+//        specialCharsMap.put("«", "<<");
+        specialCharsMap.put("&laquo;", "<<");
+//        specialCharsMap.put("»", ">>");
+        specialCharsMap.put("&raquo;", ">>");
+//        specialCharsMap.put("…", "...");
+//        specialCharsMap.put("&hellip;", "...");
+//        specialCharsMap.put("–", "--");
+        specialCharsMap.put("&endash;", "--");
+//        specialCharsMap.put("—", "---");
+        specialCharsMap.put("&emdash;", "---");
+    }
+
+    public static FlexmarkFactory instance() {
 		return instance;
 	}
 
@@ -71,7 +98,8 @@ public class FlexmarkFactory {
 				// to ensure that escaped characters are not lost
 				EscapedCharacterExtension.create(),
 				SuperscriptExtension.create(),
-				SubscriptExtension.create()
+				SubscriptExtension.create(),
+				TypographicExtension.create()
 			};
 		builder.extensions(Arrays.asList(extensions));
 
@@ -81,6 +109,8 @@ public class FlexmarkFactory {
 		builder.set(TablesExtension.APPEND_MISSING_COLUMNS, true);
 		builder.set(TablesExtension.DISCARD_EXTRA_COLUMNS, true);
 		builder.set(TablesExtension.HEADER_SEPARATOR_COLUMN_MATCH, true);
+		builder.set(TypographicExtension.SINGLE_QUOTE_UNMATCHED, "'");
+//		builder.set(FlexmarkHtmlConverter.TYPOGRAPHIC_REPLACEMENT_MAP, Collections.emptyMap());
 	}
 
 	public Parser getMarkdownParser() {

@@ -13,10 +13,10 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import gov.nist.secauto.metaschema.binding.annotations.MetaschemaModel;
 import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
 import gov.nist.secauto.metaschema.codegen.builder.MethodBuilder;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.datatype.annotations.MetaschemaModel;
 import gov.nist.secauto.metaschema.model.FlagInstance;
 import gov.nist.secauto.metaschema.model.ManagedObject;
 
@@ -121,6 +121,7 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> i
 		}
 
 		MethodBuilder toStringMethod = builder.newMethodBuilder("toString").returnType(String.class);
+		toStringMethod.annotation(Override.class);
 		toStringMethod.getBodyWriter().println("return new org.apache.commons.lang3.builder.ReflectionToStringBuilder(this, org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE).toString();");
 	}
 }
