@@ -1,5 +1,7 @@
 package gov.nist.secauto.metaschema.binding;
 
+import java.io.IOException;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
@@ -14,6 +16,8 @@ import org.codehaus.stax2.evt.XMLEventFactory2;
 import gov.nist.secauto.metaschema.binding.parser.BindingException;
 import gov.nist.secauto.metaschema.binding.parser.xml.XmlEventUtil;
 import gov.nist.secauto.metaschema.binding.parser.xml.XmlParsingContext;
+import gov.nist.secauto.metaschema.binding.writer.json.FlagPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.writer.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.writer.xml.XmlWritingContext;
 
 public abstract class SimpleJavaTypeAdapter<TYPE> implements JavaTypeAdapter<TYPE> {
@@ -26,6 +30,12 @@ public abstract class SimpleJavaTypeAdapter<TYPE> implements JavaTypeAdapter<TYP
 //	public boolean isParsingEndElement() {
 //		return true;
 //	}
+
+	@Override
+	public boolean canHandleQName(QName nextQName) {
+		// This adapter is always consuming a simple string value.
+		return false;
+	}
 
 	@Override
 	public TYPE parse(XmlParsingContext parsingContext) throws BindingException {
@@ -51,7 +61,7 @@ public abstract class SimpleJavaTypeAdapter<TYPE> implements JavaTypeAdapter<TYP
 	}
 
 	@Override
-	public void write(Object value, QName valueQName, StartElement parent, XmlWritingContext writingContext) throws BindingException {
+	public void writeXmlElement(Object value, QName valueQName, StartElement parent, XmlWritingContext writingContext) throws BindingException {
 		XMLEventFactory2 eventFactory = writingContext.getXMLEventFactory();
 		XMLEventWriter writer = writingContext.getEventWriter();
 		try {
@@ -78,8 +88,13 @@ public abstract class SimpleJavaTypeAdapter<TYPE> implements JavaTypeAdapter<TYP
 	}
 
 	@Override
-	public boolean canHandleQName(QName nextQName) {
-		// This adapter is always consuming a simple string value.
-		return false;
+	public void writeJsonFieldValue(Object value, FlagPropertyBindingFilter filter, JsonWritingContext writingContext)
+			throws BindingException {
+		try {
+			writingContext.getEventWriter().writeString(value.toString());
+		} catch (IOException ex) {
+			throw new BindingException(ex);
+		}
+		
 	}
 }

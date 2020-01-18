@@ -6,6 +6,8 @@ import javax.xml.stream.events.XMLEvent;
 
 import gov.nist.secauto.metaschema.binding.parser.BindingException;
 import gov.nist.secauto.metaschema.binding.parser.xml.XmlParsingContext;
+import gov.nist.secauto.metaschema.binding.writer.json.FlagPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.writer.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.writer.xml.XmlWritingContext;
 
 public interface JavaTypeAdapter<TYPE> {
@@ -37,5 +39,7 @@ public interface JavaTypeAdapter<TYPE> {
 	 */
 	TYPE parse(XmlParsingContext parsingContext) throws BindingException;
 
-	void write(Object value, QName valueQName, StartElement parent, XmlWritingContext writingContext) throws BindingException;
+	void writeXmlElement(Object value, QName valueQName, StartElement parent, XmlWritingContext writingContext) throws BindingException;
+
+	void writeJsonFieldValue(Object value, FlagPropertyBindingFilter filter, JsonWritingContext writingContext) throws BindingException;
 }

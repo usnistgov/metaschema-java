@@ -6,6 +6,7 @@ public abstract class AbstractPropertyBinding implements PropertyBinding {
 	public AbstractPropertyBinding(PropertyInfo propertyInfo) {
 		this.propertyInfo = propertyInfo;
 	}
+
 	@Override
 	public PropertyInfo getPropertyInfo() {
 		return propertyInfo;

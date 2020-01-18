@@ -16,7 +16,7 @@ public class XmlProblemHandler implements ProblemHandler {
 		ignoredQNames.add(XSI_SCHEMA_LOCATION);
 	}
 
-	public boolean handleUnknownAttribute(QName attributeName, XmlParsingContext parsingContext) {
+	public boolean handleUnknownAttribute(QName attributeName, @SuppressWarnings("unused") XmlParsingContext parsingContext) {
 		if (ignoredQNames.contains(attributeName)) {
 			return true;
 		}

@@ -26,7 +26,7 @@ public class FieldXmlParsePlan<CLASS> extends AbstractXmlParsePlan<CLASS> {
 		this(classBinding.getClazz(), newXmlAttributeParsers(classBinding, bindingContext), classBinding.getFieldValuePropertyBinding().newXmlPropertyParser(bindingContext));
 	}
 
-	public FieldXmlParsePlan(Class<CLASS> clazz, Map<QName, XmlAttributePropertyParser> attributeParsers, FieldValueXmlPropertyParser fieldValueParser) throws BindingException {
+	public FieldXmlParsePlan(Class<CLASS> clazz, Map<QName, XmlAttributePropertyParser> attributeParsers, FieldValueXmlPropertyParser fieldValueParser) {
 		super(clazz, attributeParsers);
 		Objects.requireNonNull(fieldValueParser, "fieldValueParser");
 		this.fieldValueParser = fieldValueParser;

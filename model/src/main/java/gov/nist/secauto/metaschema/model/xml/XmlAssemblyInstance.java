@@ -2,12 +2,12 @@ package gov.nist.secauto.metaschema.model.xml;
 
 import java.math.BigInteger;
 
-import gov.nist.csrc.ns.oscal.metaschema.x10.AssemblyDocument;
+import gov.nist.itl.metaschema.model.xml.AssemblyDocument;
 import gov.nist.secauto.metaschema.markup.MarkupString;
-import gov.nist.secauto.metaschema.model.AbstractAssemblyInstance;
-import gov.nist.secauto.metaschema.model.InfoElementDefinition;
-import gov.nist.secauto.metaschema.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
+import gov.nist.secauto.metaschema.model.info.instances.AbstractAssemblyInstance;
+import gov.nist.secauto.metaschema.model.info.instances.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.info.instances.XmlGroupAsBehavior;
 
 public class XmlAssemblyInstance extends AbstractAssemblyInstance {
 //	private static final Logger logger = LogManager.getLogger(XmlAssemblyInstance.class);

@@ -12,7 +12,6 @@ import javax.xml.stream.events.StartElement;
 import org.codehaus.stax2.evt.XMLEventFactory2;
 
 import gov.nist.secauto.metaschema.binding.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.annotations.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.parser.BindingException;
@@ -23,7 +22,7 @@ import gov.nist.secauto.metaschema.binding.property.PropertyInfo;
 import gov.nist.secauto.metaschema.markup.MarkupMultiline;
 
 public class AssemblyXmlWriter<CLASS> extends AbstractXmlWriter<CLASS, AssemblyClassBinding<CLASS>> {
-	public AssemblyXmlWriter(AssemblyClassBinding<CLASS> classBinding, BindingContext bindingContext) {
+	public AssemblyXmlWriter(AssemblyClassBinding<CLASS> classBinding) {
 		super(classBinding);
 	}
 
@@ -51,12 +50,7 @@ public class AssemblyXmlWriter<CLASS> extends AbstractXmlWriter<CLASS, AssemblyC
 				itemWrapperQName = new QName(propertyBinding.getNamespace(), propertyBinding.getLocalName());
 			}
 
-			Object value;
-			try {
-				value = propertyInfo.getPropertyAccessor().getValue(obj);
-			} catch (IllegalArgumentException | IllegalAccessException ex) {
-				throw new BindingException(ex);
-			}
+			Object value = propertyInfo.getValue(obj);
 
 			if (value != null) {
 				JavaTypeAdapter<?> typeAdapter = writingContext.getBindingContext()
@@ -94,7 +88,7 @@ public class AssemblyXmlWriter<CLASS> extends AbstractXmlWriter<CLASS, AssemblyC
 					}
 	
 					for (Object child : iterable) {
-						typeAdapter.write(child, itemWrapperQName, propertyParent, writingContext);
+						typeAdapter.writeXmlElement(child, itemWrapperQName, propertyParent, writingContext);
 					}
 	
 					if (groupWrapperQName != null) {

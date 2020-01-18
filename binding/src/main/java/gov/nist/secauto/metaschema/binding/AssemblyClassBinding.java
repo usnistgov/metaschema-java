@@ -7,16 +7,16 @@ import javax.xml.namespace.QName;
 import gov.nist.secauto.metaschema.binding.annotations.RootWrapper;
 import gov.nist.secauto.metaschema.binding.parser.BindingException;
 import gov.nist.secauto.metaschema.binding.parser.xml.AssemblyXmlParsePlan;
-import gov.nist.secauto.metaschema.binding.parser.xml.XmlParsePlan;
 import gov.nist.secauto.metaschema.binding.property.ModelItemPropertyBinding;
 import gov.nist.secauto.metaschema.binding.property.ModelUtil;
+import gov.nist.secauto.metaschema.binding.writer.json.AssemblyJsonWriter;
 import gov.nist.secauto.metaschema.binding.writer.xml.AssemblyXmlWriter;
-import gov.nist.secauto.metaschema.binding.writer.xml.XmlWriter;
 
-public class AssemblyClassBinding<CLASS> extends AbstractClassBinding<CLASS> {
+public class AssemblyClassBinding<CLASS> extends AbstractClassBinding<CLASS, AssemblyXmlParsePlan<CLASS>, AssemblyXmlWriter<CLASS>> {
 	private final List<ModelItemPropertyBinding> modelItemPropertyBindings;
 	private final RootWrapper rootWrapper;
 	private QName rootName;
+	private AssemblyJsonWriter<CLASS> assemblyJsonWriter;
 
 	public AssemblyClassBinding(Class<CLASS> clazz) throws BindingException {
 		super(clazz);
@@ -32,7 +32,7 @@ public class AssemblyClassBinding<CLASS> extends AbstractClassBinding<CLASS> {
 		return rootWrapper != null;
 	}
 
-	public QName getRootQName() throws BindingException {
+	public QName getRootQName() {
 		synchronized (this) {
 			if (rootWrapper!= null && rootName == null) {
 				String namespace = ModelUtil.resolveNamespace(rootWrapper.namespace(), getClazz());
@@ -44,13 +44,27 @@ public class AssemblyClassBinding<CLASS> extends AbstractClassBinding<CLASS> {
 	}
 
 	@Override
-	public XmlParsePlan<CLASS> newXmlParsePlan(BindingContext bindingContext) throws BindingException {
+	public AssemblyJsonWriter<CLASS> getAssemblyJsonWriter(BindingContext bindingContext) throws BindingException {
+		synchronized (this) {
+			if (assemblyJsonWriter == null) {
+				assemblyJsonWriter = newAssemblyJsonWriter();
+			}
+			return assemblyJsonWriter;
+		}
+	}
+
+	@Override
+	public AssemblyXmlParsePlan<CLASS> newXmlParsePlan(BindingContext bindingContext) throws BindingException {
 		return new AssemblyXmlParsePlan<CLASS>(this, bindingContext);
 	}
 
 	@Override
-	public XmlWriter newXmlWriter(BindingContext bindingContext) {
-		return new AssemblyXmlWriter<CLASS>(this, bindingContext);
+	public AssemblyXmlWriter<CLASS> newXmlWriter() {
+		return new AssemblyXmlWriter<CLASS>(this);
+	}
+
+	public AssemblyJsonWriter<CLASS> newAssemblyJsonWriter() {
+		return new AssemblyJsonWriter<CLASS>(this);
 	}
 
 }

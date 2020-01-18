@@ -3,7 +3,7 @@ package gov.nist.secauto.metaschema.codegen.type;
 import java.util.Set;
 import java.util.function.Function;
 
-import gov.nist.secauto.metaschema.model.ManagedObject;
+import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
 
 public interface JavaType {
 	/**

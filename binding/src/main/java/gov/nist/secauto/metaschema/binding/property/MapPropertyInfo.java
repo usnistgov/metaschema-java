@@ -46,7 +46,7 @@ public class MapPropertyInfo extends AbstractCollectionPropertyInfo implements C
 		return new MapPropertyCollector(this);
 	}
 
-	public PropertyAccessor getJsonKey(Object item) {
+	public PropertyAccessor getJsonKey() {
 		Class<?> itemClass = (Class<?>)getItemType();
 		return ClassIntrospector.getJsonKey(itemClass);
 	}
@@ -61,17 +61,12 @@ public class MapPropertyInfo extends AbstractCollectionPropertyInfo implements C
 
 		@Override
 		public void add(Object item) throws BindingException {
-			PropertyAccessor keyAccessor = getPropertyInfo().getJsonKey(item);
+			PropertyAccessor keyAccessor = getPropertyInfo().getJsonKey();
 			if (keyAccessor == null) {
 				throw new BindingException("No JSON key found");
 			}
 			
-			String key;
-			try {
-				key = keyAccessor.getValue(item).toString();
-			} catch (IllegalArgumentException | IllegalAccessException ex) {
-				throw new BindingException(ex);
-			}
+			String key = keyAccessor.getValue(item).toString();
 			map.put(key, item);
 		}
 

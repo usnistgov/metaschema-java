@@ -2,6 +2,8 @@ package gov.nist.secauto.metaschema.binding.property;
 
 import java.lang.reflect.Field;
 
+import gov.nist.secauto.metaschema.binding.parser.BindingException;
+
 public class JavaFieldPropertyAccessor implements PropertyAccessor {
 	private final Field field;
 
@@ -20,21 +22,33 @@ public class JavaFieldPropertyAccessor implements PropertyAccessor {
 	}
 
 	@Override
-	public void setValue(Object obj, Object value) throws IllegalArgumentException, IllegalAccessException {
+	public void setValue(Object obj, Object value) throws BindingException {
 		boolean accessable = field.canAccess(obj);
 		field.setAccessible(true);
-		field.set(obj, value);
-		field.setAccessible(accessable);
+		try {
+			field.set(obj, value);
+		} catch (IllegalArgumentException | IllegalAccessException ex) {
+			throw new BindingException(String.format("Unable to set the value of field '%s' in class '%s'.", field.getName(), field.getDeclaringClass().getName()));
+		} finally {
+			field.setAccessible(accessable);
+		}
 	}
 
 	@Override
-	public <TYPE> TYPE getValue(Object obj) throws IllegalArgumentException, IllegalAccessException {
+	public Object getValue(Object obj) throws BindingException {
 		boolean accessable = field.canAccess(obj);
 		field.setAccessible(true);
-		@SuppressWarnings("unchecked")
-		TYPE retval = (TYPE)field.get(obj);
-		field.setAccessible(accessable);
+		Object retval;
+		try {
+			Object result = field.get(obj);
+			retval = result;
+		} catch (IllegalArgumentException | IllegalAccessException ex) {
+			throw new BindingException(String.format("Unable to get the value of field '%s' in class '%s'.", field.getName(), field.getDeclaringClass().getName()));
+		} finally {
+			field.setAccessible(accessable);
+		}
 		return retval;
+		
 	}
 
 	@Override

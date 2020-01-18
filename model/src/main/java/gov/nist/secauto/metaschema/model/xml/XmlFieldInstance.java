@@ -2,14 +2,14 @@ package gov.nist.secauto.metaschema.model.xml;
 
 import java.math.BigInteger;
 
-import gov.nist.csrc.ns.oscal.metaschema.x10.FieldDocument;
-import gov.nist.csrc.ns.oscal.metaschema.x10.FieldDocument.Field.InXml;
+import gov.nist.itl.metaschema.model.xml.FieldDocument;
+import gov.nist.itl.metaschema.model.xml.FieldDocument.Field.InXml;
 import gov.nist.secauto.metaschema.markup.MarkupString;
-import gov.nist.secauto.metaschema.model.AbstractFieldInstance;
-import gov.nist.secauto.metaschema.model.DataType;
-import gov.nist.secauto.metaschema.model.InfoElementDefinition;
-import gov.nist.secauto.metaschema.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.info.definitions.DataType;
+import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
+import gov.nist.secauto.metaschema.model.info.instances.AbstractFieldInstance;
+import gov.nist.secauto.metaschema.model.info.instances.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.info.instances.XmlGroupAsBehavior;
 
 public class XmlFieldInstance extends AbstractFieldInstance {
 //	private static final Logger logger = LogManager.getLogger(XmlFieldInstance.class);

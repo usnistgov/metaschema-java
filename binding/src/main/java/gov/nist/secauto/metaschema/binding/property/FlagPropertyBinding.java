@@ -10,11 +10,15 @@ import gov.nist.secauto.metaschema.binding.parser.xml.XmlAttributePropertyParser
 
 public class FlagPropertyBinding extends AbstractPropertyBinding implements NamedPropertyBinding {
 	private final Flag flagAnnotation;
+	private final boolean isJsonKey;
+	private final boolean isJsonValueKey;
 	private final QName name;
 
-	public FlagPropertyBinding(PropertyInfo propertyInfo, Flag flagAnnotation) {
+	public FlagPropertyBinding(PropertyInfo propertyInfo, Flag flagAnnotation, boolean isJsonKey, boolean isJsonValueKey) {
 		super(propertyInfo);
 		this.flagAnnotation = flagAnnotation;
+		this.isJsonKey = isJsonKey;
+		this.isJsonValueKey = isJsonValueKey;
 		// Currently assumes attribute unqualified
 		// TODO: Handle attribute namespace qualified from package info
 		this.name = new QName(getLocalName());
@@ -22,6 +26,14 @@ public class FlagPropertyBinding extends AbstractPropertyBinding implements Name
 
 	protected Flag getFlagAnnotation() {
 		return flagAnnotation;
+	}
+
+	public boolean isJsonKey() {
+		return isJsonKey;
+	}
+
+	public boolean isJsonValueKey() {
+		return isJsonValueKey;
 	}
 
 	@Override
@@ -35,11 +47,11 @@ public class FlagPropertyBinding extends AbstractPropertyBinding implements Name
 
 	@Override
 	public String getLocalName() {
-		return ModelUtil.resolveLocalName(getFlagAnnotation().name(), getPropertyInfo().getPropertyAccessor().getSimpleName());
+		return ModelUtil.resolveLocalName(getFlagAnnotation().name(), getPropertyInfo().getSimpleName());
 	}
 
 	@Override
 	public String getNamespace() throws BindingException {
-		return ModelUtil.resolveNamespace(getFlagAnnotation().namespace(), getPropertyInfo().getPropertyAccessor().getContainingClass());
+		return ModelUtil.resolveNamespace(getFlagAnnotation().namespace(), getPropertyInfo().getContainingClass());
 	}
 }

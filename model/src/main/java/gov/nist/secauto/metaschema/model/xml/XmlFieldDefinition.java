@@ -4,22 +4,49 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import gov.nist.csrc.ns.oscal.metaschema.x10.DefineFieldDocument;
-import gov.nist.csrc.ns.oscal.metaschema.x10.DefineFieldDocument.DefineField;
-import gov.nist.csrc.ns.oscal.metaschema.x10.FlagDocument;
-import gov.nist.csrc.ns.oscal.metaschema.x10.JsonValueKeyDocument.JsonValueKey;
+import gov.nist.itl.metaschema.model.xml.DefineFieldDocument;
+import gov.nist.itl.metaschema.model.xml.ExtensionType;
+import gov.nist.itl.metaschema.model.xml.FlagDocument;
+import gov.nist.itl.metaschema.model.xml.JsonValueKeyDocument.JsonValueKey;
+import gov.nist.itl.metaschema.model.xml.binding.DefineFieldBindingDocument;
 import gov.nist.secauto.metaschema.markup.MarkupString;
-import gov.nist.secauto.metaschema.model.AbstractFieldDefinition;
-import gov.nist.secauto.metaschema.model.DataType;
-import gov.nist.secauto.metaschema.model.FieldDefinition;
-import gov.nist.secauto.metaschema.model.FlagInstance;
+import gov.nist.secauto.metaschema.model.configuration.FieldBindingConfiguration;
+import gov.nist.secauto.metaschema.model.info.definitions.AbstractFieldDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.DataType;
+import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
+import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
 
 public class XmlFieldDefinition extends AbstractFieldDefinition<XmlMetaschema> implements FieldDefinition {
+
+	protected static FieldBindingConfiguration getBindingConfiguration(DefineFieldDocument.DefineField xField) {
+		FieldBindingConfiguration retval = null;
+		if (xField.isSetExtensions()) {
+			DefineFieldDocument.DefineField.Extensions extensions = xField.getExtensions();
+			for (ExtensionType extensionInstance : extensions.getDefineFieldExtensionList()) {
+				System.out.println("Extension Class: "+extensionInstance.getClass().getName());
+				if (extensionInstance instanceof DefineFieldBindingDocument.DefineFieldBinding) {
+					DefineFieldBindingDocument.DefineFieldBinding modelConfig = (DefineFieldBindingDocument.DefineFieldBinding)extensionInstance;
+					if (modelConfig.isSetJava()) {
+						DefineFieldBindingDocument.DefineFieldBinding.Java modelJava = modelConfig.getJava();
+
+						retval = new FieldBindingConfiguration(modelJava.getClassName(), modelJava.getBaseClassName(), modelJava.getInterfaceNameList());
+						break;
+					}
+				}
+			}
+		}
+
+		if (retval == null) {
+			retval = FieldBindingConfiguration.NULL_CONFIG;
+		}
+		return retval;
+	}
+
 	private final DefineFieldDocument.DefineField xField;
 	private final Map<String, XmlFlagInstance> flagInstances;
 
-	public XmlFieldDefinition(DefineField xField, XmlMetaschema metaschema) {
-		super(metaschema);
+	public XmlFieldDefinition(DefineFieldDocument.DefineField xField, XmlMetaschema metaschema) {
+		super(getBindingConfiguration(xField), metaschema);
 		this.xField = xField;
 
 		int numFlags = xField.sizeOfFlagArray();
@@ -141,7 +168,7 @@ public class XmlFieldDefinition extends AbstractFieldDefinition<XmlMetaschema> i
 		// default value
 		boolean retval = true;
 		if (getXmlField().isSetCollapsible()) {
-			retval = gov.nist.csrc.ns.oscal.metaschema.x10.Boolean.YES.equals(getXmlField().getCollapsible());
+			retval = gov.nist.itl.metaschema.model.xml.Boolean.YES.equals(getXmlField().getCollapsible());
 		}
 		return retval;
 	}

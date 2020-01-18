@@ -19,31 +19,31 @@ class PropertyInfoTest {
 //	private PropertyAccessor propertyAccessor = context.mock(PropertyAccessor.class);
 
 	@Test
-	void testSington() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, BindingException {
+	void testSington() throws NoSuchFieldException, SecurityException, BindingException {
 		Field field = TestClass.class.getDeclaredField("singleton");
 		
 		PropertyInfo propertyInfo = PropertyInfo.newPropertyInfo(field);
 		Assertions.assertEquals(String.class, propertyInfo.getRawType());
 
 		TestClass testClass = new TestClass();
-		propertyInfo.getPropertyAccessor().setValue(testClass, "test");
+		propertyInfo.setValue(testClass, "test");
 		Assertions.assertEquals("test", testClass.getSingleton());
 	}
 
 	@Test
-	void testList() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, BindingException {
+	void testList() throws NoSuchFieldException, SecurityException, BindingException {
 		Field field = TestClass.class.getDeclaredField("list");
 		PropertyInfo propertyInfo = PropertyInfo.newPropertyInfo(field);
 		Assertions.assertEquals(List.class, propertyInfo.getRawType());
 		Assertions.assertEquals(String.class, propertyInfo.getItemType());
 
 		TestClass testClass = new TestClass();
-		propertyInfo.getPropertyAccessor().setValue(testClass, Collections.singletonList("test"));
+		propertyInfo.setValue(testClass, Collections.singletonList("test"));
 		Assertions.assertEquals(Collections.singletonList("test"), testClass.getList());
 	}
 
 	@Test
-	void testMap() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, BindingException {
+	void testMap() throws NoSuchFieldException, SecurityException, BindingException {
 		Field field = TestClass.class.getDeclaredField("map");
 		MapPropertyInfo propertyInfo = (MapPropertyInfo)PropertyInfo.newPropertyInfo(field);
 		Assertions.assertEquals(Map.class, propertyInfo.getRawType());
@@ -52,7 +52,7 @@ class PropertyInfoTest {
 		Assertions.assertEquals(Integer.class, propertyInfo.getValueType());
 
 		TestClass testClass = new TestClass();
-		propertyInfo.getPropertyAccessor().setValue(testClass, Collections.singletonMap("key",1));
+		propertyInfo.setValue(testClass, Collections.singletonMap("key",1));
 		Assertions.assertEquals( Collections.singletonMap("key",1), testClass.getMap());
 	}
 

@@ -22,7 +22,9 @@
       <field ref="field5" max-occurs="unbounded">
         <group-as name="field5s" in-xml="UNGROUPED" in-json="SINGLETON_OR_ARRAY"/>
       </field>
-     
+      <field ref="field6" max-occurs="unbounded">
+        <group-as name="field6s" in-json="SINGLETON_OR_ARRAY"/>
+      </field>
     </model>
   </define-assembly>
   
@@ -59,6 +61,11 @@
     <formal-name>A Field</formal-name>
     <description>A field with no flags.</description>
     <json-value-key>text5</json-value-key>
+  </define-field>
+  
+  <define-field name="field6" collapsible="yes" as-type="boolean">
+    <formal-name>A Field</formal-name>
+    <description>A field with no flags.</description>
   </define-field>
   
 </METASCHEMA>

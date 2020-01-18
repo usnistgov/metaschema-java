@@ -4,7 +4,7 @@ import java.net.URI;
 
 import gov.nist.secauto.metaschema.codegen.AssemblyClassGenerator;
 import gov.nist.secauto.metaschema.markup.MarkupString;
-import gov.nist.secauto.metaschema.model.ModelInstance;
+import gov.nist.secauto.metaschema.model.info.instances.ModelInstance;
 
 public abstract class AbstractInstanceItemContext<INSTANCE extends ModelInstance> implements InstanceItemContext {
 	private final AssemblyClassGenerator containingClassGenerator;

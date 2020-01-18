@@ -5,12 +5,15 @@ import org.apache.logging.log4j.Logger;
 
 import gov.nist.secauto.metaschema.binding.annotations.Flag;
 import gov.nist.secauto.metaschema.binding.annotations.JsonKey;
+import gov.nist.secauto.metaschema.binding.annotations.JsonValueKey;
 import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
 import gov.nist.secauto.metaschema.markup.MarkupString;
-import gov.nist.secauto.metaschema.model.FlagInstance;
-import gov.nist.secauto.metaschema.model.ManagedObject;
+import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.JsonValueKeyEnum;
+import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
+import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
 
 public class FlagInstanceGenerator extends AbstractInstanceGenerator<AbstractClassGenerator<?>> {
 	private static final Logger logger = LogManager.getLogger(FlagInstanceGenerator.class);
@@ -22,7 +25,7 @@ public class FlagInstanceGenerator extends AbstractInstanceGenerator<AbstractCla
 		super(classContext);
 		this.instance = instance;
 
-		gov.nist.secauto.metaschema.model.DataType type = instance.getDatatype();
+		gov.nist.secauto.metaschema.model.info.definitions.DataType type = instance.getDatatype();
 		DataType e = DataType.lookupByDatatype(type);
 		if (e == null) {
 			logger.warn("Unsupported datatype '{}', using String", type);
@@ -54,6 +57,13 @@ public class FlagInstanceGenerator extends AbstractInstanceGenerator<AbstractCla
 		return instance.getDescription();
 	}
 
+	public boolean isJsonValueKeyFlag() {
+		FlagInstance instance = getInstance();
+		ManagedObject parent = instance.getContainingDefinition();
+		FieldDefinition parentField = (FieldDefinition)parent;
+		return parentField.hasJsonValueKey() && JsonValueKeyEnum.FLAG.equals(parentField.getJsonValueKeyType()) && getInstance().equals(parentField.getJsonValueKeyFlagInstance());
+	}
+
 	@Override
 	protected void buildField(FieldBuilder builder) {
 		StringBuilder arguments = new StringBuilder();
@@ -71,6 +81,13 @@ public class FlagInstanceGenerator extends AbstractInstanceGenerator<AbstractCla
 		if (parent.hasJsonKey() && instance.equals(parent.getJsonKeyFlagInstance())) {
 			builder.annotation(JsonKey.class);
 		}
+
+		if (parent instanceof FieldDefinition) {
+			if (isJsonValueKeyFlag()) {
+				builder.annotation(JsonValueKey.class);
+			}
+		}
+		
 	}
 
 }

@@ -3,6 +3,11 @@ package gov.nist.secauto.metaschema.model;
 import java.net.URI;
 import java.util.Map;
 
+import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.FlagDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
+
 public interface Metaschema {
 	URI getLocation();
 	String getShortName();
@@ -21,4 +26,5 @@ public interface Metaschema {
 	Map<String, FlagDefinition> getUsedFlagDefinitions();
 	Map<String, FieldDefinition> getUsedFieldDefinitions();
 	Map<String, AssemblyDefinition> getUsedAssemblyDefinitions();
+	String getPackageName();
 }

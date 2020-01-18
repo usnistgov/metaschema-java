@@ -3,16 +3,16 @@ package gov.nist.secauto.metaschema.binding.datatypes;
 import java.util.Objects;
 
 public abstract class AbstractDatatype<T> {
-	private T value;
+	private final T value;
 	
 	public AbstractDatatype(T value) {
 		Objects.requireNonNull(value, "value");
 		this.value = value;
 	}
-//
-//	public T getValue() {
-//		return value;
-//	}
+
+	public T getValue() {
+		return value;
+	}
 //
 //	public void setValue(T value) {
 //		this.value = value;

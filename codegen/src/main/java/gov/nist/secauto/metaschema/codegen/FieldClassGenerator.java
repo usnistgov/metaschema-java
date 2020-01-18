@@ -6,14 +6,17 @@ import org.apache.logging.log4j.Logger;
 import gov.nist.secauto.metaschema.binding.annotations.Collapsible;
 import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
-import gov.nist.secauto.metaschema.model.FieldDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
+import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
 
 public class FieldClassGenerator extends AbstractClassGenerator<FieldDefinition> {
 	private static final Logger logger = LogManager.getLogger(FieldClassGenerator.class);
 	private final FieldValueInstanceGenerator fieldInstance;
+	private boolean hasJsonValueKeyFlag = false;
 
-	public FieldClassGenerator(FieldDefinition definition) {
+	public FieldClassGenerator(FieldDefinition definition)  {
 		super(definition);
+
 		if (!DataType.EMPTY.equals(getValueDatatype())) {
 			this.fieldInstance = newFieldInstance(this);
 		} else {
@@ -27,8 +30,16 @@ public class FieldClassGenerator extends AbstractClassGenerator<FieldDefinition>
 		return context;
 	}
 
+	@Override
+	public FlagInstanceGenerator newFlagInstance(FlagInstance instance) {
+		if (instance.isJsonValueKeyFlag()) {
+			hasJsonValueKeyFlag = true;
+		}
+		return super.newFlagInstance(instance);
+	}
+
 	public DataType getValueDatatype() {
-		gov.nist.secauto.metaschema.model.DataType type = getDefinition().getDatatype();
+		gov.nist.secauto.metaschema.model.info.definitions.DataType type = getDefinition().getDatatype();
 		DataType e = DataType.lookupByDatatype(type);
 		if (e == null) {
 			logger.warn("Unsupported datatype '{}', using String", type);
@@ -45,7 +56,13 @@ public class FieldClassGenerator extends AbstractClassGenerator<FieldDefinition>
 	protected void buildClass(ClassBuilder builder) {
 		super.buildClass(builder);
 
-		builder.annotation(Collapsible.class);
+		if (getDefinition().isCollapsible()) {
+			if (getDefinition().hasJsonKey()) {
+				logger.warn("A field binding cannot implement a json-key and be collapsible. Ignoring the collapsible for class '{}'.", getJavaType().getQualifiedClassName());
+			} else {
+				builder.annotation(Collapsible.class);
+			}
+		}
 //		FieldValueInstanceGenerator fieldInsatnce = getFieldInstance();
 //		// no-arg constructor
 //		writer.println("\t@JsonCreator");
@@ -53,5 +70,9 @@ public class FieldClassGenerator extends AbstractClassGenerator<FieldDefinition>
 //		writer.printf("\t\tthis.%s = value;%n", fieldInsatnce.getVariableName());
 //		writer.println("\t}");
 //		writer.println();
+	}
+
+	public boolean hasJsonValueKeyFlag() {
+		return hasJsonValueKeyFlag;
 	}
 }

@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import gov.nist.secauto.metaschema.binding.annotations.JsonKey;
+import gov.nist.secauto.metaschema.binding.annotations.JsonFieldName;
+import gov.nist.secauto.metaschema.binding.annotations.JsonValueKey;
 import gov.nist.secauto.metaschema.binding.annotations.XmlSchema;
 import gov.nist.secauto.metaschema.binding.parser.BindingException;
 import gov.nist.secauto.metaschema.binding.property.AssemblyPropertyBinding;
@@ -26,7 +28,8 @@ public class ClassIntrospector {
 	 * @return the namespace, or {@code null} if no namespace is provided
 	 */
 	public static String getXmlSchemaNamespace(Class<?> clazz) {
-		XmlSchema xmlSchema = clazz.getPackage().getAnnotation(XmlSchema.class);
+		Package classPackage = clazz.getPackage();
+		XmlSchema xmlSchema = classPackage.getAnnotation(XmlSchema.class);
 		String retval = null;
 		if (xmlSchema != null) {
 			retval = xmlSchema.namespace();
@@ -48,7 +51,7 @@ public class ClassIntrospector {
 			gov.nist.secauto.metaschema.binding.annotations.Flag flagAnnotation = field.getAnnotation(gov.nist.secauto.metaschema.binding.annotations.Flag.class);
 			if (flagAnnotation != null) {
 				PropertyInfo info = PropertyInfo.newPropertyInfo(field);
-				FlagPropertyBinding binding = new FlagPropertyBinding(info, flagAnnotation);
+				FlagPropertyBinding binding = new FlagPropertyBinding(info, flagAnnotation, field.isAnnotationPresent(JsonKey.class), field.isAnnotationPresent(JsonValueKey.class));
 				retval.add(binding);
 			}
 		}
@@ -67,7 +70,8 @@ public class ClassIntrospector {
 
 			gov.nist.secauto.metaschema.binding.annotations.FieldValue fieldValueAnnotation = javaField.getAnnotation(gov.nist.secauto.metaschema.binding.annotations.FieldValue.class);
 			if (fieldValueAnnotation != null) {
-				retval = FieldValuePropertyBinding.fromJavaField(javaField, fieldValueAnnotation);
+				JsonFieldName jsonValue = javaField.getAnnotation(JsonFieldName.class);
+				retval = FieldValuePropertyBinding.fromJavaField(javaField, fieldValueAnnotation, jsonValue);
 				break;
 			}
 		}

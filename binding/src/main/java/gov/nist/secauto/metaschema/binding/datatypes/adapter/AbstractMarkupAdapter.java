@@ -26,7 +26,7 @@ public abstract class AbstractMarkupAdapter<TYPE extends MarkupString> implement
 	}
 
 	@Override
-	public void write(Object value, QName valueQName, StartElement parent, XmlWritingContext writingContext)
+	public void writeXmlElement(Object value, QName valueQName, StartElement parent, XmlWritingContext writingContext)
 			throws BindingException {
 		XMLEventFactory2 eventFactory = writingContext.getXMLEventFactory();
 		XMLEventWriter writer = writingContext.getEventWriter();
@@ -38,7 +38,7 @@ public abstract class AbstractMarkupAdapter<TYPE extends MarkupString> implement
 				parent = start;
 			}
 
-			writeInternal(value, parent, writingContext);
+			writeXmlElementInternal(value, parent, writingContext);
 
 			if (valueQName != null) {
 				EndElement end = eventFactory.createEndElement(valueQName, null);
@@ -49,6 +49,6 @@ public abstract class AbstractMarkupAdapter<TYPE extends MarkupString> implement
 		}
 	}
 
-	protected abstract void writeInternal(Object value, StartElement parent, XmlWritingContext writingContext)
+	protected abstract void writeXmlElementInternal(Object value, StartElement parent, XmlWritingContext writingContext)
 			throws BindingException;
 }

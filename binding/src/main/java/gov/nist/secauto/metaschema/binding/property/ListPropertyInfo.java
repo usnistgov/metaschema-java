@@ -17,7 +17,7 @@ public class ListPropertyInfo extends AbstractCollectionPropertyInfo implements 
 	public Class<?> getItemType() {
 		ParameterizedType actualType = getType();
 		// this is a List so there is only a single generic type
-		return (Class<?>)actualType.getActualTypeArguments()[0];
+		return (Class<?>) actualType.getActualTypeArguments()[0];
 	}
 
 	@Override
@@ -47,11 +47,7 @@ public class ListPropertyInfo extends AbstractCollectionPropertyInfo implements 
 
 		@Override
 		public void applyCollection(Object obj) throws BindingException {
-			try {
-				getPropertyInfo().getPropertyAccessor().setValue(obj, collection);
-			} catch (IllegalArgumentException | IllegalAccessException ex) {
-				throw new BindingException(ex);
-			}
+			getPropertyInfo().getPropertyAccessor().setValue(obj, collection);
 		}
 
 		@SuppressWarnings("unchecked")

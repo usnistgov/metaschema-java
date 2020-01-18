@@ -7,7 +7,17 @@ import gov.nist.secauto.metaschema.binding.annotations.GroupAs;
 import gov.nist.secauto.metaschema.binding.annotations.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.parser.BindingException;
 
-public interface PropertyInfo {
+public interface PropertyInfo extends PropertyAccessor {
+//
+//	public static FlagPropertyInfo newFlagPropertyInfo(java.lang.reflect.Field field) throws BindingException {
+//		if (!field.isAnnotationPresent(Flag.class)) {
+//			throw new BindingException(String.format("In class '%s' the field '%s' must have a %s annotation", field.getDeclaringClass().getName(), field.getName(), Flag.class.getName()));
+//		}
+//		PropertyAccessor propertyAccessor = new JavaFieldPropertyAccessor(field);
+//		Type type = field.getGenericType();
+//		Flag flag = field.getAnnotation(Flag.class);
+//		return new DefaultFlagPropertyInfo(type, propertyAccessor, flag, field.isAnnotationPresent(JsonKey.class));
+//	}
 
 	public static PropertyInfo newPropertyInfo(java.lang.reflect.Field field) throws BindingException {
 		PropertyAccessor propertyAccessor = new JavaFieldPropertyAccessor(field);
@@ -18,7 +28,7 @@ public interface PropertyInfo {
 			ParameterizedType parameterizedType = (ParameterizedType) type;
 			GroupAs groupAs = field.getAnnotation(GroupAs.class);
 			if (groupAs == null) {
-				throw new BindingException(String.format("In class '%s' the field '%s' must have a GroupAs annotation, since it is a collection type.", field.getDeclaringClass().getName(), field.getName()));
+				throw new BindingException(String.format("In class '%s' the field '%s' must have a %s annotation, since it is a collection type.", field.getDeclaringClass().getName(), field.getName(), GroupAs.class.getName()));
 			}
 
 			if (groupAs.maxOccurs() == -1 || groupAs.maxOccurs() > 1) {
@@ -48,12 +58,8 @@ public interface PropertyInfo {
 	 * @return
 	 */
 	Class<?> getItemType();
-	PropertyAccessor getPropertyAccessor();
 
-	/**
-	 * The simple property name of the field or method in the pattern "somePropertyName".
-	 * @return
-	 */
+	@Override
 	String getSimpleName();
 
 	PropertyCollector newPropertyCollector();

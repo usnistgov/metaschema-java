@@ -33,13 +33,15 @@ import gov.nist.secauto.metaschema.binding.parser.BindingException;
 import gov.nist.secauto.metaschema.codegen.JavaGenerator;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
-import gov.nist.secauto.metaschema.model.MetaschemaFactory;
+import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 
 public class BasicMetaschema {
 	private static final Logger logger = LogManager.getLogger(BasicMetaschema.class);
+	
+	private static final MetaschemaLoader loader = new MetaschemaLoader();
 
 	private static Metaschema loadMetaschema(File metaschemaFile) throws MetaschemaException, IOException {
-		return MetaschemaFactory.loadMetaschemaFromXml(metaschemaFile);
+		return loader.loadXmlMetaschema(metaschemaFile);
 	}
 
 	public static Class<?> compileMetaschema(File metaschemaFile, File classDir)
@@ -81,12 +83,12 @@ public class BasicMetaschema {
 		return null;
 	}
 
-	private static String writeJson(Object rootObject)
-			throws IOException {
-		StringWriter writer = new StringWriter();
+	private static void writeJson(Writer writer, Object rootObject)
+			throws IOException, BindingException {
+		BindingContext context = BindingContext.newInstance();
+		context.writeJson(writer, rootObject);
 //		JsonGenerator jsonGenerator = jsonFactory.createGenerator(writer);
 //		jsonGenerator.writeObject(rootObject);
-		return writer.toString();
 	}
 
 	private static Object readXml(Reader reader, Class<?> rootClass) throws IOException, BindingException {
@@ -147,6 +149,10 @@ public class BasicMetaschema {
 				}
 				xml = writeXml(root);
 				logger.info("Write XML: Object: {}", xml);
+
+				StringWriter writer = new StringWriter();
+				writeJson(writer, root);
+				logger.info("Write JSON: Object: {}", writer.toString());
 			}
 
 //			Object root = readXml(new StringReader(xml), rootClass);
@@ -186,8 +192,8 @@ public class BasicMetaschema {
 	@Test
 	public void testFieldsWithFlagMetaschema(@TempDir Path tempDir)
 			throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-		File classDir = tempDir.toFile();
-//		File classDir = new File("target/generated-sources/metaschema");
+//		File classDir = tempDir.toFile();
+		File classDir = new File("target/generated-sources/metaschema");
 		runTests("fields_with_flags", classDir, (obj) -> {
 			try {
 				Assertions.assertEquals("test", reflectMethod(obj, "getId"));
@@ -252,8 +258,8 @@ public class BasicMetaschema {
 	@Test
 	public void testAssemblyMetaschema(@TempDir Path tempDir)
 			throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-		File classDir = tempDir.toFile();
-//		File classDir = new File("target/generated-sources/metaschema");
+//		File classDir = tempDir.toFile();
+		File classDir = new File("target/generated-sources/metaschema");
 
 		runTests("assembly", classDir, (obj) -> {
 			try {
@@ -282,9 +288,13 @@ public class BasicMetaschema {
 
 //			String xml = writeXml(root);
 //			logger.info("Write XML: Object: {}", xml);
-			File out = new File("target/oscal-catalog.xml");
-			writeXml(new FileWriter(out), root);
-			logger.info("Write XML: Saved as: {}", out.getPath());
+			File outXml = new File("target/oscal-catalog.xml");
+			writeXml(new FileWriter(outXml), root);
+			logger.info("Write XML: Saved as: {}", outXml.getPath());
+
+			File outJson = new File("target/oscal-catalog.json");
+			writeJson(new FileWriter(outJson), root);
+			logger.info("Write JSON: Saved as: {}", outJson.getPath());
 		}
 
 	}

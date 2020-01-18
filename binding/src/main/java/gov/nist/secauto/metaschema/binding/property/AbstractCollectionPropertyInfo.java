@@ -8,7 +8,7 @@ import gov.nist.secauto.metaschema.binding.annotations.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.annotations.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.parser.BindingException;
 
-public abstract class AbstractCollectionPropertyInfo extends AbstractPropertyInfo<ParameterizedType, PropertyAccessor>
+public abstract class AbstractCollectionPropertyInfo extends AbstractPropertyInfo<ParameterizedType>
 		implements CollectionPropertyInfo {
 	private final GroupAs groupAs;
 

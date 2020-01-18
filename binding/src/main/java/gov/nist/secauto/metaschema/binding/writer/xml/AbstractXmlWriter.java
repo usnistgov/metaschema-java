@@ -59,16 +59,14 @@ public abstract class AbstractXmlWriter<CLASS, CLASS_BINDING extends ClassBindin
 		for (FlagPropertyBinding flagBinding : getClassBinding().getFlagPropertyBindings()) {
 			QName name = flagBinding.getXmlQName();
 			String value;
-			try {
-				Object objectValue = flagBinding.getPropertyInfo().getPropertyAccessor().getValue(obj);
-				if (objectValue != null) {
-					value = objectValue.toString();
-				} else {
-					value = null;
-				}
-			} catch (IllegalArgumentException | IllegalAccessException ex) {
-				throw new BindingException("Unable to access flag value.", ex);
+
+			Object objectValue = flagBinding.getPropertyInfo().getValue(obj);
+			if (objectValue != null) {
+				value = objectValue.toString();
+			} else {
+				value = null;
 			}
+
 			if (value != null) {
 				Attribute attribute = factory.createAttribute(name, value);
 				retval.add(attribute);
