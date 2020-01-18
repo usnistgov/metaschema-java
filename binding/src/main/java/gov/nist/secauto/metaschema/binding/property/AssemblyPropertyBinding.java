@@ -34,11 +34,11 @@ public class AssemblyPropertyBinding extends AbstractModelItemPropertyBinding {
 
 	@Override
 	public String getLocalName() {
-		return ModelUtil.resolveLocalName(getAssemblyAnnotation().name(), getPropertyInfo().getPropertyAccessor().getSimpleName());
+		return ModelUtil.resolveLocalName(getAssemblyAnnotation().name(), getPropertyInfo().getSimpleName());
 	}
 
 	@Override
 	public String getNamespace() throws BindingException {
-		return ModelUtil.resolveNamespace(getAssemblyAnnotation().namespace(), getPropertyInfo().getPropertyAccessor().getContainingClass());
+		return ModelUtil.resolveNamespace(getAssemblyAnnotation().namespace(), getPropertyInfo().getContainingClass());
 	}
 }

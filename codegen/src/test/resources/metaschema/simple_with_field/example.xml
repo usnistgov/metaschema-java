@@ -15,4 +15,6 @@
 	</field4s>
 	<field5>string1</field5>
 	<field5>string2</field5>
+	<field6>true</field6>
+	<field6>false</field6>
 </top-level>

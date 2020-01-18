@@ -1,7 +1,6 @@
 package gov.nist.secauto.metaschema.binding.property;
 
 import gov.nist.secauto.metaschema.binding.annotations.XmlSchema;
-import gov.nist.secauto.metaschema.binding.parser.BindingException;
 
 public class ModelUtil {
 
@@ -15,7 +14,7 @@ public class ModelUtil {
 		return retval;
 	}
 
-	public static String resolveNamespace(String provided, Class<?> containingClass) throws BindingException {
+	public static String resolveNamespace(String provided, Class<?> containingClass) {
 		String retval;
 		if ("##default".equals(provided)) {
 			// get namespace from package-info

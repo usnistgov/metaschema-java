@@ -17,8 +17,8 @@ import gov.nist.secauto.metaschema.binding.annotations.MetaschemaModel;
 import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
 import gov.nist.secauto.metaschema.codegen.builder.MethodBuilder;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.model.FlagInstance;
-import gov.nist.secauto.metaschema.model.ManagedObject;
+import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
+import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
 
 public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> implements ClassGenerator {
 	private static final Logger logger = LogManager.getLogger(AbstractClassGenerator.class);
@@ -26,10 +26,12 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> i
 	private final DEFINITION definition;
 	private final Map<String, InstanceGenerator> instanceNameToContextMap = new LinkedHashMap<>();
 	private final JavaType javaType;
+	private boolean hasJsonKeyFlag = false;
 
 	public AbstractClassGenerator(DEFINITION definition) {
 		this.definition = definition;
-		this.javaType = JavaType.create(ClassUtils.toPackageName(getDefinition()), ClassUtils.toClassName(getDefinition()));
+		
+		this.javaType = JavaType.create(getDefinition());
 		for (FlagInstance instance : definition.getFlagInstances().values()) {
 			newFlagInstance(instance);
 		}
@@ -96,6 +98,9 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> i
 	}
 
 	public FlagInstanceGenerator newFlagInstance(FlagInstance instance) {
+		if (instance.isJsonKeyFlag()) {
+			hasJsonKeyFlag = true;
+		}
 		FlagInstanceGenerator context = new FlagInstanceGenerator(instance, this);
 		addInstance(context);
 		return context;
@@ -108,6 +113,10 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> i
 
 	public Collection<InstanceGenerator> getInstanceContexts() {
 		return instanceNameToContextMap.values();
+	}
+
+	public boolean hasJsonKeyFlag() {
+		return hasJsonKeyFlag;
 	}
 
 	protected void buildClass(ClassBuilder builder) {

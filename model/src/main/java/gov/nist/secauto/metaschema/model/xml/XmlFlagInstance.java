@@ -3,16 +3,16 @@ package gov.nist.secauto.metaschema.model.xml;
 import java.util.Collections;
 import java.util.Map;
 
-import gov.nist.csrc.ns.oscal.metaschema.x10.Boolean;
-import gov.nist.csrc.ns.oscal.metaschema.x10.FlagDocument;
+import gov.nist.itl.metaschema.model.xml.Boolean;
+import gov.nist.itl.metaschema.model.xml.FlagDocument;
 import gov.nist.secauto.metaschema.markup.MarkupString;
-import gov.nist.secauto.metaschema.model.AbstractFlagInstance;
-import gov.nist.secauto.metaschema.model.DataType;
-import gov.nist.secauto.metaschema.model.FlagDefinition;
-import gov.nist.secauto.metaschema.model.FlagInstance;
-import gov.nist.secauto.metaschema.model.ManagedObject;
 import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.Type;
+import gov.nist.secauto.metaschema.model.info.Type;
+import gov.nist.secauto.metaschema.model.info.definitions.DataType;
+import gov.nist.secauto.metaschema.model.info.definitions.FlagDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
+import gov.nist.secauto.metaschema.model.info.instances.AbstractFlagInstance;
+import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
 
 public class XmlFlagInstance extends AbstractFlagInstance {
 	private final FlagDocument.Flag xFlag;

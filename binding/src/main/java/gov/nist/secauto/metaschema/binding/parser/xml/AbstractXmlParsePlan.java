@@ -30,11 +30,11 @@ public abstract class AbstractXmlParsePlan<CLASS> extends AbstractParsePlan<XmlP
 
 	private final Map<QName, XmlAttributePropertyParser> attributeParsers;
 
-	public AbstractXmlParsePlan(ClassBinding<CLASS> classBinding, BindingContext bindingContext) throws BindingException {
+	public AbstractXmlParsePlan(ClassBinding<CLASS> classBinding, BindingContext bindingContext) {
 		this(classBinding.getClazz(), newXmlAttributeParsers(classBinding, bindingContext));
 	}
 
-	public AbstractXmlParsePlan(Class<CLASS> clazz, Map<QName, XmlAttributePropertyParser> attributeParsers) throws BindingException {
+	public AbstractXmlParsePlan(Class<CLASS> clazz, Map<QName, XmlAttributePropertyParser> attributeParsers) {
 		super(clazz);
 		Objects.requireNonNull(attributeParsers, "attributeParsers");
 		this.attributeParsers = attributeParsers;
@@ -44,7 +44,7 @@ public abstract class AbstractXmlParsePlan<CLASS> extends AbstractParsePlan<XmlP
 		return attributeParsers;
 	}
 
-	protected static <CLASS> Map<QName, XmlAttributePropertyParser> newXmlAttributeParsers(ClassBinding<CLASS> classBinding, BindingContext bindingContext) throws BindingException {
+	protected static <CLASS> Map<QName, XmlAttributePropertyParser> newXmlAttributeParsers(ClassBinding<CLASS> classBinding, BindingContext bindingContext) {
 		List<FlagPropertyBinding> bindings = classBinding.getFlagPropertyBindings();
 		Map<QName, XmlAttributePropertyParser> retval;
 		if (bindings.isEmpty()) {

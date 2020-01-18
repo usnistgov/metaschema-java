@@ -4,6 +4,7 @@ import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
 import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
 import gov.nist.secauto.metaschema.codegen.builder.MethodBuilder;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
+import gov.nist.secauto.metaschema.model.info.instances.ClassUtils;
 
 public abstract class AbstractInstanceGenerator<GENERATOR extends ClassGenerator> implements InstanceGenerator {
 	private final GENERATOR classGenerator;

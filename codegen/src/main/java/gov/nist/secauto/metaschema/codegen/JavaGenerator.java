@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,25 +22,25 @@ import org.apache.logging.log4j.Logger;
 import gov.nist.secauto.metaschema.binding.annotations.XmlNs;
 import gov.nist.secauto.metaschema.binding.annotations.XmlNsForm;
 import gov.nist.secauto.metaschema.binding.annotations.XmlSchema;
-import gov.nist.secauto.metaschema.model.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.FieldDefinition;
-import gov.nist.secauto.metaschema.model.InfoElementDefinition;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
-import gov.nist.secauto.metaschema.model.MetaschemaFactory;
-import gov.nist.secauto.metaschema.model.Type;
+import gov.nist.secauto.metaschema.model.MetaschemaLoader;
+import gov.nist.secauto.metaschema.model.info.Type;
+import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
 
 public class JavaGenerator {
 	private static final Logger logger = LogManager.getLogger(JavaGenerator.class);
 
 	public static void main(String[] args) throws IOException, MetaschemaException {
 		File metaschemaFile = new File("target/src/metaschema/oscal_catalog_metaschema.xml");
-		Metaschema metaschema = MetaschemaFactory.loadMetaschemaFromXml(metaschemaFile);
+		Metaschema metaschema = new MetaschemaLoader().loadXmlMetaschema(metaschemaFile);
 
 		JavaGenerator.generate(metaschema, new File(args[0]));
 	}
 
-	private  JavaGenerator() {
+	private JavaGenerator() {
 		// disable construction
 	}
 
@@ -47,7 +48,7 @@ public class JavaGenerator {
 		return generate(Collections.singletonList(metaschema), dir);
 	}
 
-	public static Map<Metaschema, List<GeneratedClass>> generate(List<Metaschema> metaschemas, File dir) throws IOException {
+	public static Map<Metaschema, List<GeneratedClass>> generate(Collection<? extends Metaschema> metaschemas, File dir) throws IOException {
 		logger.info("Generating Java classes in: {}", dir.getPath());
 
 		Map<Metaschema, List<GeneratedClass>> retval = new HashMap<>();
@@ -58,6 +59,7 @@ public class JavaGenerator {
 		for (Map.Entry<Metaschema, List<InfoElementDefinition>> entry : metaschemaToInformationElementsMap.entrySet()) {
 			Metaschema metaschema = entry.getKey();
 			List<GeneratedClass> generatedClasses = null;
+			Set<String> classNames = new HashSet<>();
 
 			for (InfoElementDefinition definition : entry.getValue()) {
 				ClassGenerator classGenerator = null;
@@ -77,6 +79,12 @@ public class JavaGenerator {
 
 				if (classGenerator != null) {
 					GeneratedClass generatedClass = classGenerator.generateClass(dir);
+					String className = generatedClass.getClassName();
+					if (classNames.contains(className)) {
+						throw new IllegalStateException(String.format("Found duplicate class name '%s' in metaschema '%s'. If multiple metaschema are compiled for the same namespace, all class names must be unique.", className, metaschema.getLocation()));
+					} else {
+						classNames.add(className);
+					}
 
 					if (generatedClasses == null) {
 						generatedClasses = new LinkedList<>();
@@ -84,18 +92,27 @@ public class JavaGenerator {
 					}
 					generatedClasses.add(generatedClass);
 
-					URI xmlNamespace = classGenerator.getXmlNamespace();
-					String packageName = classGenerator.getPackageName();
-					xmlNamespaceToPackageNameMap.put(xmlNamespace, packageName);
-
-					Set<Metaschema> metaschemaSet = xmlNamespaceToMetaschemaMap.get(xmlNamespace);
-					if (metaschemaSet == null) {
-						metaschemaSet = new HashSet<>();
-						xmlNamespaceToMetaschemaMap.put(xmlNamespace, metaschemaSet);
-					}
-					metaschemaSet.add(metaschema);
 				}
 			}
+
+			URI xmlNamespace = metaschema.getXmlNamespace();
+			String packageName = metaschema.getPackageName();
+
+			if (xmlNamespaceToPackageNameMap.containsKey(xmlNamespace)) {
+				String assignedPackage = xmlNamespaceToPackageNameMap.get(xmlNamespace);
+				if (!assignedPackage.equals(packageName)) {
+					throw new IllegalStateException(String.format("The metaschema '%s' is assigning the new package name '%s', which is different than the previously assigned package name '%s' for the same namespace. tA metaschema namespace must be assigned to a consistent package name.", metaschema.getLocation().toString(), metaschema.getPackageName(), assignedPackage));
+				}
+			} else {
+				xmlNamespaceToPackageNameMap.put(xmlNamespace, packageName);
+			}
+
+			Set<Metaschema> metaschemaSet = xmlNamespaceToMetaschemaMap.get(xmlNamespace);
+			if (metaschemaSet == null) {
+				metaschemaSet = new HashSet<>();
+				xmlNamespaceToMetaschemaMap.put(xmlNamespace, metaschemaSet);
+			}
+			metaschemaSet.add(metaschema);
 		}
 
 		for (Map.Entry<URI, String> entry : xmlNamespaceToPackageNameMap.entrySet()) {
@@ -119,7 +136,7 @@ public class JavaGenerator {
 		return Collections.unmodifiableMap(retval);
 	}
 
-	private static Map<Metaschema, List<InfoElementDefinition>> buildMetaschemaMap(List<Metaschema> metaschemas) {
+	private static Map<Metaschema, List<InfoElementDefinition>> buildMetaschemaMap(Collection<? extends Metaschema> metaschemas) {
 		Map<Metaschema, List<InfoElementDefinition>> retval = new HashMap<>();
 
 		for (Metaschema metaschema : metaschemas) {
@@ -139,7 +156,7 @@ public class JavaGenerator {
 			map.put(metaschema, definitions);
 		}
 	}
-	
+
 	public static class GeneratedClass {
 		private final File classFile;
 		private final String className;

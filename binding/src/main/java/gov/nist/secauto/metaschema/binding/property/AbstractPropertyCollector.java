@@ -17,10 +17,6 @@ public abstract class AbstractPropertyCollector<INFO extends PropertyInfo> imple
 
 	@Override
 	public void applyCollection(Object obj) throws BindingException {
-		try {
-			getPropertyInfo().getPropertyAccessor().setValue(obj, getCollection());
-		} catch (IllegalArgumentException | IllegalAccessException ex) {
-			throw new BindingException(ex);
-		}
+		getPropertyInfo().setValue(obj, getCollection());
 	}
 }

@@ -9,13 +9,13 @@ import java.util.stream.Collectors;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 
-import gov.nist.csrc.ns.oscal.metaschema.x10.AssemblyDocument;
-import gov.nist.csrc.ns.oscal.metaschema.x10.ChoiceDocument;
-import gov.nist.csrc.ns.oscal.metaschema.x10.FieldDocument;
-import gov.nist.secauto.metaschema.model.AbstractChoiceInstance;
-import gov.nist.secauto.metaschema.model.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.InfoElementInstance;
-import gov.nist.secauto.metaschema.model.ModelInstance;
+import gov.nist.itl.metaschema.model.xml.AssemblyDocument;
+import gov.nist.itl.metaschema.model.xml.ChoiceDocument;
+import gov.nist.itl.metaschema.model.xml.FieldDocument;
+import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.info.instances.AbstractChoiceInstance;
+import gov.nist.secauto.metaschema.model.info.instances.InfoElementInstance;
+import gov.nist.secauto.metaschema.model.info.instances.ModelInstance;
 
 public class XmlChoiceInstance extends AbstractChoiceInstance {
 	private final ChoiceDocument.Choice xChoice;

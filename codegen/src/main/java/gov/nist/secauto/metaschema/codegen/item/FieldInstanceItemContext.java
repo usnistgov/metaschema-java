@@ -2,7 +2,7 @@ package gov.nist.secauto.metaschema.codegen.item;
 
 import gov.nist.secauto.metaschema.codegen.AssemblyClassGenerator;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.model.FieldInstance;
+import gov.nist.secauto.metaschema.model.info.instances.FieldInstance;
 
 public class FieldInstanceItemContext extends AbstractInstanceItemContext<FieldInstance> implements InstanceItemContext {
 	private final JavaType javaType;

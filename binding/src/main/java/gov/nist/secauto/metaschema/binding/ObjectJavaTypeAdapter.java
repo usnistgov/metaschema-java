@@ -8,33 +8,21 @@ import javax.xml.stream.events.StartElement;
 import gov.nist.secauto.metaschema.binding.parser.BindingException;
 import gov.nist.secauto.metaschema.binding.parser.xml.XmlParsePlan;
 import gov.nist.secauto.metaschema.binding.parser.xml.XmlParsingContext;
+import gov.nist.secauto.metaschema.binding.writer.json.FlagPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.writer.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.writer.xml.XmlWriter;
 import gov.nist.secauto.metaschema.binding.writer.xml.XmlWritingContext;
 
 public class ObjectJavaTypeAdapter<CLASS> implements JavaTypeAdapter<CLASS> {
 	private final ClassBinding<CLASS> classBinding;
-	private final BindingContext bindingContext;
 
-	private XmlParsePlan<CLASS> xmlParsePlan;
-
-	public ObjectJavaTypeAdapter(ClassBinding<CLASS> classBinding, BindingContext bindingContext) {
+	public ObjectJavaTypeAdapter(ClassBinding<CLASS> classBinding) {
 		Objects.requireNonNull(classBinding, "classBinding");
-		Objects.requireNonNull(bindingContext, "bindingContext");
 		this.classBinding = classBinding;
-		this.bindingContext = bindingContext;
 	}
 
 	protected ClassBinding<CLASS> getClassBinding() {
 		return classBinding;
-	}
-
-	protected XmlParsePlan<CLASS> getXmlParsePlan() throws BindingException {
-		synchronized (this) {
-			if (xmlParsePlan == null) {
-				xmlParsePlan = bindingContext.getXmlParsePlan(getClassBinding().getClazz());
-			}
-			return xmlParsePlan;
-		}
 	}
 
 	@Override
@@ -48,6 +36,12 @@ public class ObjectJavaTypeAdapter<CLASS> implements JavaTypeAdapter<CLASS> {
 //	}
 
 	@Override
+	public boolean canHandleQName(QName nextQName) {
+		// This adapter is always handling another bound class, which is the type being parsed
+		return false;
+	}
+
+	@Override
 	public CLASS parse(String value) {
 		throw new UnsupportedOperationException();
 	}
@@ -55,19 +49,18 @@ public class ObjectJavaTypeAdapter<CLASS> implements JavaTypeAdapter<CLASS> {
 	@Override
 	public CLASS parse(XmlParsingContext parsingContext) throws BindingException {
 		// delegates all parsing to the parse plan
-		XmlParsePlan<CLASS> plan = getXmlParsePlan();
+		XmlParsePlan<CLASS> plan = getClassBinding().getXmlParsePlan(parsingContext.getBindingContext());
 		return plan.parse(parsingContext);
 	}
 
 	@Override
-	public void write(Object value, QName valueQName, StartElement parent, XmlWritingContext writingContext) throws BindingException {
-		XmlWriter writer = writingContext.getBindingContext().getXmlWriter(getClassBinding().getClazz());
+	public void writeXmlElement(Object value, QName valueQName, StartElement parent, XmlWritingContext writingContext) throws BindingException {
+		XmlWriter writer = getClassBinding().getXmlWriter();
 		writer.writeXml(value, valueQName, writingContext);
 	}
 
 	@Override
-	public boolean canHandleQName(QName nextQName) {
-		// This adapter is always handling another bound class, which is the type being parsed
-		return false;
+	public void writeJsonFieldValue(Object value, FlagPropertyBindingFilter filter, JsonWritingContext writingContext) throws BindingException {
+		throw new UnsupportedOperationException();
 	}
 }

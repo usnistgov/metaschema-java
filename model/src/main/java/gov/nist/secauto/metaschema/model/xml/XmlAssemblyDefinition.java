@@ -10,21 +10,49 @@ import java.util.stream.Collectors;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 
-import gov.nist.csrc.ns.oscal.metaschema.x10.AssemblyDocument;
-import gov.nist.csrc.ns.oscal.metaschema.x10.ChoiceDocument;
-import gov.nist.csrc.ns.oscal.metaschema.x10.DefineAssemblyDocument;
-import gov.nist.csrc.ns.oscal.metaschema.x10.FieldDocument;
-import gov.nist.csrc.ns.oscal.metaschema.x10.FlagDocument;
+import gov.nist.itl.metaschema.model.xml.AssemblyDocument;
+import gov.nist.itl.metaschema.model.xml.ChoiceDocument;
+import gov.nist.itl.metaschema.model.xml.DefineAssemblyDocument;
+import gov.nist.itl.metaschema.model.xml.ExtensionType;
+import gov.nist.itl.metaschema.model.xml.FieldDocument;
+import gov.nist.itl.metaschema.model.xml.FlagDocument;
+import gov.nist.itl.metaschema.model.xml.binding.DefineAssemblyBindingDocument;
 import gov.nist.secauto.metaschema.markup.MarkupString;
-import gov.nist.secauto.metaschema.model.AbstractAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.ChoiceInstance;
-import gov.nist.secauto.metaschema.model.FlagInstance;
-import gov.nist.secauto.metaschema.model.InfoElementInstance;
-import gov.nist.secauto.metaschema.model.ModelInstance;
-import gov.nist.secauto.metaschema.model.Type;
+import gov.nist.secauto.metaschema.model.configuration.AssemblyBindingConfiguration;
+import gov.nist.secauto.metaschema.model.info.Type;
+import gov.nist.secauto.metaschema.model.info.definitions.AbstractAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.info.instances.ChoiceInstance;
+import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
+import gov.nist.secauto.metaschema.model.info.instances.InfoElementInstance;
+import gov.nist.secauto.metaschema.model.info.instances.ModelInstance;
 
 public class XmlAssemblyDefinition extends AbstractAssemblyDefinition<XmlMetaschema> implements AssemblyDefinition {
+
+	protected static AssemblyBindingConfiguration getBindingConfiguration(DefineAssemblyDocument.DefineAssembly xField) {
+		AssemblyBindingConfiguration retval = null;
+		if (xField.isSetExtensions()) {
+			DefineAssemblyDocument.DefineAssembly.Extensions extensions = xField.getExtensions();
+			for (ExtensionType extensionInstance : extensions.getDefineAssemblyExtensionList()) {
+				System.out.println("Extension Class: "+extensionInstance.getClass().getName());
+				if (extensionInstance instanceof DefineAssemblyBindingDocument.DefineAssemblyBinding) {
+					DefineAssemblyBindingDocument.DefineAssemblyBinding modelConfig = (DefineAssemblyBindingDocument.DefineAssemblyBinding)extensionInstance;
+					if (modelConfig.isSetJava()) {
+						DefineAssemblyBindingDocument.DefineAssemblyBinding.Java modelJava = modelConfig.getJava();
+
+						retval = new AssemblyBindingConfiguration(modelJava.getClassName(), modelJava.getBaseClassName(), modelJava.getInterfaceNameList());
+						break;
+					}
+				}
+			}
+		}
+
+		if (retval == null) {
+			retval = AssemblyBindingConfiguration.NULL_CONFIG;
+		}
+		return retval;
+	}
+
 	private final DefineAssemblyDocument.DefineAssembly xAssembly;
 	private final Map<String, XmlFlagInstance> flagInstances;
 	private final Map<String, ModelInstance> namedModelInstances;
@@ -33,7 +61,7 @@ public class XmlAssemblyDefinition extends AbstractAssemblyDefinition<XmlMetasch
 	private final List<InfoElementInstance> modelInstances;
 
 	public XmlAssemblyDefinition(DefineAssemblyDocument.DefineAssembly xAssembly, XmlMetaschema metaschema) {
-		super(metaschema);
+		super(getBindingConfiguration(xAssembly), metaschema);
 		this.xAssembly = xAssembly;
 
 		MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription());

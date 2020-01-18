@@ -24,9 +24,7 @@ public class DefaultXmlAttributePropertyParser extends AbstractXmlPropertyParser
 		JavaTypeAdapter<?> typeAdapter = getBindingContext().getJavaTypeAdapter((Class<?>)getPropertyBinding().getPropertyInfo().getItemType());
 		try {
 			Object value = typeAdapter.parse(attribue.getValue());
-			getPropertyBinding().getPropertyInfo().getPropertyAccessor().setValue(obj, value);
-		} catch (IllegalArgumentException | IllegalAccessException ex) {
-			throw new BindingException(ex);
+			getPropertyBinding().getPropertyInfo().setValue(obj, value);
 		} catch (UnsupportedOperationException ex) {
 			throw new BindingException(ex);
 		}

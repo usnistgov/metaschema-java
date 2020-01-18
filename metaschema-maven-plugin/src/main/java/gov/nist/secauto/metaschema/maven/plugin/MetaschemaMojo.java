@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.validation.constraints.NotNull;
+
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
  *
@@ -183,7 +185,7 @@ public class MetaschemaMojo extends AbstractMojo {
 	 *
 	 * @return the staleFile
 	 */
-	protected final File getStaleFile() {
+	protected final @NotNull File getStaleFile() {
 		StringBuilder builder = new StringBuilder();
 		if (getMojoExecution() != null) {
 			builder.append(getMojoExecution().getExecutionId()).append('-');
@@ -250,20 +252,19 @@ public class MetaschemaMojo extends AbstractMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException {
-		File staleFile;
+		@NotNull
+		File staleFile = getStaleFile();
 		try {
-			staleFile = getStaleFile().getCanonicalFile();
+			staleFile = staleFile.getCanonicalFile();
 		} catch (IOException ex) {
 			getLog().warn("Unable to resolve canonical path to stale file. Treating it as not existing.", ex);
-			staleFile = null;
 		}
 
 		boolean generate;
 		if (shouldExecutionBeSkipped()) {
-			getLog().debug(String.format("Source file generation is configured to be skipped. Skipping.",
-					staleFile.getPath()));
+			getLog().debug(String.format("Source file generation is configured to be skipped. Skipping."));
 			generate = false;
-		} else if (staleFile == null || !staleFile.exists()) {
+		} else if (!staleFile.exists()) {
 			getLog().info(
 					String.format("Stale file '%s' doesn't exist! Generating source files.", staleFile.getPath()));
 			generate = true;

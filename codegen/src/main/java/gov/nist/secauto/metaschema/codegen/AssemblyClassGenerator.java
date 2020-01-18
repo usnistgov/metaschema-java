@@ -12,14 +12,14 @@ import gov.nist.secauto.metaschema.codegen.item.DataTypeInstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.item.FieldInstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.item.InstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
-import gov.nist.secauto.metaschema.model.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.AssemblyInstance;
-import gov.nist.secauto.metaschema.model.ChoiceInstance;
-import gov.nist.secauto.metaschema.model.FieldInstance;
-import gov.nist.secauto.metaschema.model.InfoElementInstance;
-import gov.nist.secauto.metaschema.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.ModelContainer;
-import gov.nist.secauto.metaschema.model.ModelInstance;
+import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.ModelContainer;
+import gov.nist.secauto.metaschema.model.info.instances.AssemblyInstance;
+import gov.nist.secauto.metaschema.model.info.instances.ChoiceInstance;
+import gov.nist.secauto.metaschema.model.info.instances.FieldInstance;
+import gov.nist.secauto.metaschema.model.info.instances.InfoElementInstance;
+import gov.nist.secauto.metaschema.model.info.instances.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.info.instances.ModelInstance;
 
 public class AssemblyClassGenerator extends AbstractClassGenerator<AssemblyDefinition> {
 	private static final Logger logger = LogManager.getLogger(AssemblyClassGenerator.class);

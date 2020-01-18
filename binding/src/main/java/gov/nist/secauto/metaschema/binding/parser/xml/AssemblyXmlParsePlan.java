@@ -30,7 +30,7 @@ public class AssemblyXmlParsePlan<CLASS> extends AbstractXmlParsePlan<CLASS> {
 		this(classBinding.getClazz(), newXmlAttributeParsers(classBinding, bindingContext), newModelParsers(classBinding, bindingContext));
 	}
 
-	public AssemblyXmlParsePlan(Class<CLASS> clazz, Map<QName, XmlAttributePropertyParser> attributeParsers, List<XmlObjectPropertyParser> modelParsers) throws BindingException {
+	public AssemblyXmlParsePlan(Class<CLASS> clazz, Map<QName, XmlAttributePropertyParser> attributeParsers, List<XmlObjectPropertyParser> modelParsers) {
 		super(clazz, attributeParsers);
 		Objects.requireNonNull(modelParsers, "modelParsers");
 		this.modelParsers = modelParsers;

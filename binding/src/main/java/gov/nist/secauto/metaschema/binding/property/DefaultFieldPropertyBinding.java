@@ -39,12 +39,12 @@ public class DefaultFieldPropertyBinding extends AbstractModelItemPropertyBindin
 
 	@Override
 	public String getLocalName() {
-		return ModelUtil.resolveLocalName(getFieldAnnotation().name(), getPropertyInfo().getPropertyAccessor().getSimpleName());
+		return ModelUtil.resolveLocalName(getFieldAnnotation().name(), getPropertyInfo().getSimpleName());
 	}
 
 	@Override
 	public String getNamespace() throws BindingException {
-		return ModelUtil.resolveNamespace(getFieldAnnotation().namespace(), getPropertyInfo().getPropertyAccessor().getContainingClass());
+		return ModelUtil.resolveNamespace(getFieldAnnotation().namespace(), getPropertyInfo().getContainingClass());
 	}
 
 }

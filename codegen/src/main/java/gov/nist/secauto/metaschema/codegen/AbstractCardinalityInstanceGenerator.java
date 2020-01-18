@@ -7,11 +7,11 @@ import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
 import gov.nist.secauto.metaschema.codegen.item.InstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
 import gov.nist.secauto.metaschema.markup.MarkupString;
-import gov.nist.secauto.metaschema.model.AssemblyInstance;
-import gov.nist.secauto.metaschema.model.FieldInstance;
-import gov.nist.secauto.metaschema.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.ModelInstance;
-import gov.nist.secauto.metaschema.model.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.info.instances.AssemblyInstance;
+import gov.nist.secauto.metaschema.model.info.instances.FieldInstance;
+import gov.nist.secauto.metaschema.model.info.instances.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.info.instances.ModelInstance;
+import gov.nist.secauto.metaschema.model.info.instances.XmlGroupAsBehavior;
 
 public abstract class AbstractCardinalityInstanceGenerator<JAVA_TYPE extends JavaType> extends AbstractInstanceGenerator<AssemblyClassGenerator> implements CardinalityInstanceGenerator {
 	private final InstanceItemContext instanceItemContext;

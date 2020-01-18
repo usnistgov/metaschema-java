@@ -1,7 +1,6 @@
 package gov.nist.secauto.metaschema.markup;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -28,31 +27,31 @@ import gov.nist.secauto.metaschema.markup.flexmark.insertanchor.InsertAnchorExte
 public class FlexmarkFactory {
 	private static final Logger logger = LogManager.getLogger(FlexmarkFactory.class);
 	private static final FlexmarkFactory instance = new FlexmarkFactory();
-	
+
 	static Map<String, String> specialCharsMap = new HashMap<>();
-    static {
+	static {
 //        specialCharsMap.put("“", "\"");
 //        specialCharsMap.put("”", "\"");
-        specialCharsMap.put("&ldquo;", "\"");
-        specialCharsMap.put("&rdquo;", "\"");
+		specialCharsMap.put("&ldquo;", "“");
+		specialCharsMap.put("&rdquo;", "”");
 //        specialCharsMap.put("‘", "'");
 //        specialCharsMap.put("’", "'");
-        specialCharsMap.put("&lsquo;", "'");
-        specialCharsMap.put("&rsquo;", "'");
-        specialCharsMap.put("&apos;", "'");
+		specialCharsMap.put("&lsquo;", "‘");
+		specialCharsMap.put("&rsquo;", "’");
+		specialCharsMap.put("&apos;", "'");
 //        specialCharsMap.put("«", "<<");
-        specialCharsMap.put("&laquo;", "<<");
+		specialCharsMap.put("&laquo;", "«");
 //        specialCharsMap.put("»", ">>");
-        specialCharsMap.put("&raquo;", ">>");
+		specialCharsMap.put("&raquo;", "»");
 //        specialCharsMap.put("…", "...");
-//        specialCharsMap.put("&hellip;", "...");
+		specialCharsMap.put("&hellip;", "…");
 //        specialCharsMap.put("–", "--");
-        specialCharsMap.put("&endash;", "--");
+		specialCharsMap.put("&ndash;", "–");
 //        specialCharsMap.put("—", "---");
-        specialCharsMap.put("&emdash;", "---");
-    }
+		specialCharsMap.put("&mdash;", "—");
+	}
 
-    public static FlexmarkFactory instance() {
+	public static FlexmarkFactory instance() {
 		return instance;
 	}
 
@@ -94,23 +93,22 @@ public class FlexmarkFactory {
 		Extension[] extensions = {
 				// Metaschema insert
 				InsertAnchorExtension.create(),
+//				TypographicExtension.create(),
 				TablesExtension.create(),
 				// to ensure that escaped characters are not lost
-				EscapedCharacterExtension.create(),
-				SuperscriptExtension.create(),
-				SubscriptExtension.create(),
-				TypographicExtension.create()
-			};
+				EscapedCharacterExtension.create(), SuperscriptExtension.create(), SubscriptExtension.create() };
 		builder.extensions(Arrays.asList(extensions));
 
 		builder.set(Parser.FENCED_CODE_CONTENT_BLOCK, true);
 		// GitHub-flavored tables
-        builder.set(TablesExtension.COLUMN_SPANS, false);
+		builder.set(TablesExtension.COLUMN_SPANS, false);
 		builder.set(TablesExtension.APPEND_MISSING_COLUMNS, true);
 		builder.set(TablesExtension.DISCARD_EXTRA_COLUMNS, true);
 		builder.set(TablesExtension.HEADER_SEPARATOR_COLUMN_MATCH, true);
-		builder.set(TypographicExtension.SINGLE_QUOTE_UNMATCHED, "'");
-//		builder.set(FlexmarkHtmlConverter.TYPOGRAPHIC_REPLACEMENT_MAP, Collections.emptyMap());
+		builder.set(TypographicExtension.SINGLE_QUOTE_UNMATCHED, null);
+		builder.set(TypographicExtension.ENABLE_QUOTES, false);
+		builder.set(TypographicExtension.ENABLE_SMARTS, false);
+		builder.set(FlexmarkHtmlConverter.TYPOGRAPHIC_REPLACEMENT_MAP, specialCharsMap);
 	}
 
 	public Parser getMarkdownParser() {

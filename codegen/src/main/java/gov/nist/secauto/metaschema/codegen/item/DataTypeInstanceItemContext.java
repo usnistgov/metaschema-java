@@ -3,7 +3,7 @@ package gov.nist.secauto.metaschema.codegen.item;
 import gov.nist.secauto.metaschema.codegen.AssemblyClassGenerator;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.model.FieldInstance;
+import gov.nist.secauto.metaschema.model.info.instances.FieldInstance;
 
 public class DataTypeInstanceItemContext extends AbstractInstanceItemContext<FieldInstance> {
 	private final DataType dataType;

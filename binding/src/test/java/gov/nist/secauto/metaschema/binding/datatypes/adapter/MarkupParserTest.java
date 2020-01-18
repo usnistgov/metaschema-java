@@ -19,7 +19,8 @@ class MarkupParserTest {
 
 	@Test
 	void test() throws XMLStreamException {
-		String html = "  <p> some text </p>\n";
+		String html = "<node>\n";
+		html = html + "  <p> some text </p>\n";
 		html = html + "  <p><q>text</q></p>\n";
 		html = html + "  <p>some <b>text</b> <insert param-id=\"param-id\"/>.</p>\n";
 		html = html + "  <h1>Example</h1>\n";
@@ -33,7 +34,7 @@ class MarkupParserTest {
 //		html = html + "    <tr><td><q>data1</q> <insert param-id=\"insert\" /></td></tr>\n";
 //		html = html + "  </table>\n";
 		html = html + "  <p>Some <em>more</em> <strong>text</strong><img alt=\"alt\" src=\"src\"/></p>";
-//		html = html + "</node>\n";
+		html = html + "</node>\n";
 		XMLInputFactory2 factory = (XMLInputFactory2) WstxInputFactory.newInstance();
 		factory.configureForXmlConformance();
 		factory.setProperty(XMLInputFactory2.IS_COALESCING, true);

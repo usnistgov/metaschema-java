@@ -3,12 +3,12 @@ package gov.nist.secauto.metaschema.model.xml;
 import java.util.Collections;
 import java.util.Map;
 
-import gov.nist.csrc.ns.oscal.metaschema.x10.DefineFlagDocument;
+import gov.nist.itl.metaschema.model.xml.DefineFlagDocument;
 import gov.nist.secauto.metaschema.markup.MarkupString;
-import gov.nist.secauto.metaschema.model.AbstractFlagDefinition;
-import gov.nist.secauto.metaschema.model.DataType;
-import gov.nist.secauto.metaschema.model.FlagDefinition;
-import gov.nist.secauto.metaschema.model.FlagInstance;
+import gov.nist.secauto.metaschema.model.info.definitions.AbstractFlagDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.DataType;
+import gov.nist.secauto.metaschema.model.info.definitions.FlagDefinition;
+import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
 
 public class XmlFlagDefinition extends AbstractFlagDefinition<XmlMetaschema> implements FlagDefinition {
 	private final DefineFlagDocument.DefineFlag xFlag;

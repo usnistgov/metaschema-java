@@ -6,14 +6,30 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import gov.nist.secauto.metaschema.model.configuration.ModelBindingConfiguration;
+import gov.nist.secauto.metaschema.model.info.Util;
+import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.FlagContainer;
+import gov.nist.secauto.metaschema.model.info.definitions.FlagDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.ModelContainer;
+import gov.nist.secauto.metaschema.model.info.instances.AssemblyInstance;
+import gov.nist.secauto.metaschema.model.info.instances.ChoiceInstance;
+import gov.nist.secauto.metaschema.model.info.instances.FieldInstance;
+import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
+import gov.nist.secauto.metaschema.model.info.instances.InfoElementInstance;
 
 public abstract class AbstractMetaschema implements Metaschema {
 	private static final Logger logger = LogManager.getLogger(AbstractMetaschema.class);
 	
 	private final URI location;
+	private final ModelBindingConfiguration bindingConfiguration;
 	private final Map<URI, Metaschema> importedMetaschema;
 	private Map<String, InfoElementDefinition> usedInfoElementDefinitions;
 	private Map<String, FlagDefinition> usedFlagDefinitions;
@@ -21,10 +37,18 @@ public abstract class AbstractMetaschema implements Metaschema {
 	private Map<String, AssemblyDefinition> usedAssemblyDefinitions;
 
 
-	public AbstractMetaschema(URI metaschemaResource, Map<URI, ? extends Metaschema> importedMetaschema) {
+	public AbstractMetaschema(URI metaschemaResource, ModelBindingConfiguration bindingConfiguration, Map<URI, ? extends Metaschema> importedMetaschema) {
+		Objects.requireNonNull(metaschemaResource, "metaschemaResource");
+		Objects.requireNonNull(bindingConfiguration, "bindingConfiguration");
+		Objects.requireNonNull(importedMetaschema, "importedMetaschema");
 		this.location = metaschemaResource;
+		this.bindingConfiguration = bindingConfiguration;
 		this.importedMetaschema = Collections.unmodifiableMap(importedMetaschema);
 		logger.trace("Creating metaschema '{}'",metaschemaResource);
+	}
+
+	public ModelBindingConfiguration getBindingConfiguration() {
+		return bindingConfiguration;
 	}
 
 	@Override

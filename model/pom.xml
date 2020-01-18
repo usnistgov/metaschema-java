@@ -20,7 +20,7 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>markup</artifactId>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
 			<artifactId>xmlbeans</artifactId>
@@ -38,6 +38,12 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-jul</artifactId>
+		</dependency>
+
+		<!-- Used to generate Java class, field, package, etc. names -->
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -59,7 +65,10 @@
 					<javaSource>1.5</javaSource>
 					<noJavac>true</noJavac>
 					<sourceGenerationDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceGenerationDirectory>
-					<classGenerationDirectory>${project.build.directory}/generated-classes/xmlbeans</classGenerationDirectory>
+					<!-- <classGenerationDirectory>${project.build.directory}/generated-classes/xmlbeans</classGenerationDirectory> -->
+					<xmlConfigs>
+						<xmlConfig implementation="java.io.File">${project.basedir}/src/main/xsdconfig/metaschema.xsdconfig</xmlConfig>
+					</xmlConfigs>
 				</configuration>
 			</plugin>
 		</plugins>
