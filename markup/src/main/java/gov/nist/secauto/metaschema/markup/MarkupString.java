@@ -38,6 +38,17 @@ public class MarkupString {
 		return formatter.render(getDocument());
 	}
 
+	public String toMarkdownYaml() {
+		return toMarkdownYaml(FlexmarkFactory.instance().getFormatter());
+	}
+
+	public String toMarkdownYaml(Formatter formatter) {
+		String markdown = formatter.render(getDocument());
+//		markdown = markdown.replaceAll("\\n", "\n");
+//		markdown = markdown.replaceAll("\\r", "\r");
+		return markdown;
+	}
+
 	@Override
 	public String toString() {
 		AstCollectingVisitor visitor = new AstCollectingVisitor();

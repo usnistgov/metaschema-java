@@ -6,6 +6,9 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+
 import gov.nist.secauto.metaschema.binding.parser.BindingException;
 import gov.nist.secauto.metaschema.binding.parser.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.writer.json.FlagPropertyBindingFilter;
@@ -55,9 +58,15 @@ public class MarkupMultilineAdapter  extends AbstractMarkupAdapter<MarkupMultili
 			throw new BindingException(ex);
 		}
 
-		String jsonString = mml.toMarkdown().trim();
+		JsonGenerator generator = writingContext.getEventWriter();
+		String jsonString;
+		if (generator instanceof YAMLGenerator) {
+			jsonString = mml.toMarkdownYaml().trim();
+		} else {
+			jsonString = mml.toMarkdown().trim();
+		}
 		try {
-			writingContext.getEventWriter().writeString(jsonString);
+			generator.writeString(jsonString);
 		} catch (IOException ex) {
 			throw new BindingException(ex);
 		}

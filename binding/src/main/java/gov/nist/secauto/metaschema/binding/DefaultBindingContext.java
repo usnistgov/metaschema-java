@@ -28,6 +28,8 @@ import com.ctc.wstx.stax.WstxOutputFactory;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 
 import gov.nist.secauto.metaschema.binding.annotations.Assembly;
 import gov.nist.secauto.metaschema.binding.annotations.FieldValue;
@@ -51,29 +53,19 @@ import gov.nist.secauto.metaschema.binding.writer.xml.XmlWritingContext;
 public class DefaultBindingContext implements BindingContext {
 	private static final Logger logger = LogManager.getLogger(DefaultBindingContext.class);
 
-	private XMLInputFactory2 xmlInputFactory;
-	private XMLOutputFactory2 xmlOutputFactory;
-	private XMLEventFactory2 xmlEventFactory;
-	private JsonFactory jsonFactory;
-
 	private final Map<Class<?>, ClassBinding<?>> classBindingsByClass = new HashMap<>();
 //	private final Map<Class<?>, XmlParsePlan<?>> xmlParsePlansByClass = new HashMap<>();
 //	private final Map<Class<?>, XmlWriter> xmlWriterByClass = new HashMap<>();
 //	private final Map<Class<?>, JsonWriter> jsonWriterByClass = new HashMap<>();
 	private final Map<Type, JavaTypeAdapter<?>> xmlJavaTypeAdapters = new HashMap<>();
 
+	private XMLInputFactory2 xmlInputFactory;
+	private XMLOutputFactory2 xmlOutputFactory;
+	private XMLEventFactory2 xmlEventFactory;
+	private JsonFactory jsonFactory;
+	private YAMLFactory yamlFactory;
+
 	public DefaultBindingContext() {
-		xmlInputFactory = (XMLInputFactory2) WstxInputFactory.newInstance();
-		xmlInputFactory.configureForXmlConformance();
-		xmlInputFactory.setProperty(XMLInputFactory2.IS_COALESCING, false);
-//		xmlInputFactory.configureForSpeed();
-
-		xmlOutputFactory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
-		xmlOutputFactory.configureForSpeed();
-		xmlOutputFactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
-		xmlEventFactory = (XMLEventFactory2) WstxEventFactory.newInstance();
-
-		jsonFactory = new JsonFactory();
 		// register all known types
 		for (DataTypes dts : DataTypes.values()) {
 			JavaTypeAdapter<?> adapter = dts.getJavaTypeAdapter();
@@ -84,19 +76,39 @@ public class DefaultBindingContext implements BindingContext {
 	}
 
 	protected XMLInputFactory2 getXMLInputFactory() {
-		return xmlInputFactory;
+		synchronized (this) {
+			if (xmlInputFactory == null) {
+				xmlInputFactory = (XMLInputFactory2) WstxInputFactory.newInstance();
+				xmlInputFactory.configureForXmlConformance();
+				xmlInputFactory.setProperty(XMLInputFactory2.IS_COALESCING, false);
+//				xmlInputFactory.configureForSpeed();
+			}
+			return xmlInputFactory;
+		}
 	}
 
 	protected void setXMLInputFactory(XMLInputFactory2 factory) {
-		this.xmlInputFactory = factory;
+		synchronized (this) {
+			this.xmlInputFactory = factory;
+		}
 	}
 
 	protected XMLOutputFactory2 getXMLOutputFactory() {
-		return xmlOutputFactory;
+		synchronized (this) {
+			if (xmlOutputFactory == null) {
+				xmlOutputFactory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
+				xmlOutputFactory.configureForSpeed();
+				xmlOutputFactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
+				xmlEventFactory = (XMLEventFactory2) WstxEventFactory.newInstance();
+			}
+			return xmlOutputFactory;
+		}
 	}
 
 	protected void setXMLOutputFactory(XMLOutputFactory2 xmlOutputFactory) {
-		this.xmlOutputFactory = xmlOutputFactory;
+		synchronized (this) {
+			this.xmlOutputFactory = xmlOutputFactory;
+		}
 	}
 
 	protected XMLEventFactory2 getXmlEventFactory() {
@@ -108,11 +120,33 @@ public class DefaultBindingContext implements BindingContext {
 	}
 
 	protected JsonFactory getJsonFactory() {
-		return jsonFactory;
+		synchronized (this) {
+			if (jsonFactory == null) {
+				jsonFactory = new JsonFactory();
+			}
+			return jsonFactory;
+		}
 	}
 
 	protected void setJsonFactory(JsonFactory jsonFactory) {
-		this.jsonFactory = jsonFactory;
+		synchronized (this) {
+			this.jsonFactory = jsonFactory;
+		}
+	}
+
+	protected YAMLFactory getYamlFactory() {
+		synchronized (this) {
+			if (yamlFactory == null) {
+				yamlFactory = new YAMLFactory();
+			}
+			return yamlFactory;
+		}
+	}
+
+	protected void setYamlFactory(YAMLFactory yamlFactory) {
+		synchronized (this) {
+			this.yamlFactory = yamlFactory;
+		}
 	}
 
 	public <CLASS> JavaTypeAdapter<?> registerJavaTypeAdapter(Class<CLASS> clazz, JavaTypeAdapter<CLASS> adapter) {
@@ -135,12 +169,24 @@ public class DefaultBindingContext implements BindingContext {
 		}
 	}
 
-	private JsonGenerator newJsonGenerator(Writer writer) throws BindingException {
+	protected JsonGenerator newJsonGenerator(Writer writer) throws BindingException {
 		try {
 			JsonFactory factory = getJsonFactory();
 			JsonGenerator retval = factory.createGenerator(writer);
 			retval.setPrettyPrinter(new DefaultPrettyPrinter());
 			 return retval;
+		} catch (IOException ex) {
+			throw new BindingException(ex);
+		}
+	}
+
+	protected YAMLGenerator newYamlGenerator(Writer writer) throws BindingException {
+		try {
+			YAMLFactory factory = getYamlFactory();
+			
+			YAMLGenerator retval = factory.createGenerator(writer);
+			retval.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
+			return retval;
 		} catch (IOException ex) {
 			throw new BindingException(ex);
 		}
@@ -257,6 +303,20 @@ public class DefaultBindingContext implements BindingContext {
 		}
 
 		writer.writeJson(obj, null, writingContext);
+	}
+
+	@Override
+	public void writeYaml(Writer writer, Object data) throws BindingException {
+		JsonGenerator eventWriter = newYamlGenerator(writer);
+		JsonWritingContext writingContext = new DefaultJsonWritingContext(eventWriter, this);
+		try {
+			eventWriter.writeStartObject();
+			writeJsonInternal(data, writingContext);
+			eventWriter.writeEndObject();
+			eventWriter.close();
+		} catch (IOException ex) {
+			throw new BindingException(ex);
+		}
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -77,20 +78,6 @@ public class BasicMetaschema {
 //		return new DynamicClassLoader(classDir).loadClass(rootClassName);
 	}
 
-	private static Object readJson(Reader reader, Class<?> rootClass)
-			throws IOException {
-
-		return null;
-	}
-
-	private static void writeJson(Writer writer, Object rootObject)
-			throws IOException, BindingException {
-		BindingContext context = BindingContext.newInstance();
-		context.writeJson(writer, rootObject);
-//		JsonGenerator jsonGenerator = jsonFactory.createGenerator(writer);
-//		jsonGenerator.writeObject(rootObject);
-	}
-
 	private static Object readXml(Reader reader, Class<?> rootClass) throws IOException, BindingException {
 		BindingContext context = BindingContext.newInstance();
 		Object value = context.parseXml(reader, rootClass);
@@ -106,6 +93,24 @@ public class BasicMetaschema {
 		StringWriter writer = new StringWriter();
 		writeXml(writer, rootObject);
 		return writer.toString();
+	}
+
+	private static Object readJson(Reader reader, Class<?> rootClass)
+			throws IOException {
+
+		return null;
+	}
+
+	private static void writeJson(Writer writer, Object rootObject)
+			throws IOException, BindingException {
+		BindingContext context = BindingContext.newInstance();
+		context.writeJson(writer, rootObject);
+	}
+
+	private static void writeYaml(Writer writer, Object rootObject)
+			throws IOException, BindingException {
+		BindingContext context = BindingContext.newInstance();
+		context.writeYaml(writer, rootObject);
 	}
 
 	private void runTests(String testPath, File classDir)
@@ -289,12 +294,16 @@ public class BasicMetaschema {
 //			String xml = writeXml(root);
 //			logger.info("Write XML: Object: {}", xml);
 			File outXml = new File("target/oscal-catalog.xml");
-			writeXml(new FileWriter(outXml), root);
+			writeXml(new FileWriter(outXml, Charset.forName("UTF-8")), root);
 			logger.info("Write XML: Saved as: {}", outXml.getPath());
 
 			File outJson = new File("target/oscal-catalog.json");
-			writeJson(new FileWriter(outJson), root);
+			writeJson(new FileWriter(outJson, Charset.forName("UTF-8")), root);
 			logger.info("Write JSON: Saved as: {}", outJson.getPath());
+
+			File outYaml = new File("target/oscal-catalog.yml");
+			writeYaml(new FileWriter(outYaml, Charset.forName("UTF-8")), root);
+			logger.info("Write YAML: Saved as: {}", outYaml.getPath());
 		}
 
 	}
