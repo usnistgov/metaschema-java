@@ -25,22 +25,17 @@ public class AssemblyJsonReader<CLASS> extends AbstractJsonReader<CLASS, Assembl
 	}
 
 	@Override
-	public CLASS readJson(JsonParsingContext parsingContext, PropertyBindingFilter filter, boolean parseRoot) throws BindingException {
-		CLASS retval = getClassBinding().newInstance();
-
-		try {
-			if (parseRoot) {
-				parseRoot(retval, filter, parsingContext);
-			} else {
-				parseObject(retval, filter, parsingContext);
-			}
-		} catch (IOException ex) {
-			throw new BindingException(ex);
+	protected void readJsonInternal(CLASS obj, PropertyBindingFilter filter, JsonParsingContext parsingContext,
+			boolean parseRoot) throws BindingException, IOException {
+		if (parseRoot) {
+			parseRoot(obj, filter, parsingContext);
+		} else {
+			super.readJsonInternal(obj, filter, parsingContext, false);
 		}
-		return retval;
 	}
 
-	protected void parseRoot(CLASS obj, PropertyBindingFilter filter, JsonParsingContext parsingContext) throws BindingException, IOException {
+	protected void parseRoot(CLASS obj, PropertyBindingFilter filter, JsonParsingContext parsingContext)
+			throws BindingException, IOException {
 		JsonParser parser = parsingContext.getEventReader();
 		RootWrapper rootWrapper = getClassBinding().getRootWrapper();
 		String rootName = rootWrapper.name();
@@ -49,7 +44,7 @@ public class AssemblyJsonReader<CLASS> extends AbstractJsonReader<CLASS, Assembl
 		if (ignoreFieldsArray == null || ignoreFieldsArray.length == 0) {
 			ignoreRootFields = Collections.emptySet();
 		} else {
-			ignoreRootFields =  new HashSet<>(Arrays.asList(ignoreFieldsArray));
+			ignoreRootFields = new HashSet<>(Arrays.asList(ignoreFieldsArray));
 		}
 		JsonToken token;
 		while ((token = parser.nextToken()) != null) {
@@ -69,7 +64,8 @@ public class AssemblyJsonReader<CLASS> extends AbstractJsonReader<CLASS, Assembl
 				// ignore the field
 				JsonUtil.skipValue(parser);
 			} else {
-				if (!parsingContext.getProblemHandler().handleUnknownProperty(obj, getClassBinding(), fieldName, parsingContext)) {
+				if (!parsingContext.getProblemHandler().handleUnknownProperty(obj, getClassBinding(), fieldName,
+						parsingContext)) {
 					logger.warn("Skipping unhandled JSON field '{}'.", fieldName);
 					JsonUtil.skipValue(parser);
 				}

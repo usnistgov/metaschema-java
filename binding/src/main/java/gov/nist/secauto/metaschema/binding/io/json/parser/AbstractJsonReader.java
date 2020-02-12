@@ -17,7 +17,8 @@ import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
-public abstract class AbstractJsonReader<CLASS, CLASS_BINDING extends ClassBinding<CLASS>> implements JsonReader<CLASS> {
+public abstract class AbstractJsonReader<CLASS, CLASS_BINDING extends ClassBinding<CLASS>>
+		implements JsonReader<CLASS> {
 	private final CLASS_BINDING classBinding;
 
 	public AbstractJsonReader(CLASS_BINDING classBinding) {
@@ -28,15 +29,37 @@ public abstract class AbstractJsonReader<CLASS, CLASS_BINDING extends ClassBindi
 		return classBinding;
 	}
 
-	protected Map<String, PropertyBinding> getJsonPropertyBindings(BindingContext bindingContext, PropertyBindingFilter filter) throws BindingException {
+	@Override
+	public CLASS readJson(JsonParsingContext parsingContext, PropertyBindingFilter filter, boolean parseRoot)
+			throws BindingException {
+		CLASS retval = getClassBinding().newInstance();
+
+		try {
+			readJsonInternal(retval, filter, parsingContext, parseRoot);
+		} catch (IOException ex) {
+			throw new BindingException(ex);
+		}
+
+		return retval;
+	}
+
+	protected void readJsonInternal(CLASS obj, PropertyBindingFilter filter, JsonParsingContext parsingContext,
+			@SuppressWarnings("unused") boolean parseRoot) throws BindingException, IOException {
+		parseObject(obj, filter, parsingContext);
+	}
+
+	protected Map<String, PropertyBinding> getJsonPropertyBindings(BindingContext bindingContext,
+			PropertyBindingFilter filter) throws BindingException {
 		return Collections.unmodifiableMap(classBinding.getJsonPropertyBindings(bindingContext, filter));
 	}
 
-	protected void parseObject(CLASS obj, PropertyBindingFilter filter, JsonParsingContext parsingContext) throws BindingException, IOException {
+	protected void parseObject(CLASS obj, PropertyBindingFilter filter, JsonParsingContext parsingContext)
+			throws BindingException, IOException {
 		// we are at a start object
 		JsonParser parser = parsingContext.getEventReader();
 
-		Map<String, PropertyBinding> propertyBindings = getJsonPropertyBindings(parsingContext.getBindingContext(), filter);
+		Map<String, PropertyBinding> propertyBindings = getJsonPropertyBindings(parsingContext.getBindingContext(),
+				filter);
 
 		JsonUtil.expectCurrentToken(parser, JsonToken.START_OBJECT);
 		// parse to the first field
@@ -45,18 +68,21 @@ public abstract class AbstractJsonReader<CLASS, CLASS_BINDING extends ClassBindi
 		Set<String> parsedProperties = new HashSet<>();
 		Set<String> unknownProperties = new HashSet<>();
 		String nextFieldName;
-		while (JsonToken.FIELD_NAME.equals(parser.currentToken()) && (nextFieldName = parser.getCurrentName()) != null) {
+		while (JsonToken.FIELD_NAME.equals(parser.currentToken())
+				&& (nextFieldName = parser.getCurrentName()) != null) {
 			PropertyBinding propertyBinding = propertyBindings.get(nextFieldName);
 			if (propertyBinding == null) {
 				// Parse to the value
 				parser.nextToken();
 
 				// Give the problem handler a chance to handle the property
-				if (!parsingContext.getProblemHandler().handleUnknownProperty(obj, getClassBinding(), nextFieldName, parsingContext)) {
+				if (!parsingContext.getProblemHandler().handleUnknownProperty(obj, getClassBinding(), nextFieldName,
+						parsingContext)) {
 
 					// handle it internally if possible (e.g., valueKey with flag)
-					if (!handleUnknownProperty(obj, nextFieldName, Collections.unmodifiableSet(unknownProperties), parsingContext)) {
-						JsonUtil.skipValue(parser);					
+					if (!handleUnknownProperty(obj, nextFieldName, Collections.unmodifiableSet(unknownProperties),
+							parsingContext)) {
+						JsonUtil.skipValue(parser);
 					}
 
 					unknownProperties.add(nextFieldName);
@@ -76,8 +102,9 @@ public abstract class AbstractJsonReader<CLASS, CLASS_BINDING extends ClassBindi
 		Map<String, PropertyBinding> missingPropertyBindings = new HashMap<>(propertyBindings);
 		Set<String> keySet = missingPropertyBindings.keySet();
 		keySet.removeAll(parsedProperties);
-		parsingContext.getProblemHandler().handleMissingFields(obj, getClassBinding(), missingPropertyBindings, parsingContext);
-		
+		parsingContext.getProblemHandler().handleMissingFields(obj, getClassBinding(), missingPropertyBindings,
+				parsingContext);
+
 //		for (String key : keySet) {
 //			logger.info("  Unparsed field '{}'", key);
 //		}

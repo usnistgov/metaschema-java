@@ -1,6 +1,5 @@
 package gov.nist.secauto.metaschema.binding.io.json.parser;
 
-import java.io.IOException;
 import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonLocation;
@@ -11,25 +10,12 @@ import gov.nist.secauto.metaschema.binding.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FieldValuePropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FlagPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyInfo;
 
 public class FieldJsonReader<CLASS> extends AbstractJsonReader<CLASS, FieldClassBinding<CLASS>> {
 
 	public FieldJsonReader(FieldClassBinding<CLASS> classBinding) {
 		super(classBinding);
-	}
-
-	@Override
-	public CLASS readJson(JsonParsingContext parsingContext, PropertyBindingFilter filter, boolean parseRoot) throws BindingException {
-		CLASS retval = getClassBinding().newInstance();
-
-		try {
-			parseObject(retval, filter, parsingContext);
-		} catch (IOException ex) {
-			throw new BindingException(ex);
-		}
-		return retval;
 	}
 
 	@Override
