@@ -1,0 +1,10 @@
+{
+	"property": {
+		"test0": {
+			"data": "value"
+		},
+		"test1": {
+			"data": "value"
+		}
+	}
+}

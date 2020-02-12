@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -30,7 +31,11 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.platform.commons.util.ReflectionUtils;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
-import gov.nist.secauto.metaschema.binding.parser.BindingException;
+import gov.nist.secauto.metaschema.binding.BindingException;
+import gov.nist.secauto.metaschema.binding.io.Deserializer;
+import gov.nist.secauto.metaschema.binding.io.Feature;
+import gov.nist.secauto.metaschema.binding.io.MutableConfiguration;
+import gov.nist.secauto.metaschema.binding.io.Serializer;
 import gov.nist.secauto.metaschema.codegen.JavaGenerator;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
@@ -38,7 +43,7 @@ import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 
 public class BasicMetaschema {
 	private static final Logger logger = LogManager.getLogger(BasicMetaschema.class);
-	
+
 	private static final MetaschemaLoader loader = new MetaschemaLoader();
 
 	private static Metaschema loadMetaschema(File metaschemaFile) throws MetaschemaException, IOException {
@@ -50,19 +55,21 @@ public class BasicMetaschema {
 		Metaschema metaschema = loadMetaschema(metaschemaFile);
 
 		String rootClassName = null;
-		
+
 		List<JavaGenerator.GeneratedClass> classesToCompile = new LinkedList<>();
-		for (Map.Entry<Metaschema, List<JavaGenerator.GeneratedClass>> entry : JavaGenerator.generate(metaschema, classDir).entrySet()) {
+		for (Map.Entry<Metaschema, List<JavaGenerator.GeneratedClass>> entry : JavaGenerator
+				.generate(metaschema, classDir).entrySet()) {
 			Metaschema containingMetaschema = entry.getKey();
 			for (JavaGenerator.GeneratedClass generatedClass : entry.getValue()) {
 				classesToCompile.add(generatedClass);
 
-				if (rootClassName == null && Objects.equals(containingMetaschema, metaschema) && generatedClass.isRootClass()) {
+				if (rootClassName == null && Objects.equals(containingMetaschema, metaschema)
+						&& generatedClass.isRootClass()) {
 					rootClassName = generatedClass.getClassName();
 				}
 			}
 		}
-		
+
 		DynamicJavaCompiler compiler = new DynamicJavaCompiler(classDir);
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 
@@ -80,13 +87,15 @@ public class BasicMetaschema {
 
 	private static Object readXml(Reader reader, Class<?> rootClass) throws IOException, BindingException {
 		BindingContext context = BindingContext.newInstance();
-		Object value = context.parseXml(reader, rootClass);
+		Object value = context.newXmlDeserializer(rootClass, null).deserialize(reader);
 		return value;
 	}
 
-	private static void writeXml(Writer writer, Object rootObject) throws IOException, BindingException {
+	private static <CLASS> void writeXml(Writer writer, CLASS rootObject) throws IOException, BindingException {
 		BindingContext context = BindingContext.newInstance();
-		context.writeXml(writer, rootObject);
+		@SuppressWarnings("unchecked")
+		Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
+		context.newXmlSerializer(clazz, null).serialize(rootObject, writer);
 	}
 
 	private static String writeXml(Object rootObject) throws IOException, BindingException {
@@ -95,22 +104,25 @@ public class BasicMetaschema {
 		return writer.toString();
 	}
 
-	private static Object readJson(Reader reader, Class<?> rootClass)
-			throws IOException {
-
-		return null;
+	private static Object readJson(Reader reader, Class<?> rootClass) throws IOException, BindingException {
+		BindingContext context = BindingContext.newInstance();
+		return context
+				.newJsonDeserializer(rootClass, new MutableConfiguration().enableFeature(Feature.DESERIALIZE_ROOT))
+				.deserialize(reader);
 	}
 
-	private static void writeJson(Writer writer, Object rootObject)
-			throws IOException, BindingException {
+	private static <CLASS> void writeJson(Writer writer, CLASS rootObject) throws IOException, BindingException {
 		BindingContext context = BindingContext.newInstance();
-		context.writeJson(writer, rootObject);
+		@SuppressWarnings("unchecked")
+		Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
+		context.newJsonSerializer(clazz, null).serialize(rootObject, writer);
 	}
 
-	private static void writeYaml(Writer writer, Object rootObject)
-			throws IOException, BindingException {
+	private static <CLASS> void writeYaml(Writer writer, CLASS rootObject) throws IOException, BindingException {
 		BindingContext context = BindingContext.newInstance();
-		context.writeYaml(writer, rootObject);
+		@SuppressWarnings("unchecked")
+		Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
+		context.newYamlSerializer(clazz, null).serialize(rootObject, writer);
 	}
 
 	private void runTests(String testPath, File classDir)
@@ -275,6 +287,38 @@ public class BasicMetaschema {
 		});
 	}
 
+	public Object measureDeserializer(String format, File file, Deserializer<Object> deserializer, int iterations)
+			throws FileNotFoundException, BindingException {
+		Object retval = null;
+		long totalTime = 0;
+		for (int i = 0; i < iterations; i++) {
+			long startTime = System.nanoTime();
+			retval = deserializer.deserialize(new FileReader(file));
+			long endTime = System.nanoTime();
+			long timeElapsed = (endTime - startTime) / 1000000;
+			logger.info(String.format("%s read in %d milliseconds from %s", format, timeElapsed, file));
+			totalTime += timeElapsed;
+		}
+		long average = totalTime / iterations;
+		logger.info(String.format("%s read in %d milliseconds (on average) from %s", format, average, file));
+		return retval;
+	}
+
+	public void measureSerializer(Object root, String format, File file, Serializer<Object> serializer, int iterations)
+			throws BindingException, IOException {
+		long totalTime = 0;
+		for (int i = 0; i < iterations; i++) {
+			long startTime = System.nanoTime();
+			serializer.serialize(root, new FileWriter(file));
+			long endTime = System.nanoTime();
+			long timeElapsed = (endTime - startTime) / 1000000;
+			logger.info(String.format("%s written in %d milliseconds to %s", format, timeElapsed, file));
+			totalTime += timeElapsed;
+		}
+		long average = totalTime / iterations;
+		logger.info(String.format("%s written in %d milliseconds (on average) to %s", format, average, file));
+	}
+
 	@Test
 	public void testOSCALCatalog(@TempDir Path tempDir)
 			throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
@@ -284,26 +328,35 @@ public class BasicMetaschema {
 		Class<?> rootClass = compileMetaschema(
 				new File("../../../../OSCAL/src/metaschema/oscal_catalog_metaschema.xml"), classDir);
 
-		File xmlExample = new File("../../../../OSCAL/content/nist.gov/SP800-53/rev4/xml/NIST_SP-800-53_rev4_catalog.xml");
+		File xmlExample = new File(
+				"../../../../OSCAL/content/nist.gov/SP800-53/rev4/xml/NIST_SP-800-53_rev4_catalog.xml");
 		logger.info("Testing XML file: {}", xmlExample.getName());
 		if (xmlExample.exists()) {
-			Object root = readXml(new FileReader(xmlExample), rootClass);
-			logger.debug("Read XML: Object: {}", root.toString());
-			logger.info("done");
+			int iterations = 50;
+			BindingContext context = BindingContext.newInstance();
+			MutableConfiguration config = new MutableConfiguration().enableFeature(Feature.SERIALIZE_ROOT)
+					.enableFeature(Feature.DESERIALIZE_ROOT);
+			@SuppressWarnings("unchecked")
+			Deserializer<Object> xmlDeserializer = context.newXmlDeserializer((Class<Object>)rootClass, config);
+			Object root = measureDeserializer("XML", xmlExample, xmlDeserializer, iterations);
 
-//			String xml = writeXml(root);
-//			logger.info("Write XML: Object: {}", xml);
 			File outXml = new File("target/oscal-catalog.xml");
-			writeXml(new FileWriter(outXml, Charset.forName("UTF-8")), root);
-			logger.info("Write XML: Saved as: {}", outXml.getPath());
+			@SuppressWarnings("unchecked")
+			Serializer<Object> xmlSerializer = context.newXmlSerializer((Class<Object>)rootClass, config);
+			measureSerializer(root, "XML", outXml, xmlSerializer, iterations);
 
 			File outJson = new File("target/oscal-catalog.json");
-			writeJson(new FileWriter(outJson, Charset.forName("UTF-8")), root);
-			logger.info("Write JSON: Saved as: {}", outJson.getPath());
+			@SuppressWarnings("unchecked")
+			Serializer<Object> jsonSerializer = context.newJsonSerializer((Class<Object>)rootClass, config);
+			measureSerializer(root, "JSON", outJson, jsonSerializer, iterations);
 
-			File outYaml = new File("target/oscal-catalog.yml");
-			writeYaml(new FileWriter(outYaml, Charset.forName("UTF-8")), root);
-			logger.info("Write YAML: Saved as: {}", outYaml.getPath());
+			@SuppressWarnings("unchecked")
+			Deserializer<Object> jsonDeserializer = context.newJsonDeserializer((Class<Object>)rootClass, config);
+			root = measureDeserializer("JSON", outJson, jsonDeserializer, iterations);
+
+//			File outYaml = new File("target/oscal-catalog.yml");
+//			writeYaml(new FileWriter(outYaml, Charset.forName("UTF-8")), root);
+//			logger.info("Write YAML: Saved as: {}", outYaml.getPath());
 		}
 
 	}

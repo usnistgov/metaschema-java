@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import gov.nist.secauto.metaschema.binding.annotations.XmlNs;
-import gov.nist.secauto.metaschema.binding.annotations.XmlNsForm;
-import gov.nist.secauto.metaschema.binding.annotations.XmlSchema;
+import gov.nist.secauto.metaschema.binding.model.annotations.XmlNs;
+import gov.nist.secauto.metaschema.binding.model.annotations.XmlNsForm;
+import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;

@@ -4,11 +4,11 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import gov.nist.secauto.metaschema.binding.parser.BindingException;
-import gov.nist.secauto.metaschema.binding.parser.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.writer.json.FlagPropertyBindingFilter;
-import gov.nist.secauto.metaschema.binding.writer.json.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.writer.xml.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
 
 public interface JavaTypeAdapter<TYPE> {
 	boolean isParsingStartElement();
@@ -38,8 +38,26 @@ public interface JavaTypeAdapter<TYPE> {
 	 * @throws BindingException if a parsing error occurs
 	 */
 	TYPE parse(XmlParsingContext parsingContext) throws BindingException;
+	TYPE parse(JsonParsingContext parsingContext) throws BindingException;
 
-	void writeXmlElement(Object value, QName valueQName, StartElement parent, XmlWritingContext writingContext) throws BindingException;
+	void writeXmlElement(Object value, QName valueQName, StartElement parent, XmlWritingContext writingContext)
+			throws BindingException;
 
-	void writeJsonFieldValue(Object value, FlagPropertyBindingFilter filter, JsonWritingContext writingContext) throws BindingException;
+	void writeJsonFieldValue(Object value, NamedPropertyBindingFilter filter, JsonWritingContext writingContext)
+			throws BindingException;
+
+	/**
+	 * Gets the default value to use as the JSON (or YAML) field name.
+	 * 
+	 * @return the default field name
+	 */
+	String getDefaultJsonFieldName();
+
+	/**
+	 * Determines if the data type's value is allowed to be unwrapped in XML when
+	 * the value is a field value.
+	 * 
+	 * @return {@code true} if allowed, or {@code false} otherwise.
+	 */
+	boolean isUnrappedValueAllowedInXml();
 }

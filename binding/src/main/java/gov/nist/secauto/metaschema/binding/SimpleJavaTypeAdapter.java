@@ -13,12 +13,14 @@ import javax.xml.stream.events.XMLEvent;
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.evt.XMLEventFactory2;
 
-import gov.nist.secauto.metaschema.binding.parser.BindingException;
-import gov.nist.secauto.metaschema.binding.parser.xml.XmlEventUtil;
-import gov.nist.secauto.metaschema.binding.parser.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.writer.json.FlagPropertyBindingFilter;
-import gov.nist.secauto.metaschema.binding.writer.json.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.writer.xml.XmlWritingContext;
+import com.fasterxml.jackson.core.JsonParser;
+
+import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlEventUtil;
+import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
 
 public abstract class SimpleJavaTypeAdapter<TYPE> implements JavaTypeAdapter<TYPE> {
 	@Override
@@ -60,6 +62,26 @@ public abstract class SimpleJavaTypeAdapter<TYPE> implements JavaTypeAdapter<TYP
 		}
 	}
 
+	/**
+	 * This default implementation will parse the value as a string and delegate to the string-based parsing method.
+	 */
+	@Override
+	public TYPE parse(JsonParsingContext parsingContext) throws BindingException {
+		JsonParser parser = parsingContext.getEventReader();
+		String value;
+		try {
+			value = parser.getValueAsString();
+			// skip over value
+			parser.nextToken();
+		} catch (IOException ex) {
+			throw new BindingException(ex);
+		}
+		if (value == null) {
+			throw new BindingException("Unable to parse field value as text");
+		}
+		return parse(value);
+	}
+
 	@Override
 	public void writeXmlElement(Object value, QName valueQName, StartElement parent, XmlWritingContext writingContext) throws BindingException {
 		XMLEventFactory2 eventFactory = writingContext.getXMLEventFactory();
@@ -88,7 +110,7 @@ public abstract class SimpleJavaTypeAdapter<TYPE> implements JavaTypeAdapter<TYP
 	}
 
 	@Override
-	public void writeJsonFieldValue(Object value, FlagPropertyBindingFilter filter, JsonWritingContext writingContext)
+	public void writeJsonFieldValue(Object value, NamedPropertyBindingFilter filter, JsonWritingContext writingContext)
 			throws BindingException {
 		try {
 			writingContext.getEventWriter().writeString(value.toString());
@@ -96,5 +118,15 @@ public abstract class SimpleJavaTypeAdapter<TYPE> implements JavaTypeAdapter<TYP
 			throw new BindingException(ex);
 		}
 		
+	}
+
+	@Override
+	public String getDefaultJsonFieldName() {
+		return "STRVALUE";
+	}
+
+	@Override
+	public boolean isUnrappedValueAllowedInXml() {
+		return false;
 	}
 }

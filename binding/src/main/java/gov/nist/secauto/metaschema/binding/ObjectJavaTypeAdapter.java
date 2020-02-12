@@ -5,15 +5,16 @@ import java.util.Objects;
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.StartElement;
 
-import gov.nist.secauto.metaschema.binding.parser.BindingException;
-import gov.nist.secauto.metaschema.binding.parser.xml.XmlParsePlan;
-import gov.nist.secauto.metaschema.binding.parser.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.writer.json.FlagPropertyBindingFilter;
-import gov.nist.secauto.metaschema.binding.writer.json.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.writer.xml.XmlWriter;
-import gov.nist.secauto.metaschema.binding.writer.xml.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsePlan;
+import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWriter;
+import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
 
-public class ObjectJavaTypeAdapter<CLASS> implements JavaTypeAdapter<CLASS> {
+class ObjectJavaTypeAdapter<CLASS> implements JavaTypeAdapter<CLASS> {
 	private final ClassBinding<CLASS> classBinding;
 
 	public ObjectJavaTypeAdapter(ClassBinding<CLASS> classBinding) {
@@ -54,13 +55,30 @@ public class ObjectJavaTypeAdapter<CLASS> implements JavaTypeAdapter<CLASS> {
 	}
 
 	@Override
+	public CLASS parse(JsonParsingContext parsingContext) throws BindingException {
+		// TODO: support same pathway as parse(XML)
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public void writeXmlElement(Object value, QName valueQName, StartElement parent, XmlWritingContext writingContext) throws BindingException {
 		XmlWriter writer = getClassBinding().getXmlWriter();
 		writer.writeXml(value, valueQName, writingContext);
 	}
 
 	@Override
-	public void writeJsonFieldValue(Object value, FlagPropertyBindingFilter filter, JsonWritingContext writingContext) throws BindingException {
+	public void writeJsonFieldValue(Object value, NamedPropertyBindingFilter filter, JsonWritingContext writingContext) throws BindingException {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public String getDefaultJsonFieldName() {
+		throw new UnsupportedOperationException("A bound object must always be referenced from an assembly or field property");
+	}
+
+	@Override
+	public boolean isUnrappedValueAllowedInXml() {
+		return false;
+	}
+
 }

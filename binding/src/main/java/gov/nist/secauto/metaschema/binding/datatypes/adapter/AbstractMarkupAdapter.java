@@ -8,9 +8,9 @@ import javax.xml.stream.events.StartElement;
 
 import org.codehaus.stax2.evt.XMLEventFactory2;
 
+import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.JavaTypeAdapter;
-import gov.nist.secauto.metaschema.binding.parser.BindingException;
-import gov.nist.secauto.metaschema.binding.writer.xml.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWritingContext;
 import gov.nist.secauto.metaschema.markup.MarkupString;
 
 public abstract class AbstractMarkupAdapter<TYPE extends MarkupString> implements JavaTypeAdapter<TYPE> {

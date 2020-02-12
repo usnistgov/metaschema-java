@@ -2,10 +2,10 @@ package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import java.io.IOException;
 
+import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
-import gov.nist.secauto.metaschema.binding.parser.BindingException;
-import gov.nist.secauto.metaschema.binding.writer.json.FlagPropertyBindingFilter;
-import gov.nist.secauto.metaschema.binding.writer.json.JsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
+import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
 
 public class BooleanAdapter extends SimpleJavaTypeAdapter<Boolean> {
 	@Override
@@ -14,7 +14,7 @@ public class BooleanAdapter extends SimpleJavaTypeAdapter<Boolean> {
 	}
 
 	@Override
-	public void writeJsonFieldValue(Object value, FlagPropertyBindingFilter filter, JsonWritingContext writingContext)
+	public void writeJsonFieldValue(Object value, NamedPropertyBindingFilter filter, JsonWritingContext writingContext)
 			throws BindingException {
 		try {
 			writingContext.getEventWriter().writeBoolean(((Boolean)value).booleanValue());

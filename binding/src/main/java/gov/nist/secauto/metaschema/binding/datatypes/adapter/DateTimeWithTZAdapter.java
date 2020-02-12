@@ -2,9 +2,9 @@ package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import java.time.ZonedDateTime;
 
+import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.datatypes.DateTimeTimeZone;
-import gov.nist.secauto.metaschema.binding.parser.BindingException;
 
 public class DateTimeWithTZAdapter extends SimpleJavaTypeAdapter<DateTimeTimeZone> {
 

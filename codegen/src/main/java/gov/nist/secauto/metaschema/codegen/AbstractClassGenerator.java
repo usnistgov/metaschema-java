@@ -13,7 +13,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import gov.nist.secauto.metaschema.binding.annotations.MetaschemaModel;
+import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaModel;
 import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
 import gov.nist.secauto.metaschema.codegen.builder.MethodBuilder;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;

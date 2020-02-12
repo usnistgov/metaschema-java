@@ -3,9 +3,9 @@ package gov.nist.secauto.metaschema.codegen;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import gov.nist.secauto.metaschema.binding.annotations.Flag;
-import gov.nist.secauto.metaschema.binding.annotations.JsonKey;
-import gov.nist.secauto.metaschema.binding.annotations.JsonValueKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKey;
 import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
@@ -84,7 +84,7 @@ public class FlagInstanceGenerator extends AbstractInstanceGenerator<AbstractCla
 
 		if (parent instanceof FieldDefinition) {
 			if (isJsonValueKeyFlag()) {
-				builder.annotation(JsonValueKey.class);
+				builder.annotation(JsonFieldValueKey.class);
 			}
 		}
 		

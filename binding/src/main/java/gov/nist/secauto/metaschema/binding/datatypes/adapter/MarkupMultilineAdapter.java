@@ -7,13 +7,16 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 
-import gov.nist.secauto.metaschema.binding.parser.BindingException;
-import gov.nist.secauto.metaschema.binding.parser.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.writer.json.FlagPropertyBindingFilter;
-import gov.nist.secauto.metaschema.binding.writer.json.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.writer.xml.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.BindingException;
+import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.markup.MarkupLine;
 import gov.nist.secauto.metaschema.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.markup.MarkupString;
 
@@ -48,7 +51,7 @@ public class MarkupMultilineAdapter  extends AbstractMarkupAdapter<MarkupMultili
 	}
 
 	@Override
-	public void writeJsonFieldValue(Object value, FlagPropertyBindingFilter filter, JsonWritingContext writingContext)
+	public void writeJsonFieldValue(Object value, NamedPropertyBindingFilter filter, JsonWritingContext writingContext)
 			throws BindingException {
 
 		MarkupMultiline mml;
@@ -71,4 +74,28 @@ public class MarkupMultilineAdapter  extends AbstractMarkupAdapter<MarkupMultili
 			throw new BindingException(ex);
 		}
 	}
+
+	@Override
+	public MarkupMultiline parse(JsonParsingContext parsingContext) throws BindingException {
+		try {
+			JsonParser parser = parsingContext.getEventReader();
+			MarkupMultiline retval = parse(parser.getValueAsString());
+			// skip past value
+			parser.nextToken();
+			return retval;
+		} catch (IOException ex) {
+			throw new BindingException(ex);
+		}
+	}
+
+	@Override
+	public String getDefaultJsonFieldName() {
+		return "PROSE";
+	}
+
+	@Override
+	public boolean isUnrappedValueAllowedInXml() {
+		return true;
+	}
+
 }

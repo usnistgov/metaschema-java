@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import com.ctc.wstx.stax.WstxInputFactory;
 
 import gov.nist.secauto.metaschema.binding.datatypes.adapter.MarkupParser;
-import gov.nist.secauto.metaschema.binding.parser.xml.XmlEventUtil;
+import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlEventUtil;
 import gov.nist.secauto.metaschema.markup.MarkupString;
 import gov.nist.secauto.metaschema.markup.flexmark.AstCollectingVisitor;
 

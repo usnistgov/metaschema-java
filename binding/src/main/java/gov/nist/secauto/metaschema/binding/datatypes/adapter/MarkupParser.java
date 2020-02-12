@@ -36,7 +36,7 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 import com.vladsch.flexmark.util.sequence.BasedSequence;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
-import gov.nist.secauto.metaschema.binding.parser.xml.XmlEventUtil;
+import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlEventUtil;
 import gov.nist.secauto.metaschema.binding.util.Util;
 import gov.nist.secauto.metaschema.markup.MarkupLine;
 import gov.nist.secauto.metaschema.markup.MarkupMultiline;

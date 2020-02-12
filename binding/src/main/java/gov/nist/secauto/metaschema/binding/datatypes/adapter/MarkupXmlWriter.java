@@ -39,7 +39,7 @@ import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeVisitorBase;
 
-import gov.nist.secauto.metaschema.binding.parser.BindingException;
+import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.markup.flexmark.insertanchor.InsertAnchorNode;
 
 public class MarkupXmlWriter {
@@ -58,7 +58,7 @@ public class MarkupXmlWriter {
 		entityMap.put("&mdash;", "—");
 		entityMap.put("&ndash;", "–");
 		entityMap.put("&ldquo;", "“");
-		entityMap.put("&rdquo;", "”");
+		entityMap.put("&rdquo;", "\u201D");
 		entityMap.put("&laquo;", "«");
 		entityMap.put("&raquo;", "»");
 

@@ -4,9 +4,9 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.datatypes.Date;
-import gov.nist.secauto.metaschema.binding.parser.BindingException;
 
 public class DateAdapter extends SimpleJavaTypeAdapter<Date> {
 	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-ddXXX");

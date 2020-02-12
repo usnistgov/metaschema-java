@@ -6,9 +6,9 @@ import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import gov.nist.secauto.metaschema.binding.parser.BindingException;
-import gov.nist.secauto.metaschema.binding.parser.xml.XmlParsePlan;
-import gov.nist.secauto.metaschema.binding.parser.xml.XmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsePlan;
+import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsingContext;
+import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 
 class ObjectJavaTypeAdapterTest {
 	@RegisterExtension

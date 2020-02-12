@@ -3,8 +3,8 @@ package gov.nist.secauto.metaschema.codegen;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import gov.nist.secauto.metaschema.binding.annotations.FieldValue;
-import gov.nist.secauto.metaschema.binding.annotations.JsonFieldName;
+import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
+import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueName;
 import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
@@ -71,7 +71,7 @@ public class FieldValueInstanceGenerator extends AbstractInstanceGenerator<Field
 		switch (fieldDefinition.getJsonValueKeyType()) {
 		case NONE:
 		case LABEL:
-			builder.annotation(JsonFieldName.class, String.format("name=\"%s\"", fieldDefinition.getJsonValueKeyName()));
+			builder.annotation(JsonFieldValueName.class, String.format("name=\"%s\"", fieldDefinition.getJsonValueKeyName()));
 			break;
 		case FLAG:
 			// do nothing, the annotation will be on the flag
