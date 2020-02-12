@@ -14,7 +14,8 @@ import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsePlan;
 import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWriter;
 import gov.nist.secauto.metaschema.binding.model.property.FlagPropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 abstract class AbstractClassBinding<CLASS, XML_PARSE_PLAN extends XmlParsePlan<CLASS>, XML_WRITER extends XmlWriter> implements ClassBinding<CLASS> {
 	private final Class<CLASS> clazz;
@@ -78,8 +79,8 @@ abstract class AbstractClassBinding<CLASS, XML_PARSE_PLAN extends XmlParsePlan<C
 	}
 
 	@Override
-	public Map<String, NamedPropertyBinding> getNamedPropertyBindings(BindingContext bindingContext, NamedPropertyBindingFilter filter) throws BindingException {
-		Map<String, NamedPropertyBinding> retval = new HashMap<>();
+	public Map<String, PropertyBinding> getJsonPropertyBindings(BindingContext bindingContext, PropertyBindingFilter filter) throws BindingException {
+		Map<String, PropertyBinding> retval = new HashMap<>();
 		List<FlagPropertyBinding> flags = getFlagPropertyBindings();
 		
 		

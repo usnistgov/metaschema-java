@@ -12,7 +12,7 @@ import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyPropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FieldPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
 
 /**
@@ -51,8 +51,8 @@ public interface PropertyItemHandler {
 
 	PropertyBinding getPropertyBinding();
 
-	List<Object> parse(JsonParsingContext parsingContext, NamedPropertyBindingFilter filter) throws BindingException, IOException;
+	List<Object> parse(JsonParsingContext parsingContext, PropertyBindingFilter filter) throws BindingException, IOException;
 
-	void writeValue(Object value, JsonWritingContext writingContext, NamedPropertyBindingFilter filter)
+	void writeValue(Object value, JsonWritingContext writingContext, PropertyBindingFilter filter)
 			throws BindingException, IOException;
 }

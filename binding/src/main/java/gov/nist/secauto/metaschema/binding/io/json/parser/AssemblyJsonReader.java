@@ -15,7 +15,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.RootWrapper;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 public class AssemblyJsonReader<CLASS> extends AbstractJsonReader<CLASS, AssemblyClassBinding<CLASS>> {
 	private static final Logger logger = LogManager.getLogger(AssemblyJsonReader.class);
@@ -25,14 +25,14 @@ public class AssemblyJsonReader<CLASS> extends AbstractJsonReader<CLASS, Assembl
 	}
 
 	@Override
-	public CLASS readJson(JsonParsingContext parsingContext, NamedPropertyBindingFilter filter, boolean parseRoot) throws BindingException {
+	public CLASS readJson(JsonParsingContext parsingContext, PropertyBindingFilter filter, boolean parseRoot) throws BindingException {
 		CLASS retval = getClassBinding().newInstance();
 
 		try {
 			if (parseRoot) {
 				parseRoot(retval, filter, parsingContext);
 			} else {
-				parseBody(retval, filter, parsingContext);
+				parseObject(retval, filter, parsingContext);
 			}
 		} catch (IOException ex) {
 			throw new BindingException(ex);
@@ -40,7 +40,7 @@ public class AssemblyJsonReader<CLASS> extends AbstractJsonReader<CLASS, Assembl
 		return retval;
 	}
 
-	protected void parseRoot(CLASS obj, NamedPropertyBindingFilter filter, JsonParsingContext parsingContext) throws BindingException, IOException {
+	protected void parseRoot(CLASS obj, PropertyBindingFilter filter, JsonParsingContext parsingContext) throws BindingException, IOException {
 		JsonParser parser = parsingContext.getEventReader();
 		RootWrapper rootWrapper = getClassBinding().getRootWrapper();
 		String rootName = rootWrapper.name();
@@ -64,17 +64,23 @@ public class AssemblyJsonReader<CLASS> extends AbstractJsonReader<CLASS, Assembl
 			if (fieldName.equals(rootName)) {
 				// process the object value, bound to the requested class
 				JsonUtil.readNextToken(parser, JsonToken.START_OBJECT);
-				parseBody(obj, filter, parsingContext);
+				parseObject(obj, filter, parsingContext);
 			} else if (ignoreRootFields.contains(fieldName)) {
 				// ignore the field
 				JsonUtil.skipValue(parser);
 			} else {
-				if (!parsingContext.getProblemHandler().handleUnknownProperty(obj, fieldName, parsingContext)) {
+				if (!parsingContext.getProblemHandler().handleUnknownProperty(obj, getClassBinding(), fieldName, parsingContext)) {
 					logger.warn("Skipping unhandled JSON field '{}'.", fieldName);
 					JsonUtil.skipValue(parser);
 				}
 			}
 		}
 		JsonUtil.expectCurrentToken(parser, null);
+	}
+
+	@Override
+	protected boolean handleUnknownProperty(CLASS obj, String nextFieldName, Set<String> unmodifiableSet,
+			JsonParsingContext parsingContext) {
+		return false;
 	}
 }

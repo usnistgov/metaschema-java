@@ -3,9 +3,6 @@ package gov.nist.secauto.metaschema.binding.io.json;
 import java.io.IOException;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;

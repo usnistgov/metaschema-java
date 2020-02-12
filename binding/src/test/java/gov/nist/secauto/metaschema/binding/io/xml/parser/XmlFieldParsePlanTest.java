@@ -27,7 +27,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.BindingException;
-import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlAssemblyParsePlanTest.Value;
 import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
 
 class XmlFieldParsePlanTest {

@@ -27,8 +27,8 @@ import gov.nist.secauto.metaschema.binding.model.property.FieldPropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FieldValuePropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FlagPropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.ModelItemPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyInfo;
 
 public class AssemblyJsonWriter<CLASS> extends AbstractJsonWriter<CLASS, AssemblyClassBinding<CLASS>> {
@@ -38,7 +38,7 @@ public class AssemblyJsonWriter<CLASS> extends AbstractJsonWriter<CLASS, Assembl
 	}
 
 	@Override
-	public void writeJson(Object obj, NamedPropertyBindingFilter filter, JsonWritingContext writingContext)
+	public void writeJson(Object obj, PropertyBindingFilter filter, JsonWritingContext writingContext)
 			throws BindingException {
 		JsonGenerator generator = writingContext.getEventWriter();
 		try {
@@ -183,7 +183,7 @@ public class AssemblyJsonWriter<CLASS> extends AbstractJsonWriter<CLASS, Assembl
 			String key = jsonKeyPropertyInfo.getValue(item).toString();
 
 			generator.writeFieldName(key);
-			itemBinding.writeValue(item, (NamedPropertyBinding binding) -> binding.equals(jsonKey),
+			itemBinding.writeValue(item, (PropertyBinding binding) -> binding.equals(jsonKey),
 					writingContext);
 		}
 

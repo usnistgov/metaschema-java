@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -104,6 +103,7 @@ public class BasicMetaschema {
 		return writer.toString();
 	}
 
+	@SuppressWarnings("unused")
 	private static Object readJson(Reader reader, Class<?> rootClass) throws IOException, BindingException {
 		BindingContext context = BindingContext.newInstance();
 		return context
@@ -118,6 +118,7 @@ public class BasicMetaschema {
 		context.newJsonSerializer(clazz, null).serialize(rootObject, writer);
 	}
 
+	@SuppressWarnings("unused")
 	private static <CLASS> void writeYaml(Writer writer, CLASS rootObject) throws IOException, BindingException {
 		BindingContext context = BindingContext.newInstance();
 		@SuppressWarnings("unchecked")
@@ -209,8 +210,8 @@ public class BasicMetaschema {
 	@Test
 	public void testFieldsWithFlagMetaschema(@TempDir Path tempDir)
 			throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-//		File classDir = tempDir.toFile();
-		File classDir = new File("target/generated-sources/metaschema");
+		File classDir = tempDir.toFile();
+//		File classDir = new File("target/generated-sources/metaschema");
 		runTests("fields_with_flags", classDir, (obj) -> {
 			try {
 				Assertions.assertEquals("test", reflectMethod(obj, "getId"));
@@ -275,8 +276,8 @@ public class BasicMetaschema {
 	@Test
 	public void testAssemblyMetaschema(@TempDir Path tempDir)
 			throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-//		File classDir = tempDir.toFile();
-		File classDir = new File("target/generated-sources/metaschema");
+		File classDir = tempDir.toFile();
+//		File classDir = new File("target/generated-sources/metaschema");
 
 		runTests("assembly", classDir, (obj) -> {
 			try {
@@ -324,6 +325,50 @@ public class BasicMetaschema {
 			throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
 //		File classDir = tempDir.toFile();
 		File classDir = new File("target/generated-sources/metaschema");
+
+		Class<?> rootClass = compileMetaschema(
+				new File("../../../../OSCAL/src/metaschema/oscal_catalog_metaschema.xml"), classDir);
+
+		File xmlExample = new File(
+				"../../../../OSCAL/content/nist.gov/SP800-53/rev4/xml/NIST_SP-800-53_rev4_catalog.xml");
+		logger.info("Testing XML file: {}", xmlExample.getName());
+		if (xmlExample.exists()) {
+			int iterations = 1;
+			BindingContext context = BindingContext.newInstance();
+			MutableConfiguration config = new MutableConfiguration().enableFeature(Feature.SERIALIZE_ROOT)
+					.enableFeature(Feature.DESERIALIZE_ROOT);
+			@SuppressWarnings("unused")
+			Object root = null;
+			@SuppressWarnings("unchecked")
+			Deserializer<Object> xmlDeserializer = context.newXmlDeserializer((Class<Object>)rootClass, config);
+			root = measureDeserializer("XML", xmlExample, xmlDeserializer, iterations);
+//
+//			File outXml = new File("target/oscal-catalog.xml");
+//			@SuppressWarnings("unchecked")
+//			Serializer<Object> xmlSerializer = context.newXmlSerializer((Class<Object>)rootClass, config);
+//			measureSerializer(root, "XML", outXml, xmlSerializer, iterations);
+
+			File outJson = new File("target/oscal-catalog.json");
+			@SuppressWarnings("unchecked")
+			Serializer<Object> jsonSerializer = context.newJsonSerializer((Class<Object>)rootClass, config);
+			measureSerializer(root, "JSON", outJson, jsonSerializer, iterations);
+
+			@SuppressWarnings("unchecked")
+			Deserializer<Object> jsonDeserializer = context.newJsonDeserializer((Class<Object>)rootClass, config);
+			root = measureDeserializer("JSON", outJson, jsonDeserializer, iterations);
+
+//			File outYaml = new File("target/oscal-catalog.yml");
+//			writeYaml(new FileWriter(outYaml, Charset.forName("UTF-8")), root);
+//			logger.info("Write YAML: Saved as: {}", outYaml.getPath());
+		}
+
+	}
+
+	@Test
+	public void testOSCALCatalogMetrics(@TempDir Path tempDir)
+			throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
+		File classDir = tempDir.toFile();
+//		File classDir = new File("target/generated-sources/metaschema");
 
 		Class<?> rootClass = compileMetaschema(
 				new File("../../../../OSCAL/src/metaschema/oscal_catalog_metaschema.xml"), classDir);

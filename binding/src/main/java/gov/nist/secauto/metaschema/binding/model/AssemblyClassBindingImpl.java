@@ -16,7 +16,8 @@ import gov.nist.secauto.metaschema.binding.model.annotations.RootWrapper;
 import gov.nist.secauto.metaschema.binding.model.property.ModelItemPropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 class AssemblyClassBindingImpl<CLASS> extends AbstractClassBinding<CLASS, AssemblyXmlParsePlan<CLASS>, AssemblyXmlWriter<CLASS>> implements AssemblyClassBinding<CLASS> {
 	private final List<ModelItemPropertyBinding> modelItemPropertyBindings;
@@ -36,8 +37,8 @@ class AssemblyClassBindingImpl<CLASS> extends AbstractClassBinding<CLASS, Assemb
 	}
 
 	@Override
-	public Map<String, NamedPropertyBinding> getNamedPropertyBindings(BindingContext bindingContext, NamedPropertyBindingFilter filter) throws BindingException {
-		Map<String, NamedPropertyBinding> retval = super.getNamedPropertyBindings(bindingContext, filter);
+	public Map<String, PropertyBinding> getJsonPropertyBindings(BindingContext bindingContext, PropertyBindingFilter filter) throws BindingException {
+		Map<String, PropertyBinding> retval = super.getJsonPropertyBindings(bindingContext, filter);
 		List<? extends NamedPropertyBinding> modelItems = getModelItemPropertyBindings();
 		
 		if (!modelItems.isEmpty()) {

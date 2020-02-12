@@ -12,7 +12,7 @@ import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWriter;
 import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 class ObjectJavaTypeAdapter<CLASS> implements JavaTypeAdapter<CLASS> {
 	private final ClassBinding<CLASS> classBinding;
@@ -67,7 +67,7 @@ class ObjectJavaTypeAdapter<CLASS> implements JavaTypeAdapter<CLASS> {
 	}
 
 	@Override
-	public void writeJsonFieldValue(Object value, NamedPropertyBindingFilter filter, JsonWritingContext writingContext) throws BindingException {
+	public void writeJsonFieldValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext) throws BindingException {
 		throw new UnsupportedOperationException();
 	}
 

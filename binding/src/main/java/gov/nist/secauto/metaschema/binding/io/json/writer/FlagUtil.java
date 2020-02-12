@@ -10,15 +10,15 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.model.property.FlagPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 public class FlagUtil {
 	private FlagUtil() {
 		// disable construction
 	}
 
-	public static List<FlagPropertyBinding> filterFlags(Object obj, List<FlagPropertyBinding> flags, NamedPropertyBindingFilter filter)
+	public static List<FlagPropertyBinding> filterFlags(Object obj, List<FlagPropertyBinding> flags, PropertyBindingFilter filter)
 			throws BindingException {
 		List<FlagPropertyBinding> retval;
 		if (flags.isEmpty()) {
@@ -60,13 +60,13 @@ public class FlagUtil {
 		adapter.writeJsonFieldValue(value, null, writingContext);
 	}
 
-	public static NamedPropertyBindingFilter adjustFilterToIncludeFlag(NamedPropertyBindingFilter filter,
+	public static PropertyBindingFilter adjustFilterToIncludeFlag(PropertyBindingFilter filter,
 			FlagPropertyBinding jsonValueKeyFlag) {
-		NamedPropertyBindingFilter retval;
+		PropertyBindingFilter retval;
 		if (filter == null) {
-			retval = (NamedPropertyBinding binding) -> jsonValueKeyFlag.equals(binding);
+			retval = (PropertyBinding binding) -> jsonValueKeyFlag.equals(binding);
 		} else {
-			retval = (NamedPropertyBinding binding) -> filter.filter(binding) || jsonValueKeyFlag.equals(binding);
+			retval = (PropertyBinding binding) -> filter.filter(binding) || jsonValueKeyFlag.equals(binding);
 		}
 		return retval;
 	}

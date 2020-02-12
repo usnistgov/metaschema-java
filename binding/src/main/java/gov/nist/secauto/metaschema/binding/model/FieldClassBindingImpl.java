@@ -1,5 +1,8 @@
 package gov.nist.secauto.metaschema.binding.model;
 
+import java.util.Collections;
+import java.util.Map;
+
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.parser.FieldJsonReader;
@@ -10,8 +13,11 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Collapsible;
 import gov.nist.secauto.metaschema.binding.model.annotations.RootWrapper;
 import gov.nist.secauto.metaschema.binding.model.property.FieldValuePropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FlagPropertyBinding;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
-class FieldClassBindingImpl<CLASS> extends AbstractClassBinding<CLASS, FieldXmlParsePlan<CLASS>, FieldXmlWriter<CLASS>> implements FieldClassBinding<CLASS> {
+class FieldClassBindingImpl<CLASS> extends AbstractClassBinding<CLASS, FieldXmlParsePlan<CLASS>, FieldXmlWriter<CLASS>>
+		implements FieldClassBinding<CLASS> {
 	private final FieldValuePropertyBinding fieldValuePropertyBinding;
 	private final FlagPropertyBinding jsonValueKeyFlagPropertyBinding;
 
@@ -27,6 +33,16 @@ class FieldClassBindingImpl<CLASS> extends AbstractClassBinding<CLASS, FieldXmlP
 		}
 		this.jsonValueKeyFlagPropertyBinding = jsonValueKeyFlag;
 		this.fieldValuePropertyBinding = ClassIntrospector.getFieldValueBinding(this, clazz);
+	}
+
+	@Override
+	public Map<String, PropertyBinding> getJsonPropertyBindings(BindingContext bindingContext,
+			PropertyBindingFilter filter) throws BindingException {
+		Map<String, PropertyBinding> retval = super.getJsonPropertyBindings(bindingContext, filter);
+
+		FieldValuePropertyBinding fieldValuePropertyBinding = getFieldValuePropertyBinding();
+		retval.put(fieldValuePropertyBinding.getJsonFieldName(bindingContext), fieldValuePropertyBinding);
+		return Collections.unmodifiableMap(retval);
 	}
 
 	@Override
@@ -68,6 +84,5 @@ class FieldClassBindingImpl<CLASS> extends AbstractClassBinding<CLASS, FieldXmlP
 	public FieldJsonReader<CLASS> getJsonReader(BindingContext bindingContext) throws BindingException {
 		return new FieldJsonReader<CLASS>(this);
 	}
-
 
 }

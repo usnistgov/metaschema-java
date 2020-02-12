@@ -2,13 +2,10 @@ package gov.nist.secauto.metaschema.binding.io.json.parser;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -17,13 +14,10 @@ import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.PropertyValueHandler;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 public abstract class AbstractJsonReader<CLASS, CLASS_BINDING extends ClassBinding<CLASS>> implements JsonReader<CLASS> {
-	private static final Logger logger = LogManager.getLogger(AbstractJsonReader.class);
-
 	private final CLASS_BINDING classBinding;
 
 	public AbstractJsonReader(CLASS_BINDING classBinding) {
@@ -34,47 +28,39 @@ public abstract class AbstractJsonReader<CLASS, CLASS_BINDING extends ClassBindi
 		return classBinding;
 	}
 
-	protected Map<String, NamedPropertyBinding> getNamedPropertyBindings(BindingContext bindingContext, NamedPropertyBindingFilter filter) throws BindingException {
-		return Collections.unmodifiableMap(classBinding.getNamedPropertyBindings(bindingContext, filter));
+	protected Map<String, PropertyBinding> getJsonPropertyBindings(BindingContext bindingContext, PropertyBindingFilter filter) throws BindingException {
+		return Collections.unmodifiableMap(classBinding.getJsonPropertyBindings(bindingContext, filter));
 	}
 
-	protected void parseBody(CLASS obj, NamedPropertyBindingFilter filter, JsonParsingContext parsingContext) throws BindingException, IOException {
+	protected void parseObject(CLASS obj, PropertyBindingFilter filter, JsonParsingContext parsingContext) throws BindingException, IOException {
 		// we are at a start object
-
-//		JsonParser parser = parsingContext.getEventReader();
-//		FlagPropertyBinding jsonKey =  getClassBinding().getJsonKeyFlagPropertyBinding();
-//		if (jsonKey != null) {
-//			String keyValue = parser.nextFieldName();
-//			jsonKey.getPropertyInfo().setValue(obj, keyValue);
-//			
-//			JsonUtil.readNextToken(parser, JsonToken.START_OBJECT);
-//			parseObject(obj, parsingContext);
-//			JsonUtil.expectCurrentToken(parser, JsonToken.START_OBJECT);
-//			JsonUtil.readNextToken(parser, JsonToken.END_OBJECT);
-//		} else {
-			parseObject(obj, filter, parsingContext);
-//		}
-	}
-
-	protected void parseObject(CLASS obj, NamedPropertyBindingFilter filter, JsonParsingContext parsingContext) throws BindingException, IOException {
 		JsonParser parser = parsingContext.getEventReader();
 
-		Map<String, NamedPropertyBinding> namedPropertyBindings = getNamedPropertyBindings(parsingContext.getBindingContext(), filter);
-
-//		for (Map.Entry<String, NamedPropertyBinding> entry : namedPropertyBindings.entrySet()) {
-//			logger.info("  Binding: {} = {}", entry.getKey(), entry.getValue().getClass().getSimpleName());
-//		}
+		Map<String, PropertyBinding> propertyBindings = getJsonPropertyBindings(parsingContext.getBindingContext(), filter);
 
 		JsonUtil.expectCurrentToken(parser, JsonToken.START_OBJECT);
 		// parse to the first field
 		parser.nextToken();
 
 		Set<String> parsedProperties = new HashSet<>();
+		Set<String> unknownProperties = new HashSet<>();
 		String nextFieldName;
 		while (JsonToken.FIELD_NAME.equals(parser.currentToken()) && (nextFieldName = parser.getCurrentName()) != null) {
-			NamedPropertyBinding propertyBinding = namedPropertyBindings.get(nextFieldName);
+			PropertyBinding propertyBinding = propertyBindings.get(nextFieldName);
 			if (propertyBinding == null) {
-				parsingContext.getProblemHandler().handleUnknownProperty(obj, nextFieldName, parsingContext);
+				// Parse to the value
+				parser.nextToken();
+
+				// Give the problem handler a chance to handle the property
+				if (!parsingContext.getProblemHandler().handleUnknownProperty(obj, getClassBinding(), nextFieldName, parsingContext)) {
+
+					// handle it internally if possible (e.g., valueKey with flag)
+					if (!handleUnknownProperty(obj, nextFieldName, Collections.unmodifiableSet(unknownProperties), parsingContext)) {
+						JsonUtil.skipValue(parser);					
+					}
+
+					unknownProperties.add(nextFieldName);
+				}
 			} else {
 //				logger.info("  Parsing field '{}'", nextFieldName);
 
@@ -87,13 +73,18 @@ public abstract class AbstractJsonReader<CLASS, CLASS_BINDING extends ClassBindi
 		JsonUtil.expectCurrentToken(parser, JsonToken.END_OBJECT);
 		parser.nextToken();
 
-		Set<String> keySet = new LinkedHashSet<>(namedPropertyBindings.keySet());
+		Map<String, PropertyBinding> missingPropertyBindings = new HashMap<>(propertyBindings);
+		Set<String> keySet = missingPropertyBindings.keySet();
 		keySet.removeAll(parsedProperties);
+		parsingContext.getProblemHandler().handleMissingFields(obj, getClassBinding(), missingPropertyBindings, parsingContext);
+		
 //		for (String key : keySet) {
 //			logger.info("  Unparsed field '{}'", key);
 //		}
 	}
 
+	protected abstract boolean handleUnknownProperty(CLASS obj, String nextFieldName, Set<String> unmodifiableSet,
+			JsonParsingContext parsingContext) throws BindingException;
 
 	/**
 	 * Parses the field and value for the bound property provided by the
@@ -123,7 +114,7 @@ public abstract class AbstractJsonReader<CLASS, CLASS_BINDING extends ClassBindi
 
 		// parse to "value" token, which may be a START_ARRAY, START_OBJECT, or one of
 		// the "VALUE" tokens
-		JsonToken currentToken = parser.nextToken();
+		parser.nextToken();
 		while (propertyValueHandler.parseNextFieldValue(parsingContext)) {
 			// after calling parseNextField the current token is expected to be at the next
 			// field to parse or at the END_OBJECT for the containing object

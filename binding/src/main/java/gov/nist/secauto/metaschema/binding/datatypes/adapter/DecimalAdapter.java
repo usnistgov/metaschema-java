@@ -7,7 +7,7 @@ import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.datatypes.Decimal;
 import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 public class DecimalAdapter extends SimpleJavaTypeAdapter<Decimal> {
 
@@ -17,7 +17,7 @@ public class DecimalAdapter extends SimpleJavaTypeAdapter<Decimal> {
 	}
 
 	@Override
-	public void writeJsonFieldValue(Object value, NamedPropertyBindingFilter filter, JsonWritingContext writingContext)
+	public void writeJsonFieldValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
 			throws BindingException {
 		try {
 			writingContext.getEventWriter().writeNumber(((Decimal)value).getValue());

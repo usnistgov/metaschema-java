@@ -24,10 +24,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
-import gov.nist.secauto.metaschema.binding.io.xml.parser.AbstractXmlParsePlan;
-import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlAttributePropertyParser;
-import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlAssemblyParsePlanTest.Value;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 
 class AbstractXmlParsePlanTest {

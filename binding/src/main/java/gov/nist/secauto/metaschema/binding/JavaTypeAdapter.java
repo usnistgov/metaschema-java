@@ -8,7 +8,7 @@ import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 public interface JavaTypeAdapter<TYPE> {
 	boolean isParsingStartElement();
@@ -43,7 +43,7 @@ public interface JavaTypeAdapter<TYPE> {
 	void writeXmlElement(Object value, QName valueQName, StartElement parent, XmlWritingContext writingContext)
 			throws BindingException;
 
-	void writeJsonFieldValue(Object value, NamedPropertyBindingFilter filter, JsonWritingContext writingContext)
+	void writeJsonFieldValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
 			throws BindingException;
 
 	/**

@@ -7,7 +7,7 @@ import gov.nist.secauto.metaschema.binding.io.json.writer.AssemblyJsonWriter;
 import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 public class AssemblyItemBinding extends AbstractBoundClassItemBinding<AssemblyClassBinding<?>, AssemblyPropertyBinding> {
 
@@ -16,7 +16,7 @@ public class AssemblyItemBinding extends AbstractBoundClassItemBinding<AssemblyC
 	}
 
 	@Override
-	public void writeValue(Object value, NamedPropertyBindingFilter filter, JsonWritingContext writingContext)
+	public void writeValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
 			throws BindingException, IOException {
 		
 		AssemblyJsonWriter<?> jsonWriter = getClassBinding().getAssemblyJsonWriter(writingContext.getBindingContext());

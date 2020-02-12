@@ -7,7 +7,7 @@ import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.datatypes.NonNegativeInteger;
 import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 public class NegativeIntegerAdapter extends SimpleJavaTypeAdapter<NonNegativeInteger> {
 
@@ -17,7 +17,7 @@ public class NegativeIntegerAdapter extends SimpleJavaTypeAdapter<NonNegativeInt
 	}
 
 	@Override
-	public void writeJsonFieldValue(Object value, NamedPropertyBindingFilter filter, JsonWritingContext writingContext)
+	public void writeJsonFieldValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
 			throws BindingException {
 		try {
 			writingContext.getEventWriter().writeNumber(((NonNegativeInteger)value).getValue());

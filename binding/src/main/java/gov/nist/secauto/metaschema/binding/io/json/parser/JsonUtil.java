@@ -84,7 +84,7 @@ public class JsonUtil {
 
 	public static void expectCurrentToken(JsonParser parser, JsonToken expectedToken) {
 		JsonToken token = parser.currentToken();
-		assert (expectedToken == null && token == null) || (expectedToken != null && expectedToken.equals(token)) : String.format("Expected JsonToken '%s', but found JsonToken '%s.",expectedToken, token);
+		assert (expectedToken != null && expectedToken.equals(token)) || (expectedToken == null && token == null) : String.format("Expected JsonToken '%s', but found JsonToken '%s.",expectedToken, token);
 	}
 
 	public static String toLocationContext(JsonParser parser, ClassBinding<?> classBinding, PropertyBinding propertyBinding) {

@@ -27,7 +27,7 @@ import gov.nist.secauto.metaschema.binding.io.json.parser.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FlagPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyInfo;
 
@@ -65,7 +65,7 @@ class MapPropertyValueHandlerTest {
 			}
 
 			@Override
-			public List<Object> parse(JsonParsingContext parsingContext, NamedPropertyBindingFilter filter)
+			public List<Object> parse(JsonParsingContext parsingContext, PropertyBindingFilter filter)
 					throws BindingException, IOException {
 				JsonParser parser = parsingContext.getEventReader();
 				assertEquals(JsonToken.START_OBJECT, parser.currentToken());
@@ -79,7 +79,7 @@ class MapPropertyValueHandlerTest {
 			}
 
 			@Override
-			public void writeValue(Object value, JsonWritingContext writingContext, NamedPropertyBindingFilter filter)
+			public void writeValue(Object value, JsonWritingContext writingContext, PropertyBindingFilter filter)
 					throws BindingException, IOException {
 				throw new UnsupportedOperationException();
 			}

@@ -15,8 +15,8 @@ import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKey;
 import gov.nist.secauto.metaschema.binding.model.property.FieldValuePropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FlagPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 public class CollapseKeyBuilder {
 	private final FieldClassBinding<?> classBinding;
@@ -77,7 +77,7 @@ public class CollapseKeyBuilder {
 		public void write(List<Object> values, JsonWritingContext writingContext) throws BindingException, IOException {
 			FieldClassBinding<?> classBinding = getClassBinding();
 
-			NamedPropertyBindingFilter filter = null;
+			PropertyBindingFilter filter = null;
 			List<FlagPropertyBinding> flags = classBinding.getFlagPropertyBindings();
 			FieldValuePropertyBinding fieldValue = classBinding.getFieldValuePropertyBinding();
 
@@ -97,7 +97,7 @@ public class CollapseKeyBuilder {
 								classBinding.getClazz().getName(), JsonFieldValueKey.class.getName()));
 					}
 					valueFieldName = valueKeyValue.toString();
-					filter = (NamedPropertyBinding binding) -> jsonValueKeyFlag.equals(binding);
+					filter = (PropertyBinding binding) -> jsonValueKeyFlag.equals(binding);
 				} else {
 					// use the value name instead
 					valueFieldName = fieldValue.getJsonFieldName(writingContext.getBindingContext());

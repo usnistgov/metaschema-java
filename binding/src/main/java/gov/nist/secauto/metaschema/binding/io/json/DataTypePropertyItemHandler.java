@@ -8,7 +8,7 @@ import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
 
 public class DataTypePropertyItemHandler extends AbstractProperrtyItemHandler<PropertyBinding> {
@@ -18,7 +18,7 @@ public class DataTypePropertyItemHandler extends AbstractProperrtyItemHandler<Pr
 	}
 
 	@Override
-	public List<Object> parse(JsonParsingContext parsingContext, NamedPropertyBindingFilter filter) throws BindingException {
+	public List<Object> parse(JsonParsingContext parsingContext, PropertyBindingFilter filter) throws BindingException {
 		JavaTypeAdapter<?> adapter = parsingContext.getBindingContext()
 				.getJavaTypeAdapter(getPropertyBinding().getPropertyInfo().getItemType());
 
@@ -26,7 +26,7 @@ public class DataTypePropertyItemHandler extends AbstractProperrtyItemHandler<Pr
 	}
 
 	@Override
-	public void writeValue(Object value, JsonWritingContext writingContext, NamedPropertyBindingFilter filter)
+	public void writeValue(Object value, JsonWritingContext writingContext, PropertyBindingFilter filter)
 			throws BindingException, IOException {
 		JavaTypeAdapter<?> adapter = writingContext.getBindingContext()
 				.getJavaTypeAdapter(getPropertyBinding().getPropertyInfo().getItemType());

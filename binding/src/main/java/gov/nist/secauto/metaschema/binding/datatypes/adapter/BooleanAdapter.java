@@ -5,7 +5,7 @@ import java.io.IOException;
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 public class BooleanAdapter extends SimpleJavaTypeAdapter<Boolean> {
 	@Override
@@ -14,7 +14,7 @@ public class BooleanAdapter extends SimpleJavaTypeAdapter<Boolean> {
 	}
 
 	@Override
-	public void writeJsonFieldValue(Object value, NamedPropertyBindingFilter filter, JsonWritingContext writingContext)
+	public void writeJsonFieldValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
 			throws BindingException {
 		try {
 			writingContext.getEventWriter().writeBoolean(((Boolean)value).booleanValue());

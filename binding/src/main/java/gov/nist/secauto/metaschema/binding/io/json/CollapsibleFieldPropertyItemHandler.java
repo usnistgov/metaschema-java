@@ -12,7 +12,7 @@ import gov.nist.secauto.metaschema.binding.io.json.parser.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FieldPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 public class CollapsibleFieldPropertyItemHandler extends AbstractBoundClassPropertyItemHandler<FieldClassBinding<?>, FieldPropertyBinding>
 		implements PropertyItemHandler {
@@ -22,7 +22,7 @@ public class CollapsibleFieldPropertyItemHandler extends AbstractBoundClassPrope
 	}
 
 	@Override
-	public List<Object> parse(JsonParsingContext parsingContext, NamedPropertyBindingFilter filter) throws IOException {
+	public List<Object> parse(JsonParsingContext parsingContext, PropertyBindingFilter filter) throws IOException {
 		// TODO: implement
 		JsonParser parser = parsingContext.getEventReader();
 		JsonUtil.skipValue(parser);
@@ -33,7 +33,7 @@ public class CollapsibleFieldPropertyItemHandler extends AbstractBoundClassPrope
 	}
 
 	@Override
-	public void writeValue(Object value, JsonWritingContext writingContext, NamedPropertyBindingFilter filter)
+	public void writeValue(Object value, JsonWritingContext writingContext, PropertyBindingFilter filter)
 			throws BindingException, IOException {
 		throw new UnsupportedOperationException();
 	}

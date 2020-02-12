@@ -14,8 +14,8 @@ import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKey;
 import gov.nist.secauto.metaschema.binding.model.property.FieldPropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FieldValuePropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FlagPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 public class FieldItemBinding extends AbstractBoundClassItemBinding<FieldClassBinding<?>, FieldPropertyBinding> {
 
@@ -24,7 +24,7 @@ public class FieldItemBinding extends AbstractBoundClassItemBinding<FieldClassBi
 	}
 
 	@Override
-	public void writeValue(Object obj, NamedPropertyBindingFilter filter, JsonWritingContext writingContext)
+	public void writeValue(Object obj, PropertyBindingFilter filter, JsonWritingContext writingContext)
 			throws BindingException, IOException {
 		FieldClassBinding<?> classBinding = getClassBinding();
 
@@ -47,7 +47,7 @@ public class FieldItemBinding extends AbstractBoundClassItemBinding<FieldClassBi
 							classBinding.getClazz().getName(), JsonFieldValueKey.class.getName()));
 				}
 				valueFieldName = valueKeyValue.toString();
-				filter = (NamedPropertyBinding binding) -> jsonValueKeyFlag.equals(binding);
+				filter = (PropertyBinding binding) -> jsonValueKeyFlag.equals(binding);
 			} else {
 				// use the value name instead
 				valueFieldName = fieldValueBinding.getJsonFieldName(writingContext.getBindingContext());

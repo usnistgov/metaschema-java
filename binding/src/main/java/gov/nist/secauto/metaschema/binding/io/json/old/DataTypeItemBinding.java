@@ -6,7 +6,7 @@ import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.ModelItemPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 public class DataTypeItemBinding extends AbstractItemBinding<ModelItemPropertyBinding> {
 
@@ -15,7 +15,7 @@ public class DataTypeItemBinding extends AbstractItemBinding<ModelItemPropertyBi
 	}
 
 	@Override
-	public void writeValue(Object value, NamedPropertyBindingFilter filter, JsonWritingContext writingContext) throws BindingException, IOException {
+	public void writeValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext) throws BindingException, IOException {
 		JavaTypeAdapter<?> adapter = writingContext.getBindingContext()
 				.getJavaTypeAdapter(getPropertyBinding().getPropertyInfo().getItemType());
 

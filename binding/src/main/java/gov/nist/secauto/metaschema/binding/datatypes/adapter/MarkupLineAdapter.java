@@ -15,7 +15,7 @@ import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.property.NamedPropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 import gov.nist.secauto.metaschema.markup.MarkupLine;
 import gov.nist.secauto.metaschema.markup.MarkupString;
 
@@ -54,7 +54,7 @@ public class MarkupLineAdapter extends AbstractMarkupAdapter<MarkupLine> {
 	}
 
 	@Override
-	public void writeJsonFieldValue(Object value, NamedPropertyBindingFilter filter, JsonWritingContext writingContext)
+	public void writeJsonFieldValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
 			throws BindingException {
 
 		MarkupLine ml;
