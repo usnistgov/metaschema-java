@@ -4,12 +4,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
-import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
 import gov.nist.secauto.metaschema.model.info.definitions.JsonValueKeyEnum;
 import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
@@ -53,7 +53,7 @@ public class FlagInstanceGenerator extends AbstractInstanceGenerator<AbstractCla
 	}
 
 	@Override
-	public MarkupString getDescription() {
+	public MarkupLine getDescription() {
 		return instance.getDescription();
 	}
 

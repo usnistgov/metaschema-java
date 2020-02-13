@@ -3,7 +3,7 @@ package gov.nist.secauto.metaschema.codegen.item;
 import java.net.URI;
 
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.info.instances.ModelInstance;
 
 public interface InstanceItemContext {
@@ -11,5 +11,5 @@ public interface InstanceItemContext {
 	JavaType getJavaType();
 	String getInstanceName();
 	URI getXmlNamespace();
-	MarkupString getDescription();
+	MarkupLine getDescription();
 }

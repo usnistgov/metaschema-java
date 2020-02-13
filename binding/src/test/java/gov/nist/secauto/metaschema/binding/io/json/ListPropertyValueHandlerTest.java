@@ -99,7 +99,7 @@ class ListPropertyValueHandlerTest {
 	@Test
 	void testSingleton() throws BindingException, IOException {
 
-		JsonParser jsonParser = new JsonFactory().createParser(getClass().getResourceAsStream("list-singleton.json"));
+		JsonParser jsonParser = new JsonFactory().createParser(ListPropertyValueHandlerTest.class.getResourceAsStream("list-singleton.json"));
 
 		context.checking(new Expectations() {
 			{
@@ -123,7 +123,7 @@ class ListPropertyValueHandlerTest {
 	@Test
 	void testSingletonFail() throws IOException {
 
-		JsonParser jsonParser = new JsonFactory().createParser(getClass().getResourceAsStream("list-singleton.json"));
+		JsonParser jsonParser = new JsonFactory().createParser(ListPropertyValueHandlerTest.class.getResourceAsStream("list-singleton.json"));
 
 		context.checking(new Expectations() {
 			{
@@ -147,7 +147,7 @@ class ListPropertyValueHandlerTest {
 	@Test
 	void testSequence() throws BindingException, IOException {
 
-		JsonParser jsonParser = new JsonFactory().createParser(getClass().getResourceAsStream("list-sequence.json"));
+		JsonParser jsonParser = new JsonFactory().createParser(ListPropertyValueHandlerTest.class.getResourceAsStream("list-sequence.json"));
 
 		context.checking(new Expectations() {
 			{

@@ -17,7 +17,7 @@ import gov.nist.itl.metaschema.model.xml.ExtensionType;
 import gov.nist.itl.metaschema.model.xml.FieldDocument;
 import gov.nist.itl.metaschema.model.xml.FlagDocument;
 import gov.nist.itl.metaschema.model.xml.binding.DefineAssemblyBindingDocument;
-import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.configuration.AssemblyBindingConfiguration;
 import gov.nist.secauto.metaschema.model.info.Type;
 import gov.nist.secauto.metaschema.model.info.definitions.AbstractAssemblyDefinition;
@@ -63,8 +63,8 @@ public class XmlAssemblyDefinition extends AbstractAssemblyDefinition<XmlMetasch
 	public XmlAssemblyDefinition(DefineAssemblyDocument.DefineAssembly xAssembly, XmlMetaschema metaschema) {
 		super(getBindingConfiguration(xAssembly), metaschema);
 		this.xAssembly = xAssembly;
-
-		MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription());
+//
+//		MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription());
 
 		Map<String, InfoElementInstance> infoElementInstances = new LinkedHashMap<>();
 		int numFlags = xAssembly.sizeOfFlagArray();
@@ -129,7 +129,7 @@ public class XmlAssemblyDefinition extends AbstractAssemblyDefinition<XmlMetasch
 	}
 
 	@Override
-	public MarkupString getDescription() {
+	public MarkupLine getDescription() {
 		return MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription());
 	}
 

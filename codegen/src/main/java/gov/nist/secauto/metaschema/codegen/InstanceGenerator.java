@@ -1,12 +1,12 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
-import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
 
 public interface InstanceGenerator {
 
 	String getPropertyName();
-	MarkupString getDescription();
+	MarkupLine getDescription();
 	void buildInstance(ClassBuilder builder);
 
 }

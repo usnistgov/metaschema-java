@@ -3,7 +3,7 @@ package gov.nist.secauto.metaschema.model.xml;
 import java.math.BigInteger;
 
 import gov.nist.itl.metaschema.model.xml.AssemblyDocument;
-import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
 import gov.nist.secauto.metaschema.model.info.instances.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.model.info.instances.JsonGroupAsBehavior;
@@ -31,8 +31,8 @@ public class XmlAssemblyInstance extends AbstractAssemblyInstance {
 	}
 
 	@Override
-	public MarkupString getDescription() {
-		MarkupString retval = null;
+	public MarkupLine getDescription() {
+		MarkupLine retval = null;
 		if (getXmlAssembly().isSetDescription()) {
 			retval = MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription());
 		} else if (isReference()) {

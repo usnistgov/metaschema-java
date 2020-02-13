@@ -6,7 +6,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
 import gov.nist.secauto.metaschema.codegen.item.InstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.info.instances.AssemblyInstance;
 import gov.nist.secauto.metaschema.model.info.instances.FieldInstance;
 import gov.nist.secauto.metaschema.model.info.instances.JsonGroupAsBehavior;
@@ -62,7 +62,7 @@ public abstract class AbstractCardinalityInstanceGenerator<JAVA_TYPE extends Jav
 	}
 
 	@Override
-	public MarkupString getDescription() {
+	public MarkupLine getDescription() {
 		return getInstanceItemContext().getDescription();
 	}
 

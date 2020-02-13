@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -27,8 +28,8 @@ import gov.nist.secauto.metaschema.binding.io.json.parser.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FlagPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyInfo;
 
 class MapPropertyValueHandlerTest {
@@ -89,12 +90,12 @@ class MapPropertyValueHandlerTest {
 
 	private void parseProperty(JsonParser parser, PropertyValueHandler propertyValueHandler, int count)
 			throws IOException, BindingException {
-		JsonUtil.readNextToken(parser, JsonToken.START_OBJECT);
-		JsonUtil.readNextToken(parser, JsonToken.FIELD_NAME);
+		JsonToken currentToken = JsonUtil.readNextToken(parser, JsonToken.START_OBJECT);
+		currentToken = JsonUtil.readNextToken(parser, JsonToken.FIELD_NAME);
 		assertEquals("property", parser.currentName());
 
 		// advance to value
-		parser.nextToken();
+		currentToken = parser.nextToken();
 
 		for (int i = 0; i < count; i++) {
 			assertEquals(count != i + 1, propertyValueHandler.parseNextFieldValue(parsingContext), "when parsing item #"+i);
@@ -115,7 +116,8 @@ class MapPropertyValueHandlerTest {
 	@Test
 	void testSingleton() throws BindingException, IOException {
 
-		JsonParser jsonParser = new JsonFactory().createParser(getClass().getResourceAsStream("map-singleton.json"));
+		InputStream is = MapPropertyValueHandlerTest.class.getResourceAsStream("map-singleton.json");
+		JsonParser jsonParser = new JsonFactory().createParser(is);
 
 		context.checking(new Expectations() {
 			{
@@ -163,7 +165,7 @@ class MapPropertyValueHandlerTest {
 	@Test
 	void testSequence() throws BindingException, IOException {
 
-		JsonParser jsonParser = new JsonFactory().createParser(getClass().getResourceAsStream("map-sequence.json"));
+		JsonParser jsonParser = new JsonFactory().createParser(MapPropertyValueHandlerTest.class.getResourceAsStream("map-sequence.json"));
 
 		context.checking(new Expectations() {
 			{

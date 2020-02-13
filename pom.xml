@@ -17,8 +17,9 @@
 		<dependency.flexmark.version>0.50.46</dependency.flexmark.version>
 		<dependency.jackson.version>2.10.1</dependency.jackson.version>
 		<dependency.log4j2.version>2.12.1</dependency.log4j2.version>
-		<dependency.junit5.version>5.5.2</dependency.junit5.version>
+		<dependency.junit5.version>5.6.0</dependency.junit5.version>
 		<plugin.surefire.version>2.22.1</plugin.surefire.version>
+		<plugin.license.version>3.0</plugin.license.version>
 	</properties>
 
 	<dependencyManagement>
@@ -219,6 +220,34 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>${plugin.surefire.version}</version>
 				</plugin>
+				<plugin>
+					<groupId>com.mycila</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>${plugin.license.version}</version>
+					<configuration>
+						<header>license/nist/license.txt</header>
+						<includes>
+							<include>**/*.java</include>
+						</includes>
+						<failIfMissing>true</failIfMissing>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>support</artifactId>
+							<version>${project.version}</version>
+						</dependency>
+					</dependencies>
+					<executions>
+						<execution>
+							<id>check-license</id>
+							<goals>
+								<goal>check</goal>
+							</goals>
+							<phase>verify</phase>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -228,5 +257,6 @@
 		<module>codegen</module>
 		<module>markup</module>
 		<module>metaschema-maven-plugin</module>
+		<module>support</module>
 	</modules>
 </project>

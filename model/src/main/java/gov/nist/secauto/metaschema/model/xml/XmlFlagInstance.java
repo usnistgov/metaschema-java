@@ -5,7 +5,7 @@ import java.util.Map;
 
 import gov.nist.itl.metaschema.model.xml.Boolean;
 import gov.nist.itl.metaschema.model.xml.FlagDocument;
-import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.info.Type;
 import gov.nist.secauto.metaschema.model.info.definitions.DataType;
@@ -52,8 +52,8 @@ public class XmlFlagInstance extends AbstractFlagInstance {
 	}
 
 	@Override
-	public MarkupString getDescription() {
-		MarkupString retval = null;
+	public MarkupLine getDescription() {
+		MarkupLine retval = null;
 		if (getXmlFlag().isSetDescription()) {
 			retval = MarkupStringConverter.toMarkupString(getXmlFlag().getDescription());
 		} else if (isReference()) {
@@ -155,7 +155,7 @@ public class XmlFlagInstance extends AbstractFlagInstance {
 		}
 
 		@Override
-		public MarkupString getDescription() {
+		public MarkupLine getDescription() {
 			return XmlFlagInstance.this.getDescription();
 		}
 

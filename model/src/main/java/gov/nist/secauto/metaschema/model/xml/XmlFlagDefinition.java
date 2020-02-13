@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import gov.nist.itl.metaschema.model.xml.DefineFlagDocument;
-import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.info.definitions.AbstractFlagDefinition;
 import gov.nist.secauto.metaschema.model.info.definitions.DataType;
 import gov.nist.secauto.metaschema.model.info.definitions.FlagDefinition;
@@ -29,7 +29,7 @@ public class XmlFlagDefinition extends AbstractFlagDefinition<XmlMetaschema> imp
 	}
 
 	@Override
-	public MarkupString getDescription() {
+	public MarkupLine getDescription() {
 		return MarkupStringConverter.toMarkupString(getXmlFlag().getDescription());
 	}
 

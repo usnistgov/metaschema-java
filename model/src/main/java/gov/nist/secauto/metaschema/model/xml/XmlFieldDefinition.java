@@ -9,7 +9,7 @@ import gov.nist.itl.metaschema.model.xml.ExtensionType;
 import gov.nist.itl.metaschema.model.xml.FlagDocument;
 import gov.nist.itl.metaschema.model.xml.JsonValueKeyDocument.JsonValueKey;
 import gov.nist.itl.metaschema.model.xml.binding.DefineFieldBindingDocument;
-import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.configuration.FieldBindingConfiguration;
 import gov.nist.secauto.metaschema.model.info.definitions.AbstractFieldDefinition;
 import gov.nist.secauto.metaschema.model.info.definitions.DataType;
@@ -73,7 +73,7 @@ public class XmlFieldDefinition extends AbstractFieldDefinition<XmlMetaschema> i
 	}
 
 	@Override
-	public MarkupString getDescription() {
+	public MarkupLine getDescription() {
 		return MarkupStringConverter.toMarkupString(getXmlField().getDescription());
 	}
 

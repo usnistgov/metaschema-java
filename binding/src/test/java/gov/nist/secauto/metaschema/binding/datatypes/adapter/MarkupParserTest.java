@@ -10,9 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import com.ctc.wstx.stax.WstxInputFactory;
 
-import gov.nist.secauto.metaschema.binding.datatypes.adapter.MarkupParser;
 import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlEventUtil;
-import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.datatype.markup.flexmark.AstCollectingVisitor;
 
 class MarkupParserTest {
@@ -42,7 +41,7 @@ class MarkupParserTest {
 		System.out.println("Start: " + XmlEventUtil.toString(reader.nextEvent()));
 		System.out.println("Start: " + XmlEventUtil.toString(reader.nextEvent()));
 		MarkupParser parser = new MarkupParser();
-		MarkupString markupString = parser.parseMarkupMultiline(reader);
+		MarkupMultiline markupString = parser.parseMarkupMultiline(reader);
 		AstCollectingVisitor visitor = new AstCollectingVisitor();
 		visitor.collect(markupString.getDocument());
 		System.out.println(html);

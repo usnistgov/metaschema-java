@@ -8,7 +8,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueName;
 import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
 
 /**
@@ -46,7 +46,7 @@ public class FieldValueInstanceGenerator extends AbstractInstanceGenerator<Field
 	}
 
 	@Override
-	public MarkupString getDescription() {
+	public MarkupLine getDescription() {
 		return getGenerator().getDefinition().getDescription();
 	}
 

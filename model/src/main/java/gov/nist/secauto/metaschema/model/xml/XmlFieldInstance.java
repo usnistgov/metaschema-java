@@ -4,7 +4,7 @@ import java.math.BigInteger;
 
 import gov.nist.itl.metaschema.model.xml.FieldDocument;
 import gov.nist.itl.metaschema.model.xml.FieldDocument.Field.InXml;
-import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.info.definitions.DataType;
 import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
 import gov.nist.secauto.metaschema.model.info.instances.AbstractFieldInstance;
@@ -32,8 +32,8 @@ public class XmlFieldInstance extends AbstractFieldInstance {
 	}
 
 	@Override
-	public MarkupString getDescription() {
-		MarkupString retval = null;
+	public MarkupLine getDescription() {
+		MarkupLine retval = null;
 		if (getXmlField().isSetDescription()) {
 			retval = MarkupStringConverter.toMarkupString(getXmlField().getDescription());
 		} else if (isReference()) {
