@@ -1,7 +1,7 @@
 package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
-import gov.nist.secauto.metaschema.binding.datatypes.IPv4;
+import gov.nist.secauto.metaschema.datatype.IPv4;
 
 public class Ipv4AddressAdapter extends SimpleJavaTypeAdapter<IPv4> {
 

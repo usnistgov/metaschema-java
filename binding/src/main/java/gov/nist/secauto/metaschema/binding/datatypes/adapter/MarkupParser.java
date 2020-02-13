@@ -38,10 +38,10 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlEventUtil;
 import gov.nist.secauto.metaschema.binding.util.Util;
-import gov.nist.secauto.metaschema.markup.MarkupLine;
-import gov.nist.secauto.metaschema.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.markup.MarkupString;
-import gov.nist.secauto.metaschema.markup.flexmark.insertanchor.InsertAnchorNode;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.flexmark.insertanchor.InsertAnchorNode;
 
 public class MarkupParser {
 	private static final Logger logger = LogManager.getLogger(MarkupParser.class);
@@ -232,7 +232,7 @@ public class MarkupParser {
 	 * @throws XMLStreamException    if a parse error occurs
 	 * @throws IllegalStateException if unexpected content is encountered
 	 */
-	protected MarkupString parseMarkupMultilineAsAST(XMLEventReader2 reader) throws XMLStreamException {
+	protected MarkupMultiline parseMarkupMultilineAsAST(XMLEventReader2 reader) throws XMLStreamException {
 		MutableDataSet options = new MutableDataSet();
 		Document document = new Document(options, BasedSequence.EMPTY);
 
@@ -311,7 +311,7 @@ public class MarkupParser {
 			logger.trace("exit: {}",(reader.peek() != null ? XmlEventUtil.toString(reader.peek()) : ""));
 		}
 
-		MarkupString retval = new MarkupString(document);
+		MarkupMultiline retval = new MarkupMultiline(document);
 //		System.out.println(retval.toMarkdown());
 		return retval;
 	}

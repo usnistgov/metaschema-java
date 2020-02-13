@@ -4,7 +4,7 @@ import java.time.ZonedDateTime;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
-import gov.nist.secauto.metaschema.binding.datatypes.DateTimeTimeZone;
+import gov.nist.secauto.metaschema.datatype.DateTimeTimeZone;
 
 public class DateTimeWithTZAdapter extends SimpleJavaTypeAdapter<DateTimeTimeZone> {
 

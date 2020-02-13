@@ -5,9 +5,9 @@ import java.math.BigDecimal;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
-import gov.nist.secauto.metaschema.binding.datatypes.Decimal;
 import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
+import gov.nist.secauto.metaschema.datatype.Decimal;
 
 public class DecimalAdapter extends SimpleJavaTypeAdapter<Decimal> {
 

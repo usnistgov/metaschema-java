@@ -1,7 +1,7 @@
 package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
-import gov.nist.secauto.metaschema.binding.datatypes.URI;
+import gov.nist.secauto.metaschema.datatype.URI;
 
 public class UriAdapter extends SimpleJavaTypeAdapter<URI> {
 	@Override

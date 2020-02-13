@@ -1,7 +1,7 @@
 package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
-import gov.nist.secauto.metaschema.binding.datatypes.NCName;
+import gov.nist.secauto.metaschema.datatype.NCName;
 
 public class NcNameAdapter extends SimpleJavaTypeAdapter<NCName> {
 

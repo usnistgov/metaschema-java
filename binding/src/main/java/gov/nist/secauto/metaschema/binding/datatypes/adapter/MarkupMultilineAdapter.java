@@ -16,10 +16,20 @@ import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
-import gov.nist.secauto.metaschema.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
 
 public class MarkupMultilineAdapter  extends AbstractMarkupAdapter<MarkupMultiline> {
+
+	public MarkupMultilineAdapter() {
+		super();
+	}
+
+	@Override
+	public boolean isUnrappedValueAllowedInXml() {
+		return true;
+	}
+
 	@Override
 	public MarkupMultiline parse(String value) {
 		return MarkupMultiline.fromMarkdown(value);
@@ -32,7 +42,6 @@ public class MarkupMultilineAdapter  extends AbstractMarkupAdapter<MarkupMultili
 		} catch (XMLStreamException ex) {
 			throw new BindingException(ex);
 		}
-//		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -40,13 +49,12 @@ public class MarkupMultilineAdapter  extends AbstractMarkupAdapter<MarkupMultili
 		return true;
 	}
 
-
 	@Override
 	protected void writeXmlElementInternal(Object value, StartElement parent, XmlWritingContext writingContext)
 			throws BindingException {
 		MarkupXmlWriter writingVisitor = new MarkupXmlWriter(parent.getName().getNamespaceURI(),
 				writingContext.getXMLEventFactory());
-		writingVisitor.process(((MarkupString) value).getDocument(), writingContext.getEventWriter(), true);
+		writingVisitor.process(((MarkupString<?>) value).getDocument(), writingContext.getEventWriter(), true);
 	}
 
 	@Override
@@ -90,11 +98,6 @@ public class MarkupMultilineAdapter  extends AbstractMarkupAdapter<MarkupMultili
 	@Override
 	public String getDefaultJsonFieldName() {
 		return "PROSE";
-	}
-
-	@Override
-	public boolean isUnrappedValueAllowedInXml() {
-		return true;
 	}
 
 }

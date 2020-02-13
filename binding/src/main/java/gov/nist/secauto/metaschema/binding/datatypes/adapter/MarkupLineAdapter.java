@@ -2,7 +2,6 @@ package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
@@ -16,24 +15,18 @@ import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
-import gov.nist.secauto.metaschema.markup.MarkupLine;
-import gov.nist.secauto.metaschema.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
 
 public class MarkupLineAdapter extends AbstractMarkupAdapter<MarkupLine> {
 
-//	@Override
-//	public boolean isParsingEndElement() {
-//		return false;
-//	}
+	public MarkupLineAdapter() {
+		super();
+	}
 
 	@Override
 	public MarkupLine parse(String value) {
 		return MarkupLine.fromMarkdown(value);
-	}
-
-	@Override
-	public boolean canHandleQName(QName nextQName) {
-		return false;
 	}
 
 	@Override
@@ -50,7 +43,7 @@ public class MarkupLineAdapter extends AbstractMarkupAdapter<MarkupLine> {
 			throws BindingException {
 		MarkupXmlWriter writingVisitor = new MarkupXmlWriter(parent.getName().getNamespaceURI(),
 				writingContext.getXMLEventFactory());
-		writingVisitor.process(((MarkupString) value).getDocument(), writingContext.getEventWriter(), false);
+		writingVisitor.process(((MarkupString<?>) value).getDocument(), writingContext.getEventWriter(), false);
 	}
 
 	@Override
@@ -95,10 +88,4 @@ public class MarkupLineAdapter extends AbstractMarkupAdapter<MarkupLine> {
 	public String getDefaultJsonFieldName() {
 		return "RICHTEXT";
 	}
-
-	@Override
-	public boolean isUnrappedValueAllowedInXml() {
-		return false;
-	}
-
 }

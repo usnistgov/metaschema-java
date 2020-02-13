@@ -25,7 +25,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.model.property.CollectionPropertyInfo;
 import gov.nist.secauto.metaschema.binding.model.property.FieldPropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyCollector;
-import gov.nist.secauto.metaschema.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupMultiline;
 
 class DefaultXmlObjectPropertyParserTest {
 	private static final String NS = "namespace";

@@ -2,7 +2,10 @@ package gov.nist.secauto.metaschema.markup;
 
 import org.junit.jupiter.api.Test;
 
-import gov.nist.secauto.metaschema.markup.flexmark.AstCollectingVisitor;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.flexmark.AstCollectingVisitor;
 
 class MarkupStringTest {
 

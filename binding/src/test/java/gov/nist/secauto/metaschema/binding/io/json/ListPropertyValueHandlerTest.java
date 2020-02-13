@@ -87,7 +87,7 @@ class ListPropertyValueHandlerTest {
 		}
 
 		@SuppressWarnings("unchecked")
-		List<Integer> objects = (List<Integer>) propertyValueHandler.getObject();
+		List<Integer> objects = (List<Integer>) propertyValueHandler.getObjectSupplier().get();
 		for (int i = 0; i < count; i++) {
 			assertEquals(i, objects.get(i));
 		}

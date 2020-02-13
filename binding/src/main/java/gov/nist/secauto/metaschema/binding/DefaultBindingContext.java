@@ -17,6 +17,7 @@ import gov.nist.secauto.metaschema.binding.io.Deserializer;
 import gov.nist.secauto.metaschema.binding.io.Serializer;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.datatype.Datatype;
 
 class DefaultBindingContext implements BindingContext {
 //	private static final Logger logger = LogManager.getLogger(DefaultBindingContext.class);
@@ -37,12 +38,14 @@ class DefaultBindingContext implements BindingContext {
 		}
 	}
 
-	public <CLASS> JavaTypeAdapter<?> registerJavaTypeAdapter(Class<CLASS> clazz, JavaTypeAdapter<CLASS> adapter) {
+	public <TYPE extends Datatype<TYPE>> JavaTypeAdapter<TYPE> registerJavaTypeAdapter(Class<TYPE> clazz, JavaTypeAdapter<TYPE> adapter) {
 		Objects.requireNonNull(clazz, "clazz");
 		Objects.requireNonNull(adapter, "adapter");
 
 		synchronized (adapter) {
-			return xmlJavaTypeAdapters.put(clazz, adapter);
+			@SuppressWarnings("unchecked")
+			JavaTypeAdapter<TYPE> retval = (JavaTypeAdapter<TYPE>)xmlJavaTypeAdapters.put(clazz, adapter);
+			return retval;
 		}
 	}
 
@@ -77,18 +80,18 @@ class DefaultBindingContext implements BindingContext {
 	}
 
 	@Override
-	public <CLASS> JavaTypeAdapter<CLASS> getJavaTypeAdapter(Class<CLASS> clazz) throws BindingException {
+	public <TYPE> JavaTypeAdapter<TYPE> getJavaTypeAdapter(Class<TYPE> clazz) throws BindingException {
 		synchronized (this) {
-			// First try to find a simple data binding
+			// try to find a simple data binding
 			@SuppressWarnings("unchecked")
-			JavaTypeAdapter<CLASS> retval = (JavaTypeAdapter<CLASS>) xmlJavaTypeAdapters.get(clazz);
+			JavaTypeAdapter<TYPE> retval = (JavaTypeAdapter<TYPE>) xmlJavaTypeAdapters.get(clazz);
 			if (retval == null) {
 				// no simple binding exists, try to bind to the object
 
 				// TODO: handle binding exception, which may be caused if the class cannot be
 				// bound for any reason
-				ClassBinding<CLASS> classBinding = getClassBinding(clazz);
-				retval = new ObjectJavaTypeAdapter<CLASS>(classBinding);
+				ClassBinding<TYPE> classBinding = getClassBinding(clazz);
+				retval = new ObjectJavaTypeAdapter<TYPE>(classBinding);
 				xmlJavaTypeAdapters.put(clazz, retval);
 			}
 			return retval;

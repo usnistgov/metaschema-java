@@ -5,7 +5,9 @@ import java.util.Map;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.BindingException;
+import gov.nist.secauto.metaschema.binding.io.json.parser.CollapsedFieldJsonReader;
 import gov.nist.secauto.metaschema.binding.io.json.parser.FieldJsonReader;
+import gov.nist.secauto.metaschema.binding.io.json.parser.SingleFieldJsonReader;
 import gov.nist.secauto.metaschema.binding.io.json.writer.AssemblyJsonWriter;
 import gov.nist.secauto.metaschema.binding.io.xml.parser.FieldXmlParsePlan;
 import gov.nist.secauto.metaschema.binding.io.xml.writer.FieldXmlWriter;
@@ -82,7 +84,13 @@ class FieldClassBindingImpl<CLASS> extends AbstractClassBinding<CLASS, FieldXmlP
 
 	@Override
 	public FieldJsonReader<CLASS> getJsonReader(BindingContext bindingContext) throws BindingException {
-		return new FieldJsonReader<CLASS>(this);
+		FieldJsonReader<CLASS> retval;
+		if (isCollapsible()) {
+			retval = new SingleFieldJsonReader<CLASS>(this);
+		} else {
+			retval = new CollapsedFieldJsonReader<CLASS>(this);
+		}
+		return retval;
 	}
 
 }

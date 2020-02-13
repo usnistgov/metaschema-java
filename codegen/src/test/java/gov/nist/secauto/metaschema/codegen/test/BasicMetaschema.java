@@ -348,14 +348,18 @@ public class BasicMetaschema {
 //			Serializer<Object> xmlSerializer = context.newXmlSerializer((Class<Object>)rootClass, config);
 //			measureSerializer(root, "XML", outXml, xmlSerializer, iterations);
 
-			File outJson = new File("target/oscal-catalog.json");
 			@SuppressWarnings("unchecked")
 			Serializer<Object> jsonSerializer = context.newJsonSerializer((Class<Object>)rootClass, config);
+
+			File outJson = new File("target/oscal-catalog.json");
 			measureSerializer(root, "JSON", outJson, jsonSerializer, iterations);
 
 			@SuppressWarnings("unchecked")
 			Deserializer<Object> jsonDeserializer = context.newJsonDeserializer((Class<Object>)rootClass, config);
 			root = measureDeserializer("JSON", outJson, jsonDeserializer, iterations);
+
+			File outJson2 = new File("target/oscal-catalog-after-read.json");
+			measureSerializer(root, "JSON", outJson2, jsonSerializer, iterations);
 
 //			File outYaml = new File("target/oscal-catalog.yml");
 //			writeYaml(new FileWriter(outYaml, Charset.forName("UTF-8")), root);

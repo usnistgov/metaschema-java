@@ -9,20 +9,15 @@ import javax.xml.stream.events.StartElement;
 import org.codehaus.stax2.evt.XMLEventFactory2;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
-import gov.nist.secauto.metaschema.binding.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWritingContext;
-import gov.nist.secauto.metaschema.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
 
-public abstract class AbstractMarkupAdapter<TYPE extends MarkupString> implements JavaTypeAdapter<TYPE> {
+public abstract class AbstractMarkupAdapter<TYPE extends MarkupString<TYPE>> extends SimpleJavaTypeAdapter<TYPE> {
 	private final MarkupParser markupParser = new MarkupParser();
 
 	protected MarkupParser getMarkupParser() {
 		return markupParser;
-	}
-
-	@Override
-	public boolean isParsingStartElement() {
-		return false;
 	}
 
 	@Override

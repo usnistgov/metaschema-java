@@ -3,7 +3,7 @@ package gov.nist.secauto.metaschema.model.info.instances;
 import java.util.Collections;
 import java.util.Map;
 
-import gov.nist.secauto.metaschema.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.info.Type;
 import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;

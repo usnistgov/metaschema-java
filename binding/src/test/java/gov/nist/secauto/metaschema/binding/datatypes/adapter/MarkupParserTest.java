@@ -12,8 +12,8 @@ import com.ctc.wstx.stax.WstxInputFactory;
 
 import gov.nist.secauto.metaschema.binding.datatypes.adapter.MarkupParser;
 import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlEventUtil;
-import gov.nist.secauto.metaschema.markup.MarkupString;
-import gov.nist.secauto.metaschema.markup.flexmark.AstCollectingVisitor;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.flexmark.AstCollectingVisitor;
 
 class MarkupParserTest {
 

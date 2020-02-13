@@ -9,7 +9,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKey;
 import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
 import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
 import gov.nist.secauto.metaschema.model.info.definitions.JsonValueKeyEnum;
 import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;

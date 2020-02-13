@@ -31,11 +31,7 @@ public interface PropertyItemHandler {
 		if (itemClassBinding != null) {
 			if (itemClassBinding instanceof FieldClassBinding) {
 				FieldClassBinding<?> fieldClassBinding = (FieldClassBinding<?>) itemClassBinding;
-				if (fieldClassBinding.isCollapsible()) {
-					retval = new CollapsibleFieldPropertyItemHandler(fieldClassBinding, (FieldPropertyBinding) propertyBinding);
-				} else {
-					retval = new FieldPropertyItemHandler(fieldClassBinding, (FieldPropertyBinding) propertyBinding);
-				}
+				retval = new FieldPropertyItemHandler(fieldClassBinding, (FieldPropertyBinding) propertyBinding);
 			} else if (itemClassBinding instanceof AssemblyClassBinding) {
 				retval = new AssemblyPropertyItemHandler((AssemblyClassBinding<?>) itemClassBinding,
 						(AssemblyPropertyBinding) propertyBinding);

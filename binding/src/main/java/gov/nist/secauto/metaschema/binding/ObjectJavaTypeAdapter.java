@@ -1,6 +1,7 @@
 package gov.nist.secauto.metaschema.binding;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.StartElement;
@@ -31,14 +32,9 @@ class ObjectJavaTypeAdapter<CLASS> implements JavaTypeAdapter<CLASS> {
 		return true;
 	}
 
-//	@Override
-//	public boolean isParsingEndElement() {
-//		return true;
-//	}
-
 	@Override
 	public boolean canHandleQName(QName nextQName) {
-		// This adapter is always handling another bound class, which is the type being parsed
+		// we are only handling the element being parsed
 		return false;
 	}
 
@@ -79,6 +75,28 @@ class ObjectJavaTypeAdapter<CLASS> implements JavaTypeAdapter<CLASS> {
 	@Override
 	public boolean isUnrappedValueAllowedInXml() {
 		return false;
+	}
+
+	@Override
+	public CLASS copy(CLASS obj) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Supplier<?> parseAndSupply(String value) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Supplier<CLASS> parseAndSupply(XmlParsingContext parsingContext) throws BindingException {
+		CLASS retval = parse(parsingContext);
+		return () -> retval;
+	}
+
+	@Override
+	public Supplier<CLASS> parseAndSupply(JsonParsingContext parsingContext) throws BindingException {
+		CLASS retval = parse(parsingContext);
+		return () -> retval;
 	}
 
 }

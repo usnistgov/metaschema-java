@@ -6,6 +6,7 @@ import javax.xml.namespace.QName;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.BindingException;
+import gov.nist.secauto.metaschema.binding.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.io.xml.parser.DefaultFieldValuePropertyParser;
 import gov.nist.secauto.metaschema.binding.io.xml.parser.FieldValueXmlPropertyParser;
 import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
@@ -64,7 +65,12 @@ public class DefaultFieldValuePropertyBinding extends AbstractPropertyBinding im
 			retval = getJsonFieldValueName().name();
 		} else {
 			// use the default from the java type binding
-			retval = bindingContext.getJavaTypeAdapter(getPropertyInfo().getItemType()).getDefaultJsonFieldName();
+			JavaTypeAdapter<?> javaTypeAdapter = bindingContext.getJavaTypeAdapter(getPropertyInfo().getItemType());
+			if (javaTypeAdapter == null) {
+				throw new BindingException(String.format("Unable to determine the JSON field name for the property '%s' on class '$s'. Perhaps the data type is not bound?", getPropertyInfo().getSimpleName(), getClassBinding().getClazz().getName()));
+			} else {
+				retval = bindingContext.getJavaTypeAdapter(getPropertyInfo().getItemType()).getDefaultJsonFieldName();
+			}
 		}
 		return retval;
 	}

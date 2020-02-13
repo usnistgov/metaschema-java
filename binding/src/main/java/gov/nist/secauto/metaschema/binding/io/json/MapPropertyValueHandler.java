@@ -3,6 +3,7 @@ package gov.nist.secauto.metaschema.binding.io.json;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -96,7 +97,7 @@ public class MapPropertyValueHandler extends AbstractPropertyValueHandler {
 	}
 
 	@Override
-	public Object getObject() {
-		return values;
+	public Supplier<LinkedHashMap<String, Object>> getObjectSupplier() {
+		return () -> values;
 	}
 }

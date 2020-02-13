@@ -1,7 +1,7 @@
 package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
-import gov.nist.secauto.metaschema.binding.datatypes.URIReference;
+import gov.nist.secauto.metaschema.datatype.URIReference;
 
 public class UriReferenceAdapter extends SimpleJavaTypeAdapter<URIReference> {
 	@Override

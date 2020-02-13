@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import gov.nist.itl.metaschema.model.xml.DefineFlagDocument;
-import gov.nist.secauto.metaschema.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
 import gov.nist.secauto.metaschema.model.info.definitions.AbstractFlagDefinition;
 import gov.nist.secauto.metaschema.model.info.definitions.DataType;
 import gov.nist.secauto.metaschema.model.info.definitions.FlagDefinition;

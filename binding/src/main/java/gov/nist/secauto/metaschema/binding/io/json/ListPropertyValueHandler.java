@@ -3,6 +3,7 @@ package gov.nist.secauto.metaschema.binding.io.json;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -79,7 +80,7 @@ public class ListPropertyValueHandler extends AbstractPropertyValueHandler {
 	}
 
 	@Override
-	public Object getObject() {
-		return values;
+	public Supplier<List<Object>> getObjectSupplier() {
+		return () -> values;
 	}
 }

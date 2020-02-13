@@ -1,6 +1,6 @@
 package gov.nist.secauto.metaschema.model.info;
 
-import gov.nist.secauto.metaschema.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
 import gov.nist.secauto.metaschema.model.Metaschema;
 
 public interface InfoElement {

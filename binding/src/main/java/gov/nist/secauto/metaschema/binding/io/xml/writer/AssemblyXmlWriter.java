@@ -19,7 +19,7 @@ import gov.nist.secauto.metaschema.binding.model.property.CollectionPropertyInfo
 import gov.nist.secauto.metaschema.binding.model.property.FieldPropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.ModelItemPropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyInfo;
-import gov.nist.secauto.metaschema.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupMultiline;
 
 public class AssemblyXmlWriter<CLASS> extends AbstractXmlWriter<CLASS, AssemblyClassBinding<CLASS>> {
 	public AssemblyXmlWriter(AssemblyClassBinding<CLASS> classBinding) {

@@ -1,6 +1,7 @@
 package gov.nist.secauto.metaschema.binding.io.json;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 
 import com.fasterxml.jackson.core.JsonToken;
 
@@ -69,5 +70,5 @@ public interface PropertyValueHandler {
 	 */
 	boolean parseNextFieldValue(JsonParsingContext parsingContext) throws BindingException, IOException;
 
-	Object getObject();
+	Supplier<? extends Object> getObjectSupplier();
 }

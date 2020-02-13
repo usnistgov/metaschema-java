@@ -2,6 +2,7 @@ package gov.nist.secauto.metaschema.binding.io.json;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Supplier;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
@@ -39,8 +40,7 @@ public class SingletonPropertyValueHandler extends AbstractPropertyValueHandler 
 	}
 
 	@Override
-	public Object getObject() {
-		return value;
+	public Supplier<Object> getObjectSupplier() {
+		return () -> value;
 	}
-
 }

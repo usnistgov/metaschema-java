@@ -1,5 +1,7 @@
 package gov.nist.secauto.metaschema.binding;
 
+import java.util.function.Supplier;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
@@ -11,6 +13,8 @@ import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 public interface JavaTypeAdapter<TYPE> {
+	TYPE copy(TYPE obj);
+
 	boolean isParsingStartElement();
 
 //	boolean isParsingEndElement();
@@ -39,6 +43,9 @@ public interface JavaTypeAdapter<TYPE> {
 	 */
 	TYPE parse(XmlParsingContext parsingContext) throws BindingException;
 	TYPE parse(JsonParsingContext parsingContext) throws BindingException;
+	Supplier<?> parseAndSupply(String value) throws BindingException;
+	Supplier<TYPE> parseAndSupply(XmlParsingContext parsingContext) throws BindingException;
+	Supplier<TYPE> parseAndSupply(JsonParsingContext parsingContext) throws BindingException;
 
 	void writeXmlElement(Object value, QName valueQName, StartElement parent, XmlWritingContext writingContext)
 			throws BindingException;

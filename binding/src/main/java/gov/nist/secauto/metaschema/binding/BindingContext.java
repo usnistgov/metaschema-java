@@ -20,7 +20,7 @@ public interface BindingContext {
 
 	boolean hasClassBinding(Class<?> clazz) throws BindingException;
 	<CLASS> ClassBinding<CLASS> getClassBinding(Class<CLASS> clazz) throws BindingException;
-	<CLASS> JavaTypeAdapter<CLASS> getJavaTypeAdapter(Class<CLASS> itemType) throws BindingException;
+	<TYPE> JavaTypeAdapter<TYPE> getJavaTypeAdapter(Class<TYPE> itemType) throws BindingException;
 	<CLASS> Serializer<CLASS> newXmlSerializer(Class<CLASS> clazz, Configuration configuration) throws BindingException;
 	<CLASS> Serializer<CLASS> newJsonSerializer(Class<CLASS> clazz, Configuration configuration) throws BindingException;
 	<CLASS> Serializer<CLASS> newYamlSerializer(Class<CLASS> clazz, Configuration configuration) throws BindingException;

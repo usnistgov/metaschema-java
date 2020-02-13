@@ -101,7 +101,7 @@ class MapPropertyValueHandlerTest {
 		}
 
 		@SuppressWarnings("unchecked")
-		LinkedHashMap<String, Integer> objects = (LinkedHashMap<String, Integer>) propertyValueHandler.getObject();
+		LinkedHashMap<String, Integer> objects = (LinkedHashMap<String, Integer>) propertyValueHandler.getObjectSupplier().get();
 		List<Integer> values = new ArrayList<>(objects.values());
 		for (int i = 0; i < count; i++) {
 			assertEquals(i, values.get(i));

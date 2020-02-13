@@ -17,7 +17,7 @@ import gov.nist.itl.metaschema.model.xml.ExtensionType;
 import gov.nist.itl.metaschema.model.xml.FieldDocument;
 import gov.nist.itl.metaschema.model.xml.FlagDocument;
 import gov.nist.itl.metaschema.model.xml.binding.DefineAssemblyBindingDocument;
-import gov.nist.secauto.metaschema.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
 import gov.nist.secauto.metaschema.model.configuration.AssemblyBindingConfiguration;
 import gov.nist.secauto.metaschema.model.info.Type;
 import gov.nist.secauto.metaschema.model.info.definitions.AbstractAssemblyDefinition;

@@ -40,7 +40,7 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeVisitorBase;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
-import gov.nist.secauto.metaschema.markup.flexmark.insertanchor.InsertAnchorNode;
+import gov.nist.secauto.metaschema.datatype.markup.flexmark.insertanchor.InsertAnchorNode;
 
 public class MarkupXmlWriter {
 	private final XMLEventFactory2 eventFactory;

@@ -1,7 +1,6 @@
 package gov.nist.secauto.metaschema.binding.io.json;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
@@ -22,7 +21,9 @@ public class AssemblyPropertyItemHandler extends AbstractBoundClassPropertyItemH
 	@Override
 	public List<Object> parse(JsonParsingContext parsingContext, PropertyBindingFilter filter) throws BindingException {
 		JsonReader<?> jsonReader = getClassBinding().getJsonReader(parsingContext.getBindingContext());
-		return Collections.singletonList(jsonReader.readJson(parsingContext, filter, false));
+		@SuppressWarnings("unchecked")
+		List<Object> retval = (List<Object>)jsonReader.readJson(parsingContext, filter, false);
+		return retval;
 	}
 
 	@Override

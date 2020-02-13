@@ -3,7 +3,7 @@ package gov.nist.secauto.metaschema.model.xml;
 import java.math.BigInteger;
 
 import gov.nist.itl.metaschema.model.xml.AssemblyDocument;
-import gov.nist.secauto.metaschema.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
 import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
 import gov.nist.secauto.metaschema.model.info.instances.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.model.info.instances.JsonGroupAsBehavior;

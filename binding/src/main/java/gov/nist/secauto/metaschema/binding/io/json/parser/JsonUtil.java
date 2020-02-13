@@ -92,7 +92,7 @@ public class JsonUtil {
 		builder.append("property '");
 		builder.append(propertyBinding.getPropertyInfo().getSimpleName());
 		builder.append("' on class '");
-		builder.append(classBinding.getClazz().getSimpleName());
+		builder.append(classBinding.getClazz().getName());
 		builder.append("' at location '");
 		JsonLocation location = parser.getCurrentLocation();
 		builder.append(location.getLineNr());

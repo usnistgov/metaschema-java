@@ -5,7 +5,7 @@ import java.util.Map;
 
 import gov.nist.itl.metaschema.model.xml.Boolean;
 import gov.nist.itl.metaschema.model.xml.FlagDocument;
-import gov.nist.secauto.metaschema.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.info.Type;
 import gov.nist.secauto.metaschema.model.info.definitions.DataType;

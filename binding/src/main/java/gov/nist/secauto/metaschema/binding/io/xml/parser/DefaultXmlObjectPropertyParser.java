@@ -17,7 +17,7 @@ import gov.nist.secauto.metaschema.binding.model.property.FieldPropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.ModelItemPropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyInfo;
-import gov.nist.secauto.metaschema.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupMultiline;
 
 public class DefaultXmlObjectPropertyParser extends AbstractXmlPropertyParser<ModelItemPropertyBinding>
 		implements XmlObjectPropertyParser {
@@ -101,9 +101,11 @@ public class DefaultXmlObjectPropertyParser extends AbstractXmlPropertyParser<Mo
 	protected JavaTypeAdapter<?> getTypeAdapter() throws BindingException {
 		synchronized (this) {
 			if (typeAdapter == null) {
+				Class<?> itemClass = getPropertyBinding().getPropertyInfo().getItemType();
 				typeAdapter = getBindingContext()
-						.getJavaTypeAdapter((Class<?>) getPropertyBinding().getPropertyInfo().getItemType());
+						.getJavaTypeAdapter(itemClass);
 			}
+
 			return typeAdapter;
 		}
 	}

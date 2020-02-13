@@ -5,9 +5,9 @@ import java.math.BigInteger;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
-import gov.nist.secauto.metaschema.binding.datatypes.NonNegativeInteger;
 import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
+import gov.nist.secauto.metaschema.datatype.NonNegativeInteger;
 
 public class NegativeIntegerAdapter extends SimpleJavaTypeAdapter<NonNegativeInteger> {
 

@@ -1,7 +1,7 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
-import gov.nist.secauto.metaschema.markup.MarkupString;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupString;
 
 public interface InstanceGenerator {
 

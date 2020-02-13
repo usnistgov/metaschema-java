@@ -6,7 +6,7 @@ import java.io.StringWriter;
 import org.apache.xmlbeans.XmlOptions;
 
 import gov.nist.itl.metaschema.model.xml.MarkupContentType;
-import gov.nist.secauto.metaschema.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupMultiline;
 
 public class MarkupStringConverter {
 	private MarkupStringConverter() {

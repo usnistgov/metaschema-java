@@ -1,7 +1,7 @@
 package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
-import gov.nist.secauto.metaschema.binding.datatypes.Base64;
+import gov.nist.secauto.metaschema.datatype.Base64;
 
 public class Base64Adapter extends SimpleJavaTypeAdapter<Base64> {
 	@Override
