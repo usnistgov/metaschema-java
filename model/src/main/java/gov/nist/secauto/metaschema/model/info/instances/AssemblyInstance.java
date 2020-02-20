@@ -20,17 +20,18 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.info.instances;
 
 import gov.nist.secauto.metaschema.model.info.Assembly;
 import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;
 
 public interface AssemblyInstance extends ModelInstance, Assembly {
-	/**
-	 * Retrieve the definition of the assembly referenced by this instance.
-	 * 
-	 * @return the referenced assembly definition
-	 */
-	@Override
-	AssemblyDefinition getDefinition();
+  /**
+   * Retrieve the definition of the assembly referenced by this instance.
+   * 
+   * @return the referenced assembly definition
+   */
+  @Override
+  AssemblyDefinition getDefinition();
 }

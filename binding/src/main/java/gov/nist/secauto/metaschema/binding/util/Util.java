@@ -20,17 +20,18 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.util;
 
 import java.util.Iterator;
 
 public class Util {
-	public static <T> Iterable<T> toIterable(Iterator<T> iterator) {
-		return new Iterable<T>() {
-			@Override
-			public Iterator<T> iterator() {
-				return iterator;
-			}
-		};
-	}
+  public static <T> Iterable<T> toIterable(Iterator<T> iterator) {
+    return new Iterable<T>() {
+      @Override
+      public Iterator<T> iterator() {
+        return iterator;
+      }
+    };
+  }
 }

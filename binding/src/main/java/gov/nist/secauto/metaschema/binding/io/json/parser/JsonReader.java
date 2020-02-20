@@ -20,13 +20,15 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.io.json.parser;
 
-import java.util.List;
+package gov.nist.secauto.metaschema.binding.io.json.parser;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
+import java.util.List;
+
 public interface JsonReader<CLASS> {
-	List<CLASS> readJson(JsonParsingContext parsingContext, PropertyBindingFilter filter, boolean parseRoot) throws BindingException;
+  List<CLASS> readJson(JsonParsingContext parsingContext, PropertyBindingFilter filter, boolean parseRoot)
+      throws BindingException;
 }

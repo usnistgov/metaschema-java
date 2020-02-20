@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
@@ -33,10 +34,10 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
  */
 public interface AssemblyPropertyBinding extends ModelItemPropertyBinding {
 
-	public static AssemblyPropertyBinding fromJavaField(java.lang.reflect.Field field, Assembly assemblyAnnotation)
-			throws BindingException {
-		PropertyInfo propertyInfo = PropertyInfo.newPropertyInfo(field);
+  public static AssemblyPropertyBinding fromJavaField(java.lang.reflect.Field field, Assembly assemblyAnnotation)
+      throws BindingException {
+    PropertyInfo propertyInfo = PropertyInfo.newPropertyInfo(field);
 
-		return new DefaultAssemblyPropertyBinding(propertyInfo, assemblyAnnotation);
-	}
+    return new DefaultAssemblyPropertyBinding(propertyInfo, assemblyAnnotation);
+  }
 }

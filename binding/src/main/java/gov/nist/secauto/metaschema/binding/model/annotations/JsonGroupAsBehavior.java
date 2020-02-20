@@ -20,11 +20,12 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
 public enum JsonGroupAsBehavior {
-	KEYED,
-	SINGLETON_OR_LIST,
-	LIST,
-	NONE;
+  KEYED,
+  SINGLETON_OR_LIST,
+  LIST,
+  NONE;
 }

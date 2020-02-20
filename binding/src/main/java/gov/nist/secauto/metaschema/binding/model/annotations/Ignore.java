@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
 import static java.lang.annotation.ElementType.FIELD;
@@ -32,5 +33,5 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target({ FIELD, METHOD })
 public @interface Ignore {
-	boolean value() default false;
+  boolean value() default false;
 }

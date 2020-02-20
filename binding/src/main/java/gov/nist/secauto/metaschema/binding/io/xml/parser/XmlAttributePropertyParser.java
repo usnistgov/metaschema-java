@@ -20,14 +20,16 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.io.xml.parser;
+
+import gov.nist.secauto.metaschema.binding.BindingException;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.Attribute;
 
-import gov.nist.secauto.metaschema.binding.BindingException;
-
 public interface XmlAttributePropertyParser extends XmlPropertyParser {
-	QName getHandledQName();
-	<CLASS> void parse(CLASS obj, XmlParsingContext parser, Attribute attribue) throws BindingException;
+  QName getHandledQName();
+
+  <CLASS> void parse(CLASS obj, XmlParsingContext parser, Attribute attribue) throws BindingException;
 }

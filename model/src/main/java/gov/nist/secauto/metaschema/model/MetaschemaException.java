@@ -20,32 +20,33 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model;
 
 public class MetaschemaException extends Exception {
 
-	/**
-	 * The serial version UID
-	 */
-	private static final long serialVersionUID = 1L;
+  /**
+   * The serial version UID.
+   */
+  private static final long serialVersionUID = 1L;
 
-	public MetaschemaException() {
-	}
+  public MetaschemaException() {
+  }
 
-	public MetaschemaException(String message) {
-		super(message);
-	}
+  public MetaschemaException(String message) {
+    super(message);
+  }
 
-	public MetaschemaException(Throwable cause) {
-		super(cause);
-	}
+  public MetaschemaException(Throwable cause) {
+    super(cause);
+  }
 
-	public MetaschemaException(String message, Throwable cause) {
-		super(message, cause);
-	}
+  public MetaschemaException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-	public MetaschemaException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
+  public MetaschemaException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
 
 }

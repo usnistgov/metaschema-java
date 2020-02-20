@@ -20,39 +20,40 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.io.json.writer;
 
-import java.util.Objects;
+package gov.nist.secauto.metaschema.binding.io.json.writer;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonGroupAsBehavior;
 
+import java.util.Objects;
+
 public class CallingContext {
-	public static final CallingContext NO_GROUPING;
-	public static final CallingContext SINGLETON_OR_LIST;
-	public static final CallingContext LIST;
-	public static final CallingContext KEYED;
+  public static final CallingContext NO_GROUPING;
+  public static final CallingContext SINGLETON_OR_LIST;
+  public static final CallingContext LIST;
+  public static final CallingContext KEYED;
 
-	static {
-		NO_GROUPING = new CallingContext(false, JsonGroupAsBehavior.NONE);
-		SINGLETON_OR_LIST = new CallingContext(false, JsonGroupAsBehavior.SINGLETON_OR_LIST);
-		LIST = new CallingContext(false, JsonGroupAsBehavior.LIST);
-		KEYED = new CallingContext(false, JsonGroupAsBehavior.KEYED);
-	}
+  static {
+    NO_GROUPING = new CallingContext(false, JsonGroupAsBehavior.NONE);
+    SINGLETON_OR_LIST = new CallingContext(false, JsonGroupAsBehavior.SINGLETON_OR_LIST);
+    LIST = new CallingContext(false, JsonGroupAsBehavior.LIST);
+    KEYED = new CallingContext(false, JsonGroupAsBehavior.KEYED);
+  }
 
-	private final boolean isRootProperty;
-	private final JsonGroupAsBehavior groupAsBehavior;
+  private final boolean isRootProperty;
+  private final JsonGroupAsBehavior groupAsBehavior;
 
-	public CallingContext(boolean isRootProperty, JsonGroupAsBehavior groupAsBehavior) {
-		Objects.requireNonNull(groupAsBehavior, "groupAsBehavior");
-		this.isRootProperty = isRootProperty;
-		this.groupAsBehavior = groupAsBehavior;
-	}
+  public CallingContext(boolean isRootProperty, JsonGroupAsBehavior groupAsBehavior) {
+    Objects.requireNonNull(groupAsBehavior, "groupAsBehavior");
+    this.isRootProperty = isRootProperty;
+    this.groupAsBehavior = groupAsBehavior;
+  }
 
-	protected boolean isRootProperty() {
-		return isRootProperty;
-	}
+  protected boolean isRootProperty() {
+    return isRootProperty;
+  }
 
-	protected JsonGroupAsBehavior getGroupAsBehavior() {
-		return groupAsBehavior;
-	}
+  protected JsonGroupAsBehavior getGroupAsBehavior() {
+    return groupAsBehavior;
+  }
 }

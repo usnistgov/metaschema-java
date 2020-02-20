@@ -20,15 +20,8 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.datatype.markup;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.vladsch.flexmark.ext.escaped.character.EscapedCharacterExtension;
 import com.vladsch.flexmark.ext.gfm.strikethrough.SubscriptExtension;
@@ -46,174 +39,183 @@ import com.vladsch.flexmark.util.data.DataHolder;
 
 import gov.nist.secauto.metaschema.datatype.markup.flexmark.insertanchor.InsertAnchorExtension;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 public class FlexmarkFactory {
-	private static final Logger logger = LogManager.getLogger(FlexmarkFactory.class);
-	private static final FlexmarkFactory instance = new FlexmarkFactory();
+  private static final Logger logger = LogManager.getLogger(FlexmarkFactory.class);
+  private static final FlexmarkFactory instance = new FlexmarkFactory();
 
-	static Map<String, String> specialCharsMap = new HashMap<>();
-	static {
-//        specialCharsMap.put("“", "\"");
-//        specialCharsMap.put("”", "\"");
-		specialCharsMap.put("&ldquo;", "“");
-		specialCharsMap.put("&rdquo;", "”");
-//        specialCharsMap.put("‘", "'");
-//        specialCharsMap.put("’", "'");
-		specialCharsMap.put("&lsquo;", "‘");
-		specialCharsMap.put("&rsquo;", "’");
-		specialCharsMap.put("&apos;", "'");
-//        specialCharsMap.put("«", "<<");
-		specialCharsMap.put("&laquo;", "«");
-//        specialCharsMap.put("»", ">>");
-		specialCharsMap.put("&raquo;", "»");
-//        specialCharsMap.put("…", "...");
-		specialCharsMap.put("&hellip;", "…");
-//        specialCharsMap.put("–", "--");
-		specialCharsMap.put("&ndash;", "–");
-//        specialCharsMap.put("—", "---");
-		specialCharsMap.put("&mdash;", "—");
-	}
+  static Map<String, String> specialCharsMap = new HashMap<>();
 
-	public static FlexmarkFactory instance() {
-		return instance;
-	}
+  static {
+    // specialCharsMap.put("“", "\"");
+    // specialCharsMap.put("”", "\"");
+    specialCharsMap.put("&ldquo;", "“");
+    specialCharsMap.put("&rdquo;", "”");
+    // specialCharsMap.put("‘", "'");
+    // specialCharsMap.put("’", "'");
+    specialCharsMap.put("&lsquo;", "‘");
+    specialCharsMap.put("&rsquo;", "’");
+    specialCharsMap.put("&apos;", "'");
+    // specialCharsMap.put("«", "<<");
+    specialCharsMap.put("&laquo;", "«");
+    // specialCharsMap.put("»", ">>");
+    specialCharsMap.put("&raquo;", "»");
+    // specialCharsMap.put("…", "...");
+    specialCharsMap.put("&hellip;", "…");
+    // specialCharsMap.put("–", "--");
+    specialCharsMap.put("&ndash;", "–");
+    // specialCharsMap.put("—", "---");
+    specialCharsMap.put("&mdash;", "—");
+  }
 
-	private Parser markdownParser;
-	private HtmlRenderer htmlRenderer;
-	private Formatter formatter;
-	private FlexmarkHtmlConverter htmlConverter;
+  public static FlexmarkFactory instance() {
+    return instance;
+  }
 
-	public Document fromHtml(String html) {
-		return fromHtml(html, null, null);
-	}
+  private Parser markdownParser;
+  private HtmlRenderer htmlRenderer;
+  private Formatter formatter;
+  private FlexmarkHtmlConverter htmlConverter;
 
-	public Document fromHtml(String html, FlexmarkHtmlConverter htmlParser, Parser markdownParser) {
-		Objects.requireNonNull(html, "html");
-		if (htmlParser == null) {
-			htmlParser = getFlexmarkHtmlConverter();
-		}
-		if (markdownParser == null) {
-			markdownParser = getMarkdownParser();
-		}
+  public Document fromHtml(String html) {
+    return fromHtml(html, null, null);
+  }
 
-		String markdown = htmlParser.convert(html);
-		logger.trace("markdown: {}", markdown);
-		return fromMarkdown(markdown, markdownParser);
-	}
+  public Document fromHtml(String html, FlexmarkHtmlConverter htmlParser, Parser markdownParser) {
+    Objects.requireNonNull(html, "html");
+    if (htmlParser == null) {
+      htmlParser = getFlexmarkHtmlConverter();
+    }
+    if (markdownParser == null) {
+      markdownParser = getMarkdownParser();
+    }
 
-	public Document fromMarkdown(String markdown) {
-		return fromMarkdown(markdown, getMarkdownParser());
-	}
+    String markdown = htmlParser.convert(html);
+    logger.trace("markdown: {}", markdown);
+    return fromMarkdown(markdown, markdownParser);
+  }
 
-	public Document fromMarkdown(String markdown, Parser parser) {
-		Objects.requireNonNull(markdown, "markdown");
-		Objects.requireNonNull(parser, "parser");
+  public Document fromMarkdown(String markdown) {
+    return fromMarkdown(markdown, getMarkdownParser());
+  }
 
-		return parser.parse(markdown);
-	}
+  public Document fromMarkdown(String markdown, Parser parser) {
+    Objects.requireNonNull(markdown, "markdown");
+    Objects.requireNonNull(parser, "parser");
 
-	protected void applyOptions(BuilderBase<?> builder) {
-		Extension[] extensions = {
-				// Metaschema insert
-				InsertAnchorExtension.create(),
-//				TypographicExtension.create(),
-				TablesExtension.create(),
-				// to ensure that escaped characters are not lost
-				EscapedCharacterExtension.create(), SuperscriptExtension.create(), SubscriptExtension.create() };
-		builder.extensions(Arrays.asList(extensions));
+    return parser.parse(markdown);
+  }
 
-		builder.set(Parser.FENCED_CODE_CONTENT_BLOCK, true);
-		// GitHub-flavored tables
-		builder.set(TablesExtension.COLUMN_SPANS, false);
-		builder.set(TablesExtension.APPEND_MISSING_COLUMNS, true);
-		builder.set(TablesExtension.DISCARD_EXTRA_COLUMNS, true);
-		builder.set(TablesExtension.HEADER_SEPARATOR_COLUMN_MATCH, true);
-		builder.set(TypographicExtension.SINGLE_QUOTE_UNMATCHED, null);
-		builder.set(TypographicExtension.ENABLE_QUOTES, false);
-		builder.set(TypographicExtension.ENABLE_SMARTS, false);
-		builder.set(FlexmarkHtmlConverter.TYPOGRAPHIC_REPLACEMENT_MAP, specialCharsMap);
-	}
+  protected void applyOptions(BuilderBase<?> builder) {
+    Extension[] extensions = {
+        // Metaschema insert
+        InsertAnchorExtension.create(),
+        // TypographicExtension.create(),
+        TablesExtension.create(),
+        // to ensure that escaped characters are not lost
+        EscapedCharacterExtension.create(), SuperscriptExtension.create(), SubscriptExtension.create() };
+    builder.extensions(Arrays.asList(extensions));
 
-	public Parser getMarkdownParser() {
-		synchronized (this) {
-			if (markdownParser == null) {
-				markdownParser = newMarkdownParser(null);
-			}
-			return markdownParser;
-		}
-	}
+    builder.set(Parser.FENCED_CODE_CONTENT_BLOCK, true);
+    // GitHub-flavored tables
+    builder.set(TablesExtension.COLUMN_SPANS, false);
+    builder.set(TablesExtension.APPEND_MISSING_COLUMNS, true);
+    builder.set(TablesExtension.DISCARD_EXTRA_COLUMNS, true);
+    builder.set(TablesExtension.HEADER_SEPARATOR_COLUMN_MATCH, true);
+    builder.set(TypographicExtension.SINGLE_QUOTE_UNMATCHED, null);
+    builder.set(TypographicExtension.ENABLE_QUOTES, false);
+    builder.set(TypographicExtension.ENABLE_SMARTS, false);
+    builder.set(FlexmarkHtmlConverter.TYPOGRAPHIC_REPLACEMENT_MAP, specialCharsMap);
+  }
 
-	public Parser newMarkdownParser(DataHolder options) {
-		Parser.Builder builder;
-		if (options != null) {
-			builder = Parser.builder(options);
-		} else {
-			builder = Parser.builder();
-		}
+  public Parser getMarkdownParser() {
+    synchronized (this) {
+      if (markdownParser == null) {
+        markdownParser = newMarkdownParser(null);
+      }
+      return markdownParser;
+    }
+  }
 
-		applyOptions(builder);
-		return builder.build();
-	}
+  public Parser newMarkdownParser(DataHolder options) {
+    Parser.Builder builder;
+    if (options != null) {
+      builder = Parser.builder(options);
+    } else {
+      builder = Parser.builder();
+    }
 
-	public HtmlRenderer getHtmlRenderer() {
-		synchronized (this) {
-			if (htmlRenderer == null) {
-				htmlRenderer = newHtmlRenderer(null);
-			}
-			return htmlRenderer;
-		}
-	}
+    applyOptions(builder);
+    return builder.build();
+  }
 
-	public HtmlRenderer newHtmlRenderer(DataHolder options) {
-		HtmlRenderer.Builder builder;
-		if (options != null) {
-			builder = HtmlRenderer.builder(options);
-		} else {
-			builder = HtmlRenderer.builder();
-		}
+  public HtmlRenderer getHtmlRenderer() {
+    synchronized (this) {
+      if (htmlRenderer == null) {
+        htmlRenderer = newHtmlRenderer(null);
+      }
+      return htmlRenderer;
+    }
+  }
 
-		applyOptions(builder);
-		return builder.build();
-	}
+  public HtmlRenderer newHtmlRenderer(DataHolder options) {
+    HtmlRenderer.Builder builder;
+    if (options != null) {
+      builder = HtmlRenderer.builder(options);
+    } else {
+      builder = HtmlRenderer.builder();
+    }
 
-	public Formatter getFormatter() {
-		synchronized (this) {
-			if (formatter == null) {
-				formatter = newFormatter(null);
-			}
-			return formatter;
-		}
-	}
+    applyOptions(builder);
+    return builder.build();
+  }
 
-	public Formatter newFormatter(DataHolder options) {
-		Formatter.Builder builder;
-		if (options != null) {
-			builder = Formatter.builder(options);
-		} else {
-			builder = Formatter.builder();
-		}
+  public Formatter getFormatter() {
+    synchronized (this) {
+      if (formatter == null) {
+        formatter = newFormatter(null);
+      }
+      return formatter;
+    }
+  }
 
-		applyOptions(builder);
-		return builder.build();
-	}
+  public Formatter newFormatter(DataHolder options) {
+    Formatter.Builder builder;
+    if (options != null) {
+      builder = Formatter.builder(options);
+    } else {
+      builder = Formatter.builder();
+    }
 
-	public FlexmarkHtmlConverter getFlexmarkHtmlConverter() {
-		synchronized (this) {
-			if (htmlConverter == null) {
-				htmlConverter = newFlexmarkHtmlConverter(null);
-			}
-			return htmlConverter;
-		}
-	}
+    applyOptions(builder);
+    return builder.build();
+  }
 
-	public FlexmarkHtmlConverter newFlexmarkHtmlConverter(DataHolder options) {
-		FlexmarkHtmlConverter.Builder builder;
-		if (options != null) {
-			builder = FlexmarkHtmlConverter.builder(options);
-		} else {
-			builder = FlexmarkHtmlConverter.builder();
-		}
+  public FlexmarkHtmlConverter getFlexmarkHtmlConverter() {
+    synchronized (this) {
+      if (htmlConverter == null) {
+        htmlConverter = newFlexmarkHtmlConverter(null);
+      }
+      return htmlConverter;
+    }
+  }
 
-		applyOptions(builder);
-		return builder.build();
-	}
+  public FlexmarkHtmlConverter newFlexmarkHtmlConverter(DataHolder options) {
+    FlexmarkHtmlConverter.Builder builder;
+    if (options != null) {
+      builder = FlexmarkHtmlConverter.builder(options);
+    } else {
+      builder = FlexmarkHtmlConverter.builder();
+    }
+
+    applyOptions(builder);
+    return builder.build();
+  }
 }

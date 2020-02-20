@@ -20,8 +20,9 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.io;
 
 public interface Configuration {
-	boolean isFeatureEnabled(Feature feature, boolean defaultState);
+  boolean isFeatureEnabled(Feature feature, boolean defaultState);
 }

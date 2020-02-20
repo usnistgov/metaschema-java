@@ -20,10 +20,8 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.io.json;
 
-import java.io.IOException;
-import java.util.List;
+package gov.nist.secauto.metaschema.binding.io.json;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
@@ -34,24 +32,28 @@ import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyPropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
-public class AssemblyPropertyItemHandler extends AbstractBoundClassPropertyItemHandler<AssemblyClassBinding<?>, AssemblyPropertyBinding> {
+import java.io.IOException;
+import java.util.List;
 
-	public AssemblyPropertyItemHandler(AssemblyClassBinding<?> classBinding, AssemblyPropertyBinding propertyBinding) {
-		super(classBinding, propertyBinding);
-	}
+public class AssemblyPropertyItemHandler
+    extends AbstractBoundClassPropertyItemHandler<AssemblyClassBinding<?>, AssemblyPropertyBinding> {
 
-	@Override
-	public List<Object> parse(JsonParsingContext parsingContext, PropertyBindingFilter filter) throws BindingException {
-		JsonReader<?> jsonReader = getClassBinding().getJsonReader(parsingContext.getBindingContext());
-		@SuppressWarnings("unchecked")
-		List<Object> retval = (List<Object>)jsonReader.readJson(parsingContext, filter, false);
-		return retval;
-	}
+  public AssemblyPropertyItemHandler(AssemblyClassBinding<?> classBinding, AssemblyPropertyBinding propertyBinding) {
+    super(classBinding, propertyBinding);
+  }
 
-	@Override
-	public void writeValue(Object value, JsonWritingContext writingContext, PropertyBindingFilter filter)
-			throws BindingException, IOException {
-		AssemblyJsonWriter<?> jsonWriter = getClassBinding().getAssemblyJsonWriter(writingContext.getBindingContext());
-		jsonWriter.writeJson(value, filter, writingContext);
-	}
+  @Override
+  public List<Object> parse(JsonParsingContext parsingContext, PropertyBindingFilter filter) throws BindingException {
+    JsonReader<?> jsonReader = getClassBinding().getJsonReader(parsingContext.getBindingContext());
+    @SuppressWarnings("unchecked")
+    List<Object> retval = (List<Object>) jsonReader.readJson(parsingContext, filter, false);
+    return retval;
+  }
+
+  @Override
+  public void writeValue(Object value, JsonWritingContext writingContext, PropertyBindingFilter filter)
+      throws BindingException, IOException {
+    AssemblyJsonWriter<?> jsonWriter = getClassBinding().getAssemblyJsonWriter(writingContext.getBindingContext());
+    jsonWriter.writeJson(value, filter, writingContext);
+  }
 }

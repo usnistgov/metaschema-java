@@ -20,31 +20,32 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatype.Date;
 
-public class DateAdapter extends SimpleJavaTypeAdapter<Date> {
-	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-ddXXX");
-	private static final DateFormat dateFormatWithoutTZ = new SimpleDateFormat("yyyy-MM-dd");
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
-	@Override
-	public Date parse(String value) throws BindingException {
-		try {
-			return new Date(dateFormat.parse(value));
-		} catch (ParseException e) {
-			try {
-				return new Date(dateFormatWithoutTZ.parse(value));
-			} catch (ParseException ex) {
-				throw new BindingException(ex);
-			}
-		}
-	}
+public class DateAdapter extends SimpleJavaTypeAdapter<Date> {
+  private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-ddXXX");
+  private static final DateFormat dateFormatWithoutTZ = new SimpleDateFormat("yyyy-MM-dd");
+
+  @Override
+  public Date parse(String value) throws BindingException {
+    try {
+      return new Date(dateFormat.parse(value));
+    } catch (ParseException e) {
+      try {
+        return new Date(dateFormatWithoutTZ.parse(value));
+      } catch (ParseException ex) {
+        throw new BindingException(ex);
+      }
+    }
+  }
 
 }

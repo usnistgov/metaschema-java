@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.info.instances;
 
 import gov.nist.secauto.metaschema.model.Metaschema;
@@ -28,34 +29,34 @@ import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
 import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
 
 public abstract class AbstractFieldInstance implements FieldInstance {
-	private final InfoElementDefinition parent;
+  private final InfoElementDefinition parent;
 
-	public AbstractFieldInstance(InfoElementDefinition parent) {
-		this.parent = parent;
-	}
+  public AbstractFieldInstance(InfoElementDefinition parent) {
+    this.parent = parent;
+  }
 
-	@Override
-	public boolean isReference() {
-		return true;
-	}
+  @Override
+  public boolean isReference() {
+    return true;
+  }
 
-	@Override
-	public Type getType() {
-		return Type.FIELD;
-	}
+  @Override
+  public Type getType() {
+    return Type.FIELD;
+  }
 
-	@Override
-	public Metaschema getContainingMetaschema() {
-		return parent.getContainingMetaschema();
-	}
+  @Override
+  public Metaschema getContainingMetaschema() {
+    return parent.getContainingMetaschema();
+  }
 
-	@Override
-	public FieldDefinition getDefinition() {
-		return getContainingMetaschema().getFieldDefinitionByName(getName());
-	}
+  @Override
+  public FieldDefinition getDefinition() {
+    return getContainingMetaschema().getFieldDefinitionByName(getName());
+  }
 
-	@Override
-	public InfoElementDefinition getContainingDefinition() {
-		return parent;
-	}
+  @Override
+  public InfoElementDefinition getContainingDefinition() {
+    return parent;
+  }
 }

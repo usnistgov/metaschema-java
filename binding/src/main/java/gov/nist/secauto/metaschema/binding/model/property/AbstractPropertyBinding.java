@@ -20,17 +20,18 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.property;
 
 public abstract class AbstractPropertyBinding implements PropertyBinding {
-	private final PropertyInfo propertyInfo;
+  private final PropertyInfo propertyInfo;
 
-	public AbstractPropertyBinding(PropertyInfo propertyInfo) {
-		this.propertyInfo = propertyInfo;
-	}
+  public AbstractPropertyBinding(PropertyInfo propertyInfo) {
+    this.propertyInfo = propertyInfo;
+  }
 
-	@Override
-	public PropertyInfo getPropertyInfo() {
-		return propertyInfo;
-	}
+  @Override
+  public PropertyInfo getPropertyInfo() {
+    return propertyInfo;
+  }
 }

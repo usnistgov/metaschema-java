@@ -20,11 +20,12 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.io.xml.parser;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 
 public interface FieldValueXmlPropertyParser extends XmlPropertyParser {
-	void parse(Object obj, XmlParsingContext parser) throws BindingException;
+  void parse(Object obj, XmlParsingContext parser) throws BindingException;
 
 }

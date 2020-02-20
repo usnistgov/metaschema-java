@@ -3,6 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>gov.nist.secauto</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>14-SNAPSHOT</version>
+	</parent>
 	<groupId>gov.nist.secauto.metaschema</groupId>
 	<artifactId>parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -13,13 +18,11 @@
 	<properties>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
 		<dependency.flexmark.version>0.50.46</dependency.flexmark.version>
 		<dependency.jackson.version>2.10.1</dependency.jackson.version>
 		<dependency.log4j2.version>2.12.1</dependency.log4j2.version>
 		<dependency.junit5.version>5.6.0</dependency.junit5.version>
-		<plugin.surefire.version>2.22.1</plugin.surefire.version>
-		<plugin.license.version>3.0</plugin.license.version>
 	</properties>
 
 	<dependencyManagement>
@@ -189,6 +192,13 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
+				<groupId>org.junit.platform</groupId>
+				<artifactId>junit-platform-launcher</artifactId>
+				<version>1.6.0</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
 				<groupId>org.jmock</groupId>
 				<artifactId>jmock-junit5</artifactId>
 				<version>2.12.0</version>
@@ -211,46 +221,12 @@
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-launcher</artifactId>
+		</dependency>
 	</dependencies>
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>${plugin.surefire.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>com.mycila</groupId>
-					<artifactId>license-maven-plugin</artifactId>
-					<version>${plugin.license.version}</version>
-					<configuration>
-						<header>license/nist/license.txt</header>
-						<includes>
-							<include>**/*.java</include>
-						</includes>
-						<failIfMissing>true</failIfMissing>
-					</configuration>
-					<dependencies>
-						<dependency>
-							<groupId>${project.groupId}</groupId>
-							<artifactId>support</artifactId>
-							<version>${project.version}</version>
-						</dependency>
-					</dependencies>
-					<executions>
-						<execution>
-							<id>check-license</id>
-							<goals>
-								<goal>check</goal>
-							</goals>
-							<phase>verify</phase>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
+
 	<modules>
 		<module>model</module>
 		<module>binding</module>

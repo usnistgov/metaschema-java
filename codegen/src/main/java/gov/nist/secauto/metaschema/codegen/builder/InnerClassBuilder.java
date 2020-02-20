@@ -20,7 +20,10 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.codegen.builder;
+
+import gov.nist.secauto.metaschema.codegen.type.JavaType;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,109 +32,108 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
-import gov.nist.secauto.metaschema.codegen.type.JavaType;
-
 public class InnerClassBuilder extends AbstractClassBuilder<InnerClassBuilder> {
-	private static final Visibility DEFAULT_VISIBILITY = Visibility.PRIVATE;
+  private static final Visibility DEFAULT_VISIBILITY = Visibility.PRIVATE;
 
-	private static JavaType makeInnerClassJavaType(ClassBuilder outerClassBuilder, String className) {
-		JavaType outerType = outerClassBuilder.getJavaType();
-		StringBuilder name = new StringBuilder();
-		name.append(outerType.getClassName());
-		name.append('.');
-		name.append(className);
-		return JavaType.create(outerType.getPackageName(), name.toString());
-		
-	}
+  private static JavaType makeInnerClassJavaType(ClassBuilder outerClassBuilder, String className) {
+    JavaType outerType = outerClassBuilder.getJavaType();
+    StringBuilder name = new StringBuilder();
+    name.append(outerType.getClassName());
+    name.append('.');
+    name.append(className);
+    return JavaType.create(outerType.getPackageName(), name.toString());
 
-	private final ClassBuilder outerClassBuilder;
-	private final String className;
-	private String extendsClass;
+  }
 
-	public InnerClassBuilder(ClassBuilder outerClassBuilder, String className) {
-		super(makeInnerClassJavaType(outerClassBuilder, className));
-		this.outerClassBuilder = outerClassBuilder; 
-		this.className = className;
-	}
+  private final ClassBuilder outerClassBuilder;
+  private final String className;
+  private String extendsClass;
 
-	public InnerClassBuilder extendsClass(String value) {
-		this.extendsClass = value;
-		return this;
-	}
+  public InnerClassBuilder(ClassBuilder outerClassBuilder, String className) {
+    super(makeInnerClassJavaType(outerClassBuilder, className));
+    this.outerClassBuilder = outerClassBuilder;
+    this.className = className;
+  }
 
-	protected String getExtendsClass() {
-		return extendsClass;
-	}
+  public InnerClassBuilder extendsClass(String value) {
+    this.extendsClass = value;
+    return this;
+  }
 
-	public String getClassName() {
-		return className;
-	}
+  protected String getExtendsClass() {
+    return extendsClass;
+  }
 
-	@Override
-	protected String getPadding() {
-		return "    ";
-	}
+  public String getClassName() {
+    return className;
+  }
 
-	@Override
-	public ClassBuilder getActualClassBuilder() {
-		return getClassBuilder();
-	}
+  @Override
+  protected String getPadding() {
+    return "    ";
+  }
 
-	@Override
-	public ClassBuilder getClassBuilder() {
-		return outerClassBuilder;
-	}
+  @Override
+  public ClassBuilder getActualClassBuilder() {
+    return getClassBuilder();
+  }
 
-	@Override
-	public Set<JavaType> getImports() {
-		// Handle Imports
-		Set<JavaType> imports = new HashSet<>(getImports());
-		for (FieldBuilder field : getFields().values()) {
-			imports.addAll(field.getImports());
-		}
-		for (ConstructorBuilder constructor : getConstructors()) {
-			imports.addAll(constructor.getImports());
-		}
-		for (MethodBuilder method : getMethods().values()) {
-			imports.addAll(method.getImports());
-		}
-		return Collections.unmodifiableSet(imports);
-	}
+  @Override
+  public ClassBuilder getClassBuilder() {
+    return outerClassBuilder;
+  }
 
-	@Override
-	public void build(PrintWriter out) throws IOException {
-		// class declaration
-		buildAnnotations(out);
+  @Override
+  public Set<JavaType> getImports() {
+    // Handle Imports
+    Set<JavaType> imports = new HashSet<>(getImports());
+    for (FieldBuilder field : getFields().values()) {
+      imports.addAll(field.getImports());
+    }
+    for (ConstructorBuilder constructor : getConstructors()) {
+      imports.addAll(constructor.getImports());
+    }
+    for (MethodBuilder method : getMethods().values()) {
+      imports.addAll(method.getImports());
+    }
+    return Collections.unmodifiableSet(imports);
+  }
 
-		String extendsClass = getExtendsClass();
-		if (extendsClass == null) {
-			extendsClass = "";
-		} else {
-			extendsClass = "extends " + extendsClass + " ";
-		}
+  @Override
+  public void build(PrintWriter out) throws IOException {
+    // class declaration
+    buildAnnotations(out);
 
-		out.printf("%s%sstatic class %s %s{%n", getPadding(), getVisibilityValue(DEFAULT_VISIBILITY), getClassName(), extendsClass);
+    String extendsClass = getExtendsClass();
+    if (extendsClass == null) {
+      extendsClass = "";
+    } else {
+      extendsClass = "extends " + extendsClass + " ";
+    }
 
-		for (FieldBuilder field : getFields().values()) {
-			field.build(out);
-			out.println();
-		}
+    out.printf("%s%sstatic class %s %s{%n", getPadding(), getVisibilityValue(DEFAULT_VISIBILITY), getClassName(),
+        extendsClass);
 
-		for (ConstructorBuilder constructor : getConstructors()) {
-			constructor.build(out);
-			out.println();
-		}
+    for (FieldBuilder field : getFields().values()) {
+      field.build(out);
+      out.println();
+    }
 
-		for (MethodBuilder method : getMethods().values()) {
-			method.build(out);
-			out.println();
-		}
-		
-		out.printf("%s}%n", getPadding());
-	}
+    for (ConstructorBuilder constructor : getConstructors()) {
+      constructor.build(out);
+      out.println();
+    }
 
-	@Override
-	public Function<String, Boolean> getClashEvaluator() {
-		return getClassBuilder().getClashEvaluator();
-	}
+    for (MethodBuilder method : getMethods().values()) {
+      method.build(out);
+      out.println();
+    }
+
+    out.printf("%s}%n", getPadding());
+  }
+
+  @Override
+  public Function<String, Boolean> getClashEvaluator() {
+    return getClassBuilder().getClashEvaluator();
+  }
 }

@@ -20,19 +20,18 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.datatype;
 
-import java.util.Date;
+package gov.nist.secauto.metaschema.datatype;
 
 public class DateTime extends AbstractDatatype<DateTime, java.util.Date> {
 
-	public DateTime(Date value) {
-		super(value);
-	}
+  public DateTime(java.util.Date value) {
+    super(value);
+  }
 
-	@Override
-	public DateTime copy() {
-		return new DateTime(getValue());
-	}
+  @Override
+  public DateTime copy() {
+    return new DateTime(getValue());
+  }
 
 }

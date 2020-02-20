@@ -20,7 +20,10 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.codegen.builder;
+
+import gov.nist.secauto.metaschema.codegen.type.JavaType;
 
 import java.io.PrintWriter;
 import java.util.LinkedList;
@@ -28,70 +31,69 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import gov.nist.secauto.metaschema.codegen.type.JavaType;
-
 public class MethodBuilder extends AbstractMethodBuilder<MethodBuilder> {
-	private static final Visibility DEFAULT_VISIBILITY = Visibility.PUBLIC;
-	private final String name;
-	private JavaType returnType;
-	private List<Class<? extends Throwable>> exceptionClasses = new LinkedList<>();
+  private static final Visibility DEFAULT_VISIBILITY = Visibility.PUBLIC;
+  private final String name;
+  private JavaType returnType;
+  private List<Class<? extends Throwable>> exceptionClasses = new LinkedList<>();
 
-	public MethodBuilder(AbstractClassBuilder<?> classBuilder, String name) {
-		super(classBuilder);
-		Objects.requireNonNull(name, "name");
-		this.name = name;
-	}
+  public MethodBuilder(AbstractClassBuilder<?> classBuilder, String name) {
+    super(classBuilder);
+    Objects.requireNonNull(name, "name");
+    this.name = name;
+  }
 
-	public MethodBuilder returnType(Class<?> clazz) {
-		return returnType(JavaType.create(clazz));
-	}
+  public MethodBuilder returnType(Class<?> clazz) {
+    return returnType(JavaType.create(clazz));
+  }
 
-	public MethodBuilder returnType(JavaType type) {
-		this.returnType = type;
-		importEntries(type.getImports(getClassBuilder().getJavaType()));
-		return this;
-	}
+  public MethodBuilder returnType(JavaType type) {
+    this.returnType = type;
+    importEntries(type.getImports(getClassBuilder().getJavaType()));
+    return this;
+  }
 
-	public MethodBuilder throwsDeclaration(Class<? extends Throwable> exceptionClass) {
-		this.exceptionClasses.add(exceptionClass);
-		return this;
-	}
+  public MethodBuilder throwsDeclaration(Class<? extends Throwable> exceptionClass) {
+    this.exceptionClasses.add(exceptionClass);
+    return this;
+  }
 
-	protected JavaType getReturnType() {
-		return returnType;
-	}
+  protected JavaType getReturnType() {
+    return returnType;
+  }
 
-	protected String getName() {
-		return name;
-	}
+  protected String getName() {
+    return name;
+  }
 
-	@Override
-	public void build(PrintWriter out) {
-		buildAnnotations(out);
+  @Override
+  public void build(PrintWriter out) {
+    buildAnnotations(out);
 
-		JavaType returnType = getReturnType();
-		String returnTypeValue;
-		if (returnType == null) {
-			returnTypeValue = "void";
-		} else {
-			returnTypeValue = returnType.getType(getClashEvaluator());
-		}
+    JavaType returnType = getReturnType();
+    String returnTypeValue;
+    if (returnType == null) {
+      returnTypeValue = "void";
+    } else {
+      returnTypeValue = returnType.getType(getClashEvaluator());
+    }
 
-		String arguments = getArguments();
-		if (arguments == null) {
-			arguments = "";
-		}
+    String arguments = getArguments();
+    if (arguments == null) {
+      arguments = "";
+    }
 
-		String throwsClause = null;
-		if (!exceptionClasses.isEmpty()) {
-			throwsClause = " throws " +exceptionClasses.stream().map(c -> c.getName()).collect(Collectors.joining(", "));
-		} else {
-			throwsClause = "";
-		}
+    String throwsClause = null;
+    if (!exceptionClasses.isEmpty()) {
+      throwsClause = " throws " + exceptionClasses.stream().map(c -> c.getName()).collect(Collectors.joining(", "));
+    } else {
+      throwsClause = "";
+    }
 
-		out.printf("%s%s%s %s(%s)%s {%n", getPadding(), getVisibilityValue(DEFAULT_VISIBILITY), returnTypeValue, getName(), arguments, throwsClause);
-		out.print(getBody());
-		out.printf("%s}%n", getPadding());
-	}
+    out.printf("%s%s%s %s(%s)%s {%n", getPadding(), getVisibilityValue(DEFAULT_VISIBILITY), returnTypeValue, getName(),
+        arguments, throwsClause);
+    out.print(getBody());
+    out.printf("%s}%n", getPadding());
+  }
 
 }

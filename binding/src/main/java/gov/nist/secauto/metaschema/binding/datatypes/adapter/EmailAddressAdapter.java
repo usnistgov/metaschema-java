@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
@@ -28,9 +29,9 @@ import gov.nist.secauto.metaschema.datatype.EmailAddress;
 
 public class EmailAddressAdapter extends SimpleJavaTypeAdapter<EmailAddress> {
 
-	@Override
-	public EmailAddress parse(String value) throws BindingException {
-		return new EmailAddress(value);
-	}
+  @Override
+  public EmailAddress parse(String value) throws BindingException {
+    return new EmailAddress(value);
+  }
 
 }

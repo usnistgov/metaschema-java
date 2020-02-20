@@ -20,67 +20,68 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.property;
+
+import gov.nist.secauto.metaschema.binding.BindingException;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
 
-import gov.nist.secauto.metaschema.binding.BindingException;
-
 public abstract class AbstractPropertyInfo<TYPE extends Type> implements PropertyInfo {
-	private final TYPE type;
-	private final PropertyAccessor propertyAccessor;
+  private final TYPE type;
+  private final PropertyAccessor propertyAccessor;
 
-	public AbstractPropertyInfo(TYPE type, PropertyAccessor propertyAccessor) {
-		Objects.requireNonNull(type, "type");
-		Objects.requireNonNull(propertyAccessor, "propertyAccessor");
+  public AbstractPropertyInfo(TYPE type, PropertyAccessor propertyAccessor) {
+    Objects.requireNonNull(type, "type");
+    Objects.requireNonNull(propertyAccessor, "propertyAccessor");
 
-		this.type = type;
-		this.propertyAccessor = propertyAccessor;
-	}
+    this.type = type;
+    this.propertyAccessor = propertyAccessor;
+  }
 
-	@Override
-	public TYPE getType() {
-		return type;
-	}
+  @Override
+  public TYPE getType() {
+    return type;
+  }
 
-	@Override
-	public Class<?> getRawType() {
-		return (Class<?>)getType();
-	}
+  @Override
+  public Class<?> getRawType() {
+    return (Class<?>) getType();
+  }
 
-	@Override
-	public Class<?> getItemType() {
-		return (Class<?>)getType();
-	}
+  @Override
+  public Class<?> getItemType() {
+    return (Class<?>) getType();
+  }
 
-	protected PropertyAccessor getPropertyAccessor() {
-		return propertyAccessor;
-	}
+  protected PropertyAccessor getPropertyAccessor() {
+    return propertyAccessor;
+  }
 
-	@Override
-	public String getSimpleName() {
-		return getPropertyAccessor().getSimpleName();
-	}
+  @Override
+  public String getSimpleName() {
+    return getPropertyAccessor().getSimpleName();
+  }
 
-	@Override
-	public Class<?> getContainingClass() {
-		return getPropertyAccessor().getContainingClass();
-	}
+  @Override
+  public Class<?> getContainingClass() {
+    return getPropertyAccessor().getContainingClass();
+  }
 
-	@Override
-	public String getPropertyName() {
-		return getPropertyAccessor().getPropertyName();
-	}
+  @Override
+  public String getPropertyName() {
+    return getPropertyAccessor().getPropertyName();
+  }
 
-	@Override
-	public void setValue(Object obj, Object value) throws BindingException {
-		getPropertyAccessor().setValue(obj, value);
-	}
+  @Override
+  public void setValue(Object obj, Object value) throws BindingException {
+    getPropertyAccessor().setValue(obj, value);
+  }
 
-	@Override
-	public Object getValue(Object obj) throws BindingException {
-		return getPropertyAccessor().getValue(obj);
-	}
+  @Override
+  public Object getValue(Object obj) throws BindingException {
+    return getPropertyAccessor().getValue(obj);
+  }
 
 }

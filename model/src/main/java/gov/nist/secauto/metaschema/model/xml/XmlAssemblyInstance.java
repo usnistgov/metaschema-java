@@ -20,9 +20,8 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.model.xml;
 
-import java.math.BigInteger;
+package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.itl.metaschema.model.xml.AssemblyDocument;
 import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
@@ -31,86 +30,96 @@ import gov.nist.secauto.metaschema.model.info.instances.AbstractAssemblyInstance
 import gov.nist.secauto.metaschema.model.info.instances.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.info.instances.XmlGroupAsBehavior;
 
+import java.math.BigInteger;
+
 public class XmlAssemblyInstance extends AbstractAssemblyInstance {
-//	private static final Logger logger = LogManager.getLogger(XmlAssemblyInstance.class);
+  // private static final Logger logger = LogManager.getLogger(XmlAssemblyInstance.class);
 
-	private final AssemblyDocument.Assembly xAssembly;
+  private final AssemblyDocument.Assembly xmlAssembly;
 
 
-	public XmlAssemblyInstance(AssemblyDocument.Assembly xAssembly, InfoElementDefinition parent) {
-		super(parent);
-		this.xAssembly = xAssembly;
-	}
+  /**
+   * Constructs a new Metaschema Assembly instance definition from an XML representation bound to Java objects.
+   * 
+   * @param xmlAssembly
+   *          the XML representation bound to Java objects
+   * @param parent
+   *          the assembly definition this object is an instance of
+   */
+  public XmlAssemblyInstance(AssemblyDocument.Assembly xmlAssembly, InfoElementDefinition parent) {
+    super(parent);
+    this.xmlAssembly = xmlAssembly;
+  }
 
-	@Override
-	public String getName() {
-		return getXmlAssembly().getRef();
-	}
+  @Override
+  public String getName() {
+    return getXmlAssembly().getRef();
+  }
 
-	@Override
-	public String getFormalName() {
-		return getDefinition().getFormalName();
-	}
+  @Override
+  public String getFormalName() {
+    return getDefinition().getFormalName();
+  }
 
-	@Override
-	public MarkupLine getDescription() {
-		MarkupLine retval = null;
-		if (getXmlAssembly().isSetDescription()) {
-			retval = MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription());
-		} else if (isReference()) {
-			retval = getDefinition().getDescription();
-		}
-		return retval;
-	}
+  @Override
+  public MarkupLine getDescription() {
+    MarkupLine retval = null;
+    if (getXmlAssembly().isSetDescription()) {
+      retval = MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription());
+    } else if (isReference()) {
+      retval = getDefinition().getDescription();
+    }
+    return retval;
+  }
 
-	@Override
-	public int getMinOccurs() {
-		int retval = 0;
-		if (getXmlAssembly().isSetMinOccurs()) {
-			retval = getXmlAssembly().getMinOccurs().intValueExact();
-		}
-		return retval;
-	}
+  @Override
+  public int getMinOccurs() {
+    int retval = 0;
+    if (getXmlAssembly().isSetMinOccurs()) {
+      retval = getXmlAssembly().getMinOccurs().intValueExact();
+    }
+    return retval;
+  }
 
-	@Override
-	public int getMaxOccurs() {
-		int retval = 1;
-		if (getXmlAssembly().isSetMaxOccurs()) {
-			Object value = getXmlAssembly().getMaxOccurs();
-			if (value instanceof String) {
-				// unbounded
-				retval = -1;
-			} else if (value instanceof BigInteger) {
-				retval = ((BigInteger)value).intValueExact();
-			}
-		}
-		return retval;
-	}
+  @Override
+  public int getMaxOccurs() {
+    int retval = 1;
+    if (getXmlAssembly().isSetMaxOccurs()) {
+      Object value = getXmlAssembly().getMaxOccurs();
+      if (value instanceof String) {
+        // unbounded
+        retval = -1;
+      } else if (value instanceof BigInteger) {
+        retval = ((BigInteger) value).intValueExact();
+      }
+    }
+    return retval;
+  }
 
-	@Override
-	public String getInstanceName() {
-		return getXmlAssembly().isSetGroupAs() ? getXmlAssembly().getGroupAs().getName() : getName();
-	}
+  @Override
+  public String getInstanceName() {
+    return getXmlAssembly().isSetGroupAs() ? getXmlAssembly().getGroupAs().getName() : getName();
+  }
 
-	protected AssemblyDocument.Assembly getXmlAssembly() {
-		return xAssembly;
-	}
+  protected AssemblyDocument.Assembly getXmlAssembly() {
+    return xmlAssembly;
+  }
 
-	@Override
-	public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-		JsonGroupAsBehavior retval = JsonGroupAsBehavior.SINGLETON_OR_LIST;
-		if (getXmlAssembly().isSetGroupAs() && getXmlAssembly().getGroupAs().isSetInJson()) {
-			retval = JsonGroupAsBehavior.lookup(getXmlAssembly().getGroupAs().getInJson());
-		}
-		return retval;
-	}
+  @Override
+  public JsonGroupAsBehavior getJsonGroupAsBehavior() {
+    JsonGroupAsBehavior retval = JsonGroupAsBehavior.SINGLETON_OR_LIST;
+    if (getXmlAssembly().isSetGroupAs() && getXmlAssembly().getGroupAs().isSetInJson()) {
+      retval = JsonGroupAsBehavior.lookup(getXmlAssembly().getGroupAs().getInJson());
+    }
+    return retval;
+  }
 
-	@Override
-	public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-		XmlGroupAsBehavior retval = XmlGroupAsBehavior.UNGROUPED;
-		if (getXmlAssembly().isSetGroupAs() && getXmlAssembly().getGroupAs().isSetInXml()) {
-			retval = XmlGroupAsBehavior.lookup(getXmlAssembly().getGroupAs().getInXml());
-		}
-		return retval;
-	}
+  @Override
+  public XmlGroupAsBehavior getXmlGroupAsBehavior() {
+    XmlGroupAsBehavior retval = XmlGroupAsBehavior.UNGROUPED;
+    if (getXmlAssembly().isSetGroupAs() && getXmlAssembly().getGroupAs().isSetInXml()) {
+      retval = XmlGroupAsBehavior.lookup(getXmlAssembly().getGroupAs().getInXml());
+    }
+    return retval;
+  }
 }

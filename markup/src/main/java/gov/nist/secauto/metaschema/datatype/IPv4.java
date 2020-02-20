@@ -20,17 +20,18 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.datatype;
 
 public class IPv4 extends AbstractIPDatatype<IPv4> {
 
-	public IPv4(String value) {
-		super(value);
-	}
+  public IPv4(String value) {
+    super(value);
+  }
 
-	@Override
-	public IPv4 copy() {
-		return new IPv4(getValue());
-	}
+  @Override
+  public IPv4 copy() {
+    return new IPv4(getValue());
+  }
 
 }

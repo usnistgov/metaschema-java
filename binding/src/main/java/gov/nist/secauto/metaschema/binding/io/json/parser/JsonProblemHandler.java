@@ -20,11 +20,8 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.io.json.parser;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.function.Supplier;
+package gov.nist.secauto.metaschema.binding.io.json.parser;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.io.ProblemHandler;
@@ -33,20 +30,36 @@ import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyAccessor;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.function.Supplier;
+
 public interface JsonProblemHandler extends ProblemHandler {
-	<CLASS> boolean handleUnknownRootProperty(CLASS instance, AssemblyClassBinding<CLASS> classBinding, String fieldName,
-			JsonParsingContext parsingContext) throws BindingException, IOException;
+  <CLASS> boolean handleUnknownRootProperty(CLASS instance, AssemblyClassBinding<CLASS> classBinding, String fieldName,
+      JsonParsingContext parsingContext) throws BindingException, IOException;
 
-	boolean canHandleUnknownProperty(ClassBinding<?> classBinding, String propertyName, JsonParsingContext parsingContext) throws BindingException, IOException;
-	Map<PropertyAccessor, Supplier<?>> handleUnknownProperty(ClassBinding<?> classBinding, String propertyName, JsonParsingContext parsingContext) throws BindingException, IOException;
+  boolean canHandleUnknownProperty(ClassBinding<?> classBinding, String propertyName, JsonParsingContext parsingContext)
+      throws BindingException, IOException;
 
-	/**
-	 * 
-	 * @param <CLASS>
-	 * @param obj
-	 * @param classBinding
-	 * @param missingPropertyBindings a map of field names to property bindings for missing fields
-	 * @param parsingContext
-	 */
-	Map<PropertyBinding, Supplier<?>> handleMissingFields(ClassBinding<?> classBinding, Map<String, PropertyBinding> missingPropertyBindings, JsonParsingContext parsingContext) throws BindingException;
+  Map<PropertyAccessor, Supplier<?>> handleUnknownProperty(ClassBinding<?> classBinding, String propertyName,
+      JsonParsingContext parsingContext) throws BindingException, IOException;
+
+  /**
+   * A callback used to handle bound properties for which no data was found when the content was
+   * parsed.
+   * <p>
+   * This can be used to supply default or prescribed values based on application logic.
+   * 
+   * @param classBinding
+   *          the bound class on which the missing properties are found
+   * @param missingPropertyBindings
+   *          a map of field names to property bindings for missing fields
+   * @param parsingContext
+   *          the parser context used for deserialziation
+   * @return a mapping of property to suppliers for any properties handled by this method
+   * @throws BindingException
+   *           if an unhandled binding error has occurred for any reason
+   */
+  Map<PropertyBinding, Supplier<?>> handleMissingFields(ClassBinding<?> classBinding,
+      Map<String, PropertyBinding> missingPropertyBindings, JsonParsingContext parsingContext) throws BindingException;
 }

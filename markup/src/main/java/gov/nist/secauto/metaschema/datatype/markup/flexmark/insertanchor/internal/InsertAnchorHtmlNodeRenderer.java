@@ -20,12 +20,8 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.datatype.markup.flexmark.insertanchor.internal;
-
-import java.util.Collections;
-import java.util.Set;
-
-import org.jsoup.nodes.Element;
 
 import com.vladsch.flexmark.html2md.converter.HtmlMarkdownWriter;
 import com.vladsch.flexmark.html2md.converter.HtmlNodeConverterContext;
@@ -36,31 +32,38 @@ import com.vladsch.flexmark.util.data.DataHolder;
 
 import gov.nist.secauto.metaschema.datatype.markup.flexmark.insertanchor.InsertAnchorOptions;
 
+import org.jsoup.nodes.Element;
+
+import java.util.Collections;
+import java.util.Set;
+
 public class InsertAnchorHtmlNodeRenderer implements HtmlNodeRenderer {
-	private final InsertAnchorOptions options;
+  private final InsertAnchorOptions options;
 
-	public InsertAnchorHtmlNodeRenderer(DataHolder options) {
-		this.options = new InsertAnchorOptions(options);
-	}
+  public InsertAnchorHtmlNodeRenderer(DataHolder options) {
+    this.options = new InsertAnchorOptions(options);
+  }
 
-	@Override
-	public Set<HtmlNodeRendererHandler<?>> getHtmlNodeRendererHandlers() {
-		return options.enableInlineInsertAnchors ? Collections.singleton(
-				new HtmlNodeRendererHandler<>("insert",Element.class, this::processInsert)) : Collections.emptySet();
-	}
+  @Override
+  public Set<HtmlNodeRendererHandler<?>> getHtmlNodeRendererHandlers() {
+    return options.enableInlineInsertAnchors
+        ? Collections.singleton(new HtmlNodeRendererHandler<>("insert", Element.class, this::processInsert))
+        : Collections.emptySet();
+  }
 
-	private void processInsert(@SuppressWarnings("unused") Element node, HtmlNodeConverterContext context, HtmlMarkdownWriter out) {
-        out.append("{{ ");
-        out.append(context.getCurrentNode().attr("param-id"));
-        out.append(" }}");
+  private void processInsert(@SuppressWarnings("unused") Element node, HtmlNodeConverterContext context,
+      HtmlMarkdownWriter out) {
+    out.append("{{ ");
+    out.append(context.getCurrentNode().attr("param-id"));
+    out.append(" }}");
+  }
+
+  public static class Factory implements HtmlNodeRendererFactory {
+
+    @Override
+    public HtmlNodeRenderer apply(DataHolder options) {
+      return new InsertAnchorHtmlNodeRenderer(options);
     }
-
-	public static class Factory implements HtmlNodeRendererFactory {
-
-		@Override
-		public HtmlNodeRenderer apply(DataHolder options) {
-			return new InsertAnchorHtmlNodeRenderer(options);
-		}
-	}
+  }
 
 }

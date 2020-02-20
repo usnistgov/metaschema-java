@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.codegen.builder;
 
 import java.io.PrintWriter;
@@ -27,30 +28,31 @@ import java.io.StringWriter;
 import java.util.stream.Collectors;
 
 public abstract class AbstractMethodBuilder<T extends AbstractMethodBuilder<T>> extends AbstractMemberBuilder<T> {
-	private String arguments;
-	private StringWriter bodyWriter = new StringWriter();
+  private String arguments;
+  private StringWriter bodyWriter = new StringWriter();
 
-	public AbstractMethodBuilder(AbstractClassBuilder<?> classBuilder) {
-		super(classBuilder);
-	}
+  public AbstractMethodBuilder(AbstractClassBuilder<?> classBuilder) {
+    super(classBuilder);
+  }
 
-	@SuppressWarnings("unchecked")
-	public T arguments(String args) {
-		this.arguments = args;
-		return (T)this;
-	}
+  @SuppressWarnings("unchecked")
+  public T arguments(String args) {
+    this.arguments = args;
+    return (T) this;
+  }
 
-	public PrintWriter getBodyWriter() {
-		return new PrintWriter(bodyWriter);
-	}
+  public PrintWriter getBodyWriter() {
+    return new PrintWriter(bodyWriter);
+  }
 
-	protected String getArguments() {
-		return arguments;
-	}
+  protected String getArguments() {
+    return arguments;
+  }
 
-	protected String getBody() {
-		String padding = getPadding()+"    ";
-		return bodyWriter.toString().lines().map(str -> String.format("%s%s%n", padding, str)).collect(Collectors.joining());
-	}
+  protected String getBody() {
+    String padding = getPadding() + "    ";
+    return bodyWriter.toString().lines().map(str -> String.format("%s%s%n", padding, str))
+        .collect(Collectors.joining());
+  }
 
 }

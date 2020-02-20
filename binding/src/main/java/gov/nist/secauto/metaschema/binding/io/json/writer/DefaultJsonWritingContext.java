@@ -20,34 +20,34 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.io.json.writer;
 
-import java.util.Objects;
+package gov.nist.secauto.metaschema.binding.io.json.writer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 
+import java.util.Objects;
+
 public class DefaultJsonWritingContext implements JsonWritingContext {
-	private final BindingContext bindingContext;
-	private final JsonGenerator jsonGenerator;
+  private final BindingContext bindingContext;
+  private final JsonGenerator jsonGenerator;
 
-	public DefaultJsonWritingContext(JsonGenerator jsonGenerator,
-			BindingContext bindingContext) {
-		Objects.requireNonNull(jsonGenerator, "jsonGenerator");
-		Objects.requireNonNull(bindingContext, "bindingContext");
-		this.jsonGenerator = jsonGenerator;
-		this.bindingContext = bindingContext;
-	}
+  public DefaultJsonWritingContext(JsonGenerator jsonGenerator, BindingContext bindingContext) {
+    Objects.requireNonNull(jsonGenerator, "jsonGenerator");
+    Objects.requireNonNull(bindingContext, "bindingContext");
+    this.jsonGenerator = jsonGenerator;
+    this.bindingContext = bindingContext;
+  }
 
-	@Override
-	public BindingContext getBindingContext() {
-		return bindingContext;
-	}
+  @Override
+  public BindingContext getBindingContext() {
+    return bindingContext;
+  }
 
-	@Override
-	public JsonGenerator getEventWriter() {
-		return jsonGenerator;
-	}
+  @Override
+  public JsonGenerator getEventWriter() {
+    return jsonGenerator;
+  }
 
 }

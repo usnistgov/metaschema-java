@@ -20,12 +20,27 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.info.instances;
 
+import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
+
 public interface ModelInstance extends InfoElementInstance {
-	int getMinOccurs();
-	int getMaxOccurs();
-	String getInstanceName();
-	JsonGroupAsBehavior getJsonGroupAsBehavior();
-	XmlGroupAsBehavior getXmlGroupAsBehavior();
+  int getMinOccurs();
+
+  int getMaxOccurs();
+
+  /**
+   * Get the name of the model item defined within the associated Metaschema assembly.
+   * 
+   * @return the instance name
+   */
+  String getInstanceName();
+
+  JsonGroupAsBehavior getJsonGroupAsBehavior();
+
+  XmlGroupAsBehavior getXmlGroupAsBehavior();
+
+  @Override
+  ManagedObject getDefinition();
 }

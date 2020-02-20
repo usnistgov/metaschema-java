@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.info.instances;
 
 import gov.nist.secauto.metaschema.model.Metaschema;
@@ -29,35 +30,35 @@ import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
 
 public abstract class AbstractAssemblyInstance implements AssemblyInstance, Assembly {
-	private final InfoElementDefinition parent;
+  private final InfoElementDefinition parent;
 
-	public AbstractAssemblyInstance(InfoElementDefinition parent) {
-		this.parent = parent;
-	}
+  public AbstractAssemblyInstance(InfoElementDefinition parent) {
+    this.parent = parent;
+  }
 
-	@Override
-	public boolean isReference() {
-		return true;
-	}
+  @Override
+  public boolean isReference() {
+    return true;
+  }
 
-	@Override
-	public Type getType() {
-		return Type.ASSEMBLY;
-	}
+  @Override
+  public Type getType() {
+    return Type.ASSEMBLY;
+  }
 
-	@Override
-	public Metaschema getContainingMetaschema() {
-		return parent.getContainingMetaschema();
-	}
+  @Override
+  public Metaschema getContainingMetaschema() {
+    return parent.getContainingMetaschema();
+  }
 
-	@Override
-	public AssemblyDefinition getDefinition() {
-		return getContainingMetaschema().getAssemblyDefinitionByName(getName());
-	}
+  @Override
+  public AssemblyDefinition getDefinition() {
+    return getContainingMetaschema().getAssemblyDefinitionByName(getName());
+  }
 
-	@Override
-	public InfoElementDefinition getContainingDefinition() {
-		return parent;
-	}
+  @Override
+  public InfoElementDefinition getContainingDefinition() {
+    return parent;
+  }
 
 }

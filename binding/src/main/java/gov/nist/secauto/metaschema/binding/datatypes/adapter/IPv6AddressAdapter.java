@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
@@ -28,9 +29,9 @@ import gov.nist.secauto.metaschema.datatype.IPv6;
 
 public class IPv6AddressAdapter extends SimpleJavaTypeAdapter<IPv6> {
 
-	@Override
-	public IPv6 parse(String value) throws BindingException {
-		return new IPv6(value);
-	}
+  @Override
+  public IPv6 parse(String value) throws BindingException {
+    return new IPv6(value);
+  }
 
 }

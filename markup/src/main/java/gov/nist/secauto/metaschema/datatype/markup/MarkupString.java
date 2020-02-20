@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.datatype.markup;
 
 import com.vladsch.flexmark.formatter.Formatter;
@@ -30,52 +31,52 @@ import gov.nist.secauto.metaschema.datatype.Datatype;
 import gov.nist.secauto.metaschema.datatype.markup.flexmark.AstCollectingVisitor;
 
 public abstract class MarkupString<TYPE extends MarkupString<TYPE>> implements Datatype<TYPE> {
-	private final Document document;
+  private final Document document;
 
-//
-//	public MarkupString() {
-//		this(null);
-//	}
-	
-	public MarkupString(Document document) {
-		this.document = document;
-	}
+  //
+  // public MarkupString() {
+  // this(null);
+  // }
 
-	public Document getDocument() {
-		return document;
-	}
+  public MarkupString(Document document) {
+    this.document = document;
+  }
 
-	public String toHtml() {
-		return toHTML(FlexmarkFactory.instance().getHtmlRenderer());
-	}
+  public Document getDocument() {
+    return document;
+  }
 
-	protected String toHTML(HtmlRenderer renderer) {
-		return renderer.render(getDocument());
-	}
+  public String toHtml() {
+    return toHTML(FlexmarkFactory.instance().getHtmlRenderer());
+  }
 
-	public String toMarkdown() {
-		return toMarkdown(FlexmarkFactory.instance().getFormatter());
-	}
+  protected String toHTML(HtmlRenderer renderer) {
+    return renderer.render(getDocument());
+  }
 
-	protected String toMarkdown(Formatter formatter) {
-		return formatter.render(getDocument());
-	}
+  public String toMarkdown() {
+    return toMarkdown(FlexmarkFactory.instance().getFormatter());
+  }
 
-	public String toMarkdownYaml() {
-		return toMarkdownYaml(FlexmarkFactory.instance().getFormatter());
-	}
+  protected String toMarkdown(Formatter formatter) {
+    return formatter.render(getDocument());
+  }
 
-	public String toMarkdownYaml(Formatter formatter) {
-		String markdown = formatter.render(getDocument());
-//		markdown = markdown.replaceAll("\\n", "\n");
-//		markdown = markdown.replaceAll("\\r", "\r");
-		return markdown;
-	}
+  public String toMarkdownYaml() {
+    return toMarkdownYaml(FlexmarkFactory.instance().getFormatter());
+  }
 
-	@Override
-	public String toString() {
-		AstCollectingVisitor visitor = new AstCollectingVisitor();
-		visitor.collect(getDocument());
-		return visitor.getAst();
-	}
+  public String toMarkdownYaml(Formatter formatter) {
+    String markdown = formatter.render(getDocument());
+    // markdown = markdown.replaceAll("\\n", "\n");
+    // markdown = markdown.replaceAll("\\r", "\r");
+    return markdown;
+  }
+
+  @Override
+  public String toString() {
+    AstCollectingVisitor visitor = new AstCollectingVisitor();
+    visitor.collect(getDocument());
+    return visitor.getAst();
+  }
 }

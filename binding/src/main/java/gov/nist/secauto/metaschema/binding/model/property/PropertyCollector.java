@@ -20,12 +20,14 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 
 public interface PropertyCollector {
-	void add(Object item) throws BindingException;
-	void applyCollection(Object obj) throws BindingException;
+  void add(Object item) throws BindingException;
+
+  void applyCollection(Object obj) throws BindingException;
 
 }

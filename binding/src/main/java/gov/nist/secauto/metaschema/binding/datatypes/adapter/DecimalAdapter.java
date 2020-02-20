@@ -20,10 +20,8 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
-import java.io.IOException;
-import java.math.BigDecimal;
+package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
@@ -31,21 +29,24 @@ import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 import gov.nist.secauto.metaschema.datatype.Decimal;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+
 public class DecimalAdapter extends SimpleJavaTypeAdapter<Decimal> {
 
-	@Override
-	public Decimal parse(String value) {
-		return new Decimal(new BigDecimal(value));
-	}
+  @Override
+  public Decimal parse(String value) {
+    return new Decimal(new BigDecimal(value));
+  }
 
-	@Override
-	public void writeJsonFieldValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
-			throws BindingException {
-		try {
-			writingContext.getEventWriter().writeNumber(((Decimal)value).getValue());
-		} catch (IOException | ClassCastException ex) {
-			throw new BindingException(ex);
-		}
-	}
+  @Override
+  public void writeJsonFieldValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
+      throws BindingException {
+    try {
+      writingContext.getEventWriter().writeNumber(((Decimal) value).getValue());
+    } catch (IOException | ClassCastException ex) {
+      throw new BindingException(ex);
+    }
+  }
 
 }

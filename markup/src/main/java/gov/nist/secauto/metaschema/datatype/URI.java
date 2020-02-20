@@ -20,17 +20,18 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.datatype;
 
 public class URI extends AbstractURIDatatype<URI> {
 
-	public URI(java.net.URI value) {
-		super(value);
-	}
+  public URI(java.net.URI value) {
+    super(value);
+  }
 
-	@Override
-	public URI copy() {
-		return new URI(getValue());
-	}
+  @Override
+  public URI copy() {
+    return new URI(getValue());
+  }
 
 }

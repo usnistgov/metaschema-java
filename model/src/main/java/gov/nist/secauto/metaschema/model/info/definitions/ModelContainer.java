@@ -20,21 +20,27 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.model.info.definitions;
 
-import java.util.List;
-import java.util.Map;
+package gov.nist.secauto.metaschema.model.info.definitions;
 
 import gov.nist.secauto.metaschema.model.info.instances.AssemblyInstance;
 import gov.nist.secauto.metaschema.model.info.instances.FieldInstance;
 import gov.nist.secauto.metaschema.model.info.instances.InfoElementInstance;
 import gov.nist.secauto.metaschema.model.info.instances.ModelInstance;
 
+import java.util.List;
+import java.util.Map;
+
 public interface ModelContainer extends FlagContainer {
-	FieldInstance getFieldInstanceByName(String name);
-	AssemblyInstance getAssemblyInstanceByName(String name);
-	Map<String, ModelInstance> getNamedModelInstances();
-	Map<String, ? extends FieldInstance> getFieldInstances();
-	Map<String, ? extends AssemblyInstance> getAssemblyInstances();
-	List<InfoElementInstance> getInstances();
+  FieldInstance getFieldInstanceByName(String name);
+
+  AssemblyInstance getAssemblyInstanceByName(String name);
+
+  Map<String, ModelInstance> getNamedModelInstances();
+
+  Map<String, ? extends FieldInstance> getFieldInstances();
+
+  Map<String, ? extends AssemblyInstance> getAssemblyInstances();
+
+  List<InfoElementInstance> getInstances();
 }

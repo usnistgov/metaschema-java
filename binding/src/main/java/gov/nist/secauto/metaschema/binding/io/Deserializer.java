@@ -20,18 +20,22 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.io;
+
+import gov.nist.secauto.metaschema.binding.BindingException;
 
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
 
-import gov.nist.secauto.metaschema.binding.BindingException;
-
 public interface Deserializer<CLASS> {
-	CLASS deserialize(InputStream out) throws BindingException;
-	CLASS deserialize(File file) throws BindingException;
-	CLASS deserialize(URL url) throws BindingException;
-	CLASS deserialize(Reader reader) throws BindingException;
+  CLASS deserialize(InputStream out) throws BindingException;
+
+  CLASS deserialize(File file) throws BindingException;
+
+  CLASS deserialize(URL url) throws BindingException;
+
+  CLASS deserialize(Reader reader) throws BindingException;
 }

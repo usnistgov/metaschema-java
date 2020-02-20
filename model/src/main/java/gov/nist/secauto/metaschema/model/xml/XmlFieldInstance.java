@@ -20,9 +20,8 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.model.xml;
 
-import java.math.BigInteger;
+package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.itl.metaschema.model.xml.FieldDocument;
 import gov.nist.itl.metaschema.model.xml.FieldDocument.Field.InXml;
@@ -33,101 +32,112 @@ import gov.nist.secauto.metaschema.model.info.instances.AbstractFieldInstance;
 import gov.nist.secauto.metaschema.model.info.instances.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.info.instances.XmlGroupAsBehavior;
 
+import java.math.BigInteger;
+
 public class XmlFieldInstance extends AbstractFieldInstance {
-//	private static final Logger logger = LogManager.getLogger(XmlFieldInstance.class);
+  // private static final Logger logger = LogManager.getLogger(XmlFieldInstance.class);
 
-	private final FieldDocument.Field xField;
+  private final FieldDocument.Field xmlField;
 
-	public XmlFieldInstance(FieldDocument.Field xField, InfoElementDefinition parent) {
-		super(parent);
-		this.xField = xField;
-	}
 
-	@Override
-	public String getName() {
-		return getXmlField().getRef();
-	}
+  /**
+   * Constructs a new Metaschema field instance definition from an XML representation bound to Java objects.
+   * 
+   * @param xmlField
+   *          the XML representation bound to Java objects
+   * @param parent
+   *          the field definition this object is an instance of
+   */
+  public XmlFieldInstance(FieldDocument.Field xmlField, InfoElementDefinition parent) {
+    super(parent);
+    this.xmlField = xmlField;
+  }
 
-	@Override
-	public String getFormalName() {
-		return getDefinition().getFormalName();
-	}
+  @Override
+  public String getName() {
+    return getXmlField().getRef();
+  }
 
-	@Override
-	public MarkupLine getDescription() {
-		MarkupLine retval = null;
-		if (getXmlField().isSetDescription()) {
-			retval = MarkupStringConverter.toMarkupString(getXmlField().getDescription());
-		} else if (isReference()) {
-			retval = getDefinition().getDescription();
-		}
-		return retval;
-	}
+  @Override
+  public String getFormalName() {
+    return getDefinition().getFormalName();
+  }
 
-	@Override
-	public DataType getDatatype() {
-		return getDefinition().getDatatype();
-	}
+  @Override
+  public MarkupLine getDescription() {
+    MarkupLine retval = null;
+    if (getXmlField().isSetDescription()) {
+      retval = MarkupStringConverter.toMarkupString(getXmlField().getDescription());
+    } else if (isReference()) {
+      retval = getDefinition().getDescription();
+    }
+    return retval;
+  }
 
-	@Override
-	public int getMinOccurs() {
-		int retval = 0;
-		if (getXmlField().isSetMinOccurs()) {
-			retval = getXmlField().getMinOccurs().intValueExact();
-		}
-		return retval;
-	}
+  @Override
+  public DataType getDatatype() {
+    return getDefinition().getDatatype();
+  }
 
-	@Override
-	public int getMaxOccurs() {
-		int retval = 1;
-		if (getXmlField().isSetMaxOccurs()) {
-			Object value = getXmlField().getMaxOccurs();
-			if (value instanceof String) {
-				// unbounded
-				retval = -1;
-			} else if (value instanceof BigInteger) {
-				retval = ((BigInteger)value).intValueExact();
-			}
-		}
-		return retval;
-	}
+  @Override
+  public int getMinOccurs() {
+    int retval = 0;
+    if (getXmlField().isSetMinOccurs()) {
+      retval = getXmlField().getMinOccurs().intValueExact();
+    }
+    return retval;
+  }
 
-	@Override
-	public String getInstanceName() {
-		return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : getName();
-	}
+  @Override
+  public int getMaxOccurs() {
+    int retval = 1;
+    if (getXmlField().isSetMaxOccurs()) {
+      Object value = getXmlField().getMaxOccurs();
+      if (value instanceof String) {
+        // unbounded
+        retval = -1;
+      } else if (value instanceof BigInteger) {
+        retval = ((BigInteger) value).intValueExact();
+      }
+    }
+    return retval;
+  }
 
-	protected FieldDocument.Field getXmlField() {
-		return xField;
-	}
+  @Override
+  public String getInstanceName() {
+    return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : getName();
+  }
 
-	@Override
-	public boolean hasXmlWrapper() {
-		// default value
-		boolean retval = true;
-		if (getXmlField().isSetInXml()) {
-			retval = InXml.WITH_WRAPPER.equals(getXmlField().getInXml());
-		}
-		return retval;
-	}
+  protected FieldDocument.Field getXmlField() {
+    return xmlField;
+  }
 
-	@Override
-	public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-		JsonGroupAsBehavior retval = JsonGroupAsBehavior.SINGLETON_OR_LIST;
-		if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInJson()) {
-			retval = JsonGroupAsBehavior.lookup(getXmlField().getGroupAs().getInJson());
-		}
-		return retval;
-	}
+  @Override
+  public boolean hasXmlWrapper() {
+    // default value
+    boolean retval = true;
+    if (getXmlField().isSetInXml()) {
+      retval = InXml.WITH_WRAPPER.equals(getXmlField().getInXml());
+    }
+    return retval;
+  }
 
-	@Override
-	public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-		XmlGroupAsBehavior retval = XmlGroupAsBehavior.UNGROUPED;
-		if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInXml()) {
-			retval = XmlGroupAsBehavior.lookup(getXmlField().getGroupAs().getInXml());
-		}
-		return retval;
-	}
+  @Override
+  public JsonGroupAsBehavior getJsonGroupAsBehavior() {
+    JsonGroupAsBehavior retval = JsonGroupAsBehavior.SINGLETON_OR_LIST;
+    if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInJson()) {
+      retval = JsonGroupAsBehavior.lookup(getXmlField().getGroupAs().getInJson());
+    }
+    return retval;
+  }
+
+  @Override
+  public XmlGroupAsBehavior getXmlGroupAsBehavior() {
+    XmlGroupAsBehavior retval = XmlGroupAsBehavior.UNGROUPED;
+    if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInXml()) {
+      retval = XmlGroupAsBehavior.lookup(getXmlField().getGroupAs().getInXml());
+    }
+    return retval;
+  }
 
 }

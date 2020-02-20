@@ -20,24 +20,26 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.model.property;
 
-import java.util.Objects;
+package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 
+import java.util.Objects;
+
 // TODO: implement collapsible
 public interface FieldPropertyBinding extends ModelItemPropertyBinding {
 
-	public static DefaultFieldPropertyBinding fromJavaField(java.lang.reflect.Field field, Field fieldAnnotation) throws BindingException {
-		Objects.requireNonNull(field, "field");
-		Objects.requireNonNull(fieldAnnotation, "fieldAnnotation");
-		PropertyInfo propertyInfo = PropertyInfo.newPropertyInfo(field);
+  public static DefaultFieldPropertyBinding fromJavaField(java.lang.reflect.Field field, Field fieldAnnotation)
+      throws BindingException {
+    Objects.requireNonNull(field, "field");
+    Objects.requireNonNull(fieldAnnotation, "fieldAnnotation");
+    PropertyInfo propertyInfo = PropertyInfo.newPropertyInfo(field);
 
-		return new DefaultFieldPropertyBinding(propertyInfo, fieldAnnotation);
-	}
+    return new DefaultFieldPropertyBinding(propertyInfo, fieldAnnotation);
+  }
 
-	boolean isWrappedInXml();
-//	Field getFieldAnnotation();
+  boolean isWrappedInXml();
+  // Field getFieldAnnotation();
 }

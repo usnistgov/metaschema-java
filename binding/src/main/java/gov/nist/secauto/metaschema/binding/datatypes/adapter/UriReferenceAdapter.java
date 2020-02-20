@@ -20,14 +20,15 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatype.URIReference;
 
 public class UriReferenceAdapter extends SimpleJavaTypeAdapter<URIReference> {
-	@Override
-	public URIReference parse(String value) {
-		return new URIReference(java.net.URI.create(value));
-	}
+  @Override
+  public URIReference parse(String value) {
+    return new URIReference(java.net.URI.create(value));
+  }
 }

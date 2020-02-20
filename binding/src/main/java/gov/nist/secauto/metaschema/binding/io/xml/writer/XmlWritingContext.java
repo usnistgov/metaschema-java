@@ -20,14 +20,15 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.io.xml.writer;
-
-import javax.xml.stream.XMLEventWriter;
-
-import org.codehaus.stax2.evt.XMLEventFactory2;
 
 import gov.nist.secauto.metaschema.binding.io.WritingContext;
 
+import org.codehaus.stax2.evt.XMLEventFactory2;
+
+import javax.xml.stream.XMLEventWriter;
+
 public interface XmlWritingContext extends WritingContext<XMLEventWriter> {
-	XMLEventFactory2 getXMLEventFactory();
+  XMLEventFactory2 getXMLEventFactory();
 }

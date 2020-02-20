@@ -20,10 +20,8 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.model.xml;
 
-import java.util.Collections;
-import java.util.Map;
+package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.itl.metaschema.model.xml.DefineFlagDocument;
 import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
@@ -32,52 +30,64 @@ import gov.nist.secauto.metaschema.model.info.definitions.DataType;
 import gov.nist.secauto.metaschema.model.info.definitions.FlagDefinition;
 import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
 
+import java.util.Collections;
+import java.util.Map;
+
 public class XmlFlagDefinition extends AbstractFlagDefinition<XmlMetaschema> implements FlagDefinition {
-	private final DefineFlagDocument.DefineFlag xFlag;
+  private final DefineFlagDocument.DefineFlag xmlFlag;
 
-	public XmlFlagDefinition(DefineFlagDocument.DefineFlag xFlag, XmlMetaschema metaschema) {
-		super(metaschema);
-		this.xFlag = xFlag;
-	}
 
-	@Override
-	public String getName() {
-		return getXmlFlag().getName();
-	}
+  /**
+   * Constructs a new Metaschema flag definition from an XML representation bound to Java objects.
+   * 
+   * @param xmlFlag
+   *          the XML representation bound to Java objects
+   * @param metaschema
+   *          the containing Metaschema
+   */
+  public XmlFlagDefinition(DefineFlagDocument.DefineFlag xmlFlag, XmlMetaschema metaschema) {
+    super(metaschema);
+    this.xmlFlag = xmlFlag;
+  }
 
-	@Override
-	public String getFormalName() {
-		return getXmlFlag().getFormalName();
-	}
+  @Override
+  public String getName() {
+    return getXmlFlag().getName();
+  }
 
-	@Override
-	public MarkupLine getDescription() {
-		return MarkupStringConverter.toMarkupString(getXmlFlag().getDescription());
-	}
+  @Override
+  public String getFormalName() {
+    return getXmlFlag().getFormalName();
+  }
 
-	@Override
-	public DataType getDatatype() {
-		DataType retval;
-		if (getXmlFlag().isSetAsType()) {
-			retval = DataType.lookup(getXmlFlag().getAsType());
-		} else {
-			// the default
-			retval = DataType.STRING;
-		}
-		return retval;
-	}
+  @Override
+  public MarkupLine getDescription() {
+    return MarkupStringConverter.toMarkupString(getXmlFlag().getDescription());
+  }
 
-	protected DefineFlagDocument.DefineFlag getXmlFlag() {
-		return xFlag;
-	}
+  @Override
+  public DataType getDatatype() {
+    DataType retval;
+    if (getXmlFlag().isSetAsType()) {
+      retval = DataType.lookup(getXmlFlag().getAsType());
+    } else {
+      // the default
+      retval = DataType.STRING;
+    }
+    return retval;
+  }
 
-	@Override
-	public FlagInstance getFlagInstanceByName(String name) {
-		return null;
-	}
+  protected DefineFlagDocument.DefineFlag getXmlFlag() {
+    return xmlFlag;
+  }
 
-	@Override
-	public Map<String, ? extends FlagInstance> getFlagInstances() {
-		return Collections.emptyMap();
-	}
+  @Override
+  public FlagInstance getFlagInstanceByName(String name) {
+    return null;
+  }
+
+  @Override
+  public Map<String, ? extends FlagInstance> getFlagInstances() {
+    return Collections.emptyMap();
+  }
 }

@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
@@ -27,9 +28,9 @@ import gov.nist.secauto.metaschema.datatype.DateTime;
 
 public class DateTimeAdapter extends SimpleJavaTypeAdapter<DateTime> {
 
-	@Override
-	public DateTime parse(String value) {
-		throw new UnsupportedOperationException();
-	}
+  @Override
+  public DateTime parse(String value) {
+    throw new UnsupportedOperationException();
+  }
 
 }

@@ -20,23 +20,18 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.codegen.item;
 
-import gov.nist.secauto.metaschema.codegen.AssemblyClassGenerator;
-import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.model.info.instances.AssemblyInstance;
+package gov.nist.secauto.metaschema.codegen;
 
-public class AssemblyInstanceItemContext extends AbstractInstanceItemContext<AssemblyInstance> implements InstanceItemContext {
-	private final JavaType javaType;
+import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
+import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
 
-	public AssemblyInstanceItemContext(AssemblyInstance instance, AssemblyClassGenerator classContext) {
-		super(instance, classContext);
-		this.javaType = JavaType.create(instance.getDefinition());
-	}
+public interface PropertyGenerator {
 
-	@Override
-	public JavaType getJavaType() {
-		return javaType;
-	}
+  String getPropertyName();
+
+  MarkupLine getDescription();
+
+  void build(ClassBuilder builder);
 
 }

@@ -20,17 +20,18 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.io.json.parser;
 
-import java.util.List;
+package gov.nist.secauto.metaschema.binding.io.json.parser;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 
+import java.util.List;
+
 public interface BoundObjectParser<CLASS, CLASS_BINDING extends ClassBinding<CLASS>> {
 
-	List<CLASS> parseObjects() throws BindingException;
+  List<CLASS> parseObjects() throws BindingException;
 
-	JsonParsingContext getParsingContext();
+  JsonParsingContext getParsingContext();
 
 }

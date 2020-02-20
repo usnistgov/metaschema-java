@@ -20,14 +20,16 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.model.info.definitions;
 
-import java.util.Map;
+package gov.nist.secauto.metaschema.model.info.definitions;
 
 import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
 
+import java.util.Map;
+
 public interface FlagContainer {
-	
-	FlagInstance getFlagInstanceByName(String name);
-	Map<String, ? extends FlagInstance> getFlagInstances();
+
+  FlagInstance getFlagInstanceByName(String name);
+
+  Map<String, ? extends FlagInstance> getFlagInstances();
 }

@@ -20,17 +20,18 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.datatype;
 
 public class EmailAddress extends AbstractStringDatatype<EmailAddress> {
 
-	public EmailAddress(String value) {
-		super(value);
-	}
+  public EmailAddress(String value) {
+    super(value);
+  }
 
-	@Override
-	public EmailAddress copy() {
-		return new EmailAddress(getValue());
-	}
+  @Override
+  public EmailAddress copy() {
+    return new EmailAddress(getValue());
+  }
 
 }

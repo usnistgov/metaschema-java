@@ -20,34 +20,34 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.io.json;
 
-import java.util.Objects;
+package gov.nist.secauto.metaschema.binding.io.json;
 
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
 
+import java.util.Objects;
+
 public abstract class AbstractPropertyValueHandler implements PropertyValueHandler {
-	private final ClassBinding<?> classBinding;
-	private final PropertyItemHandler propertyItemHandler;
+  private final ClassBinding<?> classBinding;
+  private final PropertyItemHandler propertyItemHandler;
 
-	public AbstractPropertyValueHandler(ClassBinding<?> classBinding,
-			PropertyItemHandler propertyItemHandler) {
-		Objects.requireNonNull(classBinding, "classBinding");
-		Objects.requireNonNull(propertyItemHandler, "propertyItemHandler");
-		this.classBinding = classBinding;
-		this.propertyItemHandler = propertyItemHandler;
-	}
+  public AbstractPropertyValueHandler(ClassBinding<?> classBinding, PropertyItemHandler propertyItemHandler) {
+    Objects.requireNonNull(classBinding, "classBinding");
+    Objects.requireNonNull(propertyItemHandler, "propertyItemHandler");
+    this.classBinding = classBinding;
+    this.propertyItemHandler = propertyItemHandler;
+  }
 
-	protected ClassBinding<?> getClassBinding() {
-		return classBinding;
-	}
+  protected ClassBinding<?> getClassBinding() {
+    return classBinding;
+  }
 
-	protected PropertyBinding getPropertyBinding() {
-		return getPropertyItemHandler().getPropertyBinding();
-	}
+  protected PropertyBinding getPropertyBinding() {
+    return getPropertyItemHandler().getPropertyBinding();
+  }
 
-	protected PropertyItemHandler getPropertyItemHandler() {
-		return propertyItemHandler;
-	}
+  protected PropertyItemHandler getPropertyItemHandler() {
+    return propertyItemHandler;
+  }
 }

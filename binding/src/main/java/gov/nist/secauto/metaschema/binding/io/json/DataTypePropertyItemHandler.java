@@ -20,40 +20,41 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.io.json;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
+package gov.nist.secauto.metaschema.binding.io.json;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 public class DataTypePropertyItemHandler extends AbstractProperrtyItemHandler<PropertyBinding> {
 
-	public DataTypePropertyItemHandler(PropertyBinding propertyBinding) {
-		super(propertyBinding);
-	}
+  public DataTypePropertyItemHandler(PropertyBinding propertyBinding) {
+    super(propertyBinding);
+  }
 
-	@Override
-	public List<Object> parse(JsonParsingContext parsingContext, PropertyBindingFilter filter) throws BindingException {
-		JavaTypeAdapter<?> adapter = parsingContext.getBindingContext()
-				.getJavaTypeAdapter(getPropertyBinding().getPropertyInfo().getItemType());
+  @Override
+  public List<Object> parse(JsonParsingContext parsingContext, PropertyBindingFilter filter) throws BindingException {
+    JavaTypeAdapter<?> adapter
+        = parsingContext.getBindingContext().getJavaTypeAdapter(getPropertyBinding().getPropertyInfo().getItemType());
 
-		return Collections.singletonList(adapter.parse(parsingContext));
-	}
+    return Collections.singletonList(adapter.parse(parsingContext));
+  }
 
-	@Override
-	public void writeValue(Object value, JsonWritingContext writingContext, PropertyBindingFilter filter)
-			throws BindingException, IOException {
-		JavaTypeAdapter<?> adapter = writingContext.getBindingContext()
-				.getJavaTypeAdapter(getPropertyBinding().getPropertyInfo().getItemType());
+  @Override
+  public void writeValue(Object value, JsonWritingContext writingContext, PropertyBindingFilter filter)
+      throws BindingException, IOException {
+    JavaTypeAdapter<?> adapter
+        = writingContext.getBindingContext().getJavaTypeAdapter(getPropertyBinding().getPropertyInfo().getItemType());
 
-		adapter.writeJsonFieldValue(value, filter, writingContext);
-	}
+    adapter.writeJsonFieldValue(value, filter, writingContext);
+  }
 
 }

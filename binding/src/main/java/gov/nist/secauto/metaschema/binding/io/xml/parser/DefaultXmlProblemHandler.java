@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.io.xml.parser;
 
 import java.util.HashSet;
@@ -28,20 +29,21 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 public class DefaultXmlProblemHandler implements XmlProblemHandler {
-	private static final QName XSI_SCHEMA_LOCATION = new QName("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation");
-	private static final Set<QName> ignoredQNames;
-	
-	static {
-		ignoredQNames = new HashSet<>();
-		ignoredQNames.add(XSI_SCHEMA_LOCATION);
-	}
+  private static final QName XSI_SCHEMA_LOCATION
+      = new QName("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation");
+  private static final Set<QName> ignoredQNames;
 
-	@Override
-	public boolean handleUnknownAttribute(Object obj, QName attributeName, XmlParsingContext parsingContext) {
-		if (ignoredQNames.contains(attributeName)) {
-			return true;
-		}
-		return false;
-	}
+  static {
+    ignoredQNames = new HashSet<>();
+    ignoredQNames.add(XSI_SCHEMA_LOCATION);
+  }
+
+  @Override
+  public boolean handleUnknownAttribute(Object obj, QName attributeName, XmlParsingContext parsingContext) {
+    if (ignoredQNames.contains(attributeName)) {
+      return true;
+    }
+    return false;
+  }
 
 }

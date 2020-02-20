@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
 import static java.lang.annotation.ElementType.TYPE;
@@ -31,5 +32,15 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target(TYPE)
 public @interface Collapsible {
-	boolean value() default true;
+  /**
+   * Defines if the annotated class representing a Metaschema Field is collapsible, meaning fields
+   * with the same set of flag/values can be combined together, with an array of values containing the
+   * combination of corrisponding field values.
+   * <p>
+   * For a Metaschema field to be collapsible, it must have flags, otherwise the collapsible status is
+   * ignored.
+   * 
+   * @return {@code true} if the field is collapsible, or {@code false} otherwise
+   */
+  boolean value() default true;
 }

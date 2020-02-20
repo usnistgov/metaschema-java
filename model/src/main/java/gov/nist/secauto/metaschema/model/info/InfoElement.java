@@ -20,14 +20,18 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.info;
 
 import gov.nist.secauto.metaschema.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.Metaschema;
 
 public interface InfoElement {
-	String getName();
-	Type getType();
-	MarkupLine getDescription();
-	Metaschema getContainingMetaschema();
+  String getName();
+
+  Type getType();
+
+  MarkupLine getDescription();
+
+  Metaschema getContainingMetaschema();
 }

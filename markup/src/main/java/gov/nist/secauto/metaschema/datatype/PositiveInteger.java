@@ -20,21 +20,22 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.datatype;
 
 import java.math.BigInteger;
 
 public class PositiveInteger extends AbstractIntegerDatatype<PositiveInteger> {
 
-	public PositiveInteger(BigInteger value) {
-		super(value);
-		if (value.signum() != 1) {
-			throw new IllegalArgumentException("The value must be positive");
-		}
-	}
+  public PositiveInteger(BigInteger value) {
+    super(value);
+    if (value.signum() != 1) {
+      throw new IllegalArgumentException("The value must be positive");
+    }
+  }
 
-	@Override
-	public PositiveInteger copy() {
-		return new PositiveInteger(getValue());
-	}
+  @Override
+  public PositiveInteger copy() {
+    return new PositiveInteger(getValue());
+  }
 }

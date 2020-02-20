@@ -20,11 +20,13 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.info;
 
 import gov.nist.secauto.metaschema.model.info.definitions.DataType;
 
 public interface Flag extends InfoElement {
-	String getFormalName();
-	DataType getDatatype();
+  String getFormalName();
+
+  DataType getDatatype();
 }

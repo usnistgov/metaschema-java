@@ -20,9 +20,8 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.model.info.definitions;
 
-import java.util.Objects;
+package gov.nist.secauto.metaschema.model.info.definitions;
 
 import com.sun.xml.bind.api.impl.NameConverter;
 
@@ -33,50 +32,59 @@ import gov.nist.secauto.metaschema.model.info.instances.AssemblyInstance;
 import gov.nist.secauto.metaschema.model.info.instances.FieldInstance;
 import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
 
-public abstract class AbstractAssemblyDefinition<METASCHEMA extends Metaschema> extends AbstractInfoElementDefinition<METASCHEMA> implements AssemblyDefinition {
-	private final AssemblyBindingConfiguration bindingConfiguration;
+import java.util.Objects;
 
-	public AbstractAssemblyDefinition(AssemblyBindingConfiguration bindingConfiguration, METASCHEMA metaschema) {
-		super(metaschema);
-		Objects.requireNonNull(bindingConfiguration, "bindingConfiguration");
-		this.bindingConfiguration = bindingConfiguration;
-	}
+public abstract class AbstractAssemblyDefinition<METASCHEMA extends Metaschema>
+    extends AbstractInfoElementDefinition<METASCHEMA> implements AssemblyDefinition {
+  private final AssemblyBindingConfiguration bindingConfiguration;
 
-	@Override
-	public Type getType() {
-		return Type.ASSEMBLY;
-	}
+  /**
+   * Constructs a new definition of a Metaschema Assembly.
+   * 
+   * @param bindingConfiguration the binding configuration used to customize the generated code for this assembly
+   * @param metaschema the containing Metaschema
+   */
+  public AbstractAssemblyDefinition(AssemblyBindingConfiguration bindingConfiguration, METASCHEMA metaschema) {
+    super(metaschema);
+    Objects.requireNonNull(bindingConfiguration, "bindingConfiguration");
+    this.bindingConfiguration = bindingConfiguration;
+  }
 
-	protected AssemblyBindingConfiguration getBindingConfiguration() {
-		return bindingConfiguration;
-	}
+  @Override
+  public Type getType() {
+    return Type.ASSEMBLY;
+  }
 
-	@Override
-	public String getClassName() {
-		String retval = getBindingConfiguration().getClassName();
-		if (retval == null) {
-			retval = NameConverter.standard.toClassName(getName());
-		}
-		return retval;
-	}
+  protected AssemblyBindingConfiguration getBindingConfiguration() {
+    return bindingConfiguration;
+  }
 
-	@Override
-	public String getPackageName() {
-		return getContainingMetaschema().getPackageName();
-	}
+  @Override
+  public String getClassName() {
+    String retval = getBindingConfiguration().getClassName();
+    if (retval == null) {
+      retval = NameConverter.standard.toClassName(getName());
+    }
+    return retval;
+  }
 
-	@Override
-	public FlagInstance getFlagInstanceByName(String name) {
-		return getFlagInstances().get(name);
-	}
+  @Override
+  public String getPackageName() {
+    return getContainingMetaschema().getPackageName();
+  }
 
-	@Override
-	public FieldInstance getFieldInstanceByName(String name) {
-		return getFieldInstances().get(name);
-	}
+  @Override
+  public FlagInstance getFlagInstanceByName(String name) {
+    return getFlagInstances().get(name);
+  }
 
-	@Override
-	public AssemblyInstance getAssemblyInstanceByName(String name) {
-		return getAssemblyInstances().get(name);
-	}
+  @Override
+  public FieldInstance getFieldInstanceByName(String name) {
+    return getFieldInstances().get(name);
+  }
+
+  @Override
+  public AssemblyInstance getAssemblyInstanceByName(String name) {
+    return getAssemblyInstances().get(name);
+  }
 }

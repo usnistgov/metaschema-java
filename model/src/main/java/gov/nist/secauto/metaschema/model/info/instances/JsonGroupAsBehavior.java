@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.info.instances;
 
 import java.util.Collections;
@@ -27,31 +28,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum JsonGroupAsBehavior {
-	KEYED(gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.BY_KEY),
-	SINGLETON_OR_LIST(gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.SINGLETON_OR_ARRAY),
-	LIST(gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.ARRAY);
+  KEYED(gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.BY_KEY),
+  SINGLETON_OR_LIST(gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.SINGLETON_OR_ARRAY),
+  LIST(gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.ARRAY);
 
-	private static final Map<gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.Enum, JsonGroupAsBehavior> modelToEnumMap;
+  private static final Map<gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.Enum,
+      JsonGroupAsBehavior> modelToEnumMap;
 
-	static {
-		Map<gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.Enum, JsonGroupAsBehavior> _modelToEnumMap = new HashMap<>();
-		for (JsonGroupAsBehavior e : values()) {
-			_modelToEnumMap.put(e.getModelValue(), e);
-		}
-		modelToEnumMap = Collections.unmodifiableMap(_modelToEnumMap);
-	}
-	
-	public static JsonGroupAsBehavior lookup(gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.Enum value) {
-		return modelToEnumMap.get(value);
-	}
+  static {
+    Map<gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.Enum, JsonGroupAsBehavior> map = new HashMap<>();
+    for (JsonGroupAsBehavior e : values()) {
+      map.put(e.getModelValue(), e);
+    }
+    modelToEnumMap = Collections.unmodifiableMap(map);
+  }
 
-	private final gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.Enum modelValue;
+  public static JsonGroupAsBehavior lookup(gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.Enum value) {
+    return modelToEnumMap.get(value);
+  }
 
-	private JsonGroupAsBehavior(gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.Enum modelValue) {
-		this.modelValue = modelValue;
-	}
+  private final gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.Enum modelValue;
 
-	protected gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.Enum getModelValue() {
-		return modelValue;
-	}
+  private JsonGroupAsBehavior(gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.Enum modelValue) {
+    this.modelValue = modelValue;
+  }
+
+  protected gov.nist.itl.metaschema.model.xml.JsonGroupBehavior.Enum getModelValue() {
+    return modelValue;
+  }
 }

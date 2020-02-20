@@ -20,12 +20,15 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.configuration;
 
 import java.util.List;
 
 public interface ManagedObjectBingingConfiguration extends BindingConfiguration {
-	String getClassName();
-	String getQualifiedBaseClassName();
-	List<String> getInterfacesToImplement();
+  String getClassName();
+
+  String getQualifiedBaseClassName();
+
+  List<String> getInterfacesToImplement();
 }

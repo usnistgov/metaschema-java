@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.info.instances;
 
 import gov.nist.secauto.metaschema.model.Metaschema;
@@ -30,56 +31,58 @@ import gov.nist.secauto.metaschema.model.info.definitions.JsonValueKeyEnum;
 import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
 
 public abstract class AbstractFlagInstance implements FlagInstance {
-	private final ManagedObject parent;
+  private final ManagedObject parent;
 
-	public AbstractFlagInstance(ManagedObject parent) {
-		super();
-		this.parent = parent;
-	}
+  public AbstractFlagInstance(ManagedObject parent) {
+    super();
+    this.parent = parent;
+  }
 
-	protected abstract FlagDefinition getLocalFlagDefinition();
+  protected abstract FlagDefinition getLocalFlagDefinition();
 
-	@Override
-	public boolean isReference() {
-		return getLocalFlagDefinition() == null;
-	}
+  @Override
+  public boolean isReference() {
+    return getLocalFlagDefinition() == null;
+  }
 
-	@Override
-	public boolean isJsonKeyFlag() {
-		return this.equals(getContainingDefinition().getJsonKeyFlagInstance());
-	}
+  @Override
+  public boolean isJsonKeyFlag() {
+    return this.equals(getContainingDefinition().getJsonKeyFlagInstance());
+  }
 
-	@Override
-	public boolean isJsonValueKeyFlag() {
-		boolean retval;
-		ManagedObject parent = getContainingDefinition();
-		if (parent instanceof FieldDefinition) {
-			FieldDefinition parentField = (FieldDefinition)parent;
-			retval = parentField.hasJsonValueKey() && JsonValueKeyEnum.FLAG.equals(parentField.getJsonValueKeyType()) && this.equals(parentField.getJsonValueKeyFlagInstance());
-		} else {
-			retval = false;
-		}
-		return retval;
-	}
+  @Override
+  public boolean isJsonValueKeyFlag() {
+    boolean retval;
+    ManagedObject parent = getContainingDefinition();
+    if (parent instanceof FieldDefinition) {
+      FieldDefinition parentField = (FieldDefinition) parent;
+      retval = parentField.hasJsonValueKey() && JsonValueKeyEnum.FLAG.equals(parentField.getJsonValueKeyType())
+          && this.equals(parentField.getJsonValueKeyFlagInstance());
+    } else {
+      retval = false;
+    }
+    return retval;
+  }
 
-	@Override
-	public Type getType() {
-		return Type.FLAG;
-	}
+  @Override
+  public Type getType() {
+    return Type.FLAG;
+  }
 
-	@Override
-	public Metaschema getContainingMetaschema() {
-		return parent.getContainingMetaschema();
-	}
+  @Override
+  public Metaschema getContainingMetaschema() {
+    return parent.getContainingMetaschema();
+  }
 
-	@Override
-	public FlagDefinition getDefinition() {
-		FlagDefinition localFlagDefinition = getLocalFlagDefinition();
-		return localFlagDefinition == null ? getContainingMetaschema().getFlagDefinitionByName(getName()) : localFlagDefinition;
-	}
+  @Override
+  public FlagDefinition getDefinition() {
+    FlagDefinition localFlagDefinition = getLocalFlagDefinition();
+    return localFlagDefinition == null ? getContainingMetaschema().getFlagDefinitionByName(getName())
+        : localFlagDefinition;
+  }
 
-	@Override
-	public ManagedObject getContainingDefinition() {
-		return parent;
-	}
+  @Override
+  public ManagedObject getContainingDefinition() {
+    return parent;
+  }
 }

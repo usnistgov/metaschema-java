@@ -20,19 +20,22 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.io.xml.parser;
 
-import javax.xml.namespace.QName;
+package gov.nist.secauto.metaschema.binding.io.xml.parser;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.model.property.ModelItemPropertyBinding;
 
-public interface XmlObjectPropertyParser extends XmlPropertyParser {
-//	List<QName> getHandledQNames();
-	@Override
-	ModelItemPropertyBinding getPropertyBinding();
-	<CLASS> void parse(CLASS obj, XmlParsingContext parsingContext) throws BindingException;
+import javax.xml.namespace.QName;
 
-	boolean canConsume(QName nextQName) throws BindingException;
-	boolean isChildWrappedInXml();
+public interface XmlObjectPropertyParser extends XmlPropertyParser {
+  // List<QName> getHandledQNames();
+  @Override
+  ModelItemPropertyBinding getPropertyBinding();
+
+  <CLASS> void parse(CLASS obj, XmlParsingContext parsingContext) throws BindingException;
+
+  boolean canConsume(QName nextQName) throws BindingException;
+
+  boolean isChildWrappedInXml();
 }

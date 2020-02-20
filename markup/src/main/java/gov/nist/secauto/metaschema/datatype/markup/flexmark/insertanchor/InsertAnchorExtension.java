@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.datatype.markup.flexmark.insertanchor;
 
 import com.vladsch.flexmark.formatter.Formatter;
@@ -35,44 +36,46 @@ import gov.nist.secauto.metaschema.datatype.markup.flexmark.insertanchor.interna
 import gov.nist.secauto.metaschema.datatype.markup.flexmark.insertanchor.internal.InsertAnchorInlineParser;
 import gov.nist.secauto.metaschema.datatype.markup.flexmark.insertanchor.internal.InsertAnchorNodeRenderer;
 
-public class InsertAnchorExtension implements Parser.ParserExtension, HtmlRenderer.HtmlRendererExtension, Formatter.FormatterExtension, FlexmarkHtmlConverter.HtmlConverterExtension  {
-	public static final DataKey<Boolean> ENABLE_INLINE_INSERT_ANCHORS = new DataKey<>("ENABLE_INLINE_INSERT_ANCHORS", true);
-	public static final DataKey<Boolean> ENABLE_RENDERING = new DataKey<>("ENABLE_RENDERING", true);
+public class InsertAnchorExtension implements Parser.ParserExtension, HtmlRenderer.HtmlRendererExtension,
+    Formatter.FormatterExtension, FlexmarkHtmlConverter.HtmlConverterExtension {
+  public static final DataKey<Boolean> ENABLE_INLINE_INSERT_ANCHORS
+      = new DataKey<>("ENABLE_INLINE_INSERT_ANCHORS", true);
+  public static final DataKey<Boolean> ENABLE_RENDERING = new DataKey<>("ENABLE_RENDERING", true);
 
-	public static Extension create() {
-		return new InsertAnchorExtension();
-	}
+  public static Extension create() {
+    return new InsertAnchorExtension();
+  }
 
-	public InsertAnchorExtension() {
-	}
+  public InsertAnchorExtension() {
+  }
 
-	@Override
-	public void parserOptions(MutableDataHolder options) {
-	}
+  @Override
+  public void parserOptions(MutableDataHolder options) {
+  }
 
-	@Override
-	public void rendererOptions(MutableDataHolder options) {
-	}
+  @Override
+  public void rendererOptions(MutableDataHolder options) {
+  }
 
-	@Override
-	public void extend(HtmlRenderer.Builder rendererBuilder, String rendererType) {
-		rendererBuilder.nodeRendererFactory(new InsertAnchorNodeRenderer.Factory());
-	}
+  @Override
+  public void extend(HtmlRenderer.Builder rendererBuilder, String rendererType) {
+    rendererBuilder.nodeRendererFactory(new InsertAnchorNodeRenderer.Factory());
+  }
 
-	@Override
-	public void extend(Parser.Builder parserBuilder) {
-		if (ENABLE_INLINE_INSERT_ANCHORS.getFrom(parserBuilder)) {
-			parserBuilder.customInlineParserExtensionFactory(new InsertAnchorInlineParser.Factory());
-		}
-	}
+  @Override
+  public void extend(Parser.Builder parserBuilder) {
+    if (ENABLE_INLINE_INSERT_ANCHORS.getFrom(parserBuilder)) {
+      parserBuilder.customInlineParserExtensionFactory(new InsertAnchorInlineParser.Factory());
+    }
+  }
 
-	@Override
-	public void extend(Formatter.Builder builder) {
-		builder.nodeFormatterFactory(new InsertAnchorFormatter.Factory());
-	}
+  @Override
+  public void extend(Formatter.Builder builder) {
+    builder.nodeFormatterFactory(new InsertAnchorFormatter.Factory());
+  }
 
-	@Override
-	public void extend(FlexmarkHtmlConverter.Builder builder) {
-		builder.htmlNodeRendererFactory(new InsertAnchorHtmlNodeRenderer.Factory());
-	}
+  @Override
+  public void extend(FlexmarkHtmlConverter.Builder builder) {
+    builder.htmlNodeRendererFactory(new InsertAnchorHtmlNodeRenderer.Factory());
+  }
 }

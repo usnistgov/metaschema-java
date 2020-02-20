@@ -20,7 +20,13 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model;
+
+import gov.nist.secauto.metaschema.model.xml.XmlMetaschema;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,41 +40,50 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import gov.nist.secauto.metaschema.model.xml.XmlMetaschema;
-
 public class MetaschemaLoader {
-	private final Set<XmlMetaschema> loadedMetaschema = new LinkedHashSet<>();
-	private final Map<URI, XmlMetaschema> metaschemaCache = new LinkedHashMap<>();
+  private static final Logger logger = LogManager.getLogger(MetaschemaLoader.class);
 
-	public MetaschemaLoader() {
-	}
+  private final Set<XmlMetaschema> loadedMetaschema = new LinkedHashSet<>();
+  private final Map<URI, XmlMetaschema> metaschemaCache = new LinkedHashMap<>();
 
-	public Set<XmlMetaschema> getLoadedMetaschema() {
-		return loadedMetaschema.isEmpty() ? Collections.emptySet() : Collections.unmodifiableSet(loadedMetaschema);
-	}
+  public MetaschemaLoader() {
+  }
 
-	protected Map<URI, XmlMetaschema> getMetaschemaCache() {
-		return metaschemaCache;
-	}
+  public Set<XmlMetaschema> getLoadedMetaschema() {
+    return loadedMetaschema.isEmpty() ? Collections.emptySet() : Collections.unmodifiableSet(loadedMetaschema);
+  }
 
-	public XmlMetaschema loadXmlMetaschema(File file) throws MetaschemaException, IOException {
-		return loadXmlMetaschema(file.toURI());
-	}
+  protected Map<URI, XmlMetaschema> getMetaschemaCache() {
+    return metaschemaCache;
+  }
 
-	public XmlMetaschema loadXmlMetaschema(URL url) throws MetaschemaException, IOException {
-		try {
-			URI resource = url.toURI();
-			return loadXmlMetaschema(resource);
-		} catch (URISyntaxException e) {
-			// this should not happen
-			throw new RuntimeException(e);
-		}
-	}
+  public XmlMetaschema loadXmlMetaschema(File file) throws MetaschemaException, IOException {
+    return loadXmlMetaschema(file.toURI());
+  }
 
-	protected XmlMetaschema loadXmlMetaschema(URI resource) throws MetaschemaException, IOException {
-		if (!resource.isAbsolute()) {
-			throw new IllegalStateException(String.format("The URI '%s' must be absolute.", resource.toString()));
-		}
-		return XmlMetaschema.loadMetaschema(resource, new Stack<>(), getMetaschemaCache());
-	}
+  /**
+   * Loads a Metaschema from the specified URL.
+   * 
+   * @param url the URL to load the metaschema from
+   * @return the loaded Metaschema or {@code null} if the Metaschema was not found
+   * @throws MetaschemaException if an error occurred while processing the Metaschema definition
+   * @throws IOException if an error occurred reading the Metaschema
+   */
+  public XmlMetaschema loadXmlMetaschema(URL url) throws MetaschemaException, IOException {
+    try {
+      URI resource = url.toURI();
+      return loadXmlMetaschema(resource);
+    } catch (URISyntaxException ex) {
+      // this should not happen
+      logger.error("Invalid url", ex);
+      return null;
+    }
+  }
+
+  protected XmlMetaschema loadXmlMetaschema(URI resource) throws MetaschemaException, IOException {
+    if (!resource.isAbsolute()) {
+      throw new IllegalStateException(String.format("The URI '%s' must be absolute.", resource.toString()));
+    }
+    return XmlMetaschema.loadMetaschema(resource, new Stack<>(), getMetaschemaCache());
+  }
 }

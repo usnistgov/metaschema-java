@@ -20,25 +20,26 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model;
-
-import java.util.List;
-
-import javax.xml.namespace.QName;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.io.xml.writer.AssemblyXmlWriter;
 import gov.nist.secauto.metaschema.binding.model.property.ModelItemPropertyBinding;
 
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
 public interface AssemblyClassBinding<CLASS> extends ClassBinding<CLASS> {
 
-	List<ModelItemPropertyBinding> getModelItemPropertyBindings();
+  List<ModelItemPropertyBinding> getModelItemPropertyBindings();
 
-	boolean isRootElement();
+  boolean isRootElement();
 
-	QName getRootQName();
+  QName getRootQName();
 
-	@Override
-	AssemblyXmlWriter<CLASS> getXmlWriter() throws BindingException;
-	
+  @Override
+  AssemblyXmlWriter<CLASS> getXmlWriter() throws BindingException;
+
 }

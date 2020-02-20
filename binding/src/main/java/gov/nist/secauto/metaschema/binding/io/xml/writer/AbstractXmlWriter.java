@@ -20,7 +20,14 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.io.xml.writer;
+
+import gov.nist.secauto.metaschema.binding.BindingException;
+import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.FlagPropertyBinding;
+
+import org.codehaus.stax2.evt.XMLEventFactory2;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -33,67 +40,61 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 
-import org.codehaus.stax2.evt.XMLEventFactory2;
-
-import gov.nist.secauto.metaschema.binding.BindingException;
-import gov.nist.secauto.metaschema.binding.model.ClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.FlagPropertyBinding;
-
 public abstract class AbstractXmlWriter<CLASS, CLASS_BINDING extends ClassBinding<CLASS>> implements XmlWriter {
-	private final CLASS_BINDING classBinding;
+  private final CLASS_BINDING classBinding;
 
-	protected AbstractXmlWriter(CLASS_BINDING classBinding) {
-		this.classBinding = classBinding;
-	}
+  protected AbstractXmlWriter(CLASS_BINDING classBinding) {
+    this.classBinding = classBinding;
+  }
 
-	protected CLASS_BINDING getClassBinding() {
-		return classBinding;
-	}
+  protected CLASS_BINDING getClassBinding() {
+    return classBinding;
+  }
 
-	@Override
-	public void writeXml(Object obj, QName name, XmlWritingContext writingContext) throws BindingException {
-		if (name == null) {
-			throw new BindingException("Unspecified QName");
-		}
+  @Override
+  public void writeXml(Object obj, QName name, XmlWritingContext writingContext) throws BindingException {
+    if (name == null) {
+      throw new BindingException("Unspecified QName");
+    }
 
-		XMLEventFactory2 factory = writingContext.getXMLEventFactory();
-		StartElement start = factory.createStartElement(name, gatherAttributes(obj, factory).iterator(), null);
+    XMLEventFactory2 factory = writingContext.getXMLEventFactory();
+    StartElement start = factory.createStartElement(name, gatherAttributes(obj, factory).iterator(), null);
 
-		EndElement end = factory.createEndElement(name, null);
+    EndElement end = factory.createEndElement(name, null);
 
-		try {
-			XMLEventWriter writer = writingContext.getEventWriter();
-			writer.add(start);
+    try {
+      XMLEventWriter writer = writingContext.getEventWriter();
+      writer.add(start);
 
-			writeBody(obj, start, writingContext);
+      writeBody(obj, start, writingContext);
 
-			writer.add(end);
-		} catch (XMLStreamException ex) {
-			throw new BindingException(ex);
-		}
-	}
+      writer.add(end);
+    } catch (XMLStreamException ex) {
+      throw new BindingException(ex);
+    }
+  }
 
-	protected abstract void writeBody(Object obj, StartElement parent, XmlWritingContext writingContext)
-			throws BindingException;
+  protected abstract void writeBody(Object obj, StartElement parent, XmlWritingContext writingContext)
+      throws BindingException;
 
-	public List<Attribute> gatherAttributes(Object obj, XMLEventFactory2 factory) throws BindingException {
-		List<Attribute> retval = new LinkedList<>();
-		for (FlagPropertyBinding flagBinding : getClassBinding().getFlagPropertyBindings()) {
-			QName name = flagBinding.getXmlQName();
-			String value;
+  public List<Attribute> gatherAttributes(Object obj, XMLEventFactory2 factory) throws BindingException {
+    List<Attribute> retval = new LinkedList<>();
+    for (FlagPropertyBinding flagBinding : getClassBinding().getFlagPropertyBindings()) {
+      QName name = flagBinding.getXmlQName();
+      String value;
 
-			Object objectValue = flagBinding.getPropertyInfo().getValue(obj);
-			if (objectValue != null) {
-				value = objectValue.toString();
-			} else {
-				value = null;
-			}
+      Object objectValue = flagBinding.getPropertyInfo().getValue(obj);
+      if (objectValue != null) {
+        value = objectValue.toString();
+      } else {
+        value = null;
+      }
 
-			if (value != null) {
-				Attribute attribute = factory.createAttribute(name, value);
-				retval.add(attribute);
-			}
-		}
-		return retval.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(retval);
-	}
+      if (value != null) {
+        Attribute attribute = factory.createAttribute(name, value);
+        retval.add(attribute);
+      }
+    }
+    return retval.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(retval);
+  }
 }

@@ -20,21 +20,22 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.codegen.builder;
 
 public enum Visibility {
-	PRIVATE("private"),
-	PACKAGE_PRIVATE(null),
-	PROTECTED("protected"),
-	PUBLIC("public");
+  PRIVATE("private"),
+  PACKAGE_PRIVATE(null),
+  PROTECTED("protected"),
+  PUBLIC("public");
 
-	private final String modifier;
+  private final String modifier;
 
-	private Visibility(String modifier) {
-		this.modifier = modifier;
-	}
+  private Visibility(String modifier) {
+    this.modifier = modifier;
+  }
 
-	protected String getModifier() {
-		return modifier;
-	}
+  protected String getModifier() {
+    return modifier;
+  }
 }

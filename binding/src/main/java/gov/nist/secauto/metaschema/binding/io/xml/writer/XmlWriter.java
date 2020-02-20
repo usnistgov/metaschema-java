@@ -20,12 +20,13 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.io.xml.writer;
 
-import javax.xml.namespace.QName;
+package gov.nist.secauto.metaschema.binding.io.xml.writer;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 
+import javax.xml.namespace.QName;
+
 public interface XmlWriter {
-	void writeXml(Object obj, QName name, XmlWritingContext writingContext) throws BindingException;
+  void writeXml(Object obj, QName name, XmlWritingContext writingContext) throws BindingException;
 }

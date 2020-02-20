@@ -20,30 +20,31 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.codegen.builder;
 
 import java.util.function.Function;
 
 public abstract class AbstractMemberBuilder<T extends AbstractMemberBuilder<T>> extends AbstractBuilder<T> {
-	private final AbstractClassBuilder<?> classBuilder;
+  private final AbstractClassBuilder<?> classBuilder;
 
-	public AbstractMemberBuilder(AbstractClassBuilder<?> classBuilder) {
-		this.classBuilder = classBuilder;
-	}
+  public AbstractMemberBuilder(AbstractClassBuilder<?> classBuilder) {
+    this.classBuilder = classBuilder;
+  }
 
-	@Override
-	public Function<String, Boolean> getClashEvaluator() {
-		return getClassBuilder().getClashEvaluator();
-	}
+  @Override
+  public Function<String, Boolean> getClashEvaluator() {
+    return getClassBuilder().getClashEvaluator();
+  }
 
-	@Override
-	public AbstractClassBuilder<?> getClassBuilder() {
-		return classBuilder;
-	}
+  @Override
+  public AbstractClassBuilder<?> getClassBuilder() {
+    return classBuilder;
+  }
 
-	@Override
-	protected String getPadding() {
-		return "    ";
-	}
+  @Override
+  protected String getPadding() {
+    return "    ";
+  }
 
 }

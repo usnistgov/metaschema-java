@@ -20,9 +20,8 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.io.json.old;
 
-import java.io.IOException;
+package gov.nist.secauto.metaschema.binding.io.json.old;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.writer.AssemblyJsonWriter;
@@ -31,18 +30,21 @@ import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyPropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
-public class AssemblyItemBinding extends AbstractBoundClassItemBinding<AssemblyClassBinding<?>, AssemblyPropertyBinding> {
+import java.io.IOException;
 
-	public AssemblyItemBinding(AssemblyClassBinding<?> classBinding, AssemblyPropertyBinding propertyBinding) {
-		super(classBinding, propertyBinding);
-	}
+public class AssemblyItemBinding
+    extends AbstractBoundClassItemBinding<AssemblyClassBinding<?>, AssemblyPropertyBinding> {
 
-	@Override
-	public void writeValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
-			throws BindingException, IOException {
-		
-		AssemblyJsonWriter<?> jsonWriter = getClassBinding().getAssemblyJsonWriter(writingContext.getBindingContext());
-		jsonWriter.writeJson(value, filter, writingContext);
-	}
+  public AssemblyItemBinding(AssemblyClassBinding<?> classBinding, AssemblyPropertyBinding propertyBinding) {
+    super(classBinding, propertyBinding);
+  }
+
+  @Override
+  public void writeValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
+      throws BindingException, IOException {
+
+    AssemblyJsonWriter<?> jsonWriter = getClassBinding().getAssemblyJsonWriter(writingContext.getBindingContext());
+    jsonWriter.writeJson(value, filter, writingContext);
+  }
 
 }

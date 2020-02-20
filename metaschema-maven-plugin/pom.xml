@@ -19,15 +19,22 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+
 		<mojo.maven.version>3.0.5</mojo.maven.version>
-		<mojo.java.target>1.7</mojo.java.target>
+		<mojo.java.target>1.8</mojo.java.target>
 		<dependency.plexus-utils.version>3.1.0</dependency.plexus-utils.version>
 		<dependency.plexus-build-api.version>0.0.7</dependency.plexus-build-api.version>
-		<plugin.maven-plugin-plugin.version>3.6.0</plugin.maven-plugin-plugin.version>
+		<dependency.maven-shared-incremental.version>1.1</dependency.maven-shared-incremental.version>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>codegen</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
@@ -48,6 +55,11 @@
 			<artifactId>maven-model</artifactId>
 			<version>${mojo.maven.version}</version>
 		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.apache.maven.shared</groupId> -->
+<!-- 			<artifactId>maven-shared-incremental</artifactId> -->
+<!-- 			<version>${dependency.maven-shared-incremental.version}</version> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>org.apache.maven.plugin-tools</groupId>
 			<artifactId>maven-plugin-annotations</artifactId>
@@ -87,18 +99,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-plugin-plugin</artifactId>
-				<version>${plugin.maven-plugin-plugin.version}</version>
 				<configuration>
 					<goalPrefix>metaschema</goalPrefix>
 					<skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.maven.plugin-tools</groupId>
-						<artifactId>maven-plugin-annotations</artifactId>
-						<version>${plugin.maven-plugin-plugin.version}</version>
-					</dependency>
-				</dependencies>
 				<executions>
 					<execution>
 						<id>help-mojo</id>
@@ -111,7 +115,8 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>

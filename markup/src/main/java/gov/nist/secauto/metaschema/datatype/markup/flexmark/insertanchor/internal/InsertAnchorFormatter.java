@@ -20,10 +20,8 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.datatype.markup.flexmark.insertanchor.internal;
 
-import java.util.Collections;
-import java.util.Set;
+package gov.nist.secauto.metaschema.datatype.markup.flexmark.insertanchor.internal;
 
 import com.vladsch.flexmark.formatter.MarkdownWriter;
 import com.vladsch.flexmark.formatter.NodeFormatter;
@@ -35,39 +33,44 @@ import com.vladsch.flexmark.util.data.DataHolder;
 import gov.nist.secauto.metaschema.datatype.markup.flexmark.insertanchor.InsertAnchorNode;
 import gov.nist.secauto.metaschema.datatype.markup.flexmark.insertanchor.InsertAnchorOptions;
 
-public class InsertAnchorFormatter implements NodeFormatter  {
-	private final InsertAnchorOptions options;
-	
-	public InsertAnchorFormatter(DataHolder options) {
-		this.options = new InsertAnchorOptions(options);
-	}
+import java.util.Collections;
+import java.util.Set;
 
-	@Override
-	public Set<NodeFormattingHandler<?>> getNodeFormattingHandlers() {
-		return options.enableInlineInsertAnchors ? Collections.singleton(
-				new NodeFormattingHandler<InsertAnchorNode>(InsertAnchorNode.class, this::render)) : Collections.emptySet();
-	}
+public class InsertAnchorFormatter implements NodeFormatter {
+  private final InsertAnchorOptions options;
 
-	protected void render(InsertAnchorNode node, @SuppressWarnings("unused") NodeFormatterContext context, MarkdownWriter markdown) {
-		if (options.enableRendering) {
-			markdown.append("{{ ");
-			markdown.append(node.getName());
-			markdown.append(" }}");
-		}
-	}
+  public InsertAnchorFormatter(DataHolder options) {
+    this.options = new InsertAnchorOptions(options);
+  }
 
-	@Override
-	public Set<Class<?>> getNodeClasses() {
-		return Collections.singleton(InsertAnchorNode.class);
-	}
+  @Override
+  public Set<NodeFormattingHandler<?>> getNodeFormattingHandlers() {
+    return options.enableInlineInsertAnchors
+        ? Collections.singleton(new NodeFormattingHandler<InsertAnchorNode>(InsertAnchorNode.class, this::render))
+        : Collections.emptySet();
+  }
 
-	public static class Factory implements NodeFormatterFactory {
+  protected void render(InsertAnchorNode node, @SuppressWarnings("unused") NodeFormatterContext context,
+      MarkdownWriter markdown) {
+    if (options.enableRendering) {
+      markdown.append("{{ ");
+      markdown.append(node.getName());
+      markdown.append(" }}");
+    }
+  }
 
-		@Override
-		public NodeFormatter create(DataHolder options) {
-			return new InsertAnchorFormatter(options);
-		}
+  @Override
+  public Set<Class<?>> getNodeClasses() {
+    return Collections.singleton(InsertAnchorNode.class);
+  }
 
-	}
+  public static class Factory implements NodeFormatterFactory {
+
+    @Override
+    public NodeFormatter create(DataHolder options) {
+      return new InsertAnchorFormatter(options);
+    }
+
+  }
 
 }

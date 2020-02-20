@@ -20,11 +20,13 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.io.json.old;
 
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.ModelItemPropertyBinding;
 
-public interface BoundClassItemBinding<CLASS_BINDING extends ClassBinding<?>, PROPERTY_BINDING extends ModelItemPropertyBinding> extends ItemBinding<PROPERTY_BINDING> {
-	CLASS_BINDING getClassBinding();
+public interface BoundClassItemBinding<CLASS_BINDING extends ClassBinding<
+    ?>, PROPERTY_BINDING extends ModelItemPropertyBinding> extends ItemBinding<PROPERTY_BINDING> {
+  CLASS_BINDING getClassBinding();
 }

@@ -20,11 +20,13 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.datatype;
 
-public abstract class AbstractStringDatatype<TYPE extends AbstractDatatype<TYPE, String>> extends AbstractDatatype<TYPE, String> {
+public abstract class AbstractStringDatatype<TYPE extends AbstractDatatype<TYPE, String>>
+    extends AbstractDatatype<TYPE, String> {
 
-	protected AbstractStringDatatype(String value) {
-		super(value);
-	}
+  protected AbstractStringDatatype(String value) {
+    super(value);
+  }
 }

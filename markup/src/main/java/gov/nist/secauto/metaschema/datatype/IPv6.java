@@ -20,17 +20,18 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.datatype;
 
 public class IPv6 extends AbstractIPDatatype<IPv6> {
 
-	public IPv6(String value) {
-		super(value);
-	}
+  public IPv6(String value) {
+    super(value);
+  }
 
-	@Override
-	public IPv6 copy() {
-		return new IPv6(getValue());
-	}
+  @Override
+  public IPv6 copy() {
+    return new IPv6(getValue());
+  }
 
 }

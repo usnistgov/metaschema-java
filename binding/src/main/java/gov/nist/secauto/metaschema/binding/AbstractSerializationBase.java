@@ -20,41 +20,42 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding;
 
-import java.util.Objects;
+package gov.nist.secauto.metaschema.binding;
 
 import gov.nist.secauto.metaschema.binding.io.Configuration;
 import gov.nist.secauto.metaschema.binding.io.MutableConfiguration;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 
+import java.util.Objects;
+
 abstract class AbstractSerializationBase<CLASS> {
-	private final BindingContext bindingContext;
-	private final AssemblyClassBinding<CLASS> classBinding;
-	private final Configuration configuration;
+  private final BindingContext bindingContext;
+  private final AssemblyClassBinding<CLASS> classBinding;
+  private final Configuration configuration;
 
-	public AbstractSerializationBase(BindingContext bindingContext, AssemblyClassBinding<CLASS> classBinding,
-			Configuration configuration) {
-		Objects.requireNonNull(bindingContext, "bindingContext");
-		Objects.requireNonNull(classBinding, "classBinding");
-		this.bindingContext = bindingContext;
-		this.classBinding = classBinding;
-		if (configuration == null) {
-			this.configuration = new MutableConfiguration();
-		} else {
-			this.configuration = configuration;
-		}
-	}
+  public AbstractSerializationBase(BindingContext bindingContext, AssemblyClassBinding<CLASS> classBinding,
+      Configuration configuration) {
+    Objects.requireNonNull(bindingContext, "bindingContext");
+    Objects.requireNonNull(classBinding, "classBinding");
+    this.bindingContext = bindingContext;
+    this.classBinding = classBinding;
+    if (configuration == null) {
+      this.configuration = new MutableConfiguration();
+    } else {
+      this.configuration = configuration;
+    }
+  }
 
-	protected BindingContext getBindingContext() {
-		return bindingContext;
-	}
+  protected BindingContext getBindingContext() {
+    return bindingContext;
+  }
 
-	protected AssemblyClassBinding<CLASS> getClassBinding() {
-		return classBinding;
-	}
+  protected AssemblyClassBinding<CLASS> getClassBinding() {
+    return classBinding;
+  }
 
-	protected Configuration getConfiguration() {
-		return configuration;
-	}
+  protected Configuration getConfiguration() {
+    return configuration;
+  }
 }

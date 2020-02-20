@@ -20,16 +20,19 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.io;
+
+import gov.nist.secauto.metaschema.binding.BindingException;
 
 import java.io.File;
 import java.io.OutputStream;
 import java.io.Writer;
 
-import gov.nist.secauto.metaschema.binding.BindingException;
-
 public interface Serializer<CLASS> {
-	void serialize(CLASS data, OutputStream os) throws BindingException;
-	void serialize(CLASS data, File file) throws BindingException;
-	void serialize(CLASS data, Writer writer) throws BindingException;
+  void serialize(CLASS data, OutputStream os) throws BindingException;
+
+  void serialize(CLASS data, File file) throws BindingException;
+
+  void serialize(CLASS data, Writer writer) throws BindingException;
 }

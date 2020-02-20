@@ -20,40 +20,41 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.io.json.parser;
 
-import java.util.List;
+package gov.nist.secauto.metaschema.binding.io.json.parser;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
-public abstract class AbstractJsonReader<CLASS, CLASS_BINDING extends ClassBinding<CLASS>, OBJECT_PARSER extends BoundObjectParser<CLASS, CLASS_BINDING>>
-		implements JsonReader<CLASS> {
-	private final CLASS_BINDING classBinding;
+import java.util.List;
 
-	public AbstractJsonReader(CLASS_BINDING classBinding) {
-		this.classBinding = classBinding;
-	}
+public abstract class AbstractJsonReader<CLASS, CLASS_BINDING extends ClassBinding<
+    CLASS>, OBJECT_PARSER extends BoundObjectParser<CLASS, CLASS_BINDING>> implements JsonReader<CLASS> {
+  private final CLASS_BINDING classBinding;
 
-	protected CLASS_BINDING getClassBinding() {
-		return classBinding;
-	}
+  public AbstractJsonReader(CLASS_BINDING classBinding) {
+    this.classBinding = classBinding;
+  }
 
-	protected abstract OBJECT_PARSER newObjectParser(PropertyBindingFilter filter,
-			JsonParsingContext parsingContext) throws BindingException;
+  protected CLASS_BINDING getClassBinding() {
+    return classBinding;
+  }
 
-	@Override
-	public List<CLASS> readJson(JsonParsingContext parsingContext, PropertyBindingFilter filter, boolean parseRoot)
-			throws BindingException {
+  protected abstract OBJECT_PARSER newObjectParser(PropertyBindingFilter filter, JsonParsingContext parsingContext)
+      throws BindingException;
 
-		OBJECT_PARSER parser = newObjectParser(filter, parsingContext);
+  @Override
+  public List<CLASS> readJson(JsonParsingContext parsingContext, PropertyBindingFilter filter, boolean parseRoot)
+      throws BindingException {
 
-		return readJsonInternal(parser, parseRoot);
-	}
+    OBJECT_PARSER parser = newObjectParser(filter, parsingContext);
 
-	protected List<CLASS> readJsonInternal(OBJECT_PARSER parser,
-			@SuppressWarnings("unused") boolean parseRoot) throws BindingException {
-		return parser.parseObjects();
-	}
+    return readJsonInternal(parser, parseRoot);
+  }
+
+  protected List<CLASS> readJsonInternal(OBJECT_PARSER parser, @SuppressWarnings("unused") boolean parseRoot)
+      throws BindingException {
+    return parser.parseObjects();
+  }
 }

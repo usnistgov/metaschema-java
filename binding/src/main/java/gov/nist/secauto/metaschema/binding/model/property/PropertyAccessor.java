@@ -20,30 +20,35 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.model.property;
 
-import java.lang.reflect.Field;
+package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 
+import java.lang.reflect.Field;
+
 public interface PropertyAccessor {
-	public static PropertyAccessor newPropertyAccessor(Field field) {
-		return new JavaFieldPropertyAccessor(field);
-	}
+  public static PropertyAccessor newPropertyAccessor(Field field) {
+    return new JavaFieldPropertyAccessor(field);
+  }
 
-	Class<?> getContainingClass();
-	/**
-	 * Returns the field or method name for which the property is bound.
-	 * @return the name
-	 */
-	String getSimpleName();
-	/**
-	 * Returns the property name, not the field or method name.
-	 * @return the name in the pattern "somePropertyName"
-	 */
-	String getPropertyName();
+  Class<?> getContainingClass();
 
+  /**
+   * Returns the field or method name for which the property is bound.
+   * 
+   * @return the name
+   */
+  String getSimpleName();
 
-	void setValue(Object obj, Object value) throws BindingException;
-	Object getValue(Object obj) throws BindingException;
+  /**
+   * Returns the property name, not the field or method name.
+   * 
+   * @return the name in the pattern "somePropertyName"
+   */
+  String getPropertyName();
+
+  void setValue(Object obj, Object value) throws BindingException;
+
+  Object getValue(Object obj) throws BindingException;
 }

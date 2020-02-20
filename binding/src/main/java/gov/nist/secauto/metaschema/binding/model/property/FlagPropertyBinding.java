@@ -20,16 +20,17 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlAttributePropertyParser;
 
 public interface FlagPropertyBinding extends NamedPropertyBinding {
-	@Override
-	XmlAttributePropertyParser newXmlPropertyParser(BindingContext bindingContext);
+  @Override
+  XmlAttributePropertyParser newXmlPropertyParser(BindingContext bindingContext);
 
-	boolean isJsonKey();
+  boolean isJsonKey();
 
-	boolean isJsonValueKey();
+  boolean isJsonValueKey();
 }

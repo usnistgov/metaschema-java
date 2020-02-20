@@ -20,29 +20,30 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 
 class SingletonPropertyCollector<INFO extends PropertyInfo> extends AbstractPropertyCollector<INFO> {
 
-	private Object object;
+  private Object object;
 
-	protected SingletonPropertyCollector(INFO propertyInfo) {
-		super(propertyInfo);
-	}
+  protected SingletonPropertyCollector(INFO propertyInfo) {
+    super(propertyInfo);
+  }
 
-	@Override
-	public void add(Object item) throws BindingException {
-		if (object != null) {
-			throw new IllegalStateException("A value has already been set for this singleton");
-		}
-		object = item;
-	}
+  @Override
+  public void add(Object item) throws BindingException {
+    if (object != null) {
+      throw new IllegalStateException("A value has already been set for this singleton");
+    }
+    object = item;
+  }
 
-	@Override
-	protected Object getCollection() {
-		return object;
-	}
+  @Override
+  protected Object getCollection() {
+    return object;
+  }
 
 }

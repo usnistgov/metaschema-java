@@ -20,20 +20,27 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.info.definitions;
 
 import gov.nist.secauto.metaschema.model.info.Field;
 import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
 
 public interface FieldDefinition extends ManagedObject, Field {
-	boolean hasJsonValueKey();
-	/**
-	 * 
-	 * @return a string or a FlagInstance value
-	 */
-	Object getJsonValueKey();
-	JsonValueKeyEnum getJsonValueKeyType();
-	FlagInstance getJsonValueKeyFlagInstance();
-	String getJsonValueKeyName();
-	boolean isCollapsible();
+  boolean hasJsonValueKey();
+
+  /**
+   * Retrieves the key to use as the field name for this field's value in JSON.
+   * 
+   * @return a string or a FlagInstance value
+   */
+  Object getJsonValueKey();
+
+  JsonValueKeyEnum getJsonValueKeyType();
+
+  FlagInstance getJsonValueKeyFlagInstance();
+
+  String getJsonValueKeyName();
+
+  boolean isCollapsible();
 }

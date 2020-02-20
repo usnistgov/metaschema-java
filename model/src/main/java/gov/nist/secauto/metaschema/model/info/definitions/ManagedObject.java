@@ -20,13 +20,17 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.info.definitions;
 
 import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
 
 public interface ManagedObject extends FlagContainer, InfoElementDefinition {
-	boolean hasJsonKey();
-	FlagInstance getJsonKeyFlagInstance();
-	String getPackageName();
-	String getClassName();
+  boolean hasJsonKey();
+
+  FlagInstance getJsonKeyFlagInstance();
+
+  String getPackageName();
+
+  String getClassName();
 }

@@ -20,18 +20,19 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import gov.nist.secauto.metaschema.binding.AbstractJavaTypeAdapter;
 
 public class StringAdapter extends AbstractJavaTypeAdapter<String> {
-	@Override
-	public String parse(String value) {
-		return value;
-	}
+  @Override
+  public String parse(String value) {
+    return value;
+  }
 
-	@Override
-	public String copy(String obj) {
-		return obj;
-	}
+  @Override
+  public String copy(String obj) {
+    return obj;
+  }
 }

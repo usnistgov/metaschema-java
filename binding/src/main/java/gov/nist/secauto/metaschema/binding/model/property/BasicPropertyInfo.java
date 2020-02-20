@@ -20,18 +20,19 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import java.lang.reflect.Type;
 
 public class BasicPropertyInfo extends AbstractPropertyInfo<Type> {
 
-	public BasicPropertyInfo(Type type, PropertyAccessor propertyAccessor) {
-		super(type, propertyAccessor);
-	}
+  public BasicPropertyInfo(Type type, PropertyAccessor propertyAccessor) {
+    super(type, propertyAccessor);
+  }
 
-	@Override
-	public SingletonPropertyCollector<BasicPropertyInfo> newPropertyCollector() {
-		return new SingletonPropertyCollector<BasicPropertyInfo>(this);
-	}
+  @Override
+  public SingletonPropertyCollector<BasicPropertyInfo> newPropertyCollector() {
+    return new SingletonPropertyCollector<BasicPropertyInfo>(this);
+  }
 }

@@ -20,16 +20,17 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding;
 
 import gov.nist.secauto.metaschema.datatype.Datatype;
 
 // TODO: rename to DatatypeJavaTypeAdapter
 public abstract class SimpleJavaTypeAdapter<TYPE extends Datatype<TYPE>> extends AbstractJavaTypeAdapter<TYPE> {
-	
-	@Override
-	public TYPE copy(TYPE obj) {
-		return obj.copy();
-	}
+
+  @Override
+  public TYPE copy(TYPE obj) {
+    return obj.copy();
+  }
 
 }

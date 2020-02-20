@@ -20,39 +20,40 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.info.instances;
+
+import gov.nist.itl.metaschema.model.xml.XmlGroupBehavior;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import gov.nist.itl.metaschema.model.xml.XmlGroupBehavior;
-
 public enum XmlGroupAsBehavior {
-	GROUPED(XmlGroupBehavior.GROUPED),
-	UNGROUPED(XmlGroupBehavior.UNGROUPED);
+  GROUPED(XmlGroupBehavior.GROUPED),
+  UNGROUPED(XmlGroupBehavior.UNGROUPED);
 
-	private static final Map<XmlGroupBehavior.Enum, XmlGroupAsBehavior> modelToEnumMap;
+  private static final Map<XmlGroupBehavior.Enum, XmlGroupAsBehavior> modelToEnumMap;
 
-	static {
-		Map<XmlGroupBehavior.Enum, XmlGroupAsBehavior> _modelToEnumMap = new HashMap<>();
-		for (XmlGroupAsBehavior e : values()) {
-			_modelToEnumMap.put(e.getModelValue(), e);
-		}
-		modelToEnumMap = Collections.unmodifiableMap(_modelToEnumMap);
-	}
-	
-	public static XmlGroupAsBehavior lookup(XmlGroupBehavior.Enum value) {
-		return modelToEnumMap.get(value);
-	}
+  static {
+    Map<XmlGroupBehavior.Enum, XmlGroupAsBehavior> map = new HashMap<>();
+    for (XmlGroupAsBehavior e : values()) {
+      map.put(e.getModelValue(), e);
+    }
+    modelToEnumMap = Collections.unmodifiableMap(map);
+  }
 
-	private final XmlGroupBehavior.Enum modelValue;
+  public static XmlGroupAsBehavior lookup(XmlGroupBehavior.Enum value) {
+    return modelToEnumMap.get(value);
+  }
 
-	private XmlGroupAsBehavior(XmlGroupBehavior.Enum modelValue) {
-		this.modelValue = modelValue;
-	}
+  private final XmlGroupBehavior.Enum modelValue;
 
-	protected XmlGroupBehavior.Enum getModelValue() {
-		return modelValue;
-	}
+  private XmlGroupAsBehavior(XmlGroupBehavior.Enum modelValue) {
+    this.modelValue = modelValue;
+  }
+
+  protected XmlGroupBehavior.Enum getModelValue() {
+    return modelValue;
+  }
 }

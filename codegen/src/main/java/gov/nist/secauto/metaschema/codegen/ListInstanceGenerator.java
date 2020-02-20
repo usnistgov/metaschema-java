@@ -20,17 +20,16 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.codegen;
 
-import gov.nist.secauto.metaschema.codegen.item.InstanceItemContext;
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
 import gov.nist.secauto.metaschema.codegen.type.ListJavaType;
+import gov.nist.secauto.metaschema.model.info.instances.ModelInstance;
 
-public class ListInstanceGenerator extends AbstractCardinalityInstanceGenerator<ListJavaType>
-		implements CardinalityInstanceGenerator {
-	public ListInstanceGenerator(InstanceItemContext itemInstanceContext,
-			AssemblyClassGenerator assemblyClassGenerator) {
-		super(itemInstanceContext, assemblyClassGenerator,
-				JavaType.createGenericList(itemInstanceContext.getJavaType()));
-	}
+public class ListInstanceGenerator extends AbstractModelItemPropertyGenerator<ListJavaType> {
+  public ListInstanceGenerator(ModelInstance modelInstance, JavaType itemJavaType,
+      AssemblyClassGenerator assemblyClassGenerator) {
+    super(modelInstance, assemblyClassGenerator, JavaType.createGenericList(itemJavaType));
+  }
 }

@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
@@ -28,9 +29,9 @@ import gov.nist.secauto.metaschema.datatype.Hostname;
 
 public class HostnameAdapter extends SimpleJavaTypeAdapter<Hostname> {
 
-	@Override
-	public Hostname parse(String value) throws BindingException {
-		return new Hostname(value);
-	}
+  @Override
+  public Hostname parse(String value) throws BindingException {
+    return new Hostname(value);
+  }
 
 }

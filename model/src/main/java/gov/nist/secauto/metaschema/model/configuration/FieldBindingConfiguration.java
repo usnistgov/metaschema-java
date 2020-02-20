@@ -20,20 +20,21 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.configuration;
 
 import java.util.List;
 
-public class FieldBindingConfiguration extends AbstractManagedObjectBingingConfiguration {
+public class FieldBindingConfiguration extends AbstractManagedObjectBindingConfiguration {
 
-	public static final FieldBindingConfiguration NULL_CONFIG;
-	static {
-		NULL_CONFIG = new FieldBindingConfiguration(null, null, null);
-	}
+  public static final FieldBindingConfiguration NULL_CONFIG;
 
-	public FieldBindingConfiguration(String className, String baseClass,
-			List<String> interfacesToImplement) {
-		super(className, baseClass, interfacesToImplement);
-	}
+  static {
+    NULL_CONFIG = new FieldBindingConfiguration(null, null, null);
+  }
+
+  public FieldBindingConfiguration(String className, String baseClass, List<String> interfacesToImplement) {
+    super(className, baseClass, interfacesToImplement);
+  }
 
 }

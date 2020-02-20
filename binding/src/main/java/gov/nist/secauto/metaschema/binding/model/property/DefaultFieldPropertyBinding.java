@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
@@ -28,43 +29,43 @@ import gov.nist.secauto.metaschema.binding.io.xml.parser.DefaultXmlObjectPropert
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 
 public class DefaultFieldPropertyBinding extends AbstractModelItemPropertyBinding implements FieldPropertyBinding {
-	
-	private final Field fieldAnnotation;
 
-	public DefaultFieldPropertyBinding(PropertyInfo propertyInfo, Field fieldAnnotation) {
-		super(propertyInfo, fieldAnnotation.name(), fieldAnnotation.namespace());
-		this.fieldAnnotation = fieldAnnotation;
-	}
+  private final Field fieldAnnotation;
 
-	@Override
-	public PropertyBindingType getPropertyBindingType() {
-		return PropertyBindingType.FIELD;
-	}
+  public DefaultFieldPropertyBinding(PropertyInfo propertyInfo, Field fieldAnnotation) {
+    super(propertyInfo, fieldAnnotation.name(), fieldAnnotation.namespace());
+    this.fieldAnnotation = fieldAnnotation;
+  }
 
-	@Override
-	public boolean isWrappedInXml() {
-		return getFieldAnnotation().inXmlWrapped();
-	}
+  @Override
+  public PropertyBindingType getPropertyBindingType() {
+    return PropertyBindingType.FIELD;
+  }
 
-	protected Field getFieldAnnotation() {
-		return fieldAnnotation;
-	}
+  @Override
+  public boolean isWrappedInXml() {
+    return getFieldAnnotation().inXmlWrapped();
+  }
 
-	@Override
-	public DefaultXmlObjectPropertyParser newXmlPropertyParser(BindingContext bindingContext) throws BindingException {
-		return new DefaultXmlObjectPropertyParser(this, bindingContext);
-	}
+  protected Field getFieldAnnotation() {
+    return fieldAnnotation;
+  }
 
-	@Override
-	public int getMinimumOccurance() {
-		PropertyInfo propertyInfo = getPropertyInfo();
+  @Override
+  public DefaultXmlObjectPropertyParser newXmlPropertyParser(BindingContext bindingContext) throws BindingException {
+    return new DefaultXmlObjectPropertyParser(this, bindingContext);
+  }
 
-		int retval;
-		if (propertyInfo instanceof CollectionPropertyInfo) {
-			retval = ((CollectionPropertyInfo)propertyInfo).getMinimumOccurance();
-		} else {
-			retval = getFieldAnnotation().required() ? 1 : 0;
-		}
-		return retval;
-	}
+  @Override
+  public int getMinimumOccurance() {
+    PropertyInfo propertyInfo = getPropertyInfo();
+
+    int retval;
+    if (propertyInfo instanceof CollectionPropertyInfo) {
+      retval = ((CollectionPropertyInfo) propertyInfo).getMinimumOccurance();
+    } else {
+      retval = getFieldAnnotation().required() ? 1 : 0;
+    }
+    return retval;
+  }
 }

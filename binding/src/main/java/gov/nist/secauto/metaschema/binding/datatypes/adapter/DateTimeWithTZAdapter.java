@@ -20,19 +20,20 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
-import java.time.ZonedDateTime;
+package gov.nist.secauto.metaschema.binding.datatypes.adapter;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.SimpleJavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatype.DateTimeTimeZone;
 
+import java.time.ZonedDateTime;
+
 public class DateTimeWithTZAdapter extends SimpleJavaTypeAdapter<DateTimeTimeZone> {
 
-	@Override
-	public DateTimeTimeZone parse(String value) throws BindingException {
-		return new DateTimeTimeZone(ZonedDateTime.parse(value));
-	}
+  @Override
+  public DateTimeTimeZone parse(String value) throws BindingException {
+    return new DateTimeTimeZone(ZonedDateTime.parse(value));
+  }
 
 }

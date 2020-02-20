@@ -123,6 +123,8 @@ class MapPropertyValueHandlerTest {
 			assertEquals(count != i + 1, propertyValueHandler.parseNextFieldValue(parsingContext), "when parsing item #"+i);
 		}
 
+		currentToken = parser.currentToken();
+
 		@SuppressWarnings("unchecked")
 		LinkedHashMap<String, Integer> objects = (LinkedHashMap<String, Integer>) propertyValueHandler.getObjectSupplier().get();
 		List<Integer> values = new ArrayList<>(objects.values());
@@ -130,7 +132,7 @@ class MapPropertyValueHandlerTest {
 			assertEquals(i, values.get(i));
 		}
 
-		assertEquals(JsonToken.END_OBJECT, parser.currentToken());
+		assertEquals(JsonToken.END_OBJECT, currentToken);
 		assertNull(parser.nextToken());
 	}
 

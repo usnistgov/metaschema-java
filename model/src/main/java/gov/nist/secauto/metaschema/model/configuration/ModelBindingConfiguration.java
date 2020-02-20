@@ -20,22 +20,24 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.configuration;
 
 public class ModelBindingConfiguration implements BindingConfiguration {
 
-	public static final ModelBindingConfiguration NULL_CONFIG;
-	static {
-		NULL_CONFIG = new ModelBindingConfiguration(null);
-	}
+  public static final ModelBindingConfiguration NULL_CONFIG;
 
-	private final String packageName;
+  static {
+    NULL_CONFIG = new ModelBindingConfiguration(null);
+  }
 
-	public ModelBindingConfiguration(String packageName) {
-		this.packageName = packageName;
-	}
+  private final String packageName;
 
-	public String getPackageName() {
-		return packageName;
-	}
+  public ModelBindingConfiguration(String packageName) {
+    this.packageName = packageName;
+  }
+
+  public String getPackageName() {
+    return packageName;
+  }
 }

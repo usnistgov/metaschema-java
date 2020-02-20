@@ -54,21 +54,47 @@
 				<version>2.3.3</version>
 				<executions>
 					<execution>
+						<id>metaschema</id>
 						<goals>
 							<goal>xmlbeans</goal>
 						</goals>
+						<configuration>
+							<!-- TODO: update to a perminant location -->
+							<schemaDirectory>${project.basedir}/../../../schema</schemaDirectory>
+							<noUpa>false</noUpa>
+							<javaSource>1.5</javaSource>
+							<noJavac>true</noJavac>
+							<sourceGenerationDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceGenerationDirectory>
+							<!-- <classGenerationDirectory>${project.build.directory}/generated-classes/xmlbeans</classGenerationDirectory> -->
+							<xmlConfigs>
+								<xmlConfig implementation="java.io.File">${project.basedir}/src/main/xsdconfig/metaschema.xsdconfig</xmlConfig>
+							</xmlConfigs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>metaschema-config</id>
+						<goals>
+							<goal>xmlbeans</goal>
+						</goals>
+						<configuration>
+							<schemaDirectory>${project.basedir}/../../../schema</schemaDirectory>
+							<noUpa>false</noUpa>
+							<javaSource>1.5</javaSource>
+							<noJavac>true</noJavac>
+							<sourceGenerationDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceGenerationDirectory>
+							<!-- <classGenerationDirectory>${project.build.directory}/generated-classes/xmlbeans</classGenerationDirectory> -->
+							<xmlConfigs>
+								<xmlConfig implementation="java.io.File">${project.basedir}/src/main/xsdconfig/metaschema.xsdconfig</xmlConfig>
+							</xmlConfigs>
+						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
-					<schemaDirectory>${project.basedir}/../../../schema</schemaDirectory>
-					<noUpa>false</noUpa>
-					<javaSource>1.5</javaSource>
-					<noJavac>true</noJavac>
-					<sourceGenerationDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceGenerationDirectory>
-					<!-- <classGenerationDirectory>${project.build.directory}/generated-classes/xmlbeans</classGenerationDirectory> -->
-					<xmlConfigs>
-						<xmlConfig implementation="java.io.File">${project.basedir}/src/main/xsdconfig/metaschema.xsdconfig</xmlConfig>
-					</xmlConfigs>
+					<excludes>${project.build.directory}/generated-sources/xmlbeans/**/*</excludes>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -20,7 +20,12 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding;
+
+import gov.nist.secauto.metaschema.binding.io.Configuration;
+import gov.nist.secauto.metaschema.binding.io.Serializer;
+import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -29,29 +34,25 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 
-import gov.nist.secauto.metaschema.binding.io.Configuration;
-import gov.nist.secauto.metaschema.binding.io.Serializer;
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-
 abstract class AbstractSerializer<CLASS> extends AbstractSerializationBase<CLASS> implements Serializer<CLASS> {
 
-	public AbstractSerializer(BindingContext bindingContext, AssemblyClassBinding<CLASS> classBinding,
-			Configuration configuration) {
-		super(bindingContext, classBinding, configuration);
-	}
+  public AbstractSerializer(BindingContext bindingContext, AssemblyClassBinding<CLASS> classBinding,
+      Configuration configuration) {
+    super(bindingContext, classBinding, configuration);
+  }
 
-	@Override
-	public void serialize(CLASS data, OutputStream out) throws BindingException {
-		serialize(data, new OutputStreamWriter(out));
-	}
+  @Override
+  public void serialize(CLASS data, OutputStream out) throws BindingException {
+    serialize(data, new OutputStreamWriter(out));
+  }
 
-	@Override
-	public void serialize(CLASS data, File file) throws BindingException {
-		try (FileWriter writer = new FileWriter(file, Charset.forName("UTF-8"))) {
-			serialize(data, writer);
-		} catch (IOException ex) {
-			throw new BindingException("Unable to open file: " + file != null ? file.getPath() : "{null}", ex);
-		}
-	}
+  @Override
+  public void serialize(CLASS data, File file) throws BindingException {
+    try (FileWriter writer = new FileWriter(file, Charset.forName("UTF-8"))) {
+      serialize(data, writer);
+    } catch (IOException ex) {
+      throw new BindingException("Unable to open file: " + file != null ? file.getPath() : "{null}", ex);
+    }
+  }
 
 }

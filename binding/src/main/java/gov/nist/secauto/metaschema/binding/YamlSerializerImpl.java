@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -29,15 +30,14 @@ import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 
 class YamlSerializerImpl<CLASS> extends AbstractJsonSerializer<CLASS> {
 
-	public YamlSerializerImpl(BindingContext bindingContext, AssemblyClassBinding<CLASS> classBinding,
-			Configuration configuration) {
-		super(bindingContext, classBinding, configuration);
-	}
+  public YamlSerializerImpl(BindingContext bindingContext, AssemblyClassBinding<CLASS> classBinding,
+      Configuration configuration) {
+    super(bindingContext, classBinding, configuration);
+  }
 
-	@Override
-	protected JsonFactory getJsonFactoryInstance() {
-		return YamlFactoryFactory.singletonInstance();
-	}
+  @Override
+  protected JsonFactory getJsonFactoryInstance() {
+    return YamlFactoryFactory.singletonInstance();
+  }
 
-	
 }

@@ -20,17 +20,18 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.datatype;
 
 public class Hostname extends AbstractStringDatatype<Hostname> {
 
-	public Hostname(String value) {
-		super(value);
-	}
+  public Hostname(String value) {
+    super(value);
+  }
 
-	@Override
-	public Hostname copy() {
-		return new Hostname(getValue());
-	}
+  @Override
+  public Hostname copy() {
+    return new Hostname(getValue());
+  }
 
 }

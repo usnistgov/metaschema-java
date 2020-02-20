@@ -20,25 +20,26 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 
 public abstract class AbstractPropertyCollector<INFO extends PropertyInfo> implements PropertyCollector {
-	private final INFO propertyInfo;
+  private final INFO propertyInfo;
 
-	protected AbstractPropertyCollector(INFO propertyInfo) {
-		this.propertyInfo = propertyInfo;
-	}
+  protected AbstractPropertyCollector(INFO propertyInfo) {
+    this.propertyInfo = propertyInfo;
+  }
 
-	public INFO getPropertyInfo() {
-		return propertyInfo;
-	}
+  public INFO getPropertyInfo() {
+    return propertyInfo;
+  }
 
-	protected abstract Object getCollection();
+  protected abstract Object getCollection();
 
-	@Override
-	public void applyCollection(Object obj) throws BindingException {
-		getPropertyInfo().setValue(obj, getCollection());
-	}
+  @Override
+  public void applyCollection(Object obj) throws BindingException {
+    getPropertyInfo().setValue(obj, getCollection());
+  }
 }

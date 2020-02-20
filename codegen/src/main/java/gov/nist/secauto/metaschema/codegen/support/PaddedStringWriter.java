@@ -20,24 +20,25 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.codegen.support;
 
 import java.io.StringWriter;
 
 public class PaddedStringWriter extends StringWriter {
-	private final String linePadding;
+  private final String linePadding;
 
-	public PaddedStringWriter(String linePadding) {
-		this.linePadding = linePadding;
-	}
+  public PaddedStringWriter(String linePadding) {
+    this.linePadding = linePadding;
+  }
 
-	public PaddedStringWriter(String linePadding, int initialSize) {
-		super(initialSize);
-		this.linePadding = linePadding;
-	}
+  public PaddedStringWriter(String linePadding, int initialSize) {
+    super(initialSize);
+    this.linePadding = linePadding;
+  }
 
-	protected String getLinePadding() {
-		return linePadding;
-	}
+  protected String getLinePadding() {
+    return linePadding;
+  }
 
 }

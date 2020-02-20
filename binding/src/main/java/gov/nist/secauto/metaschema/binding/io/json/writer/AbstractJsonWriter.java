@@ -20,22 +20,24 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.io.json.writer;
 
-import java.util.Objects;
+package gov.nist.secauto.metaschema.binding.io.json.writer;
 
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 
-public abstract class AbstractJsonWriter<CLASS, CLASS_BINDING extends ClassBinding<CLASS>> implements JsonWriter<CLASS> {
-	private final CLASS_BINDING classBinding;
+import java.util.Objects;
 
-	public AbstractJsonWriter(CLASS_BINDING classBinding) {
-		Objects.requireNonNull(classBinding, "classBinding");
-		this.classBinding = classBinding;
-	}
+public abstract class AbstractJsonWriter<CLASS, CLASS_BINDING extends ClassBinding<CLASS>>
+    implements JsonWriter<CLASS> {
+  private final CLASS_BINDING classBinding;
 
-	public CLASS_BINDING getClassBinding() {
-		return classBinding;
-	}
+  public AbstractJsonWriter(CLASS_BINDING classBinding) {
+    Objects.requireNonNull(classBinding, "classBinding");
+    this.classBinding = classBinding;
+  }
+
+  public CLASS_BINDING getClassBinding() {
+    return classBinding;
+  }
 
 }

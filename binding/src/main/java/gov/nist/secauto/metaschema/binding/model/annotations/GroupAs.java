@@ -20,6 +20,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
 import static java.lang.annotation.ElementType.FIELD;
@@ -32,30 +33,32 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target({ FIELD, METHOD })
 public @interface GroupAs {
-	/**
-	 * Name of the XML Schema element.
-	 * <p>
-	 * If the value is "##default", then element name is derived from the JavaBean
-	 * property name.
-	 */
-	String name() default "##default";
+  /**
+   * Name of the XML Schema element.
+   * <p>
+   * If the value is "##default", then element name is derived from the JavaBean property name.
+   */
+  String name() default "##default";
 
-	/**
-	 * XML target namespace of the XML Schema element.
-	 */
-	String namespace() default "##default";
+  /**
+   * XML target namespace of the XML Schema element.
+   */
+  String namespace() default "##default";
 
-	/**
-	 * A non-negative number that indicates the minimum occurrence of the element.
-	 */
-	int minOccurs() default 0;
+  /**
+   * A non-negative number that indicates the minimum occurrence of the element.
+   */
+  int minOccurs() default 0;
 
-	/**
-	 * A number that indicates the maximum occurrence of the element. The value must be a positive number or {@code -1} to indicate "unbounded".
-	 * @return
-	 */
-	int maxOccurs() default 1;
+  /**
+   * A number that indicates the maximum occurrence of the element. The value must be a positive
+   * number or {@code -1} to indicate "unbounded".
+   * 
+   * @return
+   */
+  int maxOccurs() default 1;
 
-	JsonGroupAsBehavior inJson() default JsonGroupAsBehavior.SINGLETON_OR_LIST;
-	XmlGroupAsBehavior inXml() default XmlGroupAsBehavior.UNGROUPED;
+  JsonGroupAsBehavior inJson() default JsonGroupAsBehavior.SINGLETON_OR_LIST;
+
+  XmlGroupAsBehavior inXml() default XmlGroupAsBehavior.UNGROUPED;
 }

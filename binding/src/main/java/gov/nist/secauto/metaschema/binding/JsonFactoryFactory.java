@@ -20,23 +20,24 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding;
 
 import com.fasterxml.jackson.core.JsonFactory;
 
 class JsonFactoryFactory {
-	private static final JsonFactory singletonInstance = newJsonFactoryInstance();
+  private static final JsonFactory singletonInstance = newJsonFactoryInstance();
 
-	private JsonFactoryFactory() {
-		// disable construction
-	}
+  private JsonFactoryFactory() {
+    // disable construction
+  }
 
-	public static JsonFactory newJsonFactoryInstance() {
-		return new JsonFactory();
-	}
+  public static JsonFactory newJsonFactoryInstance() {
+    return new JsonFactory();
+  }
 
-	public static JsonFactory singletonInstance() {
-		return singletonInstance;
-	}
+  public static JsonFactory singletonInstance() {
+    return singletonInstance;
+  }
 
 }

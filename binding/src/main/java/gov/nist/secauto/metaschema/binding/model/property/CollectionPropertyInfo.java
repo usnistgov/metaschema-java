@@ -20,22 +20,27 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.model.property;
 
-import javax.xml.namespace.QName;
+package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlGroupAsBehavior;
 
+import javax.xml.namespace.QName;
+
 public interface CollectionPropertyInfo extends PropertyInfo {
 
-	boolean isList();
-	boolean isMap();
+  boolean isList();
 
-	QName getGroupXmlQName();
+  boolean isMap();
 
-	XmlGroupAsBehavior getXmlGroupAsBehavior();
-	JsonGroupAsBehavior getJsonGroupAsBehavior();
-	int getMinimumOccurance();
-	int getMaximumOccurance();
+  QName getGroupXmlQName();
+
+  XmlGroupAsBehavior getXmlGroupAsBehavior();
+
+  JsonGroupAsBehavior getJsonGroupAsBehavior();
+
+  int getMinimumOccurance();
+
+  int getMaximumOccurance();
 }
