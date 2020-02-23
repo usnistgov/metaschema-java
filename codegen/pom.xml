@@ -15,6 +15,11 @@
 	<name>Metaschema Java Code Generator</name>
 	<url>http://maven.apache.org</url>
 
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
@@ -25,11 +30,6 @@
 			<artifactId>binding</artifactId>
 		</dependency>
 
-		<!-- <dependency> -->
-		<!-- <groupId>com.sun.xml.bind</groupId> -->
-		<!-- <artifactId>jaxb-core</artifactId> -->
-		<!-- <scope>test</scope> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>javax.activation</groupId>
 			<artifactId>activation</artifactId>
@@ -44,6 +44,12 @@
 			<version>2.3.4</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.jmock</groupId> -->
+		<!-- <artifactId>jmock-junit5</artifactId> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
+
 	</dependencies>
 	<build>
 		<plugins>
