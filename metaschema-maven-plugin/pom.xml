@@ -4,8 +4,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>parent</artifactId>
 		<groupId>gov.nist.secauto.metaschema</groupId>
+		<artifactId>metaschema-framework</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
@@ -13,17 +13,12 @@
 
 	<packaging>maven-plugin</packaging>
 
-	<name>metaschema-maven-plugin Maven Plugin</name>
-
-	<!-- FIXME change it to the project's website -->
-	<url>http://maven.apache.org</url>
+	<name>Metaschema Maven Plugin</name>
+	<url>https://pages.nist.gov/metaschema</url>
 
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-
 		<mojo.maven.version>3.0.5</mojo.maven.version>
-		<mojo.java.target>1.8</mojo.java.target>
+		<mojo.java.target>${maven.compiler.target}</mojo.java.target>
 		<dependency.plexus-utils.version>3.1.0</dependency.plexus-utils.version>
 		<dependency.plexus-build-api.version>0.0.7</dependency.plexus-build-api.version>
 		<dependency.maven-shared-incremental.version>1.1</dependency.maven-shared-incremental.version>
@@ -32,7 +27,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>codegen</artifactId>
+			<artifactId>metaschema-java-codegen</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

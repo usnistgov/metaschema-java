@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>gov.nist.secauto.metaschema</groupId>
+		<artifactId>metaschema-framework</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>metaschema-model</artifactId>
+
+	<name>Metaschema Model</name>
+	<url>https://pages.nist.gov/metaschema</url>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>metaschema-java-datatypes</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>xml-resolver</groupId>
+			<artifactId>xml-resolver</artifactId>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-jul</artifactId>
+		</dependency>
+
+		<!-- Used to generate Java class, field, package, etc. names -->
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xmlbeans-maven-plugin</artifactId>
+				<version>2.3.3</version>
+				<executions>
+					<execution>
+						<id>metaschema</id>
+						<goals>
+							<goal>xmlbeans</goal>
+						</goals>
+						<configuration>
+							<!-- TODO: update to a perminant location -->
+							<schemaDirectory>${project.basedir}/../../../schema</schemaDirectory>
+							<noUpa>false</noUpa>
+							<javaSource>1.5</javaSource>
+							<noJavac>true</noJavac>
+							<sourceGenerationDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceGenerationDirectory>
+							<!-- <classGenerationDirectory>${project.build.directory}/generated-classes/xmlbeans</classGenerationDirectory> -->
+							<xmlConfigs>
+								<xmlConfig implementation="java.io.File">${project.basedir}/src/main/xsdconfig/metaschema.xsdconfig</xmlConfig>
+							</xmlConfigs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>metaschema-config</id>
+						<goals>
+							<goal>xmlbeans</goal>
+						</goals>
+						<configuration>
+							<schemaDirectory>${project.basedir}/../../../schema</schemaDirectory>
+							<noUpa>false</noUpa>
+							<javaSource>1.5</javaSource>
+							<noJavac>true</noJavac>
+							<sourceGenerationDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceGenerationDirectory>
+							<!-- <classGenerationDirectory>${project.build.directory}/generated-classes/xmlbeans</classGenerationDirectory> -->
+							<xmlConfigs>
+								<xmlConfig implementation="java.io.File">${project.basedir}/src/main/xsdconfig/metaschema.xsdconfig</xmlConfig>
+							</xmlConfigs>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.xmlbeans</groupId>
+						<artifactId>xmlbeans</artifactId>
+						<version>${dependency.xmlbeans.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<configuration>
+					<excludes>${project.build.directory}/generated-sources/xmlbeans/**/*</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

@@ -9,42 +9,48 @@
 		<version>15-SNAPSHOT</version>
 	</parent>
 	<groupId>gov.nist.secauto.metaschema</groupId>
-	<artifactId>parent</artifactId>
+	<artifactId>metaschema-framework</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
-	<name>Metaschema Schema Generator</name>
+
+	<name>Metaschema Framework Parent</name>
+	<description>A common build root for all NIST projects related to the Metaschema framework.</description>
+	<url>https://pages.nist.gov/metaschema</url>
 
 	<properties>
-		<maven.compiler.source>11</maven.compiler.source>
-		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.source>9</maven.compiler.source>
+		<maven.compiler.target>9</maven.compiler.target>
+		<maven.compiler.release>9</maven.compiler.release>
+		
 
 		<dependency.flexmark.version>0.50.46</dependency.flexmark.version>
 		<dependency.jackson.version>2.10.1</dependency.jackson.version>
 		<dependency.log4j2.version>2.12.1</dependency.log4j2.version>
 		<dependency.junit5.version>5.6.0</dependency.junit5.version>
+		<dependency.xmlbeans.version>3.1.0</dependency.xmlbeans.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>model</artifactId>
+				<artifactId>metaschema-model</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>markup</artifactId>
+				<artifactId>metaschema-java-datatypes</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>binding</artifactId>
+				<artifactId>metaschema-java-binding</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>codegen</artifactId>
+				<artifactId>metaschema-java-codegen</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
@@ -237,11 +243,10 @@
 	</build>
 
 	<modules>
-		<module>model</module>
-		<module>binding</module>
-		<module>codegen</module>
-		<module>markup</module>
+		<module>metaschema-model</module>
+		<module>metaschema-java-binding</module>
+		<module>metaschema-java-codegen</module>
+		<module>metaschema-java-datatypes</module>
 		<module>metaschema-maven-plugin</module>
-		<module>support</module>
-	</modules>
+</modules>
 </project>
