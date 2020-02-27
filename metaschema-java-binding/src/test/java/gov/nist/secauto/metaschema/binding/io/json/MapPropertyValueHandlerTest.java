@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.io.json;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,181 +60,183 @@ import gov.nist.secauto.metaschema.binding.model.property.PropertyInfo;
 
 class MapPropertyValueHandlerTest {
 
-	@RegisterExtension
-	JUnit5Mockery context = new JUnit5Mockery();
+  @RegisterExtension
+  JUnit5Mockery context = new JUnit5Mockery();
 
-	@Mock
-	BindingContext bindingContext;
-	@Mock
-	ClassBinding<?> classBinding;
-	@Mock
-	JsonParsingContext parsingContext;
-	@Mock
-	PropertyBinding propertyBinding;
-	@Mock
-	PropertyInfo propertyInfo;
-	@Mock
-	ClassBinding<?> itemClassBinding;
-	@Mock
-	FlagPropertyBinding jsonKeyPropertyBinding;
-	@Mock
-	PropertyInfo jsonKeyPropertyInfo;
-	@Mock
-	JavaTypeAdapter<String> stringJavaTypeAdapter;
+  @Mock
+  BindingContext bindingContext;
+  @Mock
+  ClassBinding<?> classBinding;
+  @Mock
+  JsonParsingContext parsingContext;
+  @Mock
+  PropertyBinding propertyBinding;
+  @Mock
+  PropertyInfo propertyInfo;
+  @Mock
+  ClassBinding<?> itemClassBinding;
+  @Mock
+  FlagPropertyBinding jsonKeyPropertyBinding;
+  @Mock
+  PropertyInfo jsonKeyPropertyInfo;
+  @Mock
+  JavaTypeAdapter<String> stringJavaTypeAdapter;
 
-	PropertyItemHandler newPropertyItemHandler(PropertyBinding propertyBinding) {
-		return new PropertyItemHandler() {
-			private int count = 0;
+  PropertyItemHandler newPropertyItemHandler(PropertyBinding propertyBinding) {
+    return new PropertyItemHandler() {
+      private int count = 0;
 
-			@Override
-			public PropertyBinding getPropertyBinding() {
-				return propertyBinding;
-			}
+      @Override
+      public PropertyBinding getPropertyBinding() {
+        return propertyBinding;
+      }
 
-			@Override
-			public List<Object> parse(JsonParsingContext parsingContext, PropertyBindingFilter filter)
-					throws BindingException, IOException {
-				JsonParser parser = parsingContext.getEventReader();
-				assertEquals(JsonToken.START_OBJECT, parser.currentToken());
-				JsonUtil.readNextToken(parser, JsonToken.FIELD_NAME);
-				assertEquals("data", parser.currentName());
-				JsonUtil.readNextToken(parser, JsonToken.VALUE_STRING);
-				assertEquals("value", parser.getText());
-				JsonUtil.readNextToken(parser, JsonToken.END_OBJECT);
-				parser.nextToken();
-				return Collections.singletonList(Integer.valueOf(count++));
-			}
+      @Override
+      public List<Object> parse(JsonParsingContext parsingContext, PropertyBindingFilter filter)
+          throws BindingException, IOException {
+        JsonParser parser = parsingContext.getEventReader();
+        assertEquals(JsonToken.START_OBJECT, parser.currentToken());
+        JsonUtil.readNextToken(parser, JsonToken.FIELD_NAME);
+        assertEquals("data", parser.currentName());
+        JsonUtil.readNextToken(parser, JsonToken.VALUE_STRING);
+        assertEquals("value", parser.getText());
+        JsonUtil.readNextToken(parser, JsonToken.END_OBJECT);
+        parser.nextToken();
+        return Collections.singletonList(Integer.valueOf(count++));
+      }
 
-			@Override
-			public void writeValue(Object value, JsonWritingContext writingContext, PropertyBindingFilter filter)
-					throws BindingException, IOException {
-				throw new UnsupportedOperationException();
-			}
+      @Override
+      public void writeValue(Object value, JsonWritingContext writingContext, PropertyBindingFilter filter)
+          throws BindingException, IOException {
+        throw new UnsupportedOperationException();
+      }
 
-		};
-	}
+    };
+  }
 
-	private void parseProperty(JsonParser parser, PropertyValueHandler propertyValueHandler, int count)
-			throws IOException, BindingException {
-		JsonToken currentToken = JsonUtil.readNextToken(parser, JsonToken.START_OBJECT);
-		currentToken = JsonUtil.readNextToken(parser, JsonToken.FIELD_NAME);
-		assertEquals("property", parser.currentName());
+  private void parseProperty(JsonParser parser, PropertyValueHandler propertyValueHandler, int count)
+      throws IOException, BindingException {
+    JsonToken currentToken = JsonUtil.readNextToken(parser, JsonToken.START_OBJECT);
+    currentToken = JsonUtil.readNextToken(parser, JsonToken.FIELD_NAME);
+    assertEquals("property", parser.currentName());
 
-		// advance to value
-		currentToken = parser.nextToken();
+    // advance to value
+    currentToken = parser.nextToken();
 
-		for (int i = 0; i < count; i++) {
-			assertEquals(count != i + 1, propertyValueHandler.parseNextFieldValue(parsingContext), "when parsing item #"+i);
-		}
+    for (int i = 0; i < count; i++) {
+      assertEquals(count != i + 1, propertyValueHandler.parseNextFieldValue(parsingContext), "when parsing item #" + i);
+    }
 
-		currentToken = parser.currentToken();
+    currentToken = parser.currentToken();
 
-		@SuppressWarnings("unchecked")
-		LinkedHashMap<String, Integer> objects = (LinkedHashMap<String, Integer>) propertyValueHandler.getObjectSupplier().get();
-		List<Integer> values = new ArrayList<>(objects.values());
-		for (int i = 0; i < count; i++) {
-			assertEquals(i, values.get(i));
-		}
+    @SuppressWarnings("unchecked")
+    LinkedHashMap<String, Integer> objects
+        = (LinkedHashMap<String, Integer>) propertyValueHandler.getObjectSupplier().get();
+    List<Integer> values = new ArrayList<>(objects.values());
+    for (int i = 0; i < count; i++) {
+      assertEquals(i, values.get(i));
+    }
 
-		assertEquals(JsonToken.END_OBJECT, currentToken);
-		assertNull(parser.nextToken());
-	}
+    assertEquals(JsonToken.END_OBJECT, currentToken);
+    assertNull(parser.nextToken());
+  }
 
-	@SuppressWarnings("unchecked")
-	@Test
-	void testSingleton() throws BindingException, IOException {
+  @SuppressWarnings("unchecked")
+  @Test
+  void testSingleton() throws BindingException, IOException {
 
-		InputStream is = MapPropertyValueHandlerTest.class.getResourceAsStream("map-singleton.json");
-		JsonParser jsonParser = new JsonFactory().createParser(is);
+    InputStream is = MapPropertyValueHandlerTest.class.getResourceAsStream("map-singleton.json");
+    JsonParser jsonParser = new JsonFactory().createParser(is);
 
-		context.checking(new Expectations() {
-			{
-				allowing(bindingContext).getClassBinding(with(any(Class.class)));
-				will(returnValue(itemClassBinding));
-				allowing(bindingContext).getJavaTypeAdapter(with(any(Class.class)));
-				will(returnValue(stringJavaTypeAdapter));
+    context.checking(new Expectations() {
+      {
+        allowing(bindingContext).getClassBinding(with(any(Class.class)));
+        will(returnValue(itemClassBinding));
+        allowing(bindingContext).getJavaTypeAdapter(with(any(Class.class)));
+        will(returnValue(stringJavaTypeAdapter));
 
-				allowing(itemClassBinding).getJsonKeyFlagPropertyBinding();
-				will(returnValue(jsonKeyPropertyBinding));
-				allowing(jsonKeyPropertyBinding).getPropertyInfo();
-				will(returnValue(jsonKeyPropertyInfo));
-				allowing(jsonKeyPropertyInfo).getSimpleName();
-				will(returnValue("_json_key"));
-				allowing(jsonKeyPropertyInfo).getItemType();
-				will(returnValue(String.class));
-				allowing(jsonKeyPropertyInfo).setValue(with(any(Object.class)), with(any(Object.class)));
+        allowing(itemClassBinding).getJsonKeyFlagPropertyBinding();
+        will(returnValue(jsonKeyPropertyBinding));
+        allowing(jsonKeyPropertyBinding).getPropertyInfo();
+        will(returnValue(jsonKeyPropertyInfo));
+        allowing(jsonKeyPropertyInfo).getSimpleName();
+        will(returnValue("_json_key"));
+        allowing(jsonKeyPropertyInfo).getItemType();
+        will(returnValue(String.class));
+        allowing(jsonKeyPropertyInfo).setValue(with(any(Object.class)), with(any(Object.class)));
 
-				allowing(stringJavaTypeAdapter).parse(with(any(String.class)));
+        allowing(stringJavaTypeAdapter).parse(with(any(String.class)));
 
-				allowing(parsingContext).getEventReader();
-				will(returnValue(jsonParser));
-				allowing(parsingContext).getBindingContext();
-				will(returnValue(bindingContext));
+        allowing(parsingContext).getEventReader();
+        will(returnValue(jsonParser));
+        allowing(parsingContext).getBindingContext();
+        will(returnValue(bindingContext));
 
-				allowing(classBinding).getClazz();
-				will(returnValue(Object.class));
+        allowing(classBinding).getClazz();
+        will(returnValue(Object.class));
 
-				allowing(propertyBinding).getPropertyInfo();
-				will(returnValue(propertyInfo));
-				allowing(propertyInfo).getSimpleName();
-				will(returnValue("_property"));
-				allowing(propertyInfo).getItemType();
-				will(returnValue(Integer.class));
-			}
-		});
+        allowing(propertyBinding).getPropertyInfo();
+        will(returnValue(propertyInfo));
+        allowing(propertyInfo).getSimpleName();
+        will(returnValue("_property"));
+        allowing(propertyInfo).getItemType();
+        will(returnValue(Integer.class));
+      }
+    });
 
-		PropertyItemHandler propertyItemHandler = newPropertyItemHandler(propertyBinding);
-		PropertyValueHandler handler = new MapPropertyValueHandler(classBinding, propertyItemHandler, bindingContext);
-		parseProperty(jsonParser, handler, 1);
-		context.assertIsSatisfied();
-	}
+    PropertyItemHandler propertyItemHandler = newPropertyItemHandler(propertyBinding);
+    PropertyValueHandler handler = new MapPropertyValueHandler(classBinding, propertyItemHandler, bindingContext);
+    parseProperty(jsonParser, handler, 1);
+    context.assertIsSatisfied();
+  }
 
-	@SuppressWarnings("unchecked")
-	@Test
-	void testSequence() throws BindingException, IOException {
+  @SuppressWarnings("unchecked")
+  @Test
+  void testSequence() throws BindingException, IOException {
 
-		JsonParser jsonParser = new JsonFactory().createParser(MapPropertyValueHandlerTest.class.getResourceAsStream("map-sequence.json"));
+    JsonParser jsonParser
+        = new JsonFactory().createParser(MapPropertyValueHandlerTest.class.getResourceAsStream("map-sequence.json"));
 
-		context.checking(new Expectations() {
-			{
-				allowing(bindingContext).getClassBinding(with(any(Class.class)));
-				will(returnValue(itemClassBinding));
-				allowing(bindingContext).getJavaTypeAdapter(with(any(Class.class)));
-				will(returnValue(stringJavaTypeAdapter));
+    context.checking(new Expectations() {
+      {
+        allowing(bindingContext).getClassBinding(with(any(Class.class)));
+        will(returnValue(itemClassBinding));
+        allowing(bindingContext).getJavaTypeAdapter(with(any(Class.class)));
+        will(returnValue(stringJavaTypeAdapter));
 
-				allowing(itemClassBinding).getJsonKeyFlagPropertyBinding();
-				will(returnValue(jsonKeyPropertyBinding));
-				allowing(jsonKeyPropertyBinding).getPropertyInfo();
-				will(returnValue(jsonKeyPropertyInfo));
-				allowing(jsonKeyPropertyInfo).getSimpleName();
-				will(returnValue("_json_key"));
-				allowing(jsonKeyPropertyInfo).getItemType();
-				will(returnValue(String.class));
-				allowing(jsonKeyPropertyInfo).setValue(with(any(Object.class)), with(any(Object.class)));
+        allowing(itemClassBinding).getJsonKeyFlagPropertyBinding();
+        will(returnValue(jsonKeyPropertyBinding));
+        allowing(jsonKeyPropertyBinding).getPropertyInfo();
+        will(returnValue(jsonKeyPropertyInfo));
+        allowing(jsonKeyPropertyInfo).getSimpleName();
+        will(returnValue("_json_key"));
+        allowing(jsonKeyPropertyInfo).getItemType();
+        will(returnValue(String.class));
+        allowing(jsonKeyPropertyInfo).setValue(with(any(Object.class)), with(any(Object.class)));
 
-				allowing(stringJavaTypeAdapter).parse(with(any(String.class)));
+        allowing(stringJavaTypeAdapter).parse(with(any(String.class)));
 
-				allowing(parsingContext).getEventReader();
-				will(returnValue(jsonParser));
-				allowing(parsingContext).getBindingContext();
-				will(returnValue(bindingContext));
+        allowing(parsingContext).getEventReader();
+        will(returnValue(jsonParser));
+        allowing(parsingContext).getBindingContext();
+        will(returnValue(bindingContext));
 
-				allowing(classBinding).getClazz();
-				will(returnValue(Object.class));
+        allowing(classBinding).getClazz();
+        will(returnValue(Object.class));
 
-				allowing(propertyBinding).getPropertyInfo();
-				will(returnValue(propertyInfo));
-				allowing(propertyInfo).getSimpleName();
-				will(returnValue("_property"));
-				allowing(propertyInfo).getItemType();
-				will(returnValue(Integer.class));
-			}
-		});
+        allowing(propertyBinding).getPropertyInfo();
+        will(returnValue(propertyInfo));
+        allowing(propertyInfo).getSimpleName();
+        will(returnValue("_property"));
+        allowing(propertyInfo).getItemType();
+        will(returnValue(Integer.class));
+      }
+    });
 
-		PropertyItemHandler propertyItemHandler = newPropertyItemHandler(propertyBinding);
-		PropertyValueHandler handler = new MapPropertyValueHandler(classBinding, propertyItemHandler, bindingContext);
-		parseProperty(jsonParser, handler, 2);
-		context.assertIsSatisfied();
-	}
+    PropertyItemHandler propertyItemHandler = newPropertyItemHandler(propertyBinding);
+    PropertyValueHandler handler = new MapPropertyValueHandler(classBinding, propertyItemHandler, bindingContext);
+    parseProperty(jsonParser, handler, 2);
+    context.assertIsSatisfied();
+  }
 
 }

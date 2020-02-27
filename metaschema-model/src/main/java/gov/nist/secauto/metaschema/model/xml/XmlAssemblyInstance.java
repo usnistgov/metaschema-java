@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.itl.metaschema.model.xml.AssemblyDocument;
@@ -39,9 +40,9 @@ public class XmlAssemblyInstance extends AbstractAssemblyInstance {
 
   private final AssemblyDocument.Assembly xmlAssembly;
 
-
   /**
-   * Constructs a new Metaschema Assembly instance definition from an XML representation bound to Java objects.
+   * Constructs a new Metaschema Assembly instance definition from an XML representation bound to Java
+   * objects.
    * 
    * @param xmlAssembly
    *          the XML representation bound to Java objects

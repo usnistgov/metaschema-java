@@ -15,6 +15,10 @@
 	<name>Metaschema Model</name>
 	<url>https://pages.nist.gov/metaschema</url>
 
+	<scm>
+		<url>https://github.com/usnistgov/metaschema/tree/master/metaschema-model</url>
+	</scm>
+
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

@@ -16,6 +16,10 @@
 	<description>A Metaschema binding-based parser for Java objects supporting serialization of conformant XML, JSON, and YAML data.</description>
 	<url>https://pages.nist.gov/metaschema</url>
 
+	<scm>
+		<url>https://github.com/usnistgov/metaschema/tree/master/metaschema-java-binding</url>
+	</scm>
+
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>

@@ -1,0 +1,13 @@
+
+This module provides a Java library that provides a [Java API](apidocs/index.html) supporting all Metaschema [datatypes](https://pages.nist.gov/metaschema/specification/syntax/#data-types) used by these tools.
+
+The following dependency can be added to your POM to use this library.
+
+```xml
+<dependency>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>${project.artifactId}</artifactId>
+  <version>${project.version}</version>
+</dependency>
+```
+

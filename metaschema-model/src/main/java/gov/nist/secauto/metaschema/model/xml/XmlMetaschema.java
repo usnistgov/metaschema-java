@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.xml;
 
 import com.sun.xml.bind.api.impl.NameConverter;
@@ -184,8 +185,8 @@ public class XmlMetaschema extends AbstractMetaschema {
     this.metaschema = metaschemaXml;
 
     XmlCursor cursor = metaschema.getMETASCHEMA().newCursor();
-    cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" +
-        "$this/m:define-assembly|$this/m:define-field|$this/m:define-flag");
+    cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
+        + "$this/m:define-assembly|$this/m:define-field|$this/m:define-flag");
 
     // handle definitions in this metaschema
     Map<String, InfoElementDefinition> infoElementDefinitions = new LinkedHashMap<>();

@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.codegen;
 
 import com.sun.xml.bind.api.impl.NameConverter;
@@ -236,32 +237,33 @@ public class JavaGenerator {
       if (retval == null) {
         String packageName = definition.getPackageName();
         String className = definition.getClassName();
-  
+
         Set<String> classNames = packageToClassNamesMap.get(packageName);
         if (classNames == null) {
           classNames = new HashSet<>();
           packageToClassNamesMap.put(packageName, classNames);
         }
-  
+
         if (classNames.contains(className)) {
-          logger.warn(String.format("Class name '%s' in metaschema '%s' conflicts with a previously used class name.", className, definition.getContainingMetaschema().getLocation()));
+          logger.warn(String.format("Class name '%s' in metaschema '%s' conflicts with a previously used class name.",
+              className, definition.getContainingMetaschema().getLocation()));
           // first try to append the metaschema's short name
           String metaschemaShortName = definition.getContainingMetaschema().getShortName();
           className = NameConverter.standard.toClassName(className + metaschemaShortName);
         }
-  
+
         String classNameBase = className;
         int index = 1;
         while (classNames.contains(className)) {
           className = classNameBase + Integer.toString(index);
         }
         classNames.add(className);
-      
+
         retval = JavaType.create(packageName, className);
         definitionToTypeMap.put(definition, retval);
       }
       return retval;
     }
-    
+
   }
 }

@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
 import static java.lang.annotation.ElementType.FIELD;
@@ -39,6 +40,8 @@ public @interface JsonFieldValueName {
    * The name of the JSON property that contains the field's value. If this value is provided, the the
    * name will be used as the property name. Use of this annotation is mutually exclusive with the
    * {@link JsonFieldValueKey} annotation.
+   * 
+   * @return the name
    */
   String name();
 }

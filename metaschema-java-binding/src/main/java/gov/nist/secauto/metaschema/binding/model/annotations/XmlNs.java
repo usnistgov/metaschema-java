@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
@@ -35,12 +36,16 @@ import java.lang.annotation.Target;
 @Target(ANNOTATION_TYPE)
 public @interface XmlNs {
   /**
-   * Namespace prefix
+   * Suggests a namespace prefix to use for generated code.
+   * 
+   * @return the associated namespace prefix
    */
   String prefix();
 
   /**
-   * Namespace URI
+   * Defines the Namespace URI for this namespace.
+   * 
+   * @return the associated namespace
    */
   String namespace();
 }

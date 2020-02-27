@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
 import static java.lang.annotation.ElementType.TYPE;
@@ -35,17 +36,30 @@ import java.lang.annotation.Target;
 @Target(TYPE)
 public @interface RootWrapper {
   /**
-   * The root's namespace for use in XML.
-   */
-  String namespace() default "##default";
-
-  /**
-   * The root's name.
+   * Name of the XML element.
+   * <p>
+   * If the value is "##default", then element name is derived from the JavaBean property name.
+   * 
+   * @return the name
    */
   String name() default "##default";
 
   /**
-   * A list of other properties at the root level to ignore.
+   */
+  /**
+   * XML target namespace of the XML element.
+   * <p>
+   * If the value is "##default", then element name is derived from the namespace provided in the
+   * package-info.
+   * 
+   * @return the namespace
+   */
+  String namespace() default "##default";
+
+  /**
+   * A list of other properties at the root level to ignore in JSON data.
+   * 
+   * @return an array of JSON field names
    */
   public String[] ignoreJsonProperties() default {};
 }

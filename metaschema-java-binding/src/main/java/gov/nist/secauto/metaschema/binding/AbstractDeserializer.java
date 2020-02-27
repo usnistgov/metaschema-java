@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding;
 
 import gov.nist.secauto.metaschema.binding.io.Configuration;
@@ -51,9 +52,9 @@ abstract class AbstractDeserializer<CLASS> extends AbstractSerializationBase<CLA
 
   @Override
   public CLASS deserialize(File file) throws BindingException {
-    
+
     try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8"))) {
-      CLASS retval =  deserialize(reader);
+      CLASS retval = deserialize(reader);
       reader.close();
       return retval;
     } catch (IOException ex) {
@@ -64,7 +65,7 @@ abstract class AbstractDeserializer<CLASS> extends AbstractSerializationBase<CLA
   @Override
   public CLASS deserialize(URL url) throws BindingException {
     try (InputStream in = url.openStream()) {
-      CLASS retval =  deserialize(in);
+      CLASS retval = deserialize(in);
       in.close();
       return retval;
     } catch (IOException ex) {

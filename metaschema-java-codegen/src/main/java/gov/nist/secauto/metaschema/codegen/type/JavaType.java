@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.codegen.type;
 
 import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
@@ -88,7 +89,7 @@ public interface JavaType {
   /**
    * Get the import value for this Java type.
    * 
-   * @param classType
+   * @param classJavaType
    *          the Java type of the containing class
    * @return the import value or {@code null} if no import is needed
    */

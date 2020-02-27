@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.itl.metaschema.model.xml.Boolean;
@@ -44,7 +45,8 @@ public class XmlFlagInstance extends AbstractFlagInstance {
   private final LocalFlagDefinition localFlagDefinition;
 
   /**
-   * Constructs a new Metaschema flag instance definition from an XML representation bound to Java objects.
+   * Constructs a new Metaschema flag instance definition from an XML representation bound to Java
+   * objects.
    * 
    * @param xmlFlag
    *          the XML representation bound to Java objects
@@ -98,8 +100,8 @@ public class XmlFlagInstance extends AbstractFlagInstance {
   /*
    * TODO: implement
    * 
-   * @Override public String getRemarks() { String retval = null; if (xmlFlag.isSetRemarks()) { retval =
-   * xmlFlag.getRemarks(); } else if (isReference()) { // TODO: append? retval =
+   * @Override public String getRemarks() { String retval = null; if (xmlFlag.isSetRemarks()) { retval
+   * = xmlFlag.getRemarks(); } else if (isReference()) { // TODO: append? retval =
    * getFlagDefinition().getRemarks(); } return retval; }
    * 
    * 

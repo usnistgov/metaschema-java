@@ -16,13 +16,85 @@
 
 	<name>Metaschema Framework Parent</name>
 	<description>A common build root for all NIST projects related to the Metaschema framework.</description>
-	<url>https://pages.nist.gov/metaschema</url>
+	<url>https://github.com/usnistgov/oss-maven</url>
+
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/usnistgov/metaschema/issues</url>
+	</issueManagement>
+
+	<scm>
+		<url>https://github.com/usnistgov/metaschema</url>
+		<connection>scm:git:https://github.com/usnistgov/metaschema.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:usnistgov/metaschema.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+		<site>
+			<id>pages-site</id>
+			<url>https://pages.nist.gov/metaschema</url>
+		</site>
+	</distributionManagement>
+
+	<licenses>
+		<license>
+			<name>NIST License</name>
+			<url>https://www.nist.gov/director/licensing</url>
+			<distribution>repo</distribution>
+			<comments>NIST software License</comments>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>National Institute of Standards and Technology</name>
+		<url>https://www.nist.gov</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<id>david.waltermire@nist.gov</id>
+			<name>David Waltermire</name>
+			<email>david.waltermire@nist.gov</email>
+			<organization>National Institute of Standards and Technology</organization>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+				<role>maintainer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<mailingLists>
+		<mailingList>
+			<name>OSCAL NIST Team</name>
+			<post>oscal@nist.gov</post>
+		</mailingList>
+		<mailingList>
+			<name>OSCAL Project Development Discussion</name>
+			<post>oscal-dev@nist.gov</post>
+			<subscribe>oscal-dev-join@nist.gov</subscribe>
+			<unsubscribe>oscal-dev-leave@nist.gov</unsubscribe>
+		</mailingList>
+		<mailingList>
+			<name>OSCAL Project Updates</name>
+			<subscribe>oscal-updates-join@nist.gov</subscribe>
+			<unsubscribe>oscal-updates-leave@nist.gov</unsubscribe>
+		</mailingList>
+	</mailingLists>
 
 	<properties>
 		<maven.compiler.source>9</maven.compiler.source>
 		<maven.compiler.target>9</maven.compiler.target>
 		<maven.compiler.release>9</maven.compiler.release>
-		
 
 		<dependency.flexmark.version>0.50.46</dependency.flexmark.version>
 		<dependency.jackson.version>2.10.1</dependency.jackson.version>
@@ -227,14 +299,26 @@
 			<artifactId>junit-jupiter-engine</artifactId>
 			<scope>test</scope>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.junit.platform</groupId> -->
-<!-- 			<artifactId>junit-platform-launcher</artifactId> -->
-<!-- 			<scope>test</scope> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.junit.platform</groupId> -->
+		<!-- <artifactId>junit-platform-launcher</artifactId> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
 	</dependencies>
 
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<configuration>
+						<!--  this is a hack to fix a javadoc bug -->
+						<detectJavaApiLink>false</detectJavaApiLink>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -248,5 +332,5 @@
 		<module>metaschema-java-codegen</module>
 		<module>metaschema-java-datatypes</module>
 		<module>metaschema-maven-plugin</module>
-</modules>
+	</modules>
 </project>

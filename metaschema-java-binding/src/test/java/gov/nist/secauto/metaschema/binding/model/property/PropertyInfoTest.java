@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import java.lang.reflect.Field;
@@ -40,75 +41,80 @@ import gov.nist.secauto.metaschema.binding.model.property.MapPropertyInfo;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyInfo;
 
 class PropertyInfoTest {
-//	@RegisterExtension
-//	JUnit5Mockery context = new JUnit5Mockery();
-//	private PropertyAccessor propertyAccessor = context.mock(PropertyAccessor.class);
+  // @RegisterExtension
+  // JUnit5Mockery context = new JUnit5Mockery();
+  // private PropertyAccessor propertyAccessor = context.mock(PropertyAccessor.class);
 
-	@Test
-	void testSington() throws NoSuchFieldException, SecurityException, BindingException {
-		Field field = TestClass.class.getDeclaredField("singleton");
-		
-		PropertyInfo propertyInfo = PropertyInfo.newPropertyInfo(field);
-		Assertions.assertEquals(String.class, propertyInfo.getRawType());
+  @Test
+  void testSington() throws NoSuchFieldException, SecurityException, BindingException {
+    Field field = TestClass.class.getDeclaredField("singleton");
 
-		TestClass testClass = new TestClass();
-		propertyInfo.setValue(testClass, "test");
-		Assertions.assertEquals("test", testClass.getSingleton());
-	}
+    PropertyInfo propertyInfo = PropertyInfo.newPropertyInfo(field);
+    Assertions.assertEquals(String.class, propertyInfo.getRawType());
 
-	@Test
-	void testList() throws NoSuchFieldException, SecurityException, BindingException {
-		Field field = TestClass.class.getDeclaredField("list");
-		PropertyInfo propertyInfo = PropertyInfo.newPropertyInfo(field);
-		Assertions.assertEquals(List.class, propertyInfo.getRawType());
-		Assertions.assertEquals(String.class, propertyInfo.getItemType());
+    TestClass testClass = new TestClass();
+    propertyInfo.setValue(testClass, "test");
+    Assertions.assertEquals("test", testClass.getSingleton());
+  }
 
-		TestClass testClass = new TestClass();
-		propertyInfo.setValue(testClass, Collections.singletonList("test"));
-		Assertions.assertEquals(Collections.singletonList("test"), testClass.getList());
-	}
+  @Test
+  void testList() throws NoSuchFieldException, SecurityException, BindingException {
+    Field field = TestClass.class.getDeclaredField("list");
+    PropertyInfo propertyInfo = PropertyInfo.newPropertyInfo(field);
+    Assertions.assertEquals(List.class, propertyInfo.getRawType());
+    Assertions.assertEquals(String.class, propertyInfo.getItemType());
 
-	@Test
-	void testMap() throws NoSuchFieldException, SecurityException, BindingException {
-		Field field = TestClass.class.getDeclaredField("map");
-		MapPropertyInfo propertyInfo = (MapPropertyInfo)PropertyInfo.newPropertyInfo(field);
-		Assertions.assertEquals(Map.class, propertyInfo.getRawType());
-		Assertions.assertEquals(String.class, propertyInfo.getKeyType());
-		Assertions.assertEquals(Integer.class, propertyInfo.getItemType());
-		Assertions.assertEquals(Integer.class, propertyInfo.getValueType());
+    TestClass testClass = new TestClass();
+    propertyInfo.setValue(testClass, Collections.singletonList("test"));
+    Assertions.assertEquals(Collections.singletonList("test"), testClass.getList());
+  }
 
-		TestClass testClass = new TestClass();
-		propertyInfo.setValue(testClass, Collections.singletonMap("key",1));
-		Assertions.assertEquals( Collections.singletonMap("key",1), testClass.getMap());
-	}
+  @Test
+  void testMap() throws NoSuchFieldException, SecurityException, BindingException {
+    Field field = TestClass.class.getDeclaredField("map");
+    MapPropertyInfo propertyInfo = (MapPropertyInfo) PropertyInfo.newPropertyInfo(field);
+    Assertions.assertEquals(Map.class, propertyInfo.getRawType());
+    Assertions.assertEquals(String.class, propertyInfo.getKeyType());
+    Assertions.assertEquals(Integer.class, propertyInfo.getItemType());
+    Assertions.assertEquals(Integer.class, propertyInfo.getValueType());
 
-	public static class TestClass {
-		@gov.nist.secauto.metaschema.binding.model.annotations.Field
-		private String singleton;
-		@gov.nist.secauto.metaschema.binding.model.annotations.Field
-		@GroupAs(maxOccurs = -1)
-		private List<String> list;
-		@gov.nist.secauto.metaschema.binding.model.annotations.Field
-		@GroupAs(maxOccurs = -1, inJson = JsonGroupAsBehavior.KEYED)
-		private Map<String, Integer> map;
+    TestClass testClass = new TestClass();
+    propertyInfo.setValue(testClass, Collections.singletonMap("key", 1));
+    Assertions.assertEquals(Collections.singletonMap("key", 1), testClass.getMap());
+  }
 
-		public String getSingleton() {
-			return singleton;
-		}
-		public void setSingleton(String singleton) {
-			this.singleton = singleton;
-		}
-		public List<String> getList() {
-			return list;
-		}
-		public void setList(List<String> list) {
-			this.list = list;
-		}
-		public Map<String, Integer> getMap() {
-			return map;
-		}
-		public void setMap(Map<String, Integer> map) {
-			this.map = map;
-		}
-	}
+  public static class TestClass {
+    @gov.nist.secauto.metaschema.binding.model.annotations.Field
+    private String singleton;
+    @gov.nist.secauto.metaschema.binding.model.annotations.Field
+    @GroupAs(maxOccurs = -1)
+    private List<String> list;
+    @gov.nist.secauto.metaschema.binding.model.annotations.Field
+    @GroupAs(maxOccurs = -1, inJson = JsonGroupAsBehavior.KEYED)
+    private Map<String, Integer> map;
+
+    public String getSingleton() {
+      return singleton;
+    }
+
+    public void setSingleton(String singleton) {
+      this.singleton = singleton;
+    }
+
+    public List<String> getList() {
+      return list;
+    }
+
+    public void setList(List<String> list) {
+      this.list = list;
+    }
+
+    public Map<String, Integer> getMap() {
+      return map;
+    }
+
+    public void setMap(Map<String, Integer> map) {
+      this.map = map;
+    }
+  }
 }

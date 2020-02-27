@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.codegen.type.JavaType;
@@ -30,6 +31,6 @@ import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
 import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
 
 public interface JavaTypeSupplier {
-   JavaType getClassJavaType(ManagedObject definition);
-//   JavaType getJavaType(InfoElementDefinition definition);
+  JavaType getClassJavaType(ManagedObject definition);
+  // JavaType getJavaType(InfoElementDefinition definition);
 }

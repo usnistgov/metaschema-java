@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
@@ -82,14 +83,14 @@ public interface PropertyInfo extends PropertyAccessor {
   /**
    * Get the general type of the declared class.
    * 
-   * @return
+   * @return the raw type of the property
    */
   Class<?> getRawType();
 
   /**
    * Get the type of the bound object.
    * 
-   * @return
+   * @return the raw type of the bound object
    */
   Class<?> getItemType();
 

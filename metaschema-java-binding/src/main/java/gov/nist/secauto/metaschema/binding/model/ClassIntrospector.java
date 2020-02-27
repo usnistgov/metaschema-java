@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
@@ -50,7 +51,10 @@ public class ClassIntrospector {
   }
 
   /**
+   * Gets the XML namespace for the provided class.
    * 
+   * @param clazz
+   *          the class to find the namespace for
    * @return the namespace, or {@code null} if no namespace is provided
    */
   public static String getXmlSchemaNamespace(Class<?> clazz) {

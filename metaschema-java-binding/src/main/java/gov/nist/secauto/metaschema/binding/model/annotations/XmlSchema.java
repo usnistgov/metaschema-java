@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
 import static java.lang.annotation.ElementType.PACKAGE;
@@ -37,21 +38,29 @@ public @interface XmlSchema {
   /**
    * Defines the XML namespace prefix to URI bindings to use for this model. If not provided, the XML
    * prefixes will be auto-generated.
+   * 
+   * @return an array of namespace definitions
    */
   XmlNs[] xmlns() default {};
 
   /**
    * Name of the XML namespace.
+   * 
+   * @return a namespace string in the form of a URI
    */
   String namespace() default "";
 
   /**
    * The location of the associated XML schema.
+   * 
+   * @return a location string in the form of a URI
    */
   String xmlSchemaLocation() default NO_LOCATION;
 
   /**
    * The location of the associated JSON schema.
+   * 
+   * @return a location string in the form of a URI
    */
   String jsonSchemaLocation() default NO_LOCATION;
 
@@ -60,9 +69,9 @@ public @interface XmlSchema {
   XmlNsForm xmlAttributeFormDefault() default XmlNsForm.UNSET;
 
   /**
-   * The default value of the {@link #location()}, which indicates that no schema will be associated.
+   * The default value of a schema location, which indicates that no schema will be associated.
+   * <p>
+   * The value "##none" was chosen because ## is not a valid sequence in xs:anyURI.
    */
-  // the actual value is chosen because ## is not a valid
-  // sequence in xs:anyURI.
   static final String NO_LOCATION = "##none";
 }

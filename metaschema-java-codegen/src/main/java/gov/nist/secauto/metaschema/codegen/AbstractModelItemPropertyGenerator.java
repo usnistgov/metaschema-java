@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
@@ -46,14 +47,15 @@ public abstract class AbstractModelItemPropertyGenerator<JAVA_TYPE extends JavaT
    * Constructs a new generator of cardinality information for a property item of a Metaschema
    * assembly.
    * 
-   * @param instanceItemContext
+   * @param modelInstance
    *          the property instance to associate the cardinality information with
    * @param classContext
    *          the containing class to generate
    * @param javaType
+   *          the model item's java type info
    */
-  public AbstractModelItemPropertyGenerator(ModelInstance modelInstance,
-      AssemblyClassGenerator classContext, JAVA_TYPE javaType) {
+  public AbstractModelItemPropertyGenerator(ModelInstance modelInstance, AssemblyClassGenerator classContext,
+      JAVA_TYPE javaType) {
     super(classContext);
     this.modelInstance = modelInstance;
     this.javaType = javaType;

@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.maven.plugin;
 
 import gov.nist.secauto.metaschema.codegen.JavaGenerator;
@@ -236,9 +237,6 @@ public class MetaschemaMojo extends AbstractMojo {
    * <li>Otherwise use the value from the system property <code>file.encoding</code>.</li>
    * </ol>
    *
-   * @param warnIfPlatformEncoding
-   *          Defines if a warning should be logged if encoding is not configured but the platform
-   *          encoding (system property {@code file.encoding}) is used
    * @return The encoding to be used by this AbstractJaxbMojo and its tools.
    * @see #encoding
    */
@@ -312,14 +310,14 @@ public class MetaschemaMojo extends AbstractMojo {
     }
 
     if (generate) {
-  
+
       File outputDir = getOutputDirectory();
       getLog().debug(String.format("Using outputDirectory: %s", outputDir.getPath()));
-  
+
       if (!outputDir.exists()) {
         outputDir.mkdirs();
       }
-  
+
       // generate Java sources based on provided metaschema sources
       final MetaschemaLoader loader = new MetaschemaLoader();
       final Set<Metaschema> metaschemaCollection = new HashSet<>();
@@ -332,7 +330,7 @@ public class MetaschemaMojo extends AbstractMojo {
           throw new MojoExecutionException("Loading of metaschema failed", ex);
         }
         metaschemaCollection.add(metaschema);
-        
+
       }
       try {
         getLog().info("Generating Java classes in: " + getOutputDirectory().getPath());
@@ -340,12 +338,12 @@ public class MetaschemaMojo extends AbstractMojo {
       } catch (IOException ex) {
         throw new MojoExecutionException("Creation of Java classes failed.", ex);
       }
-  
+
       // create the stale file
       staleFileDirectory.mkdirs();
       try (OutputStream os = new FileOutputStream(staleFile)) {
       } catch (IOException ex) {
-        throw new MojoExecutionException("Failed to write stale file: "+staleFile.getPath(), ex);
+        throw new MojoExecutionException("Failed to write stale file: " + staleFile.getPath(), ex);
       }
 
       // for m2e

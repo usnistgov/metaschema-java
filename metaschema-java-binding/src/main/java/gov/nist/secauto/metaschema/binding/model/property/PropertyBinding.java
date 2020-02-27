@@ -23,10 +23,12 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.BindingException;
+import gov.nist.secauto.metaschema.binding.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlPropertyParser;
 import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
@@ -96,7 +98,6 @@ public interface PropertyBinding {
    * When {@link #getPropertyBindingType()} == {@link PropertyBindingType#ASSEMBLY} or
    * {@link #getPropertyBindingType()} == {@link PropertyBindingType#FIELD}, one of two possible
    * states can occur:
-   * <p>
    * <ul>
    * <li>If the {@link GroupAs} annotation is present, then the name value will be the value of
    * {@link GroupAs#name()}.
@@ -106,7 +107,6 @@ public interface PropertyBinding {
    * <p>
    * When {@link #getPropertyBindingType()} == {@link PropertyBindingType#FIELD_VALUE}, the field name
    * value is determined as follows (in order):
-   * <p>
    * <ul>
    * <li>If the {@link JsonFieldValueKey} annotation is present on any sibling {@link Flag}, then the
    * field name is {@code} null. The name must be determined by analyzing an remaining properties to
@@ -120,15 +120,18 @@ public interface PropertyBinding {
    * Note: Use of the {@link JsonFieldValueName} and {@link JsonFieldValueKey} annotations are
    * mutually exclusive.
    * 
+   * @param bindingContext
+   *          the configured binding context that initialized this property
    * @return the JSON field name
-   * @throws BindingException if a binding error has occured
+   * @throws BindingException
+   *           if a binding error has occured
    */
   String getJsonFieldName(BindingContext bindingContext) throws BindingException;
 
   /**
    * Gets information about the bound property.
    * 
-   * @return
+   * @return the property information for the bound property
    */
   PropertyInfo getPropertyInfo();
 

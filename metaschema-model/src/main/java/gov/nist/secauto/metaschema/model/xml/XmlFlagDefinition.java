@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.itl.metaschema.model.xml.DefineFlagDocument;
@@ -37,7 +38,6 @@ import java.util.Map;
 
 public class XmlFlagDefinition extends AbstractFlagDefinition<XmlMetaschema> implements FlagDefinition {
   private final DefineFlagDocument.DefineFlag xmlFlag;
-
 
   /**
    * Constructs a new Metaschema flag definition from an XML representation bound to Java objects.

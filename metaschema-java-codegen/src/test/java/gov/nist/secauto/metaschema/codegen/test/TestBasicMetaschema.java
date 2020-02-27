@@ -128,7 +128,8 @@ public class TestBasicMetaschema {
   @SuppressWarnings("unused")
   private static Object readJson(Reader reader, Class<?> rootClass) throws IOException, BindingException {
     BindingContext context = BindingContext.newInstance();
-    return context.newDeserializer(Format.JSON, rootClass, new MutableConfiguration().enableFeature(Feature.DESERIALIZE_ROOT))
+    return context
+        .newDeserializer(Format.JSON, rootClass, new MutableConfiguration().enableFeature(Feature.DESERIALIZE_ROOT))
         .deserialize(reader);
   }
 
@@ -205,8 +206,8 @@ public class TestBasicMetaschema {
   @Test
   public void testSimpleMetaschema(@TempDir Path tempDir)
       throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-//    File classDir = tempDir.toFile();
-     File classDir = new File("target/generated-sources/metaschema");
+    // File classDir = tempDir.toFile();
+    File classDir = new File("target/generated-sources/metaschema");
 
     runTests("simple", classDir, (obj) -> {
       try {
@@ -220,7 +221,7 @@ public class TestBasicMetaschema {
   @Test
   public void testSimpleWithFieldMetaschema(@TempDir Path tempDir)
       throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-//    File classDir = tempDir.toFile();
+    // File classDir = tempDir.toFile();
     File classDir = new File("target/generated-sources/metaschema");
     runTests("simple_with_field", classDir);
   }
@@ -232,8 +233,8 @@ public class TestBasicMetaschema {
   @Test
   public void testFieldsWithFlagMetaschema(@TempDir Path tempDir)
       throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-//    File classDir = tempDir.toFile();
-     File classDir = new File("target/generated-sources/metaschema");
+    // File classDir = tempDir.toFile();
+    File classDir = new File("target/generated-sources/metaschema");
     runTests("fields_with_flags", classDir, (obj) -> {
       try {
         Assertions.assertEquals("test", reflectMethod(obj, "getId"));

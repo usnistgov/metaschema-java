@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaModel;
@@ -61,6 +62,8 @@ public abstract class AbstractClassGenerator<DEFINITION extends ManagedObject> i
    * 
    * @param definition
    *          the Metaschema field or assembly definition for which a Java class will be generated
+   * @param supplier
+   *          a callback used to generate class type information for a generated class
    */
   public AbstractClassGenerator(DEFINITION definition, JavaTypeSupplier supplier) {
     Objects.requireNonNull(definition, "definition");

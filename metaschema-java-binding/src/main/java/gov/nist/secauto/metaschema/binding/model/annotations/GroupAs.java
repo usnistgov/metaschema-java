@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
 import static java.lang.annotation.ElementType.FIELD;
@@ -39,24 +40,32 @@ public @interface GroupAs {
    * Name of the XML Schema element.
    * <p>
    * If the value is "##default", then element name is derived from the JavaBean property name.
+   * 
+   * @return the name
    */
   String name() default "##default";
 
   /**
    * XML target namespace of the XML Schema element.
+   * <p>
+   * If the value is "##default", then element name is derived from the namespace provided in the
+   * package-info.
+   * 
+   * @return the namespace
    */
   String namespace() default "##default";
 
   /**
    * A non-negative number that indicates the minimum occurrence of the element.
+   * 
+   * @return a non-negative number
    */
   int minOccurs() default 0;
 
   /**
-   * A number that indicates the maximum occurrence of the element. The value must be a positive
-   * number or {@code -1} to indicate "unbounded".
+   * A number that indicates the maximum occurrence of the element.
    * 
-   * @return
+   * @return a positive number or {@code -1} to indicate "unbounded"
    */
   int maxOccurs() default 1;
 

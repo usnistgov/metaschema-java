@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.configuration;
 
 import java.util.Collections;
@@ -36,9 +37,15 @@ public class AbstractManagedObjectBindingConfiguration implements ManagedObjectB
   /**
    * Constructs a new binding configuration for a Metaschema assembly or field.
    * 
-   * @param className the name of the class to use when generating code for this bound object, or {@code null} if the default behavior is to be used
-   * @param baseClassName the name of the class to extend the generated class from, or {@code null} if no extension is to be used
-   * @param interfacesToImplement additional interfaces to implement in the generated class, or {@code null} no interfaces are to be implemented
+   * @param className
+   *          the name of the class to use when generating code for this bound object, or {@code null}
+   *          if the default behavior is to be used
+   * @param baseClassName
+   *          the name of the class to extend the generated class from, or {@code null} if no
+   *          extension is to be used
+   * @param interfacesToImplement
+   *          additional interfaces to implement in the generated class, or {@code null} no interfaces
+   *          are to be implemented
    */
   public AbstractManagedObjectBindingConfiguration(String className, String baseClassName,
       List<String> interfacesToImplement) {

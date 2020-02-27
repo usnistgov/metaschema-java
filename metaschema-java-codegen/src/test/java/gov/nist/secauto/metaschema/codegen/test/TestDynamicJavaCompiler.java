@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.codegen.test;
 
 import java.io.File;
@@ -51,107 +52,107 @@ import org.apache.logging.log4j.Logger;
 import gov.nist.secauto.metaschema.codegen.JavaGenerator;
 
 public class TestDynamicJavaCompiler {
-	private static final Logger logger = LogManager.getLogger(TestDynamicJavaCompiler.class);
+  private static final Logger logger = LogManager.getLogger(TestDynamicJavaCompiler.class);
 
-	public static void main(String[] args)
-			throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, NoSuchMethodException, SecurityException {
-		
-		StringBuilder builder = new StringBuilder();
-		builder.append("package test;\n");
-		builder.append("public class HelloWorld {\n");
-		builder.append("    public HelloWorld() {\n");
-		builder.append("        System.out.println(\"Hello World\");\n");
-		builder.append("    }\n");
-		builder.append("}");
-		String javaCode = builder.toString();
+  public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+      IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 
-		JavaFileObject classCode = newJavaFileObject("test.HelloWorld", javaCode);
+    StringBuilder builder = new StringBuilder();
+    builder.append("package test;\n");
+    builder.append("public class HelloWorld {\n");
+    builder.append("    public HelloWorld() {\n");
+    builder.append("        System.out.println(\"Hello World\");\n");
+    builder.append("    }\n");
+    builder.append("}");
+    String javaCode = builder.toString();
 
-		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
+    JavaFileObject classCode = newJavaFileObject("test.HelloWorld", javaCode);
 
-		TestDynamicJavaCompiler compiler = new TestDynamicJavaCompiler(new File("target/generated-classes/dynamic"));
-		if (!compiler.compile(Collections.singletonList(classCode), diagnostics)) {
-			logger.error(diagnostics.getDiagnostics().toString());
-		}
-		ClassLoader classLoader = compiler.getClassLoader();
-		Class<?> clazz = classLoader.loadClass("test.HelloWorld");
-		clazz.getConstructor().newInstance();
-	}
+    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 
-	public static JavaFileObject newJavaFileObject(String className, String source) {
-		return new StringSource(className, JavaFileObject.Kind.SOURCE, source);
-	}
+    TestDynamicJavaCompiler compiler = new TestDynamicJavaCompiler(new File("target/generated-classes/dynamic"));
+    if (!compiler.compile(Collections.singletonList(classCode), diagnostics)) {
+      logger.error(diagnostics.getDiagnostics().toString());
+    }
+    ClassLoader classLoader = compiler.getClassLoader();
+    Class<?> clazz = classLoader.loadClass("test.HelloWorld");
+    clazz.getConstructor().newInstance();
+  }
 
-	private final File compilationLocation;
-	private ClassLoader classLoader;
+  public static JavaFileObject newJavaFileObject(String className, String source) {
+    return new StringSource(className, JavaFileObject.Kind.SOURCE, source);
+  }
 
-	public TestDynamicJavaCompiler(File compilationLocation) {
-		Objects.requireNonNull(compilationLocation, "compilationLocation");
-		this.compilationLocation = compilationLocation;
-	}
+  private final File compilationLocation;
+  private ClassLoader classLoader;
 
-	protected File getCompilationLocation() {
-		return compilationLocation;
-	}
+  public TestDynamicJavaCompiler(File compilationLocation) {
+    Objects.requireNonNull(compilationLocation, "compilationLocation");
+    this.compilationLocation = compilationLocation;
+  }
 
-	protected ClassLoader getClassLoader() {
-		synchronized (this) {
-			if (classLoader == null) {
-				try {
-					classLoader = new URLClassLoader(new URL[] { getCompilationLocation().toURI().toURL() });
-				} catch (MalformedURLException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}
-		return classLoader;
-	}
+  protected File getCompilationLocation() {
+    return compilationLocation;
+  }
 
-	public boolean compile(List<JavaFileObject> compilationUnits, DiagnosticCollector<JavaFileObject> diagnostics) {
-		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+  protected ClassLoader getClassLoader() {
+    synchronized (this) {
+      if (classLoader == null) {
+        try {
+          classLoader = new URLClassLoader(new URL[] { getCompilationLocation().toURI().toURL() });
+        } catch (MalformedURLException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    }
+    return classLoader;
+  }
 
-		return compile(compiler, null, diagnostics, compilationUnits);
+  public boolean compile(List<JavaFileObject> compilationUnits, DiagnosticCollector<JavaFileObject> diagnostics) {
+    JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
-	}
+    return compile(compiler, null, diagnostics, compilationUnits);
 
-	public boolean compileGeneratedClasses(List<JavaGenerator.GeneratedClass> classesToCompile,
-			DiagnosticCollector<JavaFileObject> diagnostics) {
-		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
+  }
 
-		List<JavaFileObject> compilationUnits = new ArrayList<>(classesToCompile.size());
-		for (JavaGenerator.GeneratedClass generatedClass : classesToCompile) {
-			compilationUnits.add(fileManager.getJavaFileObjects(generatedClass.getClassFile()).iterator().next());
-		}
+  public boolean compileGeneratedClasses(List<JavaGenerator.GeneratedClass> classesToCompile,
+      DiagnosticCollector<JavaFileObject> diagnostics) {
+    JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+    StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
 
-		return compile(compiler, fileManager, diagnostics, compilationUnits);
-	}
+    List<JavaFileObject> compilationUnits = new ArrayList<>(classesToCompile.size());
+    for (JavaGenerator.GeneratedClass generatedClass : classesToCompile) {
+      compilationUnits.add(fileManager.getJavaFileObjects(generatedClass.getClassFile()).iterator().next());
+    }
 
-	private boolean compile(JavaCompiler compiler, JavaFileManager fileManager,
-			DiagnosticCollector<JavaFileObject> diagnostics, List<JavaFileObject> compilationUnits) {
-		List<String> options = new LinkedList<String>();
-		options.add("-d");
-		options.add(getCompilationLocation().getAbsolutePath());
-		options.add("-classpath");
-		options.add(System.getProperty("java.class.path"));
+    return compile(compiler, fileManager, diagnostics, compilationUnits);
+  }
 
-		JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits);
-		boolean retval = task.call();
-		return retval;
-	}
+  private boolean compile(JavaCompiler compiler, JavaFileManager fileManager,
+      DiagnosticCollector<JavaFileObject> diagnostics, List<JavaFileObject> compilationUnits) {
+    List<String> options = new LinkedList<String>();
+    options.add("-d");
+    options.add(getCompilationLocation().getAbsolutePath());
+    options.add("-classpath");
+    options.add(System.getProperty("java.class.path"));
 
-	private static class StringSource extends SimpleJavaFileObject {
-		private final String content;
+    JavaCompiler.CompilationTask task
+        = compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits);
+    boolean retval = task.call();
+    return retval;
+  }
 
-		public StringSource(String name, JavaFileObject.Kind kind, String content) {
-			super(URI.create("memo:///" + name.replace('.', '/') + kind.extension), kind);
-			this.content = content;
-		}
+  private static class StringSource extends SimpleJavaFileObject {
+    private final String content;
 
-		@Override
-		public CharSequence getCharContent(boolean ignore) {
-			return this.content;
-		}
-	}
+    public StringSource(String name, JavaFileObject.Kind kind, String content) {
+      super(URI.create("memo:///" + name.replace('.', '/') + kind.extension), kind);
+      this.content = content;
+    }
+
+    @Override
+    public CharSequence getCharContent(boolean ignore) {
+      return this.content;
+    }
+  }
 }

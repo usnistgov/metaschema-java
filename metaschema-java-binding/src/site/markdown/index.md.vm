@@ -1,0 +1,15 @@
+
+This module provides a Java parser library, which allows generated Java code to read and write XML, JSON, and YAML content that is valid to the associated Metaschema model. This library is a dependency for Java code generated from a Metaschema using the [Metaschema code generator](../metaschema-java-codegen).
+
+This parser uses a set of [annotations](apidocs/gov/nist/secauto/metaschema/binding/model/annotations/package-summary.html) on generated Java classes to drive parsing behavior.
+
+The following dependency can be added to your POM to use this library.
+
+```xml
+<dependency>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>${project.artifactId}</artifactId>
+  <version>${project.version}</version>
+</dependency>
+```
+

@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.markup;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
@@ -33,56 +34,54 @@ import org.junit.jupiter.api.Test;
 
 class MarkupStringTest {
 
-	@Test
-	void fromMarkdownLine() {
-		MarkupLine ms = MarkupLine.fromMarkdown("Some \\**more* **text** and a param: {{ insert }}.");
-		AstCollectingVisitor visitor = new AstCollectingVisitor();
-		visitor.collect(ms.getDocument());
-		System.out.println(visitor.getAst());
-		System.out.println(ms.toHtml());
-		System.out.println(ms.toMarkdown());
-	}
+  @Test
+  void fromMarkdownLine() {
+    MarkupLine ms = MarkupLine.fromMarkdown("Some \\**more* **text** and a param: {{ insert }}.");
+    AstCollectingVisitor visitor = new AstCollectingVisitor();
+    visitor.collect(ms.getDocument());
+    System.out.println(visitor.getAst());
+    System.out.println(ms.toHtml());
+    System.out.println(ms.toMarkdown());
+  }
 
-	@Test
-	void fromMarkdown() {
-		MarkupMultiline ms = MarkupMultiline.fromMarkdown("# Example\n\nSome \\**more* **text**\n\nA param: {{ insert }}.");
-		AstCollectingVisitor visitor = new AstCollectingVisitor();
-		visitor.collect(ms.getDocument());
-		System.out.println(visitor.getAst());
-		System.out.println(ms.toHtml());
-		System.out.println(ms.toMarkdown());
-	}
+  @Test
+  void fromMarkdown() {
+    MarkupMultiline ms = MarkupMultiline.fromMarkdown("# Example\n\nSome \\**more* **text**\n\nA param: {{ insert }}.");
+    AstCollectingVisitor visitor = new AstCollectingVisitor();
+    visitor.collect(ms.getDocument());
+    System.out.println(visitor.getAst());
+    System.out.println(ms.toHtml());
+    System.out.println(ms.toMarkdown());
+  }
 
-	@Test
-	void fromHTML() {
-		MarkupMultiline ms = MarkupMultiline.fromHtml(
-				"<h1>Example</h1><p><a href=\"link\">text</a></p><table><tr><th>Heading 1</th></tr><tr><td><q>data1</q> <insert param-id=\"insert\" /></td></tr></table><p>Some <em>more</em> <strong>text</strong><img alt=\"alt\" src=\"src\"/></p>");
-		AstCollectingVisitor visitor = new AstCollectingVisitor();
-		visitor.collect(ms.getDocument());
-		System.out.println(visitor.getAst());
-		System.out.println(ms.toHtml());
-		System.out.println(ms.toMarkdown());
-	}
+  @Test
+  void fromHTML() {
+    MarkupMultiline ms = MarkupMultiline.fromHtml(
+        "<h1>Example</h1><p><a href=\"link\">text</a></p><table><tr><th>Heading 1</th></tr><tr><td><q>data1</q> <insert param-id=\"insert\" /></td></tr></table><p>Some <em>more</em> <strong>text</strong><img alt=\"alt\" src=\"src\"/></p>");
+    AstCollectingVisitor visitor = new AstCollectingVisitor();
+    visitor.collect(ms.getDocument());
+    System.out.println(visitor.getAst());
+    System.out.println(ms.toHtml());
+    System.out.println(ms.toMarkdown());
+  }
 
-	@Test
-	void preMarkdown() {
-		MarkupMultiline ms = MarkupMultiline.fromHtml(
-				"<pre>Example **some** *code*</pre>");
-		AstCollectingVisitor visitor = new AstCollectingVisitor();
-		visitor.collect(ms.getDocument());
-		System.out.println(visitor.getAst());
-		System.out.println(ms.toHtml());
-		System.out.println(ms.toMarkdown());
-	}
+  @Test
+  void preMarkdown() {
+    MarkupMultiline ms = MarkupMultiline.fromHtml("<pre>Example **some** *code*</pre>");
+    AstCollectingVisitor visitor = new AstCollectingVisitor();
+    visitor.collect(ms.getDocument());
+    System.out.println(visitor.getAst());
+    System.out.println(ms.toHtml());
+    System.out.println(ms.toMarkdown());
+  }
 
-	@Test
-	void pCodeMarkdown() {
-		MarkupMultiline ms = MarkupMultiline.fromHtml(
-				"<p>Example<code>**some** *code*</code></p>");
-		AstCollectingVisitor visitor = new AstCollectingVisitor();
-		visitor.collect(ms.getDocument());
-		System.out.println(visitor.getAst());
-		System.out.println(ms.toHtml());
-		System.out.println(ms.toMarkdown());
-	}
+  @Test
+  void pCodeMarkdown() {
+    MarkupMultiline ms = MarkupMultiline.fromHtml("<p>Example<code>**some** *code*</code></p>");
+    AstCollectingVisitor visitor = new AstCollectingVisitor();
+    visitor.collect(ms.getDocument());
+    System.out.println(visitor.getAst());
+    System.out.println(ms.toHtml());
+    System.out.println(ms.toMarkdown());
+  }
 }

@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
@@ -41,52 +42,56 @@ import java.util.List;
 // TODO: test map
 class PropertyCollectorTest {
 
-	@Test
-	void testSingleton() throws NoSuchFieldException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, BindingException {
-		String value = "test1";
+  @Test
+  void testSingleton() throws NoSuchFieldException, SecurityException, InstantiationException, IllegalAccessException,
+      IllegalArgumentException, InvocationTargetException, NoSuchMethodException, BindingException {
+    String value = "test1";
 
-		Field field = TestClass.class.getDeclaredField("singleton");
-		FieldPropertyBinding binding = FieldPropertyBinding.fromJavaField(field, field.getAnnotation(gov.nist.secauto.metaschema.binding.model.annotations.Field.class));
+    Field field = TestClass.class.getDeclaredField("singleton");
+    FieldPropertyBinding binding = FieldPropertyBinding.fromJavaField(field,
+        field.getAnnotation(gov.nist.secauto.metaschema.binding.model.annotations.Field.class));
 
-		PropertyCollector collector = binding.getPropertyInfo().newPropertyCollector();
-		collector.add(value);
+    PropertyCollector collector = binding.getPropertyInfo().newPropertyCollector();
+    collector.add(value);
 
-		TestClass obj = TestClass.class.getDeclaredConstructor().newInstance();
-		collector.applyCollection(obj);
-		Assertions.assertEquals(value, obj.singleton);
-	}
+    TestClass obj = TestClass.class.getDeclaredConstructor().newInstance();
+    collector.applyCollection(obj);
+    Assertions.assertEquals(value, obj.singleton);
+  }
 
-	@Test
-	void testList() throws NoSuchFieldException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, BindingException {
-		List<String> values = new LinkedList<>();
-		values.add("test1");
-		values.add("test2");
+  @Test
+  void testList() throws NoSuchFieldException, SecurityException, InstantiationException, IllegalAccessException,
+      IllegalArgumentException, InvocationTargetException, NoSuchMethodException, BindingException {
+    List<String> values = new LinkedList<>();
+    values.add("test1");
+    values.add("test2");
 
-		Field field = TestClass.class.getDeclaredField("list");
-		FieldPropertyBinding binding = FieldPropertyBinding.fromJavaField(field, field.getAnnotation(gov.nist.secauto.metaschema.binding.model.annotations.Field.class));
+    Field field = TestClass.class.getDeclaredField("list");
+    FieldPropertyBinding binding = FieldPropertyBinding.fromJavaField(field,
+        field.getAnnotation(gov.nist.secauto.metaschema.binding.model.annotations.Field.class));
 
-		PropertyCollector collector = binding.getPropertyInfo().newPropertyCollector();
-		for (String value : values) {
-			collector.add(value);
-		}
+    PropertyCollector collector = binding.getPropertyInfo().newPropertyCollector();
+    for (String value : values) {
+      collector.add(value);
+    }
 
-		Constructor<TestClass> constructor = TestClass.class.getDeclaredConstructor();
-		TestClass obj = constructor.newInstance();
-		collector.applyCollection(obj);
-		Assertions.assertEquals(values, obj.list);
-	}
+    Constructor<TestClass> constructor = TestClass.class.getDeclaredConstructor();
+    TestClass obj = constructor.newInstance();
+    collector.applyCollection(obj);
+    Assertions.assertEquals(values, obj.list);
+  }
 
-	private static class TestClass {
-		@gov.nist.secauto.metaschema.binding.model.annotations.Field
-		private String singleton;
+  private static class TestClass {
+    @gov.nist.secauto.metaschema.binding.model.annotations.Field
+    private String singleton;
 
-		@gov.nist.secauto.metaschema.binding.model.annotations.Field
-		@GroupAs(maxOccurs = -1)
-		private List<String> list;
+    @gov.nist.secauto.metaschema.binding.model.annotations.Field
+    @GroupAs(maxOccurs = -1)
+    private List<String> list;
 
-		@SuppressWarnings("unused")
+    @SuppressWarnings("unused")
     public TestClass() {
-		  // Public constructor
-		}
-	}
+      // Public constructor
+    }
+  }
 }

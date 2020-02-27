@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.io.json.parser;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -166,10 +167,14 @@ public abstract class AbstractBoundObjectParser<CLASS, CLASS_BINDING extends Cla
    * {@link JsonToken#END_OBJECT} if the last field has been parsed.
    * 
    * @param propertyBinding
+   *          the bound property to be parsed
    * @param parsingContext
-   * @return
-   * @throws BindingException if a binding error occurs whole parsing the target property
+   *          the configured parsing context
+   * @return a supplier that will provide the value
+   * @throws BindingException
+   *           if a binding error occurs whole parsing the target property
    * @throws IOException
+   *           if an input error has occurred
    */
   public Supplier<? extends Object> parseProperty(PropertyBinding propertyBinding, JsonParsingContext parsingContext)
       throws BindingException, IOException {

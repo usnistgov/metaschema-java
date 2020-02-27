@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.io.xml.parser;
 
 import gov.nist.secauto.metaschema.binding.io.ProblemHandler;
@@ -33,9 +34,12 @@ public interface XmlProblemHandler extends ProblemHandler {
   /**
    * Callback used to handle an attribute that is unknown to the model being parsed.
    * 
-   * @param obj the Java instance that data is to be deserialized to
-   * @param attributeName the name of the unknown attribute
-   * @param parsingContext the context used for parsing
+   * @param obj
+   *          the Java instance that data is to be deserialized to
+   * @param attributeName
+   *          the name of the unknown attribute
+   * @param parsingContext
+   *          the context used for parsing
    * @return {@code true} if the attribute was processed by this handler, or {@code false} otherwise
    */
   boolean handleUnknownAttribute(Object obj, QName attributeName, XmlParsingContext parsingContext);

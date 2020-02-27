@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.xml.XmlMetaschema;
@@ -66,10 +67,13 @@ public class MetaschemaLoader {
   /**
    * Loads a Metaschema from the specified URL.
    * 
-   * @param url the URL to load the metaschema from
+   * @param url
+   *          the URL to load the metaschema from
    * @return the loaded Metaschema or {@code null} if the Metaschema was not found
-   * @throws MetaschemaException if an error occurred while processing the Metaschema definition
-   * @throws IOException if an error occurred reading the Metaschema
+   * @throws MetaschemaException
+   *           if an error occurred while processing the Metaschema definition
+   * @throws IOException
+   *           if an error occurred reading the Metaschema
    */
   public XmlMetaschema loadXmlMetaschema(URL url) throws MetaschemaException, IOException {
     try {

@@ -15,6 +15,10 @@
 	<name>Metaschema Datatype Support</name>
 	<url>https://pages.nist.gov/metaschema</url>
 
+	<scm>
+		<url>https://github.com/usnistgov/metaschema/tree/master/metaschema-java-datatypes</url>
+	</scm>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.vladsch.flexmark</groupId>

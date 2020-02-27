@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.info.definitions;
 
 import com.sun.xml.bind.api.impl.NameConverter;
@@ -43,8 +44,10 @@ public abstract class AbstractAssemblyDefinition<METASCHEMA extends Metaschema>
   /**
    * Constructs a new definition of a Metaschema Assembly.
    * 
-   * @param bindingConfiguration the binding configuration used to customize the generated code for this assembly
-   * @param metaschema the containing Metaschema
+   * @param bindingConfiguration
+   *          the binding configuration used to customize the generated code for this assembly
+   * @param metaschema
+   *          the containing Metaschema
    */
   public AbstractAssemblyDefinition(AssemblyBindingConfiguration bindingConfiguration, METASCHEMA metaschema) {
     super(metaschema);

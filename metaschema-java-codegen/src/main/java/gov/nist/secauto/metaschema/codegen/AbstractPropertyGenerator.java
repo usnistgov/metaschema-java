@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
@@ -72,6 +73,7 @@ public abstract class AbstractPropertyGenerator<CLASS_GENERATOR extends ClassGen
 
   /**
    * Gets the name of the Java field for this property item.
+   * 
    * @return the Java field name
    */
   public final String getJavaFieldName() {

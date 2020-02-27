@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.info.definitions;
 
 import com.sun.xml.bind.api.impl.NameConverter;
@@ -39,9 +40,12 @@ public abstract class AbstractFieldDefinition<METASCHEMA extends Metaschema>
   private final FieldBindingConfiguration bindingConfiguration;
 
   /**
-   * Constructs a binding definition for a Metaschema Field. 
-   * @param bindingConfiguration the binding configuration used to customize the generated code for this field
-   * @param metaschema the containing Metaschema
+   * Constructs a binding definition for a Metaschema Field.
+   * 
+   * @param bindingConfiguration
+   *          the binding configuration used to customize the generated code for this field
+   * @param metaschema
+   *          the containing Metaschema
    */
   public AbstractFieldDefinition(FieldBindingConfiguration bindingConfiguration, METASCHEMA metaschema) {
     super(metaschema);

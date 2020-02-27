@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
 import static java.lang.annotation.ElementType.FIELD;
@@ -47,16 +48,27 @@ public @interface Assembly {
    * Name of the XML Schema element.
    * <p>
    * If the value is "##default", then element name is derived from the JavaBean property name.
+   * 
+   * @return the name
    */
   String name() default "##default";
 
   /**
+   */
+  /**
    * XML target namespace of the XML Schema element.
+   * <p>
+   * If the value is "##default", then element name is derived from the namespace provided in the
+   * package-info.
+   * 
+   * @return the namespace
    */
   String namespace() default "##default";
 
   /**
-   * Specifies if the field must occur, {@code true}, or {@code false} otherwise.
+   * Specifies if the assembly must occur.
+   * 
+   * @return {@code true} if the field must occur, or {@code false} otherwise
    */
   boolean required() default false;
 }
