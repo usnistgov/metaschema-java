@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DataType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Code Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.codegen.type</a> &gt; <span class="el_source">DataType.java</span></div><h1>DataType.java</h1><pre class="source lang-java linenums">/**
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.codegen.type;
+
+import gov.nist.secauto.metaschema.datatypes.Base64;
+import gov.nist.secauto.metaschema.datatypes.Date;
+import gov.nist.secauto.metaschema.datatypes.DateTime;
+import gov.nist.secauto.metaschema.datatypes.DateTimeTimeZone;
+import gov.nist.secauto.metaschema.datatypes.DateTimeZone;
+import gov.nist.secauto.metaschema.datatypes.Decimal;
+import gov.nist.secauto.metaschema.datatypes.EmailAddress;
+import gov.nist.secauto.metaschema.datatypes.Hostname;
+import gov.nist.secauto.metaschema.datatypes.IPv4;
+import gov.nist.secauto.metaschema.datatypes.IPv6;
+import gov.nist.secauto.metaschema.datatypes.Integer;
+import gov.nist.secauto.metaschema.datatypes.NCName;
+import gov.nist.secauto.metaschema.datatypes.NonNegativeInteger;
+import gov.nist.secauto.metaschema.datatypes.PositiveInteger;
+import gov.nist.secauto.metaschema.datatypes.URI;
+import gov.nist.secauto.metaschema.datatypes.URIReference;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+
+import java.util.HashMap;
+import java.util.Map;
+
+<span class="fc" id="L51">public enum DataType {</span>
+<span class="fc" id="L52">  NCNAME(gov.nist.secauto.metaschema.model.info.definitions.DataType.NCNAME, NCName.class),</span>
+<span class="fc" id="L53">  DECIMAL(gov.nist.secauto.metaschema.model.info.definitions.DataType.DECIMAL, Decimal.class),</span>
+<span class="fc" id="L54">  INTEGER(gov.nist.secauto.metaschema.model.info.definitions.DataType.INTEGER, Integer.class),</span>
+<span class="fc" id="L55">  NON_NEGATIVE_INTEGER(</span>
+      gov.nist.secauto.metaschema.model.info.definitions.DataType.NON_NEGATIVE_INTEGER,
+      NonNegativeInteger.class),
+<span class="fc" id="L58">  POSITIVE_INTEGER(gov.nist.secauto.metaschema.model.info.definitions.DataType.POSITIVE_INTEGER, PositiveInteger.class),</span>
+<span class="fc" id="L59">  DATE(gov.nist.secauto.metaschema.model.info.definitions.DataType.DATE, Date.class),</span>
+<span class="fc" id="L60">  DATE_TIME(gov.nist.secauto.metaschema.model.info.definitions.DataType.DATE_TIME, DateTime.class),</span>
+<span class="fc" id="L61">  DATE_WITH_TZ(gov.nist.secauto.metaschema.model.info.definitions.DataType.DATE_WITH_TZ, DateTimeZone.class),</span>
+<span class="fc" id="L62">  DATE_TIME_WITH_TZ(</span>
+      gov.nist.secauto.metaschema.model.info.definitions.DataType.DATE_TIME_WITH_TZ,
+      DateTimeTimeZone.class),
+<span class="fc" id="L65">  BASE64(gov.nist.secauto.metaschema.model.info.definitions.DataType.BASE64, Base64.class),</span>
+<span class="fc" id="L66">  EMAIL_ADDRESS(gov.nist.secauto.metaschema.model.info.definitions.DataType.EMAIL_ADDRESS, EmailAddress.class),</span>
+<span class="fc" id="L67">  HOSTNAME(gov.nist.secauto.metaschema.model.info.definitions.DataType.HOSTNAME, Hostname.class),</span>
+<span class="fc" id="L68">  IP_V4_ADDRESS(gov.nist.secauto.metaschema.model.info.definitions.DataType.IP_V4_ADDRESS, IPv4.class),</span>
+<span class="fc" id="L69">  IP_V6_ADDRESS(gov.nist.secauto.metaschema.model.info.definitions.DataType.IP_V6_ADDRESS, IPv6.class),</span>
+<span class="fc" id="L70">  URI(gov.nist.secauto.metaschema.model.info.definitions.DataType.URI, URI.class),</span>
+<span class="fc" id="L71">  URI_REFERENCE(gov.nist.secauto.metaschema.model.info.definitions.DataType.URI_REFERENCE, URIReference.class),</span>
+<span class="fc" id="L72">  MARKUP_LINE(gov.nist.secauto.metaschema.model.info.definitions.DataType.MARKUP_LINE, MarkupLine.class),</span>
+<span class="fc" id="L73">  MARKUP_MULTILINE(gov.nist.secauto.metaschema.model.info.definitions.DataType.MARKUP_MULTILINE, MarkupMultiline.class),</span>
+<span class="fc" id="L74">  EMPTY(gov.nist.secauto.metaschema.model.info.definitions.DataType.EMPTY, Void.class),</span>
+<span class="fc" id="L75">  BOOLEAN(gov.nist.secauto.metaschema.model.info.definitions.DataType.BOOLEAN, Boolean.class),</span>
+<span class="fc" id="L76">  STRING(gov.nist.secauto.metaschema.model.info.definitions.DataType.STRING, String.class);</span>
+
+  private static final Map&lt;gov.nist.secauto.metaschema.model.info.definitions.DataType, DataType&gt; datatypeMap;
+
+  static {
+<span class="fc" id="L81">    datatypeMap = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">    for (DataType e : values()) {</span>
+<span class="fc" id="L83">      datatypeMap.put(e.getDataType(), e);</span>
+    }
+<span class="fc" id="L85">  }</span>
+
+  public static DataType lookupByDatatype(gov.nist.secauto.metaschema.model.info.definitions.DataType type) {
+<span class="fc" id="L88">    return datatypeMap.get(type);</span>
+  }
+
+  private final gov.nist.secauto.metaschema.model.info.definitions.DataType dataType;
+  private final Class&lt;?&gt; javaClass;
+  private final ClassJavaType javaType;
+
+<span class="fc" id="L95">  private DataType(gov.nist.secauto.metaschema.model.info.definitions.DataType dataType, Class&lt;?&gt; javaClass) {</span>
+<span class="fc" id="L96">    this.dataType = dataType;</span>
+<span class="fc" id="L97">    this.javaClass = javaClass;</span>
+<span class="fc" id="L98">    this.javaType = new ClassJavaType(getJavaClass());</span>
+<span class="fc" id="L99">  }</span>
+
+  public gov.nist.secauto.metaschema.model.info.definitions.DataType getDataType() {
+<span class="fc" id="L102">    return dataType;</span>
+  }
+
+  protected Class&lt;?&gt; getJavaClass() {
+<span class="fc" id="L106">    return javaClass;</span>
+  }
+
+  public ClassJavaType getJavaType() {
+<span class="fc" id="L110">    return javaType;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

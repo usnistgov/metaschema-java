@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractClassGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Code Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.codegen</a> &gt; <span class="el_source">AbstractClassGenerator.java</span></div><h1>AbstractClassGenerator.java</h1><pre class="source lang-java linenums">/**
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.codegen;
+
+import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaModel;
+import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
+import gov.nist.secauto.metaschema.codegen.builder.MethodBuilder;
+import gov.nist.secauto.metaschema.codegen.type.JavaType;
+import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
+import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URI;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
+
+public abstract class AbstractClassGenerator&lt;DEFINITION extends ManagedObject&gt; implements ClassGenerator {
+<span class="fc" id="L52">  private static final Logger logger = LogManager.getLogger(AbstractClassGenerator.class);</span>
+
+  private final DEFINITION definition;
+  private final JavaTypeSupplier supplier;
+<span class="fc" id="L56">  private final Map&lt;String, PropertyGenerator&gt; propertyNameToPropertyGeneratorMap = new LinkedHashMap&lt;&gt;();</span>
+  private final JavaType javaType;
+<span class="fc" id="L58">  private boolean hasJsonKeyFlag = false;</span>
+
+  /**
+   * Constructs a new class generator based on the provided definition.
+   * 
+   * @param definition
+   *          the Metaschema field or assembly definition for which a Java class will be generated
+   * @param supplier
+   *          a callback used to generate class type information for a generated class
+   */
+<span class="fc" id="L68">  public AbstractClassGenerator(DEFINITION definition, JavaTypeSupplier supplier) {</span>
+<span class="fc" id="L69">    Objects.requireNonNull(definition, &quot;definition&quot;);</span>
+<span class="fc" id="L70">    Objects.requireNonNull(supplier, &quot;supplier&quot;);</span>
+<span class="fc" id="L71">    this.definition = definition;</span>
+<span class="fc" id="L72">    this.supplier = supplier;</span>
+
+<span class="fc" id="L74">    this.javaType = supplier.getClassJavaType(getDefinition());</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">    for (FlagInstance instance : definition.getFlagInstances().values()) {</span>
+<span class="fc" id="L76">      newFlagPropertyGenerator(instance);</span>
+<span class="fc" id="L77">    }</span>
+<span class="fc" id="L78">  }</span>
+
+  /**
+   * Gets the Metaschema field or assembly definition for which a Java class will be generated.
+   * 
+   * @return the definition
+   */
+  protected DEFINITION getDefinition() {
+<span class="fc" id="L86">    return definition;</span>
+  }
+
+  protected JavaTypeSupplier getJavaTypeSupplier() {
+<span class="fc" id="L90">    return supplier;</span>
+  }
+
+  @Override
+  public JavaType getJavaType() {
+<span class="fc" id="L95">    return javaType;</span>
+  }
+
+  @Override
+  public URI getXmlNamespace() {
+<span class="fc" id="L100">    return getDefinition().getContainingMetaschema().getXmlNamespace();</span>
+  }
+
+  @Override
+  public String getPackageName() {
+<span class="fc" id="L105">    return getJavaType().getPackageName();</span>
+  }
+
+  @Override
+  public JavaGenerator.GeneratedClass generateClass(File outputDir) throws IOException {
+<span class="fc" id="L110">    String className = getJavaType().getClassName();</span>
+<span class="fc" id="L111">    String qualifiedClassName = getJavaType().getQualifiedClassName();</span>
+<span class="fc" id="L112">    String packagePath = getPackageName().replace(&quot;.&quot;, &quot;/&quot;);</span>
+<span class="fc" id="L113">    File packageDir = new File(outputDir, packagePath);</span>
+
+<span class="fc bfc" id="L115" title="All 2 branches covered.">    if (packageDir.mkdirs()) {</span>
+<span class="fc" id="L116">      logger.info(&quot;Created package directory '{}'&quot;, packageDir.getAbsolutePath());</span>
+    }
+
+<span class="fc" id="L119">    File classFile = new File(packageDir, className + &quot;.java&quot;);</span>
+
+<span class="fc" id="L121">    try (BufferedWriter bufferWriter = new BufferedWriter(new FileWriter(classFile))) {</span>
+<span class="fc" id="L122">      logger.info(&quot;Generating class: {}&quot;, qualifiedClassName);</span>
+
+<span class="fc" id="L124">      PrintWriter writer = new PrintWriter(bufferWriter);</span>
+<span class="fc" id="L125">      ClassBuilder builder = new ClassBuilder(getJavaType());</span>
+
+<span class="fc" id="L127">      buildClass(builder);</span>
+
+<span class="fc" id="L129">      builder.build(writer);</span>
+    }
+
+<span class="fc" id="L132">    return new JavaGenerator.GeneratedClass(classFile, qualifiedClassName, isRootClass());</span>
+  }
+
+  /**
+   * Identifies if this class to generate is a root data element in the bound XML, JSON, etc. model.
+   * 
+   * @return {@code true} if the class to be generated is a possible model root or {@code false}
+   *         otherwise
+   */
+  protected abstract boolean isRootClass();
+
+  /**
+   * Adds the provided property generator to this class generator.
+   * 
+   * @param property
+   *          the property generator to add
+   */
+  protected void addPropertyGenerator(PropertyGenerator property) {
+<span class="fc" id="L150">    String name = property.getPropertyName();</span>
+<span class="fc" id="L151">    PropertyGenerator oldContext = propertyNameToPropertyGeneratorMap.put(name, property);</span>
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">    if (oldContext != null) {</span>
+<span class="nc" id="L153">      logger.error(&quot;Unexpected duplicate instance property name '{}'&quot;, name);</span>
+<span class="nc" id="L154">      throw new RuntimeException(String.format(&quot;Unexpected duplicate instance property name '%s'&quot;, name));</span>
+    }
+<span class="fc" id="L156">  }</span>
+
+  /**
+   * Creates a new {@link PropertyGenerator} for the provided {@link FlagInstance}.
+   * 
+   * @param instance
+   *          the flag instance to generate the property for
+   * @return the new property generator
+   */
+  public FlagPropertyGenerator newFlagPropertyGenerator(FlagInstance instance) {
+<span class="fc bfc" id="L166" title="All 2 branches covered.">    if (instance.isJsonKeyFlag()) {</span>
+<span class="fc" id="L167">      hasJsonKeyFlag = true;</span>
+    }
+<span class="fc" id="L169">    FlagPropertyGenerator context = new FlagPropertyGenerator(instance, this);</span>
+<span class="fc" id="L170">    addPropertyGenerator(context);</span>
+<span class="fc" id="L171">    return context;</span>
+  }
+
+  @Override
+  public boolean hasPropertyWithName(String newName) {
+<span class="fc" id="L176">    return propertyNameToPropertyGeneratorMap.containsKey(newName);</span>
+  }
+
+  /**
+   * Gets the collection of properties to generate when generating the Java type associated with this
+   * class.
+   * 
+   * @return an unmodifiable collection of property generators
+   */
+  protected Collection&lt;PropertyGenerator&gt; getPropertyGenerators() {
+<span class="fc" id="L186">    return Collections.unmodifiableCollection(propertyNameToPropertyGeneratorMap.values());</span>
+  }
+
+  /**
+   * Indicates if the Metaschema field or assembly associated with this generator has a JSON key
+   * binding.
+   * 
+   * @return {@code true} if the JSON key binding is configured or {@code false} otherwise
+   */
+  public boolean hasJsonKeyFlag() {
+<span class="nc" id="L196">    return hasJsonKeyFlag;</span>
+  }
+
+  protected void buildClass(ClassBuilder builder) {
+<span class="fc" id="L200">    builder.getJavadocBuilder().append(getDefinition().getDescription().toHtml());</span>
+<span class="fc" id="L201">    builder.annotation(MetaschemaModel.class);</span>
+
+    // no-arg constructor
+<span class="fc" id="L204">    builder.newConstructorBuilder();</span>
+
+<span class="fc bfc" id="L206" title="All 2 branches covered.">    for (PropertyGenerator property : getPropertyGenerators()) {</span>
+<span class="fc" id="L207">      property.build(builder);</span>
+<span class="fc" id="L208">    }</span>
+
+<span class="fc" id="L210">    MethodBuilder toStringMethod = builder.newMethodBuilder(&quot;toString&quot;).returnType(String.class);</span>
+<span class="fc" id="L211">    toStringMethod.annotation(Override.class);</span>
+<span class="fc" id="L212">    toStringMethod.getBodyWriter().println(&quot;return new org.apache.commons.lang3.builder.ReflectionToStringBuilder(&quot;</span>
+        + &quot;this, org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE).toString();&quot;);
+<span class="fc" id="L214">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

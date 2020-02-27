@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<rss version="0.91">
+  <channel>
+    <title>Metaschema Java Code Generator - Checkstyle report</title>
+    <link>https://pages.nist.gov/metaschema</link>
+    <description>Metaschema Java Code Generator - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2020 National Institute of Standards and Technology</copyright>
+    <item>
+      <title>File: 30,
+             Errors: 0,
+             Warnings: 113,
+             Infos: 0
+      </title>
+            <link>https://pages.nist.gov/metaschema/checkstyle.html</link>
+      <description>
+        <p>Click <a href="https://pages.nist.gov/metaschema/checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.FieldValuePropertyGenerator.java">gov/nist/secauto/metaschema/codegen/FieldValuePropertyGenerator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.SingletonInstanceGenerator.java">gov/nist/secauto/metaschema/codegen/SingletonInstanceGenerator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.support.PaddedStringWriter.java">gov/nist/secauto/metaschema/codegen/support/PaddedStringWriter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.FieldClassGenerator.java">gov/nist/secauto/metaschema/codegen/FieldClassGenerator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.type.AbstractJavaType.java">gov/nist/secauto/metaschema/codegen/type/AbstractJavaType.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.builder.ConstructorBuilder.java">gov/nist/secauto/metaschema/codegen/builder/ConstructorBuilder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.AbstractClassGenerator.java">gov/nist/secauto/metaschema/codegen/AbstractClassGenerator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.AbstractPropertyGenerator.java">gov/nist/secauto/metaschema/codegen/AbstractPropertyGenerator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.builder.MethodBuilder.java">gov/nist/secauto/metaschema/codegen/builder/MethodBuilder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  6
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.ListInstanceGenerator.java">gov/nist/secauto/metaschema/codegen/ListInstanceGenerator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.type.ClassJavaType.java">gov/nist/secauto/metaschema/codegen/type/ClassJavaType.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.ClassGenerator.java">gov/nist/secauto/metaschema/codegen/ClassGenerator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.MapInstanceGenerator.java">gov/nist/secauto/metaschema/codegen/MapInstanceGenerator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.FlagPropertyGenerator.java">gov/nist/secauto/metaschema/codegen/FlagPropertyGenerator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.type.JavaType.java">gov/nist/secauto/metaschema/codegen/type/JavaType.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  8
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.AssemblyClassGenerator.java">gov/nist/secauto/metaschema/codegen/AssemblyClassGenerator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.builder.FieldBuilder.java">gov/nist/secauto/metaschema/codegen/builder/FieldBuilder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.JavaTypeSupplier.java">gov/nist/secauto/metaschema/codegen/JavaTypeSupplier.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.type.AbstractCollectionJavaType.java">gov/nist/secauto/metaschema/codegen/type/AbstractCollectionJavaType.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.builder.AbstractMethodBuilder.java">gov/nist/secauto/metaschema/codegen/builder/AbstractMethodBuilder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.builder.ClassBuilder.java">gov/nist/secauto/metaschema/codegen/builder/ClassBuilder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.builder.Visibility.java">gov/nist/secauto/metaschema/codegen/builder/Visibility.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.builder.AbstractClassBuilder.java">gov/nist/secauto/metaschema/codegen/builder/AbstractClassBuilder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  9
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.JavaGenerator.java">gov/nist/secauto/metaschema/codegen/JavaGenerator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  7
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.PropertyGenerator.java">gov/nist/secauto/metaschema/codegen/PropertyGenerator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.type.DataType.java">gov/nist/secauto/metaschema/codegen/type/DataType.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.type.MapJavaType.java">gov/nist/secauto/metaschema/codegen/type/MapJavaType.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.builder.AbstractMemberBuilder.java">gov/nist/secauto/metaschema/codegen/builder/AbstractMemberBuilder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.builder.InnerClassBuilder.java">gov/nist/secauto/metaschema/codegen/builder/InnerClassBuilder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema/checkstyle.html#gov.nist.secauto.metaschema.codegen.builder.AbstractBuilder.java">gov/nist/secauto/metaschema/codegen/builder/AbstractBuilder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  17
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+

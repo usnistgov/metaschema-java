@@ -1,0 +1,50 @@
+/* adjust for nist header */
+.navbar-fixed-top {
+    top: 58px;
+    position: absolute;
+}
+/* reset back to bootswatch */
+body {
+    padding-top: 80px;
+    padding-bottom: 20px;
+}
+
+#nistheadergoeshere {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-color: #000;
+}
+
+#nist-header {
+    z-index: 3000;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+@media ( min-width :768px) {
+    .nist-header {
+        width: 750px;
+    }
+}
+
+@media ( min-width :992px) {
+    .nist-header {
+        width: 970px;
+    }
+}
+
+@media ( min-width :1200px) {
+    .nist-header {
+        width: 1170px;
+    }
+}
+
+/* Remove the drop shadow */
+.nist-header__nav-wrapper {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}

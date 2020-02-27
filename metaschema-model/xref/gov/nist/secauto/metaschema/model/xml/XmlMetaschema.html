@@ -1,0 +1,284 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>XmlMetaschema xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../apidocs/gov/nist/secauto/metaschema/model/xml/XmlMetaschema.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_javadoccomment"> * Portions of this software was developed by employees of the National Institute</em>
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_javadoccomment"> * of Standards and Technology (NIST), an agency of the Federal Government and is</em>
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_javadoccomment"> * being made available as a public service. Pursuant to title 17 United States</em>
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_javadoccomment"> * Code Section 105, works of NIST employees are not subject to copyright</em>
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <em class="jxr_javadoccomment"> * protection in the United States. This software may be subject to foreign</em>
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <em class="jxr_javadoccomment"> * copyright. Permission in the United States and in foreign countries, to the</em>
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <em class="jxr_javadoccomment"> * extent that NIST may hold copyright, to use, copy, modify, create derivative</em>
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <em class="jxr_javadoccomment"> * works, and distribute this software and its documentation without fee is hereby</em>
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_javadoccomment"> * granted on a non-exclusive basis, provided that this notice and disclaimer</em>
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <em class="jxr_javadoccomment"> * of warranty appears in all copies.</em>
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <em class="jxr_javadoccomment"> * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER</em>
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <em class="jxr_javadoccomment"> * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY</em>
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <em class="jxr_javadoccomment"> * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF</em>
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_javadoccomment"> * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM</em>
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <em class="jxr_javadoccomment"> * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE</em>
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_javadoccomment"> * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT</em>
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <em class="jxr_javadoccomment"> * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,</em>
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <em class="jxr_javadoccomment"> * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,</em>
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <em class="jxr_javadoccomment"> * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,</em>
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <em class="jxr_javadoccomment"> * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR</em>
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <em class="jxr_javadoccomment"> * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT</em>
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <em class="jxr_javadoccomment"> * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.</em>
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.model.xml;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> com.sun.xml.bind.api.impl.NameConverter;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.itl.metaschema.model.xml.DefineAssemblyDocument;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.itl.metaschema.model.xml.DefineFieldDocument;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.itl.metaschema.model.xml.DefineFlagDocument;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.itl.metaschema.model.xml.ExtensionType;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.itl.metaschema.model.xml.ImportDocument;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.itl.metaschema.model.xml.METASCHEMADocument;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> gov.nist.itl.metaschema.model.xml.METASCHEMADocument.METASCHEMA;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> gov.nist.itl.metaschema.model.xml.METASCHEMADocument.METASCHEMA.Extensions;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> gov.nist.itl.metaschema.model.xml.binding.ModelBindingDocument;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.AbstractMetaschema;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.Metaschema;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.MetaschemaException;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.configuration.ModelBindingConfiguration;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.info.Util;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.LogManager;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> org.apache.logging.log4j.Logger;
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> org.apache.xmlbeans.XmlCursor;
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> org.apache.xmlbeans.XmlException;
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">import</strong> org.apache.xmlbeans.XmlObject;
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  <strong class="jxr_keyword">import</strong> java.net.MalformedURLException;
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <strong class="jxr_keyword">import</strong> java.net.URI;
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <strong class="jxr_keyword">import</strong> java.util.Collections;
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <strong class="jxr_keyword">import</strong> java.util.LinkedHashMap;
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <strong class="jxr_keyword">import</strong> java.util.Stack;
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <strong class="jxr_keyword">import</strong> java.util.stream.Collectors;
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="XmlMetaschema" href="../../../../../../gov/nist/secauto/metaschema/model/xml/XmlMetaschema.html#XmlMetaschema">XmlMetaschema</a> <strong class="jxr_keyword">extends</strong> <a name="AbstractMetaschema" href="../../../../../../gov/nist/secauto/metaschema/model/AbstractMetaschema.html#AbstractMetaschema">AbstractMetaschema</a> {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Logger logger = LogManager.getLogger(XmlMetaschema.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a name="XmlMetaschema" href="../../../../../../gov/nist/secauto/metaschema/model/xml/XmlMetaschema.html#XmlMetaschema">XmlMetaschema</a> loadMetaschema(URI resource) <strong class="jxr_keyword">throws</strong> MetaschemaException, IOException {
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">return</strong> loadMetaschema(resource, <strong class="jxr_keyword">new</strong> Stack&lt;&gt;(), <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;&gt;());
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>    }
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>  
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>    <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">   * Loads a metaschema from the provided resource.</em>
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">   * &lt;p&gt;</em>
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_javadoccomment">   * If the metaschema imports other metaschema, the provided visitedMetaschema can be used to track</em>
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">   * circular inclusions. This is useful when this method recurses into included metaschema.</em>
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">   * &lt;p&gt;</em>
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">   * Previously loaded metaschema are provided by the metaschemaCache. This method will add the</em>
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">   * current metaschema to the cache after all imported metaschema have been loaded.</em>
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">   * @param resource</em>
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">   *          the metaschema resource to load</em>
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">   * @param visitedMetaschema</em>
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>  <em class="jxr_javadoccomment">   *          a LIFO queue representing previously visited metaschema in an import chain</em>
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  <em class="jxr_javadoccomment">   * @param metaschemaCache</em>
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_javadoccomment">   *          a map of previously processed metaschema, keyed by the resource URI of the metaschema</em>
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_javadoccomment">   * @return the loaded metaschema</em>
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_javadoccomment">   * @throws MetaschemaException</em>
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">   *           if a parsing or processing error occurs</em>
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">   * @throws MalformedURLException</em>
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">   *           if the provided URI is malformed</em>
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">   * @throws IOException</em>
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>  <em class="jxr_javadoccomment">   *           if an IO error occurs while parsing</em>
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>  <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a name="XmlMetaschema" href="../../../../../../gov/nist/secauto/metaschema/model/xml/XmlMetaschema.html#XmlMetaschema">XmlMetaschema</a> loadMetaschema(URI resource, Stack&lt;URI&gt; visitedMetaschema,
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>        Map&lt;URI, XmlMetaschema&gt; metaschemaCache) <strong class="jxr_keyword">throws</strong> MetaschemaException, MalformedURLException, IOException {
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <em class="jxr_comment">// first check if the current Metaschema has been visited to prevent cycles</em>
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>      <strong class="jxr_keyword">if</strong> (visitedMetaschema.contains(resource)) {
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>        <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="MetaschemaException" href="../../../../../../gov/nist/secauto/metaschema/model/MetaschemaException.html#MetaschemaException">MetaschemaException</a>(<span class="jxr_string">"Cycle detected in metaschema includes for '"</span> + resource + <span class="jxr_string">"'. Call stack: '"</span>
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>            + visitedMetaschema.stream().map(n -&gt; n.toString()).collect(Collectors.joining(<span class="jxr_string">","</span>)));
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>      }
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>  
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>     <a name="XmlMetaschema" href="../../../../../../gov/nist/secauto/metaschema/model/xml/XmlMetaschema.html#XmlMetaschema">XmlMetaschema</a> retval = metaschemaCache.get(resource);
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>     <strong class="jxr_keyword">if</strong> (retval == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>       logger.info(<span class="jxr_string">"Loading metaschema '{}'"</span>, resource);
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>       <em class="jxr_comment">// parse this metaschema</em>
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>       METASCHEMADocument metaschemaXml;
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>       <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>         metaschemaXml = METASCHEMADocument.Factory.parse(resource.toURL());
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>       } <strong class="jxr_keyword">catch</strong> (XmlException e) {
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="MetaschemaException" href="../../../../../../gov/nist/secauto/metaschema/model/MetaschemaException.html#MetaschemaException">MetaschemaException</a>(e);
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>       }
+<a class="jxr_linenumber" name="L110" href="#L110">110</a> 
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>       <em class="jxr_comment">// now check if this Metaschema imports other metaschema</em>
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>       <strong class="jxr_keyword">int</strong> size = metaschemaXml.getMETASCHEMA().sizeOfImportArray();
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>       Map&lt;URI, Metaschema&gt; importedMetaschema;
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>       <strong class="jxr_keyword">if</strong> (size == 0) {
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>         importedMetaschema = Collections.emptyMap();
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>       } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>         visitedMetaschema.push(resource);
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>           importedMetaschema = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;&gt;();
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>           <strong class="jxr_keyword">for</strong> (ImportDocument.Import imported : metaschemaXml.getMETASCHEMA().getImportList()) {
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>             URI importedResource = URI.create(imported.getHref());
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>             importedResource = resource.resolve(importedResource);
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>             importedMetaschema.put(importedResource,
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>                 loadMetaschema(importedResource, visitedMetaschema, metaschemaCache));
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>           }
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>         } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>           visitedMetaschema.pop();
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>         }
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>       }
+<a class="jxr_linenumber" name="L130" href="#L130">130</a> 
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>       <em class="jxr_comment">// now create this metaschema</em>
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>       retval = <strong class="jxr_keyword">new</strong> <a name="XmlMetaschema" href="../../../../../../gov/nist/secauto/metaschema/model/xml/XmlMetaschema.html#XmlMetaschema">XmlMetaschema</a>(resource, metaschemaXml, importedMetaschema);
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>       metaschemaCache.put(resource, retval);
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>     } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>       logger.debug(<span class="jxr_string">"Found metaschema in cache '{}'"</span>, resource);
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>     }
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>     <strong class="jxr_keyword">return</strong> retval;
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>   }
+<a class="jxr_linenumber" name="L139" href="#L139">139</a> 
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <a name="ModelBindingConfiguration" href="../../../../../../gov/nist/secauto/metaschema/model/configuration/ModelBindingConfiguration.html#ModelBindingConfiguration">ModelBindingConfiguration</a> getBindingConfiguration(METASCHEMADocument metaschema) {
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>     <a name="ModelBindingConfiguration" href="../../../../../../gov/nist/secauto/metaschema/model/configuration/ModelBindingConfiguration.html#ModelBindingConfiguration">ModelBindingConfiguration</a> retval = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>     METASCHEMA modelMetaschema = metaschema.getMETASCHEMA();
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>     <strong class="jxr_keyword">if</strong> (modelMetaschema.isSetExtensions()) {
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>       Extensions extensions = modelMetaschema.getExtensions();
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>       <strong class="jxr_keyword">for</strong> (ExtensionType extensionInstance : extensions.getModelExtensionList()) {
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>         System.out.println(<span class="jxr_string">"Extension Class: "</span> + extensionInstance.getClass().getName());
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>         <strong class="jxr_keyword">if</strong> (extensionInstance instanceof ModelBindingDocument.ModelBinding) {
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>           ModelBindingDocument.ModelBinding modelConfig = (ModelBindingDocument.ModelBinding) extensionInstance;
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>           <strong class="jxr_keyword">if</strong> (modelConfig.isSetJava()) {
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>             ModelBindingDocument.ModelBinding.Java modelJava = modelConfig.getJava();
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>             retval = <strong class="jxr_keyword">new</strong> <a name="ModelBindingConfiguration" href="../../../../../../gov/nist/secauto/metaschema/model/configuration/ModelBindingConfiguration.html#ModelBindingConfiguration">ModelBindingConfiguration</a>(modelJava.getPackageName());
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>             <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>           }
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>         }
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>       }
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>     }
+<a class="jxr_linenumber" name="L157" href="#L157">157</a> 
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>     <strong class="jxr_keyword">if</strong> (retval == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>       retval = ModelBindingConfiguration.NULL_CONFIG;
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>     }
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>     <strong class="jxr_keyword">return</strong> retval;
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>   }
+<a class="jxr_linenumber" name="L163" href="#L163">163</a> 
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> METASCHEMADocument metaschema;
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;String, InfoElementDefinition&gt; infoElementDefinitions;
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;String, XmlFlagDefinition&gt; flagDefinitions;
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;String, XmlFieldDefinition&gt; fieldDefinitions;
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;String, XmlAssemblyDefinition&gt; assemblyDefinitions;
+<a class="jxr_linenumber" name="L169" href="#L169">169</a> 
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L171" href="#L171">171</a> <em class="jxr_javadoccomment">   * Constructs a new Metaschema instance.</em>
+<a class="jxr_linenumber" name="L172" href="#L172">172</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L173" href="#L173">173</a> <em class="jxr_javadoccomment">   * @param resource</em>
+<a class="jxr_linenumber" name="L174" href="#L174">174</a> <em class="jxr_javadoccomment">   *          the resource from which the metaschema was loaded</em>
+<a class="jxr_linenumber" name="L175" href="#L175">175</a> <em class="jxr_javadoccomment">   * @param metaschemaXml</em>
+<a class="jxr_linenumber" name="L176" href="#L176">176</a> <em class="jxr_javadoccomment">   *          the XML source of the metaschema definition bound to Java objects</em>
+<a class="jxr_linenumber" name="L177" href="#L177">177</a> <em class="jxr_javadoccomment">   * @param importedMetaschema</em>
+<a class="jxr_linenumber" name="L178" href="#L178">178</a> <em class="jxr_javadoccomment">   *          the definitions for any metaschema imported by this metaschema</em>
+<a class="jxr_linenumber" name="L179" href="#L179">179</a> <em class="jxr_javadoccomment">   * @throws MetaschemaException</em>
+<a class="jxr_linenumber" name="L180" href="#L180">180</a> <em class="jxr_javadoccomment">   *           if a processing error occurs</em>
+<a class="jxr_linenumber" name="L181" href="#L181">181</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>   <strong class="jxr_keyword">public</strong> <a name="XmlMetaschema" href="../../../../../../gov/nist/secauto/metaschema/model/xml/XmlMetaschema.html#XmlMetaschema">XmlMetaschema</a>(URI resource, METASCHEMADocument metaschemaXml, Map&lt;URI, Metaschema&gt; importedMetaschema)
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>       <strong class="jxr_keyword">throws</strong> <a name="MetaschemaException" href="../../../../../../gov/nist/secauto/metaschema/model/MetaschemaException.html#MetaschemaException">MetaschemaException</a> {
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>     <strong class="jxr_keyword">super</strong>(resource, getBindingConfiguration(metaschemaXml), importedMetaschema);
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>     <strong class="jxr_keyword">this</strong>.metaschema = metaschemaXml;
+<a class="jxr_linenumber" name="L186" href="#L186">186</a> 
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>     XmlCursor cursor = metaschema.getMETASCHEMA().newCursor();
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>     cursor.selectPath(<span class="jxr_string">"declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"</span>
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>         + <span class="jxr_string">"$this/m:define-assembly|$this/m:define-field|$this/m:define-flag"</span>);
+<a class="jxr_linenumber" name="L190" href="#L190">190</a> 
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>     <em class="jxr_comment">// handle definitions in this metaschema</em>
+<a class="jxr_linenumber" name="L192" href="#L192">192</a>     Map&lt;String, InfoElementDefinition&gt; infoElementDefinitions = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;&gt;();
+<a class="jxr_linenumber" name="L193" href="#L193">193</a>     Map&lt;String, XmlFlagDefinition&gt; flagDefinitions = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;&gt;();
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>     Map&lt;String, XmlFieldDefinition&gt; fieldDefinitions = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;&gt;();
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>     Map&lt;String, XmlAssemblyDefinition&gt; assemblyDefinitions = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;&gt;();
+<a class="jxr_linenumber" name="L196" href="#L196">196</a> 
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>     <strong class="jxr_keyword">while</strong> (cursor.toNextSelection()) {
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>       XmlObject obj = cursor.getObject();
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>       <strong class="jxr_keyword">if</strong> (obj instanceof DefineFlagDocument.DefineFlag) {
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>         <a name="XmlFlagDefinition" href="../../../../../../gov/nist/secau<a name="XmlFlagDefinition" href="../../../../../../gov/nist/secauto/metaschema/model/xml/XmlFlagDefinition.html#XmlFlagDefinition">XmlFlagDefinition</a>el/xml/XmlFlagDefinition.html#XmlFlagDefinition">XmlFlagDefinition</a> flag = <strong class="jxr_keyword">new</strong> <a name="XmlFlagDefinition" href="../../../../../../gov/nist/secauto/metaschema/model/xml/XmlFlagDefinition.html#XmlFlagDefinition">XmlFlagDefinition</a>((DefineFlagDocument.DefineFlag) obj, <strong class="jxr_keyword">this</strong>);
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>         logger.trace(<span class="jxr_string">"New flag definition '{}'"</span>, Util.toCoordinates(flag));
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>         flagDefinitions.put(flag.getName(), flag);
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>         infoElementDefinitions.put(flag.getName(), flag);
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>       } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (obj instanceof DefineFieldDocument.DefineField) {
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>         <a name="XmlFieldDefinition" href="../../../../../../gov/nist/secaut<a name="XmlFieldDefinition" href="../../../../../../gov/nist/secauto/metaschema/model/xml/XmlFieldDefinition.html#XmlFieldDefinition">XmlFieldDefinition</a>/xml/XmlFieldDefinition.html#XmlFieldDefinition">XmlFieldDefinition</a> field = <strong class="jxr_keyword">new</strong> <a name="XmlFieldDefinition" href="../../../../../../gov/nist/secauto/metaschema/model/xml/XmlFieldDefinition.html#XmlFieldDefinition">XmlFieldDefinition</a>((DefineFieldDocument.DefineField) obj, <strong class="jxr_keyword">this</strong>);
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>         logger.trace(<span class="jxr_string">"New field definition '{}'"</span>, Util.toCoordinates(field));
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>         fieldDefinitions.put(field.getName(), field);
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>         infoElementDefinitions.put(field.getName(), field);
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>       } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (obj instanceof DefineAssemblyDocument.DefineAssembly) {
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>         <a name="XmlAssemblyDefinition" href="../../../../../../gov/nist/secauto/m<a name="XmlAssemblyDefinition" href="../../../../../../gov/nist/secauto/metaschema/model/xml/XmlAssemblyDefinition.html#XmlAssemblyDefinition">XmlAssemblyDefinition</a>mlAssemblyDefinition.html#XmlAssemblyDefinition">XmlAssemblyDefinition</a> assembly = <strong class="jxr_keyword">new</strong> <a name="XmlAssemblyDefinition" href="../../../../../../gov/nist/secauto/metaschema/model/xml/XmlAssemblyDefinition.html#XmlAssemblyDefinition">XmlAssemblyDefinition</a>((DefineAssemblyDocument.DefineAssembly) obj, <strong class="jxr_keyword">this</strong>);
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>         logger.trace(<span class="jxr_string">"New assembly definition '{}'"</span>, Util.toCoordinates(assembly));
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>         assemblyDefinitions.put(assembly.getName(), assembly);
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>         infoElementDefinitions.put(assembly.getName(), assembly);
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>       }
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>     }
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>     <strong class="jxr_keyword">this</strong>.flagDefinitions
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>         = flagDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagDefinitions);
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>     <strong class="jxr_keyword">this</strong>.fieldDefinitions
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>         = fieldDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(fieldDefinitions);
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>     <strong class="jxr_keyword">this</strong>.assemblyDefinitions
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>         = assemblyDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(assemblyDefinitions);
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>     <strong class="jxr_keyword">this</strong>.infoElementDefinitions = infoElementDefinitions.isEmpty() ? Collections.emptyMap()
+<a class="jxr_linenumber" name="L223" href="#L223">223</a>         : Collections.unmodifiableMap(infoElementDefinitions);
+<a class="jxr_linenumber" name="L224" href="#L224">224</a> 
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>     parseUsedDefinitions();
+<a class="jxr_linenumber" name="L226" href="#L226">226</a>   }
+<a class="jxr_linenumber" name="L227" href="#L227">227</a> 
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>   @Override
+<a class="jxr_linenumber" name="L229" href="#L229">229</a>   <strong class="jxr_keyword">public</strong> String getShortName() {
+<a class="jxr_linenumber" name="L230" href="#L230">230</a>     <strong class="jxr_keyword">return</strong> metaschema.getMETASCHEMA().getShortName();
+<a class="jxr_linenumber" name="L231" href="#L231">231</a>   }
+<a class="jxr_linenumber" name="L232" href="#L232">232</a> 
+<a class="jxr_linenumber" name="L233" href="#L233">233</a>   @Override
+<a class="jxr_linenumber" name="L234" href="#L234">234</a>   <strong class="jxr_keyword">public</strong> URI getXmlNamespace() {
+<a class="jxr_linenumber" name="L235" href="#L235">235</a>     <strong class="jxr_keyword">return</strong> URI.create(metaschema.getMETASCHEMA().getNamespace());
+<a class="jxr_linenumber" name="L236" href="#L236">236</a>   }
+<a class="jxr_linenumber" name="L237" href="#L237">237</a> 
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>   @Override
+<a class="jxr_linenumber" name="L239" href="#L239">239</a>   <strong class="jxr_keyword">public</strong> String getPackageName() {
+<a class="jxr_linenumber" name="L240" href="#L240">240</a>     String packageName = getBindingConfiguration().getPackageName();
+<a class="jxr_linenumber" name="L241" href="#L241">241</a>     <strong class="jxr_keyword">if</strong> (packageName == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L242" href="#L242">242</a>       packageName = NameConverter.standard.toPackageName(getXmlNamespace().toString());
+<a class="jxr_linenumber" name="L243" href="#L243">243</a>     }
+<a class="jxr_linenumber" name="L244" href="#L244">244</a>     <strong class="jxr_keyword">return</strong> packageName;
+<a class="jxr_linenumber" name="L245" href="#L245">245</a>   }
+<a class="jxr_linenumber" name="L246" href="#L246">246</a> 
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>   @Override
+<a class="jxr_linenumber" name="L248" href="#L248">248</a>   <strong class="jxr_keyword">public</strong> Map&lt;String, InfoElementDefinition&gt; getInfoElementDefinitions() {
+<a class="jxr_linenumber" name="L249" href="#L249">249</a>     <strong class="jxr_keyword">return</strong> infoElementDefinitions;
+<a class="jxr_linenumber" name="L250" href="#L250">250</a>   }
+<a class="jxr_linenumber" name="L251" href="#L251">251</a> 
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>   @Override
+<a class="jxr_linenumber" name="L253" href="#L253">253</a>   <strong class="jxr_keyword">public</strong> Map&lt;String, XmlAssemblyDefinition&gt; getAssemblyDefinitions() {
+<a class="jxr_linenumber" name="L254" href="#L254">254</a>     <strong class="jxr_keyword">return</strong> assemblyDefinitions;
+<a class="jxr_linenumber" name="L255" href="#L255">255</a>   }
+<a class="jxr_linenumber" name="L256" href="#L256">256</a> 
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>   @Override
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>   <strong class="jxr_keyword">public</strong> Map&lt;String, XmlFieldDefinition&gt; getFieldDefinitions() {
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>     <strong class="jxr_keyword">return</strong> fieldDefinitions;
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>   }
+<a class="jxr_linenumber" name="L261" href="#L261">261</a> 
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>   @Override
+<a class="jxr_linenumber" name="L263" href="#L263">263</a>   <strong class="jxr_keyword">public</strong> Map&lt;String, XmlFlagDefinition&gt; getFlagDefinitions() {
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>     <strong class="jxr_keyword">return</strong> flagDefinitions;
+<a class="jxr_linenumber" name="L265" href="#L265">265</a>   }
+<a class="jxr_linenumber" name="L266" href="#L266">266</a> 
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>   @Override
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>   <strong class="jxr_keyword">public</strong> <a name="XmlAssemblyDefinition" href="../../../../../../gov/nist/secauto/metaschema/model/xml/XmlAssemblyDefinition.html#XmlAssemblyDefinition">XmlAssemblyDefinition</a> getRootAssemblyDefinition() {
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>     <strong class="jxr_keyword">return</strong> getAssemblyDefinitions().get(metaschema.getMETASCHEMA().getRoot());
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>   }
+<a class="jxr_linenumber" name="L271" href="#L271">271</a> }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2020 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
+</body>
+</html>

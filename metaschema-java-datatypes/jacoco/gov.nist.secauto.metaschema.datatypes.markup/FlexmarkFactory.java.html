@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FlexmarkFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Datatype Support</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.datatypes.markup</a> &gt; <span class="el_source">FlexmarkFactory.java</span></div><h1>FlexmarkFactory.java</h1><pre class="source lang-java linenums">/**
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.datatypes.markup;
+
+import com.vladsch.flexmark.ext.escaped.character.EscapedCharacterExtension;
+import com.vladsch.flexmark.ext.gfm.strikethrough.SubscriptExtension;
+import com.vladsch.flexmark.ext.tables.TablesExtension;
+import com.vladsch.flexmark.ext.typographic.TypographicExtension;
+import com.vladsch.flexmark.formatter.Formatter;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.superscript.SuperscriptExtension;
+import com.vladsch.flexmark.util.ast.Document;
+import com.vladsch.flexmark.util.builder.BuilderBase;
+import com.vladsch.flexmark.util.builder.Extension;
+import com.vladsch.flexmark.util.data.DataHolder;
+
+import gov.nist.secauto.metaschema.datatypes.markup.flexmark.insertanchor.InsertAnchorExtension;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+<span class="fc" id="L53">public class FlexmarkFactory {</span>
+<span class="fc" id="L54">  private static final Logger logger = LogManager.getLogger(FlexmarkFactory.class);</span>
+<span class="fc" id="L55">  private static final FlexmarkFactory instance = new FlexmarkFactory();</span>
+
+<span class="fc" id="L57">  static Map&lt;String, String&gt; specialCharsMap = new HashMap&lt;&gt;();</span>
+
+  static {
+    // specialCharsMap.put(&quot;“&quot;, &quot;\&quot;&quot;);
+    // specialCharsMap.put(&quot;”&quot;, &quot;\&quot;&quot;);
+<span class="fc" id="L62">    specialCharsMap.put(&quot;&amp;ldquo;&quot;, &quot;“&quot;);</span>
+<span class="fc" id="L63">    specialCharsMap.put(&quot;&amp;rdquo;&quot;, &quot;”&quot;);</span>
+    // specialCharsMap.put(&quot;‘&quot;, &quot;'&quot;);
+    // specialCharsMap.put(&quot;’&quot;, &quot;'&quot;);
+<span class="fc" id="L66">    specialCharsMap.put(&quot;&amp;lsquo;&quot;, &quot;‘&quot;);</span>
+<span class="fc" id="L67">    specialCharsMap.put(&quot;&amp;rsquo;&quot;, &quot;’&quot;);</span>
+<span class="fc" id="L68">    specialCharsMap.put(&quot;&amp;apos;&quot;, &quot;'&quot;);</span>
+    // specialCharsMap.put(&quot;«&quot;, &quot;&lt;&lt;&quot;);
+<span class="fc" id="L70">    specialCharsMap.put(&quot;&amp;laquo;&quot;, &quot;«&quot;);</span>
+    // specialCharsMap.put(&quot;»&quot;, &quot;&gt;&gt;&quot;);
+<span class="fc" id="L72">    specialCharsMap.put(&quot;&amp;raquo;&quot;, &quot;»&quot;);</span>
+    // specialCharsMap.put(&quot;…&quot;, &quot;...&quot;);
+<span class="fc" id="L74">    specialCharsMap.put(&quot;&amp;hellip;&quot;, &quot;…&quot;);</span>
+    // specialCharsMap.put(&quot;–&quot;, &quot;--&quot;);
+<span class="fc" id="L76">    specialCharsMap.put(&quot;&amp;ndash;&quot;, &quot;–&quot;);</span>
+    // specialCharsMap.put(&quot;—&quot;, &quot;---&quot;);
+<span class="fc" id="L78">    specialCharsMap.put(&quot;&amp;mdash;&quot;, &quot;—&quot;);</span>
+<span class="fc" id="L79">  }</span>
+
+  public static FlexmarkFactory instance() {
+<span class="fc" id="L82">    return instance;</span>
+  }
+
+  private Parser markdownParser;
+  private HtmlRenderer htmlRenderer;
+  private Formatter formatter;
+  private FlexmarkHtmlConverter htmlConverter;
+
+  public Document fromHtml(String html) {
+<span class="fc" id="L91">    return fromHtml(html, null, null);</span>
+  }
+
+  public Document fromHtml(String html, FlexmarkHtmlConverter htmlParser, Parser markdownParser) {
+<span class="fc" id="L95">    Objects.requireNonNull(html, &quot;html&quot;);</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">    if (htmlParser == null) {</span>
+<span class="fc" id="L97">      htmlParser = getFlexmarkHtmlConverter();</span>
+    }
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">    if (markdownParser == null) {</span>
+<span class="fc" id="L100">      markdownParser = getMarkdownParser();</span>
+    }
+
+<span class="fc" id="L103">    String markdown = htmlParser.convert(html);</span>
+<span class="fc" id="L104">    logger.trace(&quot;markdown: {}&quot;, markdown);</span>
+<span class="fc" id="L105">    return fromMarkdown(markdown, markdownParser);</span>
+  }
+
+  public Document fromMarkdown(String markdown) {
+<span class="fc" id="L109">    return fromMarkdown(markdown, getMarkdownParser());</span>
+  }
+
+  public Document fromMarkdown(String markdown, Parser parser) {
+<span class="fc" id="L113">    Objects.requireNonNull(markdown, &quot;markdown&quot;);</span>
+<span class="fc" id="L114">    Objects.requireNonNull(parser, &quot;parser&quot;);</span>
+
+<span class="fc" id="L116">    return parser.parse(markdown);</span>
+  }
+
+  protected void applyOptions(BuilderBase&lt;?&gt; builder) {
+<span class="fc" id="L120">    Extension[] extensions = {</span>
+        // Metaschema insert
+<span class="fc" id="L122">        InsertAnchorExtension.create(),</span>
+        // TypographicExtension.create(),
+<span class="fc" id="L124">        TablesExtension.create(),</span>
+        // to ensure that escaped characters are not lost
+<span class="fc" id="L126">        EscapedCharacterExtension.create(), SuperscriptExtension.create(), SubscriptExtension.create() };</span>
+<span class="fc" id="L127">    builder.extensions(Arrays.asList(extensions));</span>
+
+<span class="fc" id="L129">    builder.set(Parser.FENCED_CODE_CONTENT_BLOCK, true);</span>
+    // GitHub-flavored tables
+<span class="fc" id="L131">    builder.set(TablesExtension.COLUMN_SPANS, false);</span>
+<span class="fc" id="L132">    builder.set(TablesExtension.APPEND_MISSING_COLUMNS, true);</span>
+<span class="fc" id="L133">    builder.set(TablesExtension.DISCARD_EXTRA_COLUMNS, true);</span>
+<span class="fc" id="L134">    builder.set(TablesExtension.HEADER_SEPARATOR_COLUMN_MATCH, true);</span>
+<span class="fc" id="L135">    builder.set(TypographicExtension.SINGLE_QUOTE_UNMATCHED, null);</span>
+<span class="fc" id="L136">    builder.set(TypographicExtension.ENABLE_QUOTES, false);</span>
+<span class="fc" id="L137">    builder.set(TypographicExtension.ENABLE_SMARTS, false);</span>
+<span class="fc" id="L138">    builder.set(FlexmarkHtmlConverter.TYPOGRAPHIC_REPLACEMENT_MAP, specialCharsMap);</span>
+<span class="fc" id="L139">  }</span>
+
+  public Parser getMarkdownParser() {
+<span class="fc" id="L142">    synchronized (this) {</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">      if (markdownParser == null) {</span>
+<span class="fc" id="L144">        markdownParser = newMarkdownParser(null);</span>
+      }
+<span class="fc" id="L146">      return markdownParser;</span>
+    }
+  }
+
+  public Parser newMarkdownParser(DataHolder options) {
+    Parser.Builder builder;
+<span class="fc bfc" id="L152" title="All 2 branches covered.">    if (options != null) {</span>
+<span class="fc" id="L153">      builder = Parser.builder(options);</span>
+    } else {
+<span class="fc" id="L155">      builder = Parser.builder();</span>
+    }
+
+<span class="fc" id="L158">    applyOptions(builder);</span>
+<span class="fc" id="L159">    return builder.build();</span>
+  }
+
+  public HtmlRenderer getHtmlRenderer() {
+<span class="fc" id="L163">    synchronized (this) {</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">      if (htmlRenderer == null) {</span>
+<span class="fc" id="L165">        htmlRenderer = newHtmlRenderer(null);</span>
+      }
+<span class="fc" id="L167">      return htmlRenderer;</span>
+    }
+  }
+
+  public HtmlRenderer newHtmlRenderer(DataHolder options) {
+    HtmlRenderer.Builder builder;
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">    if (options != null) {</span>
+<span class="nc" id="L174">      builder = HtmlRenderer.builder(options);</span>
+    } else {
+<span class="fc" id="L176">      builder = HtmlRenderer.builder();</span>
+    }
+
+<span class="fc" id="L179">    applyOptions(builder);</span>
+<span class="fc" id="L180">    return builder.build();</span>
+  }
+
+  public Formatter getFormatter() {
+<span class="fc" id="L184">    synchronized (this) {</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">      if (formatter == null) {</span>
+<span class="fc" id="L186">        formatter = newFormatter(null);</span>
+      }
+<span class="fc" id="L188">      return formatter;</span>
+    }
+  }
+
+  public Formatter newFormatter(DataHolder options) {
+    Formatter.Builder builder;
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">    if (options != null) {</span>
+<span class="nc" id="L195">      builder = Formatter.builder(options);</span>
+    } else {
+<span class="fc" id="L197">      builder = Formatter.builder();</span>
+    }
+
+<span class="fc" id="L200">    applyOptions(builder);</span>
+<span class="fc" id="L201">    return builder.build();</span>
+  }
+
+  public FlexmarkHtmlConverter getFlexmarkHtmlConverter() {
+<span class="fc" id="L205">    synchronized (this) {</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">      if (htmlConverter == null) {</span>
+<span class="fc" id="L207">        htmlConverter = newFlexmarkHtmlConverter(null);</span>
+      }
+<span class="fc" id="L209">      return htmlConverter;</span>
+    }
+  }
+
+  public FlexmarkHtmlConverter newFlexmarkHtmlConverter(DataHolder options) {
+    FlexmarkHtmlConverter.Builder builder;
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">    if (options != null) {</span>
+<span class="nc" id="L216">      builder = FlexmarkHtmlConverter.builder(options);</span>
+    } else {
+<span class="fc" id="L218">      builder = FlexmarkHtmlConverter.builder();</span>
+    }
+
+<span class="fc" id="L221">    applyOptions(builder);</span>
+<span class="fc" id="L222">    return builder.build();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AssemblyClassGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Code Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.codegen</a> &gt; <span class="el_source">AssemblyClassGenerator.java</span></div><h1>AssemblyClassGenerator.java</h1><pre class="source lang-java linenums">/**
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.codegen;
+
+import gov.nist.secauto.metaschema.binding.model.annotations.RootWrapper;
+import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
+import gov.nist.secauto.metaschema.codegen.type.DataType;
+import gov.nist.secauto.metaschema.codegen.type.JavaType;
+import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.info.definitions.ModelContainer;
+import gov.nist.secauto.metaschema.model.info.instances.AssemblyInstance;
+import gov.nist.secauto.metaschema.model.info.instances.ChoiceInstance;
+import gov.nist.secauto.metaschema.model.info.instances.FieldInstance;
+import gov.nist.secauto.metaschema.model.info.instances.InfoElementInstance;
+import gov.nist.secauto.metaschema.model.info.instances.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.info.instances.ModelInstance;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Objects;
+
+public class AssemblyClassGenerator extends AbstractClassGenerator&lt;AssemblyDefinition&gt; {
+<span class="fc" id="L48">  private static final Logger logger = LogManager.getLogger(AssemblyClassGenerator.class);</span>
+
+  public AssemblyClassGenerator(AssemblyDefinition definition, JavaTypeSupplier supplier) {
+<span class="fc" id="L51">    super(definition, supplier);</span>
+
+<span class="fc" id="L53">    processModel(getDefinition());</span>
+<span class="fc" id="L54">  }</span>
+
+  private void processModel(ModelContainer model) {
+<span class="fc bfc" id="L57" title="All 2 branches covered.">    for (InfoElementInstance instance : model.getInstances()) {</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">      if (instance instanceof ChoiceInstance) {</span>
+<span class="nc" id="L59">        processModel((ChoiceInstance) instance);</span>
+<span class="nc" id="L60">        continue;</span>
+      }
+
+      // else the instance is a model instance with a named instance
+<span class="fc" id="L64">      ModelInstance modelInstance = (ModelInstance) instance;</span>
+<span class="fc" id="L65">      newModelInstance(modelInstance);</span>
+<span class="fc" id="L66">    }</span>
+<span class="fc" id="L67">  }</span>
+
+  public PropertyGenerator newModelInstance(ModelInstance instance) {
+    JavaType itemJavaType;
+<span class="fc bfc" id="L71" title="All 2 branches covered.">    if (instance instanceof FieldInstance) {</span>
+<span class="fc" id="L72">      FieldInstance fieldInstance = (FieldInstance) instance;</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">      if (fieldInstance.getDefinition().getFlagInstances().isEmpty()) {</span>
+<span class="fc" id="L74">        DataType dataType = DataType.lookupByDatatype(fieldInstance.getDatatype());</span>
+        // this is a simple value
+<span class="fc" id="L76">        itemJavaType = dataType.getJavaType();</span>
+<span class="fc" id="L77">      } else {</span>
+<span class="fc" id="L78">        itemJavaType = getJavaTypeSupplier().getClassJavaType(instance.getDefinition());</span>
+      }
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">    } else if (instance instanceof AssemblyInstance) {</span>
+<span class="fc" id="L81">      itemJavaType = getJavaTypeSupplier().getClassJavaType(instance.getDefinition());</span>
+    } else {
+<span class="nc" id="L83">      String msg = String.format(&quot;Unknown model instance type: %s&quot;, instance.getClass().getCanonicalName());</span>
+<span class="nc" id="L84">      logger.error(msg);</span>
+<span class="nc" id="L85">      throw new RuntimeException(msg);</span>
+    }
+
+    PropertyGenerator context;
+<span class="fc" id="L89">    int maxOccurance = instance.getMaxOccurs();</span>
+<span class="pc bpc" id="L90" title="1 of 4 branches missed.">    if (maxOccurance == -1 || maxOccurance &gt; 1) {</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">      if (JsonGroupAsBehavior.KEYED.equals(instance.getJsonGroupAsBehavior())) {</span>
+<span class="fc" id="L92">        context = new MapInstanceGenerator(instance, itemJavaType, this);</span>
+      } else {
+<span class="fc" id="L94">        context = new ListInstanceGenerator(instance, itemJavaType, this);</span>
+      }
+    } else {
+<span class="fc" id="L97">      context = new SingletonInstanceGenerator(instance, itemJavaType, this);</span>
+    }
+
+<span class="fc" id="L100">    addPropertyGenerator(context);</span>
+<span class="fc" id="L101">    return context;</span>
+  }
+
+  @Override
+  protected boolean isRootClass() {
+<span class="fc" id="L106">    return Objects.equals(getDefinition(), getDefinition().getContainingMetaschema().getRootAssemblyDefinition());</span>
+  }
+
+  @Override
+  protected void buildClass(ClassBuilder builder) {
+<span class="fc" id="L111">    super.buildClass(builder);</span>
+
+<span class="fc" id="L113">    AssemblyDefinition definition = getDefinition();</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">    if (Objects.equals(definition, definition.getContainingMetaschema().getRootAssemblyDefinition())) {</span>
+
+<span class="fc" id="L116">      StringBuilder instanceBuilder = new StringBuilder();</span>
+<span class="fc" id="L117">      instanceBuilder.append(&quot;name = \&quot;&quot;);</span>
+<span class="fc" id="L118">      instanceBuilder.append(getDefinition().getName());</span>
+<span class="fc" id="L119">      instanceBuilder.append(&quot;\&quot;&quot;);</span>
+
+<span class="fc" id="L121">      String namespace = getXmlNamespace().toString();</span>
+<span class="fc" id="L122">      String containingNamespace = getDefinition().getContainingMetaschema().getXmlNamespace().toString();</span>
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">      if (!containingNamespace.equals(namespace)) {</span>
+<span class="nc" id="L124">        instanceBuilder.append(&quot;, namespace = \&quot;&quot;);</span>
+<span class="nc" id="L125">        instanceBuilder.append(namespace);</span>
+<span class="nc" id="L126">        instanceBuilder.append(&quot;\&quot;&quot;);</span>
+      }
+
+<span class="fc" id="L129">      builder.annotation(RootWrapper.class, instanceBuilder.toString());</span>
+    }
+<span class="fc" id="L131">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

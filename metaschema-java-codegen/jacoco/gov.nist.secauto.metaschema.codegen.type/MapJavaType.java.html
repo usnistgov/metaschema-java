@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MapJavaType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Code Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.codegen.type</a> &gt; <span class="el_source">MapJavaType.java</span></div><h1>MapJavaType.java</h1><pre class="source lang-java linenums">/**
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.codegen.type;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+
+public class MapJavaType extends AbstractCollectionJavaType {
+  private final JavaType keyClass;
+
+  MapJavaType(Class&lt;?&gt; keyClass, JavaType valueClass) {
+<span class="nc" id="L40">    this(new ClassJavaType(keyClass), valueClass);</span>
+<span class="nc" id="L41">  }</span>
+
+  MapJavaType(JavaType keyClass, JavaType itemClass) {
+<span class="fc" id="L44">    super(LinkedHashMap.class, itemClass);</span>
+<span class="fc" id="L45">    Objects.requireNonNull(keyClass);</span>
+<span class="fc" id="L46">    this.keyClass = keyClass;</span>
+<span class="fc" id="L47">  }</span>
+
+  protected JavaType getKeyClass() {
+<span class="fc" id="L50">    return keyClass;</span>
+  }
+
+  @Override
+  public Set&lt;JavaType&gt; getImports(JavaType classType) {
+<span class="fc" id="L55">    Set&lt;JavaType&gt; retval = new HashSet&lt;&gt;(super.getImports(classType));</span>
+<span class="fc" id="L56">    retval.addAll(getKeyClass().getImports(classType));</span>
+<span class="fc" id="L57">    return Collections.unmodifiableSet(retval);</span>
+  }
+
+  @Override
+  protected String getGenericArguments(Function&lt;String, Boolean&gt; clashEvaluator) {
+<span class="fc" id="L62">    return getKeyClass().getType(clashEvaluator) + &quot;,&quot; + getValueClass().getType(clashEvaluator);</span>
+  }
+
+  @Override
+  public int hashCode() {
+<span class="fc" id="L67">    final int prime = 31;</span>
+<span class="fc" id="L68">    int result = super.hashCode();</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">    result = prime * result + ((keyClass == null) ? 0 : keyClass.hashCode());</span>
+<span class="fc" id="L70">    return result;</span>
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+<span class="nc bnc" id="L75" title="All 2 branches missed.">    if (this == obj) {</span>
+<span class="nc" id="L76">      return true;</span>
+    }
+<span class="nc bnc" id="L78" title="All 2 branches missed.">    if (!super.equals(obj)) {</span>
+<span class="nc" id="L79">      return false;</span>
+    }
+<span class="nc bnc" id="L81" title="All 2 branches missed.">    if (!(obj instanceof MapJavaType)) {</span>
+<span class="nc" id="L82">      return false;</span>
+    }
+<span class="nc" id="L84">    MapJavaType other = (MapJavaType) obj;</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">    if (keyClass == null) {</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">      if (other.keyClass != null) {</span>
+<span class="nc" id="L87">        return false;</span>
+      }
+<span class="nc bnc" id="L89" title="All 2 branches missed.">    } else if (!keyClass.equals(other.keyClass)) {</span>
+<span class="nc" id="L90">      return false;</span>
+    }
+<span class="nc" id="L92">    return true;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

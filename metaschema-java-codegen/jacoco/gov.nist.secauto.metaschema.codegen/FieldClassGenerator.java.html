@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FieldClassGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Code Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.codegen</a> &gt; <span class="el_source">FieldClassGenerator.java</span></div><h1>FieldClassGenerator.java</h1><pre class="source lang-java linenums">/**
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.codegen;
+
+import gov.nist.secauto.metaschema.binding.model.annotations.Collapsible;
+import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
+import gov.nist.secauto.metaschema.codegen.type.DataType;
+import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
+import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+public class FieldClassGenerator extends AbstractClassGenerator&lt;FieldDefinition&gt; {
+<span class="fc" id="L39">  private static final Logger logger = LogManager.getLogger(FieldClassGenerator.class);</span>
+  private final FieldValuePropertyGenerator fieldInstance;
+<span class="fc" id="L41">  private boolean hasJsonValueKeyFlag = false;</span>
+
+  public FieldClassGenerator(FieldDefinition definition, JavaTypeSupplier supplier) {
+<span class="fc" id="L44">    super(definition, supplier);</span>
+
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">    if (!DataType.EMPTY.equals(getValueDatatype())) {</span>
+<span class="fc" id="L47">      this.fieldInstance = newFieldInstance(this);</span>
+    } else {
+<span class="nc" id="L49">      this.fieldInstance = null;</span>
+    }
+<span class="fc" id="L51">  }</span>
+
+  @Override
+  protected boolean isRootClass() {
+<span class="fc" id="L55">    return false;</span>
+  }
+
+  public FieldValuePropertyGenerator newFieldInstance(FieldClassGenerator field) {
+<span class="fc" id="L59">    FieldValuePropertyGenerator context = new FieldValuePropertyGenerator(field, this);</span>
+<span class="fc" id="L60">    addPropertyGenerator(context);</span>
+<span class="fc" id="L61">    return context;</span>
+  }
+
+  @Override
+  public FlagPropertyGenerator newFlagPropertyGenerator(FlagInstance instance) {
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">    if (instance.isJsonValueKeyFlag()) {</span>
+<span class="nc" id="L67">      hasJsonValueKeyFlag = true;</span>
+    }
+<span class="fc" id="L69">    return super.newFlagPropertyGenerator(instance);</span>
+  }
+
+  public DataType getValueDatatype() {
+<span class="fc" id="L73">    gov.nist.secauto.metaschema.model.info.definitions.DataType type = getDefinition().getDatatype();</span>
+<span class="fc" id="L74">    DataType retval = DataType.lookupByDatatype(type);</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">    if (retval == null) {</span>
+<span class="nc" id="L76">      logger.warn(&quot;Unsupported datatype '{}', using String&quot;, type);</span>
+<span class="nc" id="L77">      retval = DataType.STRING;</span>
+    }
+<span class="fc" id="L79">    return retval;</span>
+  }
+
+  public FieldValuePropertyGenerator getFieldInstance() {
+<span class="nc" id="L83">    return fieldInstance;</span>
+  }
+
+  @Override
+  protected void buildClass(ClassBuilder builder) {
+<span class="fc" id="L88">    super.buildClass(builder);</span>
+
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">    if (getDefinition().isCollapsible()) {</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">      if (getDefinition().hasJsonKey()) {</span>
+<span class="fc" id="L92">        logger.warn(</span>
+            &quot;A field binding cannot implement a json-key and be collapsible. Ignoring the collapsible for class '{}'.&quot;,
+<span class="fc" id="L94">            getJavaType().getQualifiedClassName());</span>
+      } else {
+<span class="fc" id="L96">        builder.annotation(Collapsible.class);</span>
+      }
+    }
+    // FieldValuePropertyGenerator fieldInsatnce = getFieldInstance();
+    // // no-arg constructor
+    // writer.println(&quot;\t@JsonCreator&quot;);
+    // writer.printf(&quot;\tpublic %s(%s value) {%n&quot;, getJavaType().getClassName(),
+    // fieldInsatnce.getJavaType().getType(getJavaType()));
+    // writer.printf(&quot;\t\tthis.%s = value;%n&quot;, fieldInsatnce.getVariableName());
+    // writer.println(&quot;\t}&quot;);
+    // writer.println();
+<span class="fc" id="L107">  }</span>
+
+  public boolean hasJsonValueKeyFlag() {
+<span class="nc" id="L110">    return hasJsonValueKeyFlag;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

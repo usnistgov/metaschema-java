@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractPropertyGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Metaschema Java Code Generator</a> &gt; <a href="index.source.html" class="el_package">gov.nist.secauto.metaschema.codegen</a> &gt; <span class="el_source">AbstractPropertyGenerator.java</span></div><h1>AbstractPropertyGenerator.java</h1><pre class="source lang-java linenums">/**
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.codegen;
+
+import gov.nist.secauto.metaschema.codegen.builder.ClassBuilder;
+import gov.nist.secauto.metaschema.codegen.builder.FieldBuilder;
+import gov.nist.secauto.metaschema.codegen.builder.MethodBuilder;
+import gov.nist.secauto.metaschema.codegen.type.JavaType;
+import gov.nist.secauto.metaschema.model.info.instances.ClassUtils;
+
+public abstract class AbstractPropertyGenerator&lt;CLASS_GENERATOR extends ClassGenerator&gt; implements PropertyGenerator {
+  private final CLASS_GENERATOR classGenerator;
+  private String propertyName;
+  private String variableName;
+
+<span class="fc" id="L40">  public AbstractPropertyGenerator(CLASS_GENERATOR classContext) {</span>
+<span class="fc" id="L41">    this.classGenerator = classContext;</span>
+<span class="fc" id="L42">  }</span>
+
+  protected CLASS_GENERATOR getClassGenerator() {
+<span class="nc" id="L45">    return classGenerator;</span>
+  }
+
+  /**
+   * The property name of the instance, which must be unique within the class.
+   * 
+   * @return the name
+   */
+  @Override
+  public String getPropertyName() {
+<span class="fc bfc" id="L55" title="All 2 branches covered.">    if (this.propertyName == null) {</span>
+<span class="fc" id="L56">      String name = ClassUtils.toPropertyName(getInstanceName());</span>
+      // first check if a property already exists with the same name
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">      if (classGenerator.hasPropertyWithName(name)) {</span>
+        // append an integer value to make the name unique
+        String newName;
+<span class="nc" id="L61">        int index = 1;</span>
+        do {
+<span class="nc" id="L63">          newName = ClassUtils.toPropertyName(name + Integer.toString(index));</span>
+<span class="nc" id="L64">          index++;</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        } while (classGenerator.hasPropertyWithName(newName));</span>
+<span class="nc" id="L66">        name = newName;</span>
+      }
+
+<span class="fc" id="L69">      this.propertyName = name;</span>
+    }
+<span class="fc" id="L71">    return this.propertyName;</span>
+  }
+
+  /**
+   * Gets the name of the Java field for this property item.
+   * 
+   * @return the Java field name
+   */
+  public final String getJavaFieldName() {
+<span class="fc bfc" id="L80" title="All 2 branches covered.">    if (this.variableName == null) {</span>
+<span class="fc" id="L81">      this.variableName = &quot;_&quot; + ClassUtils.toVariableName(getPropertyName());</span>
+    }
+<span class="fc" id="L83">    return this.variableName;</span>
+  }
+
+  /**
+   * Gets the type of the associated Java field for the property.
+   * 
+   * @return the Java type for the field
+   */
+  protected abstract JavaType getJavaType();
+
+  protected abstract String getInstanceName();
+
+  // protected void writeVariableJavadoc(PrintWriter writer) {
+  // MarkupString description = getDescription();
+  // if (description != null) {
+  // writer.println(&quot;\t/**&quot;);
+  // writer.println(&quot;\t * &quot; + description.toHTML());
+  // writer.println(&quot;\t */&quot;);
+  // }
+  // }
+
+  @Override
+  public void build(ClassBuilder builder) {
+<span class="fc" id="L106">    buildField(builder.newFieldBuilder(getJavaType(), getJavaFieldName()));</span>
+
+<span class="fc" id="L108">    buildGetter(builder.newMethodBuilder(&quot;get&quot; + getPropertyName()).returnType(getJavaType()));</span>
+<span class="fc" id="L109">    buildSetter(builder.newMethodBuilder(&quot;set&quot; + getPropertyName())</span>
+<span class="fc" id="L110">        .arguments(String.format(&quot;%s value&quot;, getJavaType().getType(builder.getClashEvaluator()))));</span>
+<span class="fc" id="L111">  }</span>
+
+  protected abstract void buildField(@SuppressWarnings(&quot;unused&quot;) FieldBuilder builder);
+
+  protected void buildGetter(MethodBuilder builder) {
+<span class="fc" id="L116">    builder.getBodyWriter().format(&quot;return %s;%n&quot;, getJavaFieldName());</span>
+<span class="fc" id="L117">  }</span>
+
+  private void buildSetter(MethodBuilder builder) {
+<span class="fc" id="L120">    builder.getBodyWriter().format(&quot;this.%s = value;%n&quot;, getJavaFieldName());</span>
+<span class="fc" id="L121">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

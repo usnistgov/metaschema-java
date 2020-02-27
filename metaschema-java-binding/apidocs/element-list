@@ -1,0 +1,13 @@
+gov.nist.secauto.metaschema.binding
+gov.nist.secauto.metaschema.binding.datatypes.adapter
+gov.nist.secauto.metaschema.binding.io
+gov.nist.secauto.metaschema.binding.io.json
+gov.nist.secauto.metaschema.binding.io.json.old
+gov.nist.secauto.metaschema.binding.io.json.parser
+gov.nist.secauto.metaschema.binding.io.json.writer
+gov.nist.secauto.metaschema.binding.io.xml.parser
+gov.nist.secauto.metaschema.binding.io.xml.writer
+gov.nist.secauto.metaschema.binding.model
+gov.nist.secauto.metaschema.binding.model.annotations
+gov.nist.secauto.metaschema.binding.model.property
+gov.nist.secauto.metaschema.binding.util
