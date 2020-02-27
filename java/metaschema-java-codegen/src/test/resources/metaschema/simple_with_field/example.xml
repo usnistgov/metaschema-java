@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<top-level
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://csrc.nist.gov/ns/metaschema/testing/simple/with/field schema.xsd"
+	xmlns="http://csrc.nist.gov/ns/metaschema/testing/simple/with/field" id="test">
+	<field>field-value</field>
+	<field2>
+		<p><b>bold</b> <i>italics</i>field2-markup1</p>
+		<p>field2-markup2</p>
+	</field2>
+	<field3>field-value3</field3>
+	<field4s>
+		<field4><p>markdown-string1<a href="url">link-text</a></p></field4>
+		<field4><p>markdown-string2</p></field4>
+	</field4s>
+	<field5>string1</field5>
+	<field5>string2</field5>
+	<field6>true</field6>
+	<field6>false</field6>
+</top-level>

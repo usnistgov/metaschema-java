@@ -1,0 +1,98 @@
+
+  { "$schema" : "http://json-schema.org/draft-07/schema#",
+    "$id" : "http://csrc.nist.gov/ns/metaschema/testing/assembly-schema.json",
+    "$comment" : "Metaschema with assembly: JSON Schema",
+    "type" : "object",
+    "definitions" : 
+    { "top-level" : 
+      { "title" : "Root",
+        "description" : "Root assembly",
+        "$id" : "#/definitions/top-level",
+        "type" : "object",
+        "properties" : 
+        { "id" : 
+          { "title" : "Identifier",
+            "description" : "The document identifier",
+            "type" : "string" },
+          "children" : 
+          { "anyOf" : 
+            [ 
+              { "$ref" : "#/definitions/child" },
+              
+              { "type" : "array",
+                "items" : 
+                { "$ref" : "#/definitions/child" },
+                "minItems" : 2 } ] } },
+        "required" : 
+        [ "children" ],
+        "additionalProperties" : false },
+      "child" : 
+      { "title" : "Child",
+        "description" : "Child assembly",
+        "$id" : "#/definitions/child",
+        "type" : "object",
+        "properties" : 
+        { "id" : 
+          { "title" : "Identifier",
+            "description" : "The document identifier",
+            "type" : "string" },
+          "grandchildren" : 
+          { "anyOf" : 
+            [ 
+              { "$ref" : "#/definitions/grandchild" },
+              
+              { "type" : "array",
+                "items" : 
+                { "$ref" : "#/definitions/grandchild" },
+                "minItems" : 2 } ] },
+          "grandchildren2" : 
+          { "type" : "array",
+            "minItems" : 1,
+            "items" : 
+            { "$ref" : "#/definitions/grandchild" } },
+          "grandchild" : 
+          { "$ref" : "#/definitions/grandchild" } },
+        "required" : 
+        [ "id",
+          "grandchildren",
+          "grandchildren2",
+          "grandchild" ],
+        "additionalProperties" : false },
+      "grandchild" : 
+      { "title" : "Child",
+        "description" : "Child assembly",
+        "$id" : "#/definitions/grandchild",
+        "type" : "object",
+        "properties" : 
+        { "id" : 
+          { "title" : "Identifier",
+            "description" : "The document identifier",
+            "type" : "string" },
+          "fields" : 
+          { "anyOf" : 
+            [ 
+              { "$ref" : "#/definitions/field" },
+              
+              { "type" : "array",
+                "items" : 
+                { "$ref" : "#/definitions/field" },
+                "minItems" : 2 } ] } },
+        "additionalProperties" : false },
+      "field" : 
+      { "title" : "Complex Field",
+        "description" : "A complex field with a flag",
+        "$id" : "#/definitions/field",
+        "type" : "object",
+        "properties" : 
+        { "id" : 
+          { "title" : "Identifier",
+            "description" : "The document identifier",
+            "type" : "string" },
+          "STRVALUE" : 
+          { "type" : "string" } },
+        "required" : 
+        [ "STRVALUE" ],
+        "additionalProperties" : false } },
+    "properties" : 
+    { "top-level" : 
+      { "$ref" : "#/definitions/top-level" } } }
