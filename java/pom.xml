@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>15-SNAPSHOT</version>
+		<version>15</version>
 	</parent>
 	<groupId>gov.nist.secauto.metaschema</groupId>
 	<artifactId>metaschema-framework</artifactId>
@@ -16,17 +16,17 @@
 
 	<name>Metaschema Framework Parent</name>
 	<description>A common build root for all NIST projects related to the Metaschema framework.</description>
-	<url>https://github.com/usnistgov/oss-maven</url>
+	<url>https://github.com/usnistgov/metaschema-java</url>
 
 	<issueManagement>
 		<system>GitHub Issues</system>
-		<url>https://github.com/usnistgov/metaschema/issues</url>
+		<url>https://github.com/usnistgov/metaschema-java/issues</url>
 	</issueManagement>
 
 	<scm>
-		<url>https://github.com/usnistgov/metaschema</url>
-		<connection>scm:git:https://github.com/usnistgov/metaschema.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com:usnistgov/metaschema.git</developerConnection>
+		<url>https://github.com/usnistgov/metaschema-java</url>
+		<connection>scm:git:https://github.com/usnistgov/metaschema-java.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:usnistgov/metaschema-java.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -41,7 +41,7 @@
 		</repository>
 		<site>
 			<id>pages-site</id>
-			<url>https://pages.nist.gov/metaschema</url>
+			<url>https://pages.nist.gov/metaschema-java</url>
 		</site>
 	</distributionManagement>
 
@@ -319,11 +319,6 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-		<plugins>
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-			</plugin>
-		</plugins>
 	</build>
 
 	<modules>

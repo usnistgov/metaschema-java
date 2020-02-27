@@ -16,7 +16,7 @@
 	<url>https://pages.nist.gov/metaschema</url>
 
 	<scm>
-		<url>https://github.com/usnistgov/metaschema/tree/master/metaschema-model</url>
+		<url>https://github.com/usnistgov/metaschema-java/tree/master/metaschema-model</url>
 	</scm>
 
 	<dependencies>
@@ -63,30 +63,12 @@
 							<goal>xmlbeans</goal>
 						</goals>
 						<configuration>
-							<!-- TODO: update to a perminant location -->
-							<schemaDirectory>${project.basedir}/../../../schema</schemaDirectory>
+							<!-- TODO: update to a permanent location, where this is retrieved -->
+							<schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
 							<noUpa>false</noUpa>
 							<javaSource>1.5</javaSource>
 							<noJavac>true</noJavac>
 							<sourceGenerationDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceGenerationDirectory>
-							<!-- <classGenerationDirectory>${project.build.directory}/generated-classes/xmlbeans</classGenerationDirectory> -->
-							<xmlConfigs>
-								<xmlConfig implementation="java.io.File">${project.basedir}/src/main/xsdconfig/metaschema.xsdconfig</xmlConfig>
-							</xmlConfigs>
-						</configuration>
-					</execution>
-					<execution>
-						<id>metaschema-config</id>
-						<goals>
-							<goal>xmlbeans</goal>
-						</goals>
-						<configuration>
-							<schemaDirectory>${project.basedir}/../../../schema</schemaDirectory>
-							<noUpa>false</noUpa>
-							<javaSource>1.5</javaSource>
-							<noJavac>true</noJavac>
-							<sourceGenerationDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceGenerationDirectory>
-							<!-- <classGenerationDirectory>${project.build.directory}/generated-classes/xmlbeans</classGenerationDirectory> -->
 							<xmlConfigs>
 								<xmlConfig implementation="java.io.File">${project.basedir}/src/main/xsdconfig/metaschema.xsdconfig</xmlConfig>
 							</xmlConfigs>
@@ -105,7 +87,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
-					<excludes>${project.build.directory}/generated-sources/xmlbeans/**/*</excludes>
+					<sourceDirectories>
+						<sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+						<sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory>
+					</sourceDirectories>
 				</configuration>
 			</plugin>
 		</plugins>
