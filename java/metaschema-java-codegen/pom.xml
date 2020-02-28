@@ -51,4 +51,47 @@
 		<!-- </dependency> -->
 
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xmlbeans-maven-plugin</artifactId>
+				<version>2.3.3</version>
+				<executions>
+					<execution>
+						<id>metaschema</id>
+						<goals>
+							<goal>xmlbeans</goal>
+						</goals>
+						<configuration>
+							<noUpa>false</noUpa>
+							<javaSource>1.5</javaSource>
+							<noJavac>true</noJavac>
+							<sourceGenerationDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceGenerationDirectory>
+<!-- 							<xmlConfigs> -->
+<!-- 								<xmlConfig implementation="java.io.File">${project.basedir}/src/main/xsdconfig/metaschema.xsdconfig</xmlConfig> -->
+<!-- 							</xmlConfigs> -->
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.xmlbeans</groupId>
+						<artifactId>xmlbeans</artifactId>
+						<version>${dependency.xmlbeans.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<configuration>
+					<sourceDirectories>
+						<sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+						<sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory>
+					</sourceDirectories>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

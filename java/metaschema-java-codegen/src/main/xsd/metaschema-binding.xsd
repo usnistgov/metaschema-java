@@ -31,17 +31,17 @@
           <xs:documentation>Defines a binding for a given metaschema identified by a URL.</xs:documentation>
         </xs:annotation>
         <xs:unique name="UniqueManagedObjects">
-          <xs:selector xpath="b:define-assembly-binding|b:define-field-binding"></xs:selector>
-          <xs:field xpath="@name"></xs:field>
+          <xs:selector xpath="b:define-assembly-binding | b:define-field-binding"/>
+          <xs:field xpath="@name"/>
         </xs:unique>
         <xs:unique name="UniqueManagedObjectJavaClassNames">
-          <xs:selector xpath="b:define-assembly-binding/b:java|b:define-field-binding/b:java"></xs:selector>
-          <xs:field xpath="b:use-class-name"></xs:field>
+          <xs:selector xpath="b:define-assembly-binding/b:java | b:define-field-binding/b:java"/>
+          <xs:field xpath="b:use-class-name"/>
         </xs:unique>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:complexType name="ModelBindingType">
     <xs:sequence>
       <xs:element name="java" type="b:JavaModelBindingType" minOccurs="0"> </xs:element>
@@ -52,7 +52,7 @@
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
-  
+
   <xs:complexType name="MetaschemaBindingType">
     <xs:annotation>
       <xs:documentation>Defines a binding for a given metaschema identified by a relative URL.</xs:documentation>
@@ -91,12 +91,12 @@
           <xs:documentation>Field and assembly binding configurations for Java bound classes.</xs:documentation>
         </xs:annotation>
         <xs:unique name="UniqueInterfaces">
-          <xs:selector xpath="b:implement-interface"></xs:selector>
-          <xs:field xpath="."></xs:field>
+          <xs:selector xpath="b:implement-interface"/>
+          <xs:field xpath="."/>
         </xs:unique>
       </xs:element>
     </xs:sequence>
-    <xs:attribute name="name" type="xs:NCName">
+    <xs:attribute name="name" type="xs:NCName" use="required">
       <xs:annotation>
         <xs:documentation>The name of the metaschema field or assembly.</xs:documentation>
       </xs:annotation>

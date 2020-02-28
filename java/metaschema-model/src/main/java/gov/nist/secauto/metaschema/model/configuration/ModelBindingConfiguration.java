@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.configuration;
 
-public class ModelBindingConfiguration implements BindingConfiguration {
+public class ModelBindingConfiguration {
 
   public static final ModelBindingConfiguration NULL_CONFIG;
 

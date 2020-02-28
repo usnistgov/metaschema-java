@@ -24,7 +24,12 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.configuration;
+package gov.nist.secauto.metaschema.codegen.binding.config;
+
+import gov.nist.secauto.metaschema.model.configuration.ManagedObjectBingingConfiguration;
+
+import java.net.URL;
 
 public interface BindingConfiguration {
+  ManagedObjectBingingConfiguration getManagedObjectConfig(URL metaschemaUrl, String name);
 }

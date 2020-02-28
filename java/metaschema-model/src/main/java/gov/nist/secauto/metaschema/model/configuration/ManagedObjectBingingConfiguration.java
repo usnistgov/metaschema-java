@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.configuration;
 
-import java.util.List;
+import java.util.Collection;
 
-public interface ManagedObjectBingingConfiguration extends BindingConfiguration {
+public interface ManagedObjectBingingConfiguration {
   String getClassName();
 
   String getQualifiedBaseClassName();
 
-  List<String> getInterfacesToImplement();
+  Collection<String> getInterfacesToImplement();
 }
