@@ -26,10 +26,14 @@
 
 package gov.nist.secauto.metaschema.codegen.binding.config;
 
-import gov.nist.secauto.metaschema.model.configuration.ManagedObjectBingingConfiguration;
-
-import java.net.URL;
+import gov.nist.secauto.metaschema.model.Metaschema;
+import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
 
 public interface BindingConfiguration {
-  ManagedObjectBingingConfiguration getManagedObjectConfig(URL metaschemaUrl, String name);
+
+  String getPackageName(Metaschema metaschema);
+
+  String getClassName(ManagedObject definition);
+
+  JavaTypeSupplier getJavaTypeSupplier();
 }

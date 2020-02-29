@@ -33,7 +33,7 @@ public interface ManagedObject extends FlagContainer, InfoElementDefinition {
 
   FlagInstance getJsonKeyFlagInstance();
 
-  String getPackageName();
+//  String getPackageName();
 
-  String getClassName();
+//  String getClassName();
 }

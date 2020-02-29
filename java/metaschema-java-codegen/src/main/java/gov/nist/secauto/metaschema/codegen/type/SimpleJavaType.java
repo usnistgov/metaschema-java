@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.codegen.type;
 
-import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
-
 import java.util.Objects;
 
 public class SimpleJavaType extends AbstractJavaType {
@@ -41,10 +39,6 @@ public class SimpleJavaType extends AbstractJavaType {
     this.className = className;
     this.packageName = packageName;
     this.qualifiedClassName = packageName + "." + className;
-  }
-
-  SimpleJavaType(ManagedObject obj) {
-    this(obj.getPackageName(), obj.getClassName());
   }
 
   @Override

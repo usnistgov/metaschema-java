@@ -61,7 +61,7 @@ public class MapPropertyValueHandler extends AbstractPropertyValueHandler {
   }
 
   @Override
-  public boolean parseNextFieldValue(JsonParsingContext parsingContext) throws BindingException, IOException {
+  public boolean parseNextFieldValue(Object parent, JsonParsingContext parsingContext) throws BindingException, IOException {
     /*
      * JSON will look like this:
      * 
@@ -92,7 +92,7 @@ public class MapPropertyValueHandler extends AbstractPropertyValueHandler {
     // Parse the value(s) at the current token; after this the current token is
     // expected to be the end of the value (e.g., VALUE, END_OBJECT
     PropertyItemHandler propertyItemHandler = getPropertyItemHandler();
-    List<Object> parsedValues = propertyItemHandler.parse(parsingContext, null);
+    List<Object> parsedValues = propertyItemHandler.parse(null, parent, parsingContext);
 
     // // Check end of parsed value
     // JsonUtil.checkEndOfValue(parser, currentToken);

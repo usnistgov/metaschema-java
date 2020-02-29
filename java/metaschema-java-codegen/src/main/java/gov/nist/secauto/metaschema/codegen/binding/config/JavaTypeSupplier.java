@@ -24,14 +24,11 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.configuration;
+package gov.nist.secauto.metaschema.codegen.binding.config;
 
-import java.util.Collection;
+import gov.nist.secauto.metaschema.codegen.type.JavaType;
+import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
 
-public interface ManagedObjectBingingConfiguration {
-  String getClassName();
-
-  String getQualifiedBaseClassName();
-
-  Collection<String> getInterfacesToImplement();
+public interface JavaTypeSupplier {
+  JavaType getClassJavaType(ManagedObject managedObject);
 }

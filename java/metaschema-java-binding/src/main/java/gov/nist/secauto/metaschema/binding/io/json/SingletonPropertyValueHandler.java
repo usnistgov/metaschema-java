@@ -43,11 +43,11 @@ public class SingletonPropertyValueHandler extends AbstractPropertyValueHandler 
   }
 
   @Override
-  public boolean parseNextFieldValue(JsonParsingContext parsingContext) throws BindingException, IOException {
+  public boolean parseNextFieldValue(Object parent, JsonParsingContext parsingContext) throws BindingException, IOException {
     // Parse the value at the current token; after this the current token is
     // expected to be the end of the value (e.g., VALUE, END_OBJECT
     PropertyItemHandler propertyItemHandler = getPropertyItemHandler();
-    List<Object> values = propertyItemHandler.parse(parsingContext, null);
+    List<Object> values = propertyItemHandler.parse(null, parent, parsingContext);
 
     if (values == null) {
       throw new BindingException(

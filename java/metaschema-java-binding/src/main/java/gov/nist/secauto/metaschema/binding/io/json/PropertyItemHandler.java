@@ -72,9 +72,9 @@ public interface PropertyItemHandler {
 
   PropertyBinding getPropertyBinding();
 
-  List<Object> parse(JsonParsingContext parsingContext, PropertyBindingFilter filter)
+  List<Object> parse(PropertyBindingFilter filter, Object parent, JsonParsingContext parsingContext)
       throws BindingException, IOException;
 
-  void writeValue(Object value, JsonWritingContext writingContext, PropertyBindingFilter filter)
+  void writeValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
       throws BindingException, IOException;
 }

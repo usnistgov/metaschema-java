@@ -24,20 +24,13 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.configuration;
+package gov.nist.secauto.metaschema.codegen.binding.config;
 
-import java.util.List;
+public interface MutableManagedObjectBindingConfiguration extends ManagedObjectBindingConfiguration {
+  void setClassName(String name);
 
-public class FieldBindingConfiguration extends AbstractManagedObjectBindingConfiguration {
+  void setQualifiedBaseClassName(String name);
 
-  public static final FieldBindingConfiguration NULL_CONFIG;
-
-  static {
-    NULL_CONFIG = new FieldBindingConfiguration(null, null, null);
-  }
-
-  public FieldBindingConfiguration(String className, String baseClass, List<String> interfacesToImplement) {
-    super(className, baseClass, interfacesToImplement);
-  }
+  void addInterfaceToImplement(String name);
 
 }

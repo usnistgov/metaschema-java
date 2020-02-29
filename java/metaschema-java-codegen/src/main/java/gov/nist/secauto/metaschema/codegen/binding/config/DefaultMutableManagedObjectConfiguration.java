@@ -24,23 +24,49 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.configuration;
+package gov.nist.secauto.metaschema.codegen.binding.config;
 
-public class ModelBindingConfiguration {
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-  public static final ModelBindingConfiguration NULL_CONFIG;
+public class DefaultMutableManagedObjectConfiguration implements MutableManagedObjectBindingConfiguration {
+  private String className;
+  private String baseClassName;
+  private Set<String> interfacesToImplement = new HashSet<>();
 
-  static {
-    NULL_CONFIG = new ModelBindingConfiguration(null);
+  public DefaultMutableManagedObjectConfiguration() {
   }
 
-  private final String packageName;
-
-  public ModelBindingConfiguration(String packageName) {
-    this.packageName = packageName;
+  @Override
+  public String getClassName() {
+    return className;
   }
 
-  public String getPackageName() {
-    return packageName;
+  @Override
+  public void setClassName(String name) {
+    this.className = name;
+  }
+
+  @Override
+  public String getQualifiedBaseClassName() {
+    return baseClassName;
+  }
+
+  @Override
+  public void setQualifiedBaseClassName(String name) {
+    this.baseClassName = name;
+  }
+
+  @Override
+  public Collection<String> getInterfacesToImplement() {
+    return interfacesToImplement.isEmpty() ? Collections.emptySet()
+        : Collections.unmodifiableCollection(interfacesToImplement);
+  }
+
+  @Override
+  public void addInterfaceToImplement(String interfaceName) {
+    this.interfacesToImplement.add(interfaceName);
   }
 }

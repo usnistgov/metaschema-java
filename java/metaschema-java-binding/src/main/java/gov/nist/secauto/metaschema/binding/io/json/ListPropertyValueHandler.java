@@ -55,7 +55,7 @@ public class ListPropertyValueHandler extends AbstractPropertyValueHandler {
   }
 
   @Override
-  public boolean parseNextFieldValue(JsonParsingContext parsingContext) throws BindingException, IOException {
+  public boolean parseNextFieldValue(Object parent, JsonParsingContext parsingContext) throws BindingException, IOException {
     JsonParser parser = parsingContext.getEventReader();
     JsonToken currentToken = parser.currentToken();
 
@@ -74,7 +74,7 @@ public class ListPropertyValueHandler extends AbstractPropertyValueHandler {
     // Parse the value at the current token; after parsing the current token is
     // expected to be at the next START_OBJECT, END_ARRAY, or FIELD_NAME
     PropertyItemHandler propertyItemHandler = getPropertyItemHandler();
-    List<Object> parsedValues = propertyItemHandler.parse(parsingContext, null);
+    List<Object> parsedValues = propertyItemHandler.parse(null, parent, parsingContext);
 
     // if (!JsonUtil.checkEndOfValue(parser, currentToken)) {
     // throw new BindingException(String.format("Unexpected end state token '%s' after parsing %s.",

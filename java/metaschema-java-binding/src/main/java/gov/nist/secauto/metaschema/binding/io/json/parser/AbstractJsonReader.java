@@ -48,16 +48,16 @@ public abstract class AbstractJsonReader<CLASS, CLASS_BINDING extends ClassBindi
       throws BindingException;
 
   @Override
-  public List<CLASS> readJson(JsonParsingContext parsingContext, PropertyBindingFilter filter, boolean parseRoot)
+  public List<CLASS> readJson(PropertyBindingFilter filter, Object parent, boolean parseRoot, JsonParsingContext parsingContext)
       throws BindingException {
 
     OBJECT_PARSER parser = newObjectParser(filter, parsingContext);
 
-    return readJsonInternal(parser, parseRoot);
+    return readJsonInternal(parser, parent, parseRoot);
   }
 
-  protected List<CLASS> readJsonInternal(OBJECT_PARSER parser, @SuppressWarnings("unused") boolean parseRoot)
+  protected List<CLASS> readJsonInternal(OBJECT_PARSER parser, Object parent, @SuppressWarnings("unused") boolean parseRoot)
       throws BindingException {
-    return parser.parseObjects();
+    return parser.parseObjects(parent);
   }
 }

@@ -45,28 +45,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface ClassBinding<CLASS> {
-  Class<CLASS> getClazz();
-
-  List<FlagPropertyBinding> getFlagPropertyBindings();
-
-  FlagPropertyBinding getJsonKeyFlagPropertyBinding();
-
-  Map<String, PropertyBinding> getJsonPropertyBindings(BindingContext bindingContext, PropertyBindingFilter filter)
-      throws BindingException;
-
-  boolean hasRootWrapper();
-
-  RootWrapper getRootWrapper();
-
-  XmlParsePlan<CLASS> getXmlParsePlan(BindingContext bindingContext) throws BindingException;
-
-  XmlWriter getXmlWriter() throws BindingException;
-
-  AssemblyJsonWriter<CLASS> getAssemblyJsonWriter(BindingContext bindingContext) throws BindingException;
-
-  JsonReader<CLASS> getJsonReader(BindingContext bindingContext) throws BindingException;
-
-  CLASS newInstance() throws BindingException;
 
   public static <CLASS> ClassBinding<CLASS> newClassBinding(Class<CLASS> clazz) throws BindingException {
     boolean hasFlag = false;
@@ -99,4 +77,31 @@ public interface ClassBinding<CLASS> {
     }
     return retval;
   }
+
+  Class<CLASS> getClazz();
+
+  List<FlagPropertyBinding> getFlagPropertyBindings();
+
+  FlagPropertyBinding getJsonKeyFlagPropertyBinding();
+
+  Map<String, PropertyBinding> getJsonPropertyBindings(BindingContext bindingContext, PropertyBindingFilter filter)
+      throws BindingException;
+
+  boolean hasRootWrapper();
+
+  RootWrapper getRootWrapper();
+
+  XmlParsePlan<CLASS> getXmlParsePlan(BindingContext bindingContext) throws BindingException;
+
+  XmlWriter getXmlWriter() throws BindingException;
+
+  AssemblyJsonWriter<CLASS> getAssemblyJsonWriter(BindingContext bindingContext) throws BindingException;
+
+  JsonReader<CLASS> getJsonReader(BindingContext bindingContext) throws BindingException;
+
+  CLASS newInstance() throws BindingException;
+
+  void callBeforeDeserialize(Object obj, Object parent) throws BindingException;
+
+  void callAfterDeserialize(Object obj, Object parent) throws BindingException;
 }

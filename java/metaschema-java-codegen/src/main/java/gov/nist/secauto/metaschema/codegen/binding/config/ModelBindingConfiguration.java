@@ -24,13 +24,23 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.codegen;
+package gov.nist.secauto.metaschema.codegen.binding.config;
 
-import gov.nist.secauto.metaschema.codegen.type.JavaType;
-import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
-import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
+public class ModelBindingConfiguration {
 
-public interface JavaTypeSupplier {
-  JavaType getClassJavaType(ManagedObject definition);
-  // JavaType getJavaType(InfoElementDefinition definition);
+  public static final ModelBindingConfiguration NULL_CONFIG;
+
+  static {
+    NULL_CONFIG = new ModelBindingConfiguration(null);
+  }
+
+  private final String packageName;
+
+  public ModelBindingConfiguration(String packageName) {
+    this.packageName = packageName;
+  }
+
+  public String getPackageName() {
+    return packageName;
+  }
 }

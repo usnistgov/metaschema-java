@@ -29,12 +29,9 @@ package gov.nist.secauto.metaschema.model.xml;
 import gov.nist.itl.metaschema.model.xml.AssemblyDocument;
 import gov.nist.itl.metaschema.model.xml.ChoiceDocument;
 import gov.nist.itl.metaschema.model.xml.DefineAssemblyDocument;
-import gov.nist.itl.metaschema.model.xml.ExtensionType;
 import gov.nist.itl.metaschema.model.xml.FieldDocument;
 import gov.nist.itl.metaschema.model.xml.FlagDocument;
-import gov.nist.itl.metaschema.model.xml.binding.DefineAssemblyBindingDocument;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.configuration.AssemblyBindingConfiguration;
 import gov.nist.secauto.metaschema.model.info.Type;
 import gov.nist.secauto.metaschema.model.info.definitions.AbstractAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;
@@ -54,34 +51,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class XmlAssemblyDefinition extends AbstractAssemblyDefinition<XmlMetaschema> implements AssemblyDefinition {
-
-  protected static AssemblyBindingConfiguration
-      getBindingConfiguration(DefineAssemblyDocument.DefineAssembly xmlField) {
-    AssemblyBindingConfiguration retval = null;
-    if (xmlField.isSetExtensions()) {
-      DefineAssemblyDocument.DefineAssembly.Extensions extensions = xmlField.getExtensions();
-      for (ExtensionType extensionInstance : extensions.getDefineAssemblyExtensionList()) {
-        System.out.println("Extension Class: " + extensionInstance.getClass().getName());
-        if (extensionInstance instanceof DefineAssemblyBindingDocument.DefineAssemblyBinding) {
-          DefineAssemblyBindingDocument.DefineAssemblyBinding modelConfig
-              = (DefineAssemblyBindingDocument.DefineAssemblyBinding) extensionInstance;
-          if (modelConfig.isSetJava()) {
-            DefineAssemblyBindingDocument.DefineAssemblyBinding.Java modelJava = modelConfig.getJava();
-
-            retval = new AssemblyBindingConfiguration(modelJava.getClassName(), modelJava.getBaseClassName(),
-                modelJava.getInterfaceNameList());
-            break;
-          }
-        }
-      }
-    }
-
-    if (retval == null) {
-      retval = AssemblyBindingConfiguration.NULL_CONFIG;
-    }
-    return retval;
-  }
-
   private final DefineAssemblyDocument.DefineAssembly xmlAssembly;
   private final Map<String, XmlFlagInstance> flagInstances;
   private final Map<String, ModelInstance> namedModelInstances;
@@ -98,7 +67,7 @@ public class XmlAssemblyDefinition extends AbstractAssemblyDefinition<XmlMetasch
    *          the containing Metaschema
    */
   public XmlAssemblyDefinition(DefineAssemblyDocument.DefineAssembly xmlAssembly, XmlMetaschema metaschema) {
-    super(getBindingConfiguration(xmlAssembly), metaschema);
+    super(metaschema);
     this.xmlAssembly = xmlAssembly;
     //
     // MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription());

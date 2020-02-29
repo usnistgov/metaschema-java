@@ -125,7 +125,7 @@ abstract class AbstractJsonDeserializer<CLASS> extends AbstractDeserializer<CLAS
 
     BindingContext bindingContext = getBindingContext();
     JsonParsingContext parsingContext = new DefaultJsonParsingContext(parser, bindingContext);
-    return classBinding.getJsonReader(bindingContext).readJson(parsingContext, null, isParseRoot).get(0);
+    return classBinding.getJsonReader(bindingContext).readJson(null, null, isParseRoot, parsingContext).get(0);
   }
 
 }

@@ -26,6 +26,11 @@
 
 package gov.nist.secauto.metaschema.codegen.test;
 
+import gov.nist.secauto.metaschema.codegen.JavaGenerator;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -45,11 +50,6 @@ import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import gov.nist.secauto.metaschema.codegen.JavaGenerator;
 
 public class TestDynamicJavaCompiler {
   private static final Logger logger = LogManager.getLogger(TestDynamicJavaCompiler.class);
@@ -115,19 +115,6 @@ public class TestDynamicJavaCompiler {
 
   }
 
-  public boolean compileGeneratedClasses(List<JavaGenerator.GeneratedClass> classesToCompile,
-      DiagnosticCollector<JavaFileObject> diagnostics) {
-    JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-    StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
-
-    List<JavaFileObject> compilationUnits = new ArrayList<>(classesToCompile.size());
-    for (JavaGenerator.GeneratedClass generatedClass : classesToCompile) {
-      compilationUnits.add(fileManager.getJavaFileObjects(generatedClass.getClassFile()).iterator().next());
-    }
-
-    return compile(compiler, fileManager, diagnostics, compilationUnits);
-  }
-
   private boolean compile(JavaCompiler compiler, JavaFileManager fileManager,
       DiagnosticCollector<JavaFileObject> diagnostics, List<JavaFileObject> compilationUnits) {
     List<String> options = new LinkedList<String>();
@@ -154,5 +141,18 @@ public class TestDynamicJavaCompiler {
     public CharSequence getCharContent(boolean ignore) {
       return this.content;
     }
+  }
+
+  public boolean compileGeneratedClasses(List<JavaGenerator.GeneratedClass> classesToCompile,
+      DiagnosticCollector<JavaFileObject> diagnostics) {
+    JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+    StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
+
+    List<JavaFileObject> compilationUnits = new ArrayList<>(classesToCompile.size());
+    for (JavaGenerator.GeneratedClass generatedClass : classesToCompile) {
+      compilationUnits.add(fileManager.getJavaFileObjects(generatedClass.getClassFile()).iterator().next());
+    }
+
+    return compile(compiler, fileManager, diagnostics, compilationUnits);
   }
 }

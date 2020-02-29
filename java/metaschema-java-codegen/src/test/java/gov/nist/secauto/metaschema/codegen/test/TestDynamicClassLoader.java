@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.codegen.test;
 
+import net.openhft.compiler.CompilerUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -33,8 +35,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.stream.Stream;
-
-import net.openhft.compiler.CompilerUtils;
 
 public class TestDynamicClassLoader extends ClassLoader {
   private final File classDir;

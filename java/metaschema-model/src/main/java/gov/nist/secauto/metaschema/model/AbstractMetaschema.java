@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.model;
 
-import gov.nist.secauto.metaschema.model.configuration.ModelBindingConfiguration;
 import gov.nist.secauto.metaschema.model.info.Util;
 import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
@@ -55,7 +54,6 @@ public abstract class AbstractMetaschema implements Metaschema {
   private static final Logger logger = LogManager.getLogger(AbstractMetaschema.class);
 
   private final URI location;
-  private final ModelBindingConfiguration bindingConfiguration;
   private final Map<URI, Metaschema> importedMetaschema;
   private Map<String, InfoElementDefinition> usedInfoElementDefinitions;
   private Map<String, FlagDefinition> usedFlagDefinitions;
@@ -72,19 +70,12 @@ public abstract class AbstractMetaschema implements Metaschema {
    * @param importedMetaschema
    *          previously imported metaschema that this metaschema might import
    */
-  public AbstractMetaschema(URI metaschemaResource, ModelBindingConfiguration bindingConfiguration,
-      Map<URI, ? extends Metaschema> importedMetaschema) {
+  public AbstractMetaschema(URI metaschemaResource, Map<URI, ? extends Metaschema> importedMetaschema) {
     Objects.requireNonNull(metaschemaResource, "metaschemaResource");
-    Objects.requireNonNull(bindingConfiguration, "bindingConfiguration");
     Objects.requireNonNull(importedMetaschema, "importedMetaschema");
     this.location = metaschemaResource;
-    this.bindingConfiguration = bindingConfiguration;
     this.importedMetaschema = Collections.unmodifiableMap(importedMetaschema);
     logger.trace("Creating metaschema '{}'", metaschemaResource);
-  }
-
-  public ModelBindingConfiguration getBindingConfiguration() {
-    return bindingConfiguration;
   }
 
   @Override

@@ -24,50 +24,26 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.configuration;
+package gov.nist.secauto.metaschema.codegen.binding.config;
 
-import java.util.Collections;
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class AbstractManagedObjectBindingConfiguration implements ManagedObjectBingingConfiguration {
-  private final String className;
-  private final String baseClassName;
-  private final List<String> interfacesToImplement;
+import gov.nist.secauto.metaschema.model.MetaschemaException;
 
-  /**
-   * Constructs a new binding configuration for a Metaschema assembly or field.
-   * 
-   * @param className
-   *          the name of the class to use when generating code for this bound object, or {@code null}
-   *          if the default behavior is to be used
-   * @param baseClassName
-   *          the name of the class to extend the generated class from, or {@code null} if no
-   *          extension is to be used
-   * @param interfacesToImplement
-   *          additional interfaces to implement in the generated class, or {@code null} no interfaces
-   *          are to be implemented
-   */
-  public AbstractManagedObjectBindingConfiguration(String className, String baseClassName,
-      List<String> interfacesToImplement) {
-    this.className = className;
-    this.baseClassName = baseClassName;
-    this.interfacesToImplement
-        = interfacesToImplement != null ? Collections.unmodifiableList(interfacesToImplement) : Collections.emptyList();
-  }
+import org.junit.jupiter.api.Test;
 
-  @Override
-  public String getClassName() {
-    return className;
-  }
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 
-  @Override
-  public String getQualifiedBaseClassName() {
-    return baseClassName;
-  }
+class BindingConfigurationLoaderTest {
 
-  @Override
-  public List<String> getInterfacesToImplement() {
-    return interfacesToImplement;
+  @Test
+  void test() throws MalformedURLException, IOException, MetaschemaException {
+    File configFile = new File("src/main/metaschema-bindings/oscal-metaschema-bindings.xml");
+    DefaultBindingConfiguration config = new DefaultBindingConfiguration();
+    config.load(configFile);
+    assertNotNull(config);
   }
 
 }

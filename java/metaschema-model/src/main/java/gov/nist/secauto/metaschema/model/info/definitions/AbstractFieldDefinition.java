@@ -26,18 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.info.definitions;
 
-import com.sun.xml.bind.api.impl.NameConverter;
-
 import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.configuration.FieldBindingConfiguration;
 import gov.nist.secauto.metaschema.model.info.Type;
 import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
 
-import java.util.Objects;
-
 public abstract class AbstractFieldDefinition<METASCHEMA extends Metaschema>
     extends AbstractInfoElementDefinition<METASCHEMA> implements FieldDefinition {
-  private final FieldBindingConfiguration bindingConfiguration;
 
   /**
    * Constructs a binding definition for a Metaschema Field.
@@ -47,34 +41,13 @@ public abstract class AbstractFieldDefinition<METASCHEMA extends Metaschema>
    * @param metaschema
    *          the containing Metaschema
    */
-  public AbstractFieldDefinition(FieldBindingConfiguration bindingConfiguration, METASCHEMA metaschema) {
+  public AbstractFieldDefinition(METASCHEMA metaschema) {
     super(metaschema);
-    Objects.requireNonNull(bindingConfiguration, "bindingConfiguration");
-    this.bindingConfiguration = bindingConfiguration;
   }
 
   @Override
   public Type getType() {
     return Type.FIELD;
-  }
-
-  protected FieldBindingConfiguration getBindingConfiguration() {
-    return bindingConfiguration;
-  }
-
-  @Override
-  public String getClassName() {
-    String retval = getBindingConfiguration().getClassName();
-    if (retval == null) {
-      retval = NameConverter.standard.toClassName(getName());
-      ;
-    }
-    return retval;
-  }
-
-  @Override
-  public String getPackageName() {
-    return getContainingMetaschema().getPackageName();
   }
 
   @Override

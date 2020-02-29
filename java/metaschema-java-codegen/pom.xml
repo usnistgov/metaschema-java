@@ -29,11 +29,6 @@
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>metaschema-java-binding</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>javax.activation</groupId>
-			<artifactId>activation</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>

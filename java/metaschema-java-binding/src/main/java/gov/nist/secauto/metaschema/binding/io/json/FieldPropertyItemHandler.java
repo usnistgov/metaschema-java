@@ -46,15 +46,15 @@ public class FieldPropertyItemHandler
   }
 
   @Override
-  public List<Object> parse(JsonParsingContext parsingContext, PropertyBindingFilter filter) throws BindingException {
+  public List<Object> parse(PropertyBindingFilter filter, Object parent, JsonParsingContext parsingContext) throws BindingException {
     JsonReader<?> jsonReader = getClassBinding().getJsonReader(parsingContext.getBindingContext());
     @SuppressWarnings("unchecked")
-    List<Object> retval = (List<Object>) jsonReader.readJson(parsingContext, filter, false);
+    List<Object> retval = (List<Object>) jsonReader.readJson(filter, parent, false, parsingContext);
     return retval;
   }
 
   @Override
-  public void writeValue(Object value, JsonWritingContext writingContext, PropertyBindingFilter filter)
+  public void writeValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
       throws BindingException, IOException {
     AssemblyJsonWriter<?> jsonWriter = getClassBinding().getAssemblyJsonWriter(writingContext.getBindingContext());
     jsonWriter.writeJson(value, filter, writingContext);

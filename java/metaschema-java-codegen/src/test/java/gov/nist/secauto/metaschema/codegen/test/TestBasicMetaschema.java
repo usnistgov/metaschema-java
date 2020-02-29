@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.binding.Format;
 import gov.nist.secauto.metaschema.binding.io.Feature;
 import gov.nist.secauto.metaschema.binding.io.MutableConfiguration;
 import gov.nist.secauto.metaschema.codegen.JavaGenerator;
+import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
@@ -78,8 +79,10 @@ public class TestBasicMetaschema {
 
     String rootClassName = null;
 
+    DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
     List<JavaGenerator.GeneratedClass> classesToCompile = new LinkedList<>();
-    for (Map.Entry<Metaschema, List<JavaGenerator.GeneratedClass>> entry : JavaGenerator.generate(metaschema, classDir)
+    for (Map.Entry<Metaschema, List<JavaGenerator.GeneratedClass>> entry : JavaGenerator
+        .generate(metaschema, classDir, bindingConfiguration)
         .entrySet()) {
       Metaschema containingMetaschema = entry.getKey();
       for (JavaGenerator.GeneratedClass generatedClass : entry.getValue()) {
@@ -106,20 +109,20 @@ public class TestBasicMetaschema {
     // return new TestDynamicClassLoader(classDir).loadClass(rootClassName);
   }
 
-  private static Object readXml(Reader reader, Class<?> rootClass) throws IOException, BindingException {
+  private static Object readXml(Reader reader, Class<?> rootClass) throws BindingException {
     BindingContext context = BindingContext.newInstance();
     Object value = context.newDeserializer(Format.XML, rootClass, null).deserialize(reader);
     return value;
   }
 
-  private static <CLASS> void writeXml(Writer writer, CLASS rootObject) throws IOException, BindingException {
+  private static <CLASS> void writeXml(Writer writer, CLASS rootObject) throws BindingException {
     BindingContext context = BindingContext.newInstance();
     @SuppressWarnings("unchecked")
     Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
     context.newSerializer(Format.XML, clazz, null).serialize(rootObject, writer);
   }
 
-  private static String writeXml(Object rootObject) throws IOException, BindingException {
+  private static String writeXml(Object rootObject) throws BindingException {
     StringWriter writer = new StringWriter();
     writeXml(writer, rootObject);
     return writer.toString();
@@ -133,7 +136,7 @@ public class TestBasicMetaschema {
         .deserialize(reader);
   }
 
-  private static <CLASS> void writeJson(Writer writer, CLASS rootObject) throws IOException, BindingException {
+  private static <CLASS> void writeJson(Writer writer, CLASS rootObject) throws BindingException {
     BindingContext context = BindingContext.newInstance();
     @SuppressWarnings("unchecked")
     Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();

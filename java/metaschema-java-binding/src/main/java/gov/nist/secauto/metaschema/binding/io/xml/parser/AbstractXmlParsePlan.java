@@ -106,6 +106,8 @@ public abstract class AbstractXmlParsePlan<CLASS, CLASS_BINDING extends ClassBin
     // TODO: handle start element in parent, but handle root here
     XMLEventReader2 reader = parsingContext.getEventReader();
     CLASS obj = getClassBinding().newInstance();
+    // TODO: pass in parent
+    getClassBinding().callBeforeDeserialize(obj, null);
     try {
 
       if (logger.isDebugEnabled()) {
@@ -160,6 +162,8 @@ public abstract class AbstractXmlParsePlan<CLASS, CLASS_BINDING extends ClassBin
     } catch (XMLStreamException ex) {
       throw new BindingException(ex);
     }
+    // TODO: pass in parent
+    getClassBinding().callAfterDeserialize(obj, null);
     return obj;
   }
 

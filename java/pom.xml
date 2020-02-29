@@ -127,17 +127,6 @@
 			</dependency>
 
 			<dependency>
-				<groupId>javax.activation</groupId>
-				<artifactId>activation</artifactId>
-				<version>1.1.1</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.validation</groupId>
-				<artifactId>validation-api</artifactId>
-				<version>2.0.1.Final</version>
-			</dependency>
-
-			<dependency>
 				<groupId>org.apache.xmlbeans</groupId>
 				<artifactId>xmlbeans</artifactId>
 				<version>3.1.0</version>
@@ -257,6 +246,7 @@
 				<artifactId>commons-lang3</artifactId>
 				<version>3.9</version>
 			</dependency>
+
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-api</artifactId>
@@ -286,10 +276,6 @@
 	</dependencyManagement>
 	<dependencies>
 		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
 			<scope>test</scope>
@@ -313,7 +299,7 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<configuration>
-						<!--  this is a hack to fix a javadoc bug -->
+						<!-- this is a hack to fix a javadoc bug -->
 						<detectJavaApiLink>false</detectJavaApiLink>
 					</configuration>
 				</plugin>

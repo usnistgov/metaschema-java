@@ -27,12 +27,9 @@
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.itl.metaschema.model.xml.DefineFieldDocument;
-import gov.nist.itl.metaschema.model.xml.ExtensionType;
 import gov.nist.itl.metaschema.model.xml.FlagDocument;
 import gov.nist.itl.metaschema.model.xml.JsonValueKeyDocument.JsonValueKey;
-import gov.nist.itl.metaschema.model.xml.binding.DefineFieldBindingDocument;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.configuration.FieldBindingConfiguration;
 import gov.nist.secauto.metaschema.model.info.definitions.AbstractFieldDefinition;
 import gov.nist.secauto.metaschema.model.info.definitions.DataType;
 import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
@@ -43,33 +40,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class XmlFieldDefinition extends AbstractFieldDefinition<XmlMetaschema> implements FieldDefinition {
-
-  protected static FieldBindingConfiguration getBindingConfiguration(DefineFieldDocument.DefineField xmlField) {
-    FieldBindingConfiguration retval = null;
-    if (xmlField.isSetExtensions()) {
-      DefineFieldDocument.DefineField.Extensions extensions = xmlField.getExtensions();
-      for (ExtensionType extensionInstance : extensions.getDefineFieldExtensionList()) {
-        System.out.println("Extension Class: " + extensionInstance.getClass().getName());
-        if (extensionInstance instanceof DefineFieldBindingDocument.DefineFieldBinding) {
-          DefineFieldBindingDocument.DefineFieldBinding modelConfig
-              = (DefineFieldBindingDocument.DefineFieldBinding) extensionInstance;
-          if (modelConfig.isSetJava()) {
-            DefineFieldBindingDocument.DefineFieldBinding.Java modelJava = modelConfig.getJava();
-
-            retval = new FieldBindingConfiguration(modelJava.getClassName(), modelJava.getBaseClassName(),
-                modelJava.getInterfaceNameList());
-            break;
-          }
-        }
-      }
-    }
-
-    if (retval == null) {
-      retval = FieldBindingConfiguration.NULL_CONFIG;
-    }
-    return retval;
-  }
-
   private final DefineFieldDocument.DefineField xmlField;
   private final Map<String, XmlFlagInstance> flagInstances;
 
@@ -82,7 +52,7 @@ public class XmlFieldDefinition extends AbstractFieldDefinition<XmlMetaschema> i
    *          the containing Metaschema
    */
   public XmlFieldDefinition(DefineFieldDocument.DefineField xmlField, XmlMetaschema metaschema) {
-    super(getBindingConfiguration(xmlField), metaschema);
+    super(metaschema);
     this.xmlField = xmlField;
 
     int numFlags = xmlField.sizeOfFlagArray();

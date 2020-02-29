@@ -27,25 +27,10 @@
 package gov.nist.secauto.metaschema.maven.plugin;
 
 import gov.nist.secauto.metaschema.codegen.JavaGenerator;
+import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
-
-/*
- * Copyright 2001-2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
@@ -62,12 +47,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Goal which generates Java source files for a given set of Metaschema definitions.
@@ -164,6 +150,12 @@ public class MetaschemaMojo extends AbstractMojo {
   private boolean skip;
 
   /**
+   * A set of binding configurations
+   */
+  @Parameter
+  protected File[] configs;
+
+  /**
    * The BuildContext is used to identify which files or directories were modified since last build.
    * This is used to determine if java code generation must be performed again.
    *
@@ -214,7 +206,7 @@ public class MetaschemaMojo extends AbstractMojo {
    *
    * @return the staleFile
    */
-  protected final @NotNull File getStaleFile() {
+  protected final File getStaleFile() {
     StringBuilder builder = new StringBuilder();
     if (getMojoExecution() != null) {
       builder.append(getMojoExecution().getExecutionId()).append('-');
@@ -265,6 +257,16 @@ public class MetaschemaMojo extends AbstractMojo {
     return Stream.of(ds.getIncludedFiles()).map(filename -> new File(metaschemaDir, filename)).distinct();
   }
 
+  protected List<File> getConfigs() {
+    List<File> retval;
+    if (configs == null) {
+      retval = Collections.emptyList();
+    } else {
+      retval = Arrays.asList(configs);
+    }
+    return retval;
+  }
+
   protected boolean shouldExecutionBeSkipped() {
     return skip;
   }
@@ -290,7 +292,6 @@ public class MetaschemaMojo extends AbstractMojo {
 
   @Override
   public void execute() throws MojoExecutionException {
-    @NotNull
     File staleFile = getStaleFile();
     try {
       staleFile = staleFile.getCanonicalFile();
@@ -332,9 +333,22 @@ public class MetaschemaMojo extends AbstractMojo {
         metaschemaCollection.add(metaschema);
 
       }
+
+      // TODO: load this from the requested file
+      DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
+      for (File config : getConfigs()) {
+        try {
+          getLog().info("Loading binding configuration: " + config.getPath());
+          bindingConfiguration.load(config);
+        } catch (IOException | MetaschemaException ex) {
+          throw new MojoExecutionException(
+              String.format("Unable to load binding configuration from '%s'.", config.getPath()), ex);
+        }
+      }
+
       try {
         getLog().info("Generating Java classes in: " + getOutputDirectory().getPath());
-        JavaGenerator.generate(metaschemaCollection, getOutputDirectory());
+        JavaGenerator.generate(metaschemaCollection, getOutputDirectory(), bindingConfiguration);
       } catch (IOException ex) {
         throw new MojoExecutionException("Creation of Java classes failed.", ex);
       }

@@ -24,20 +24,14 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.configuration;
+package gov.nist.secauto.metaschema.codegen.binding.config;
 
-import java.util.List;
+import java.util.Collection;
 
-public class AssemblyBindingConfiguration extends AbstractManagedObjectBindingConfiguration {
+public interface ManagedObjectBindingConfiguration {
+  String getClassName();
 
-  public static final AssemblyBindingConfiguration NULL_CONFIG;
+  String getQualifiedBaseClassName();
 
-  static {
-    NULL_CONFIG = new AssemblyBindingConfiguration(null, null, null);
-  }
-
-  public AssemblyBindingConfiguration(String className, String baseClass, List<String> interfacesToImplement) {
-    super(className, baseClass, interfacesToImplement);
-  }
-
+  Collection<String> getInterfacesToImplement();
 }

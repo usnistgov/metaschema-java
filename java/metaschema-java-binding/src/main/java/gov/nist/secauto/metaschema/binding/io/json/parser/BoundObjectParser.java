@@ -33,7 +33,7 @@ import java.util.List;
 
 public interface BoundObjectParser<CLASS, CLASS_BINDING extends ClassBinding<CLASS>> {
 
-  List<CLASS> parseObjects() throws BindingException;
+  List<CLASS> parseObjects(Object parent) throws BindingException;
 
   JsonParsingContext getParsingContext();
 

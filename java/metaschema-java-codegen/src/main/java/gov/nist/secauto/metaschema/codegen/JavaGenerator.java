@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.codegen;
 
-import com.sun.xml.bind.api.impl.NameConverter;
-
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlNs;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlNsForm;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
-import gov.nist.secauto.metaschema.codegen.type.JavaType;
+import gov.nist.secauto.metaschema.codegen.binding.config.BindingConfiguration;
+import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
+import gov.nist.secauto.metaschema.codegen.binding.config.JavaTypeSupplier;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
@@ -39,7 +39,6 @@ import gov.nist.secauto.metaschema.model.info.Type;
 import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
 import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
-import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,26 +66,31 @@ public class JavaGenerator {
     File metaschemaFile = new File("target/src/metaschema/oscal_catalog_metaschema.xml");
     Metaschema metaschema = new MetaschemaLoader().loadXmlMetaschema(metaschemaFile);
 
-    JavaGenerator.generate(metaschema, new File(args[0]));
+    DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
+    JavaGenerator.generate(metaschema, new File(args[0]), bindingConfiguration);
   }
 
   private JavaGenerator() {
     // disable construction
   }
 
-  public static Map<Metaschema, List<GeneratedClass>> generate(Metaschema metaschema, File dir) throws IOException {
-    return generate(Collections.singletonList(metaschema), dir);
+  public static Map<Metaschema, List<GeneratedClass>> generate(Metaschema metaschema, File generationTargetDirectory,
+      BindingConfiguration bindingConfiguration) throws IOException {
+    return generate(Collections.singletonList(metaschema), generationTargetDirectory, bindingConfiguration);
   }
 
-  public static Map<Metaschema, List<GeneratedClass>> generate(Collection<? extends Metaschema> metaschemas, File dir)
-      throws IOException {
-    logger.info("Generating Java classes in: {}", dir.getPath());
+  public static Map<Metaschema, List<GeneratedClass>> generate(Collection<? extends Metaschema> metaschemas,
+      File generationTargetDirectory, BindingConfiguration bindingConfiguration) throws IOException {
+    Objects.requireNonNull(metaschemas, "metaschemas");
+    Objects.requireNonNull(generationTargetDirectory, "generationTargetDirectory");
+    Objects.requireNonNull(bindingConfiguration, "bindingConfiguration");
+    logger.info("Generating Java classes in: {}", generationTargetDirectory.getPath());
 
     Map<Metaschema, List<GeneratedClass>> retval = new HashMap<>();
     Map<URI, String> xmlNamespaceToPackageNameMap = new HashMap<>();
     Map<URI, Set<Metaschema>> xmlNamespaceToMetaschemaMap = new HashMap<>();
 
-    DeconflictingJavaTypeSupplier javaTypeSupplier = new DeconflictingJavaTypeSupplier();
+    JavaTypeSupplier javaTypeSupplier = bindingConfiguration.getJavaTypeSupplier();
 
     Map<Metaschema, List<InfoElementDefinition>> metaschemaToInformationElementsMap = buildMetaschemaMap(metaschemas);
     for (Map.Entry<Metaschema, List<InfoElementDefinition>> entry : metaschemaToInformationElementsMap.entrySet()) {
@@ -111,7 +115,7 @@ public class JavaGenerator {
         }
 
         if (classGenerator != null) {
-          GeneratedClass generatedClass = classGenerator.generateClass(dir);
+          GeneratedClass generatedClass = classGenerator.generateClass(generationTargetDirectory);
           String className = generatedClass.getClassName();
           if (classNames.contains(className)) {
             throw new IllegalStateException(String.format(
@@ -132,7 +136,7 @@ public class JavaGenerator {
       }
 
       URI xmlNamespace = metaschema.getXmlNamespace();
-      String packageName = metaschema.getPackageName();
+      String packageName = bindingConfiguration.getPackageName(metaschema);
 
       if (xmlNamespaceToPackageNameMap.containsKey(xmlNamespace)) {
         String assignedPackage = xmlNamespaceToPackageNameMap.get(xmlNamespace);
@@ -141,7 +145,7 @@ public class JavaGenerator {
               "The metaschema '%s' is assigning the new package name '%s'."
                   + " This new name is different than the previously assigned package name '%s' for the same namespace."
                   + " A metaschema namespace must be assigned a consistent package name.",
-              metaschema.getLocation().toString(), metaschema.getPackageName(), assignedPackage));
+              metaschema.getLocation().toString(), packageName, assignedPackage));
         }
       } else {
         xmlNamespaceToPackageNameMap.put(xmlNamespace, packageName);
@@ -158,7 +162,7 @@ public class JavaGenerator {
     for (Map.Entry<URI, String> entry : xmlNamespaceToPackageNameMap.entrySet()) {
       String packageName = entry.getValue();
       String packagePath = packageName.replace(".", "/");
-      File packageInfo = new File(dir, packagePath + "/package-info.java");
+      File packageInfo = new File(generationTargetDirectory, packagePath + "/package-info.java");
       URI namespace = entry.getKey();
       String namespaceString = namespace.toString();
 
@@ -225,45 +229,5 @@ public class JavaGenerator {
     public boolean isRootClass() {
       return rootClass;
     }
-  }
-
-  private static class DeconflictingJavaTypeSupplier implements JavaTypeSupplier {
-    private final Map<String, Set<String>> packageToClassNamesMap = new HashMap<>();
-    private final Map<ManagedObject, JavaType> definitionToTypeMap = new HashMap<>();
-
-    @Override
-    public JavaType getClassJavaType(ManagedObject definition) {
-      JavaType retval = definitionToTypeMap.get(definition);
-      if (retval == null) {
-        String packageName = definition.getPackageName();
-        String className = definition.getClassName();
-
-        Set<String> classNames = packageToClassNamesMap.get(packageName);
-        if (classNames == null) {
-          classNames = new HashSet<>();
-          packageToClassNamesMap.put(packageName, classNames);
-        }
-
-        if (classNames.contains(className)) {
-          logger.warn(String.format("Class name '%s' in metaschema '%s' conflicts with a previously used class name.",
-              className, definition.getContainingMetaschema().getLocation()));
-          // first try to append the metaschema's short name
-          String metaschemaShortName = definition.getContainingMetaschema().getShortName();
-          className = NameConverter.standard.toClassName(className + metaschemaShortName);
-        }
-
-        String classNameBase = className;
-        int index = 1;
-        while (classNames.contains(className)) {
-          className = classNameBase + Integer.toString(index);
-        }
-        classNames.add(className);
-
-        retval = JavaType.create(packageName, className);
-        definitionToTypeMap.put(definition, retval);
-      }
-      return retval;
-    }
-
   }
 }

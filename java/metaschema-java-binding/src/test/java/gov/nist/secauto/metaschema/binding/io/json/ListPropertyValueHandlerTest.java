@@ -77,7 +77,7 @@ class ListPropertyValueHandlerTest {
       }
 
       @Override
-      public List<Object> parse(JsonParsingContext parsingContext, PropertyBindingFilter filter)
+      public List<Object> parse(PropertyBindingFilter filter, Object parent, JsonParsingContext parsingContext)
           throws BindingException, IOException {
         JsonParser parser = parsingContext.getEventReader();
         assertEquals(JsonToken.START_OBJECT, parser.currentToken());
@@ -91,7 +91,7 @@ class ListPropertyValueHandlerTest {
       }
 
       @Override
-      public void writeValue(Object value, JsonWritingContext writingContext, PropertyBindingFilter filter)
+      public void writeValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
           throws BindingException, IOException {
         throw new UnsupportedOperationException();
       }
@@ -109,7 +109,7 @@ class ListPropertyValueHandlerTest {
     parser.nextToken();
 
     for (int i = 0; i < count; i++) {
-      assertEquals(count != i + 1, propertyValueHandler.parseNextFieldValue(parsingContext), "when parsing item #" + i);
+      assertEquals(count != i + 1, propertyValueHandler.parseNextFieldValue(null, parsingContext), "when parsing item #" + i);
     }
 
     @SuppressWarnings("unchecked")

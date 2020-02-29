@@ -44,7 +44,7 @@ public class DataTypePropertyItemHandler extends AbstractProperrtyItemHandler<Pr
   }
 
   @Override
-  public List<Object> parse(JsonParsingContext parsingContext, PropertyBindingFilter filter) throws BindingException {
+  public List<Object> parse(PropertyBindingFilter filter, Object parent, JsonParsingContext parsingContext) throws BindingException {
     JavaTypeAdapter<?> adapter
         = parsingContext.getBindingContext().getJavaTypeAdapter(getPropertyBinding().getPropertyInfo().getItemType());
 
@@ -52,12 +52,11 @@ public class DataTypePropertyItemHandler extends AbstractProperrtyItemHandler<Pr
   }
 
   @Override
-  public void writeValue(Object value, JsonWritingContext writingContext, PropertyBindingFilter filter)
+  public void writeValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
       throws BindingException, IOException {
     JavaTypeAdapter<?> adapter
         = writingContext.getBindingContext().getJavaTypeAdapter(getPropertyBinding().getPropertyInfo().getItemType());
 
     adapter.writeJsonFieldValue(value, filter, writingContext);
   }
-
 }

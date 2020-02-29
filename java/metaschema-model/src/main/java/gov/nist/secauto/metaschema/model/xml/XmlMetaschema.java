@@ -26,21 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import com.sun.xml.bind.api.impl.NameConverter;
-
 import gov.nist.itl.metaschema.model.xml.DefineAssemblyDocument;
 import gov.nist.itl.metaschema.model.xml.DefineFieldDocument;
 import gov.nist.itl.metaschema.model.xml.DefineFlagDocument;
-import gov.nist.itl.metaschema.model.xml.ExtensionType;
 import gov.nist.itl.metaschema.model.xml.ImportDocument;
 import gov.nist.itl.metaschema.model.xml.METASCHEMADocument;
-import gov.nist.itl.metaschema.model.xml.METASCHEMADocument.METASCHEMA;
-import gov.nist.itl.metaschema.model.xml.METASCHEMADocument.METASCHEMA.Extensions;
-import gov.nist.itl.metaschema.model.xml.binding.ModelBindingDocument;
 import gov.nist.secauto.metaschema.model.AbstractMetaschema;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
-import gov.nist.secauto.metaschema.model.configuration.ModelBindingConfiguration;
 import gov.nist.secauto.metaschema.model.info.Util;
 import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
 
@@ -137,30 +130,6 @@ public class XmlMetaschema extends AbstractMetaschema {
     return retval;
   }
 
-  protected static ModelBindingConfiguration getBindingConfiguration(METASCHEMADocument metaschema) {
-    ModelBindingConfiguration retval = null;
-    METASCHEMA modelMetaschema = metaschema.getMETASCHEMA();
-    if (modelMetaschema.isSetExtensions()) {
-      Extensions extensions = modelMetaschema.getExtensions();
-      for (ExtensionType extensionInstance : extensions.getModelExtensionList()) {
-        System.out.println("Extension Class: " + extensionInstance.getClass().getName());
-        if (extensionInstance instanceof ModelBindingDocument.ModelBinding) {
-          ModelBindingDocument.ModelBinding modelConfig = (ModelBindingDocument.ModelBinding) extensionInstance;
-          if (modelConfig.isSetJava()) {
-            ModelBindingDocument.ModelBinding.Java modelJava = modelConfig.getJava();
-            retval = new ModelBindingConfiguration(modelJava.getPackageName());
-            break;
-          }
-        }
-      }
-    }
-
-    if (retval == null) {
-      retval = ModelBindingConfiguration.NULL_CONFIG;
-    }
-    return retval;
-  }
-
   private final METASCHEMADocument metaschema;
   private final Map<String, InfoElementDefinition> infoElementDefinitions;
   private final Map<String, XmlFlagDefinition> flagDefinitions;
@@ -181,7 +150,7 @@ public class XmlMetaschema extends AbstractMetaschema {
    */
   public XmlMetaschema(URI resource, METASCHEMADocument metaschemaXml, Map<URI, Metaschema> importedMetaschema)
       throws MetaschemaException {
-    super(resource, getBindingConfiguration(metaschemaXml), importedMetaschema);
+    super(resource, importedMetaschema);
     this.metaschema = metaschemaXml;
 
     XmlCursor cursor = metaschema.getMETASCHEMA().newCursor();
@@ -233,15 +202,6 @@ public class XmlMetaschema extends AbstractMetaschema {
   @Override
   public URI getXmlNamespace() {
     return URI.create(metaschema.getMETASCHEMA().getNamespace());
-  }
-
-  @Override
-  public String getPackageName() {
-    String packageName = getBindingConfiguration().getPackageName();
-    if (packageName == null) {
-      packageName = NameConverter.standard.toPackageName(getXmlNamespace().toString());
-    }
-    return packageName;
   }
 
   @Override

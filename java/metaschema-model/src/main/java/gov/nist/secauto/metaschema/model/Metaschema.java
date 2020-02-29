@@ -69,5 +69,5 @@ public interface Metaschema {
 
   Map<String, AssemblyDefinition> getUsedAssemblyDefinitions();
 
-  String getPackageName();
+  //  String getPackageName();
 }

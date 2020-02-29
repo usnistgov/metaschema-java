@@ -82,7 +82,7 @@ public abstract class AbstractBoundObjectParser<CLASS, CLASS_BINDING extends Cla
     return unknownPropertyHandler;
   }
 
-  protected void parseProperties(Map<String, PropertyBinding> propertyBindings) throws IOException, BindingException {
+  protected void parseProperties(Map<String, PropertyBinding> propertyBindings, Object parent) throws IOException, BindingException {
     JsonParsingContext parsingContext = getParsingContext();
     JsonParser parser = parsingContext.getEventReader();
     JsonProblemHandler problemHandler = parsingContext.getProblemHandler();
@@ -132,7 +132,7 @@ public abstract class AbstractBoundObjectParser<CLASS, CLASS_BINDING extends Cla
 
         // if the callback doesn't opt to parse the property, parse it here
         if (!propertyParser.parse(propertyBinding)) {
-          Supplier<? extends Object> supplier = parseProperty(propertyBinding, parsingContext);
+          Supplier<? extends Object> supplier = parseProperty(propertyBinding, parent, parsingContext);
           propertyBindingSupplier.apply(propertyBinding, supplier);
         }
         parsedProperties.add(nextFieldName);
@@ -176,13 +176,13 @@ public abstract class AbstractBoundObjectParser<CLASS, CLASS_BINDING extends Cla
    * @throws IOException
    *           if an input error has occurred
    */
-  public Supplier<? extends Object> parseProperty(PropertyBinding propertyBinding, JsonParsingContext parsingContext)
+  public Supplier<? extends Object> parseProperty(PropertyBinding propertyBinding, Object parent, JsonParsingContext parsingContext)
       throws BindingException, IOException {
 
     PropertyValueHandler propertyValueHandler
         = PropertyValueHandler.newPropertyValueHandler(getClassBinding(), propertyBinding, parsingContext);
 
-    while (propertyValueHandler.parseNextFieldValue(parsingContext)) {
+    while (propertyValueHandler.parseNextFieldValue(parent, parsingContext)) {
       // after calling parseNextField the current token is expected to be at the next
       // field to parse or at the END_OBJECT for the containing object
     }

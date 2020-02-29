@@ -96,7 +96,7 @@ public interface PropertyValueHandler {
    * @throws IOException
    *           if an input error has occurred while parsing
    */
-  boolean parseNextFieldValue(JsonParsingContext parsingContext) throws BindingException, IOException;
+  boolean parseNextFieldValue(Object parent, JsonParsingContext parsingContext) throws BindingException, IOException;
 
   Supplier<? extends Object> getObjectSupplier();
 }

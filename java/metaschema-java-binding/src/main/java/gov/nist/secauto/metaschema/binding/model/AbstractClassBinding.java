@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -142,6 +143,37 @@ abstract class AbstractClassBinding<CLASS, XML_PARSE_PLAN extends XmlParsePlan<C
       throw new BindingException(e);
     }
     return retval;
+  }
+
+  @Override
+  public void callBeforeDeserialize(Object obj, Object parent) throws BindingException {
+    Class<?> searchClass = getClazz();
+    do {
+      try {
+        Method method = searchClass.getDeclaredMethod("beforeDeserialize", Object.class);
+        method.invoke(obj, parent);
+        
+      } catch (NoSuchMethodException ex) {
+        // do nothing
+      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+        throw new BindingException(ex);
+      }
+    } while ((searchClass = searchClass.getSuperclass()) != null);
+  }
+
+  @Override
+  public void callAfterDeserialize(Object obj, Object parent) throws BindingException {
+    Class<?> searchClass = getClazz();
+    do {
+      try {
+        Method method = searchClass.getDeclaredMethod("afterDeserialize", Object.class);
+        method.invoke(obj, parent);
+      } catch (NoSuchMethodException ex) {
+        // do nothing
+      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+        throw new BindingException(ex);
+      }
+    } while ((searchClass = searchClass.getSuperclass()) != null);
   }
 
 }

@@ -86,7 +86,7 @@ public class CollapsedFieldObjectParser<CLASS> extends AbstractBoundObjectParser
       ListPropertyValueHandler propertyValueHandler
           = new ListPropertyValueHandler(getClassBinding(), propertyItemHandler, true);
       try {
-        while (propertyValueHandler.parseNextFieldValue(parsingContext)) {
+        while (propertyValueHandler.parseNextFieldValue(null, parsingContext)) {
           // after calling parseNextField the current token is expected to be at the next
           // field to parse or at the END_OBJECT for the containing object
         }
@@ -101,19 +101,21 @@ public class CollapsedFieldObjectParser<CLASS> extends AbstractBoundObjectParser
   }
 
   @Override
-  public List<CLASS> parseObjects() throws BindingException {
+  public List<CLASS> parseObjects(Object parent) throws BindingException {
     Map<String, PropertyBinding> propertyBindings = getJsonPropertyBindings();
     FieldValuePropertyBinding valuePropertyBinding = getClassBinding().getFieldValuePropertyBinding();
 
     List<CLASS> retval = new LinkedList<CLASS>();
     try {
-      parseProperties(propertyBindings);
+      parseProperties(propertyBindings, null);
     } catch (IOException ex) {
       throw new BindingException(ex);
     }
 
     for (Object fieldValue : values) {
       CLASS obj = getClassBinding().newInstance();
+      getClassBinding().callBeforeDeserialize(obj, parent);
+
       for (Map.Entry<PropertyBinding, Supplier<?>> entry : bindings.entrySet()) {
         PropertyBinding propertyBinding = entry.getKey();
         Supplier<?> supplier = entry.getValue();
@@ -129,6 +131,8 @@ public class CollapsedFieldObjectParser<CLASS> extends AbstractBoundObjectParser
       }
 
       valuePropertyBinding.getPropertyInfo().setValue(obj, fieldValue);
+
+      getClassBinding().callAfterDeserialize(obj, parent);
     }
     if (retval.isEmpty()) {
       retval = null;

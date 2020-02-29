@@ -66,17 +66,19 @@ public class SingleBoundObjectParser<CLASS, CLASS_BINDING extends ClassBinding<C
   }
 
   @Override
-  public List<CLASS> parseObjects() throws BindingException {
+  public List<CLASS> parseObjects(Object parent) throws BindingException {
+    CLASS instance = getInstance();
+
+    getClassBinding().callBeforeDeserialize(instance, parent);
     Map<String, PropertyBinding> propertyBindings = getJsonPropertyBindings();
 
     try {
-      parseProperties(propertyBindings);
+      parseProperties(propertyBindings, instance);
     } catch (IOException ex) {
       throw new BindingException(ex);
     }
 
-    CLASS instance = getInstance();
-
+    getClassBinding().callBeforeDeserialize(instance, parent);
     return instance != null ? new LinkedList<CLASS>(Collections.singletonList(instance)) : null;
   }
 

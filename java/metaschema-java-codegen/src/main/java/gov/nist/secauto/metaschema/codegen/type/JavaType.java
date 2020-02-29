@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.codegen.type;
 
-import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
-
 import java.util.Set;
 import java.util.function.Function;
 
@@ -107,10 +105,6 @@ public interface JavaType {
 
   public static JavaType create(String packageName, String className) {
     return new SimpleJavaType(packageName, className);
-  }
-
-  public static JavaType create(ManagedObject obj) {
-    return new SimpleJavaType(obj);
   }
 
   public static ListJavaType createGenericList(Class<?> valueClass) {

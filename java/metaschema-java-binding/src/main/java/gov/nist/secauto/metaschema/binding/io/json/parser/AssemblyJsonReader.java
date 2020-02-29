@@ -75,7 +75,7 @@ public class AssemblyJsonReader<CLASS> extends AbstractJsonReader<CLASS, Assembl
 
   @Override
   protected List<CLASS> readJsonInternal(SingleBoundObjectParser<CLASS, AssemblyClassBinding<CLASS>> parser,
-      boolean parseRoot) throws BindingException {
+      Object parent, boolean parseRoot) throws BindingException {
     List<CLASS> retval;
     if (parseRoot) {
       try {
@@ -84,7 +84,7 @@ public class AssemblyJsonReader<CLASS> extends AbstractJsonReader<CLASS, Assembl
         throw new BindingException(ex);
       }
     } else {
-      retval = super.readJsonInternal(parser, false);
+      retval = super.readJsonInternal(parser, parent, false);
     }
     return retval;
   }
@@ -117,7 +117,7 @@ public class AssemblyJsonReader<CLASS> extends AbstractJsonReader<CLASS, Assembl
       if (fieldName.equals(rootName)) {
         // process the object value, bound to the requested class
         JsonUtil.readNextToken(parser, JsonToken.START_OBJECT);
-        retval = super.readJsonInternal(objParser, false);
+        retval = super.readJsonInternal(objParser, null, false);
       } else if (ignoreRootFields.contains(fieldName)) {
         // ignore the field
         JsonUtil.skipValue(parser);
