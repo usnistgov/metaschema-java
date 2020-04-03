@@ -30,6 +30,7 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.property.PropertyItemHandler;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.model.property.CollectionPropertyInfo;

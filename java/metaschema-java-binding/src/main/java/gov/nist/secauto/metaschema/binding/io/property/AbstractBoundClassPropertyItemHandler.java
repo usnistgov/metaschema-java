@@ -24,10 +24,18 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.io.json;
+package gov.nist.secauto.metaschema.binding.io.property;
 
+import gov.nist.secauto.metaschema.binding.BindingException;
+import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsePlan;
+import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWriter;
+import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.ModelItemPropertyBinding;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.events.StartElement;
 
 public abstract class AbstractBoundClassPropertyItemHandler<CLASS_BINDING extends ClassBinding<
     ?>, PROPERTY_BINDING extends ModelItemPropertyBinding> extends AbstractProperrtyItemHandler<PROPERTY_BINDING> {
@@ -43,4 +51,28 @@ public abstract class AbstractBoundClassPropertyItemHandler<CLASS_BINDING extend
     return classBinding;
   }
 
+  @Override
+  public boolean isParsingXmlStartElement() {
+    return true;
+  }
+
+  @Override
+  public boolean canHandleQName(QName nextQName) {
+    // we are only handling the element being parsed
+    return false;
+  }
+
+  @Override
+  public Object parse(Object parent, XmlParsingContext parsingContext) throws BindingException {
+    // delegates all parsing to the parse plan
+    XmlParsePlan<?> plan = getClassBinding().getXmlParsePlan(parsingContext.getBindingContext());
+    return plan.parse(parent, parsingContext);
+  }
+
+  @Override
+  public void writeXmlElement(Object value, QName valueQName, StartElement parent, XmlWritingContext writingContext)
+      throws BindingException {
+    XmlWriter writer = getClassBinding().getXmlWriter();
+    writer.writeXml(value, valueQName, writingContext);
+  }
 }

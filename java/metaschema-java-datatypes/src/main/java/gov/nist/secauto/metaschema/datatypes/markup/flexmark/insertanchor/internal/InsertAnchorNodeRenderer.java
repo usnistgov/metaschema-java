@@ -51,7 +51,7 @@ public class InsertAnchorNodeRenderer implements NodeRenderer {
     return Collections.singleton(new NodeRenderingHandler<InsertAnchorNode>(InsertAnchorNode.class, this::render));
   }
 
-  protected void render(InsertAnchorNode node, @SuppressWarnings("unused") NodeRendererContext context,
+  protected void render(InsertAnchorNode node, NodeRendererContext context,
       HtmlWriter html) {
     if (options.enableRendering) {
       html.attr("param-id", node.getName()).withAttr().tag("insert", true);

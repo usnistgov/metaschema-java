@@ -102,12 +102,12 @@ public abstract class AbstractXmlParsePlan<CLASS, CLASS_BINDING extends ClassBin
    * corresponding to the parsed START_ELEMENT.
    */
   @Override
-  public CLASS parse(XmlParsingContext parsingContext) throws BindingException {
+  public CLASS parse(Object parent, XmlParsingContext parsingContext) throws BindingException {
     // TODO: handle start element in parent, but handle root here
     XMLEventReader2 reader = parsingContext.getEventReader();
     CLASS obj = getClassBinding().newInstance();
     // TODO: pass in parent
-    getClassBinding().callBeforeDeserialize(obj, null);
+    getClassBinding().callBeforeDeserialize(obj, parent);
     try {
 
       if (logger.isDebugEnabled()) {
@@ -163,7 +163,7 @@ public abstract class AbstractXmlParsePlan<CLASS, CLASS_BINDING extends ClassBin
       throw new BindingException(ex);
     }
     // TODO: pass in parent
-    getClassBinding().callAfterDeserialize(obj, null);
+    getClassBinding().callAfterDeserialize(obj, parent);
     return obj;
   }
 

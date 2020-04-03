@@ -33,6 +33,9 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.events.StartElement;
+
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.junit5.JUnit5Mockery;
@@ -48,6 +51,9 @@ import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.parser.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.property.PropertyItemHandler;
+import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
@@ -93,6 +99,27 @@ class ListPropertyValueHandlerTest {
       @Override
       public void writeValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
           throws BindingException, IOException {
+        throw new UnsupportedOperationException();
+      }
+
+      @Override
+      public Object parse(Object parent, XmlParsingContext parsingContext) throws BindingException {
+        throw new UnsupportedOperationException();
+      }
+
+      @Override
+      public boolean isParsingXmlStartElement() {
+        throw new UnsupportedOperationException();
+      }
+
+      @Override
+      public boolean canHandleQName(QName nextQName) {
+        throw new UnsupportedOperationException();
+      }
+
+      @Override
+      public void writeXmlElement(Object child, QName itemWrapperQName, StartElement propertyParent,
+          XmlWritingContext writingContext) throws BindingException {
         throw new UnsupportedOperationException();
       }
 

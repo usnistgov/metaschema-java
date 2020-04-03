@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.binding.io.xml.parser;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.BindingException;
-import gov.nist.secauto.metaschema.binding.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.binding.io.property.PropertyItemHandler;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.model.property.CollectionPropertyInfo;
 import gov.nist.secauto.metaschema.binding.model.property.FieldPropertyBinding;
@@ -37,8 +37,6 @@ import gov.nist.secauto.metaschema.binding.model.property.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyInfo;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLEventReader2;
 
 import javax.xml.namespace.QName;
@@ -47,16 +45,21 @@ import javax.xml.stream.events.XMLEvent;
 
 public class DefaultXmlObjectPropertyParser extends AbstractXmlPropertyParser<ModelItemPropertyBinding>
     implements XmlObjectPropertyParser {
-  private static final Logger logger = LogManager.getLogger(DefaultXmlObjectPropertyParser.class);
-
   private final QName groupWrapperQName;
   private final QName itemWrapperQName;
-  private JavaTypeAdapter<?> typeAdapter;
+  // private JavaTypeAdapter<?> typeAdapter;
+  private final PropertyItemHandler propertyItemHandler;
 
-  public DefaultXmlObjectPropertyParser(ModelItemPropertyBinding propertyBinding, BindingContext bindingContext) {
+  public DefaultXmlObjectPropertyParser(ModelItemPropertyBinding propertyBinding, BindingContext bindingContext)
+      throws BindingException {
     super(propertyBinding, bindingContext);
     groupWrapperQName = getGroupWrapperQName();
     itemWrapperQName = getItemWrapperQName();
+    this.propertyItemHandler = PropertyItemHandler.newPropertyItemHandler(getPropertyBinding(), bindingContext);
+  }
+
+  protected PropertyItemHandler getPropertyItemHandler() {
+    return propertyItemHandler;
   }
 
   @Override
@@ -68,10 +71,11 @@ public class DefaultXmlObjectPropertyParser extends AbstractXmlPropertyParser<Mo
       consumeStartElement(reader, groupWrapperQName);
     }
 
-    JavaTypeAdapter<?> typeAdapter = getTypeAdapter();
-    if (logger.isDebugEnabled()) {
-      logger.debug("Using Adapter '{}'", typeAdapter.getClass().getName());
-    }
+    // JavaTypeAdapter<?> typeAdapter = getTypeAdapter();
+    // if (logger.isDebugEnabled()) {
+    // logger.debug("Using Adapter '{}'", typeAdapter.getClass().getName());
+    // }
+    //
 
     XMLEvent nextEvent;
     try {
@@ -85,12 +89,12 @@ public class DefaultXmlObjectPropertyParser extends AbstractXmlPropertyParser<Mo
          * field with inXmlWrapped equal to {@code false}. In the latter case that object will be parsed in
          * a single loop.
          */
-        if (itemWrapperQName != null && !typeAdapter.isParsingStartElement()) {
+        if (itemWrapperQName != null && !getPropertyItemHandler().isParsingXmlStartElement()) {
           consumeStartElement(reader, itemWrapperQName);
         }
 
         // Pass in the start element if it exists to allow attributes to be parsed
-        Object value = typeAdapter.parse(parsingContext);
+        Object value = getPropertyItemHandler().parse(obj, parsingContext);
         if (value != null) {
           collector.add(value);
         } else {
@@ -98,7 +102,7 @@ public class DefaultXmlObjectPropertyParser extends AbstractXmlPropertyParser<Mo
         }
 
         nextEvent = reader.peek();
-        if (itemWrapperQName != null && !typeAdapter.isParsingStartElement()) {
+        if (itemWrapperQName != null && !getPropertyItemHandler().isParsingXmlStartElement()) {
           assert XmlEventUtil.isNextEventEndElement(reader, itemWrapperQName) : XmlEventUtil.toString(nextEvent);
           consumeEndElement(reader, itemWrapperQName);
         } else {
@@ -121,22 +125,11 @@ public class DefaultXmlObjectPropertyParser extends AbstractXmlPropertyParser<Mo
     collector.applyCollection(obj);
   }
 
-  protected JavaTypeAdapter<?> getTypeAdapter() throws BindingException {
-    synchronized (this) {
-      if (typeAdapter == null) {
-        Class<?> itemClass = getPropertyBinding().getPropertyInfo().getItemType();
-        typeAdapter = getBindingContext().getJavaTypeAdapter(itemClass);
-      }
-
-      return typeAdapter;
-    }
-  }
-
   @Override
   public boolean canConsume(QName nextQName) throws BindingException {
     return (groupWrapperQName != null && groupWrapperQName.equals(nextQName))
         || (itemWrapperQName != null && itemWrapperQName.equals(nextQName))
-        || getTypeAdapter().canHandleQName(nextQName);
+        || getPropertyItemHandler().canHandleQName(nextQName);
   }
 
   protected QName getGroupWrapperQName() {

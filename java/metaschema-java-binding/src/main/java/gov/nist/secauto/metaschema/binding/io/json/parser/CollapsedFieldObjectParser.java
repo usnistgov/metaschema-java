@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.binding.io.json.parser;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.ListPropertyValueHandler;
-import gov.nist.secauto.metaschema.binding.io.json.PropertyItemHandler;
+import gov.nist.secauto.metaschema.binding.io.property.PropertyItemHandler;
 import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FieldValuePropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyAccessor;

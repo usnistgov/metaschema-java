@@ -139,6 +139,8 @@ class XmlAssemblyParsePlanTest {
         Value value = new Value();
         allowing(classBinding).newInstance();
         will(returnValue(value));
+        allowing(classBinding).callBeforeDeserialize(with(any(Value.class)), with.is(anything()));
+        allowing(classBinding).callAfterDeserialize(with(any(Value.class)), with.is(anything()));
 
         // setup reader peeking behavior based on states
         allowing(reader).peek();
@@ -239,7 +241,7 @@ class XmlAssemblyParsePlanTest {
     AssemblyXmlParsePlan<Value> parsePlan
         = new AssemblyXmlParsePlan<Value>(classBinding, attributeParsers, modelParsers);
 
-    Value value = parsePlan.parse(parsingContext);
+    Value value = parsePlan.parse(null, parsingContext);
     assertNotNull(value);
     context.assertIsSatisfied();
   }

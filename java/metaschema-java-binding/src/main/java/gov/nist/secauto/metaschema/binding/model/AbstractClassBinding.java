@@ -40,15 +40,34 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 abstract class AbstractClassBinding<CLASS, XML_PARSE_PLAN extends XmlParsePlan<CLASS>, XML_WRITER extends XmlWriter>
     implements ClassBinding<CLASS> {
+
+  private static List<Method> getMatchingMethods(Class<?> clazz, String name, Class<?>... parameterTypes) {
+    Class<?> searchClass = clazz;
+    List<Method> retval = new LinkedList<>();
+    do {
+      try {
+        Method method = searchClass.getDeclaredMethod(name, parameterTypes);
+        retval.add(method);
+      } catch (NoSuchMethodException ex) {
+        // do nothing
+      }
+    } while ((searchClass = searchClass.getSuperclass()) != null);
+
+    return retval.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(retval);
+  }
+
   private final Class<CLASS> clazz;
   private final List<FlagPropertyBinding> flagPropertyBindings;
   private final FlagPropertyBinding jsonKeyFlagPropertyBinding;
+  private final List<Method> beforeDeserializeMethods;
+  private final List<Method> afterDeserializeMethods;
   private XML_PARSE_PLAN xmlParsePlan;
   private XML_WRITER xmlWriter;
 
@@ -65,6 +84,8 @@ abstract class AbstractClassBinding<CLASS, XML_PARSE_PLAN extends XmlParsePlan<C
       }
     }
     this.jsonKeyFlagPropertyBinding = jsonKey;
+    this.beforeDeserializeMethods = getMatchingMethods(clazz, "beforeDeserialize", Object.class);
+    this.afterDeserializeMethods = getMatchingMethods(clazz, "afterDeserialize", Object.class);
   }
 
   @Override
@@ -147,33 +168,28 @@ abstract class AbstractClassBinding<CLASS, XML_PARSE_PLAN extends XmlParsePlan<C
 
   @Override
   public void callBeforeDeserialize(Object obj, Object parent) throws BindingException {
-    Class<?> searchClass = getClazz();
-    do {
-      try {
-        Method method = searchClass.getDeclaredMethod("beforeDeserialize", Object.class);
-        method.invoke(obj, parent);
-        
-      } catch (NoSuchMethodException ex) {
-        // do nothing
-      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-        throw new BindingException(ex);
+    if (!beforeDeserializeMethods.isEmpty()) {
+      for (Method method : beforeDeserializeMethods) {
+        try {
+          method.invoke(obj, parent);
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+          throw new BindingException(ex);
+        }
       }
-    } while ((searchClass = searchClass.getSuperclass()) != null);
+    }
   }
 
   @Override
   public void callAfterDeserialize(Object obj, Object parent) throws BindingException {
-    Class<?> searchClass = getClazz();
-    do {
-      try {
-        Method method = searchClass.getDeclaredMethod("afterDeserialize", Object.class);
-        method.invoke(obj, parent);
-      } catch (NoSuchMethodException ex) {
-        // do nothing
-      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-        throw new BindingException(ex);
+    if (!afterDeserializeMethods.isEmpty()) {
+      for (Method method : afterDeserializeMethods) {
+        try {
+          method.invoke(obj, parent);
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+          throw new BindingException(ex);
+        }
       }
-    } while ((searchClass = searchClass.getSuperclass()) != null);
+    }
   }
 
 }

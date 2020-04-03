@@ -40,6 +40,7 @@ import gov.nist.secauto.metaschema.binding.model.property.ModelItemPropertyBindi
 import gov.nist.secauto.metaschema.binding.model.property.PropertyAccessor;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyInfo;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -147,5 +148,9 @@ public class ClassIntrospector {
       }
     }
     return null;
+  }
+
+  public static boolean hasClassAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+    return clazz.isAnnotationPresent(annotationClass);
   }
 }

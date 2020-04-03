@@ -110,7 +110,7 @@ class XmlDeserializerImpl<CLASS> extends AbstractDeserializer<CLASS> {
       ClassBinding<CLASS> classBinding = getClassBinding();
       XmlParsePlan<CLASS> plan = classBinding.getXmlParsePlan(bindingContext);
       XmlParsingContext parsingContext = new DefaultXmlParsingContext(reader, bindingContext);
-      retval = (CLASS) plan.parse(parsingContext);
+      retval = (CLASS) plan.parse(null, parsingContext);
       if (reader.hasNext()) {
         logger.debug("After Parse: {}", XmlEventUtil.toString(reader.peek()));
 

@@ -54,7 +54,7 @@ public class InsertAnchorHtmlNodeRenderer implements HtmlNodeRenderer {
         : Collections.emptySet();
   }
 
-  private void processInsert(@SuppressWarnings("unused") Element node, HtmlNodeConverterContext context,
+  private void processInsert(Element node, HtmlNodeConverterContext context,
       HtmlMarkdownWriter out) {
     out.append("{{ ");
     out.append(context.getCurrentNode().attr("param-id"));

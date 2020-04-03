@@ -60,7 +60,7 @@ public class ClassBuilder extends AbstractClassBuilder<ClassBuilder> {
     this.innerClasses = innerClasses;
   }
 
-  private boolean needsImport(@SuppressWarnings("unused") JavaType javaType) {
+  private boolean needsImport(JavaType javaType) {
     // String classPackageName = getJavaType().getPackageName();
     // String packageName = javaType.getPackageName();
     // return !"java.lang".equals(packageName) && !classPackageName.equals(packageName);
@@ -151,7 +151,7 @@ public class ClassBuilder extends AbstractClassBuilder<ClassBuilder> {
     return this::evaluateClash;
   }
 
-  private boolean evaluateClash(@SuppressWarnings("unused") String className) {
+  private boolean evaluateClash(String className) {
     // boolean retval = false;
     // if (getJavaType().getClassName().equals(className)) {
     // retval = true;

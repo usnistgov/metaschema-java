@@ -32,7 +32,12 @@ import gov.nist.secauto.metaschema.binding.io.Deserializer;
 import gov.nist.secauto.metaschema.binding.io.Serializer;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.model.ClassIntrospector;
+import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaModel;
 import gov.nist.secauto.metaschema.datatypes.Datatype;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,7 +52,7 @@ import java.util.Map;
 import java.util.Objects;
 
 class DefaultBindingContext implements BindingContext {
-  // private static final Logger logger = LogManager.getLogger(DefaultBindingContext.class);
+  private static final Logger logger = LogManager.getLogger(DefaultBindingContext.class);
 
   private final Map<Class<?>, ClassBinding<?>> classBindingsByClass = new HashMap<>();
   // private final Map<Class<?>, XmlParsePlan<?>> xmlParsePlansByClass = new HashMap<>();
@@ -96,10 +101,13 @@ class DefaultBindingContext implements BindingContext {
       @SuppressWarnings("unchecked")
       ClassBinding<CLASS> retval = (ClassBinding<CLASS>) classBindingsByClass.get(clazz);
       if (retval == null) {
-        retval = ClassBinding.newClassBinding(clazz);
-
-        if (retval != null) {
-          classBindingsByClass.put(clazz, retval);
+        if (ClassIntrospector.hasClassAnnotation(clazz, MetaschemaModel.class)) {
+          retval = ClassBinding.newClassBinding(clazz);
+          if (retval != null) {
+            classBindingsByClass.put(clazz, retval);
+          } else {
+            logger.warn("Unable to bind class: {}", clazz.getName());
+          }
         }
       }
       return retval;
@@ -112,14 +120,22 @@ class DefaultBindingContext implements BindingContext {
       // try to find a simple data binding
       @SuppressWarnings("unchecked")
       JavaTypeAdapter<TYPE> retval = (JavaTypeAdapter<TYPE>) xmlJavaTypeAdapters.get(clazz);
+      // if (retval == null) {
+      // // no simple binding exists, try to bind to the object
+      //
+      // // TODO: handle binding exception, which may be caused if the class cannot be
+      // // bound for any reason
+      // ClassBinding<TYPE> classBinding = getClassBinding(clazz);
+      // if (classBinding == null) {
+      // throw new BindingException(String.format("Unable to bind to Java type '%s'.", clazz.getName()));
+      // }
+      // retval = new ObjectJavaTypeAdapter<TYPE>(classBinding);
+      // xmlJavaTypeAdapters.put(clazz, retval);
+      // }
       if (retval == null) {
-        // no simple binding exists, try to bind to the object
-
-        // TODO: handle binding exception, which may be caused if the class cannot be
-        // bound for any reason
-        ClassBinding<TYPE> classBinding = getClassBinding(clazz);
-        retval = new ObjectJavaTypeAdapter<TYPE>(classBinding);
-        xmlJavaTypeAdapters.put(clazz, retval);
+        logger.warn("Unable to load Java type adapter for class: {}", clazz.getName());
+      } else if (logger.isDebugEnabled()) {
+        logger.debug("Loaded Java type adapter for class: {}", clazz.getName());
       }
       return retval;
     }

@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 public class InsertAnchorInlineParser implements InlineParserExtension {
   private static final Pattern PATTERN = Pattern.compile("\\{\\{\\s*([^\\s]+)\\s*\\}\\}");
 
-  public InsertAnchorInlineParser(@SuppressWarnings("unused") LightInlineParser inlineParser) {
+  public InsertAnchorInlineParser(LightInlineParser inlineParser) {
   }
 
   @Override

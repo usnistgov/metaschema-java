@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.binding.io.json;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.property.PropertyItemHandler;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 
 import java.io.IOException;
@@ -43,7 +44,8 @@ public class SingletonPropertyValueHandler extends AbstractPropertyValueHandler 
   }
 
   @Override
-  public boolean parseNextFieldValue(Object parent, JsonParsingContext parsingContext) throws BindingException, IOException {
+  public boolean parseNextFieldValue(Object parent, JsonParsingContext parsingContext)
+      throws BindingException, IOException {
     // Parse the value at the current token; after this the current token is
     // expected to be the end of the value (e.g., VALUE, END_OBJECT
     PropertyItemHandler propertyItemHandler = getPropertyItemHandler();

@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
 import gov.nist.secauto.metaschema.binding.model.annotations.GroupAs;
+import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaModel;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlGroupAsBehavior;
 
 import org.junit.jupiter.api.Assertions;
@@ -77,6 +78,7 @@ class XmlParsePlanTest {
     Assertions.assertEquals("value5", topLevel.field3.value);
   }
 
+  @MetaschemaModel
   @gov.nist.secauto.metaschema.binding.model.annotations.RootWrapper(name = "top-level",
       namespace = "http://csrc.nist.gov/ns/metaschema/testing")
   public static class TopLevel {
@@ -101,6 +103,7 @@ class XmlParsePlanTest {
 
   }
 
+  @MetaschemaModel
   public static class Field3 {
     @Flag(name = "id", required = false)
     private String id;

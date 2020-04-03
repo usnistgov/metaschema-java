@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.binding;
 
 import com.fasterxml.jackson.core.JsonFactory;
 
-class JsonFactoryFactory {
+public class JsonFactoryFactory {
   private static final JsonFactory singletonInstance = newJsonFactoryInstance();
 
   private JsonFactoryFactory() {

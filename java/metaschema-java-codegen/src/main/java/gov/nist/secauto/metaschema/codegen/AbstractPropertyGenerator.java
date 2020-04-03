@@ -110,7 +110,7 @@ public abstract class AbstractPropertyGenerator<CLASS_GENERATOR extends ClassGen
         .arguments(String.format("%s value", getJavaType().getType(builder.getClashEvaluator()))));
   }
 
-  protected abstract void buildField(@SuppressWarnings("unused") FieldBuilder builder);
+  protected abstract void buildField(FieldBuilder builder);
 
   protected void buildGetter(MethodBuilder builder) {
     builder.getBodyWriter().format("return %s;%n", getJavaFieldName());

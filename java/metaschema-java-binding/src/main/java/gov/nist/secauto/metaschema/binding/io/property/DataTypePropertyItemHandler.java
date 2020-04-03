@@ -24,39 +24,69 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.io.json;
+package gov.nist.secauto.metaschema.binding.io.property;
 
+import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.BindingException;
+import gov.nist.secauto.metaschema.binding.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
-import gov.nist.secauto.metaschema.binding.io.json.parser.JsonReader;
-import gov.nist.secauto.metaschema.binding.io.json.writer.AssemblyJsonWriter;
 import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.AssemblyPropertyBinding;
+import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
-public class AssemblyPropertyItemHandler
-    extends AbstractBoundClassPropertyItemHandler<AssemblyClassBinding<?>, AssemblyPropertyBinding> {
+import javax.xml.namespace.QName;
+import javax.xml.stream.events.StartElement;
 
-  public AssemblyPropertyItemHandler(AssemblyClassBinding<?> classBinding, AssemblyPropertyBinding propertyBinding) {
-    super(classBinding, propertyBinding);
+public class DataTypePropertyItemHandler extends AbstractProperrtyItemHandler<PropertyBinding> {
+  private final JavaTypeAdapter<?> javaTypeAdapter;
+
+  public DataTypePropertyItemHandler(PropertyBinding propertyBinding, BindingContext bindingContext)
+      throws BindingException {
+    super(propertyBinding);
+    this.javaTypeAdapter = bindingContext.getJavaTypeAdapter(getPropertyBinding().getPropertyInfo().getItemType());
+  }
+
+  protected JavaTypeAdapter<?> getJavaTypeAdapter() {
+    return javaTypeAdapter;
   }
 
   @Override
-  public List<Object> parse(PropertyBindingFilter filter, Object parent, JsonParsingContext parsingContext) throws BindingException {
-    JsonReader<?> jsonReader = getClassBinding().getJsonReader(parsingContext.getBindingContext());
-    @SuppressWarnings("unchecked")
-    List<Object> retval = (List<Object>) jsonReader.readJson(filter, parent, false, parsingContext);
-    return retval;
+  public List<Object> parse(PropertyBindingFilter filter, Object parent, JsonParsingContext parsingContext)
+      throws BindingException {
+    return Collections.singletonList(getJavaTypeAdapter().parse(parsingContext));
   }
 
   @Override
   public void writeValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
       throws BindingException, IOException {
-    AssemblyJsonWriter<?> jsonWriter = getClassBinding().getAssemblyJsonWriter(writingContext.getBindingContext());
-    jsonWriter.writeJson(value, filter, writingContext);
+    getJavaTypeAdapter().writeJsonFieldValue(value, filter, writingContext);
   }
+
+  @Override
+  public boolean isParsingXmlStartElement() {
+    return getJavaTypeAdapter().isParsingStartElement();
+  }
+
+  @Override
+  public boolean canHandleQName(QName nextQName) {
+    return getJavaTypeAdapter().canHandleQName(nextQName);
+  }
+
+  @Override
+  public Object parse(Object parent, XmlParsingContext parsingContext) throws BindingException {
+    return getJavaTypeAdapter().parse(parsingContext);
+  }
+
+  @Override
+  public void writeXmlElement(Object value, QName valueQName, StartElement parent, XmlWritingContext writingContext)
+      throws BindingException {
+    getJavaTypeAdapter().writeXmlElement(value, valueQName, parent, writingContext);
+  }
+
 }

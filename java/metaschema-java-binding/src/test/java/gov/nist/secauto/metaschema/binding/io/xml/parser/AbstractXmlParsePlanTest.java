@@ -26,6 +26,19 @@
 
 package gov.nist.secauto.metaschema.binding.io.xml.parser;
 
+import gov.nist.secauto.metaschema.binding.BindingException;
+import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+
+import org.codehaus.stax2.XMLEventReader2;
+import org.jmock.Expectations;
+import org.jmock.Sequence;
+import org.jmock.States;
+import org.jmock.auto.Auto;
+import org.jmock.auto.Mock;
+import org.jmock.junit5.JUnit5Mockery;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -38,19 +51,6 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
-
-import org.codehaus.stax2.XMLEventReader2;
-import org.jmock.Expectations;
-import org.jmock.Sequence;
-import org.jmock.States;
-import org.jmock.auto.Auto;
-import org.jmock.auto.Mock;
-import org.jmock.junit5.JUnit5Mockery;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-
-import gov.nist.secauto.metaschema.binding.BindingException;
-import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 
 class AbstractXmlParsePlanTest {
   private static final String OBJECT_LOCAL_NAME = "object";
@@ -100,6 +100,8 @@ class AbstractXmlParsePlanTest {
         Value value = new Value();
         allowing(classBinding).newInstance();
         will(returnValue(value));
+        allowing(classBinding).callBeforeDeserialize(with(any(Value.class)), with.is(anything()));
+        allowing(classBinding).callAfterDeserialize(with(any(Value.class)), with.is(anything()));
 
         oneOf(OBJECT_START_ELEMENT_EVENT).getAttributes();
         will(returnValue(Collections.emptyList().iterator()));
@@ -142,7 +144,7 @@ class AbstractXmlParsePlanTest {
 
         };
 
-    parsePlan.parse(parsingContext);
+    parsePlan.parse(null, parsingContext);
 
     context.assertIsSatisfied();
   }
@@ -171,6 +173,8 @@ class AbstractXmlParsePlanTest {
         Value value = new Value();
         allowing(classBinding).newInstance();
         will(returnValue(value));
+        allowing(classBinding).callBeforeDeserialize(with(any(Value.class)), with.is(anything()));
+        allowing(classBinding).callAfterDeserialize(with(any(Value.class)), with.is(anything()));
         allowing(parsingContext).getEventReader();
         will(returnValue(reader));
 
@@ -227,7 +231,7 @@ class AbstractXmlParsePlanTest {
 
         };
 
-    parsePlan.parse(parsingContext);
+    parsePlan.parse(null, parsingContext);
 
     context.assertIsSatisfied();
   }

@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.binding.io.xml.writer;
 
 import gov.nist.secauto.metaschema.binding.BindingException;
-import gov.nist.secauto.metaschema.binding.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.binding.io.property.PropertyItemHandler;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.model.property.CollectionPropertyInfo;
@@ -79,8 +79,9 @@ public class AssemblyXmlWriter<CLASS> extends AbstractXmlWriter<CLASS, AssemblyC
       Object value = propertyInfo.getValue(obj);
 
       if (value != null) {
-        JavaTypeAdapter<?> typeAdapter
-            = writingContext.getBindingContext().getJavaTypeAdapter(propertyBinding.getPropertyInfo().getItemType());
+
+        PropertyItemHandler itemHandler
+            = PropertyItemHandler.newPropertyItemHandler(propertyBinding, writingContext.getBindingContext());
 
         try {
           StartElement propertyParent = parent;
@@ -112,7 +113,7 @@ public class AssemblyXmlWriter<CLASS> extends AbstractXmlWriter<CLASS, AssemblyC
           }
 
           for (Object child : iterable) {
-            typeAdapter.writeXmlElement(child, itemWrapperQName, propertyParent, writingContext);
+            itemHandler.writeXmlElement(child, itemWrapperQName, propertyParent, writingContext);
           }
 
           if (groupWrapperQName != null) {

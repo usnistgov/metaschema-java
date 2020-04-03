@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.io.json;
 
+import gov.nist.secauto.metaschema.binding.io.property.PropertyItemHandler;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
 

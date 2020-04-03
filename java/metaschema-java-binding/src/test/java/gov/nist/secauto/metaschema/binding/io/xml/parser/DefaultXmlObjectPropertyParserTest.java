@@ -26,11 +26,14 @@
 
 package gov.nist.secauto.metaschema.binding.io.xml.parser;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Characters;
-import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.StartElement;
+import gov.nist.secauto.metaschema.binding.BindingContext;
+import gov.nist.secauto.metaschema.binding.BindingException;
+import gov.nist.secauto.metaschema.binding.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.binding.model.annotations.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.binding.model.property.CollectionPropertyInfo;
+import gov.nist.secauto.metaschema.binding.model.property.FieldPropertyBinding;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyCollector;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.jmock.Expectations;
@@ -42,16 +45,11 @@ import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
-import gov.nist.secauto.metaschema.binding.BindingException;
-import gov.nist.secauto.metaschema.binding.JavaTypeAdapter;
-import gov.nist.secauto.metaschema.binding.io.xml.parser.DefaultXmlObjectPropertyParser;
-import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.model.annotations.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.binding.model.property.CollectionPropertyInfo;
-import gov.nist.secauto.metaschema.binding.model.property.FieldPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.PropertyCollector;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
 
 class DefaultXmlObjectPropertyParserTest {
   private static final String NS = "namespace";
@@ -115,6 +113,11 @@ class DefaultXmlObjectPropertyParserTest {
             new QName(NS, OBJECT_LOCAL_NAME));
         MockXmlSupport.mockCharactersXMLEvent(this, CHARACTERS_EVENT, CHARACTERS);
 
+        allowing(bindingContext).getClassBinding(MarkupMultiline.class);
+        will(returnValue(null));
+        allowing(bindingContext).getClassBinding(String.class);
+        will(returnValue(null));
+        
         // setup PropertyInfo behavior
         allowing(propertyInfo).getXmlGroupAsBehavior();
         will(returnValue(XmlGroupAsBehavior.GROUPED));
@@ -242,6 +245,9 @@ class DefaultXmlObjectPropertyParserTest {
         MockXmlSupport.mockElementXMLEvent(this, OBJECT_START_ELEMENT_EVENT, OBJECT_END_ELEMENT_EVENT,
             new QName(NS, OBJECT_LOCAL_NAME));
         MockXmlSupport.mockCharactersXMLEvent(this, CHARACTERS_EVENT, CHARACTERS);
+
+        allowing(bindingContext).getClassBinding(String.class);
+        will(returnValue(null));
 
         // setup PropertyInfo behavior
         allowing(propertyInfo).getXmlGroupAsBehavior();
@@ -371,6 +377,9 @@ class DefaultXmlObjectPropertyParserTest {
         MockXmlSupport.mockElementXMLEvent(this, OBJECT_START_ELEMENT_EVENT, OBJECT_END_ELEMENT_EVENT,
             new QName(NS, OBJECT_LOCAL_NAME));
         MockXmlSupport.mockCharactersXMLEvent(this, CHARACTERS_EVENT, CHARACTERS);
+
+        allowing(bindingContext).getClassBinding(MarkupMultiline.class);
+        will(returnValue(null));
 
         // setup PropertyInfo behavior
         allowing(propertyInfo).getXmlGroupAsBehavior();

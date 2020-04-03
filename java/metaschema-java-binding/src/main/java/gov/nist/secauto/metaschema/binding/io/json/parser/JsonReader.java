@@ -32,6 +32,6 @@ import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
 import java.util.List;
 
 public interface JsonReader<CLASS> {
-  List<CLASS> readJson(PropertyBindingFilter filter, Object parent, boolean parseRoot, JsonParsingContext parsingContext)
-      throws BindingException;
+  List<CLASS> readJson(PropertyBindingFilter filter, Object parent, boolean parseRoot,
+      JsonParsingContext parsingContext) throws BindingException;
 }

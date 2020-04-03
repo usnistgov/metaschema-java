@@ -30,6 +30,6 @@ import gov.nist.secauto.metaschema.binding.BindingException;
 
 public interface XmlParsePlan<CLASS> {
 
-  CLASS parse(XmlParsingContext parsingContext) throws BindingException;
+  CLASS parse(Object parent, XmlParsingContext parsingContext) throws BindingException;
 
 }

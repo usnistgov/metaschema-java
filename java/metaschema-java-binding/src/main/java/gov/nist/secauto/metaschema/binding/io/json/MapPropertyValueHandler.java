@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.parser.JsonUtil;
+import gov.nist.secauto.metaschema.binding.io.property.PropertyItemHandler;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.PropertyInfo;
 
@@ -61,7 +62,8 @@ public class MapPropertyValueHandler extends AbstractPropertyValueHandler {
   }
 
   @Override
-  public boolean parseNextFieldValue(Object parent, JsonParsingContext parsingContext) throws BindingException, IOException {
+  public boolean parseNextFieldValue(Object parent, JsonParsingContext parsingContext)
+      throws BindingException, IOException {
     /*
      * JSON will look like this:
      * 

@@ -123,6 +123,8 @@ class XmlFieldParsePlanTest {
         Value value = new Value();
         allowing(classBinding).newInstance();
         will(returnValue(value));
+        allowing(classBinding).callBeforeDeserialize(with(any(Value.class)), with.is(anything()));
+        allowing(classBinding).callAfterDeserialize(with(any(Value.class)), with.is(anything()));
 
         allowing(parsingContext).getEventReader();
         will(returnValue(reader));
@@ -180,7 +182,7 @@ class XmlFieldParsePlanTest {
     FieldXmlParsePlan<Value> parsePlan
         = new FieldXmlParsePlan<Value>(classBinding, attributeParsers, fieldValueXmlPropertyParser);
 
-    Value value = parsePlan.parse(parsingContext);
+    Value value = parsePlan.parse(null, parsingContext);
     assertNotNull(value);
 
     context.assertIsSatisfied();

@@ -53,7 +53,7 @@ public class InsertAnchorFormatter implements NodeFormatter {
         : Collections.emptySet();
   }
 
-  protected void render(InsertAnchorNode node, @SuppressWarnings("unused") NodeFormatterContext context,
+  protected void render(InsertAnchorNode node, NodeFormatterContext context,
       MarkdownWriter markdown) {
     if (options.enableRendering) {
       markdown.append("{{ ");

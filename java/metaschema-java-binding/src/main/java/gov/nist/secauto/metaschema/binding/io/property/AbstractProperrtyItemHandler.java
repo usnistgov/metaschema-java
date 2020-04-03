@@ -24,40 +24,20 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.io.json;
+package gov.nist.secauto.metaschema.binding.io.property;
 
-import gov.nist.secauto.metaschema.binding.BindingException;
-import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
-import gov.nist.secauto.metaschema.binding.io.json.parser.JsonReader;
-import gov.nist.secauto.metaschema.binding.io.json.writer.AssemblyJsonWriter;
-import gov.nist.secauto.metaschema.binding.io.json.writer.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.FieldPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
 
-import java.io.IOException;
-import java.util.List;
+public abstract class AbstractProperrtyItemHandler<PROPERTY_BINDING extends PropertyBinding>
+    implements PropertyItemHandler {
+  private final PropertyBinding propertyBinding;
 
-public class FieldPropertyItemHandler
-    extends AbstractBoundClassPropertyItemHandler<FieldClassBinding<?>, FieldPropertyBinding> {
-
-  public FieldPropertyItemHandler(FieldClassBinding<?> classBinding, FieldPropertyBinding propertyBinding) {
-    super(classBinding, propertyBinding);
+  public AbstractProperrtyItemHandler(PropertyBinding propertyBinding) {
+    this.propertyBinding = propertyBinding;
   }
 
   @Override
-  public List<Object> parse(PropertyBindingFilter filter, Object parent, JsonParsingContext parsingContext) throws BindingException {
-    JsonReader<?> jsonReader = getClassBinding().getJsonReader(parsingContext.getBindingContext());
-    @SuppressWarnings("unchecked")
-    List<Object> retval = (List<Object>) jsonReader.readJson(filter, parent, false, parsingContext);
-    return retval;
+  public PropertyBinding getPropertyBinding() {
+    return propertyBinding;
   }
-
-  @Override
-  public void writeValue(Object value, PropertyBindingFilter filter, JsonWritingContext writingContext)
-      throws BindingException, IOException {
-    AssemblyJsonWriter<?> jsonWriter = getClassBinding().getAssemblyJsonWriter(writingContext.getBindingContext());
-    jsonWriter.writeJson(value, filter, writingContext);
-  }
-
 }

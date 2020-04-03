@@ -32,6 +32,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import gov.nist.secauto.metaschema.binding.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.parser.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.parser.JsonUtil;
+import gov.nist.secauto.metaschema.binding.io.property.PropertyItemHandler;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 
 import java.io.IOException;
@@ -55,7 +56,8 @@ public class ListPropertyValueHandler extends AbstractPropertyValueHandler {
   }
 
   @Override
-  public boolean parseNextFieldValue(Object parent, JsonParsingContext parsingContext) throws BindingException, IOException {
+  public boolean parseNextFieldValue(Object parent, JsonParsingContext parsingContext)
+      throws BindingException, IOException {
     JsonParser parser = parsingContext.getEventReader();
     JsonToken currentToken = parser.currentToken();
 
