@@ -35,7 +35,6 @@ import gov.nist.secauto.metaschema.binding.Format;
 import gov.nist.secauto.metaschema.binding.io.Feature;
 import gov.nist.secauto.metaschema.binding.io.MutableConfiguration;
 import gov.nist.secauto.metaschema.codegen.JavaGenerator;
-import gov.nist.secauto.metaschema.datatypes.UUID;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
@@ -226,7 +225,7 @@ public class TestBasicMetaschema {
 
     runTests("simple_with_uuid", classDir, (obj) -> {
       try {
-        Assertions.assertEquals(new UUID("5de455cf-2f8d-4da2-9182-323d433e1065"), 
+        Assertions.assertEquals("5de455cf-2f8d-4da2-9182-323d433e1065", 
         		reflectMethod(obj, "getUuid").toString());
       } catch (NoSuchMethodException | SecurityException e) {
         Assertions.fail(e);
