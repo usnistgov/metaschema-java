@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<METASCHEMA
+  xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0"
+  root="top-level">
+  <schema-name>Simple Metaschema</schema-name>
+  <schema-version>1.0</schema-version>
+  <short-name>simple</short-name>
+  <namespace>http://csrc.nist.gov/ns/metaschema/testing/simple</namespace>
+  
+  <define-assembly name="top-level">
+    <formal-name>Root</formal-name>
+    <description>Root assembly</description>
+    <flag ref="uuid" required="yes"/>
+    <model/>
+  </define-assembly>
+  
+  <define-flag name="uuid" as-type="uuid">
+      <formal-name>Universally Unique Identifier</formal-name>
+      <description>A RFC 4122 version 4 Universally Unique Identifier (UUID) for the containing object.</description>
+   </define-flag>
+</METASCHEMA>
