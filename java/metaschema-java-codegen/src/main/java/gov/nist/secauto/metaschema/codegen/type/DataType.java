@@ -42,6 +42,7 @@ import gov.nist.secauto.metaschema.datatypes.NonNegativeInteger;
 import gov.nist.secauto.metaschema.datatypes.PositiveInteger;
 import gov.nist.secauto.metaschema.datatypes.URI;
 import gov.nist.secauto.metaschema.datatypes.URIReference;
+import gov.nist.secauto.metaschema.datatypes.UUID;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 
@@ -69,6 +70,7 @@ public enum DataType {
   IP_V6_ADDRESS(gov.nist.secauto.metaschema.model.info.definitions.DataType.IP_V6_ADDRESS, IPv6.class),
   URI(gov.nist.secauto.metaschema.model.info.definitions.DataType.URI, URI.class),
   URI_REFERENCE(gov.nist.secauto.metaschema.model.info.definitions.DataType.URI_REFERENCE, URIReference.class),
+  UUID(gov.nist.secauto.metaschema.model.info.definitions.DataType.UUID, UUID.class),
   MARKUP_LINE(gov.nist.secauto.metaschema.model.info.definitions.DataType.MARKUP_LINE, MarkupLine.class),
   MARKUP_MULTILINE(gov.nist.secauto.metaschema.model.info.definitions.DataType.MARKUP_MULTILINE, MarkupMultiline.class),
   EMPTY(gov.nist.secauto.metaschema.model.info.definitions.DataType.EMPTY, Void.class),

@@ -51,6 +51,7 @@ public enum DataType {
   IP_V6_ADDRESS(SimpleDatatypes.IP_V_6_ADDRESS.toString()),
   URI(SimpleDatatypes.URI.toString()),
   URI_REFERENCE(SimpleDatatypes.URI_REFERENCE.toString()),
+  UUID(SimpleDatatypes.UUID.toString()),
   MARKUP_LINE(FieldTypes.Member.MARKUP_LINE.toString()),
   MARKUP_MULTILINE(FieldTypes.Member.MARKUP_MULTILINE.toString()),
   EMPTY(FieldTypes.Member.EMPTY.toString());
