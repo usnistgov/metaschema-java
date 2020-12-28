@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
 		<artifactId>metaschema-framework</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.4.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>metaschema-model</artifactId>
@@ -53,35 +53,59 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>com.googlecode.maven-download-plugin</groupId>
+				<artifactId>download-maven-plugin</artifactId>
+				<version>1.4.2</version>
+				<configuration>
+					<skipCache>true</skipCache>
+					<overwrite>false</overwrite>
+				</configuration>
+				<executions>
+					<!-- ##################### -->
+					<!-- # OSCAL Metaschemas # -->
+					<!-- ##################### -->
+					<execution>
+						<id>download-metaschema-m4</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<uri>https://github.com/usnistgov/metaschema/raw/metaschema-m4-integration/toolchains/xslt-M4/validate/metaschema.xsd</uri>
+							<outputDirectory>${project.build.directory}/download/metaschema-M4/xsd</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>xmlbeans-maven-plugin</artifactId>
-				<version>2.3.3</version>
 				<executions>
 					<execution>
-						<id>metaschema</id>
+						<id>metaschema-M4</id>
 						<goals>
 							<goal>xmlbeans</goal>
 						</goals>
 						<configuration>
 							<!-- TODO: update to a permanent location, where this is retrieved -->
-							<schemaDirectory>${basedir}/src/main/xsd</schemaDirectory>
-							<noUpa>false</noUpa>
-							<javaSource>1.5</javaSource>
-							<noJavac>true</noJavac>
-							<sourceGenerationDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceGenerationDirectory>
+							<schemaDirectory>${basedir}/src/main/xsd/M4</schemaDirectory>
+<!-- 							<schemaDirectory>${project.build.directory}/download/metaschema-M4/xsd</schemaDirectory> -->
+							<sourceGenerationDirectory>${project.build.directory}/generated-sources/xmlbeans-M4</sourceGenerationDirectory>
 							<xmlConfigs>
-								<xmlConfig implementation="java.io.File">${project.basedir}/src/main/xsdconfig/metaschema.xsdconfig</xmlConfig>
+								<xmlConfig implementation="java.io.File">${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</xmlConfig>
 							</xmlConfigs>
+							<staleFile>${project.build.directory}/generated-sources/xmlbeans-M4/.staleFlag</staleFile>
 						</configuration>
 					</execution>
 				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.xmlbeans</groupId>
-						<artifactId>xmlbeans</artifactId>
-						<version>${dependency.xmlbeans.version}</version>
-					</dependency>
-				</dependencies>
+<!-- 				<dependencies> -->
+<!-- 					<dependency> -->
+<!-- 						<groupId>org.apache.xmlbeans</groupId> -->
+<!-- 						<artifactId>xmlbeans</artifactId> -->
+<!-- 						<version>${dependency.xmlbeans.version}</version> -->
+<!-- 					</dependency> -->
+<!-- 				</dependencies> -->
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

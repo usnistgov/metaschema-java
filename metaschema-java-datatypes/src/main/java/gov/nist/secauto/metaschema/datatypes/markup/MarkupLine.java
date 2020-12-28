@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -32,7 +32,8 @@ import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 
-public class MarkupLine extends MarkupString<MarkupLine> {
+public class MarkupLine
+    extends MarkupString<MarkupLine> {
   private static final Parser markdownParser;
 
   static {

@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,20 +26,31 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import gov.nist.secauto.metaschema.binding.BindingException;
-import gov.nist.secauto.metaschema.binding.io.xml.writer.FieldXmlWriter;
-import gov.nist.secauto.metaschema.binding.model.property.FieldValuePropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.FlagPropertyBinding;
+import gov.nist.secauto.metaschema.binding.model.property.FieldValueProperty;
+import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
+import gov.nist.secauto.metaschema.binding.model.property.Property;
 
-public interface FieldClassBinding<CLASS> extends ClassBinding<CLASS> {
+public interface FieldClassBinding extends ClassBinding {
+  /**
+   * Get the {@link Property} that represents the Metaschema Field's value.
+   * 
+   * @return the value property
+   */
+  FieldValueProperty getFieldValue();
 
-  FieldValuePropertyBinding getFieldValuePropertyBinding();
+  /**
+   * Gets the Metaschema flag to use as the JSON value key.
+   * 
+   * @return the value key flag, or {@code null} if no value key flag is configured
+   */
+  FlagProperty getJsonValueKeyFlag();
 
+  /**
+   * Determines if the Metaschema can be collapsed in JSON/YAML representations. A collapsible field
+   * allows field values to be grouped as an array of values if the field has flags with the exact
+   * same values.
+   * 
+   * @return {@code true} if the field is eligible for collapsing, or {@code false} otherwise
+   */
   boolean isCollapsible();
-
-  FlagPropertyBinding getJsonValueKeyFlagPropertyBinding();
-
-  @Override
-  FieldXmlWriter<CLASS> getXmlWriter() throws BindingException;
-
 }

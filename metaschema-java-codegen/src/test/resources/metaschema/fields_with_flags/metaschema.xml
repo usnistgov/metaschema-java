@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <METASCHEMA xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../../../../../schema/metaschema.xsd"
- xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0" root="top-level">
+ xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../../../metaschema-model/src/main/xsd/M4/metaschema.xsd"
+ xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0">
   <schema-name>Metaschema with complex field</schema-name>
   <schema-version>1.0</schema-version>
   <short-name>complex-field</short-name>
@@ -10,6 +10,7 @@
   <define-assembly name="top-level">
     <formal-name>Root</formal-name>
     <description>Root assembly</description>
+    <root-name>top-level</root-name>
     <flag ref="id"/>
     <model>
       <field ref="complex-field1"/>
@@ -43,29 +44,29 @@
   <define-field name="complex-field3">
     <formal-name>Complex Field 3</formal-name>
     <description>A complex field with a flag</description>
-    <flag name="id2">
+    <define-flag name="id2">
       <formal-name>A flag</formal-name>
       <description>A simple flag</description>
-    </flag>
+    </define-flag>
   </define-field>
   
   <define-field name="complex-field4">
     <formal-name>Complex Field 4</formal-name>
     <description>A complex field with a flag</description>
     <json-key flag-name="id2"/>
-    <flag name="id2">
+    <define-flag name="id2">
       <formal-name>A flag</formal-name>
       <description>A simple flag</description>
-    </flag>
+    </define-flag>
   </define-field>
   
   <define-field name="complex-field5" collapsible="yes">
     <formal-name>Complex Field 5</formal-name>
     <description>A complex field with a flag that is collapsible</description>
-    <flag name="name">
+    <define-flag name="name">
       <formal-name>A flag</formal-name>
       <description>A simple flag</description>
-    </flag>
+    </define-flag>
   </define-field>
   
   <define-flag name="id">

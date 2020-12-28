@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,58 +26,138 @@
 
 package gov.nist.secauto.metaschema.codegen.type;
 
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.TypeName;
+
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.Base64Adapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.BooleanAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.DateAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.DateTimeAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.DateTimeWithTZAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.DateWithTZAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.DecimalAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.EmailAddressAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.HostnameAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.IPv6AddressAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.IntegerAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.Ipv4AddressAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.MarkupLineAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.MarkupMultilineAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.NcNameAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.NegativeIntegerAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.PositiveIntegerAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.StringAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.UriAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.UriReferenceAdapter;
+import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.UuidAdapter;
 import gov.nist.secauto.metaschema.datatypes.Base64;
 import gov.nist.secauto.metaschema.datatypes.Date;
 import gov.nist.secauto.metaschema.datatypes.DateTime;
-import gov.nist.secauto.metaschema.datatypes.DateTimeTimeZone;
-import gov.nist.secauto.metaschema.datatypes.DateTimeZone;
-import gov.nist.secauto.metaschema.datatypes.Decimal;
-import gov.nist.secauto.metaschema.datatypes.EmailAddress;
-import gov.nist.secauto.metaschema.datatypes.Hostname;
 import gov.nist.secauto.metaschema.datatypes.IPv4;
 import gov.nist.secauto.metaschema.datatypes.IPv6;
-import gov.nist.secauto.metaschema.datatypes.Integer;
-import gov.nist.secauto.metaschema.datatypes.NCName;
-import gov.nist.secauto.metaschema.datatypes.NonNegativeInteger;
-import gov.nist.secauto.metaschema.datatypes.PositiveInteger;
-import gov.nist.secauto.metaschema.datatypes.URI;
-import gov.nist.secauto.metaschema.datatypes.URIReference;
-import gov.nist.secauto.metaschema.datatypes.UUID;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URI;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public enum DataType {
-  NCNAME(gov.nist.secauto.metaschema.model.info.definitions.DataType.NCNAME, NCName.class),
-  DECIMAL(gov.nist.secauto.metaschema.model.info.definitions.DataType.DECIMAL, Decimal.class),
-  INTEGER(gov.nist.secauto.metaschema.model.info.definitions.DataType.INTEGER, Integer.class),
+  NCNAME(
+      gov.nist.secauto.metaschema.model.definitions.DataType.NCNAME,
+      String.class,
+      NcNameAdapter.class),
+  DECIMAL(
+      gov.nist.secauto.metaschema.model.definitions.DataType.DECIMAL,
+      BigDecimal.class,
+      DecimalAdapter.class),
+  INTEGER(
+      gov.nist.secauto.metaschema.model.definitions.DataType.INTEGER,
+      Integer.class,
+      IntegerAdapter.class),
   NON_NEGATIVE_INTEGER(
-      gov.nist.secauto.metaschema.model.info.definitions.DataType.NON_NEGATIVE_INTEGER,
-      NonNegativeInteger.class),
-  POSITIVE_INTEGER(gov.nist.secauto.metaschema.model.info.definitions.DataType.POSITIVE_INTEGER, PositiveInteger.class),
-  DATE(gov.nist.secauto.metaschema.model.info.definitions.DataType.DATE, Date.class),
-  DATE_TIME(gov.nist.secauto.metaschema.model.info.definitions.DataType.DATE_TIME, DateTime.class),
-  DATE_WITH_TZ(gov.nist.secauto.metaschema.model.info.definitions.DataType.DATE_WITH_TZ, DateTimeZone.class),
+      gov.nist.secauto.metaschema.model.definitions.DataType.NON_NEGATIVE_INTEGER,
+      BigInteger.class,
+      NegativeIntegerAdapter.class),
+  POSITIVE_INTEGER(
+      gov.nist.secauto.metaschema.model.definitions.DataType.POSITIVE_INTEGER,
+      BigInteger.class,
+      PositiveIntegerAdapter.class),
+  DATE(
+      gov.nist.secauto.metaschema.model.definitions.DataType.DATE,
+      Date.class,
+      DateAdapter.class),
+  DATE_TIME(
+      gov.nist.secauto.metaschema.model.definitions.DataType.DATE_TIME,
+      DateTime.class,
+      DateTimeAdapter.class),
+  DATE_WITH_TZ(
+      gov.nist.secauto.metaschema.model.definitions.DataType.DATE_WITH_TZ,
+      ZonedDateTime.class,
+      DateWithTZAdapter.class),
   DATE_TIME_WITH_TZ(
-      gov.nist.secauto.metaschema.model.info.definitions.DataType.DATE_TIME_WITH_TZ,
-      DateTimeTimeZone.class),
-  BASE64(gov.nist.secauto.metaschema.model.info.definitions.DataType.BASE64, Base64.class),
-  EMAIL_ADDRESS(gov.nist.secauto.metaschema.model.info.definitions.DataType.EMAIL_ADDRESS, EmailAddress.class),
-  HOSTNAME(gov.nist.secauto.metaschema.model.info.definitions.DataType.HOSTNAME, Hostname.class),
-  IP_V4_ADDRESS(gov.nist.secauto.metaschema.model.info.definitions.DataType.IP_V4_ADDRESS, IPv4.class),
-  IP_V6_ADDRESS(gov.nist.secauto.metaschema.model.info.definitions.DataType.IP_V6_ADDRESS, IPv6.class),
-  URI(gov.nist.secauto.metaschema.model.info.definitions.DataType.URI, URI.class),
-  URI_REFERENCE(gov.nist.secauto.metaschema.model.info.definitions.DataType.URI_REFERENCE, URIReference.class),
-  UUID(gov.nist.secauto.metaschema.model.info.definitions.DataType.UUID, UUID.class),
-  MARKUP_LINE(gov.nist.secauto.metaschema.model.info.definitions.DataType.MARKUP_LINE, MarkupLine.class),
-  MARKUP_MULTILINE(gov.nist.secauto.metaschema.model.info.definitions.DataType.MARKUP_MULTILINE, MarkupMultiline.class),
-  EMPTY(gov.nist.secauto.metaschema.model.info.definitions.DataType.EMPTY, Void.class),
-  BOOLEAN(gov.nist.secauto.metaschema.model.info.definitions.DataType.BOOLEAN, Boolean.class),
-  STRING(gov.nist.secauto.metaschema.model.info.definitions.DataType.STRING, String.class);
+      gov.nist.secauto.metaschema.model.definitions.DataType.DATE_TIME_WITH_TZ,
+      ZonedDateTime.class,
+      DateTimeWithTZAdapter.class),
+  BASE64(
+      gov.nist.secauto.metaschema.model.definitions.DataType.BASE64,
+      Base64.class,
+      Base64Adapter.class),
+  EMAIL_ADDRESS(
+      gov.nist.secauto.metaschema.model.definitions.DataType.EMAIL_ADDRESS,
+      String.class,
+      EmailAddressAdapter.class),
+  HOSTNAME(
+      gov.nist.secauto.metaschema.model.definitions.DataType.HOSTNAME,
+      String.class,
+      HostnameAdapter.class),
+  IP_V4_ADDRESS(
+      gov.nist.secauto.metaschema.model.definitions.DataType.IP_V4_ADDRESS,
+      IPv4.class,
+      Ipv4AddressAdapter.class),
+  IP_V6_ADDRESS(
+      gov.nist.secauto.metaschema.model.definitions.DataType.IP_V6_ADDRESS,
+      IPv6.class,
+      IPv6AddressAdapter.class),
+  URI(
+      gov.nist.secauto.metaschema.model.definitions.DataType.URI,
+      URI.class,
+      UriAdapter.class),
+  URI_REFERENCE(
+      gov.nist.secauto.metaschema.model.definitions.DataType.URI_REFERENCE,
+      URI.class,
+      UriReferenceAdapter.class),
+  UUID(
+      gov.nist.secauto.metaschema.model.definitions.DataType.UUID,
+      UUID.class,
+      UuidAdapter.class),
+  MARKUP_LINE(
+      gov.nist.secauto.metaschema.model.definitions.DataType.MARKUP_LINE,
+      MarkupLine.class,
+      MarkupLineAdapter.class),
+  MARKUP_MULTILINE(
+      gov.nist.secauto.metaschema.model.definitions.DataType.MARKUP_MULTILINE,
+      MarkupMultiline.class,
+      MarkupMultilineAdapter.class),
+  EMPTY(
+      gov.nist.secauto.metaschema.model.definitions.DataType.EMPTY,
+      Void.class,
+      null),
+  BOOLEAN(
+      gov.nist.secauto.metaschema.model.definitions.DataType.BOOLEAN,
+      Boolean.class,
+      BooleanAdapter.class),
+  STRING(
+      gov.nist.secauto.metaschema.model.definitions.DataType.STRING,
+      String.class,
+      StringAdapter.class);
 
-  private static final Map<gov.nist.secauto.metaschema.model.info.definitions.DataType, DataType> datatypeMap;
+  private static final Map<gov.nist.secauto.metaschema.model.definitions.DataType, DataType> datatypeMap;
 
   static {
     datatypeMap = new HashMap<>();
@@ -86,21 +166,25 @@ public enum DataType {
     }
   }
 
-  public static DataType lookupByDatatype(gov.nist.secauto.metaschema.model.info.definitions.DataType type) {
+  public static DataType lookupByDatatype(gov.nist.secauto.metaschema.model.definitions.DataType type) {
     return datatypeMap.get(type);
   }
 
-  private final gov.nist.secauto.metaschema.model.info.definitions.DataType dataType;
+  private final gov.nist.secauto.metaschema.model.definitions.DataType dataType;
   private final Class<?> javaClass;
-  private final ClassJavaType javaType;
+  private final TypeName typeName;
+  private final Class<? extends JavaTypeAdapter<?>> javaTypeAdapterClass;
 
-  private DataType(gov.nist.secauto.metaschema.model.info.definitions.DataType dataType, Class<?> javaClass) {
+  private DataType(gov.nist.secauto.metaschema.model.definitions.DataType dataType,
+      Class<?> javaClass,
+      Class<? extends JavaTypeAdapter<?>> javaTypeAdapterClass) {
     this.dataType = dataType;
     this.javaClass = javaClass;
-    this.javaType = new ClassJavaType(getJavaClass());
+    this.typeName = ClassName.get(getJavaClass());
+    this.javaTypeAdapterClass = javaTypeAdapterClass;
   }
 
-  public gov.nist.secauto.metaschema.model.info.definitions.DataType getDataType() {
+  public gov.nist.secauto.metaschema.model.definitions.DataType getDataType() {
     return dataType;
   }
 
@@ -108,7 +192,11 @@ public enum DataType {
     return javaClass;
   }
 
-  public ClassJavaType getJavaType() {
-    return javaType;
+  public TypeName getTypeName() {
+    return typeName;
+  }
+
+  public Class<? extends JavaTypeAdapter<?>> getJavaTypeAdapterClass() {
+    return javaTypeAdapterClass;
   }
 }

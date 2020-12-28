@@ -1,25 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <METASCHEMA
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../../../../../schema/metaschema.xsd http://csrc.nist.gov/ns/oscal/metaschema-binding/1.0 ../../../../../../../../schema/metaschema-binding.xsd"
+	xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../../../metaschema-model/src/main/xsd/M4/metaschema.xsd"
 	xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0"
-	xmlns:binding="http://csrc.nist.gov/ns/oscal/metaschema-binding/1.0"
-	root="top-level">
+	xmlns:binding="http://csrc.nist.gov/ns/oscal/metaschema-binding/1.0">
 	<schema-name>Metaschema with assembly</schema-name>
 	<schema-version>1.0</schema-version>
 	<short-name>assembly</short-name>
 	<namespace>http://csrc.nist.gov/ns/metaschema/testing/assembly</namespace>
 
-	<extensions>
-		<binding:model-binding>
-			<binding:java
-				package-name="gov.nist.itl.metaschema.codegen.xml.example.assembly" />
-		</binding:model-binding>
-	</extensions>
-
 	<define-assembly name="top-level">
 		<formal-name>Root</formal-name>
 		<description>Root assembly</description>
+		<root-name>top-level</root-name>
 		<flag ref="id" />
 		<model>
 			<assembly ref="child" min-occurs="1" max-occurs="unbounded">
@@ -40,43 +33,32 @@
 			</assembly>
 			<assembly ref="grandchild" min-occurs="1"
 				max-occurs="unbounded">
+				<use-name>grandchild-b</use-name>
 				<group-as name="grandchildren2" in-json="ARRAY"
 					in-xml="GROUPED" />
 			</assembly>
-			<assembly ref="grandchild" min-occurs="1" />
+			<assembly ref="grandchild" min-occurs="1">
+				<use-name>grandchild-c</use-name>
+			</assembly>
 		</model>
-		<extensions>
-			<binding:define-assembly-binding>
-				<binding:java class-name="TheChild"/>
-			</binding:define-assembly-binding>
-		</extensions>
 	</define-assembly>
 
 	<define-assembly name="grandchild">
 		<formal-name>Child</formal-name>
 		<description>Child assembly</description>
+		<use-name>grandchild-a</use-name>
 		<flag ref="id" />
 		<model>
 			<field ref="field" max-occurs="unbounded">
 				<group-as name="fields" />
 			</field>
 		</model>
-		<extensions>
-			<binding:define-assembly-binding>
-				<binding:java class-name="TheGrandchild" />
-			</binding:define-assembly-binding>
-		</extensions>
 	</define-assembly>
 
 	<define-field name="field">
 		<formal-name>Complex Field</formal-name>
 		<description>A complex field with a flag</description>
 		<flag ref="id" />
-		<extensions>
-			<binding:define-field-binding>
-				<binding:java class-name="TheField" />
-			</binding:define-field-binding>
-		</extensions>
 	</define-field>
 
 	<define-flag name="id">

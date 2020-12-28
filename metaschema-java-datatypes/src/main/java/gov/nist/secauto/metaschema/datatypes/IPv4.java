@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.datatypes;
 
-public class IPv4 extends AbstractIPDatatype<IPv4> {
+public class IPv4
+    extends AbstractIPDatatype<IPv4> {
 
   public IPv4(String value) {
     super(value);

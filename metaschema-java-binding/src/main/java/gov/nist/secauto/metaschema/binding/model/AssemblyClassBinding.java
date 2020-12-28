@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,23 +26,47 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import gov.nist.secauto.metaschema.binding.BindingException;
-import gov.nist.secauto.metaschema.binding.io.xml.writer.AssemblyXmlWriter;
-import gov.nist.secauto.metaschema.binding.model.property.ModelItemPropertyBinding;
+import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.property.ModelProperty;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 
-public interface AssemblyClassBinding<CLASS> extends ClassBinding<CLASS> {
+public interface AssemblyClassBinding extends ClassBinding {
+  /**
+   * Get the {@link ModelProperty} instances for each property that is part of the Metaschema
+   * assembly's model.
+   * 
+   * @return the ordered sequence of properties, or an empty list
+   */
+  List<ModelProperty> getModelProperties();
 
-  List<ModelItemPropertyBinding> getModelItemPropertyBindings();
+  /**
+   * Gets the root element/property name if the Metaschema assembly is configured as a root.
+   * 
+   * @return the root element/property name, or {@code null}
+   */
+  String getJsonRootName();
 
-  boolean isRootElement();
+  /**
+   * Gets the XML element's qualified name if the Metaschema assembly is configured as a root.
+   * 
+   * @return the root element qualified name, or {@code null}
+   */
+  QName getXmlRootQName();
 
-  QName getRootQName();
+  Object readRoot(JsonParsingContext parsingContext) throws BindingException, IOException;
 
-  @Override
-  AssemblyXmlWriter<CLASS> getXmlWriter() throws BindingException;
+  Object readRoot(XmlParsingContext parsingContext) throws XMLStreamException, BindingException, IOException;
 
+  void writeRoot(Object instance, JsonWritingContext context) throws IOException;
+
+  void writeRoot(Object instance, XmlWritingContext context) throws XMLStreamException, IOException;
 }

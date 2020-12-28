@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,12 +26,27 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
-
+/**
+ * Provides objects used for parsing data associated with a specific format.
+ * 
+ * @param <READER>
+ *          the format specific data reader
+ * @param <PROBLEM_HANDLER>
+ *          the format specific problem handler
+ */
 public interface ParsingContext<READER, PROBLEM_HANDLER extends ProblemHandler> {
-  BindingContext getBindingContext();
 
+  /**
+   * The parser used for reading data associated with the supported format.
+   * 
+   * @return the parser
+   */
+  READER getReader();
+
+  /**
+   * A handler that provides callbacks used to resolve parsing issues.
+   * 
+   * @return the configured handler
+   */
   PROBLEM_HANDLER getProblemHandler();
-
-  READER getEventReader();
 }

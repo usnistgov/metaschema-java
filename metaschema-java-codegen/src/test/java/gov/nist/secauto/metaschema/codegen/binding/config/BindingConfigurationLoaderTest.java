@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.codegen.binding.config;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import gov.nist.secauto.metaschema.model.MetaschemaException;
@@ -35,8 +36,42 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.Map;
 
 class BindingConfigurationLoaderTest {
+
+  @Test
+  void testDefault() throws MalformedURLException, IOException, MetaschemaException {
+    DefaultBindingConfiguration config = new DefaultBindingConfiguration();
+
+    // test namespaces
+    Map<String, String> namespaceToPackageName = new HashMap<>();
+    namespaceToPackageName.put("http://csrc.nist.gov/ns/metaschema/testing/assembly",
+        "gov.nist.csrc.ns.metaschema.testing.assembly");
+
+    for (Map.Entry<String, String> entry : namespaceToPackageName.entrySet()) {
+      assertEquals(entry.getValue(), config.getPackageNameForNamespace(entry.getKey()));
+    }
+  }
+
+  @Test
+  void testConfiguredNamespace() throws MalformedURLException, IOException, MetaschemaException {
+    DefaultBindingConfiguration config = new DefaultBindingConfiguration();
+
+    // test namespaces
+    Map<String, String> namespaceToPackageName = new HashMap<>();
+    namespaceToPackageName.put("http://csrc.nist.gov/ns/metaschema/testing/assembly",
+        "gov.nist.secauto.metaschema.testing.assembly");
+
+    for (Map.Entry<String, String> entry : namespaceToPackageName.entrySet()) {
+      config.addModelBindingConfig(entry.getKey(), entry.getValue());
+    }
+
+    for (Map.Entry<String, String> entry : namespaceToPackageName.entrySet()) {
+      assertEquals(entry.getValue(), config.getPackageNameForNamespace(entry.getKey()));
+    }
+  }
 
   @Test
   void test() throws MalformedURLException, IOException, MetaschemaException {

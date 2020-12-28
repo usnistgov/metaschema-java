@@ -58,16 +58,16 @@
       <xs:documentation>Defines a binding for a given metaschema identified by a relative URL.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="define-assembly-binding" type="b:ManagedObjectBindingType" minOccurs="0"
+      <xs:element name="define-assembly-binding" type="b:ObjectDefinitionBindingType" minOccurs="0"
         maxOccurs="unbounded">
         <xs:annotation>
-          <xs:documentation>Defines binding configurations for a given defined assembly within the parent metaschema.</xs:documentation>
+          <xs:documentation>Provides binding configurations for a given defined assembly within the parent metaschema.</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="define-field-binding" type="b:ManagedObjectBindingType" minOccurs="0"
+      <xs:element name="define-field-binding" type="b:ObjectDefinitionBindingType" minOccurs="0"
         maxOccurs="unbounded">
         <xs:annotation>
-          <xs:documentation>Defines binding configurations for a given defined field within the parent metaschema.</xs:documentation>
+          <xs:documentation>Provides binding configurations for a given defined field within the parent metaschema.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
@@ -84,9 +84,9 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="ManagedObjectBindingType">
+  <xs:complexType name="ObjectDefinitionBindingType">
     <xs:sequence>
-      <xs:element name="java" type="b:JavaManagedObjectBindingType" minOccurs="0">
+      <xs:element name="java" type="b:JavaObjectDefinitionBindingType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>Field and assembly binding configurations for Java bound classes.</xs:documentation>
         </xs:annotation>
@@ -103,7 +103,7 @@
     </xs:attribute>
   </xs:complexType>
 
-  <xs:complexType name="JavaManagedObjectBindingType">
+  <xs:complexType name="JavaObjectDefinitionBindingType">
     <xs:sequence>
       <xs:element name="use-class-name" type="b:JavaClassName" minOccurs="0"/>
       <xs:element name="implement-interface" type="b:JavaQualifiedClassName" minOccurs="0"

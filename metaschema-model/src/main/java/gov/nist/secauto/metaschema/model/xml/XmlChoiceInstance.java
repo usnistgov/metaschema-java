@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,28 +26,37 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.xml.AssemblyDocument;
-import gov.nist.itl.metaschema.model.xml.ChoiceDocument;
-import gov.nist.itl.metaschema.model.xml.FieldDocument;
-import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.info.instances.AbstractChoiceInstance;
-import gov.nist.secauto.metaschema.model.info.instances.InfoElementInstance;
-import gov.nist.secauto.metaschema.model.info.instances.ModelInstance;
+import gov.nist.itl.metaschema.model.m4.xml.AssemblyDocument;
+import gov.nist.itl.metaschema.model.m4.xml.ChoiceDocument;
+import gov.nist.itl.metaschema.model.m4.xml.FieldDocument;
+import gov.nist.itl.metaschema.model.m4.xml.LocalAssemblyDefinition;
+import gov.nist.itl.metaschema.model.m4.xml.LocalFieldDefinition;
+import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.instances.AbstractChoiceInstance;
+import gov.nist.secauto.metaschema.model.instances.AssemblyInstance;
+import gov.nist.secauto.metaschema.model.instances.ChoiceInstance;
+import gov.nist.secauto.metaschema.model.instances.FieldInstance;
+import gov.nist.secauto.metaschema.model.instances.ModelInstance;
+import gov.nist.secauto.metaschema.model.instances.ObjectModelInstance;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class XmlChoiceInstance extends AbstractChoiceInstance {
+public class XmlChoiceInstance
+    extends AbstractChoiceInstance {
   private final ChoiceDocument.Choice xmlChoice;
-  private final Map<String, ModelInstance> namedModelInstances;
-  private final Map<String, XmlFieldInstance> fieldInstances;
-  private final Map<String, XmlAssemblyInstance> assemblyInstances;
+  private final Map<String, FieldInstance<?>> fieldInstances;
+  private final Map<String, AssemblyInstance<?>> assemblyInstances;
+  private final Map<String, ObjectModelInstance<?>> namedModelInstances;
+  private final List<ModelInstance> modelInstances;
 
   /**
    * Constructs a mutually exclusive choice between two possible objects.
@@ -61,56 +70,104 @@ public class XmlChoiceInstance extends AbstractChoiceInstance {
     super(containingAssembly);
     this.xmlChoice = xmlChoice;
 
+    // handle the model
     XmlCursor cursor = xmlChoice.newCursor();
-    cursor.selectPath(
-        "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" + "$this/m:assembly|$this/m:field");
+    cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
+        + "$this/m:assembly|$this/m:define-assembly|$this/m:field|$this/m:define-field|$this/m:choice");
 
-    Map<String, ModelInstance> namedModelInstances = new LinkedHashMap<>();
-    Map<String, XmlFieldInstance> fieldInstances = new LinkedHashMap<>();
-    Map<String, XmlAssemblyInstance> assemblyInstances = new LinkedHashMap<>();
+    Map<String, FieldInstance<?>> fieldInstances = new LinkedHashMap<>();
+    List<AssemblyInstance<?>> assemblyInstances = new LinkedList<>();
+    List<ModelInstance> modelInstances = new ArrayList<>(cursor.getSelectionCount());
+    List<ObjectModelInstance<?>> namedModelInstances = new LinkedList<>();
+
     while (cursor.toNextSelection()) {
       XmlObject obj = cursor.getObject();
       if (obj instanceof FieldDocument.Field) {
         XmlFieldInstance field = new XmlFieldInstance((FieldDocument.Field) obj, this.getContainingDefinition());
-        fieldInstances.put(field.getName(), field);
-        namedModelInstances.put(field.getName(), field);
+        fieldInstances.put(field.getUseName(), field);
+        modelInstances.add(field);
+        namedModelInstances.add(field);
+      } else if (obj instanceof LocalFieldDefinition) {
+        XmlLocalFieldDefinition field
+            = new XmlLocalFieldDefinition((LocalFieldDefinition) obj, this.getContainingDefinition());
+        fieldInstances.put(field.getUseName(), field);
+        modelInstances.add(field);
+        namedModelInstances.add(field);
       } else if (obj instanceof AssemblyDocument.Assembly) {
         XmlAssemblyInstance assembly
             = new XmlAssemblyInstance((AssemblyDocument.Assembly) obj, this.getContainingDefinition());
-        assemblyInstances.put(assembly.getName(), assembly);
-        namedModelInstances.put(assembly.getName(), assembly);
+        assemblyInstances.add(assembly);
+        modelInstances.add(assembly);
+        namedModelInstances.add(assembly);
+      } else if (obj instanceof LocalAssemblyDefinition) {
+        XmlLocalAssemblyDefinition assembly
+            = new XmlLocalAssemblyDefinition((LocalAssemblyDefinition) obj, this.getContainingDefinition());
+        assemblyInstances.add(assembly);
+        modelInstances.add(assembly);
+        namedModelInstances.add(assembly);
+      } else if (obj instanceof ChoiceDocument.Choice) {
+        XmlChoiceInstance choice = new XmlChoiceInstance((ChoiceDocument.Choice) obj, this.getContainingDefinition());
+        assemblyInstances.addAll(choice.getAssemblyInstances().values());
+        fieldInstances.putAll(choice.getFieldInstances());
+        modelInstances.add(choice);
       }
     }
 
-    this.namedModelInstances
-        = namedModelInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(namedModelInstances);
     this.fieldInstances
         = fieldInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(fieldInstances);
-    this.assemblyInstances
-        = assemblyInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(assemblyInstances);
+
+    if (assemblyInstances.isEmpty()) {
+      this.assemblyInstances = Collections.emptyMap();
+    } else {
+      this.assemblyInstances = Collections.unmodifiableMap(
+          assemblyInstances.stream().collect(Collectors.toMap(AssemblyInstance::getUseName, v -> v)));
+    }
+
+    this.modelInstances
+        = modelInstances.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(modelInstances);
+
+    if (namedModelInstances.isEmpty()) {
+      this.namedModelInstances = Collections.emptyMap();
+    } else {
+      this.namedModelInstances = Collections.unmodifiableMap(
+          namedModelInstances.stream().collect(Collectors.toMap(ObjectModelInstance::getUseName, v -> v)));
+    }
+  }
+
+  /**
+   * Get the underlying XML data.
+   * 
+   * @return the underlying XML data
+   */
+  protected ChoiceDocument.Choice getXmlChoice() {
+    return xmlChoice;
   }
 
   @Override
-  public Map<String, ModelInstance> getNamedModelInstances() {
+  public Map<String, ObjectModelInstance<?>> getNamedModelInstances() {
     return namedModelInstances;
   }
 
   @Override
-  public Map<String, XmlFieldInstance> getFieldInstances() {
+  public Map<String, FieldInstance<?>> getFieldInstances() {
     return fieldInstances;
   }
 
   @Override
-  public Map<String, XmlAssemblyInstance> getAssemblyInstances() {
+  public Map<String, AssemblyInstance<?>> getAssemblyInstances() {
     return assemblyInstances;
   }
 
   @Override
-  public List<InfoElementInstance> getInstances() {
-    return namedModelInstances.values().stream().collect(Collectors.toList());
+  public List<ChoiceInstance> getChoiceInstances() {
+    // this shouldn't get called all that often, so this is better than allocating memory
+    return modelInstances.stream().filter(obj -> obj instanceof ChoiceInstance)
+        .map(obj -> (ChoiceInstance) obj)
+        .collect(Collectors.toList());
   }
 
-  protected ChoiceDocument.Choice getXmlChoice() {
-    return xmlChoice;
+  @Override
+  public List<ModelInstance> getModelInstances() {
+    return modelInstances;
   }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -27,5 +27,14 @@
 package gov.nist.secauto.metaschema.binding.io;
 
 public interface Configuration {
+  /**
+   * Determines if a specific serialization/deserialization feature is enabled.
+   * 
+   * @param feature
+   *          the feature to check for
+   * @param defaultState
+   *          the default to use if the feature is not specifically configured
+   * @return {@code true} if the feature is enabled, or {@code false} otherwise
+   */
   boolean isFeatureEnabled(Feature feature, boolean defaultState);
 }

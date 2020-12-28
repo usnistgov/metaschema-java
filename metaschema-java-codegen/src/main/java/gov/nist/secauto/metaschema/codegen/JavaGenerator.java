@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,19 +26,18 @@
 
 package gov.nist.secauto.metaschema.codegen;
 
+import com.squareup.javapoet.ClassName;
+
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlNs;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlNsForm;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
 import gov.nist.secauto.metaschema.codegen.binding.config.BindingConfiguration;
-import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
-import gov.nist.secauto.metaschema.codegen.binding.config.JavaTypeSupplier;
+import gov.nist.secauto.metaschema.codegen.type.DefaultTypeResolver;
+import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
 import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.MetaschemaException;
-import gov.nist.secauto.metaschema.model.MetaschemaLoader;
-import gov.nist.secauto.metaschema.model.info.Type;
-import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
+import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
+import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,57 +56,77 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class JavaGenerator {
   private static final Logger logger = LogManager.getLogger(JavaGenerator.class);
-
-  public static void main(String[] args) throws IOException, MetaschemaException {
-    File metaschemaFile = new File("target/src/metaschema/oscal_catalog_metaschema.xml");
-    Metaschema metaschema = new MetaschemaLoader().loadXmlMetaschema(metaschemaFile);
-
-    DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
-    JavaGenerator.generate(metaschema, new File(args[0]), bindingConfiguration);
-  }
 
   private JavaGenerator() {
     // disable construction
   }
 
-  public static Map<Metaschema, List<GeneratedClass>> generate(Metaschema metaschema, File generationTargetDirectory,
+  /**
+   * Generate Java sources for the provided metaschema.
+   * 
+   * @param metaschema
+   *          the Metaschema to generate Java sources for
+   * @param targetDir
+   *          the directory to generate sources in
+   * @param bindingConfiguration
+   *          the binding customizations to use when generating the Java classes
+   * @return a mapping of a list of generated classes (value) for a given Metaschema instance (key)
+   * @throws IOException
+   *           if a build error occurred while generating the class
+   */
+  public static Map<Metaschema, List<GeneratedClass>> generate(Metaschema metaschema, File targetDir,
       BindingConfiguration bindingConfiguration) throws IOException {
-    return generate(Collections.singletonList(metaschema), generationTargetDirectory, bindingConfiguration);
+    return generate(Collections.singletonList(metaschema), targetDir, bindingConfiguration);
   }
 
+  /**
+   * Generates Java classes for Metaschema fields and flags.
+   * 
+   * @param metaschemas
+   *          the Metaschema instances to build classes for
+   * @param targetDirectory
+   *          the directory to generate classes in
+   * @param bindingConfiguration
+   *          binding customizations that can be used to set namespaces, class names, and other
+   *          aspects of generated classes
+   * @return a mapping of a list of generated classes (value) for a given Metaschema instance (key)
+   * @throws IOException
+   *           if a build error occurred while generating the class
+   */
   public static Map<Metaschema, List<GeneratedClass>> generate(Collection<? extends Metaschema> metaschemas,
-      File generationTargetDirectory, BindingConfiguration bindingConfiguration) throws IOException {
+      File targetDirectory, BindingConfiguration bindingConfiguration) throws IOException {
     Objects.requireNonNull(metaschemas, "metaschemas");
-    Objects.requireNonNull(generationTargetDirectory, "generationTargetDirectory");
+    Objects.requireNonNull(targetDirectory, "generationTargetDirectory");
     Objects.requireNonNull(bindingConfiguration, "bindingConfiguration");
-    logger.info("Generating Java classes in: {}", generationTargetDirectory.getPath());
+    logger.info("Generating Java classes in: {}", targetDirectory.getPath());
 
     Map<Metaschema, List<GeneratedClass>> retval = new HashMap<>();
     Map<URI, String> xmlNamespaceToPackageNameMap = new HashMap<>();
     Map<URI, Set<Metaschema>> xmlNamespaceToMetaschemaMap = new HashMap<>();
 
-    JavaTypeSupplier javaTypeSupplier = bindingConfiguration.getJavaTypeSupplier();
+    TypeResolver typeResolver = new DefaultTypeResolver(bindingConfiguration);
 
-    Map<Metaschema, List<InfoElementDefinition>> metaschemaToInformationElementsMap = buildMetaschemaMap(metaschemas);
-    for (Map.Entry<Metaschema, List<InfoElementDefinition>> entry : metaschemaToInformationElementsMap.entrySet()) {
+    Map<Metaschema, List<? extends InfoElementDefinition>> metaschemaToInformationElementsMap
+        = buildMetaschemaMap(metaschemas);
+    for (Map.Entry<Metaschema, List<? extends InfoElementDefinition>> entry : metaschemaToInformationElementsMap
+        .entrySet()) {
       Metaschema metaschema = entry.getKey();
       List<GeneratedClass> generatedClasses = null;
       Set<String> classNames = new HashSet<>();
 
       for (InfoElementDefinition definition : entry.getValue()) {
-        ClassGenerator classGenerator = null;
+        JavaClassGenerator classGenerator = null;
         if (definition instanceof AssemblyDefinition) {
-          classGenerator = new AssemblyClassGenerator((AssemblyDefinition) definition, javaTypeSupplier);
+          classGenerator = new AssemblyJavaClassGenerator((AssemblyDefinition) definition, typeResolver);
         } else if (definition instanceof FieldDefinition) {
           FieldDefinition fieldDefinition = (FieldDefinition) definition;
 
           // if field is just a simple data value, then no class is needed
           if (!fieldDefinition.getFlagInstances().isEmpty()) {
-            classGenerator = new FieldClassGenerator(fieldDefinition, javaTypeSupplier);
+            classGenerator = new FieldJavaClassGenerator(fieldDefinition, typeResolver);
           }
         } else {
           // Skip others
@@ -115,8 +134,8 @@ public class JavaGenerator {
         }
 
         if (classGenerator != null) {
-          GeneratedClass generatedClass = classGenerator.generateClass(generationTargetDirectory);
-          String className = generatedClass.getClassName();
+          GeneratedClass generatedClass = classGenerator.generateClass(targetDirectory);
+          String className = generatedClass.getClassName().canonicalName();
           if (classNames.contains(className)) {
             throw new IllegalStateException(String.format(
                 "Found duplicate class name '%s' in metaschema '%s'."
@@ -136,7 +155,7 @@ public class JavaGenerator {
       }
 
       URI xmlNamespace = metaschema.getXmlNamespace();
-      String packageName = bindingConfiguration.getPackageName(metaschema);
+      String packageName = bindingConfiguration.getPackageNameForMetaschema(metaschema);
 
       if (xmlNamespaceToPackageNameMap.containsKey(xmlNamespace)) {
         String assignedPackage = xmlNamespaceToPackageNameMap.get(xmlNamespace);
@@ -162,7 +181,7 @@ public class JavaGenerator {
     for (Map.Entry<URI, String> entry : xmlNamespaceToPackageNameMap.entrySet()) {
       String packageName = entry.getValue();
       String packagePath = packageName.replace(".", "/");
-      File packageInfo = new File(generationTargetDirectory, packagePath + "/package-info.java");
+      File packageInfo = new File(targetDirectory, packagePath + "/package-info.java");
       URI namespace = entry.getKey();
       String namespaceString = namespace.toString();
 
@@ -177,15 +196,15 @@ public class JavaGenerator {
       }
 
       for (Metaschema metaschema : xmlNamespaceToMetaschemaMap.get(namespace)) {
-        retval.get(metaschema).add(new GeneratedClass(packageInfo, packageName + ".package-info", false));
+        retval.get(metaschema).add(new GeneratedClass(packageInfo, ClassName.get(packageName, "package-info"), false));
       }
     }
     return Collections.unmodifiableMap(retval);
   }
 
-  private static Map<Metaschema, List<InfoElementDefinition>>
+  private static Map<Metaschema, List<? extends InfoElementDefinition>>
       buildMetaschemaMap(Collection<? extends Metaschema> metaschemas) {
-    Map<Metaschema, List<InfoElementDefinition>> retval = new HashMap<>();
+    Map<Metaschema, List<? extends InfoElementDefinition>> retval = new HashMap<>();
 
     for (Metaschema metaschema : metaschemas) {
       processMetaschema(metaschema, retval);
@@ -193,24 +212,34 @@ public class JavaGenerator {
     return retval;
   }
 
-  private static void processMetaschema(Metaschema metaschema, Map<Metaschema, List<InfoElementDefinition>> map) {
+  private static void processMetaschema(Metaschema metaschema,
+      Map<Metaschema, List<? extends InfoElementDefinition>> map) {
     for (Metaschema importedMetaschema : metaschema.getImportedMetaschema().values()) {
       processMetaschema(importedMetaschema, map);
     }
 
     if (!map.containsKey(metaschema)) {
-      List<InfoElementDefinition> definitions = metaschema.getInfoElementDefinitions().values().stream()
-          .filter(c -> !Type.FLAG.equals(c.getType())).collect(Collectors.toList());
+      List<? extends InfoElementDefinition> definitions = metaschema.getAssemblyAndFieldDefinitions();
       map.put(metaschema, definitions);
     }
   }
 
   public static class GeneratedClass {
     private final File classFile;
-    private final String className;
+    private final ClassName className;
     private final boolean rootClass;
 
-    public GeneratedClass(File classFile, String className, boolean rootClass) {
+    /**
+     * Construct a new class information object for a generated class.
+     * 
+     * @param classFile
+     *          the file the class was written to
+     * @param className
+     *          the type info for the class
+     * @param rootClass
+     *          {@code true} if the class is a root assembly, or {@code false} otherwise
+     */
+    public GeneratedClass(File classFile, ClassName className, boolean rootClass) {
       Objects.requireNonNull(classFile, "classFile");
       Objects.requireNonNull(className, "className");
       this.classFile = classFile;
@@ -218,14 +247,30 @@ public class JavaGenerator {
       this.rootClass = rootClass;
     }
 
+    /**
+     * The file the class was written to.
+     * 
+     * @return the class file
+     */
     public File getClassFile() {
       return classFile;
     }
 
-    public String getClassName() {
+    /**
+     * The type info for the class.
+     * 
+     * @return the class's type info
+     */
+    public ClassName getClassName() {
       return className;
     }
 
+    /**
+     * Indicates if the class represents a root Metaschema assembly which can be the top-level
+     * element/property of an XML, JSON, or YAML instance.
+     * 
+     * @return {@code true} if the class is a root assembly, or {@code false} otherwise
+     */
     public boolean isRootClass() {
       return rootClass;
     }

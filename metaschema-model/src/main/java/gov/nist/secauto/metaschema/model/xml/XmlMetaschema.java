@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,115 +26,42 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.xml.DefineAssemblyDocument;
-import gov.nist.itl.metaschema.model.xml.DefineFieldDocument;
-import gov.nist.itl.metaschema.model.xml.DefineFlagDocument;
-import gov.nist.itl.metaschema.model.xml.ImportDocument;
-import gov.nist.itl.metaschema.model.xml.METASCHEMADocument;
+import gov.nist.itl.metaschema.model.m4.xml.GlobalAssemblyDefinition;
+import gov.nist.itl.metaschema.model.m4.xml.GlobalFieldDefinition;
+import gov.nist.itl.metaschema.model.m4.xml.GlobalFlagDefinition;
+import gov.nist.itl.metaschema.model.m4.xml.METASCHEMADocument;
+import gov.nist.itl.metaschema.model.m4.xml.METASCHEMADocument.METASCHEMA;
 import gov.nist.secauto.metaschema.model.AbstractMetaschema;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
-import gov.nist.secauto.metaschema.model.info.Util;
-import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
+import gov.nist.secauto.metaschema.model.Util;
+import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
+import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
+import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class XmlMetaschema extends AbstractMetaschema {
+public class XmlMetaschema
+    extends AbstractMetaschema {
   private static final Logger logger = LogManager.getLogger(XmlMetaschema.class);
 
-  public static XmlMetaschema loadMetaschema(URI resource) throws MetaschemaException, IOException {
-    return loadMetaschema(resource, new Stack<>(), new LinkedHashMap<>());
-  }
-
-  /**
-   * Loads a metaschema from the provided resource.
-   * <p>
-   * If the metaschema imports other metaschema, the provided visitedMetaschema can be used to track
-   * circular inclusions. This is useful when this method recurses into included metaschema.
-   * <p>
-   * Previously loaded metaschema are provided by the metaschemaCache. This method will add the
-   * current metaschema to the cache after all imported metaschema have been loaded.
-   * 
-   * @param resource
-   *          the metaschema resource to load
-   * @param visitedMetaschema
-   *          a LIFO queue representing previously visited metaschema in an import chain
-   * @param metaschemaCache
-   *          a map of previously processed metaschema, keyed by the resource URI of the metaschema
-   * @return the loaded metaschema
-   * @throws MetaschemaException
-   *           if a parsing or processing error occurs
-   * @throws MalformedURLException
-   *           if the provided URI is malformed
-   * @throws IOException
-   *           if an IO error occurs while parsing
-   */
-  public static XmlMetaschema loadMetaschema(URI resource, Stack<URI> visitedMetaschema,
-      Map<URI, XmlMetaschema> metaschemaCache) throws MetaschemaException, MalformedURLException, IOException {
-    // first check if the current Metaschema has been visited to prevent cycles
-    if (visitedMetaschema.contains(resource)) {
-      throw new MetaschemaException("Cycle detected in metaschema includes for '" + resource + "'. Call stack: '"
-          + visitedMetaschema.stream().map(n -> n.toString()).collect(Collectors.joining(",")));
-    }
-
-    XmlMetaschema retval = metaschemaCache.get(resource);
-    if (retval == null) {
-      logger.info("Loading metaschema '{}'", resource);
-      // parse this metaschema
-      METASCHEMADocument metaschemaXml;
-      try {
-        metaschemaXml = METASCHEMADocument.Factory.parse(resource.toURL());
-      } catch (XmlException e) {
-        throw new MetaschemaException(e);
-      }
-
-      // now check if this Metaschema imports other metaschema
-      int size = metaschemaXml.getMETASCHEMA().sizeOfImportArray();
-      Map<URI, Metaschema> importedMetaschema;
-      if (size == 0) {
-        importedMetaschema = Collections.emptyMap();
-      } else {
-        visitedMetaschema.push(resource);
-        try {
-          importedMetaschema = new LinkedHashMap<>();
-          for (ImportDocument.Import imported : metaschemaXml.getMETASCHEMA().getImportList()) {
-            URI importedResource = URI.create(imported.getHref());
-            importedResource = resource.resolve(importedResource);
-            importedMetaschema.put(importedResource,
-                loadMetaschema(importedResource, visitedMetaschema, metaschemaCache));
-          }
-        } finally {
-          visitedMetaschema.pop();
-        }
-      }
-
-      // now create this metaschema
-      retval = new XmlMetaschema(resource, metaschemaXml, importedMetaschema);
-      metaschemaCache.put(resource, retval);
-    } else {
-      logger.debug("Found metaschema in cache '{}'", resource);
-    }
-    return retval;
-  }
-
   private final METASCHEMADocument metaschema;
-  private final Map<String, InfoElementDefinition> infoElementDefinitions;
-  private final Map<String, XmlFlagDefinition> flagDefinitions;
-  private final Map<String, XmlFieldDefinition> fieldDefinitions;
-  private final Map<String, XmlAssemblyDefinition> assemblyDefinitions;
+  private final Map<String, FlagDefinition> flagDefinitions;
+  private final Map<String, FieldDefinition> fieldDefinitions;
+  private final Map<String, AssemblyDefinition> assemblyDefinitions;
+  private final Map<String, AssemblyDefinition> rootAssemblyDefinitions;
 
   /**
    * Constructs a new Metaschema instance.
@@ -153,45 +80,73 @@ public class XmlMetaschema extends AbstractMetaschema {
     super(resource, importedMetaschema);
     this.metaschema = metaschemaXml;
 
-    XmlCursor cursor = metaschema.getMETASCHEMA().newCursor();
-    cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
-        + "$this/m:define-assembly|$this/m:define-field|$this/m:define-flag");
+    METASCHEMA metaschemaNode = metaschema.getMETASCHEMA();
 
     // handle definitions in this metaschema
-    Map<String, InfoElementDefinition> infoElementDefinitions = new LinkedHashMap<>();
-    Map<String, XmlFlagDefinition> flagDefinitions = new LinkedHashMap<>();
-    Map<String, XmlFieldDefinition> fieldDefinitions = new LinkedHashMap<>();
-    Map<String, XmlAssemblyDefinition> assemblyDefinitions = new LinkedHashMap<>();
+    {
+      // start with flag definitions
+      Map<String, FlagDefinition> flagDefinitions = new LinkedHashMap<>();
 
-    while (cursor.toNextSelection()) {
-      XmlObject obj = cursor.getObject();
-      if (obj instanceof DefineFlagDocument.DefineFlag) {
-        XmlFlagDefinition flag = new XmlFlagDefinition((DefineFlagDocument.DefineFlag) obj, this);
+      XmlCursor cursor = metaschemaNode.newCursor();
+      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
+          + "$this/m:define-flag");
+
+      while (cursor.toNextSelection()) {
+        XmlObject obj = cursor.getObject();
+        XmlGlobalFlagDefinition flag = new XmlGlobalFlagDefinition((GlobalFlagDefinition) obj, this);
         logger.trace("New flag definition '{}'", Util.toCoordinates(flag));
         flagDefinitions.put(flag.getName(), flag);
-        infoElementDefinitions.put(flag.getName(), flag);
-      } else if (obj instanceof DefineFieldDocument.DefineField) {
-        XmlFieldDefinition field = new XmlFieldDefinition((DefineFieldDocument.DefineField) obj, this);
+      }
+      this.flagDefinitions
+          = flagDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagDefinitions);
+    }
+
+    {
+      // now field definitions
+      Map<String, FieldDefinition> fieldDefinitions = new LinkedHashMap<>();
+
+      XmlCursor cursor = metaschemaNode.newCursor();
+      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
+          + "$this/m:define-field");
+
+      while (cursor.toNextSelection()) {
+        XmlObject obj = cursor.getObject();
+        XmlGlobalFieldDefinition field = new XmlGlobalFieldDefinition((GlobalFieldDefinition) obj, this);
         logger.trace("New field definition '{}'", Util.toCoordinates(field));
         fieldDefinitions.put(field.getName(), field);
-        infoElementDefinitions.put(field.getName(), field);
-      } else if (obj instanceof DefineAssemblyDocument.DefineAssembly) {
-        XmlAssemblyDefinition assembly = new XmlAssemblyDefinition((DefineAssemblyDocument.DefineAssembly) obj, this);
+      }
+
+      this.fieldDefinitions
+          = fieldDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(fieldDefinitions);
+    }
+
+    {
+      // finally assembly definitions
+      Map<String, AssemblyDefinition> assemblyDefinitions = new LinkedHashMap<>();
+      Map<String, AssemblyDefinition> rootAssemblyDefinitions = new LinkedHashMap<>();
+
+      XmlCursor cursor = metaschemaNode.newCursor();
+      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
+          + "$this/m:define-assembly");
+
+      while (cursor.toNextSelection()) {
+        XmlObject obj = cursor.getObject();
+        XmlGlobalAssemblyDefinition assembly = new XmlGlobalAssemblyDefinition((GlobalAssemblyDefinition) obj, this);
         logger.trace("New assembly definition '{}'", Util.toCoordinates(assembly));
         assemblyDefinitions.put(assembly.getName(), assembly);
-        infoElementDefinitions.put(assembly.getName(), assembly);
+        if (assembly.isRoot()) {
+          rootAssemblyDefinitions.put(assembly.getRootName(), assembly);
+        }
       }
-    }
-    this.flagDefinitions
-        = flagDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagDefinitions);
-    this.fieldDefinitions
-        = fieldDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(fieldDefinitions);
-    this.assemblyDefinitions
-        = assemblyDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(assemblyDefinitions);
-    this.infoElementDefinitions = infoElementDefinitions.isEmpty() ? Collections.emptyMap()
-        : Collections.unmodifiableMap(infoElementDefinitions);
 
-    parseUsedDefinitions();
+      this.assemblyDefinitions
+          = assemblyDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(assemblyDefinitions);
+      this.rootAssemblyDefinitions
+          = rootAssemblyDefinitions.isEmpty() ? Collections.emptyMap()
+              : Collections.unmodifiableMap(rootAssemblyDefinitions);
+    }
+
+    parseExportedDefinitions();
   }
 
   @Override
@@ -205,27 +160,29 @@ public class XmlMetaschema extends AbstractMetaschema {
   }
 
   @Override
-  public Map<String, InfoElementDefinition> getInfoElementDefinitions() {
-    return infoElementDefinitions;
-  }
-
-  @Override
-  public Map<String, XmlAssemblyDefinition> getAssemblyDefinitions() {
+  public Map<String, AssemblyDefinition> getAssemblyDefinitions() {
     return assemblyDefinitions;
   }
 
   @Override
-  public Map<String, XmlFieldDefinition> getFieldDefinitions() {
+  public Map<String, FieldDefinition> getFieldDefinitions() {
     return fieldDefinitions;
   }
 
   @Override
-  public Map<String, XmlFlagDefinition> getFlagDefinitions() {
+  public List<? extends ObjectDefinition> getAssemblyAndFieldDefinitions() {
+    return Stream.of(getAssemblyDefinitions().values(), getFieldDefinitions().values())
+        .flatMap(x -> x.stream())
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public Map<String, FlagDefinition> getFlagDefinitions() {
     return flagDefinitions;
   }
 
   @Override
-  public XmlAssemblyDefinition getRootAssemblyDefinition() {
-    return getAssemblyDefinitions().get(metaschema.getMETASCHEMA().getRoot());
+  public Map<String, AssemblyDefinition> getRootAssemblyDefinitions() {
+    return rootAssemblyDefinitions;
   }
 }

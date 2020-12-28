@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,18 +26,18 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.xml.FieldDocument;
-import gov.nist.itl.metaschema.model.xml.FieldDocument.Field.InXml;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.info.definitions.DataType;
-import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
-import gov.nist.secauto.metaschema.model.info.instances.AbstractFieldInstance;
-import gov.nist.secauto.metaschema.model.info.instances.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.info.instances.XmlGroupAsBehavior;
+import gov.nist.itl.metaschema.model.m4.xml.FieldDocument;
+import gov.nist.secauto.metaschema.model.Metaschema;
+import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.definitions.DataType;
+import gov.nist.secauto.metaschema.model.instances.AbstractFieldInstance;
+import gov.nist.secauto.metaschema.model.instances.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.instances.XmlGroupAsBehavior;
 
 import java.math.BigInteger;
 
-public class XmlFieldInstance extends AbstractFieldInstance {
+public class XmlFieldInstance
+    extends AbstractFieldInstance<XmlGlobalFieldDefinition> {
   // private static final Logger logger = LogManager.getLogger(XmlFieldInstance.class);
 
   private final FieldDocument.Field xmlField;
@@ -51,10 +51,46 @@ public class XmlFieldInstance extends AbstractFieldInstance {
    * @param parent
    *          the field definition this object is an instance of
    */
-  public XmlFieldInstance(FieldDocument.Field xmlField, InfoElementDefinition parent) {
+  public XmlFieldInstance(FieldDocument.Field xmlField, AssemblyDefinition parent) {
     super(parent);
     this.xmlField = xmlField;
   }
+
+  /**
+   * Get the underlying XML data.
+   * 
+   * @return the underlying XML data
+   */
+  protected FieldDocument.Field getXmlField() {
+    return xmlField;
+  }
+
+  @Override
+  public XmlGlobalFieldDefinition getDefinition() {
+    return (XmlGlobalFieldDefinition) getContainingDefinition().getContainingMetaschema()
+        .getFieldDefinitionByName(getName());
+  }
+
+  @Override
+  public boolean hasXmlWrapper() {
+    boolean retval;
+    if (DataType.MARKUP_MULTILINE.equals(getDefinition().getDatatype())) {
+      // default value
+      retval = Metaschema.DEFAULT_FIELD_XML_WRAPPER;
+      if (getXmlField().isSetInXml()) {
+        retval = FieldDocument.Field.InXml.WITH_WRAPPER.equals(getXmlField().getInXml());
+      }
+    } else {
+      // All other data types get "wrapped"
+      retval = true;
+    }
+    return retval;
+  }
+
+  // @Override
+  // public String getInstanceName() {
+  // return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : getName();
+  // }
 
   @Override
   public String getName() {
@@ -62,29 +98,18 @@ public class XmlFieldInstance extends AbstractFieldInstance {
   }
 
   @Override
-  public String getFormalName() {
-    return getDefinition().getFormalName();
+  public String getUseName() {
+    return getXmlField().isSetUseName() ? getXmlField().getUseName() : getDefinition().getUseName();
   }
 
   @Override
-  public MarkupLine getDescription() {
-    MarkupLine retval = null;
-    if (getXmlField().isSetDescription()) {
-      retval = MarkupStringConverter.toMarkupString(getXmlField().getDescription());
-    } else if (isReference()) {
-      retval = getDefinition().getDescription();
-    }
-    return retval;
-  }
-
-  @Override
-  public DataType getDatatype() {
-    return getDefinition().getDatatype();
+  public String getGroupAsName() {
+    return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : null;
   }
 
   @Override
   public int getMinOccurs() {
-    int retval = 0;
+    int retval = Metaschema.DEFAULT_GROUP_AS_MIN_OCCURS;
     if (getXmlField().isSetMinOccurs()) {
       retval = getXmlField().getMinOccurs().intValueExact();
     }
@@ -93,7 +118,7 @@ public class XmlFieldInstance extends AbstractFieldInstance {
 
   @Override
   public int getMaxOccurs() {
-    int retval = 1;
+    int retval = Metaschema.DEFAULT_GROUP_AS_MAX_OCCURS;
     if (getXmlField().isSetMaxOccurs()) {
       Object value = getXmlField().getMaxOccurs();
       if (value instanceof String) {
@@ -102,25 +127,6 @@ public class XmlFieldInstance extends AbstractFieldInstance {
       } else if (value instanceof BigInteger) {
         retval = ((BigInteger) value).intValueExact();
       }
-    }
-    return retval;
-  }
-
-  @Override
-  public String getInstanceName() {
-    return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : getName();
-  }
-
-  protected FieldDocument.Field getXmlField() {
-    return xmlField;
-  }
-
-  @Override
-  public boolean hasXmlWrapper() {
-    // default value
-    boolean retval = true;
-    if (getXmlField().isSetInXml()) {
-      retval = InXml.WITH_WRAPPER.equals(getXmlField().getInXml());
     }
     return retval;
   }

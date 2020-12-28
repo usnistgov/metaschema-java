@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<METASCHEMA
-  xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0"
-  root="top-level">
+<METASCHEMA xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../../../metaschema-model/src/main/xsd/M4/metaschema.xsd"
+ xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0">
   <schema-name>Simple Metaschema</schema-name>
   <schema-version>1.0</schema-version>
   <short-name>simple</short-name>
@@ -10,6 +10,7 @@
   <define-assembly name="top-level">
     <formal-name>Root</formal-name>
     <description>Root assembly</description>
+    <root-name>top-level</root-name>
     <flag ref="id"/>
     <model/>
   </define-assembly>

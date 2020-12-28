@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,16 +26,17 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.xml.AssemblyDocument;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
-import gov.nist.secauto.metaschema.model.info.instances.AbstractAssemblyInstance;
-import gov.nist.secauto.metaschema.model.info.instances.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.info.instances.XmlGroupAsBehavior;
+import gov.nist.itl.metaschema.model.m4.xml.AssemblyDocument;
+import gov.nist.secauto.metaschema.model.Metaschema;
+import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.instances.AbstractAssemblyInstance;
+import gov.nist.secauto.metaschema.model.instances.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.instances.XmlGroupAsBehavior;
 
 import java.math.BigInteger;
 
-public class XmlAssemblyInstance extends AbstractAssemblyInstance {
+public class XmlAssemblyInstance
+    extends AbstractAssemblyInstance<XmlGlobalAssemblyDefinition> {
   // private static final Logger logger = LogManager.getLogger(XmlAssemblyInstance.class);
 
   private final AssemblyDocument.Assembly xmlAssembly;
@@ -49,9 +50,24 @@ public class XmlAssemblyInstance extends AbstractAssemblyInstance {
    * @param parent
    *          the assembly definition this object is an instance of
    */
-  public XmlAssemblyInstance(AssemblyDocument.Assembly xmlAssembly, InfoElementDefinition parent) {
+  public XmlAssemblyInstance(AssemblyDocument.Assembly xmlAssembly, AssemblyDefinition parent) {
     super(parent);
     this.xmlAssembly = xmlAssembly;
+  }
+
+  /**
+   * Get the underlying XML data.
+   * 
+   * @return the underlying XML data
+   */
+  protected AssemblyDocument.Assembly getXmlAssembly() {
+    return xmlAssembly;
+  }
+
+  @Override
+  public XmlGlobalAssemblyDefinition getDefinition() {
+    return (XmlGlobalAssemblyDefinition) getContainingDefinition().getContainingMetaschema()
+        .getAssemblyDefinitionByName(getName());
   }
 
   @Override
@@ -60,24 +76,18 @@ public class XmlAssemblyInstance extends AbstractAssemblyInstance {
   }
 
   @Override
-  public String getFormalName() {
-    return getDefinition().getFormalName();
+  public String getUseName() {
+    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName() : getDefinition().getUseName();
   }
 
   @Override
-  public MarkupLine getDescription() {
-    MarkupLine retval = null;
-    if (getXmlAssembly().isSetDescription()) {
-      retval = MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription());
-    } else if (isReference()) {
-      retval = getDefinition().getDescription();
-    }
-    return retval;
+  public String getGroupAsName() {
+    return getXmlAssembly().isSetGroupAs() ? getXmlAssembly().getGroupAs().getName() : null;
   }
 
   @Override
   public int getMinOccurs() {
-    int retval = 0;
+    int retval = Metaschema.DEFAULT_GROUP_AS_MIN_OCCURS;
     if (getXmlAssembly().isSetMinOccurs()) {
       retval = getXmlAssembly().getMinOccurs().intValueExact();
     }
@@ -86,7 +96,7 @@ public class XmlAssemblyInstance extends AbstractAssemblyInstance {
 
   @Override
   public int getMaxOccurs() {
-    int retval = 1;
+    int retval = Metaschema.DEFAULT_GROUP_AS_MAX_OCCURS;
     if (getXmlAssembly().isSetMaxOccurs()) {
       Object value = getXmlAssembly().getMaxOccurs();
       if (value instanceof String) {
@@ -97,15 +107,6 @@ public class XmlAssemblyInstance extends AbstractAssemblyInstance {
       }
     }
     return retval;
-  }
-
-  @Override
-  public String getInstanceName() {
-    return getXmlAssembly().isSetGroupAs() ? getXmlAssembly().getGroupAs().getName() : getName();
-  }
-
-  protected AssemblyDocument.Assembly getXmlAssembly() {
-    return xmlAssembly;
   }
 
   @Override

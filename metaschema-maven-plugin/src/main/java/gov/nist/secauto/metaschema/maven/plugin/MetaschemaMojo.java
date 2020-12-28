@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -59,7 +59,8 @@ import java.util.stream.Stream;
  * Goal which generates Java source files for a given set of Metaschema definitions.
  */
 @Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
-public class MetaschemaMojo extends AbstractMojo {
+public class MetaschemaMojo
+    extends AbstractMojo {
   private static final String SYSTEM_FILE_ENCODING_PROPERTY = "file.encoding";
   private static final String METASCHEMA_STAE_FILE_NAME = "metaschemaStateFile";
   private static final String[] DEFAULT_INCLUDES = { "**/*.xml" };
@@ -323,7 +324,7 @@ public class MetaschemaMojo extends AbstractMojo {
       final MetaschemaLoader loader = new MetaschemaLoader();
       final Set<Metaschema> metaschemaCollection = new HashSet<>();
       for (File source : getSources().collect(Collectors.toList())) {
-        getLog().info("Source: " + source.getPath());
+        getLog().info("Using metaschema source: " + source.getPath());
         Metaschema metaschema;
         try {
           metaschema = loader.loadXmlMetaschema(source);
@@ -331,7 +332,6 @@ public class MetaschemaMojo extends AbstractMojo {
           throw new MojoExecutionException("Loading of metaschema failed", ex);
         }
         metaschemaCollection.add(metaschema);
-
       }
 
       // TODO: load this from the requested file
@@ -359,9 +359,10 @@ public class MetaschemaMojo extends AbstractMojo {
       } catch (IOException ex) {
         throw new MojoExecutionException("Failed to write stale file: " + staleFile.getPath(), ex);
       }
+      getLog().info("Created stale file: " + staleFile);
 
       // for m2e
-      buildContext.refresh(getOutputDirectory());
+      // buildContext.refresh(getOutputDirectory());
     }
 
     // add generated sources to Maven

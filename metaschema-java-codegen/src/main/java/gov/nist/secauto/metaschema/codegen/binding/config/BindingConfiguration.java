@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -27,13 +27,25 @@
 package gov.nist.secauto.metaschema.codegen.binding.config;
 
 import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
+import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 
 public interface BindingConfiguration {
 
-  String getPackageName(Metaschema metaschema);
+  /**
+   * Generates a Java package name for the provided Metaschema.
+   * 
+   * @param metaschema
+   *          the Metaschema to generate a package name for
+   * @return a Java package name
+   */
+  String getPackageNameForMetaschema(Metaschema metaschema);
 
-  String getClassName(ManagedObject definition);
-
-  JavaTypeSupplier getJavaTypeSupplier();
+  /**
+   * Generates a Java class name for the provided field or assembly definition.
+   * 
+   * @param definition
+   *          the definition to generate the Java class name for
+   * @return a Java class name
+   */
+  String getClassName(ObjectDefinition definition);
 }

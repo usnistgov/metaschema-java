@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,10 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.xml.MarkupContentType;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.itl.metaschema.model.m4.xml.MarkupLine;
+import gov.nist.itl.metaschema.model.m4.xml.MarkupMultiline;
 
 import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.XmlTokenSource;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -46,7 +47,31 @@ public class MarkupStringConverter {
    *          the content to convert
    * @return the equivalent formatted text as a MarkupLine
    */
-  public static MarkupLine toMarkupString(MarkupContentType content) {
+  public static gov.nist.secauto.metaschema.datatypes.markup.MarkupLine toMarkupString(MarkupLine content) {
+    String html = processHTML(content);
+    return gov.nist.secauto.metaschema.datatypes.markup.MarkupLine.fromHtml(html);
+  }
+
+  /**
+   * Converts multiple lines of HTML-like markup into a MarkupMultiline.
+   * 
+   * @param content
+   *          the content to convert
+   * @return the equivalent formatted text as a MarkupLine
+   */
+  public static gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline toMarkupString(MarkupMultiline content) {
+    String html = processHTML(content);
+    return gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline.fromHtml(html);
+  }
+
+  /**
+   * Converts a set of XML tokens, which represent HTML content, into an HTML string.
+   * 
+   * @param content
+   *          the content to convert
+   * @return an HTML string
+   */
+  protected static String processHTML(XmlTokenSource content) {
     XmlOptions options = new XmlOptions();
     options.setSaveInner();
     options.setSaveUseOpenFrag();
@@ -56,8 +81,6 @@ public class MarkupStringConverter {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    String retval
-        = writer.toString().replaceFirst("^<frag\\:fragment[^>]+>", "").replaceFirst("</frag\\:fragment>$", "");
-    return MarkupLine.fromHtml(retval);
+    return writer.toString().replaceFirst("^<frag\\:fragment[^>]+>", "").replaceFirst("</frag\\:fragment>$", "");
   }
 }

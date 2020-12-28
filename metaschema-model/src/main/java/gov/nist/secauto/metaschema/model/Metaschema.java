@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,48 +26,168 @@
 
 package gov.nist.secauto.metaschema.model;
 
-import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.info.definitions.FlagDefinition;
-import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
+import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.definitions.DataType;
+import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
+import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
+import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.instances.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.instances.XmlGroupAsBehavior;
 
 import java.net.URI;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public interface Metaschema {
+  public static final boolean DEFAULT_REQUIRED = false;
+  public static final DataType DEFAULT_DATA_TYPE = DataType.STRING;
+  public static final int DEFAULT_GROUP_AS_MIN_OCCURS = 0;
+  public static final int DEFAULT_GROUP_AS_MAX_OCCURS = 1;
+  public static final boolean DEFAULT_FIELD_XML_WRAPPER = true;
+  public static final ModuleScopeEnum DEFAULT_MODEL_SCOPE = ModuleScopeEnum.INHERITED;
+  public static final boolean DEFAULT_COLLAPSIBLE = true;
+  public static final JsonGroupAsBehavior DEFAULT_JSON_GROUP_AS_BEHAVIOR = JsonGroupAsBehavior.SINGLETON_OR_LIST;
+  public static final XmlGroupAsBehavior DEFAULT_XML_GROUP_AS_BEHAVIOR = XmlGroupAsBehavior.UNGROUPED;
+
+  /**
+   * Retrieves the location where the Metaschema was loaded from.
+   * 
+   * @return the location
+   */
   URI getLocation();
 
+  /**
+   * Retrieves the short name for the Metaschema, which provides a textual identifier for the
+   * Metaschema instance.
+   * 
+   * @return the short name
+   */
   String getShortName();
 
+  /**
+   * Retrieves the XML namespace associated with the Metaschema.
+   * 
+   * @return a namespace
+   */
   URI getXmlNamespace();
 
+  /**
+   * Retrieves all Metaschema imported by this Metaschema.
+   * 
+   * @return a mapping of locations to Metaschema
+   */
   Map<URI, Metaschema> getImportedMetaschema();
 
-  Map<String, ? extends InfoElementDefinition> getInfoElementDefinitions();
-
+  /**
+   * Retrieves the top-level assembly definitions in this Metaschema.
+   * 
+   * @return a mapping of name to assembly definition
+   */
   Map<String, ? extends AssemblyDefinition> getAssemblyDefinitions();
 
+  /**
+   * Retrieves the top-level field definitions in this Metaschema.
+   * 
+   * @return a mapping of name to field definition
+   */
   Map<String, ? extends FieldDefinition> getFieldDefinitions();
 
+  /**
+   * Retrieves the top-level assembly and field definitions in this Metaschema.
+   * 
+   * @return a listing of assembly and field definitions
+   */
+  List<? extends ObjectDefinition> getAssemblyAndFieldDefinitions();
+
+  /**
+   * Retrieves the top-level flag definitions in this Metaschema.
+   * 
+   * @return a mapping of name to flag definition
+   */
   Map<String, ? extends FlagDefinition> getFlagDefinitions();
 
-  InfoElementDefinition getInfoElementDefinitionByName(String name);
+  /**
+   * Retrieves the information elements matching the path.
+   * 
+   * @param path
+   *          a MetaPath expression
+   * @return the matching information elements or an empty collection
+   */
+  Collection<InfoElement> getInfoElementByMetaPath(String path);
 
+  /**
+   * Retrieves the assembly definition with a matching name from either: 1) the top-level assembly
+   * definitions from this Metaschema, or 2) global assembly definitions from each imported Metaschema
+   * in reverse order of import.
+   * 
+   * @param name
+   *          the name of the assembly to find
+   * @return the assembly definition
+   */
   AssemblyDefinition getAssemblyDefinitionByName(String name);
 
+  /**
+   * Retrieves the field definition with a matching name from either: 1) the top-level field
+   * definitions from this Metaschema, or 2) global field definitions from each imported Metaschema in
+   * reverse order of import.
+   * 
+   * @param name
+   *          the name of the field definition to find
+   * @return the field definition
+   */
   FieldDefinition getFieldDefinitionByName(String name);
 
+  /**
+   * Retrieves the flag definition with a matching name from either: 1) the top-level flag definitions
+   * from this Metaschema, or 2) global flag definitions from each imported Metaschema in reverse
+   * order of import.
+   * 
+   * @param name
+   *          the name of the flag definition to find
+   * @return the flag definition
+   */
   FlagDefinition getFlagDefinitionByName(String name);
 
-  AssemblyDefinition getRootAssemblyDefinition();
+  /**
+   * Retrieves a mapping of the root name to top-level assembly definitions that are marked as roots
+   * from the current Metaschema.
+   * 
+   * @return a map of root names to assembly definitions marked as root
+   */
+  Map<String, AssemblyDefinition> getRootAssemblyDefinitions();
 
-  Map<String, InfoElementDefinition> getUsedInfoElementDefinitions();
+  /**
+   * Retrieve the top-level flag definitions that are marked global in this metaschema or in any
+   * imported Metaschema. The resulting map is built by adding global definitions from each imported
+   * metaschema in order of import, then adding global definitions from the current Metaschema. Such a
+   * map is built in this way for each imported Metaschema in the chain. Values for clashing keys will
+   * be replaced in this order, giving preference to the "closest" definition
+   * 
+   * @return a mapping of name to flag definition
+   */
+  Map<String, FlagDefinition> getExportedFlagDefinitions();
 
-  Map<String, FlagDefinition> getUsedFlagDefinitions();
+  /**
+   * Retrieve the top-level field definitions that are marked global in this metaschema or in any
+   * imported Metaschema. The resulting map is built by adding global definitions from each imported
+   * metaschema in order of import, then adding global definitions from the current Metaschema. Such a
+   * map is built in this way for each imported Metaschema in the chain. Values for clashing keys will
+   * be replaced in this order, giving preference to the "closest" definition
+   * 
+   * @return a mapping of name to field definition
+   */
+  Map<String, FieldDefinition> getExportedFieldDefinitions();
 
-  Map<String, FieldDefinition> getUsedFieldDefinitions();
-
-  Map<String, AssemblyDefinition> getUsedAssemblyDefinitions();
-
-  // String getPackageName();
+  /**
+   * Retrieve the top-level assembly definitions that are marked global in this metaschema or in any
+   * imported Metaschema. The resulting map is built by adding global definitions from each imported
+   * metaschema in order of import, then adding global definitions from the current Metaschema. Such a
+   * map is built in this way for each imported Metaschema in the chain. Values for clashing keys will
+   * be replaced in this order, giving preference to the "closest" definition
+   * 
+   * @return a mapping of name to assembly definition
+   */
+  Map<String, AssemblyDefinition> getExportedAssemblyDefinitions();
 }

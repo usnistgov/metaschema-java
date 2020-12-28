@@ -1,0 +1,24 @@
+<xb:config xmlns:meta="http://csrc.nist.gov/ns/oscal/metaschema/1.0"
+    xmlns:xb="http://xml.apache.org/xmlbeans/2004/02/xbean/config"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  	xsi:schemaLocation="http://xml.apache.org/xmlbeans/2004/02/xbean/config
+                      http://svn.apache.org/viewvc/xmlbeans/trunk/src/main/schema/config/xmlconfig.xsd?view=co">
+    <xb:namespace uri="http://csrc.nist.gov/ns/oscal/metaschema/1.0">
+        <xb:package>gov.nist.itl.metaschema.model.m4.xml</xb:package>
+    </xb:namespace>
+	<xb:usertype name="meta:boolean" javaname="java.lang.Boolean">
+	  <xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.BooleanType</xb:staticHandler>
+	</xb:usertype>
+ <!-- 
+    <xb:extension for="gov.nist.itl.metaschema.model.M4.xml.LocalFlagDefinition">
+        <xb:interface name="gov.nist.secauto.metaschema.model.xmlbeans.XmlFlagDefinitionModel">
+            <xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.XmlFlagDefinitionModelHandler</xb:staticHandler>
+        </xb:interface>
+    </xb:extension>
+    <xb:extension for="gov.nist.itl.metaschema.model.M4.xml.GlobalFlagDefinition">
+        <xb:interface name="gov.nist.secauto.metaschema.model.xmlbeans.XmlFlagDefinitionModel">
+            <xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.XmlFlagDefinitionModelHandler</xb:staticHandler>
+        </xb:interface>
+    </xb:extension>
+ -->
+ </xb:config>

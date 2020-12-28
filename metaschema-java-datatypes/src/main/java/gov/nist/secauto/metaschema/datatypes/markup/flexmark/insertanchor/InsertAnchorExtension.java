@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -39,7 +39,8 @@ import gov.nist.secauto.metaschema.datatypes.markup.flexmark.insertanchor.intern
 import gov.nist.secauto.metaschema.datatypes.markup.flexmark.insertanchor.internal.InsertAnchorInlineParser;
 import gov.nist.secauto.metaschema.datatypes.markup.flexmark.insertanchor.internal.InsertAnchorNodeRenderer;
 
-public class InsertAnchorExtension implements Parser.ParserExtension, HtmlRenderer.HtmlRendererExtension,
+public class InsertAnchorExtension
+    implements Parser.ParserExtension, HtmlRenderer.HtmlRendererExtension,
     Formatter.FormatterExtension, FlexmarkHtmlConverter.HtmlConverterExtension {
   public static final DataKey<Boolean> ENABLE_INLINE_INSERT_ANCHORS
       = new DataKey<>("ENABLE_INLINE_INSERT_ANCHORS", true);

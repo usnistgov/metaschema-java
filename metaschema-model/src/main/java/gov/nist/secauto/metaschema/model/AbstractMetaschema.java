@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,49 +26,40 @@
 
 package gov.nist.secauto.metaschema.model;
 
-import gov.nist.secauto.metaschema.model.info.Util;
-import gov.nist.secauto.metaschema.model.info.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.info.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.info.definitions.FlagContainer;
-import gov.nist.secauto.metaschema.model.info.definitions.FlagDefinition;
-import gov.nist.secauto.metaschema.model.info.definitions.InfoElementDefinition;
-import gov.nist.secauto.metaschema.model.info.definitions.ModelContainer;
-import gov.nist.secauto.metaschema.model.info.instances.AssemblyInstance;
-import gov.nist.secauto.metaschema.model.info.instances.ChoiceInstance;
-import gov.nist.secauto.metaschema.model.info.instances.FieldInstance;
-import gov.nist.secauto.metaschema.model.info.instances.FlagInstance;
-import gov.nist.secauto.metaschema.model.info.instances.InfoElementInstance;
+import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
+import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
+import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
+import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URI;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public abstract class AbstractMetaschema implements Metaschema {
   private static final Logger logger = LogManager.getLogger(AbstractMetaschema.class);
 
   private final URI location;
   private final Map<URI, Metaschema> importedMetaschema;
-  private Map<String, InfoElementDefinition> usedInfoElementDefinitions;
-  private Map<String, FlagDefinition> usedFlagDefinitions;
-  private Map<String, FieldDefinition> usedFieldDefinitions;
-  private Map<String, AssemblyDefinition> usedAssemblyDefinitions;
+  private Map<String, FlagDefinition> exportedFlagDefinitions;
+  private Map<String, FieldDefinition> exportedFieldDefinitions;
+  private Map<String, AssemblyDefinition> exportedAssemblyDefinitions;
 
   /**
    * Constructs a new {@link Metaschema} instance.
    * 
    * @param metaschemaResource
-   *          the resource to load the metaschema from
-   * @param bindingConfiguration
-   *          the binding configuration to use for customizing generated code for this metaschema
+   *          the resource to load the Metaschema from
    * @param importedMetaschema
-   *          previously imported metaschema that this metaschema might import
+   *          all previously imported Metaschema that this Metaschema might import
    */
   public AbstractMetaschema(URI metaschemaResource, Map<URI, ? extends Metaschema> importedMetaschema) {
     Objects.requireNonNull(metaschemaResource, "metaschemaResource");
@@ -84,180 +75,81 @@ public abstract class AbstractMetaschema implements Metaschema {
   }
 
   @Override
-  public Map<String, InfoElementDefinition> getUsedInfoElementDefinitions() {
-    return Collections.unmodifiableMap(usedInfoElementDefinitions);
+  public Map<String, FlagDefinition> getExportedFlagDefinitions() {
+    return Collections.unmodifiableMap(exportedFlagDefinitions);
   }
 
   @Override
-  public Map<String, FlagDefinition> getUsedFlagDefinitions() {
-    return Collections.unmodifiableMap(usedFlagDefinitions);
+  public Map<String, FieldDefinition> getExportedFieldDefinitions() {
+    return Collections.unmodifiableMap(exportedFieldDefinitions);
   }
 
   @Override
-  public Map<String, FieldDefinition> getUsedFieldDefinitions() {
-    return Collections.unmodifiableMap(usedFieldDefinitions);
+  public Map<String, AssemblyDefinition> getExportedAssemblyDefinitions() {
+    return Collections.unmodifiableMap(exportedAssemblyDefinitions);
+  }
+
+  private static class ExportedDefinitionsFilter<DEF extends InfoElementDefinition> implements Predicate<DEF> {
+    @Override
+    public boolean test(DEF definition) {
+      return ModuleScopeEnum.INHERITED.equals(definition.getModuleScope())
+          || (ModelType.ASSEMBLY.equals(definition.getModelType()) && ((AssemblyDefinition) definition).isRoot());
+    }
   }
 
   @Override
-  public Map<String, AssemblyDefinition> getUsedAssemblyDefinitions() {
-    return Collections.unmodifiableMap(usedAssemblyDefinitions);
+  public Collection<InfoElement> getInfoElementByMetaPath(String path) {
+    // TODO: implement path evaluation
+    throw new UnsupportedOperationException();
   }
 
-  protected void parseUsedDefinitions() throws MetaschemaException {
+  private static <DEF extends InfoElementDefinition> void addToMap(Collection<DEF> items,
+      Map<String, DEF> existingMap) {
+    for (DEF item : items) {
+      DEF oldItem = existingMap.put(item.getName(), item);
+      if (oldItem != null && oldItem != item && logger.isWarnEnabled()) {
+        logger.warn("The {} '{}' from metaschema '{}' is shadowing '{}' from metaschema '{}'",
+            item.getModelType().name().toLowerCase(), item.getName(), item.getContainingMetaschema().getShortName(),
+            oldItem.getName(), oldItem.getContainingMetaschema().getShortName());
+      }
+    }
+  }
+
+  /**
+   * Processes the definitions exported by the Metaschema, saving a list of all exported by specific
+   * model types.
+   * 
+   * @throws MetaschemaException
+   *           if a parsing error occurs
+   */
+  protected void parseExportedDefinitions() throws MetaschemaException {
     logger.debug("Processing metaschema '{}'", this.getLocation());
 
-    // handle definitions used in this metaschema, including any referenced definitions in included
-    // metaschema
-    if (getImportedMetaschema().isEmpty()) {
-      this.usedInfoElementDefinitions = new LinkedHashMap<>(getInfoElementDefinitions());
-      this.usedFlagDefinitions = new LinkedHashMap<>(getFlagDefinitions());
-      this.usedFieldDefinitions = new LinkedHashMap<>(getFieldDefinitions());
-      this.usedAssemblyDefinitions = new LinkedHashMap<>(getAssemblyDefinitions());
-    } else {
-      AssemblyDefinition rootAssemblyDefinition = getRootAssemblyDefinition();
-      Map<String, InfoElementDefinition> usedDefinitions = new LinkedHashMap<>();
-      processUsedDefinitions(rootAssemblyDefinition, usedDefinitions);
+    this.exportedFlagDefinitions = new LinkedHashMap<>();
+    this.exportedFieldDefinitions = new LinkedHashMap<>();
+    this.exportedAssemblyDefinitions = new LinkedHashMap<>();
 
-      this.usedInfoElementDefinitions = new LinkedHashMap<>();
-      this.usedFlagDefinitions = new LinkedHashMap<>();
-      this.usedFieldDefinitions = new LinkedHashMap<>();
-      this.usedAssemblyDefinitions = new LinkedHashMap<>();
+    // handle definitions from any included metaschema first
+    Map<URI, Metaschema> importedMetaschema = getImportedMetaschema();
 
-      List<Metaschema> metaschemas = new ArrayList<>(getImportedMetaschema().size() + 1);
-      metaschemas.addAll(getImportedMetaschema().values());
-      metaschemas.add(this);
-
-      for (Metaschema metaschema : metaschemas) {
-        for (InfoElementDefinition definition : metaschema.getInfoElementDefinitions().values()) {
-          logger.trace("Checking use of '{}'", Util.toCoordinates(definition));
-
-          InfoElementDefinition usedDefinition = usedDefinitions.get(definition.getName());
-          boolean used = definition.equals(usedDefinition);
-          if (used) {
-            logger.debug("Using definition '{}'", Util.toCoordinates(usedDefinition));
-          } else {
-            if (usedDefinition != null) {
-              logger.trace("  Unused definition '{}'", Util.toCoordinates(usedDefinition));
-            } else {
-              logger.trace("  No match for definition '{}'", Util.toCoordinates(definition));
-            }
-            continue;
-          }
-
-          String usedName = usedDefinition.getName();
-          this.usedInfoElementDefinitions.put(usedName, usedDefinition);
-          if (usedDefinition instanceof FlagDefinition) {
-            this.usedFlagDefinitions.put(usedName, (FlagDefinition) usedDefinition);
-          } else if (usedDefinition instanceof FieldDefinition) {
-            this.usedFieldDefinitions.put(usedName, (FieldDefinition) usedDefinition);
-          } else if (usedDefinition instanceof AssemblyDefinition) {
-            this.usedAssemblyDefinitions.put(usedName, (AssemblyDefinition) usedDefinition);
-          }
-        }
+    if (!importedMetaschema.isEmpty()) {
+      for (Metaschema metaschema : importedMetaschema.values()) {
+        addToMap(metaschema.getExportedFlagDefinitions().values(), this.exportedFlagDefinitions);
+        addToMap(metaschema.getExportedFieldDefinitions().values(), this.exportedFieldDefinitions);
+        addToMap(metaschema.getExportedAssemblyDefinitions().values(), this.exportedAssemblyDefinitions);
       }
     }
 
-  }
-
-  private void processUsedDefinitions(AssemblyDefinition definition, Map<String, InfoElementDefinition> usedDefinitions)
-      throws MetaschemaException {
-    logger.trace("Analyzing use of assembly '{}'", Util.toCoordinates(definition));
-    if (isNewDefinition(definition, usedDefinitions)) {
-      usedDefinitions.put(definition.getName(), definition);
-
-      // get all referenced flags
-      processUsedDefinitions((FlagContainer) definition, usedDefinitions);
-
-      // get all referenced assemblies and fields, and anything they reference
-      processUsedDefinitions((ModelContainer) definition, usedDefinitions);
-    } else {
-      logger.trace("  skipping assembly '{}'", Util.toCoordinates(definition));
-    }
-  }
-
-  private void processUsedDefinitions(FlagContainer container, Map<String, InfoElementDefinition> usedDefinitions)
-      throws MetaschemaException {
-    // get all referenced flags
-    for (FlagInstance instance : container.getFlagInstances().values()) {
-      logger.trace("Analyzing use of flag '{}'", Util.toCoordinates(instance));
-      if (instance.isReference()) {
-        FlagDefinition flagDefinition = instance.getDefinition();
-        if (isNewDefinition(flagDefinition, usedDefinitions)) {
-          usedDefinitions.put(flagDefinition.getName(), flagDefinition);
-          logger.debug("Using definition '{}'", Util.toCoordinates(flagDefinition));
-        } else {
-          logger.debug("  Skipping known definition '{}'", Util.toCoordinates(flagDefinition));
-        }
-      } else {
-        // a local definition
-        logger.debug("  Skipping local instance '{}'", Util.toCoordinates(instance));
-      }
-    }
-  }
-
-  private void processUsedDefinitions(ModelContainer modelContainer, Map<String, InfoElementDefinition> usedDefinitions)
-      throws MetaschemaException {
-    for (InfoElementInstance instance : modelContainer.getInstances()) {
-      logger.trace("Processing model instance '{}'", Util.toCoordinates(instance));
-      InfoElementDefinition definition = instance.getDefinition();
-      if (instance.isReference()) {
-        if (!isNewDefinition(definition, usedDefinitions)) {
-          logger.debug("  Skipping known definition '{}'", Util.toCoordinates(definition));
-          // skip this one, since we have already processed it
-          continue;
-        } else {
-          // handle below
-        }
-      } else {
-        // a local definition, we still need to process its instances
-      }
-
-      switch (instance.getType()) {
-      case FLAG:
-        // no child instances
-        break;
-      case FIELD:
-        usedDefinitions.put(definition.getName(), definition);
-        logger.debug("Using definition '{}'", Util.toCoordinates(definition));
-        FieldInstance fieldInstance = (FieldInstance) instance;
-        processUsedDefinitions((FlagContainer) fieldInstance.getDefinition(), usedDefinitions);
-        break;
-      case ASSEMBLY:
-        AssemblyInstance assemblyInstance = (AssemblyInstance) instance;
-        processUsedDefinitions(assemblyInstance.getDefinition(), usedDefinitions);
-        break;
-      case CHOICE:
-        ChoiceInstance choiceInstance = (ChoiceInstance) instance;
-        processUsedDefinitions((ModelContainer) choiceInstance, usedDefinitions);
-        break;
-      default:
-        throw new RuntimeException("Unexpected type: " + instance.getType());
-      }
-    }
-  }
-
-  private boolean isNewDefinition(InfoElementDefinition definition, Map<String, InfoElementDefinition> usedDefinitions)
-      throws MetaschemaException {
-    boolean processElement = true;
-    if (usedDefinitions.containsKey(definition.getName())) {
-      InfoElementDefinition existingDefinition = usedDefinitions.get(definition.getName());
-      if (!existingDefinition.getType().equals(definition.getType())) {
-        // check if the types differ
-        throw (new MetaschemaException(
-            String.format("New element '%s: (%s) %s' has conflicting type with old element '%s:(%s)%s'",
-                definition.getContainingMetaschema().getLocation(), definition.getType(), definition.getName(),
-                existingDefinition.getContainingMetaschema().getLocation(), existingDefinition.getType(),
-                existingDefinition.getName())));
-      } else if (!existingDefinition.equals(definition)) {
-        // the field or assembly is shadowing an existing definition
-        throw (new MetaschemaException(String.format("New element '%s: (%s) %s' shadows old element '%s:(%s)%s'",
-            definition.getContainingMetaschema().getLocation(), definition.getType(), definition.getName(),
-            existingDefinition.getContainingMetaschema().getLocation(), existingDefinition.getType(),
-            existingDefinition.getName())));
-      }
-      processElement = false;
-    }
-    return processElement;
+    // now handle top-level definitions from this metaschema. Start first with filtering for globals,
+    // then add these to the maps
+    addToMap(
+        getFlagDefinitions().values().stream().filter(new ExportedDefinitionsFilter<>()).collect(Collectors.toList()),
+        this.exportedFlagDefinitions);
+    addToMap(
+        getFieldDefinitions().values().stream().filter(new ExportedDefinitionsFilter<>()).collect(Collectors.toList()),
+        this.exportedFieldDefinitions);
+    addToMap(getAssemblyDefinitions().values().stream().filter(new ExportedDefinitionsFilter<>())
+        .collect(Collectors.toList()), this.exportedAssemblyDefinitions);
   }
 
   @Override
@@ -266,55 +158,35 @@ public abstract class AbstractMetaschema implements Metaschema {
   }
 
   @Override
-  public InfoElementDefinition getInfoElementDefinitionByName(String name) {
-    InfoElementDefinition retval = getInfoElementDefinitions().get(name);
-    if (retval == null) {
-      for (Metaschema metaschema : getImportedMetaschema().values()) {
-        if ((retval = metaschema.getInfoElementDefinitionByName(name)) != null) {
-          break;
-        }
-      }
-    }
-    return retval;
-  }
-
-  @Override
   public AssemblyDefinition getAssemblyDefinitionByName(String name) {
+    // first try local/global top-level definitions from current metaschema
     AssemblyDefinition retval = getAssemblyDefinitions().get(name);
     if (retval == null) {
-      for (Metaschema metaschema : getImportedMetaschema().values()) {
-        if ((retval = metaschema.getAssemblyDefinitionByName(name)) != null) {
-          break;
-        }
-      }
+      // try global definitions from imported metaschema
+      retval = this.exportedAssemblyDefinitions.get(name);
     }
     return retval;
   }
 
   @Override
   public FieldDefinition getFieldDefinitionByName(String name) {
+    // first try local/global top-level definitions from current metaschema
     FieldDefinition retval = getFieldDefinitions().get(name);
     if (retval == null) {
-      for (Metaschema metaschema : getImportedMetaschema().values()) {
-        if ((retval = metaschema.getFieldDefinitionByName(name)) != null) {
-          break;
-        }
-      }
+      // try global definitions from imported metaschema
+      retval = this.exportedFieldDefinitions.get(name);
     }
     return retval;
   }
 
   @Override
   public FlagDefinition getFlagDefinitionByName(String name) {
+    // first try local/global top-level definitions from current metaschema
     FlagDefinition retval = getFlagDefinitions().get(name);
     if (retval == null) {
-      for (Metaschema metaschema : getImportedMetaschema().values()) {
-        if ((retval = metaschema.getFlagDefinitionByName(name)) != null) {
-          break;
-        }
-      }
+      // try global definitions from imported metaschema
+      retval = this.exportedFlagDefinitions.get(name);
     }
     return retval;
   }
-
 }

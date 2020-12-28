@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,14 +26,14 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import gov.nist.secauto.metaschema.binding.BindingException;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.io.Writer;
 
 public interface Serializer<CLASS> {
+  Format supportedFromat();
+
   void serialize(CLASS data, OutputStream os) throws BindingException;
 
   void serialize(CLASS data, File file) throws BindingException, FileNotFoundException;

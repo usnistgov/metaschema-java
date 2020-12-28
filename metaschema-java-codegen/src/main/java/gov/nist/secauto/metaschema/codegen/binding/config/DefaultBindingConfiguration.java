@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -28,16 +28,16 @@ package gov.nist.secauto.metaschema.codegen.binding.config;
 
 import com.sun.xml.bind.api.impl.NameConverter;
 
-import gov.nist.csrc.ns.metaschemaBinding.x10.JavaManagedObjectBindingType;
 import gov.nist.csrc.ns.metaschemaBinding.x10.JavaModelBindingType;
-import gov.nist.csrc.ns.metaschemaBinding.x10.ManagedObjectBindingType;
+import gov.nist.csrc.ns.metaschemaBinding.x10.JavaObjectDefinitionBindingType;
 import gov.nist.csrc.ns.metaschemaBinding.x10.MetaschemaBindingType;
 import gov.nist.csrc.ns.metaschemaBinding.x10.MetaschemaBindingsDocument;
 import gov.nist.csrc.ns.metaschemaBinding.x10.MetaschemaBindingsType;
 import gov.nist.csrc.ns.metaschemaBinding.x10.ModelBindingType;
+import gov.nist.csrc.ns.metaschemaBinding.x10.ObjectDefinitionBindingType;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
-import gov.nist.secauto.metaschema.model.info.definitions.ManagedObject;
+import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 
 import org.apache.xmlbeans.XmlException;
 
@@ -49,43 +49,54 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class DefaultBindingConfiguration implements BindingConfiguration {
   private Map<String, String> namespaceToPackageNameMap = new HashMap<>();
-  private Map<String, Map<String, MutableManagedObjectBindingConfiguration>> metaschemaUrlToManagedObjectMap
+  // metaschema location -> ModelType -> Definition Name -> BindingConfiguration
+  private final Map<String, MetaschemaBindingConfiguration> metaschemaUrlToMetaschemaBindingConfigurationMap
       = new HashMap<>();
 
+  /**
+   * Create a new binding configuration.
+   */
   public DefaultBindingConfiguration() {
 
   }
 
   @Override
-  public String getPackageName(Metaschema metaschema) {
+  public String getPackageNameForMetaschema(Metaschema metaschema) {
     URI namespace = metaschema.getXmlNamespace();
-
-    String packageName = getPackageNameForNamespace(namespace.toASCIIString());
-    if (packageName == null) {
-      packageName = NameConverter.standard.toPackageName(namespace.toString());
-    }
-    return packageName;
+    return getPackageNameForNamespace(namespace.toASCIIString());
   }
 
   @Override
-  public String getClassName(ManagedObject managedObject) {
-    String retval = null;
+  public String getClassName(ObjectDefinition definition) {
+    DefinitionBindingConfiguration config = getDefinitionBindingConfiguration(definition);
 
-    ManagedObjectBindingConfiguration managedObjectBinding = getManagedObjectConfig(
-        managedObject.getContainingMetaschema().getLocation().toString(), managedObject.getName());
-    if (managedObjectBinding != null) {
-      retval = managedObjectBinding.getClassName();
+    String retval = null;
+    if (config != null) {
+      retval = config.getClassName();
     }
 
     if (retval == null) {
-      retval = NameConverter.standard.toClassName(managedObject.getName());
+      retval = NameConverter.standard.toClassName(definition.getName());
     }
     return retval;
   }
 
+  /**
+   * Binds an XML namespace, which is normally associated with one or more Metaschema, with a provided
+   * Java package name.
+   * 
+   * @param namespace
+   *          an XML namespace URI
+   * @param packageName
+   *          the package name to associate with the namespace
+   * @throws IllegalStateException
+   *           if the binding configuration is changing a previously changed namespace to package
+   *           binding
+   */
   public void addModelBindingConfig(String namespace, String packageName) {
     if (namespaceToPackageNameMap.containsKey(namespace)) {
       String oldPackageName = namespaceToPackageNameMap.get(namespace);
@@ -93,48 +104,87 @@ public class DefaultBindingConfiguration implements BindingConfiguration {
         throw new IllegalStateException(
             String.format("Attempt to redefine existing package name '%s' to '%s' for namespace '%s'", oldPackageName,
                 packageName, namespace));
-      }
+      } // else the same package name, so do nothing
     } else {
       namespaceToPackageNameMap.put(namespace, packageName);
     }
   }
 
+  /**
+   * Based on the current binding configuration, generate a Java package name for the provided
+   * namespace. If the namespace is already mapped, such as through the use of
+   * {@link #addModelBindingConfig(String, String)}, then the provided package name will be used. If
+   * the namespace is not mapped, then the namespace URI will be translated into a Java package name.
+   * 
+   * @param namespace
+   *          the namespace to generate a Java package name for
+   * @return a Java package name
+   */
   protected String getPackageNameForNamespace(String namespace) {
-    return namespaceToPackageNameMap.get(namespace);
+    String packageName = namespaceToPackageNameMap.get(namespace);
+    if (packageName == null) {
+      packageName = NameConverter.standard.toPackageName(namespace.toString());
+    }
+    return packageName;
   }
 
-  public void addMManagedObjectBindingConfig(String metaschemaUri, String name,
-      MutableManagedObjectBindingConfiguration managedObjectConfig) {
+  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(Metaschema metaschema) {
+    String metaschemaUri = metaschema.getLocation().toString();
+    return getMetaschemaBindingConfiguration(metaschemaUri);
 
-    Map<String, MutableManagedObjectBindingConfiguration> metaschemaConfigs
-        = metaschemaUrlToManagedObjectMap.get(metaschemaUri);
-    if (metaschemaConfigs == null) {
-      metaschemaConfigs = new HashMap<>();
-      metaschemaUrlToManagedObjectMap.put(metaschemaUri, metaschemaConfigs);
-    }
-
-    if (metaschemaConfigs.containsKey(name)) {
-      throw new IllegalStateException(String.format(
-          "Attempt to add an already existing binding configuration set for managed object '%s' in metaschema %s'.",
-          name, metaschemaUri));
-    }
-    metaschemaConfigs.put(name, managedObjectConfig);
   }
 
-  public MutableManagedObjectBindingConfiguration getManagedObjectConfig(String metaschemaUrl, String name) {
-    Map<String, MutableManagedObjectBindingConfiguration> metaschemaConfigs
-        = metaschemaUrlToManagedObjectMap.get(metaschemaUrl);
+  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(String metaschemaUri) {
+    return metaschemaUrlToMetaschemaBindingConfigurationMap.get(metaschemaUri);
+  }
 
-    MutableManagedObjectBindingConfiguration retval = null;
-    if (metaschemaConfigs != null) {
-      retval = metaschemaConfigs.get(name);
+  public MetaschemaBindingConfiguration addMetaschemaBindingConfiguration(String metaschemaUri,
+      MetaschemaBindingConfiguration config) {
+    Objects.requireNonNull(metaschemaUri, "metaschemaUri");
+    Objects.requireNonNull(config, "config");
+    return metaschemaUrlToMetaschemaBindingConfigurationMap.put(metaschemaUri, config);
+  }
+
+  // public void addMManagedObjectBindingConfig(String metaschemaUri, String name,
+  // MutableDefinitionBindingConfiguration managedObjectConfig) {
+  //
+  // Map<String, MutableDefinitionBindingConfiguration> metaschemaConfigs
+  // = metaschemaUrlToObjectDefinitionMap.get(metaschemaUri);
+  // if (metaschemaConfigs == null) {
+  // metaschemaConfigs = new HashMap<>();
+  // metaschemaUrlToObjectDefinitionMap.put(metaschemaUri, metaschemaConfigs);
+  // }
+  //
+  // if (metaschemaConfigs.containsKey(name)) {
+  // throw new IllegalStateException(String.format(
+  // "Attempt to add an already existing binding configuration set for managed object '%s' in
+  // metaschema %s'.",
+  // name, metaschemaUri));
+  // }
+  // metaschemaConfigs.put(name, managedObjectConfig);
+  // }
+
+  protected DefinitionBindingConfiguration getDefinitionBindingConfiguration(ObjectDefinition definition) {
+    String metaschemaUri = definition.getContainingMetaschema().getLocation().toString();
+    String definitionName = definition.getName();
+
+    MetaschemaBindingConfiguration metaschemaConfig = getMetaschemaBindingConfiguration(metaschemaUri);
+
+    DefinitionBindingConfiguration retval = null;
+    if (metaschemaConfig != null) {
+      switch (definition.getModelType()) {
+      case ASSEMBLY:
+        retval = metaschemaConfig.getAssemblyDefinitionBindingConfig(definitionName);
+        break;
+      case FIELD:
+        retval = metaschemaConfig.getFieldDefinitionBindingConfig(definitionName);
+        break;
+      default:
+        throw new UnsupportedOperationException(
+            String.format("Unsupported definition type '%s'", definition.getModelType()));
+      }
     }
     return retval;
-  }
-
-  @Override
-  public JavaTypeSupplier getJavaTypeSupplier() {
-    return new DeconflictingJavaTypeSupplier(this);
   }
 
   public void load(File file) throws MalformedURLException, IOException, MetaschemaException {
@@ -182,47 +232,75 @@ public class DefaultBindingConfiguration implements BindingConfiguration {
     URL metaschemaUrl = new URL(configResource, href);
     String metaschemaUri = metaschemaUrl.toURI().toString();
 
-    for (ManagedObjectBindingType managedObject : metaschema.getDefineAssemblyBindingList()) {
-      processManagedObjectBindingConfig(metaschemaUri, managedObject);
+    MetaschemaBindingConfiguration metaschemaConfig = getMetaschemaBindingConfiguration(metaschemaUri);
+    if (metaschemaConfig == null) {
+      metaschemaConfig = new MetaschemaBindingConfiguration();
+      addMetaschemaBindingConfiguration(metaschemaUri, metaschemaConfig);
+    }
+    for (ObjectDefinitionBindingType assemblyBinding : metaschema.getDefineAssemblyBindingList()) {
+      String name = assemblyBinding.getName();
+      DefinitionBindingConfiguration config = metaschemaConfig.getAssemblyDefinitionBindingConfig(name);
+      config = processDefinitionBindingConfiguration(config, assemblyBinding);
+      metaschemaConfig.addAssemblyDefinitionBindingConfig(name, config);
     }
 
-    for (ManagedObjectBindingType managedObject : metaschema.getDefineFieldBindingList()) {
-      processManagedObjectBindingConfig(metaschemaUri, managedObject);
+    for (ObjectDefinitionBindingType fieldBinding : metaschema.getDefineFieldBindingList()) {
+      String name = fieldBinding.getName();
+      DefinitionBindingConfiguration config = metaschemaConfig.getFieldDefinitionBindingConfig(name);
+      config = processDefinitionBindingConfiguration(config, fieldBinding);
     }
   }
 
-  private void processManagedObjectBindingConfig(String metaschemaUri, ManagedObjectBindingType managedObject) {
-    String name = managedObject.getName();
+  private MutableDefinitionBindingConfiguration
+      processDefinitionBindingConfiguration(DefinitionBindingConfiguration oldConfig,
+          ObjectDefinitionBindingType objectDefinitionBinding) {
+    MutableDefinitionBindingConfiguration config;
+    if (oldConfig != null) {
+      config = new DefaultDefinitionBindingConfiguration(oldConfig);
+    } else {
+      config = new DefaultDefinitionBindingConfiguration();
+    }
 
-    MutableManagedObjectBindingConfiguration managedObjectConfig = getManagedObjectConfig(metaschemaUri, name);
-
-    boolean configCreated = false;
-    if (managedObject.isSetJava()) {
-      JavaManagedObjectBindingType java = managedObject.getJava();
-      if (managedObjectConfig == null) {
-        configCreated = true;
-        managedObjectConfig = new DefaultMutableManagedObjectConfiguration();
-      }
-
-      boolean configChanged = false;
+    if (objectDefinitionBinding.isSetJava()) {
+      JavaObjectDefinitionBindingType java = objectDefinitionBinding.getJava();
       if (java.isSetUseClassName()) {
-        managedObjectConfig.setClassName(java.getUseClassName());
-        configChanged = true;
+        config.setClassName(java.getUseClassName());
       }
 
       if (java.isSetExtendBaseClass()) {
-        managedObjectConfig.setQualifiedBaseClassName(java.getExtendBaseClass());
-        configChanged = true;
+        config.setQualifiedBaseClassName(java.getExtendBaseClass());
       }
 
       for (String interfaceName : java.getImplementInterfaceList()) {
-        managedObjectConfig.addInterfaceToImplement(interfaceName);
-        configChanged = true;
+        config.addInterfaceToImplement(interfaceName);
       }
+    }
+    return config;
+  }
 
-      if (configChanged && configCreated) {
-        addMManagedObjectBindingConfig(metaschemaUri, name, managedObjectConfig);
-      }
+  public class MetaschemaBindingConfiguration {
+    private final Map<String, DefinitionBindingConfiguration> assemblyBindingConfigs = new HashMap<>();
+    private final Map<String, DefinitionBindingConfiguration> fieldBindingConfigs = new HashMap<>();
+
+    private MetaschemaBindingConfiguration() {
+    }
+
+    public DefinitionBindingConfiguration getAssemblyDefinitionBindingConfig(String name) {
+      return assemblyBindingConfigs.get(name);
+    }
+
+    public DefinitionBindingConfiguration getFieldDefinitionBindingConfig(String name) {
+      return fieldBindingConfigs.get(name);
+    }
+
+    public DefinitionBindingConfiguration addAssemblyDefinitionBindingConfig(String name,
+        DefinitionBindingConfiguration managedObjectConfig) {
+      return assemblyBindingConfigs.put(name, managedObjectConfig);
+    }
+
+    public DefinitionBindingConfiguration addFieldDefinitionBindingConfig(String name,
+        DefinitionBindingConfiguration managedObjectConfig) {
+      return fieldBindingConfigs.put(name, managedObjectConfig);
     }
   }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,10 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
-
 public interface WritingContext<WRITER> {
-  BindingContext getBindingContext();
-
-  WRITER getEventWriter();
+  WRITER getWriter();
 }

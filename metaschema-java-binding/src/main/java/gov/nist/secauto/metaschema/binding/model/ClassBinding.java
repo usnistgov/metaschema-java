@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,92 +26,124 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
 import gov.nist.secauto.metaschema.binding.BindingContext;
-import gov.nist.secauto.metaschema.binding.BindingException;
-import gov.nist.secauto.metaschema.binding.io.json.parser.JsonReader;
-import gov.nist.secauto.metaschema.binding.io.json.writer.AssemblyJsonWriter;
-import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlParsePlan;
-import gov.nist.secauto.metaschema.binding.io.xml.writer.XmlWriter;
-import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
-import gov.nist.secauto.metaschema.binding.model.annotations.RootWrapper;
-import gov.nist.secauto.metaschema.binding.model.property.FlagPropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.PropertyBinding;
-import gov.nist.secauto.metaschema.binding.model.property.PropertyBindingFilter;
+import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
+import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
+import gov.nist.secauto.metaschema.binding.model.property.Property;
+import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.codehaus.stax2.XMLStreamReader2;
 
-import java.lang.reflect.Field;
-import java.util.List;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.function.Predicate;
 
-public interface ClassBinding<CLASS> {
-  public static <CLASS> ClassBinding<CLASS> newClassBinding(Class<CLASS> clazz) throws BindingException {
-    // boolean hasFlag = false;
-    boolean hasFieldValue = false;
-    // boolean hasModelProperty = false;
-    for (Field javaField : clazz.getDeclaredFields()) {
-      if (javaField.isAnnotationPresent(FieldValue.class)) {
-        hasFieldValue = true;
-        // } else if (javaField.isAnnotationPresent(Flag.class)) {
-        // hasFlag = true;
-        // } else if
-        // (javaField.isAnnotationPresent(gov.nist.secauto.metaschema.binding.model.annotations.Field.class)
-        // || javaField.isAnnotationPresent(Assembly.class)) {
-        // hasModelProperty = true;
-      }
-    }
-    //
-    // if (hasFieldValue && hasModelProperty) {
-    // throw new BindingException(
-    // String.format("Class '%s' contains a FieldValue annotation and Field and/or Assembly
-    // annotations."
-    // + " FieldValue can only be used with Flag annotations.", clazz.getName()));
-    // }
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
-    Logger logger = LogManager.getLogger(ClassBinding.class);
+public interface ClassBinding {
+  BindingContext getBindingContext();
 
-    ClassBinding<CLASS> retval;
-    if (hasFieldValue) {
-      retval = new FieldClassBindingImpl<CLASS>(clazz);
-      if (logger.isDebugEnabled()) {
-        logger.debug("Binding class '{}' as field.", clazz.getName());
-      }
-      // } else if (hasFlag || hasModelProperty) {
-      // retval = new AssemblyClassBindingImpl<CLASS>(clazz);
-    } else {
-      retval = new AssemblyClassBindingImpl<CLASS>(clazz);
-      if (logger.isDebugEnabled()) {
-        logger.debug("Binding class '{}' as assembly.", clazz.getName());
-      }
-    }
-    return retval;
+  /**
+   * The class this binding is for.
+   * 
+   * @return the bound class
+   */
+  Class<?> getBoundClass();
+
+  /**
+   * Get the JSON key flag, if there is one.
+   * 
+   * @return the JSON key flag, or {@code null} if there isn't one
+   */
+  FlagProperty getJsonKey();
+
+  /**
+   * Get the class's flag properties.
+   * 
+   * @return a mapping of field name to property
+   */
+  Map<String, FlagProperty> getFlagProperties();
+
+  /**
+   * Get the class's properties.
+   * 
+   * @return a mapping of field name to property
+   */
+  Map<String, ? extends Property> getProperties();
+
+  /**
+   * Get the class's properties that match the filter.
+   * 
+   * @param filter
+   *          a filter to apply or {@code null} if no filtering is needed
+   * @return a collection of properties
+   */
+  Map<String, ? extends NamedProperty> getProperties(Predicate<FlagProperty> flagFilter);
+
+  /**
+   * Reads a JSON/YAML object storing the associated data in a Java class instance and adds the
+   * resulting instance to the provided collector.
+   * <p>
+   * When called the current {@link JsonToken} of the {@link JsonParser} is expected to be a
+   * {@link JsonToken#FIELD_NAME} that is the first field of the object.
+   * <p>
+   * After returning the current {@link JsonToken} of the {@link JsonParser} is expected to be a
+   * {@link JsonToken#END_OBJECT} representing the end of the object for this class.
+   * 
+   * @param collector
+   *          used to gather Java instances
+   * @param parentInstance
+   *          the Java instance for the object containing this object
+   * @param context
+   *          the parsing context
+   * @return {@code true} if data was parsed, {@code false} otherwise
+   */
+  // TODO: check if a boolean return value is needed
+  boolean readItem(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+      throws IOException, BindingException;
+
+  /**
+   * Reads a XML element storing the associated data in a Java class instance and adds the resulting
+   * instance to the provided collector.
+   * <p>
+   * When called the next {@link XMLEvent} of the {@link XMLStreamReader2} is expected to be a
+   * {@link XMLStreamConstants#START_ELEMENT} that is the XML element associated with the Java class.
+   * <p>
+   * After returning the next {@link XMLEvent} of the {@link XMLStreamReader2} is expected to be a the
+   * next event after the {@link XMLStreamConstants#END_ELEMENT} for the XML
+   * {@link XMLStreamConstants#START_ELEMENT} element associated with the Java class.
+   * 
+   * @param collector
+   *          used to gather Java instances
+   * @param parentInstance
+   *          the Java instance for the object containing this object
+   * @param context
+   *          the parsing context
+   * @return {@code true} if data was parsed, {@code false} otherwise
+   */
+  boolean readItem(PropertyCollector collector, Object parentInstance, StartElement start, XmlParsingContext context)
+      throws BindingException, IOException, XMLStreamException;
+
+  void writeItem(Object item, QName parentName, XmlWritingContext context) throws IOException, XMLStreamException;
+
+  default void writeItem(Object item, boolean writeObjectWrapper, JsonWritingContext context) throws IOException, XMLStreamException {
+    writeItems(Collections.singleton(item), writeObjectWrapper, context);
   }
 
-  Class<CLASS> getClazz();
-
-  List<FlagPropertyBinding> getFlagPropertyBindings();
-
-  FlagPropertyBinding getJsonKeyFlagPropertyBinding();
-
-  Map<String, PropertyBinding> getJsonPropertyBindings(BindingContext bindingContext, PropertyBindingFilter filter)
-      throws BindingException;
-
-  boolean hasRootWrapper();
-
-  RootWrapper getRootWrapper();
-
-  XmlParsePlan<CLASS> getXmlParsePlan(BindingContext bindingContext) throws BindingException;
-
-  XmlWriter getXmlWriter() throws BindingException;
-
-  AssemblyJsonWriter<CLASS> getAssemblyJsonWriter(BindingContext bindingContext) throws BindingException;
-
-  JsonReader<CLASS> getJsonReader(BindingContext bindingContext) throws BindingException;
-
-  CLASS newInstance() throws BindingException;
-
-  void callBeforeDeserialize(CLASS obj, Object parent) throws BindingException;
-
-  void callAfterDeserialize(CLASS obj, Object parent) throws BindingException;
+  // for JSON, the entire value needs to be processed to deal with collapsable fields
+  void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, JsonWritingContext context) throws IOException;
 }

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>gov.nist.secauto.metaschema</groupId>
 	<artifactId>metaschema-framework</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.4.0-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
@@ -92,15 +92,22 @@
 	</mailingLists>
 
 	<properties>
-		<maven.compiler.source>9</maven.compiler.source>
-		<maven.compiler.target>9</maven.compiler.target>
-		<maven.compiler.release>9</maven.compiler.release>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.release>11</maven.compiler.release>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<dependency.flexmark.version>0.50.46</dependency.flexmark.version>
-		<dependency.jackson.version>2.10.1</dependency.jackson.version>
-		<dependency.log4j2.version>2.13.3</dependency.log4j2.version>
+		<dependency.woodstox.version>6.0.3</dependency.woodstox.version>
+		<dependency.jackson.version>2.12.1</dependency.jackson.version>
+		<dependency.log4j2.version>2.12.1</dependency.log4j2.version>
 		<dependency.junit5.version>5.6.0</dependency.junit5.version>
 		<dependency.xmlbeans.version>3.1.0</dependency.xmlbeans.version>
+		<!-- <dependency.xmlbeans.version>4.0.0</dependency.xmlbeans.version> -->
+		<version.plugin.license>4.0.rc1</version.plugin.license>
 	</properties>
 
 	<dependencyManagement>
@@ -122,6 +129,11 @@
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
+				<artifactId>metaschema-java-binding-annotations</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
 				<artifactId>metaschema-java-codegen</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -129,7 +141,7 @@
 			<dependency>
 				<groupId>org.apache.xmlbeans</groupId>
 				<artifactId>xmlbeans</artifactId>
-				<version>3.1.0</version>
+				<version>${dependency.xmlbeans.version}</version>
 			</dependency>
 
 			<dependency>
@@ -189,6 +201,11 @@
 				<groupId>com.vladsch.flexmark</groupId>
 				<artifactId>flexmark-html2md-converter</artifactId>
 				<version>${dependency.flexmark.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.woodstox</groupId>
+				<artifactId>woodstox-core</artifactId>
+				<version>${dependency.woodstox.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
@@ -260,12 +277,17 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-params</artifactId>
+				<version>${dependency.junit5.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.junit.platform</groupId>
 				<artifactId>junit-platform-launcher</artifactId>
 				<version>1.6.0</version>
 				<scope>test</scope>
 			</dependency>
-
 			<dependency>
 				<groupId>org.jmock</groupId>
 				<artifactId>jmock-junit5</artifactId>
@@ -303,15 +325,67 @@
 						<detectJavaApiLink>false</detectJavaApiLink>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>xmlbeans-maven-plugin</artifactId>
+					<version>2.3.3</version>
+					<configuration>
+						<noUpa>false</noUpa>
+						<javaSource>1.5</javaSource>
+						<!-- <javaSource combine.self="override"></javaSource> -->
+						<noJavac>true</noJavac>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>org.apache.xmlbeans</groupId>
+							<artifactId>xmlbeans</artifactId>
+							<version>${dependency.xmlbeans.version}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+				<plugin>
+					<groupId>com.mycila</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>${version.plugin.license}</version>
+					<configuration>
+						<licenseSets>
+							<licenseSet>
+								<header>license/nist/license.txt</header>
+								<includes>
+									<include>**/*.java</include>
+								</includes>
+							</licenseSet>
+						</licenseSets>
+						<failIfMissing>true</failIfMissing>
+					</configuration>
+					<executions>
+						<execution>
+							<id>check-license</id>
+							<phase>verify</phase>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+					<dependencies>
+						<dependency>
+							<groupId>gov.nist.secauto</groupId>
+							<artifactId>oss-build-support</artifactId>
+							<version>17</version>
+							<scope>compile</scope>
+						</dependency>
+					</dependencies>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
 
 	<modules>
 		<module>metaschema-model</module>
-		<module>metaschema-java-binding</module>
-		<module>metaschema-java-codegen</module>
 		<module>metaschema-java-datatypes</module>
+		<module>metaschema-java-binding-annotations</module>
+		<module>metaschema-java-codegen</module>
 		<module>metaschema-maven-plugin</module>
+		<module>metaschema-java-binding</module>
 	</modules>
 </project>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns="http://example.org/ns/test"
+	id="idvalue">
+	<single-simple>single-simple-value</single-simple>
+	<grouped-list-simple-items>
+		<grouped-list-simple-item>grouped-list-simple-item-value-1</grouped-list-simple-item>
+		<grouped-list-simple-item>grouped-list-simple-item-value-2</grouped-list-simple-item>
+	</grouped-list-simple-items>
+	<single-flagged id="single-flagged-id">single-flagged-value</single-flagged>
+	<grouped-list-items>
+		<grouped-list-item id="grouped-list-item-id-1">grouped-list-item-value-1</grouped-list-item>
+		<grouped-list-item id="grouped-list-item-id-2">grouped-list-item-value-2</grouped-list-item>
+	</grouped-list-items>
+	<ungrouped-list-item id="ungrouped-list-item-id-1">ungrouped-list-item-value-1</ungrouped-list-item>
+	<mapped-item id="mapped-item-id-1" name="mapped-item-name-1">mapped-item-value-1</mapped-item>
+	<mapped-item id="mapped-item-id-2" name="mapped-item-name-2">mapped-item-value-2</mapped-item>
+	<single-flagged-assembly id="single-flagged-assembly-id" />
+</root>

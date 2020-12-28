@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,15 +26,27 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import gov.nist.secauto.metaschema.binding.BindingException;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
 
+/**
+ * Implementations of this interface are able to read structured data into a Java class instance of
+ * the parameterized type.
+ * 
+ * @param <CLASS> the Java type into which data can be read
+ */
 public interface Deserializer<CLASS> {
+  Format supportedFromat();
+
+  /**
+   * 
+   * @param out
+   * @return
+   * @throws BindingException
+   */
   CLASS deserialize(InputStream out) throws BindingException;
 
   CLASS deserialize(File file) throws FileNotFoundException, BindingException;

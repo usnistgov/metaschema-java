@@ -1,4 +1,4 @@
-/**
+/*
  * Portions of this software was developed by employees of the National Institute
  * of Standards and Technology (NIST), an agency of the Federal Government and is
  * being made available as a public service. Pursuant to title 17 United States
@@ -26,15 +26,17 @@
 
 package gov.nist.secauto.metaschema.datatypes;
 
-public class Date extends AbstractDatatype<Date, java.util.Date> {
+import java.time.ZonedDateTime;
 
-  public Date(java.util.Date value) {
-    super(value);
+public class Date
+    extends AbstractAmbiguousDateTime<Date> {
+
+  public Date(ZonedDateTime value, boolean hasTimeZone) {
+    super(value, hasTimeZone);
   }
 
   @Override
   public Date copy() {
-    return new Date(getValue());
+    return new Date(getValue(), hasTimeZone());
   }
-
 }
