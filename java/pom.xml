@@ -98,7 +98,7 @@
 
 		<dependency.flexmark.version>0.50.46</dependency.flexmark.version>
 		<dependency.jackson.version>2.10.1</dependency.jackson.version>
-		<dependency.log4j2.version>2.12.1</dependency.log4j2.version>
+		<dependency.log4j2.version>2.13.3</dependency.log4j2.version>
 		<dependency.junit5.version>5.6.0</dependency.junit5.version>
 		<dependency.xmlbeans.version>3.1.0</dependency.xmlbeans.version>
 	</properties>
