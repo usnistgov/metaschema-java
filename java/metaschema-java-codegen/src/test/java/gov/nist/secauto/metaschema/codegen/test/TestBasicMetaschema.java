@@ -217,6 +217,21 @@ public class TestBasicMetaschema {
       }
     });
   }
+  
+  @Test
+  public void testSimpleUuidMetaschema(@TempDir Path tempDir)
+      throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
+    File classDir = new File("target/generated-sources/metaschema");
+
+    runTests("simple_with_uuid", classDir, (obj) -> {
+      try {
+        Assertions.assertEquals("5de455cf-2f8d-4da2-9182-323d433e1065", 
+        		reflectMethod(obj, "getUuid").toString());
+      } catch (NoSuchMethodException | SecurityException e) {
+        Assertions.fail(e);
+      }
+    });
+  }
 
   @Test
   public void testSimpleWithFieldMetaschema(@TempDir Path tempDir)

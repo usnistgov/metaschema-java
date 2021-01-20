@@ -43,6 +43,7 @@ import gov.nist.secauto.metaschema.datatypes.NonNegativeInteger;
 import gov.nist.secauto.metaschema.datatypes.PositiveInteger;
 import gov.nist.secauto.metaschema.datatypes.URI;
 import gov.nist.secauto.metaschema.datatypes.URIReference;
+import gov.nist.secauto.metaschema.datatypes.UUID;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 
@@ -63,6 +64,7 @@ public enum DataTypes {
   IP_V6_ADDRESS(IPv6.class, new IPv6AddressAdapter()),
   URI(URI.class, new UriAdapter()),
   URI_REFERENCE(URIReference.class, new UriReferenceAdapter()),
+  UUID(UUID.class, new UuidAdapter()),
   MARKUP_LINE(MarkupLine.class, new MarkupLineAdapter()),
   MARKUP_MULTILINE(MarkupMultiline.class, new MarkupMultilineAdapter()),
   EMPTY(Void.class, null),
