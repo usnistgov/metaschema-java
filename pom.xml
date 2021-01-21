@@ -106,6 +106,7 @@
 		<dependency.log4j2.version>2.12.1</dependency.log4j2.version>
 		<dependency.junit5.version>5.6.0</dependency.junit5.version>
 		<dependency.xmlbeans.version>3.1.0</dependency.xmlbeans.version>
+		<dependency.freemarker.version>2.3.30</dependency.freemarker.version>
 		<!-- <dependency.xmlbeans.version>4.0.0</dependency.xmlbeans.version> -->
 		<version.plugin.license>4.0.rc1</version.plugin.license>
 	</properties>
@@ -135,6 +136,11 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>metaschema-java-codegen</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>metaschema-java-schemagen</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
@@ -191,7 +197,6 @@
 				<artifactId>flexmark-ext-typographic</artifactId>
 				<version>${dependency.flexmark.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.vladsch.flexmark</groupId>
 				<artifactId>flexmark-formatter</artifactId>
@@ -226,6 +231,11 @@
 				<groupId>com.fasterxml.jackson.dataformat</groupId>
 				<artifactId>jackson-dataformat-yaml</artifactId>
 				<version>${dependency.jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.freemarker</groupId>
+				<artifactId>freemarker</artifactId>
+				<version>${dependency.freemarker.version}</version>
 			</dependency>
 
 			<dependency>
@@ -387,5 +397,6 @@
 		<module>metaschema-java-codegen</module>
 		<module>metaschema-maven-plugin</module>
 		<module>metaschema-java-binding</module>
+		<module>metaschema-schemagen</module>
 	</modules>
 </project>

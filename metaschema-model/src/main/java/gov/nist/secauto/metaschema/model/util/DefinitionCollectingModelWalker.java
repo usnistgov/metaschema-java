@@ -36,13 +36,13 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Function;
 
-public class UsedDefinitionCollectingModelWalker
+public class DefinitionCollectingModelWalker
     extends ModelWalker {
 
   private final Function<InfoElementDefinition, Boolean> filter;
   private final Set<InfoElementDefinition> definitions = new LinkedHashSet<>();
 
-  public UsedDefinitionCollectingModelWalker(Function<InfoElementDefinition, Boolean> filter) {
+  public DefinitionCollectingModelWalker(Function<InfoElementDefinition, Boolean> filter) {
     this.filter = filter;
   }
 
