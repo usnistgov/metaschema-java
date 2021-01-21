@@ -195,11 +195,9 @@ public class TestBasicMetaschema {
   }
   
   @Test
-  public void testSimpleUuidMetaschema(@TempDir Path tempDir)
+  public void testSimpleUuidMetaschema()
       throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-    File classDir = new File("target/generated-sources/metaschema");
-
-    runTests("simple_with_uuid", classDir, (obj) -> {
+    runTests("simple_with_uuid", "gov.nist.csrc.ns.metaschema.testing.simple.with.uuid.TopLevel", generationDir, (obj) -> {
       try {
         Assertions.assertEquals("5de455cf-2f8d-4da2-9182-323d433e1065", 
         		reflectMethod(obj, "getUuid").toString());

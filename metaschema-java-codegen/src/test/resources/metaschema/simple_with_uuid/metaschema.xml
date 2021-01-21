@@ -5,7 +5,7 @@
   <schema-name>Simple Metaschema</schema-name>
   <schema-version>1.0</schema-version>
   <short-name>simple</short-name>
-  <namespace>http://csrc.nist.gov/ns/metaschema/testing/simple</namespace>
+  <namespace>http://csrc.nist.gov/ns/metaschema/testing/simple/with/uuid</namespace>
   
   <define-assembly name="top-level">
     <formal-name>Root</formal-name>
