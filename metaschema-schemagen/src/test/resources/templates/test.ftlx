@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified"
+  xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.0" vc:maxVersion="1.1"
+  targetNamespace="${metaschema.xmlNamespace}"
+  xmlns:tns="${metaschema.xmlNamespace}">
+
+<#list metaschema.rootAssemblyDefinitions as key,rootDef>
+  <xs:element name="${rootDef.rootName}" type="tns:${rootDef.containingMetaschema.shortName}_${rootDef.modelType}_${rootDef.name}_type"/>
+</#list>
+
+<#list definitions as def>
+<#switch def.modelType>
+  <#case "ASSEMBLY">
+  	Assembly
+  	<#break>
+  <#case "FIELD">
+  	field
+  	<#break>
+  <#case "FLAG">
+  	flag
+  	<#break>
+</#switch>
+</#list>
+</xs:schema>

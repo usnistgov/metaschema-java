@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<top-level xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://csrc.nist.gov/ns/metaschema/testing/assembly schema.xsd"
+  xmlns="http://csrc.nist.gov/ns/metaschema/testing/assembly" id="test">
+  <child id="child1">
+    <grandchild-a id="singleton-ungrouped">
+      <field id="field1">value1</field>
+    </grandchild-a>
+    <grandchildren2>
+      <grandchild-b id="multiple-grouped-1">
+        <field id="field2a">value2a</field>
+      </grandchild-b>
+      <grandchild-b id="multiple-grouped-2">
+        <field id="field2b">value2b</field>
+      </grandchild-b>
+    </grandchildren2>
+    <grandchild-c id="single-1">
+      <field id="field3">value3</field>
+    </grandchild-c>
+  </child>
+  <child id="child2">
+    <grandchild-a id="multiple-ungrouped-1">
+      <!-- comment -->
+      <field id="field4">value4</field>
+    </grandchild-a>
+    <grandchild-a id="multiple-ungrouped-2">
+      <field id="field5">value5</field>
+    </grandchild-a>
+    <grandchildren2>
+      <grandchild-b id="multiple-grouped-3">
+        <field id="field6">value6</field>
+      </grandchild-b>
+      <grandchild-b id="multiple-grouped-4">
+        <field id="field7">value7</field>
+      </grandchild-b>
+    </grandchildren2>
+    <grandchild-c id="single-2">
+      <field id="field8">value8</field>
+    </grandchild-c>
+  </child>
+</top-level>

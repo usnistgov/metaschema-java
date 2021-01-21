@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+  xmlns:b="https://csrc.nist.gov/ns/metaschema-binding/1.0"
+  targetNamespace="https://csrc.nist.gov/ns/metaschema-binding/1.0"
+  xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.0" vc:maxVersion="1.1">
+
+  <xs:element name="metaschema-bindings" type="b:MetaschemaBindingsType">
+    <xs:annotation>
+      <xs:documentation>This is the root element for a set of metaschema binding customizations.</xs:documentation>
+    </xs:annotation>
+    <xs:unique name="UniqueModels">
+      <xs:selector xpath="b:model-binding"/>
+      <xs:field xpath="@namespace"/>
+    </xs:unique>
+    <xs:unique name="UniqueMetaschema">
+      <xs:selector xpath="b:metaschema-binding"/>
+      <xs:field xpath="@href"/>
+    </xs:unique>
+  </xs:element>
+
+  <xs:complexType name="MetaschemaBindingsType">
+    <xs:sequence>
+      <xs:element name="model-binding" type="b:ModelBindingType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Defines binding configurations that apply to a whole model described by a namespace.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="metaschema-binding" type="b:MetaschemaBindingType" minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Defines a binding for a given metaschema identified by a URL.</xs:documentation>
+        </xs:annotation>
+        <xs:unique name="UniqueManagedObjects">
+          <xs:selector xpath="b:define-assembly-binding | b:define-field-binding"/>
+          <xs:field xpath="@name"/>
+        </xs:unique>
+        <xs:unique name="UniqueManagedObjectJavaClassNames">
+          <xs:selector xpath="b:define-assembly-binding/b:java | b:define-field-binding/b:java"/>
+          <xs:field xpath="b:use-class-name"/>
+        </xs:unique>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ModelBindingType">
+    <xs:sequence>
+      <xs:element name="java" type="b:JavaModelBindingType" minOccurs="0"> </xs:element>
+    </xs:sequence>
+    <xs:attribute name="namespace" type="xs:anyURI" use="required">
+      <xs:annotation>
+        <xs:documentation>A URI referencing the namespace of one or more related metaschema definitions.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="MetaschemaBindingType">
+    <xs:annotation>
+      <xs:documentation>Defines a binding for a given metaschema identified by a relative URL.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="define-assembly-binding" type="b:ObjectDefinitionBindingType" minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Provides binding configurations for a given defined assembly within the parent metaschema.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="define-field-binding" type="b:ObjectDefinitionBindingType" minOccurs="0"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Provides binding configurations for a given defined field within the parent metaschema.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="href" type="xs:anyURI" use="required">
+      <xs:annotation>
+        <xs:documentation>A URL relative to this binding configuration file, pointing to a metaschema definition.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="JavaModelBindingType">
+    <xs:sequence>
+      <xs:element name="use-package-name" type="b:JavaPackageName" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ObjectDefinitionBindingType">
+    <xs:sequence>
+      <xs:element name="java" type="b:JavaObjectDefinitionBindingType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Field and assembly binding configurations for Java bound classes.</xs:documentation>
+        </xs:annotation>
+        <xs:unique name="UniqueInterfaces">
+          <xs:selector xpath="b:implement-interface"/>
+          <xs:field xpath="."/>
+        </xs:unique>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:NCName" use="required">
+      <xs:annotation>
+        <xs:documentation>The name of the metaschema field or assembly.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="JavaObjectDefinitionBindingType">
+    <xs:sequence>
+      <xs:element name="use-class-name" type="b:JavaClassName" minOccurs="0"/>
+      <xs:element name="implement-interface" type="b:JavaQualifiedClassName" minOccurs="0"
+        maxOccurs="unbounded"/>
+      <xs:element name="extend-base-class" type="b:JavaQualifiedClassName" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="JavaPackageName">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="([\p{L}_$][\p{L}\p{N}_$]*\.)*[\p{L}_$][\p{L}\p{N}_$]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="JavaClassName">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[\p{L}_\p{Sc}][\p{L}\p{N}_\p{Sc}]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="JavaQualifiedClassName">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="([\p{L}_$][\p{L}\p{N}_$]*\.)*[\p{L}_$][\p{L}\p{N}_$]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

@@ -1,0 +1,38 @@
+{ 
+	"root": { 
+		"id": "idvalue",
+		"single-simple": "single-simple-value",
+		"grouped-list-simple-items": [ "grouped-list-simple-item-value-1", "grouped-list-simple-item-value-2" ],
+		"single-flagged": {
+			"id": "single-flagged-id",
+			"STRXVALUE": "single-flagged-value"
+		},
+		"grouped-list-items": [
+			{
+				"id": "grouped-list-item-id-1",
+				"STRXVALUE": "grouped-list-item-value-1"
+			},
+			{
+				"id": "grouped-list-item-id-2",
+				"STRXVALUE": "grouped-list-item-value-2"
+			}
+		],
+		"ungrouped-list-items": { 
+			"id": "ungrouped-list-item-id-2",
+			"STRXVALUE": "ungrouped-list-item-value-2"
+		},
+		"mapped-items": {
+			"mapped-item-id-1": {
+				"name": "mapped-item-name-1",
+				"VALUE": "mapped-item-value-1"
+			},
+			"mapped-item-id-2": {
+				"name": "mapped-item-name-2",
+				"VALUE": "mapped-item-value-2"
+			}
+		},
+		"single-flagged-assembly": { 
+			"id": "single-flagged-assembly-id"
+		}
+	}
+}

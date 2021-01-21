@@ -1,0 +1,83 @@
+{
+    "$schema": "schema.json",
+    "top-level": {
+        "id": "test",
+        "children": [
+            {
+                "id": "child1",
+                "grandchildren": {
+                    "id": "singleton-ungrouped",
+                    "fields": {
+                        "id": "field1",
+                        "STRVALUE": "value1"
+                    }
+                },
+                "grandchildren2": [
+                    {
+                        "id": "multiple-grouped-1",
+                        "fields": {
+                            "id": "field2a",
+                            "STRVALUE": "value2a"
+                        }
+                    },
+                    {
+                        "id": "multiple-grouped-2",
+                        "fields": {
+                            "id": "field2b",
+                            "STRVALUE": "value2b"
+                        }
+                    }
+                ],
+                "grandchild": {
+                    "id": "single-1",
+                    "fields": {
+                        "id": "field3",
+                        "STRVALUE": "value3"
+                    }
+                }
+            },
+            {
+                "id": "child2",
+                "grandchildren": [
+                    {
+                        "id": "multiple-ungrouped-1",
+                        "fields": {
+                            "id": "field4",
+                            "STRVALUE": "value4"
+                        }
+                    },
+                    {
+                        "id": "multiple-ungrouped-2",
+                        "fields": {
+                            "id": "field5",
+                            "STRVALUE": "value6"
+                        }
+                    }
+                ],
+                "grandchildren2": [
+                    {
+                        "id": "multiple-grouped-3",
+                        "fields": {
+                            "id": "field6",
+                            "STRVALUE": "value6"
+                        }
+                    },
+                    {
+                        "id": "multiple-grouped-4",
+                        "fields": {
+                            "id": "field7",
+                            "STRVALUE": "value7"
+                        }
+                    }
+                ],
+                "grandchild": {
+                    "id": "single-2",
+                    "fields": {
+                        "id": "field8",
+                        "STRVALUE": "value8"
+                    }
+                }
+            }
+        ]
+    }
+}
