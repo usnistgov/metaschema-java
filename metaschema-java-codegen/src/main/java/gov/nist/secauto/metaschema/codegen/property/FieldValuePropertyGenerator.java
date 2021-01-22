@@ -33,7 +33,7 @@ import com.squareup.javapoet.TypeName;
 import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.codegen.FieldJavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatypes.types.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 

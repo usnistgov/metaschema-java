@@ -26,15 +26,6 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import freemarker.cache.ClassTemplateLoader;
-import freemarker.core.ParseException;
-import freemarker.template.Configuration;
-import freemarker.template.MalformedTemplateNameException;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateExceptionHandler;
-import freemarker.template.TemplateNotFoundException;
-
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
@@ -50,6 +41,15 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.core.ParseException;
+import freemarker.template.Configuration;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
+import freemarker.template.TemplateNotFoundException;
 
 public class TestGen {
   @Test

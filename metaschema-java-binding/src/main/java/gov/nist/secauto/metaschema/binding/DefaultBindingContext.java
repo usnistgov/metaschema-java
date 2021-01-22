@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding;
 
-import gov.nist.secauto.metaschema.binding.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.io.Configuration;
 import gov.nist.secauto.metaschema.binding.io.Deserializer;
 import gov.nist.secauto.metaschema.binding.io.Format;
@@ -43,6 +42,7 @@ import gov.nist.secauto.metaschema.binding.model.DefaultAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.DefaultFieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
+import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

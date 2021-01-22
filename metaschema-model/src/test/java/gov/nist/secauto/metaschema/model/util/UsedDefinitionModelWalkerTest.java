@@ -23,9 +23,9 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.util;
 
-import gov.nist.secauto.metaschema.model.AbstractMetaschema;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
@@ -53,7 +53,7 @@ class UsedDefinitionModelWalkerTest {
     
     for (InfoElementDefinition definition : definitions) {
       logger.info(String.format("%s: %s %s",
-      definition.getContainingMetaschema().getShortName(), definition.getModelType().name(), definition.getName()));
+          definition.getContainingMetaschema().getShortName(), definition.getModelType().name(), definition.getName()));
     }
   }
 

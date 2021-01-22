@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.codegen.AssemblyJavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
 import gov.nist.secauto.metaschema.codegen.type.DataType;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatypes.types.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;

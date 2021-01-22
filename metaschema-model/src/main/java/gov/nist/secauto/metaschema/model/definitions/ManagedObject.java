@@ -29,8 +29,20 @@ package gov.nist.secauto.metaschema.model.definitions;
 import gov.nist.secauto.metaschema.model.instances.FlagInstance;
 
 public interface ManagedObject extends InfoElementDefinition {
+  /**
+   * Indicates if the associated definition has a metaschema JSON key configured.
+   * 
+   * @return {@code true} if a JSON key is configured, or {@code false} otherwise
+   */
   boolean hasJsonKey();
 
+  /**
+   * Returns the configured flag to use as the JSON key, if the definition has a metaschema JSON key
+   * configured.
+   * 
+   * @return the configured JSON key flag, or {@code null} if a JSON key is not configured
+   * @see #hasJsonKey()
+   */
   FlagInstance<?> getJsonKeyFlagInstance();
 
   // String getPackageName();

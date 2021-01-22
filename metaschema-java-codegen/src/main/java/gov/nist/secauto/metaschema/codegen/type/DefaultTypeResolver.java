@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.codegen.type;
 
 import com.squareup.javapoet.ClassName;
-import com.sun.xml.bind.api.impl.NameConverter;
 
 import gov.nist.secauto.metaschema.codegen.binding.config.BindingConfiguration;
 import gov.nist.secauto.metaschema.model.definitions.LocalInfoElementDefinition;
@@ -35,6 +34,7 @@ import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.glassfish.jaxb.core.api.impl.NameConverter;
 
 import java.util.HashMap;
 import java.util.HashSet;

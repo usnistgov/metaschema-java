@@ -43,14 +43,20 @@
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-jul</artifactId>
 		</dependency>
-
-		<!-- Used to generate Java class, field, package, etc. names -->
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-		</dependency>
 	</dependencies>
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<configuration>
+						<excludeRoots>
+							<excludeRoot>${project.build.directory}/generated-sources/xmlbeans-M4</excludeRoot>
+						</excludeRoots>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>com.googlecode.maven-download-plugin</groupId>
@@ -90,7 +96,7 @@
 						<configuration>
 							<!-- TODO: update to a permanent location, where this is retrieved -->
 							<schemaDirectory>${basedir}/src/main/xsd/M4</schemaDirectory>
-<!-- 							<schemaDirectory>${project.build.directory}/download/metaschema-M4/xsd</schemaDirectory> -->
+							<!-- <schemaDirectory>${project.build.directory}/download/metaschema-M4/xsd</schemaDirectory> -->
 							<sourceGenerationDirectory>${project.build.directory}/generated-sources/xmlbeans-M4</sourceGenerationDirectory>
 							<xmlConfigs>
 								<xmlConfig implementation="java.io.File">${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</xmlConfig>
@@ -99,13 +105,13 @@
 						</configuration>
 					</execution>
 				</executions>
-<!-- 				<dependencies> -->
-<!-- 					<dependency> -->
-<!-- 						<groupId>org.apache.xmlbeans</groupId> -->
-<!-- 						<artifactId>xmlbeans</artifactId> -->
-<!-- 						<version>${dependency.xmlbeans.version}</version> -->
-<!-- 					</dependency> -->
-<!-- 				</dependencies> -->
+				<!-- <dependencies> -->
+				<!-- <dependency> -->
+				<!-- <groupId>org.apache.xmlbeans</groupId> -->
+				<!-- <artifactId>xmlbeans</artifactId> -->
+				<!-- <version>${dependency.xmlbeans.version}</version> -->
+				<!-- </dependency> -->
+				<!-- </dependencies> -->
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

@@ -33,23 +33,45 @@ import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
-public class DefinitionCollectingModelWalker
+/**
+ * Supports walking a portion of a metaschema model collecting a set of definitions that match the
+ * provided filter. For a definition to be collected, the filter must return {@code true}.
+ */
+public abstract class DefinitionCollectingModelWalker
     extends ModelWalker {
 
   private final Function<InfoElementDefinition, Boolean> filter;
   private final Set<InfoElementDefinition> definitions = new LinkedHashSet<>();
 
-  public DefinitionCollectingModelWalker(Function<InfoElementDefinition, Boolean> filter) {
+  /**
+   * Construct a new walker using the provided filter.
+   * 
+   * @param filter
+   *          the filter to match definitions against
+   */
+  protected DefinitionCollectingModelWalker(Function<InfoElementDefinition, Boolean> filter) {
+    Objects.requireNonNull(filter, "filter");
     this.filter = filter;
   }
 
+  /**
+   * Retrieves the filter used for matching.
+   * 
+   * @return the filter
+   */
   protected Function<InfoElementDefinition, Boolean> getFilter() {
     return filter;
   }
 
+  /**
+   * Return the collection of definitions matching the configured filter.
+   * 
+   * @return the collection of definitions
+   */
   public Collection<InfoElementDefinition> getDefinitions() {
     return definitions;
   }

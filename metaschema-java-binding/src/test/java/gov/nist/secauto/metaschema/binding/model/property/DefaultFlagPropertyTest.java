@@ -36,14 +36,14 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
-import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.IntegerAdapter;
-import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.StringAdapter;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.IntegerAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.jmock.Expectations;

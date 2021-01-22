@@ -30,11 +30,11 @@ public class BooleanType {
   /**
    * Sets the value of obj onto the given simple value target.
    * 
-   * @param obj
+   * @param obj the boolean value to set
    * @param target
    *          the XML value to cast to a boolean
    */
-  public static void encodeBoolean(java.lang.Boolean obj, org.apache.xmlbeans.SimpleValue target) {
+  public static void encodeBoolean(Boolean obj, org.apache.xmlbeans.SimpleValue target) {
     if (obj != null) {
       if (obj.booleanValue()) {
         target.setStringValue("yes");
@@ -51,7 +51,7 @@ public class BooleanType {
    *          the XML value to cast to a boolean
    * @return the associated boolean value
    */
-  public static java.lang.Boolean decodeBoolean(org.apache.xmlbeans.SimpleValue obj) {
+  public static Boolean decodeBoolean(org.apache.xmlbeans.SimpleValue obj) {
     String value = obj.getStringValue();
     Boolean retval;
     if ("yes".equals(value)) {

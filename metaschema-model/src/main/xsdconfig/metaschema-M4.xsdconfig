@@ -9,16 +9,4 @@
 	<xb:usertype name="meta:boolean" javaname="java.lang.Boolean">
 	  <xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.BooleanType</xb:staticHandler>
 	</xb:usertype>
- <!-- 
-    <xb:extension for="gov.nist.itl.metaschema.model.M4.xml.LocalFlagDefinition">
-        <xb:interface name="gov.nist.secauto.metaschema.model.xmlbeans.XmlFlagDefinitionModel">
-            <xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.XmlFlagDefinitionModelHandler</xb:staticHandler>
-        </xb:interface>
-    </xb:extension>
-    <xb:extension for="gov.nist.itl.metaschema.model.M4.xml.GlobalFlagDefinition">
-        <xb:interface name="gov.nist.secauto.metaschema.model.xmlbeans.XmlFlagDefinitionModel">
-            <xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.XmlFlagDefinitionModelHandler</xb:staticHandler>
-        </xb:interface>
-    </xb:extension>
- -->
  </xb:config>

@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.markup;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.datatypes.markup.flexmark.AstCollectingVisitor;
+import gov.nist.secauto.metaschema.datatypes.types.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatypes.types.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.datatypes.types.markup.flexmark.AstCollectingVisitor;
 
 import org.junit.jupiter.api.Test;
 

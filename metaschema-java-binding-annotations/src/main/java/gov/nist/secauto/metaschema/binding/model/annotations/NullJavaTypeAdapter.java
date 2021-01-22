@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
-import gov.nist.secauto.metaschema.binding.datatypes.adapter.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.binding.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 
 import java.io.IOException;
 

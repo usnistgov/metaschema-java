@@ -30,7 +30,7 @@ import gov.nist.itl.metaschema.model.m4.xml.FlagDocument;
 import gov.nist.itl.metaschema.model.m4.xml.GlobalFieldDefinition;
 import gov.nist.itl.metaschema.model.m4.xml.LocalFlagDefinition;
 import gov.nist.itl.metaschema.model.m4.xml.ScopeType;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatypes.types.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.definitions.AbstractFieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.DataType;

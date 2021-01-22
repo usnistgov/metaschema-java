@@ -39,11 +39,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
-import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.StringAdapter;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.model.BoundClass.FlaggedField;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.jmock.Expectations;

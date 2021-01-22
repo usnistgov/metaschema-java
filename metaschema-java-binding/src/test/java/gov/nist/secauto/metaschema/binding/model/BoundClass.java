@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import gov.nist.secauto.metaschema.binding.datatypes.adapter.types.StringAdapter;
 import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
@@ -36,6 +35,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
 
 import java.util.List;
 import java.util.Map;

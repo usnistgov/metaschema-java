@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.definitions;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatypes.types.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.InfoElement;
 
 public interface InfoElementDefinition extends InfoElement {
@@ -60,6 +60,14 @@ public interface InfoElementDefinition extends InfoElement {
    */
   boolean isGlobal();
 
+  /**
+   * Generates a "coordinate" string that consists of the definition's containing metaschema's short
+   * name, the type of definition, the definition's name, and the hashcode.
+   * 
+   * @param definition
+   *          the definition to generate coordinates for
+   * @return the coordinate string
+   */
   static String toCoordinates(InfoElementDefinition definition) {
     return String.format("%s:%s:%s@%d", definition.getContainingMetaschema().getShortName(), definition.getModelType(),
         definition.getName(), definition.hashCode());

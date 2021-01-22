@@ -33,6 +33,15 @@ import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 public interface InfoElementInstance<PARENT extends ObjectDefinition, DEF extends InfoElementDefinition>
     extends InfoElement {
 
+  /**
+   * Generates a "coordinate" string that consists of the definition's containing metaschema's short
+   * name, the type of definition, the definition's name, the hashcode, and the definition's hash
+   * code.
+   * 
+   * @param instance
+   *          the instance to generate coordinates for
+   * @return the coordinate string
+   */
   static String toCoordinates(InfoElementInstance<?, ?> instance) {
     return String.format("%s:%s:%s@%d(%d)", instance.getContainingMetaschema().getShortName(), instance.getModelType(),
         instance.getName(), instance.hashCode(),

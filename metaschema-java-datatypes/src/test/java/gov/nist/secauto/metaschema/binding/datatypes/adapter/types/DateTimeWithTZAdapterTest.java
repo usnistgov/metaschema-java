@@ -27,6 +27,8 @@ package gov.nist.secauto.metaschema.binding.datatypes.adapter.types;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.DateTimeWithTZAdapter;
+
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 

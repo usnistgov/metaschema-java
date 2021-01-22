@@ -28,9 +28,10 @@ package gov.nist.secauto.metaschema.binding.datatypes.adapter.types;
 
 import com.ctc.wstx.stax.WstxInputFactory;
 
-import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlEventUtil;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.datatypes.markup.flexmark.AstCollectingVisitor;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MarkupParser;
+import gov.nist.secauto.metaschema.datatypes.types.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.datatypes.types.markup.flexmark.AstCollectingVisitor;
+import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;

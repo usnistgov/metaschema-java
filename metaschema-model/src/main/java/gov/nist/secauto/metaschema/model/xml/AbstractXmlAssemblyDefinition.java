@@ -79,6 +79,10 @@ public abstract class AbstractXmlAssemblyDefinition<DEF extends AbstractXmlAssem
    */
   protected abstract XmlObject getXmlAssembly();
 
+  /**
+   * Used to generate the instances for the assembly's model in a lazy fashion when the model is first
+   * accessed.
+   */
   protected void generateModel() {
     // handle flags
     {

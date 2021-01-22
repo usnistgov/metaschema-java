@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.itl.metaschema.model.m4.xml.LocalAssemblyDefinition;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatypes.types.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.LocalInfoElementDefinition;

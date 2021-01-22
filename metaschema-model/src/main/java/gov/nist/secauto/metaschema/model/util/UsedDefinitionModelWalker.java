@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.util;
 
 import gov.nist.secauto.metaschema.model.Metaschema;
@@ -32,22 +33,37 @@ import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
 import java.util.Collection;
 import java.util.function.Function;
 
+/**
+ * This model walker can be used to gather metaschema definitions that are defined globally.
+ */
 public class UsedDefinitionModelWalker
     extends DefinitionCollectingModelWalker {
   private static final Function<InfoElementDefinition, Boolean> FILTER = (def) -> {
     return def.isGlobal();
-//    return def.isGlobal() || (def instanceof AssemblyDefinition && ((AssemblyDefinition)def).getRootName() != null);
+    // return def.isGlobal() || (def instanceof AssemblyDefinition &&
+    // ((AssemblyDefinition)def).getRootName() != null);
   };
 
-  public UsedDefinitionModelWalker() {
-    super(FILTER);
-  }
-
+  /**
+   * Collect the gloablly defined metaschema definitions from the provided metaschema, and any
+   * metaschema imported by this metaschema.
+   * 
+   * @param metaschema
+   *          the metaschema to analyze
+   * @return a collection of matching definitions
+   */
   public static Collection<InfoElementDefinition> collectUsedDefinitions(Metaschema metaschema) {
     UsedDefinitionModelWalker walker = new UsedDefinitionModelWalker();
-     for (AssemblyDefinition rootDef : metaschema.getRootAssemblyDefinitions().values()) {
-       walker.walk(rootDef);
-     }
-     return walker.getDefinitions();
+    for (AssemblyDefinition rootDef : metaschema.getRootAssemblyDefinitions().values()) {
+      walker.walk(rootDef);
+    }
+    return walker.getDefinitions();
+  }
+
+  /**
+   * Construct a new walker.
+   */
+  protected UsedDefinitionModelWalker() {
+    super(FILTER);
   }
 }
