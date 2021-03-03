@@ -28,9 +28,8 @@ package gov.nist.secauto.metaschema.model.instances;
 
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 
-public abstract class AbstractChoiceInstance
+public abstract class AbstractChoiceInstance extends AbstractInfoElementInstance<AssemblyDefinition>
     implements ChoiceInstance {
-  private final AssemblyDefinition parent;
 
   /**
    * Create a new choice instance.
@@ -39,12 +38,7 @@ public abstract class AbstractChoiceInstance
    *          the containing assembly definition
    */
   public AbstractChoiceInstance(AssemblyDefinition parent) {
-    this.parent = parent;
-  }
-
-  @Override
-  public AssemblyDefinition getContainingDefinition() {
-    return parent;
+    super(parent);
   }
 
   @Override

@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 
 public abstract class AbstractObjectModelInstance<DEF extends ObjectDefinition>
-    extends AbstractInfoElementInstance<AssemblyDefinition, DEF> {
+    extends AbstractDefinedInfoElementInstance<AssemblyDefinition, DEF> {
 
   /**
    * Create a new object model instance.

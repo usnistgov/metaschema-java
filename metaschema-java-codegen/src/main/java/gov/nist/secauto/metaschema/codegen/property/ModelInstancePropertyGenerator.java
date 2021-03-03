@@ -126,7 +126,8 @@ public class ModelInstancePropertyGenerator
     ObjectModelInstance<?> modelInstance = getModelInstance();
     if (modelInstance instanceof FieldInstance) {
       FieldInstance<?> fieldInstance = (FieldInstance<?>) modelInstance;
-      if (DataType.EMPTY.equals(fieldInstance.getDefinition().getDatatype())) {
+      if (gov.nist.secauto.metaschema.model.definitions.DataType.EMPTY
+          .equals(fieldInstance.getDefinition().getDatatype())) {
         // treat "empty" fields as an assembly
         fieldAnnoation = AnnotationSpec.builder(Assembly.class);
       } else {

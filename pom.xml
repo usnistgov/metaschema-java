@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>17</version>
+		<version>18-SNAPSHOT</version>
 	</parent>
 	<groupId>gov.nist.secauto.metaschema</groupId>
 	<artifactId>metaschema-framework</artifactId>
@@ -111,8 +111,10 @@
 		<dependency.moxy.version>3.0.0</dependency.moxy.version>
 		<dependency.woodstox.version>6.2.3</dependency.woodstox.version>
 		<dependency.xmlbeans.version>3.1.0</dependency.xmlbeans.version>
+		<dependency.antlr4.version>4.9.1</dependency.antlr4.version>
 		<!-- <dependency.xmlbeans.version>4.0.0</dependency.xmlbeans.version> -->
 		<plugin.license.version>4.0.rc1</plugin.license.version>
+		<plugin.antlr4test.version>1.17</plugin.antlr4test.version>
 	</properties>
 
 	<dependencyManagement>
@@ -201,11 +203,11 @@
 				<artifactId>flexmark-ext-typographic</artifactId>
 				<version>${dependency.flexmark.version}</version>
 			</dependency>
-<!-- 			<dependency> -->
-<!-- 				<groupId>com.vladsch.flexmark</groupId> -->
-<!-- 				<artifactId>flexmark-formatter</artifactId> -->
-<!-- 				<version>${dependency.flexmark.version}</version> -->
-<!-- 			</dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>com.vladsch.flexmark</groupId> -->
+			<!-- <artifactId>flexmark-formatter</artifactId> -->
+			<!-- <version>${dependency.flexmark.version}</version> -->
+			<!-- </dependency> -->
 			<dependency>
 				<groupId>com.vladsch.flexmark</groupId>
 				<artifactId>flexmark-html2md-converter</artifactId>
@@ -240,6 +242,12 @@
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
 				<version>${dependency.freemarker.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-runtime</artifactId>
+				<version>${dependency.antlr4.version}</version>
 			</dependency>
 
 			<dependency>
@@ -395,6 +403,20 @@
 						</dependency>
 					</dependencies>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-checkstyle-plugin</artifactId>
+				</plugin>
+				<plugin>
+					<groupId>org.antlr</groupId>
+					<artifactId>antlr4-maven-plugin</artifactId>
+					<version>${dependency.antlr4.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>com.khubla.antlr</groupId>
+					<artifactId>antlr4test-maven-plugin</artifactId>
+					<version>${plugin.antlr4test.version}</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -406,6 +428,8 @@
 		<module>metaschema-java-codegen</module>
 		<module>metaschema-maven-plugin</module>
 		<module>metaschema-java-binding</module>
-		<module>metaschema-schemagen</module>
+		<module>metaschema-schema-generator</module>
+		<module>metaschema-metapath</module>
+		<module>metaschema-documentation-generator</module>
 	</modules>
 </project>

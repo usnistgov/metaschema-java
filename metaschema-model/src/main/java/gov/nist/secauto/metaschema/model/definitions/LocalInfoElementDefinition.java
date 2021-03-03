@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.definitions;
 
+import gov.nist.secauto.metaschema.model.instances.DefinedInfoElementInstance;
 import gov.nist.secauto.metaschema.model.instances.InfoElementInstance;
 
 /**
@@ -35,7 +36,7 @@ import gov.nist.secauto.metaschema.model.instances.InfoElementInstance;
  * @param <INSTANCE>
  *          the associated instance type
  */
-public interface LocalInfoElementDefinition<INSTANCE extends InfoElementInstance<?,
+public interface LocalInfoElementDefinition<INSTANCE extends DefinedInfoElementInstance<?,
     ? extends LocalInfoElementDefinition<INSTANCE>>>
     extends InfoElementDefinition {
 

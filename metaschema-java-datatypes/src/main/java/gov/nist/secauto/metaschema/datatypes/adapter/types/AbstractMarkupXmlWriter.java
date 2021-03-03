@@ -72,7 +72,7 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
     entityMap.put("&mdash;", "—");
     entityMap.put("&ndash;", "–");
     entityMap.put("&ldquo;", "“");
-    entityMap.put("&rdquo;", "\u201D");
+    entityMap.put("&rdquo;", "”");
     entityMap.put("&laquo;", "«");
     entityMap.put("&raquo;", "»");
 

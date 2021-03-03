@@ -68,7 +68,7 @@ public class InsertAnchorExtension
 
   @Override
   public void extend(Parser.Builder parserBuilder) {
-    if (ENABLE_INLINE_INSERT_ANCHORS.getFrom(parserBuilder)) {
+    if (ENABLE_INLINE_INSERT_ANCHORS.get(parserBuilder)) {
       parserBuilder.customInlineParserExtensionFactory(new InsertAnchorInlineParser.Factory());
     }
   }

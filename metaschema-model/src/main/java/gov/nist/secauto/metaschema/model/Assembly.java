@@ -30,7 +30,7 @@ package gov.nist.secauto.metaschema.model;
  * A marker interface for an information element that is an assembly model type.
  *
  */
-public interface Assembly extends InfoElement {
+public interface Assembly extends NamedInfoElement {
   /**
    * Provides the Metaschema model type of "ASSEMBLY".
    * 

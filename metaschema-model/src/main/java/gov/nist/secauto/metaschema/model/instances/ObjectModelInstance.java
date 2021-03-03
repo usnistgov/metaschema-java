@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.instances;
 
+import gov.nist.secauto.metaschema.model.NamedInfoElement;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 
@@ -36,7 +37,7 @@ import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
  *          the type of definition that this is an instance of
  */
 public interface ObjectModelInstance<DEF extends ObjectDefinition>
-    extends ModelInstance, InfoElementInstance<AssemblyDefinition, DEF> {
+    extends ModelInstance, DefinedInfoElementInstance<AssemblyDefinition, DEF>, NamedInfoElement {
 
   /**
    * Determines if the instance is a simple field value without flags, or if it has a complex

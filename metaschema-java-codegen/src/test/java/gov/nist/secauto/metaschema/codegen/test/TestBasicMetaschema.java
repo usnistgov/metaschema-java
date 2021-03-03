@@ -70,8 +70,8 @@ public class TestBasicMetaschema {
       bindingConfiguration.load(bindingFile);
     }
     List<JavaGenerator.GeneratedClass> classesToCompile = new LinkedList<>();
-    for (List<JavaGenerator.GeneratedClass> value : JavaGenerator
-        .generate(metaschema, classDir, bindingConfiguration).values()) {
+    for (List<JavaGenerator.GeneratedClass> value : JavaGenerator.generate(metaschema, classDir, bindingConfiguration)
+        .values()) {
       for (JavaGenerator.GeneratedClass generatedClass : value) {
         classesToCompile.add(generatedClass);
       }
@@ -90,11 +90,11 @@ public class TestBasicMetaschema {
     return retval;
   }
 
-  private static Object readXml(Reader reader, Class<?> rootClass) throws BindingException {
-    BindingContext context = BindingContext.newInstance();
-    Object value = context.newDeserializer(Format.XML, rootClass, null).deserialize(reader);
-    return value;
-  }
+  // private static Object readXml(Reader reader, Class<?> rootClass) throws BindingException {
+  // BindingContext context = BindingContext.newInstance();
+  // Object value = context.newDeserializer(Format.XML, rootClass, null).deserialize(reader);
+  // return value;
+  // }
 
   // private static <CLASS> void writeXml(Writer writer, CLASS rootObject) throws BindingException {
   // BindingContext context = BindingContext.newInstance();
@@ -142,11 +142,10 @@ public class TestBasicMetaschema {
   private void runTests(String testPath, String rootClassName, File classDir,
       java.util.function.Consumer<Object> assertions)
       throws ClassNotFoundException, IOException, MetaschemaException, BindingException {
-    Class<?> rootClass = compileMetaschema(
-        new File(String.format("src/test/resources/metaschema/%s/metaschema.xml", testPath)),
-        new File(String.format("src/test/resources/metaschema/%s/binding.xml", testPath)),
-        rootClassName,
-        classDir);
+    @SuppressWarnings("unused")
+    Class<?> rootClass
+        = compileMetaschema(new File(String.format("src/test/resources/metaschema/%s/metaschema.xml", testPath)),
+            new File(String.format("src/test/resources/metaschema/%s/binding.xml", testPath)), rootClassName, classDir);
 
     // File xmlExample = new File(String.format("src/test/resources/metaschema/%s/example.xml",
     // testPath));
@@ -182,29 +181,29 @@ public class TestBasicMetaschema {
   File generationDir = new File("target/generated-sources/metaschema");
 
   @Test
-  public void testSimpleMetaschema()
-      throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
+  public void testSimpleMetaschema() throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
     runTests("simple", "gov.nist.csrc.ns.metaschema.testing.simple.TopLevel", generationDir);
-//    runTests("simple", "gov.nist.csrc.ns.metaschema.testing.simple.TopLevel", generationDir, (obj) -> {
-//      try {
-//        Assertions.assertEquals("test", reflectMethod(obj, "getId"));
-//      } catch (NoSuchMethodException | SecurityException e) {
-//        Assertions.fail(e);
-//      }
-//    });
+    // runTests("simple", "gov.nist.csrc.ns.metaschema.testing.simple.TopLevel", generationDir, (obj) ->
+    // {
+    // try {
+    // Assertions.assertEquals("test", reflectMethod(obj, "getId"));
+    // } catch (NoSuchMethodException | SecurityException e) {
+    // Assertions.fail(e);
+    // }
+    // });
   }
-  
+
   @Test
   public void testSimpleUuidMetaschema()
       throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-    runTests("simple_with_uuid", "gov.nist.csrc.ns.metaschema.testing.simple.with.uuid.TopLevel", generationDir, (obj) -> {
-      try {
-        Assertions.assertEquals("5de455cf-2f8d-4da2-9182-323d433e1065", 
-        		reflectMethod(obj, "getUuid").toString());
-      } catch (NoSuchMethodException | SecurityException e) {
-        Assertions.fail(e);
-      }
-    });
+    runTests("simple_with_uuid", "gov.nist.csrc.ns.metaschema.testing.simple.with.uuid.TopLevel", generationDir,
+        (obj) -> {
+          try {
+            Assertions.assertEquals("5de455cf-2f8d-4da2-9182-323d433e1065", reflectMethod(obj, "getUuid").toString());
+          } catch (NoSuchMethodException | SecurityException e) {
+            Assertions.fail(e);
+          }
+        });
   }
 
   @Test
@@ -220,8 +219,7 @@ public class TestBasicMetaschema {
   @Test
   public void testFieldsWithFlagMetaschema()
       throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
-    runTests("fields_with_flags", "gov.nist.csrc.ns.metaschema.testing.fields.with.flags.TopLevel",
-        generationDir);
+    runTests("fields_with_flags", "gov.nist.csrc.ns.metaschema.testing.fields.with.flags.TopLevel", generationDir);
     // runTests("fields_with_flags", "gov.nist.csrc.ns.metaschema.testing.fields.with.flags.TopLevel",
     // generationDir,
     // (obj) -> {

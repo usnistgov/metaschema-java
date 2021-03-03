@@ -87,6 +87,7 @@ public abstract class AbstractModelProperty
    * @return the property information for the bound property
    * @throws BindingException
    *           if an error occurred while generating the property info
+   *           
    */
   protected synchronized ModelPropertyInfo getPropertyInfo() {
     if (propertyInfo == null) {
@@ -132,7 +133,8 @@ public abstract class AbstractModelProperty
                     getField().getType().getName(),
                     List.class.getName()));
           default:
-            throw new IllegalStateException();
+            // this should not occur
+            throw new RuntimeException(new IllegalStateException());
           }
         }
         this.propertyInfo = new SingletonPropertyInfo(this);

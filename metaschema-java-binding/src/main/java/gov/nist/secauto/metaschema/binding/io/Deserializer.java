@@ -36,22 +36,57 @@ import java.net.URL;
  * Implementations of this interface are able to read structured data into a Java class instance of
  * the parameterized type.
  * 
- * @param <CLASS> the Java type into which data can be read
+ * @param <CLASS>
+ *          the Java type into which data can be read
  */
 public interface Deserializer<CLASS> {
-  Format supportedFromat();
+  // Format supportedFromat();
+  //
+  /**
+   * Read data from the {@link InputStream} into a bound class instance.
+   * 
+   * @param is
+   *          the input stream to read from
+   * @return the instance data
+   * @throws BindingException
+   *           if an error occurred while reading data from the stream
+   */
+  CLASS deserialize(InputStream is) throws BindingException;
 
   /**
+   * Read data from the {@link File} into a bound class instance.
    * 
-   * @param out
-   * @return
+   * @param file
+   *          the file to read from
+   * @return the instance data
+   * @throws FileNotFoundException
+   *           if the provided file does not exist
    * @throws BindingException
+   *           if an error occurred while reading data from the stream
    */
-  CLASS deserialize(InputStream out) throws BindingException;
-
   CLASS deserialize(File file) throws FileNotFoundException, BindingException;
 
+  /**
+   * Read data from the remote resource into a bound class instance.
+   * 
+   * 
+   * @param url
+   *          the remote resource to read from
+   * @return the instance data
+   * @throws BindingException
+   *           if an error occurred while reading data from the stream
+   */
   CLASS deserialize(URL url) throws BindingException;
 
+  /**
+   * Read data from the {@link Reader} into a bound class instance.
+   * 
+   * 
+   * @param reader
+   *          the reader to read from
+   * @return the instance data
+   * @throws BindingException
+   *           if an error occurred while reading data from the stream
+   */
   CLASS deserialize(Reader reader) throws BindingException;
 }

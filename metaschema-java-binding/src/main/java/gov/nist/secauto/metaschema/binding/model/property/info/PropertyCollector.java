@@ -59,7 +59,7 @@ public interface PropertyCollector {
   /**
    * Get the current state of the "collection".
    * 
-   * @return
+   * @return the collection
    */
   Object getValue();
 }

@@ -182,7 +182,8 @@ public class DefaultFieldProperty
   }
 
   @Override
-  public boolean writeItem(Object item, QName parentName, XmlWritingContext context) throws XMLStreamException, IOException {
+  public boolean writeItem(Object item, QName parentName, XmlWritingContext context)
+      throws XMLStreamException, IOException {
     // figure out how to parse the item
     DataTypeHandler handler = getBindingSupplier();
 

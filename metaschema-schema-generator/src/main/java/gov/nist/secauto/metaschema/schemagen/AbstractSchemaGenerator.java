@@ -26,22 +26,6 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.MetaschemaException;
-import gov.nist.secauto.metaschema.model.MetaschemaLoader;
-import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
-import gov.nist.secauto.metaschema.model.util.UsedDefinitionModelWalker;
-
-import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.core.ParseException;
 import freemarker.template.Configuration;
@@ -51,15 +35,27 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateNotFoundException;
 
-public class TestGen {
-  @Test
-  void test() throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException,
-      MetaschemaException, TemplateException {
+import gov.nist.secauto.metaschema.model.Metaschema;
+import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
+import gov.nist.secauto.metaschema.model.util.UsedDefinitionModelWalker;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+public abstract class AbstractSchemaGenerator implements SchemaGenerator {
+  private boolean debug = false;
+
+  protected Configuration newConfiguration() {
     // Create your Configuration instance, and specify if up to what FreeMarker
     // version (here 2.3.29) do you want to apply the fixes that are not 100%
     // backward-compatible. See the Configuration JavaDoc for details.
-    Configuration cfg = new Configuration(Configuration.VERSION_2_3_29);
+    Configuration cfg = new Configuration(Configuration.VERSION_2_3_30);
 
     // // Specify the source where the template files come from. Here I set a
     // // plain directory for it, but non-file-system sources are possible too:
@@ -67,16 +63,11 @@ public class TestGen {
     ClassTemplateLoader ctl = new ClassTemplateLoader(getClass(), "/templates");
     cfg.setTemplateLoader(ctl);
 
-    // From here we will set the settings recommended for new projects. These
-    // aren't the defaults for backward compatibilty.
-
-    // Set the preferred charset template files are stored in. UTF-8 is
-    // a good choice in most applications:
-    cfg.setDefaultEncoding("UTF-8");
-
-    // Sets how errors will appear.
-    // During web page *development* TemplateExceptionHandler.HTML_DEBUG_HANDLER is better.
-    cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+    if (debug) {
+      cfg.setTemplateExceptionHandler(TemplateExceptionHandler.DEBUG_HANDLER);
+    } else {
+      cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+    }
 
     // Don't log exceptions inside FreeMarker that it will thrown at you anyway:
     cfg.setLogTemplateExceptions(false);
@@ -87,22 +78,41 @@ public class TestGen {
     // Do not fall back to higher scopes when reading a null loop variable:
     cfg.setFallbackOnNullLoopVariable(false);
 
+    return cfg;
+  }
+
+  public void generateFromMetaschemas(Collection<? extends Metaschema> metaschemas, Writer out)
+      throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException {
+    Objects.requireNonNull(metaschemas, "metaschemas");
+
+    Collection<? extends InfoElementDefinition> definitions
+        = UsedDefinitionModelWalker.collectUsedDefinitions(metaschemas);
+    generateFromDefinitions(definitions, out);
+  }
+
+  public void generateFromDefinitions(Collection<? extends InfoElementDefinition> definitions, Writer out)
+      throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException {
+    Objects.requireNonNull(definitions, "definitions");
+    Set<Metaschema> metaschemas = new LinkedHashSet<>();
+    for (InfoElementDefinition definition : definitions) {
+      Metaschema metaschema = definition.getContainingMetaschema();
+      if (!metaschemas.contains(metaschema)) {
+        metaschemas.add(metaschema);
+      }
+    }
+
+    Configuration cfg = newConfiguration();
+
     // Create the root hash. We use a Map here, but it could be a JavaBean too.
     Map<String, Object> root = new HashMap<>();
-
-    MetaschemaLoader loader = new MetaschemaLoader();
-
-    Metaschema metaschema
-        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_catalog_metaschema.xml"));
-    
-    root.put("metaschema", metaschema);
-
-    Collection<InfoElementDefinition> definitions = UsedDefinitionModelWalker.collectUsedDefinitions(metaschema);
+    root.put("metaschemas", metaschemas);
     root.put("definitions", definitions);
 
-    Template temp = cfg.getTemplate("test.ftlx");
+    Template template = getTemplate(cfg);
 
-    Writer out = new OutputStreamWriter(System.out);
-    temp.process(root, out);
+    template.process(root, out);
   }
+
+  protected abstract Template getTemplate(Configuration cfg)
+      throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException;
 }

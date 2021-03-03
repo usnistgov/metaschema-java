@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.FieldDocument;
 import gov.nist.itl.metaschema.model.m4.xml.FlagDocument;
 import gov.nist.itl.metaschema.model.m4.xml.LocalFieldDefinition;
 import gov.nist.itl.metaschema.model.m4.xml.LocalFlagDefinition;
@@ -91,7 +90,7 @@ public class XmlLocalFieldDefinition
       // default value
       retval = Metaschema.DEFAULT_FIELD_XML_WRAPPER;
       if (getXmlField().isSetInXml()) {
-        retval = FieldDocument.Field.InXml.WITH_WRAPPER.equals(getXmlField().getInXml());
+        retval = LocalFieldDefinition.InXml.WITH_WRAPPER.equals(getXmlField().getInXml());
       }
     } else {
       // All other data types get "wrapped"

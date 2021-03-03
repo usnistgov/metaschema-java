@@ -27,9 +27,18 @@
 package gov.nist.secauto.metaschema.model.instances;
 
 import gov.nist.secauto.metaschema.model.Assembly;
+import gov.nist.secauto.metaschema.model.ModelType;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 
 public interface AssemblyInstance<DEF extends AssemblyDefinition>
     extends ObjectModelInstance<DEF>, Assembly {
-
+  /**
+   * Provides the Metaschema model type of "ASSEMBLY".
+   * 
+   * @return the model type
+   */
+  @Override
+  default ModelType getModelType() {
+    return ModelType.ASSEMBLY;
+  }
 }

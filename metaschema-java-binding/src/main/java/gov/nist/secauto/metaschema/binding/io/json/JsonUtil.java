@@ -30,7 +30,6 @@ import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.Property;
 
@@ -146,7 +145,7 @@ public class JsonUtil {
   }
 
   public static JsonToken consumeAndAssert(JsonParser parser, JsonToken expectedToken)
-      throws IOException, BindingException {
+      throws IOException {
     JsonToken token = parser.nextToken();
     assert expectedToken.equals(token) : getAssertMessage(expectedToken, token, parser.getCurrentLocation());
     return token;

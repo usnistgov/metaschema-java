@@ -72,7 +72,7 @@ public abstract class DefinitionCollectingModelWalker
    * 
    * @return the collection of definitions
    */
-  public Collection<InfoElementDefinition> getDefinitions() {
+  public Collection<? extends InfoElementDefinition> getDefinitions() {
     return definitions;
   }
 

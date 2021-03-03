@@ -610,6 +610,8 @@ public class MarkupParser {
           handled = true;
           break;
         }
+        default:
+          throw new RuntimeException(String.format("Unrecognized tag '%s'",nextName.getLocalPart()));
         }
       }
 

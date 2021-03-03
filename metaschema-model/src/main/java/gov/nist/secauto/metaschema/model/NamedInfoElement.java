@@ -23,55 +23,21 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.model;
 
-import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
-import gov.nist.secauto.metaschema.model.instances.InfoElementInstance;
-
-public class Util {
+public interface NamedInfoElement extends InfoElement {
   /**
-   * Generates a coordinate string for the provided information element instance.
+   * Get the name of the information element.
    * 
-   * A coordinate consists of the element's:
-   * <ul>
-   * <li>containing Metaschema's short name</li>
-   * <li>model type</li>
-   * <li>name</li>
-   * <li>hash code</li>
-   * <li>the hash code of the definition</li>
-   * </ul>
-   * 
-   * @param instance
-   *          the information element
-   * @return the coordinate
+   * @return the name
    */
-  public static String toCoordinates(InfoElementInstance<?, ?> instance) {
-    InfoElementDefinition containingDefinition = instance.getContainingDefinition();
-    InfoElementDefinition definition = instance.getDefinition();
-    instance.getDefinition();
-    return String.format("%s:%s:%s@%d(%d)", containingDefinition.getContainingMetaschema().getShortName(),
-        instance.getModelType(),
-        instance.getName(), instance.hashCode(), definition.hashCode());
-  }
+  String getName();
 
   /**
-   * Generates a coordinate string for the provided information element definition.
+   * Retrieves the "use" name of the information element, which is the model name to use for the
+   * element where it is referenced.
    * 
-   * A coordinate consists of the element's:
-   * <ul>
-   * <li>containing Metaschema's short name</li>
-   * <li>model type</li>
-   * <li>name</li>
-   * <li>hash code</li>
-   * </ul>
-   * 
-   * @param definition
-   *          the information element definition
-   * @return the coordinate
+   * @return the "use" name
    */
-  public static String toCoordinates(InfoElementDefinition definition) {
-    return String.format("%s:%s:%s@%d", definition.getContainingMetaschema().getShortName(), definition.getModelType(),
-        definition.getName(), definition.hashCode());
-  }
+  String getUseName();
 }

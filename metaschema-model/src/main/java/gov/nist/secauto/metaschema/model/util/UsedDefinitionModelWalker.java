@@ -31,13 +31,13 @@ import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Function;
 
 /**
  * This model walker can be used to gather metaschema definitions that are defined globally.
  */
-public class UsedDefinitionModelWalker
-    extends DefinitionCollectingModelWalker {
+public class UsedDefinitionModelWalker extends DefinitionCollectingModelWalker {
   private static final Function<InfoElementDefinition, Boolean> FILTER = (def) -> {
     return def.isGlobal();
     // return def.isGlobal() || (def instanceof AssemblyDefinition &&
@@ -45,19 +45,34 @@ public class UsedDefinitionModelWalker
   };
 
   /**
-   * Collect the gloablly defined metaschema definitions from the provided metaschema, and any
+   * Collect the globally defined metaschema definitions from the provided metaschemas, and any
+   * metaschema imported by these metaschema.
+   * 
+   * @param metaschemas
+   *          the metaschemas to analyze
+   * @return a collection of matching definitions
+   */
+  public static Collection<? extends InfoElementDefinition>
+      collectUsedDefinitions(Collection<? extends Metaschema> metaschemas) {
+    UsedDefinitionModelWalker walker = new UsedDefinitionModelWalker();
+    for (Metaschema metaschema : metaschemas) {
+      for (AssemblyDefinition rootDef : metaschema.getRootAssemblyDefinitions().values()) {
+        walker.walk(rootDef);
+      }
+    }
+    return walker.getDefinitions();
+  }
+
+  /**
+   * Collect the globally defined metaschema definitions from the provided metaschema, and any
    * metaschema imported by this metaschema.
    * 
    * @param metaschema
    *          the metaschema to analyze
    * @return a collection of matching definitions
    */
-  public static Collection<InfoElementDefinition> collectUsedDefinitions(Metaschema metaschema) {
-    UsedDefinitionModelWalker walker = new UsedDefinitionModelWalker();
-    for (AssemblyDefinition rootDef : metaschema.getRootAssemblyDefinitions().values()) {
-      walker.walk(rootDef);
-    }
-    return walker.getDefinitions();
+  public static Collection<? extends InfoElementDefinition> collectUsedDefinitions(Metaschema metaschema) {
+    return collectUsedDefinitions(Collections.singleton(metaschema));
   }
 
   /**

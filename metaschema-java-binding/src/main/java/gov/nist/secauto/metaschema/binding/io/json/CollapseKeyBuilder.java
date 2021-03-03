@@ -119,16 +119,15 @@ public class CollapseKeyBuilder {
     // for each key, we need to write the properties
     for (Map.Entry<Key, List<Object>> entry : keyToValuesMap.entrySet()) {
       Key key = entry.getKey();
-      List<Object> fieldValues = entry.getValue();
 
       Object[] flagValues = key.getFlagValues();
 
       if (writeObjectWrapper) {
         writer.writeStartObject();
       }
-      
+
       // first write the JSON key if it is configured
-      if (jsonKey != null) {
+      if (jsonKey != null && jsonKeyIndex != null) {
         // the field
         writer.writeFieldName(jsonKey.getValueAsString(flagValues[jsonKeyIndex]));
 
@@ -147,9 +146,10 @@ public class CollapseKeyBuilder {
       }
 
       // finally write the field value
+      List<Object> fieldValues = entry.getValue();
       if (!fieldValues.isEmpty()) {
         String valueKeyName;
-        if (jsonValueKey != null) {
+        if (jsonValueKey != null && jsonValueKeyIndex != null) {
           valueKeyName = jsonValueKey.getValueAsString(flagValues[jsonValueKeyIndex]);
         } else {
           valueKeyName = fieldValue.getJsonPropertyName();

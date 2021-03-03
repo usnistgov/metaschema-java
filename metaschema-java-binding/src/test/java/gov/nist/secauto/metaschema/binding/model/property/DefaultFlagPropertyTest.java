@@ -168,6 +168,7 @@ class DefaultFlagPropertyTest {
       return _id;
     }
 
+    @SuppressWarnings("unused")
     public BigInteger getNumber() {
       return _number;
     }

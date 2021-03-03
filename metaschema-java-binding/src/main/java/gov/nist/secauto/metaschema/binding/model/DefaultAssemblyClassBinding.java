@@ -106,6 +106,7 @@ public class DefaultAssemblyClassBinding
    * 
    * @param clazz
    *          the Java bean class
+   * @param bindingContext
    * @throws BindingException
    *           if an error occurred while parsing the class data
    */
@@ -325,7 +326,8 @@ public class DefaultAssemblyClassBinding
     return true;
   }
 
-  protected void readInternal(Object parentInstance, Object instance, JsonParsingContext context)
+  protected void readInternal(@SuppressWarnings("unused") Object parentInstance, Object instance,
+      JsonParsingContext context)
       throws BindingException, IOException {
     JsonParser jsonParser = context.getReader();
 
@@ -433,7 +435,8 @@ public class DefaultAssemblyClassBinding
    * @throws NullPointerException
    *           if there is a JSON key configured and the key property's value is {@code null}
    */
-  protected void writeInternal(Object instance, boolean writeObjectWrapper, JsonWritingContext context) throws IOException {
+  protected void writeInternal(Object instance, boolean writeObjectWrapper, JsonWritingContext context)
+      throws IOException {
     JsonGenerator writer = context.getWriter();
 
     if (writeObjectWrapper) {

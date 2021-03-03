@@ -33,7 +33,6 @@ import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.Configuration;
 import gov.nist.secauto.metaschema.binding.io.Feature;
-import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
@@ -54,8 +53,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-public class DefaultXmlDeserializer<CLASS>
-    extends AbstractDeserializer<CLASS> {
+public class DefaultXmlDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
   private static final Logger logger = LogManager.getLogger(DefaultXmlDeserializer.class);
 
   private XMLInputFactory2 xmlInputFactory;
@@ -65,10 +63,10 @@ public class DefaultXmlDeserializer<CLASS>
     super(bindingContext, classBinding, configuration);
   }
 
-  @Override
-  public Format supportedFromat() {
-    return Format.XML;
-  }
+  // @Override
+  // public Format supportedFromat() {
+  // return Format.XML;
+  // }
 
   protected XMLInputFactory2 getXMLInputFactory() {
     synchronized (this) {
@@ -125,11 +123,10 @@ public class DefaultXmlDeserializer<CLASS>
     CLASS retval = null;
     if (getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT, false)) {
       if (rootQName == null) {
-        throw new BindingException(
-            String.format(
-                "Root parsing is enabled (DESERIALIZE_ROOT), but class '%s'"
-                    + " does not have a configured root name using the '%s' annotation.",
-                clazz.getName(), MetaschemaAssembly.class.getName()));
+        throw new BindingException(String.format(
+            "Root parsing is enabled (DESERIALIZE_ROOT), but class '%s'"
+                + " does not have a configured root name using the '%s' annotation.",
+            clazz.getName(), MetaschemaAssembly.class.getName()));
       }
       try {
         @SuppressWarnings("unchecked")

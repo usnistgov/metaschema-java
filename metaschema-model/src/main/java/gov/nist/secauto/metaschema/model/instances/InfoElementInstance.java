@@ -30,30 +30,27 @@ import gov.nist.secauto.metaschema.model.InfoElement;
 import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 
-public interface InfoElementInstance<PARENT extends ObjectDefinition, DEF extends InfoElementDefinition>
-    extends InfoElement {
+public interface InfoElementInstance<PARENT extends ObjectDefinition> extends InfoElement {
 
   /**
-   * Generates a "coordinate" string that consists of the definition's containing metaschema's short
-   * name, the type of definition, the definition's name, the hashcode, and the definition's hash
-   * code.
+   * Generates a "coordinate" string for the provided information element instance.
    * 
-   * @param instance
-   *          the instance to generate coordinates for
-   * @return the coordinate string
+   * A coordinate consists of the element's:
+   * <ul>
+   * <li>containing Metaschema's short name</li>
+   * <li>model type</li>
+   * <li>name</li>
+   * <li>hash code</li>
+   * <li>the hash code of the definition</li>
+   * </ul>
+   * 
+   * @return the coordinate
    */
-  static String toCoordinates(InfoElementInstance<?, ?> instance) {
-    return String.format("%s:%s:%s@%d(%d)", instance.getContainingMetaschema().getShortName(), instance.getModelType(),
-        instance.getName(), instance.hashCode(),
-        instance.getDefinition().isGlobal() ? instance.getDefinition().hashCode() : 0);
+  default String toCoordinates() {
+    InfoElementDefinition containingDefinition = getContainingDefinition();
+
+    return String.format("%s:%s", containingDefinition.getContainingMetaschema().getShortName(), getModelType());
   }
-
-  /**
-   * Retrieve the definition of this instance.
-   * 
-   * @return the corresponding field definition
-   */
-  DEF getDefinition();
 
   /**
    * Retrieve the Metaschema definition on which the info element was declared.

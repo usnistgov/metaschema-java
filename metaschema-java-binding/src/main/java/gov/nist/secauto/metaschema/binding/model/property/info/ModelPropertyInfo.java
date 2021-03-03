@@ -62,8 +62,8 @@ public interface ModelPropertyInfo {
    * located just after the property/field name has been parsed. This method will return a value based
    * on the property's value type as reported by {@link #getType()}.
    * 
+   * @param collector
    * @param parentInstance
-   * 
    * @param context
    *          the JSON parsing context
    * @return the property's value based on the type
@@ -78,7 +78,8 @@ public interface ModelPropertyInfo {
   boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start, XmlParsingContext context)
       throws IOException, BindingException, XMLStreamException;
 
-  boolean writeValue(Object parentInstance, QName parentName, XmlWritingContext context) throws XMLStreamException, IOException;
+  boolean writeValue(Object parentInstance, QName parentName, XmlWritingContext context)
+      throws XMLStreamException, IOException;
 
   void writeValue(Object parentInstance, JsonWritingContext context) throws IOException;
 

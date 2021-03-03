@@ -174,7 +174,7 @@ public class XmlGlobalFieldDefinition
     // default value
     boolean retval = true;
     if (getXmlField().isSetCollapsible()) {
-      retval = gov.nist.itl.metaschema.model.m4.xml.Boolean.YES.equals(getXmlField().getCollapsible());
+      retval = getXmlField().getCollapsible();
     }
     return retval;
   }

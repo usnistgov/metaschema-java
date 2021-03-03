@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    xmlns:prose="http://csrc.nist.gov/ns/oscal/1.0"
+    xmlns="http://csrc.nist.gov/ns/prose-test"
+    targetNamespace="http://csrc.nist.gov/ns/prose-test">
+    <xs:import namespace="http://csrc.nist.gov/ns/oscal/1.0" schemaLocation="templates/oscal-prose-module.xsd"/>
+    <xs:element name="prose-test">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="markup-line" type="prose:markupLineType" maxOccurs="unbounded" />
+                <xs:element name="markup-multiline" type="prose:markupMultilineType" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

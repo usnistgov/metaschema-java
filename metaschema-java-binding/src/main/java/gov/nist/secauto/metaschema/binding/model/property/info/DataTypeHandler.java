@@ -47,9 +47,11 @@ public interface DataTypeHandler extends JsonBindingSupplier, XmlBindingSupplier
   // a proxy to the JavaTypeAdapter if it is used or {@code false}
   boolean isUnrappedValueAllowedInXml();
 
-//  void writeProxyWritableItem(ProxyWritableItem item, JsonWritingContext context) throws IOException;
-//
-//  void writeCollapsedWritableItem(CollapsedWritableItem proxy, JsonWritingContext context);
+  // void writeProxyWritableItem(ProxyWritableItem item, JsonWritingContext context) throws
+  // IOException;
+  //
+  // void writeCollapsedWritableItem(CollapsedWritableItem proxy, JsonWritingContext context);
 
-  void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, JsonWritingContext context) throws IOException;
+  void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, JsonWritingContext context)
+      throws IOException;
 }

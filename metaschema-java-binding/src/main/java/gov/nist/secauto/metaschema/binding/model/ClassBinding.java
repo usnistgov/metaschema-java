@@ -88,7 +88,7 @@ public interface ClassBinding {
   /**
    * Get the class's properties that match the filter.
    * 
-   * @param filter
+   * @param flagFilter
    *          a filter to apply or {@code null} if no filtering is needed
    * @return a collection of properties
    */
@@ -111,6 +111,8 @@ public interface ClassBinding {
    * @param context
    *          the parsing context
    * @return {@code true} if data was parsed, {@code false} otherwise
+   * @throws IOException
+   * @throws BindingException
    */
   // TODO: check if a boolean return value is needed
   boolean readItem(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
@@ -131,19 +133,24 @@ public interface ClassBinding {
    *          used to gather Java instances
    * @param parentInstance
    *          the Java instance for the object containing this object
+   * @param start the containing start element
    * @param context
    *          the parsing context
    * @return {@code true} if data was parsed, {@code false} otherwise
+   * @throws IOException
+   * @throws BindingException
+   * @throws XMLStreamException
    */
   boolean readItem(PropertyCollector collector, Object parentInstance, StartElement start, XmlParsingContext context)
       throws BindingException, IOException, XMLStreamException;
 
   void writeItem(Object item, QName parentName, XmlWritingContext context) throws IOException, XMLStreamException;
 
-  default void writeItem(Object item, boolean writeObjectWrapper, JsonWritingContext context) throws IOException, XMLStreamException {
+  default void writeItem(Object item, boolean writeObjectWrapper, JsonWritingContext context) throws IOException {
     writeItems(Collections.singleton(item), writeObjectWrapper, context);
   }
 
   // for JSON, the entire value needs to be processed to deal with collapsable fields
-  void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, JsonWritingContext context) throws IOException;
+  void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, JsonWritingContext context)
+      throws IOException;
 }

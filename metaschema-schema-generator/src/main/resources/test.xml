@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<test:prose-test
+    xmlns="http://csrc.nist.gov/ns/oscal/1.0"
+    xmlns:test="http://csrc.nist.gov/ns/prose-test"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://csrc.nist.gov/ns/prose-test prose-test.xsd http://csrc.nist.gov/ns/oscal/1.0 templates/oscal-prose-module.xsd">
+    <test:markup-line>test<b>test</b></test:markup-line>
+    <test:markup-multiline>
+        <p>test</p>
+        <h1><a href="#"><strong>heading</strong></a> <em>1</em></h1>
+    </test:markup-multiline>
+</test:prose-test>

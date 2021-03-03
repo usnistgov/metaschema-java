@@ -10,16 +10,16 @@
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>../oscal-content/fedramp.gov/xml/FedRAMP_HIGH-baseline-resolved-profile_catalog.xml</String>
+                                    <String>../Untitled2.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
-                                        <String>resolve-oscal-profile-debug</String>
+                                        <String>Untitled2</String>
                                     </list>
                                 </field>
                                 <field name="scenarioTypes">
                                     <list>
-                                        <String>XPROC</String>
+                                        <String>XML</String>
                                     </list>
                                 </field>
                                 <field name="scenarioStorageLocations">
@@ -30,7 +30,7 @@
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>../OSCAL/src/metaschema/oscal_assessment-results_metaschema.xml</String>
+                                    <String>../OSCAL/src/metaschema/oscal_assessment-common_metaschema.xml</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -70,11 +70,31 @@
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>../OSCAL/src/metaschema/oscal_assessment-common_metaschema.xml</String>
+                                    <String>../OSCAL/src/metaschema/oscal_assessment-results_metaschema.xml</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
                                         <String>Upgrade M3 Metaschema</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XPROC</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../oscal-content/fedramp.gov/xml/FedRAMP_HIGH-baseline-resolved-profile_catalog.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>resolve-oscal-profile-debug</String>
                                     </list>
                                 </field>
                                 <field name="scenarioTypes">
@@ -238,6 +258,89 @@
                                 </field>
                                 <field name="outputResource">
                                     <String>${cfn}.new.xml</String>
+                                </field>
+                                <field name="openOtherLocationInBrowser">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="locationToOpenInBrowserURL">
+                                    <null/>
+                                </field>
+                                <field name="openInEditor">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="showInHTMLPane">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="showInXMLPane">
+                                    <Boolean>true</Boolean>
+                                </field>
+                                <field name="showInSVGPane">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="showInResultSetPane">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="useXSLTInput">
+                                    <Boolean>true</Boolean>
+                                </field>
+                                <field name="xsltParams">
+                                    <list/>
+                                </field>
+                                <field name="cascadingStylesheets">
+                                    <String-array/>
+                                </field>
+                                <field name="xslTransformer">
+                                    <String>Saxon-PE</String>
+                                </field>
+                                <field name="extensionURLs">
+                                    <String-array/>
+                                </field>
+                            </scenario>
+                            <scenario>
+                                <field name="advancedOptionsMap">
+                                    <null/>
+                                </field>
+                                <field name="name">
+                                    <String>Untitled2</String>
+                                </field>
+                                <field name="baseURL">
+                                    <String></String>
+                                </field>
+                                <field name="footerURL">
+                                    <String></String>
+                                </field>
+                                <field name="fOPMethod">
+                                    <String>pdf</String>
+                                </field>
+                                <field name="fOProcessorName">
+                                    <String>Apache FOP</String>
+                                </field>
+                                <field name="headerURL">
+                                    <String></String>
+                                </field>
+                                <field name="inputXSLURL">
+                                    <String>${currentFileURL}</String>
+                                </field>
+                                <field name="inputXMLURL">
+                                    <String>file:/C:/Users/davidwal/git/github/david-waltermire-nist/context-test.xml</String>
+                                </field>
+                                <field name="defaultScenario">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="isFOPPerforming">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="type">
+                                    <String>XML</String>
+                                </field>
+                                <field name="saveAs">
+                                    <Boolean>true</Boolean>
+                                </field>
+                                <field name="openInBrowser">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="outputResource">
+                                    <null/>
                                 </field>
                                 <field name="openOtherLocationInBrowser">
                                     <Boolean>false</Boolean>
@@ -661,6 +764,86 @@
                     <entry>
                         <String>validation.scenario.associations</String>
                         <scenarioAssociation-array>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../fedramp-automation/src/baselines/rev4/xml/FedRAMP_rev4_LI-SaaS-baseline_profile.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>FedRAMP_rev4_LI-SaaS-baseline_profile</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>Validation_scenario</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../fedramp-automation/baselines/rev4/xml/FedRAMP_rev4_LI-SaaS-baseline-resolved-profile_catalog.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>FedRAMP_rev4_LI-SaaS-baseline-resolved-profile_catalog</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>Validation_scenario</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../fedramp-automation/src/baselines/rev4/xml/FedRAMP_rev4_HIGH-baseline_profile.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>FedRAMP_rev4_HIGH-baseline_profile</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>Validation_scenario</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../fedramp-automation/baselines/rev4/xml/FedRAMP_rev4_HIGH-baseline-resolved-profile_catalog.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>FedRAMP_rev4_HIGH-baseline-resolved-profile_catalog</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>Validation_scenario</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
                                     <String>../oscal-content/src/examples/ssp/json/ssp-example.json</String>
@@ -2446,6 +2629,230 @@
                     <entry>
                         <String>validation.scenarios</String>
                         <validationScenario-array>
+                            <validationScenario>
+                                <field name="pairs">
+                                    <list>
+                                        <validationUnit>
+                                            <field name="validationType">
+                                                <validationUnitType>
+                                                    <field name="validationInputType">
+                                                        <String>text/xml</String>
+                                                    </field>
+                                                </validationUnitType>
+                                            </field>
+                                            <field name="url">
+                                                <String>${currentFileURL}</String>
+                                            </field>
+                                            <field name="validationEngine">
+                                                <validationEngine>
+                                                    <field name="engineType">
+                                                        <String>&lt;Default engine></String>
+                                                    </field>
+                                                    <field name="allowsAutomaticValidation">
+                                                        <Boolean>true</Boolean>
+                                                    </field>
+                                                </validationEngine>
+                                            </field>
+                                            <field name="allowAutomaticValidation">
+                                                <Boolean>true</Boolean>
+                                            </field>
+                                            <field name="extensions">
+                                                <null/>
+                                            </field>
+                                            <field name="validationSchema">
+                                                <validationUnitSchema>
+                                                    <field name="dtdSchemaPublicID">
+                                                        <null/>
+                                                    </field>
+                                                    <field name="schematronPhase">
+                                                        <null/>
+                                                    </field>
+                                                    <field name="type">
+                                                        <Integer>2</Integer>
+                                                    </field>
+                                                    <field name="uri">
+                                                        <String>file:/C:/Users/davidwal/git/github/david-waltermire-nist/fedramp-automation/oscal/xml/schema/oscal_catalog_schema.xsd</String>
+                                                    </field>
+                                                </validationUnitSchema>
+                                            </field>
+                                        </validationUnit>
+                                    </list>
+                                </field>
+                                <field name="type">
+                                    <String>Validation_scenario</String>
+                                </field>
+                                <field name="name">
+                                    <String>FedRAMP_rev4_HIGH-baseline-resolved-profile_catalog</String>
+                                </field>
+                            </validationScenario>
+                            <validationScenario>
+                                <field name="pairs">
+                                    <list>
+                                        <validationUnit>
+                                            <field name="validationType">
+                                                <validationUnitType>
+                                                    <field name="validationInputType">
+                                                        <String>text/xml</String>
+                                                    </field>
+                                                </validationUnitType>
+                                            </field>
+                                            <field name="url">
+                                                <String>${currentFileURL}</String>
+                                            </field>
+                                            <field name="validationEngine">
+                                                <validationEngine>
+                                                    <field name="engineType">
+                                                        <String>&lt;Default engine></String>
+                                                    </field>
+                                                    <field name="allowsAutomaticValidation">
+                                                        <Boolean>true</Boolean>
+                                                    </field>
+                                                </validationEngine>
+                                            </field>
+                                            <field name="allowAutomaticValidation">
+                                                <Boolean>true</Boolean>
+                                            </field>
+                                            <field name="extensions">
+                                                <null/>
+                                            </field>
+                                            <field name="validationSchema">
+                                                <validationUnitSchema>
+                                                    <field name="dtdSchemaPublicID">
+                                                        <null/>
+                                                    </field>
+                                                    <field name="schematronPhase">
+                                                        <null/>
+                                                    </field>
+                                                    <field name="type">
+                                                        <Integer>2</Integer>
+                                                    </field>
+                                                    <field name="uri">
+                                                        <String>file:/C:/Users/davidwal/git/github/david-waltermire-nist/fedramp-automation/oscal/xml/schema/oscal_profile_schema.xsd</String>
+                                                    </field>
+                                                </validationUnitSchema>
+                                            </field>
+                                        </validationUnit>
+                                    </list>
+                                </field>
+                                <field name="type">
+                                    <String>Validation_scenario</String>
+                                </field>
+                                <field name="name">
+                                    <String>FedRAMP_rev4_HIGH-baseline_profile</String>
+                                </field>
+                            </validationScenario>
+                            <validationScenario>
+                                <field name="pairs">
+                                    <list>
+                                        <validationUnit>
+                                            <field name="validationType">
+                                                <validationUnitType>
+                                                    <field name="validationInputType">
+                                                        <String>text/xml</String>
+                                                    </field>
+                                                </validationUnitType>
+                                            </field>
+                                            <field name="url">
+                                                <String>${currentFileURL}</String>
+                                            </field>
+                                            <field name="validationEngine">
+                                                <validationEngine>
+                                                    <field name="engineType">
+                                                        <String>&lt;Default engine></String>
+                                                    </field>
+                                                    <field name="allowsAutomaticValidation">
+                                                        <Boolean>true</Boolean>
+                                                    </field>
+                                                </validationEngine>
+                                            </field>
+                                            <field name="allowAutomaticValidation">
+                                                <Boolean>true</Boolean>
+                                            </field>
+                                            <field name="extensions">
+                                                <null/>
+                                            </field>
+                                            <field name="validationSchema">
+                                                <validationUnitSchema>
+                                                    <field name="dtdSchemaPublicID">
+                                                        <null/>
+                                                    </field>
+                                                    <field name="schematronPhase">
+                                                        <null/>
+                                                    </field>
+                                                    <field name="type">
+                                                        <Integer>2</Integer>
+                                                    </field>
+                                                    <field name="uri">
+                                                        <String>file:/C:/Users/davidwal/git/github/david-waltermire-nist/fedramp-automation/oscal/xml/schema/oscal_catalog_schema.xsd</String>
+                                                    </field>
+                                                </validationUnitSchema>
+                                            </field>
+                                        </validationUnit>
+                                    </list>
+                                </field>
+                                <field name="type">
+                                    <String>Validation_scenario</String>
+                                </field>
+                                <field name="name">
+                                    <String>FedRAMP_rev4_LI-SaaS-baseline-resolved-profile_catalog</String>
+                                </field>
+                            </validationScenario>
+                            <validationScenario>
+                                <field name="pairs">
+                                    <list>
+                                        <validationUnit>
+                                            <field name="validationType">
+                                                <validationUnitType>
+                                                    <field name="validationInputType">
+                                                        <String>text/xml</String>
+                                                    </field>
+                                                </validationUnitType>
+                                            </field>
+                                            <field name="url">
+                                                <String>${currentFileURL}</String>
+                                            </field>
+                                            <field name="validationEngine">
+                                                <validationEngine>
+                                                    <field name="engineType">
+                                                        <String>&lt;Default engine></String>
+                                                    </field>
+                                                    <field name="allowsAutomaticValidation">
+                                                        <Boolean>true</Boolean>
+                                                    </field>
+                                                </validationEngine>
+                                            </field>
+                                            <field name="allowAutomaticValidation">
+                                                <Boolean>true</Boolean>
+                                            </field>
+                                            <field name="extensions">
+                                                <null/>
+                                            </field>
+                                            <field name="validationSchema">
+                                                <validationUnitSchema>
+                                                    <field name="dtdSchemaPublicID">
+                                                        <null/>
+                                                    </field>
+                                                    <field name="schematronPhase">
+                                                        <null/>
+                                                    </field>
+                                                    <field name="type">
+                                                        <Integer>2</Integer>
+                                                    </field>
+                                                    <field name="uri">
+                                                        <String>file:/C:/Users/davidwal/git/github/david-waltermire-nist/fedramp-automation/oscal/xml/schema/oscal_profile_schema.xsd</String>
+                                                    </field>
+                                                </validationUnitSchema>
+                                            </field>
+                                        </validationUnit>
+                                    </list>
+                                </field>
+                                <field name="type">
+                                    <String>Validation_scenario</String>
+                                </field>
+                                <field name="name">
+                                    <String>FedRAMP_rev4_LI-SaaS-baseline_profile</String>
+                                </field>
+                            </validationScenario>
                             <validationScenario>
                                 <field name="pairs">
                                     <list>

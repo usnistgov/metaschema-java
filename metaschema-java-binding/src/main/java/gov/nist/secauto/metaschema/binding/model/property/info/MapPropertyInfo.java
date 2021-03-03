@@ -41,8 +41,6 @@ import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.ModelProperty;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLEventReader2;
 
 import java.io.IOException;
@@ -59,7 +57,6 @@ import javax.xml.stream.events.XMLEvent;
 public class MapPropertyInfo
     extends AbstractModelPropertyInfo<ParameterizedType>
     implements ModelPropertyInfo {
-  private static final Logger logger = LogManager.getLogger(MapPropertyInfo.class);
 
   public MapPropertyInfo(ModelProperty property) {
     super(property);

@@ -196,7 +196,8 @@ public interface Property {
   // XmlBindingSupplier getXmlItemSupplier(BindingContext context)
   // throws BindingException;
 
-  boolean write(Object parentInstance, QName parentName, XmlWritingContext context) throws XMLStreamException, IOException;
+  boolean write(Object parentInstance, QName parentName, XmlWritingContext context)
+      throws XMLStreamException, IOException;
 
   void write(Object parentInstance, JsonWritingContext context) throws IOException;
 }

@@ -192,7 +192,7 @@ class AssemblyClassBindingTest {
   }
 
   @Test
-  void testComplexJson() throws BindingException, XMLStreamException, IOException {
+  void testComplexJson() throws BindingException, IOException {
     File testContent
         = new File(getClass().getClassLoader().getResource("test-content/bound-class-complex.json").getFile());
     JsonParser jsonParser = newJsonParser(new FileReader(testContent));

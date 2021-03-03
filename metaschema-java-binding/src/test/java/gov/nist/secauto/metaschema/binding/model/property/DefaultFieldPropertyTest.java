@@ -222,7 +222,7 @@ class DefaultFieldPropertyTest {
 
   @Test
   void testJsonReadMissingFieldValue()
-      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, XMLStreamException,
+      throws JsonParseException, IOException, NoSuchFieldException, SecurityException,
       BindingException {
     String json = "{ \"test\":\n" +
         "  { \"fields2\": [\n" +

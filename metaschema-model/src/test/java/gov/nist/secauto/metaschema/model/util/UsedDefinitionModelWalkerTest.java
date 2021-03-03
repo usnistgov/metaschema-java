@@ -49,7 +49,7 @@ class UsedDefinitionModelWalkerTest {
     Metaschema metaschema
         = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_catalog_metaschema.xml"));
 
-    Collection<InfoElementDefinition> definitions = UsedDefinitionModelWalker.collectUsedDefinitions(metaschema);
+    Collection<? extends InfoElementDefinition> definitions = UsedDefinitionModelWalker.collectUsedDefinitions(metaschema);
     
     for (InfoElementDefinition definition : definitions) {
       logger.info(String.format("%s: %s %s",

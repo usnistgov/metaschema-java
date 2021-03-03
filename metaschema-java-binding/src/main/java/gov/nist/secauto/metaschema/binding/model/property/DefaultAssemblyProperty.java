@@ -49,9 +49,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class DefaultAssemblyProperty
-    extends AbstractModelProperty
-    implements AssemblyProperty {
+public class DefaultAssemblyProperty extends AbstractModelProperty implements AssemblyProperty {
 
   public static DefaultAssemblyProperty createInstance(AssemblyClassBinding parentClassBinding, Field field) {
     DefaultAssemblyProperty retval = new DefaultAssemblyProperty(parentClassBinding, field);
@@ -122,8 +120,7 @@ public class DefaultAssemblyProperty
 
   @Override
   public boolean readItem(PropertyCollector collector, Object parentInstance, StartElement start,
-      XmlParsingContext context)
-      throws BindingException, XMLStreamException, IOException {
+      XmlParsingContext context) throws BindingException, XMLStreamException, IOException {
     XMLEventReader2 eventReader = context.getReader();
 
     // consume extra whitespace between elements
@@ -147,7 +144,8 @@ public class DefaultAssemblyProperty
   }
 
   @Override
-  public boolean writeItem(Object item, QName parentName, XmlWritingContext context) throws XMLStreamException, IOException {
+  public boolean writeItem(Object item, QName parentName, XmlWritingContext context)
+      throws XMLStreamException, IOException {
     XMLStreamWriter2 writer = context.getWriter();
 
     QName currentParentName = getXmlQName();
@@ -162,5 +160,5 @@ public class DefaultAssemblyProperty
     writer.writeEndElement();
 
     return true;
-}
+  }
 }

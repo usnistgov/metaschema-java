@@ -11,7 +11,7 @@
 		<version>0.4.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>metaschema-schemagen</artifactId>
+	<artifactId>metaschema-schema-generator</artifactId>
 
 	<name>Metaschema XML and JSON Schema Generator</name>
 	<url>https://pages.nist.gov/metaschema</url>
@@ -38,18 +38,18 @@
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.8.0</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<configuration>
-					<sourceDirectories>
-						<sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
-						<sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory>
-					</sourceDirectories>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

@@ -59,7 +59,8 @@ public class MarkupStringConverter {
    *          the content to convert
    * @return the equivalent formatted text as a MarkupLine
    */
-  public static gov.nist.secauto.metaschema.datatypes.types.markup.MarkupMultiline toMarkupString(MarkupMultiline content) {
+  public static gov.nist.secauto.metaschema.datatypes.types.markup.MarkupMultiline
+      toMarkupString(MarkupMultiline content) {
     String html = processHTML(content);
     return gov.nist.secauto.metaschema.datatypes.types.markup.MarkupMultiline.fromHtml(html);
   }
