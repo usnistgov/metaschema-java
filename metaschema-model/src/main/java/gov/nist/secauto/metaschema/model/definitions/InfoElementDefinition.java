@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.definitions;
 
-import gov.nist.secauto.metaschema.datatypes.types.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.NamedInfoElement;
 
 public interface InfoElementDefinition extends NamedInfoElement {

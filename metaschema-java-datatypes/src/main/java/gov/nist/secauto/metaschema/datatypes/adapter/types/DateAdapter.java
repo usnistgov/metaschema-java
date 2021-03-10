@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
+import gov.nist.secauto.metaschema.datatypes.Date;
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractDatatypeJavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.types.Date;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;

@@ -31,6 +31,9 @@ import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -41,8 +44,8 @@ import java.util.function.Function;
  * Supports walking a portion of a metaschema model collecting a set of definitions that match the
  * provided filter. For a definition to be collected, the filter must return {@code true}.
  */
-public abstract class DefinitionCollectingModelWalker
-    extends ModelWalker {
+public abstract class DefinitionCollectingModelWalker extends ModelWalker {
+  private static final Logger logger = LogManager.getLogger(DefinitionCollectingModelWalker.class);
 
   private final Function<InfoElementDefinition, Boolean> filter;
   private final Set<InfoElementDefinition> definitions = new LinkedHashSet<>();
@@ -78,6 +81,10 @@ public abstract class DefinitionCollectingModelWalker
 
   @Override
   protected void visit(FlagDefinition def) {
+    if (logger.isTraceEnabled()) {
+      logger.trace("definition: {} {} {}", def.getModelType(), def.getContainingMetaschema().getShortName(),
+          def.getName());
+    }
     if (getFilter().apply(def)) {
       definitions.add(def);
     }
@@ -85,6 +92,10 @@ public abstract class DefinitionCollectingModelWalker
 
   @Override
   protected boolean visit(FieldDefinition def) {
+    if (logger.isTraceEnabled()) {
+      logger.trace("definition: {} {} {}", def.getModelType(), def.getContainingMetaschema().getShortName(),
+          def.getName());
+    }
     if (definitions.contains(def)) {
       // no need to visit, since this has already been seen
       return false;
@@ -98,6 +109,10 @@ public abstract class DefinitionCollectingModelWalker
 
   @Override
   protected boolean visit(AssemblyDefinition def) {
+    if (logger.isTraceEnabled()) {
+      logger.trace("definition: {} {} {}", def.getModelType(), def.getContainingMetaschema().getShortName(),
+          def.getName());
+    }
     if (definitions.contains(def)) {
       // no need to visit, since this has already been seen
       return false;

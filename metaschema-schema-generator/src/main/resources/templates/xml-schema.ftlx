@@ -1,6 +1,19 @@
+<#function typeName def>
+  <#if !def.global>
+    <#local definingInstance=def.definingInstance/>
+    <#local parentDef=definingInstance.containingDefinition/>
+    <#local name="${typeName(parentDef)}-${def.name}"/>
+  <#else>
+    <#local name="${def.name}"/>
+  </#if>
+  <#return name/>
+</#function>
+
+
 <#function typeForDefinition def>
-  <#local definitionType="${def.containingMetaschema.shortName}_${def.modelType}_${def.name}_type"/>
-  <#return definitionType>
+  <#local definitionType="${def.containingMetaschema.shortName}_${def.modelType}_${typeName(def)}_type"/>
+  <#local definitionType="${toCamelCase(definitionType)}"/>
+  <#return definitionType/>
 </#function>
 
 <#function typeForValue def>
@@ -76,15 +89,6 @@
       <#local valueType="xs:string"/>
       <@"<#assign ${def.datatype}_used=true>"?interpret />
 <#-- 
-  DATE_WITH_TZ
-  DATE_TIME_WITH_TZ
-  EMAIL_ADDRESS
-  HOSTNAME
-  IP_V4_ADDRESS
-  IP_V6_ADDRESS
-  URI
-  URI_REFERENCE
-  UUID
   MARKUP_LINE
   MARKUP_MULTILINE
  -->
@@ -118,6 +122,7 @@
 <#macro fieldDefinition def>
   <#if def.flagInstances?size == 0>
     <#-- skip fields without flags, since these will be bare simple types -->
+    <!-- SKIPPED field: ${typeForDefinition(def)} -->
     <#return>
   </#if>
 
@@ -169,14 +174,10 @@
           <#-- The complex type of an assembly was referenced as the type -->
           <#lt>/>
         <#else>
-          <#lt>>
           <#if instance.definition.flagInstances?size == 0>
-            <#-- Handle the simple field with no flags -->
-            <xs:simpleType>
-              <xs:restriction base="${typeForValue(instance.definition)}"/>
-            </xs:simpleType>
+            <#lt> type="${typeForValue(instance.definition)}"<#rt>
           </#if>
-          </xs:element>
+          <#lt>/>
         </#if>
       <#if (true || instance.maxOccurs gt 1 || instance.maxOccurs == -1) && instance.xmlGroupAsBehavior == "GROUPED">
           </xs:sequence>
@@ -185,7 +186,13 @@
       </#if>
     	<#break>
     <#case "CHOICE">
-    	choice
+      <#list instance.modelInstances>
+      <xs:choice>
+        <#items as childInstance>
+          <@modelInstance instance=childInstance/>
+        </#items>
+      </xs:choice>
+      </#list>
     	<#break>
     <#default>
       <#stop "unsupported model type: ${def.modelType}">
@@ -215,13 +222,12 @@
 
 <#list definitions as def>
   <#if def.modelType == "ASSEMBLY" && def.root>
-    <#assign definitionName="${def.rootName}"/>
-    <#assign definitionType="${def.containingMetaschema.shortName}_${def.modelType}_${def.name}_type"/>
-  <xs:element name="${definitionName}" type="${definitionType}"/>
+  <xs:element name="${def.rootName}" type="${typeForDefinition(def)}"/>
   </#if>
 </#list>
 
 <#list definitions as def>
+  <!-- Definition: ${typeForDefinition(def)} -->
 <#switch def.modelType>
   <#case "ASSEMBLY">
   	<@assemblyDefinition def=def />

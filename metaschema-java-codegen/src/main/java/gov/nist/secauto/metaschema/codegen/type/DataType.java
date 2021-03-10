@@ -29,6 +29,11 @@ package gov.nist.secauto.metaschema.codegen.type;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
 
+import gov.nist.secauto.metaschema.datatypes.Base64;
+import gov.nist.secauto.metaschema.datatypes.Date;
+import gov.nist.secauto.metaschema.datatypes.DateTime;
+import gov.nist.secauto.metaschema.datatypes.IPv4;
+import gov.nist.secauto.metaschema.datatypes.IPv6;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.Base64Adapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.BooleanAdapter;
@@ -51,13 +56,8 @@ import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.UriAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.UriReferenceAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.UuidAdapter;
-import gov.nist.secauto.metaschema.datatypes.types.Base64;
-import gov.nist.secauto.metaschema.datatypes.types.Date;
-import gov.nist.secauto.metaschema.datatypes.types.DateTime;
-import gov.nist.secauto.metaschema.datatypes.types.IPv4;
-import gov.nist.secauto.metaschema.datatypes.types.IPv6;
-import gov.nist.secauto.metaschema.datatypes.types.markup.MarkupLine;
-import gov.nist.secauto.metaschema.datatypes.types.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

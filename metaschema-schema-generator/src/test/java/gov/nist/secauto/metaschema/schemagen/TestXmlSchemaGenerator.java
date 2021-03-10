@@ -62,6 +62,16 @@ public class TestXmlSchemaGenerator {
     metaschemas.add(metaschema);
     metaschema = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_profile_metaschema.xml"));
     metaschemas.add(metaschema);
+    metaschema = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_component_metaschema.xml"));
+    metaschemas.add(metaschema);
+    metaschema = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_ssp_metaschema.xml"));
+    metaschemas.add(metaschema);
+    metaschema = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_assessment-plan_metaschema.xml"));
+    metaschemas.add(metaschema);
+    metaschema = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_assessment-results_metaschema.xml"));
+    metaschemas.add(metaschema);
+    metaschema = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_poam_metaschema.xml"));
+    metaschemas.add(metaschema);
 
     Collection<? extends InfoElementDefinition> definitions
         = UsedDefinitionModelWalker.collectUsedDefinitions(metaschemas);

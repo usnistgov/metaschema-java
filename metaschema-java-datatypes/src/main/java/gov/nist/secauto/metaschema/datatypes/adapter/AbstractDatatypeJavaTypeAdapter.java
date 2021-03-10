@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.datatypes.adapter;
 
-import gov.nist.secauto.metaschema.datatypes.types.Datatype;
+import gov.nist.secauto.metaschema.datatypes.Datatype;
 
 /**
  * Provides a Java type adapter implementation for data types that are based on {@link Datatype}.

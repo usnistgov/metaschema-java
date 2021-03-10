@@ -30,8 +30,11 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 
-import gov.nist.secauto.metaschema.datatypes.types.markup.AbstractMarkupString;
-import gov.nist.secauto.metaschema.datatypes.types.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.datatypes.markup.AbstractMarkupAdapter;
+import gov.nist.secauto.metaschema.datatypes.markup.AbstractMarkupString;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupXmlEventWriter;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupXmlStreamWriter;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;

@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
+import gov.nist.secauto.metaschema.datatypes.IPv4;
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractDatatypeJavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.types.IPv4;
 
 public class Ipv4AddressAdapter
     extends AbstractDatatypeJavaTypeAdapter<IPv4> {

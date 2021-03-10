@@ -47,9 +47,9 @@ public class MarkupStringConverter {
    *          the content to convert
    * @return the equivalent formatted text as a MarkupLine
    */
-  public static gov.nist.secauto.metaschema.datatypes.types.markup.MarkupLine toMarkupString(MarkupLine content) {
+  public static gov.nist.secauto.metaschema.datatypes.markup.MarkupLine toMarkupString(MarkupLine content) {
     String html = processHTML(content);
-    return gov.nist.secauto.metaschema.datatypes.types.markup.MarkupLine.fromHtml(html);
+    return gov.nist.secauto.metaschema.datatypes.markup.MarkupLine.fromHtml(html);
   }
 
   /**
@@ -59,10 +59,10 @@ public class MarkupStringConverter {
    *          the content to convert
    * @return the equivalent formatted text as a MarkupLine
    */
-  public static gov.nist.secauto.metaschema.datatypes.types.markup.MarkupMultiline
+  public static gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline
       toMarkupString(MarkupMultiline content) {
     String html = processHTML(content);
-    return gov.nist.secauto.metaschema.datatypes.types.markup.MarkupMultiline.fromHtml(html);
+    return gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline.fromHtml(html);
   }
 
   /**

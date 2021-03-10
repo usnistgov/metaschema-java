@@ -39,7 +39,8 @@ import java.util.function.Function;
  */
 public class UsedDefinitionModelWalker extends DefinitionCollectingModelWalker {
   private static final Function<InfoElementDefinition, Boolean> FILTER = (def) -> {
-    return def.isGlobal();
+    return true;
+    // return def.isGlobal();
     // return def.isGlobal() || (def instanceof AssemblyDefinition &&
     // ((AssemblyDefinition)def).getRootName() != null);
   };

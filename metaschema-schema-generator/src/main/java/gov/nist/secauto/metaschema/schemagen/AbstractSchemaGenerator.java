@@ -38,6 +38,7 @@ import freemarker.template.TemplateNotFoundException;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
 import gov.nist.secauto.metaschema.model.util.UsedDefinitionModelWalker;
+import gov.nist.secauto.metaschema.schemagen.freemarker.ToCamelCaseMethod;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -105,6 +106,11 @@ public abstract class AbstractSchemaGenerator implements SchemaGenerator {
 
     // Create the root hash. We use a Map here, but it could be a JavaBean too.
     Map<String, Object> root = new HashMap<>();
+
+    // add directives
+    root.put("toCamelCase", new ToCamelCaseMethod());
+
+    // add metaschema model
     root.put("metaschemas", metaschemas);
     root.put("definitions", definitions);
 
