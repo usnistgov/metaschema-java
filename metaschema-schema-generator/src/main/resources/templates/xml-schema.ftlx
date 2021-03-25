@@ -130,9 +130,9 @@
     <xs:annotation>
       <xs:appinfo>
         <m:formal-name>${def.formalName}</m:formal-name>
-        <m:description>${def.description.toHtml()?no_esc}</m:description>
+        <m:description>${markupToHTML(def.description, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")?no_esc}</m:description>
       </xs:appinfo>
-      <xs:documentation><b>${def.formalName}</b>: ${def.description.toHtml()?no_esc}</xs:documentation>
+      <xs:documentation xmlns="http://www.w3.org/1999/xhtml"><b>${def.formalName}</b>: ${markupToHTML(def.description, "http://www.w3.org/1999/xhtml", "")?no_esc}</xs:documentation>
     </xs:annotation>
     <xs:simpleContent>
       <xs:extension base="${typeForValue(def)}">

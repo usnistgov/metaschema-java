@@ -72,7 +72,7 @@
       </xs:choice>
       <xs:element name="model" minOccurs="0" type="m:assembly-model"/>
       <xs:element minOccurs="0" name="constraint" type="m:assembly-constraint-type"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" ref="m:remarks"/>
+      <xs:element minOccurs="0" ref="m:remarks"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="m:example"/>
     </xs:sequence>
     <xs:attribute name="name" use="required" type="xs:NCName"/>
@@ -111,7 +111,7 @@
           type="m:local-flag-definition"/>
       </xs:choice>
       <xs:element minOccurs="0" name="constraint" type="m:model-constraint-type"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" ref="m:remarks"/>
+      <xs:element minOccurs="0" ref="m:remarks"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="m:example"/>
     </xs:sequence>
     <xs:attribute name="as-type" type="m:field-types" default="string"/>
@@ -133,7 +133,7 @@
       <xs:element minOccurs="0" ref="m:description"/>
       <xs:element minOccurs="0" name="use-name" type="xs:NCName"/>
       <xs:element name="constraint" minOccurs="0" type="m:define-flag-constraints-type"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" ref="m:remarks"/>
+      <xs:element minOccurs="0" ref="m:remarks"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="m:example"/>
     </xs:sequence>
     <xs:attribute name="name" use="required" type="xs:NCName"/>
@@ -164,7 +164,7 @@
       </xs:choice>
       <xs:element name="model" minOccurs="0" type="m:assembly-model"/>
       <xs:element minOccurs="0" name="constraint" type="m:assembly-constraint-type"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" ref="m:remarks"/>
+      <xs:element minOccurs="0" ref="m:remarks"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="m:example"/>
     </xs:sequence>
     <xs:attributeGroup ref="m:cardinality-specification"/>
@@ -192,7 +192,7 @@
           type="m:local-flag-definition"/>
       </xs:choice>
       <xs:element minOccurs="0" name="constraint" type="m:model-constraint-type"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" ref="m:remarks"/>
+      <xs:element minOccurs="0" ref="m:remarks"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="m:example"/>
     </xs:sequence>
     <xs:attribute name="as-type" type="m:field-types" default="string"/>
@@ -231,7 +231,7 @@
       <xs:element minOccurs="0" ref="m:formal-name"/>
       <xs:element minOccurs="0" ref="m:description"/>
       <xs:element name="constraint" minOccurs="0" type="m:define-flag-constraints-type"/>
-      <xs:element minOccurs="0" maxOccurs="unbounded" ref="m:remarks"/>
+      <xs:element minOccurs="0" ref="m:remarks"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="m:example"/>
     </xs:sequence>
     <xs:attribute name="name" use="required" type="xs:NCName"/>
@@ -295,11 +295,6 @@
     <xs:complexType>
       <xs:complexContent>
         <xs:extension base="m:markup-multiline">
-          <xs:attribute name="class" type="xs:NMTOKENS">
-            <xs:annotation>
-              <xs:documentation>Mark as 'XML' for XML-only or 'JSON' for JSON-only remarks.</xs:documentation>
-            </xs:annotation>
-          </xs:attribute>
           <xs:attribute name="module" type="xs:anyURI"/>
         </xs:extension>
       </xs:complexContent>

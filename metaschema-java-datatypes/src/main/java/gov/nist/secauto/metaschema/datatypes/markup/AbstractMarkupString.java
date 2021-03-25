@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.datatypes.markup;
 
+import com.ctc.wstx.api.WstxOutputProperties;
+import com.ctc.wstx.stax.WstxOutputFactory;
 import com.vladsch.flexmark.formatter.Formatter;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.util.ast.Document;
@@ -33,7 +35,22 @@ import com.vladsch.flexmark.util.ast.Document;
 import gov.nist.secauto.metaschema.datatypes.Datatype;
 import gov.nist.secauto.metaschema.datatypes.markup.flexmark.AstCollectingVisitor;
 
-public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYPE>> implements Datatype<TYPE> {
+import org.codehaus.stax2.XMLOutputFactory2;
+import org.codehaus.stax2.XMLStreamWriter2;
+import org.codehaus.stax2.ri.evt.MergedNsContext;
+import org.codehaus.stax2.ri.evt.NamespaceEventImpl;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
+
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.stream.XMLStreamException;
+
+public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYPE>> implements MarkupText, Datatype<TYPE> {
+  private static final String DEFAULT_HTML_NS = "http://www.w3.org/1999/xhtml";
+  private static final String DEFAULT_HTML_PREFIX = "";
   private final Document document;
 
   //
@@ -49,10 +66,32 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     return document;
   }
 
+  public void toHtmlAsStream(OutputStream os, String namespace, String prefix) throws XMLStreamException {
+    
+    if (namespace == null) {
+      namespace = DEFAULT_HTML_NS;
+    }
+    if (prefix == null) {
+      prefix = DEFAULT_HTML_PREFIX;
+    }
+
+    MarkupXmlStreamWriter writingVisitor
+        = new MarkupXmlStreamWriter(namespace, this instanceof MarkupMultiline);
+
+    XMLOutputFactory2 factory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
+    factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
+    XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
+    NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
+        List.of(NamespaceEventImpl.constructNamespace(null, prefix != null ? prefix : "", namespace)));
+    xmlStreamWriter.setNamespaceContext(nsContext);
+    writingVisitor.visitChildren(getDocument(), xmlStreamWriter);
+    xmlStreamWriter.flush();
+  }
+
   public String toHtml() {
     return toHTML(FlexmarkFactory.instance().getHtmlRenderer());
   }
-
+  
   protected String toHTML(HtmlRenderer renderer) {
     return renderer.render(getDocument());
   }

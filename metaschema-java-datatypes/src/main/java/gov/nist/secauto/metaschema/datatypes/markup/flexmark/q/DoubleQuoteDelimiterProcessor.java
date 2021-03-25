@@ -23,18 +23,27 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.datatypes.markup.flexmark.q;
 
-package gov.nist.secauto.metaschema.model.instances;
+import com.vladsch.flexmark.ext.typographic.TypographicQuotes;
+import com.vladsch.flexmark.ext.typographic.internal.TypographicOptions;
+import com.vladsch.flexmark.parser.core.delimiter.Delimiter;
+import com.vladsch.flexmark.util.sequence.BasedSequence;
 
-import gov.nist.secauto.metaschema.model.Assembly;
-import gov.nist.secauto.metaschema.model.ModelType;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+public class DoubleQuoteDelimiterProcessor
+    extends com.vladsch.flexmark.ext.typographic.internal.DoubleQuoteDelimiterProcessor {
 
-public interface AssemblyInstance<DEF extends AssemblyDefinition>
-    extends ObjectModelInstance<DEF>, Assembly {
+  public DoubleQuoteDelimiterProcessor(TypographicOptions options) {
+    super(options);
+  }
 
   @Override
-  default ModelType getModelType() {
-    return Assembly.super.getModelType();
+  public void process(Delimiter opener, Delimiter closer, int delimitersUsed) {
+//    TypographicQuotes node = new DoubleQuoteNode(opener.getTailChars(delimitersUsed), BasedSequence.NULL, closer.getLeadChars(delimitersUsed));
+//    node.setTypographicOpening(myOpener);
+//    node.setTypographicClosing(myCloser);
+//    opener.moveNodesBetweenDelimitersTo(node, closer);
   }
+
+  
 }

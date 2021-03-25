@@ -38,6 +38,7 @@ import freemarker.template.TemplateNotFoundException;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
 import gov.nist.secauto.metaschema.model.util.UsedDefinitionModelWalker;
+import gov.nist.secauto.metaschema.schemagen.freemarker.MarkupToHtmlMethod;
 import gov.nist.secauto.metaschema.schemagen.freemarker.ToCamelCaseMethod;
 
 import java.io.IOException;
@@ -109,6 +110,7 @@ public abstract class AbstractSchemaGenerator implements SchemaGenerator {
 
     // add directives
     root.put("toCamelCase", new ToCamelCaseMethod());
+    root.put("markupToHTML", new MarkupToHtmlMethod());
 
     // add metaschema model
     root.put("metaschemas", metaschemas);

@@ -28,8 +28,10 @@ package gov.nist.secauto.metaschema.datatypes.markup;
 
 import com.vladsch.flexmark.ast.AutoLink;
 import com.vladsch.flexmark.ast.BulletList;
+import com.vladsch.flexmark.ast.Code;
 import com.vladsch.flexmark.ast.Emphasis;
 import com.vladsch.flexmark.ast.Heading;
+import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.ast.Image;
 import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.ast.LinkNode;
@@ -50,6 +52,7 @@ import com.vladsch.flexmark.util.ast.Block;
 import com.vladsch.flexmark.util.ast.Node;
 
 import gov.nist.secauto.metaschema.datatypes.markup.flexmark.insertanchor.InsertAnchorNode;
+import gov.nist.secauto.metaschema.datatypes.markup.flexmark.q.DoubleQuoteNode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -113,7 +116,8 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
     }
 
     if (!handled) {
-      throw new UnsupportedOperationException(String.format("Node '%s' not handled.", node.getNodeName()));
+      throw new UnsupportedOperationException(
+          String.format("Node '%s' not handled. AST: %s", node.getNodeName(), node.toAstString(true)));
     }
   }
 
@@ -129,7 +133,14 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
       handleTypographicSmarts((TypographicSmarts) node, writer);
       retval = true;
     } else if (node instanceof TypographicQuotes) {
-      handleTypographicSmarts((TypographicQuotes) node, writer);
+      if (node instanceof DoubleQuoteNode) {
+        handleBasicElement(node, writer, "q");
+      } else {
+        handleTypographicSmarts((TypographicQuotes) node, writer);
+      }
+      retval = true;
+    } else if (node instanceof Code) {
+      handleBasicElement(node, writer, "code");
       retval = true;
     } else if (node instanceof StrongEmphasis) {
       handleBasicElement(node, writer, "strong");
@@ -161,6 +172,9 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
       retval = true;
     } else if (node instanceof SoftLineBreak) {
       handleSoftLineBreak((SoftLineBreak) node, writer);
+      retval = true;
+    } else if (node instanceof HtmlInline) {
+      handleHtmlInline((HtmlInline) node, writer);
       retval = true;
     }
     return retval;
@@ -279,5 +293,19 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
   protected void handleSoftLineBreak(@SuppressWarnings("unused") SoftLineBreak node, WRITER writer)
       throws XMLStreamException {
     handleText(writer, " ");
+  }
+
+  private void handleHtmlInline(HtmlInline node, WRITER writer) throws XMLStreamException {
+    throw new UnsupportedOperationException(String.format("Unable to process inline HTML characters: %s",node.getChars().toString()));
+//    String htmlText = node.getChars().toString();
+//
+//    QName name = new QName(getNamespace(), "name");
+//    handleBasicElementStart(node, writer, name);
+//
+//    if (node.hasChildren()) {
+//      visitChildren(node, writer);
+//    }
+//
+//    handleBasicElementEnd(node, writer, name);
   }
 }

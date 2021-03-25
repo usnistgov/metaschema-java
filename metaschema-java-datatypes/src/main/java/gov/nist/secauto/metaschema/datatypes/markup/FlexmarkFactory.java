@@ -41,12 +41,13 @@ import com.vladsch.flexmark.util.data.DataHolder;
 import com.vladsch.flexmark.util.misc.Extension;
 
 import gov.nist.secauto.metaschema.datatypes.markup.flexmark.insertanchor.InsertAnchorExtension;
+import gov.nist.secauto.metaschema.datatypes.markup.flexmark.q.HtmlQuoteTagExtension;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -54,28 +55,27 @@ public class FlexmarkFactory {
   private static final Logger logger = LogManager.getLogger(FlexmarkFactory.class);
   private static final FlexmarkFactory instance = new FlexmarkFactory();
 
-  static Map<String, String> specialCharsMap = new HashMap<>();
-
+  static Map<String, String> TYPOGRAPHIC_REPLACEMENT_MAP = new HashMap<>();
   static {
-    // specialCharsMap.put("“", "\"");
-    // specialCharsMap.put("”", "\"");
-    specialCharsMap.put("&ldquo;", "“");
-    specialCharsMap.put("&rdquo;", "”");
-    // specialCharsMap.put("‘", "'");
-    // specialCharsMap.put("’", "'");
-    specialCharsMap.put("&lsquo;", "‘");
-    specialCharsMap.put("&rsquo;", "’");
-    specialCharsMap.put("&apos;", "'");
-    // specialCharsMap.put("«", "<<");
-    specialCharsMap.put("&laquo;", "«");
-    // specialCharsMap.put("»", ">>");
-    specialCharsMap.put("&raquo;", "»");
-    // specialCharsMap.put("…", "...");
-    specialCharsMap.put("&hellip;", "…");
-    // specialCharsMap.put("–", "--");
-    specialCharsMap.put("&ndash;", "–");
-    // specialCharsMap.put("—", "---");
-    specialCharsMap.put("&mdash;", "—");
+    TYPOGRAPHIC_REPLACEMENT_MAP.put("“", "\"");
+    TYPOGRAPHIC_REPLACEMENT_MAP.put("”", "\"");
+    TYPOGRAPHIC_REPLACEMENT_MAP.put("&ldquo;", "\"");
+    TYPOGRAPHIC_REPLACEMENT_MAP.put("&rdquo;", "\"");
+//    TYPOGRAPHIC_REPLACEMENT_MAP.put("‘", "'");
+//    TYPOGRAPHIC_REPLACEMENT_MAP.put("’", "'");
+//    TYPOGRAPHIC_REPLACEMENT_MAP.put("&lsquo;", "'");
+//    TYPOGRAPHIC_REPLACEMENT_MAP.put("&rsquo;", "'");
+    TYPOGRAPHIC_REPLACEMENT_MAP.put("&apos;", "'");
+//    TYPOGRAPHIC_REPLACEMENT_MAP.put("«", "<<");
+//    TYPOGRAPHIC_REPLACEMENT_MAP.put("&laquo;", "<<");
+//    TYPOGRAPHIC_REPLACEMENT_MAP.put("»", ">>");
+//    TYPOGRAPHIC_REPLACEMENT_MAP.put("&raquo;", ">>");
+//    TYPOGRAPHIC_REPLACEMENT_MAP.put("…", "...");
+//    TYPOGRAPHIC_REPLACEMENT_MAP.put("&hellip;", "...");
+//    TYPOGRAPHIC_REPLACEMENT_MAP.put("–", "--");
+//    TYPOGRAPHIC_REPLACEMENT_MAP.put("&endash;", "--");
+//    TYPOGRAPHIC_REPLACEMENT_MAP.put("—", "---");
+//    TYPOGRAPHIC_REPLACEMENT_MAP.put("&emdash;", "---");
   }
 
   public static FlexmarkFactory instance() {
@@ -117,15 +117,6 @@ public class FlexmarkFactory {
   }
 
   protected void applyOptions(BuilderBase<?> builder) {
-    Extension[] extensions = {
-        // Metaschema insert
-        InsertAnchorExtension.create(),
-        // TypographicExtension.create(),
-        TablesExtension.create(),
-        // to ensure that escaped characters are not lost
-        EscapedCharacterExtension.create(), SuperscriptExtension.create(), SubscriptExtension.create() };
-    builder.extensions(Arrays.asList(extensions));
-
     builder.set(Parser.FENCED_CODE_CONTENT_BLOCK, true);
     // GitHub-flavored tables
     builder.set(TablesExtension.COLUMN_SPANS, false);
@@ -133,10 +124,28 @@ public class FlexmarkFactory {
     builder.set(TablesExtension.DISCARD_EXTRA_COLUMNS, true);
     builder.set(TablesExtension.HEADER_SEPARATOR_COLUMN_MATCH, true);
     builder.set(TypographicExtension.SINGLE_QUOTE_UNMATCHED, null);
-    builder.set(TypographicExtension.ENABLE_QUOTES, false);
-    builder.set(TypographicExtension.ENABLE_SMARTS, false);
-    builder.set(FlexmarkHtmlConverter.TYPOGRAPHIC_REPLACEMENT_MAP, specialCharsMap);
-  }
+    builder.set(TypographicExtension.ENABLE_QUOTES, true);
+    builder.set(TypographicExtension.ENABLE_SMARTS, true);
+    builder.set(TypographicExtension.DOUBLE_QUOTE_OPEN, "\"");
+    builder.set(TypographicExtension.DOUBLE_QUOTE_CLOSE, "\"");
+//    builder.set(FlexmarkHtmlConverter.TYPOGRAPHIC_REPLACEMENT_MAP, TYPOGRAPHIC_REPLACEMENT_MAP);
+//    builder.set(FlexmarkHtmlConverter.OUTPUT_UNKNOWN_TAGS, true);
+    builder.set(FlexmarkHtmlConverter.SETEXT_HEADINGS, false);
+
+    List<Extension> extensions = List.of(
+        // Metaschema insert
+        InsertAnchorExtension.create(),
+        // q tag handling
+        HtmlQuoteTagExtension.create(),
+        TypographicExtension.create(),
+        TablesExtension.create(),
+        // to ensure that escaped characters are not lost
+        EscapedCharacterExtension.create(),
+        SuperscriptExtension.create(),
+        SubscriptExtension.create()
+    );
+    builder.extensions(extensions);
+}
 
   public Parser getMarkdownParser() {
     synchronized (this) {

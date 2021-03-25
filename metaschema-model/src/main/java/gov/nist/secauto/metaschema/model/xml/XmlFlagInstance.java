@@ -27,12 +27,12 @@
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.itl.metaschema.model.m4.xml.FlagDocument;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFlagInstance;
 
-public class XmlFlagInstance
-    extends AbstractFlagInstance<XmlGlobalFlagDefinition> {
+public class XmlFlagInstance extends AbstractFlagInstance<XmlGlobalFlagDefinition> {
   private final FlagDocument.Flag xmlFlag;
 
   /**
@@ -69,12 +69,13 @@ public class XmlFlagInstance
     return getXmlFlag().getRef();
   }
 
+  @Override
+  public MarkupMultiline getRemarks() {
+    return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
+  }
   /*
    * TODO: implement
    * 
-   * @Override public String getRemarks() { String retval = null; if (xmlFlag.isSetRemarks()) { retval
-   * = xmlFlag.getRemarks(); } else if (isReference()) { // TODO: append? retval =
-   * getFlagDefinition().getRemarks(); } return retval; }
    * 
    * 
    * @Override public String getAllowedValues() { String retval = null; if (xmlFlag.isSetRemarks()) {

@@ -31,15 +31,6 @@ import gov.nist.secauto.metaschema.model.ModelType;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
 
 public interface FieldInstance<DEF extends FieldDefinition> extends ObjectModelInstance<DEF>, Field {
-  /**
-   * Provides the Metaschema model type of "FIELD".
-   * 
-   * @return the model type
-   */
-  @Override
-  default ModelType getModelType() {
-    return ModelType.FIELD;
-  }
 
   /**
    * Determines if the field is configured to have a wrapper in XML.
@@ -47,4 +38,9 @@ public interface FieldInstance<DEF extends FieldDefinition> extends ObjectModelI
    * @return {@code true} if an XML wrapper is required, or {@code false} otherwise
    */
   boolean hasXmlWrapper();
+
+  @Override
+  default ModelType getModelType() {
+    return Field.super.getModelType();
+  }
 }

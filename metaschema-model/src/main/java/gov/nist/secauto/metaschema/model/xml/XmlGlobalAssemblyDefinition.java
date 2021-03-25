@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.model.xml;
 import gov.nist.itl.metaschema.model.m4.xml.GlobalAssemblyDefinition;
 import gov.nist.itl.metaschema.model.m4.xml.ScopeType;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.definitions.GlobalInfoElementDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
@@ -122,5 +123,10 @@ public class XmlGlobalAssemblyDefinition
   @Override
   public String getUseName() {
     return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName() : getName();
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    return getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : null;
   }
 }

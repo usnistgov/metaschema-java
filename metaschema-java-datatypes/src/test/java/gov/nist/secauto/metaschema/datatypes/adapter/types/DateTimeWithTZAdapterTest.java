@@ -23,18 +23,24 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
-package gov.nist.secauto.metaschema.model.instances;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import gov.nist.secauto.metaschema.model.Assembly;
-import gov.nist.secauto.metaschema.model.ModelType;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-public interface AssemblyInstance<DEF extends AssemblyDefinition>
-    extends ObjectModelInstance<DEF>, Assembly {
+import java.io.IOException;
+import java.time.ZonedDateTime;
 
-  @Override
-  default ModelType getModelType() {
-    return Assembly.super.getModelType();
+class DateTimeWithTZAdapterTest {
+  private DateTimeWithTZAdapter adapter = new DateTimeWithTZAdapter();
+
+  @ParameterizedTest
+  @ValueSource(strings = { "2020-12-20T14:47:48.623-05:00" })
+  void testParse(String value) throws IOException {
+    ZonedDateTime obj = adapter.parse(value);
+    assertNotNull(obj);
   }
+
 }

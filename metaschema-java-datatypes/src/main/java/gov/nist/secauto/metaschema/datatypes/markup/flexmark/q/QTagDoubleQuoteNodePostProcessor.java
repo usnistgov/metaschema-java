@@ -23,18 +23,45 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.datatypes.markup.flexmark.q;
 
-package gov.nist.secauto.metaschema.model.instances;
+import com.vladsch.flexmark.ext.escaped.character.internal.EscapedCharacterNodePostProcessor;
+import com.vladsch.flexmark.ext.typographic.TypographicQuotes;
+import com.vladsch.flexmark.parser.block.NodePostProcessor;
+import com.vladsch.flexmark.parser.block.NodePostProcessorFactory;
+import com.vladsch.flexmark.util.ast.DoNotDecorate;
+import com.vladsch.flexmark.util.ast.Document;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.NodeTracker;
 
-import gov.nist.secauto.metaschema.model.Assembly;
-import gov.nist.secauto.metaschema.model.ModelType;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import org.jetbrains.annotations.NotNull;
 
-public interface AssemblyInstance<DEF extends AssemblyDefinition>
-    extends ObjectModelInstance<DEF>, Assembly {
+public class QTagDoubleQuoteNodePostProcessor extends NodePostProcessor {
 
   @Override
-  default ModelType getModelType() {
-    return Assembly.super.getModelType();
+  public void process(@NotNull NodeTracker state, @NotNull Node node) {
+    if (node instanceof TypographicQuotes) {
+      TypographicQuotes typographicQuotes = (TypographicQuotes) node;
+      if (typographicQuotes.getOpeningMarker().matchChars("\"")) {
+        DoubleQuoteNode quoteNode = new DoubleQuoteNode(typographicQuotes);
+        node.insertAfter(quoteNode);
+        state.nodeAdded(quoteNode);
+        node.unlink();
+        state.nodeRemoved(node);
+      }
+    }
   }
+
+  public static class Factory extends NodePostProcessorFactory {
+    public Factory() {
+        super(false);
+        addNodeWithExclusions(TypographicQuotes.class, DoNotDecorate.class);
+    }
+
+    @NotNull
+    @Override
+    public NodePostProcessor apply(@NotNull Document document) {
+        return new QTagDoubleQuoteNodePostProcessor();
+    }
+}
 }

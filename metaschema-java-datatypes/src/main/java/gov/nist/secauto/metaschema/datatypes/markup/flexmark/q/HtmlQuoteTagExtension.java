@@ -24,17 +24,43 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.instances;
+package gov.nist.secauto.metaschema.datatypes.markup.flexmark.q;
 
-import gov.nist.secauto.metaschema.model.Assembly;
-import gov.nist.secauto.metaschema.model.ModelType;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.data.MutableDataHolder;
 
-public interface AssemblyInstance<DEF extends AssemblyDefinition>
-    extends ObjectModelInstance<DEF>, Assembly {
+import org.jetbrains.annotations.NotNull;
+
+public class HtmlQuoteTagExtension implements Parser.ParserExtension, HtmlRenderer.HtmlRendererExtension,  FlexmarkHtmlConverter.HtmlConverterExtension {
+
+  public static HtmlQuoteTagExtension create() {
+    return new HtmlQuoteTagExtension();
+  }
 
   @Override
-  default ModelType getModelType() {
-    return Assembly.super.getModelType();
+  public void rendererOptions(@NotNull MutableDataHolder options) {
   }
+
+  @Override
+  public void extend(@NotNull HtmlRenderer.Builder rendererBuilder, @NotNull String rendererType) {
+    rendererBuilder.nodeRendererFactory(new QTagNodeRenderer.Factory());
+  }
+
+  @Override
+  public void parserOptions(MutableDataHolder options) {
+  }
+
+  @Override
+  public void extend(com.vladsch.flexmark.parser.Parser.Builder parserBuilder) {
+    parserBuilder.postProcessorFactory(new QTagDoubleQuoteNodePostProcessor.Factory());
+  }
+
+
+  @Override
+  public void extend(FlexmarkHtmlConverter.Builder builder) {
+    builder.htmlNodeRendererFactory(new QTagHtmlNodeRenderer.Factory());
+  }
+
 }

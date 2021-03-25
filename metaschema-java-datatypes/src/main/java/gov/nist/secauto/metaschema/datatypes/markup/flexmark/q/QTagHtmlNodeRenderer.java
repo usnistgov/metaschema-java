@@ -23,18 +23,38 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.datatypes.markup.flexmark.q;
 
-package gov.nist.secauto.metaschema.model.instances;
+import com.vladsch.flexmark.html2md.converter.HtmlMarkdownWriter;
+import com.vladsch.flexmark.html2md.converter.HtmlNodeConverterContext;
+import com.vladsch.flexmark.html2md.converter.HtmlNodeRenderer;
+import com.vladsch.flexmark.html2md.converter.HtmlNodeRendererFactory;
+import com.vladsch.flexmark.html2md.converter.HtmlNodeRendererHandler;
+import com.vladsch.flexmark.util.data.DataHolder;
 
-import gov.nist.secauto.metaschema.model.Assembly;
-import gov.nist.secauto.metaschema.model.ModelType;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import org.jsoup.nodes.Element;
 
-public interface AssemblyInstance<DEF extends AssemblyDefinition>
-    extends ObjectModelInstance<DEF>, Assembly {
+import java.util.Collections;
+import java.util.Set;
+
+public class QTagHtmlNodeRenderer implements HtmlNodeRenderer {
 
   @Override
-  default ModelType getModelType() {
-    return Assembly.super.getModelType();
+  public Set<HtmlNodeRendererHandler<?>> getHtmlNodeRendererHandlers() {
+    return Collections.singleton(new HtmlNodeRendererHandler<>("q", Element.class, this::renderMarkdown));
   }
+
+  private void renderMarkdown(Element element, HtmlNodeConverterContext context, HtmlMarkdownWriter out) {
+    context.wrapTextNodes(element, "\"", element.nextElementSibling() != null);
+  }
+
+
+  public static class Factory implements HtmlNodeRendererFactory {
+
+    @Override
+    public HtmlNodeRenderer apply(DataHolder options) {
+      return new QTagHtmlNodeRenderer();
+    }
+  }
+
 }

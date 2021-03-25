@@ -23,18 +23,19 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.datatypes.markup.flexmark.q;
 
-package gov.nist.secauto.metaschema.model.instances;
+import com.vladsch.flexmark.ext.typographic.TypographicQuotes;
+import com.vladsch.flexmark.util.ast.Node;
 
-import gov.nist.secauto.metaschema.model.Assembly;
-import gov.nist.secauto.metaschema.model.ModelType;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+public class DoubleQuoteNode extends TypographicQuotes {
 
-public interface AssemblyInstance<DEF extends AssemblyDefinition>
-    extends ObjectModelInstance<DEF>, Assembly {
-
-  @Override
-  default ModelType getModelType() {
-    return Assembly.super.getModelType();
+  public DoubleQuoteNode(TypographicQuotes node) {
+    super(node.getOpeningMarker(),node.getText(), node.getClosingMarker());
+    setTypographicOpening(node.getTypographicOpening());
+    setTypographicClosing(node.getTypographicClosing());
+    for (Node child : node.getChildren()) {
+      appendChild(child);
+    }
   }
 }

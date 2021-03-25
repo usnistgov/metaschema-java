@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.itl.metaschema.model.m4.xml.FieldDocument;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.DataType;
@@ -36,8 +37,7 @@ import gov.nist.secauto.metaschema.model.instances.XmlGroupAsBehavior;
 
 import java.math.BigInteger;
 
-public class XmlFieldInstance
-    extends AbstractFieldInstance<XmlGlobalFieldDefinition> {
+public class XmlFieldInstance extends AbstractFieldInstance<XmlGlobalFieldDefinition> {
   // private static final Logger logger = LogManager.getLogger(XmlFieldInstance.class);
 
   private final FieldDocument.Field xmlField;
@@ -149,4 +149,8 @@ public class XmlFieldInstance
     return retval;
   }
 
+  @Override
+  public MarkupMultiline getRemarks() {
+    return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
+  }
 }

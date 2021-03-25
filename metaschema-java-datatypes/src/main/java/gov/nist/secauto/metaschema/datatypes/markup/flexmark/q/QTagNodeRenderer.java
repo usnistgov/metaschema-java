@@ -23,26 +23,41 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.datatypes.adapter.types;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+package gov.nist.secauto.metaschema.datatypes.markup.flexmark.q;
 
-import gov.nist.secauto.metaschema.datatypes.adapter.types.DateTimeWithTZAdapter;
+import com.vladsch.flexmark.html.HtmlWriter;
+import com.vladsch.flexmark.html.renderer.NodeRenderer;
+import com.vladsch.flexmark.html.renderer.NodeRendererContext;
+import com.vladsch.flexmark.html.renderer.NodeRendererFactory;
+import com.vladsch.flexmark.html.renderer.NodeRenderingHandler;
+import com.vladsch.flexmark.util.data.DataHolder;
 
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.Set;
 
-class DateTimeWithTZAdapterTest {
-  private DateTimeWithTZAdapter adapter = new DateTimeWithTZAdapter();
+public class QTagNodeRenderer implements NodeRenderer {
 
-  @ParameterizedTest
-  @ValueSource(strings = { "2020-12-20T14:47:48.623-05:00" })
-  void testParse(String value) throws IOException {
-    ZonedDateTime obj = adapter.parse(value);
-    assertNotNull(obj);
+  @Override
+  public @Nullable Set<NodeRenderingHandler<?>> getNodeRenderingHandlers() {
+    return Collections.singleton(
+        new NodeRenderingHandler<DoubleQuoteNode>(DoubleQuoteNode.class, this::render));
   }
 
+  protected void render(DoubleQuoteNode node, NodeRendererContext context, HtmlWriter html) {
+    html.withAttr().tag("q");
+    context.renderChildren(node);
+    html.tag("/q");
+  }
+
+  public static class Factory implements NodeRendererFactory {
+
+    @Override
+    public NodeRenderer apply(DataHolder options) {
+      return new QTagNodeRenderer();
+    }
+
+  }
 }

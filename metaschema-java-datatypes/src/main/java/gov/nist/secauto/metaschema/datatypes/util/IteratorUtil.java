@@ -27,7 +27,12 @@
 package gov.nist.secauto.metaschema.datatypes.util;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class IteratorUtil {
   /**
@@ -47,5 +52,32 @@ public class IteratorUtil {
         return iterator;
       }
     };
+  }
+
+  /**
+   * Convert the provided {@link Iterable} to a list of the same generic type.
+   * 
+   * @param <T>
+   *          the collection item's generic type
+   * @param iterable
+   *          the Iterable to convert to a list
+   * @return the list
+   */
+  public static <T> List<T> toList(Iterable<T> iterable) {
+    return StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
+  }
+
+  /**
+   * Convert the provided {@link Iterator} to a list of the same generic type.
+   * 
+   * @param <T>
+   *          the collection item's generic type
+   * @param iterator
+   *          the Iterator to convert to a list
+   * @return the list
+   */
+  public static <T> List<T> toList(Iterator<T> iterator) {
+    return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false)
+        .collect(Collectors.toList());
   }
 }

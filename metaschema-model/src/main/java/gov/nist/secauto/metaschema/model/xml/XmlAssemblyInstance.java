@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.itl.metaschema.model.m4.xml.AssemblyDocument;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractAssemblyInstance;
@@ -125,5 +126,10 @@ public class XmlAssemblyInstance
       retval = XmlGroupAsBehavior.lookup(getXmlAssembly().getGroupAs().getInXml());
     }
     return retval;
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    return getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : null;
   }
 }
