@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.instances;
 
 import gov.nist.secauto.metaschema.model.Field;
+import gov.nist.secauto.metaschema.model.ModelType;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
 
 public interface FieldInstance<DEF extends FieldDefinition> extends ObjectModelInstance<DEF>, Field {
@@ -37,4 +38,9 @@ public interface FieldInstance<DEF extends FieldDefinition> extends ObjectModelI
    * @return {@code true} if an XML wrapper is required, or {@code false} otherwise
    */
   boolean hasXmlWrapper();
+
+  @Override
+  default ModelType getModelType() {
+    return Field.super.getModelType();
+  }
 }

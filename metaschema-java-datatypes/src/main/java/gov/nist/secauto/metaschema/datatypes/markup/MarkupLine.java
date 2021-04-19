@@ -33,7 +33,7 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 
 public class MarkupLine
-    extends MarkupString<MarkupLine> {
+    extends AbstractMarkupString<MarkupLine> {
   private static final Parser markdownParser;
 
   static {

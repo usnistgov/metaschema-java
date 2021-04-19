@@ -26,17 +26,17 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlEventUtil;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
+import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -49,9 +49,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class DefaultAssemblyProperty
-    extends AbstractModelProperty
-    implements AssemblyProperty {
+public class DefaultAssemblyProperty extends AbstractModelProperty implements AssemblyProperty {
 
   public static DefaultAssemblyProperty createInstance(AssemblyClassBinding parentClassBinding, Field field) {
     DefaultAssemblyProperty retval = new DefaultAssemblyProperty(parentClassBinding, field);
@@ -122,8 +120,7 @@ public class DefaultAssemblyProperty
 
   @Override
   public boolean readItem(PropertyCollector collector, Object parentInstance, StartElement start,
-      XmlParsingContext context)
-      throws BindingException, XMLStreamException, IOException {
+      XmlParsingContext context) throws BindingException, XMLStreamException, IOException {
     XMLEventReader2 eventReader = context.getReader();
 
     // consume extra whitespace between elements
@@ -147,7 +144,8 @@ public class DefaultAssemblyProperty
   }
 
   @Override
-  public boolean writeItem(Object item, QName parentName, XmlWritingContext context) throws XMLStreamException, IOException {
+  public boolean writeItem(Object item, QName parentName, XmlWritingContext context)
+      throws XMLStreamException, IOException {
     XMLStreamWriter2 writer = context.getWriter();
 
     QName currentParentName = getXmlQName();
@@ -162,5 +160,5 @@ public class DefaultAssemblyProperty
     writer.writeEndElement();
 
     return true;
-}
+  }
 }

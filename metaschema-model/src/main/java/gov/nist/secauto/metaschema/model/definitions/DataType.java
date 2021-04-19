@@ -90,7 +90,7 @@ public enum DataType {
   private final String name;
   private final String valueKey;
 
-  private DataType(String name, String valueKey) {
+  DataType(String name, String valueKey) {
     this.name = name;
     this.valueKey = valueKey;
   }

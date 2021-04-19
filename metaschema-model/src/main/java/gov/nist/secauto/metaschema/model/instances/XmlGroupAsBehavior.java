@@ -65,7 +65,7 @@ public enum XmlGroupAsBehavior {
 
   private final XmlGroupBehavior.Enum modelValue;
 
-  private XmlGroupAsBehavior(XmlGroupBehavior.Enum modelValue) {
+  XmlGroupAsBehavior(XmlGroupBehavior.Enum modelValue) {
     this.modelValue = modelValue;
   }
 

@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.itl.metaschema.model.m4.xml.LocalFlagDefinition;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.definitions.AbstractFlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.DataType;
@@ -85,6 +86,11 @@ public class XmlLocalFlagDefinition
     return getDefinition().getUseName();
   }
 
+  @Override
+  public MarkupMultiline getRemarks() {
+    return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
+  }
+
   public class InternalFlagDefinition
       extends AbstractFlagDefinition
       implements LocalInfoElementDefinition<XmlLocalFlagDefinition> {
@@ -136,6 +142,11 @@ public class XmlLocalFlagDefinition
     @Override
     public XmlLocalFlagDefinition getDefiningInstance() {
       return XmlLocalFlagDefinition.this;
+    }
+
+    @Override
+    public MarkupMultiline getRemarks() {
+      return XmlLocalFlagDefinition.this.getRemarks();
     }
   }
 }

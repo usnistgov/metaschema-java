@@ -26,9 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.instances;
 
+import gov.nist.secauto.metaschema.model.ModelType;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 
-public interface ModelInstance {
+public interface ModelInstance extends InfoElementInstance<AssemblyDefinition> {
+  /**
+   * Provides the Metaschema model type.
+   * 
+   * @return the model type
+   */
+  ModelType getModelType();
 
   /**
    * Retrieve the Metaschema assembly definition on which the info element was declared.

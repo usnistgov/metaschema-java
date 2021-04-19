@@ -51,6 +51,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -59,13 +60,14 @@ import java.util.stream.Stream;
  * Goal which generates Java source files for a given set of Metaschema definitions.
  */
 @Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
-public class MetaschemaMojo
-    extends AbstractMojo {
+public class MetaschemaMojo extends AbstractMojo {
   private static final String SYSTEM_FILE_ENCODING_PROPERTY = "file.encoding";
   private static final String METASCHEMA_STAE_FILE_NAME = "metaschemaStateFile";
   private static final String[] DEFAULT_INCLUDES = { "**/*.xml" };
 
   /**
+   * The Maven project context.
+   * 
    * @parameter default-value="${project}"
    * @required
    * @readonly
@@ -74,7 +76,7 @@ public class MetaschemaMojo
   MavenProject mavenProject;
 
   /**
-   * this will be injected if this plugin is executed as part of the standard Maven lifecycle. If the
+   * This will be injected if this plugin is executed as part of the standard Maven lifecycle. If the
    * mojo is directly invoked, this parameter will not be injected.
    */
   @Parameter(defaultValue = "${mojoExecution}", readonly = true)
@@ -151,7 +153,7 @@ public class MetaschemaMojo
   private boolean skip;
 
   /**
-   * A set of binding configurations
+   * A set of binding configurations.
    */
   @Parameter
   protected File[] configs;
@@ -167,6 +169,8 @@ public class MetaschemaMojo
   }
 
   /**
+   * Retrieve the Maven project context.
+   * 
    * @return The active MavenProject.
    */
   protected final MavenProject getMavenProject() {
@@ -174,17 +178,31 @@ public class MetaschemaMojo
   }
 
   /**
+   * Retrieve the mojo execution context.
+   * 
    * @return The active MojoExecution.
    */
   public MojoExecution getMojoExecution() {
     return mojoExecution;
   }
 
+  /**
+   * Retrieve the directory where generated classes will be stored.
+   * 
+   * @return the directory
+   */
   protected File getOutputDirectory() {
     return outputDirectory;
   }
 
+  /**
+   * Set the directory where generated classes will be stored.
+   * 
+   * @param outputDirectory
+   *          the directory to use
+   */
   protected void setOutputDirectory(File outputDirectory) {
+    Objects.requireNonNull(outputDirectory, "outputDirectory");
     this.outputDirectory = outputDirectory;
   }
 
@@ -246,6 +264,11 @@ public class MetaschemaMojo
     return encoding;
   }
 
+  /**
+   * Retrieve a stream of Metaschema file sources.
+   * 
+   * @return the stream
+   */
   protected Stream<File> getSources() {
     DirectoryScanner ds = new DirectoryScanner();
     ds.setBasedir(metaschemaDir);
@@ -258,6 +281,11 @@ public class MetaschemaMojo
     return Stream.of(ds.getIncludedFiles()).map(filename -> new File(metaschemaDir, filename)).distinct();
   }
 
+  /**
+   * Retrieve a list of binding configurations.
+   * 
+   * @return the collection of binding configurations
+   */
   protected List<File> getConfigs() {
     List<File> retval;
     if (configs == null) {
@@ -268,10 +296,21 @@ public class MetaschemaMojo
     return retval;
   }
 
+  /**
+   * Determine if the execution of this mojo should be skipped.
+   * 
+   * @return {@code true} if the mojo execution should be skipped, or {@code false} otherwise
+   */
   protected boolean shouldExecutionBeSkipped() {
     return skip;
   }
 
+  /**
+   * Determine if code generation is required. This is done by comparing the last modified time of
+   * each Metaschema source file against the stale file managed by this plugin.
+   * 
+   * @return {@code true} if the code generation is needed, or {@code false} otherwise
+   */
   protected boolean isGenerationRequired() {
     final File staleFile = getStaleFile();
     boolean generate = !staleFile.exists();
@@ -356,10 +395,11 @@ public class MetaschemaMojo
       // create the stale file
       staleFileDirectory.mkdirs();
       try (OutputStream os = new FileOutputStream(staleFile)) {
+        os.close();
+        getLog().info("Created stale file: " + staleFile);
       } catch (IOException ex) {
         throw new MojoExecutionException("Failed to write stale file: " + staleFile.getPath(), ex);
       }
-      getLog().info("Created stale file: " + staleFile);
 
       // for m2e
       // buildContext.refresh(getOutputDirectory());

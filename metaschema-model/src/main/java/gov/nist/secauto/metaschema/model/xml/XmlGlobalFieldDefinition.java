@@ -31,6 +31,7 @@ import gov.nist.itl.metaschema.model.m4.xml.GlobalFieldDefinition;
 import gov.nist.itl.metaschema.model.m4.xml.LocalFlagDefinition;
 import gov.nist.itl.metaschema.model.m4.xml.ScopeType;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.definitions.AbstractFieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.DataType;
@@ -174,7 +175,7 @@ public class XmlGlobalFieldDefinition
     // default value
     boolean retval = true;
     if (getXmlField().isSetCollapsible()) {
-      retval = gov.nist.itl.metaschema.model.m4.xml.Boolean.YES.equals(getXmlField().getCollapsible());
+      retval = getXmlField().getCollapsible();
     }
     return retval;
   }
@@ -200,5 +201,10 @@ public class XmlGlobalFieldDefinition
   @Override
   public String getUseName() {
     return getXmlField().isSetUseName() ? getXmlField().getUseName() : getName();
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
   }
 }

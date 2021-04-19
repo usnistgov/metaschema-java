@@ -30,7 +30,8 @@ import gov.nist.secauto.metaschema.model.Flag;
 import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 
-public interface FlagInstance<DEF extends FlagDefinition> extends InfoElementInstance<ObjectDefinition, DEF>, Flag {
+public interface FlagInstance<DEF extends FlagDefinition>
+    extends DefinedInfoElementInstance<ObjectDefinition, DEF>, Flag {
 
   /**
    * Determines if a flag value is required to be provided.

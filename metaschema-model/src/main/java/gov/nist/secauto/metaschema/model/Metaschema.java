@@ -41,15 +41,15 @@ import java.util.List;
 import java.util.Map;
 
 public interface Metaschema {
-  public static final boolean DEFAULT_REQUIRED = false;
-  public static final DataType DEFAULT_DATA_TYPE = DataType.STRING;
-  public static final int DEFAULT_GROUP_AS_MIN_OCCURS = 0;
-  public static final int DEFAULT_GROUP_AS_MAX_OCCURS = 1;
-  public static final boolean DEFAULT_FIELD_XML_WRAPPER = true;
-  public static final ModuleScopeEnum DEFAULT_MODEL_SCOPE = ModuleScopeEnum.INHERITED;
-  public static final boolean DEFAULT_COLLAPSIBLE = true;
-  public static final JsonGroupAsBehavior DEFAULT_JSON_GROUP_AS_BEHAVIOR = JsonGroupAsBehavior.SINGLETON_OR_LIST;
-  public static final XmlGroupAsBehavior DEFAULT_XML_GROUP_AS_BEHAVIOR = XmlGroupAsBehavior.UNGROUPED;
+  boolean DEFAULT_REQUIRED = false;
+  DataType DEFAULT_DATA_TYPE = DataType.STRING;
+  int DEFAULT_GROUP_AS_MIN_OCCURS = 0;
+  int DEFAULT_GROUP_AS_MAX_OCCURS = 1;
+  boolean DEFAULT_FIELD_XML_WRAPPER = true;
+  ModuleScopeEnum DEFAULT_MODEL_SCOPE = ModuleScopeEnum.INHERITED;
+  boolean DEFAULT_COLLAPSIBLE = true;
+  JsonGroupAsBehavior DEFAULT_JSON_GROUP_AS_BEHAVIOR = JsonGroupAsBehavior.SINGLETON_OR_LIST;
+  XmlGroupAsBehavior DEFAULT_XML_GROUP_AS_BEHAVIOR = XmlGroupAsBehavior.UNGROUPED;
 
   /**
    * Retrieves the location where the Metaschema was loaded from.

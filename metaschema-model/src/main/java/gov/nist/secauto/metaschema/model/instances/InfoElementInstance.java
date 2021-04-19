@@ -30,21 +30,27 @@ import gov.nist.secauto.metaschema.model.InfoElement;
 import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 
-public interface InfoElementInstance<PARENT extends ObjectDefinition, DEF extends InfoElementDefinition>
-    extends InfoElement {
-
-  static String toCoordinates(InfoElementInstance<?, ?> instance) {
-    return String.format("%s:%s:%s@%d(%d)", instance.getContainingMetaschema().getShortName(), instance.getModelType(),
-        instance.getName(), instance.hashCode(),
-        instance.getDefinition().isGlobal() ? instance.getDefinition().hashCode() : 0);
-  }
+public interface InfoElementInstance<PARENT extends ObjectDefinition> extends InfoElement {
 
   /**
-   * Retrieve the definition of this instance.
+   * Generates a "coordinate" string for the provided information element instance.
    * 
-   * @return the corresponding field definition
+   * A coordinate consists of the element's:
+   * <ul>
+   * <li>containing Metaschema's short name</li>
+   * <li>model type</li>
+   * <li>name</li>
+   * <li>hash code</li>
+   * <li>the hash code of the definition</li>
+   * </ul>
+   * 
+   * @return the coordinate
    */
-  DEF getDefinition();
+  default String toCoordinates() {
+    InfoElementDefinition containingDefinition = getContainingDefinition();
+
+    return String.format("%s:%s", containingDefinition.getContainingMetaschema().getShortName(), getModelType());
+  }
 
   /**
    * Retrieve the Metaschema definition on which the info element was declared.

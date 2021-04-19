@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.codegen.binding.config;
 
-import com.sun.xml.bind.api.impl.NameConverter;
-
 import gov.nist.csrc.ns.metaschemaBinding.x10.JavaModelBindingType;
 import gov.nist.csrc.ns.metaschemaBinding.x10.JavaObjectDefinitionBindingType;
 import gov.nist.csrc.ns.metaschemaBinding.x10.MetaschemaBindingType;
@@ -40,6 +38,7 @@ import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 
 import org.apache.xmlbeans.XmlException;
+import org.glassfish.jaxb.core.api.impl.NameConverter;
 
 import java.io.File;
 import java.io.IOException;

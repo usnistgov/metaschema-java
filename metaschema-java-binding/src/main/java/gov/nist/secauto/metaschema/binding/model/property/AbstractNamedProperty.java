@@ -43,10 +43,9 @@ import java.lang.reflect.Field;
 
 import javax.xml.namespace.QName;
 
-public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
-    extends AbstractProperty<CLASS_BINDING>
+public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding> extends AbstractProperty<CLASS_BINDING>
     implements NamedProperty {
-      private static final Logger logger = LogManager.getLogger(AbstractNamedProperty.class);
+  private static final Logger logger = LogManager.getLogger(AbstractNamedProperty.class);
 
   private QName xmlQName;
 

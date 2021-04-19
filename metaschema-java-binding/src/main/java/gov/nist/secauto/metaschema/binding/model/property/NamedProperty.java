@@ -50,5 +50,5 @@ public interface NamedProperty extends Property {
   boolean readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException;
 
-//  void writeValue(Object parentInstance, JsonParsingContext context);
+  // void writeValue(Object parentInstance, JsonParsingContext context);
 }

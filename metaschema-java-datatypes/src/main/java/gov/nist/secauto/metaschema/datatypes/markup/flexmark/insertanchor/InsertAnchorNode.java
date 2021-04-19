@@ -32,28 +32,35 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 public class InsertAnchorNode
     extends Node {
-  private BasedSequence name;
+  private BasedSequence type;
+  private BasedSequence idReference;
 
-  public InsertAnchorNode(String chars) {
-    this(CharSubSequence.of(chars));
+  public InsertAnchorNode(String type, String idReference) {
+    this(CharSubSequence.of(type), CharSubSequence.of(idReference));
   }
 
-  public InsertAnchorNode(BasedSequence chars) {
+  public InsertAnchorNode(BasedSequence type, BasedSequence idReference) {
     super();
-    this.name = chars;
+    this.type = type;
+    this.idReference = idReference;
   }
 
-  public BasedSequence getName() {
-    return name;
+  public BasedSequence getType() {
+    return type;
+  }
+
+  public BasedSequence getIdReference() {
+    return idReference;
   }
 
   @Override
   public BasedSequence[] getSegments() {
-    return new BasedSequence[] { getName() };
+    return new BasedSequence[] { getType(), getIdReference() };
   }
 
   @Override
   public void getAstExtra(StringBuilder out) {
-    segmentSpanChars(out, name, "name");
+    segmentSpanChars(out, getType(), "type");
+    segmentSpanChars(out, getIdReference(), "id-ref");
   }
 }

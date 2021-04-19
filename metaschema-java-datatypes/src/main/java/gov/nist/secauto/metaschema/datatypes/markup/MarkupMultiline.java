@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.datatypes.markup;
 import com.vladsch.flexmark.util.ast.Document;
 
 public class MarkupMultiline
-    extends MarkupString<MarkupMultiline> {
+    extends AbstractMarkupString<MarkupMultiline> {
 
   public static MarkupMultiline fromHtml(String html) {
     return new MarkupMultiline(FlexmarkFactory.instance().fromHtml(html));

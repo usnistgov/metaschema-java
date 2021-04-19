@@ -61,7 +61,7 @@ public enum JsonGroupAsBehavior {
 
   private final JsonGroupBehavior.Enum modelValue;
 
-  private JsonGroupAsBehavior(JsonGroupBehavior.Enum modelValue) {
+  JsonGroupAsBehavior(JsonGroupBehavior.Enum modelValue) {
     this.modelValue = modelValue;
   }
 

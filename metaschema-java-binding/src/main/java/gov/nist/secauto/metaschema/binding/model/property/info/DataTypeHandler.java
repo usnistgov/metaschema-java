@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.binding.model.property.info;
 
-import gov.nist.secauto.metaschema.binding.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -47,9 +47,11 @@ public interface DataTypeHandler extends JsonBindingSupplier, XmlBindingSupplier
   // a proxy to the JavaTypeAdapter if it is used or {@code false}
   boolean isUnrappedValueAllowedInXml();
 
-//  void writeProxyWritableItem(ProxyWritableItem item, JsonWritingContext context) throws IOException;
-//
-//  void writeCollapsedWritableItem(CollapsedWritableItem proxy, JsonWritingContext context);
+  // void writeProxyWritableItem(ProxyWritableItem item, JsonWritingContext context) throws
+  // IOException;
+  //
+  // void writeCollapsedWritableItem(CollapsedWritableItem proxy, JsonWritingContext context);
 
-  void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, JsonWritingContext context) throws IOException;
+  void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, JsonWritingContext context)
+      throws IOException;
 }

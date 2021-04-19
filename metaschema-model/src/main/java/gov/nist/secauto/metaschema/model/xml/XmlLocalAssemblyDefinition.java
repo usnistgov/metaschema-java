@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.itl.metaschema.model.m4.xml.LocalAssemblyDefinition;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.LocalInfoElementDefinition;
@@ -40,6 +41,9 @@ import gov.nist.secauto.metaschema.model.xml.XmlLocalAssemblyDefinition.Internal
 
 import java.math.BigInteger;
 
+/**
+ * Represents a Metaschema assembly definition declared locally as an instance. 
+ */
 public class XmlLocalAssemblyDefinition
     extends AbstractAssemblyInstance<InternalAssemblyDefinition> {
   private final LocalAssemblyDefinition xmlAssembly;
@@ -130,6 +134,11 @@ public class XmlLocalAssemblyDefinition
     return retval;
   }
 
+  @Override
+  public MarkupMultiline getRemarks() {
+    return getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : null;
+  }
+
   public class InternalAssemblyDefinition
       extends AbstractXmlAssemblyDefinition<InternalAssemblyDefinition, XmlLocalAssemblyDefinition>
       implements LocalInfoElementDefinition<XmlLocalAssemblyDefinition> {
@@ -198,6 +207,11 @@ public class XmlLocalAssemblyDefinition
     @Override
     public XmlLocalAssemblyDefinition getDefiningInstance() {
       return XmlLocalAssemblyDefinition.this;
+    }
+
+    @Override
+    public MarkupMultiline getRemarks() {
+      return XmlLocalAssemblyDefinition.this.getRemarks();
     }
   }
 }

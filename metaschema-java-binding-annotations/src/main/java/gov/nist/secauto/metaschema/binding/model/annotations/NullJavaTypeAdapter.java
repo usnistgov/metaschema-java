@@ -26,15 +26,22 @@
 
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
-import gov.nist.secauto.metaschema.binding.datatypes.adapter.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.binding.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 
 import java.io.IOException;
 
-public class NullJavaTypeAdapter
-    extends AbstractJavaTypeAdapter<Void>
-    implements JavaTypeAdapter<Void> {
+/**
+ * Used to mark a Java type that has no configured adapter.
+ */
+public class NullJavaTypeAdapter extends AbstractJavaTypeAdapter<Void> implements JavaTypeAdapter<Void> {
 
+  /**
+   * Construct a new adapter.
+   * 
+   * @param clazz
+   *          the class to adapt
+   */
   public NullJavaTypeAdapter(Class<Void> clazz) {
     super(clazz);
     throw new UnsupportedOperationException("Not a valid type");

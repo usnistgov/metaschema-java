@@ -30,9 +30,9 @@ import com.vladsch.flexmark.formatter.Formatter;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
 import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.util.builder.Extension;
 import com.vladsch.flexmark.util.data.DataKey;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
+import com.vladsch.flexmark.util.misc.Extension;
 
 import gov.nist.secauto.metaschema.datatypes.markup.flexmark.insertanchor.internal.InsertAnchorFormatter;
 import gov.nist.secauto.metaschema.datatypes.markup.flexmark.insertanchor.internal.InsertAnchorHtmlNodeRenderer;
@@ -68,7 +68,7 @@ public class InsertAnchorExtension
 
   @Override
   public void extend(Parser.Builder parserBuilder) {
-    if (ENABLE_INLINE_INSERT_ANCHORS.getFrom(parserBuilder)) {
+    if (ENABLE_INLINE_INSERT_ANCHORS.get(parserBuilder)) {
       parserBuilder.customInlineParserExtensionFactory(new InsertAnchorInlineParser.Factory());
     }
   }

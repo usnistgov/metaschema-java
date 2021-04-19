@@ -30,7 +30,7 @@ package gov.nist.secauto.metaschema.model;
  * A marker interface for an information element that is an flag model type.
  *
  */
-public interface Flag extends InfoElement {
+public interface Flag extends NamedInfoElement {
   /**
    * Provides the Metaschema model type of "FLAG".
    * 

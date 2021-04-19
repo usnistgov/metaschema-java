@@ -71,8 +71,9 @@ public abstract class AbstractClassBinding implements ClassBinding {
    * 
    * @param clazz
    *          the bound class
+   * @param bindingContext
    * @throws BindingException
-   *           if an error occured while processing the class binding
+   *           if an error occurred while processing the class binding
    */
   public AbstractClassBinding(Class<?> clazz, BindingContext bindingContext) {
     Objects.requireNonNull(bindingContext, "bindingContext");
@@ -87,7 +88,7 @@ public abstract class AbstractClassBinding implements ClassBinding {
    * Initialize the content model of the class.
    * 
    * @throws BindingException
-   *           if an error occured while processing the class binding
+   *           if an error occurred while processing the class binding
    */
   protected void initialize() {
 
@@ -180,8 +181,7 @@ public abstract class AbstractClassBinding implements ClassBinding {
     if (filter == null) {
       retval = getFlagProperties();
     } else {
-      retval = getFlagProperties().values().stream()
-          .filter(filter)
+      retval = getFlagProperties().values().stream().filter(filter)
           .collect(Collectors.toMap(NamedProperty::getJsonPropertyName, Function.identity()));
     }
     return retval;
@@ -267,8 +267,7 @@ public abstract class AbstractClassBinding implements ClassBinding {
 
   @Override
   public boolean readItem(PropertyCollector collector, Object parentInstance, StartElement start,
-      XmlParsingContext context)
-      throws BindingException, IOException, XMLStreamException {
+      XmlParsingContext context) throws BindingException, IOException, XMLStreamException {
     Object instance = newInstance();
 
     callBeforeDeserialize(instance, parentInstance);
@@ -281,8 +280,8 @@ public abstract class AbstractClassBinding implements ClassBinding {
     return true;
   }
 
-  protected void readInternal(Object parentInstance, Object instance, StartElement start, XmlParsingContext context)
-      throws IOException, XMLStreamException, BindingException {
+  protected void readInternal(@SuppressWarnings("unused") Object parentInstance, Object instance, StartElement start,
+      XmlParsingContext context) throws IOException, XMLStreamException, BindingException {
     for (FlagProperty flag : getFlagProperties().values()) {
       flag.read(instance, start, context);
     }

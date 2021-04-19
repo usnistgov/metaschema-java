@@ -33,7 +33,7 @@ public class InsertAnchorOptions {
   public final boolean enableRendering;
 
   public InsertAnchorOptions(DataHolder options) {
-    enableInlineInsertAnchors = InsertAnchorExtension.ENABLE_INLINE_INSERT_ANCHORS.getFrom(options);
-    enableRendering = InsertAnchorExtension.ENABLE_RENDERING.getFrom(options);
+    enableInlineInsertAnchors = InsertAnchorExtension.ENABLE_INLINE_INSERT_ANCHORS.get(options);
+    enableRendering = InsertAnchorExtension.ENABLE_RENDERING.get(options);
   }
 }

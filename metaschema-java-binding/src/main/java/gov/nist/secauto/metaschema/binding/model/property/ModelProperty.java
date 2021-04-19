@@ -58,6 +58,8 @@ public interface ModelProperty extends NamedProperty {
   /**
    * Reads an individual XML item from the XML stream.
    * 
+   * @param collector
+   * @param parentInstance
    * @param start
    *          the current containing XML element
    * @param context
@@ -76,6 +78,8 @@ public interface ModelProperty extends NamedProperty {
   /**
    * Reads a set of JSON items from the JSON stream.
    * 
+   * @param collector
+   * @param parentInstance
    * @param context
    *          the JSON/YAML parsing context
    * @return the item read, or {@code null} if no item was read
@@ -89,9 +93,9 @@ public interface ModelProperty extends NamedProperty {
 
   boolean writeItem(Object item, QName parentName, XmlWritingContext context) throws XMLStreamException, IOException;
 
-//  void writeItems(List<? extends WritableItem> items, JsonWritingContext context);
+  // void writeItems(List<? extends WritableItem> items, JsonWritingContext context);
 
-//  Collection<? extends WritableItem> getItemsToWrite(Collection<? extends Object> items);
+  // Collection<? extends WritableItem> getItemsToWrite(Collection<? extends Object> items);
 
-//  void writeItem(Object instance, JsonWritingContext context);
+  // void writeItem(Object instance, JsonWritingContext context);
 }

@@ -36,9 +36,9 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.parser.XmlEventUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.model.property.ModelProperty;
+import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
 
@@ -51,20 +51,15 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class ListPropertyInfo
-    extends AbstractModelPropertyInfo<ParameterizedType>
-    implements ModelPropertyInfo {
+public class ListPropertyInfo extends AbstractModelPropertyInfo<ParameterizedType> implements ModelPropertyInfo {
 
   public ListPropertyInfo(ModelProperty property) {
     super(property);
     if (!List.class.isAssignableFrom(property.getRawType())) {
-      throw new RuntimeException(
-          String.format(
-              "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
-              property.getField().getName(),
-              property.getParentClassBinding().getBoundClass().getName(),
-              property.getField().getType().getName(),
-              List.class.getName()));
+      throw new RuntimeException(String.format(
+          "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
+          property.getField().getName(), property.getParentClassBinding().getBoundClass().getName(),
+          property.getField().getType().getName(), List.class.getName()));
     }
   }
 
@@ -135,8 +130,7 @@ public class ListPropertyInfo
 
   @Override
   public boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start,
-      XmlParsingContext context)
-      throws IOException, BindingException, XMLStreamException {
+      XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
     XMLEventReader2 eventReader = context.getReader();
 
     // TODO: is this needed?
@@ -178,10 +172,10 @@ public class ListPropertyInfo
     @SuppressWarnings("unchecked")
     List<? extends Object> items = (List<? extends Object>) property.getValue(parentInstance);
 
-//    if (items.isEmpty()) {
-//      // nothing to write
-//      return;
-//    }
+    // if (items.isEmpty()) {
+    // // nothing to write
+    // return;
+    // }
 
     JsonGenerator writer = context.getWriter();
 

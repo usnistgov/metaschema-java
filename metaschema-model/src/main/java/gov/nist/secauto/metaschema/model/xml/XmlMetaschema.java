@@ -34,7 +34,6 @@ import gov.nist.itl.metaschema.model.m4.xml.METASCHEMADocument.METASCHEMA;
 import gov.nist.secauto.metaschema.model.AbstractMetaschema;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
-import gov.nist.secauto.metaschema.model.Util;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
@@ -94,7 +93,7 @@ public class XmlMetaschema
       while (cursor.toNextSelection()) {
         XmlObject obj = cursor.getObject();
         XmlGlobalFlagDefinition flag = new XmlGlobalFlagDefinition((GlobalFlagDefinition) obj, this);
-        logger.trace("New flag definition '{}'", Util.toCoordinates(flag));
+        logger.trace("New flag definition '{}'", flag.toCoordinates());
         flagDefinitions.put(flag.getName(), flag);
       }
       this.flagDefinitions
@@ -112,7 +111,7 @@ public class XmlMetaschema
       while (cursor.toNextSelection()) {
         XmlObject obj = cursor.getObject();
         XmlGlobalFieldDefinition field = new XmlGlobalFieldDefinition((GlobalFieldDefinition) obj, this);
-        logger.trace("New field definition '{}'", Util.toCoordinates(field));
+        logger.trace("New field definition '{}'", field.toCoordinates());
         fieldDefinitions.put(field.getName(), field);
       }
 
@@ -132,7 +131,7 @@ public class XmlMetaschema
       while (cursor.toNextSelection()) {
         XmlObject obj = cursor.getObject();
         XmlGlobalAssemblyDefinition assembly = new XmlGlobalAssemblyDefinition((GlobalAssemblyDefinition) obj, this);
-        logger.trace("New assembly definition '{}'", Util.toCoordinates(assembly));
+        logger.trace("New assembly definition '{}'", assembly.toCoordinates());
         assemblyDefinitions.put(assembly.getName(), assembly);
         if (assembly.isRoot()) {
           rootAssemblyDefinitions.put(assembly.getRootName(), assembly);

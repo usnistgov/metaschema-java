@@ -5,4 +5,5 @@
 .factorypath
 .pmd
 .pmdruleset.xml
+.eclipse-pmd
 target/

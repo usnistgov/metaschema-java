@@ -35,6 +35,7 @@ public interface ChoiceInstance extends ModelInstance, ModelContainer {
    * 
    * @return the model type
    */
+  @Override
   default ModelType getModelType() {
     return ModelType.CHOICE;
   }

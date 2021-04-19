@@ -56,10 +56,10 @@
 			<groupId>com.vladsch.flexmark</groupId>
 			<artifactId>flexmark-ext-typographic</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.vladsch.flexmark</groupId>
-			<artifactId>flexmark-formatter</artifactId>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.vladsch.flexmark</groupId> -->
+<!-- 			<artifactId>flexmark-formatter</artifactId> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>com.vladsch.flexmark</groupId>
 			<artifactId>flexmark-html2md-converter</artifactId>

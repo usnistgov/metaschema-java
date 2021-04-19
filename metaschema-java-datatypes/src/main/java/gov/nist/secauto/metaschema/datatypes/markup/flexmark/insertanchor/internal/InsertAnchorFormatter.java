@@ -55,8 +55,10 @@ public class InsertAnchorFormatter implements NodeFormatter {
 
   protected void render(InsertAnchorNode node, NodeFormatterContext context, MarkdownWriter markdown) {
     if (options.enableRendering) {
-      markdown.append("{{ ");
-      markdown.append(node.getName());
+      markdown.append("{{ insert: ");
+      markdown.append(node.getType());
+      markdown.append(", ");
+      markdown.append(node.getIdReference());
       markdown.append(" }}");
     }
   }

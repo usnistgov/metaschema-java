@@ -27,9 +27,14 @@
 package gov.nist.secauto.metaschema.model.instances;
 
 import gov.nist.secauto.metaschema.model.Assembly;
+import gov.nist.secauto.metaschema.model.ModelType;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 
 public interface AssemblyInstance<DEF extends AssemblyDefinition>
     extends ObjectModelInstance<DEF>, Assembly {
 
+  @Override
+  default ModelType getModelType() {
+    return Assembly.super.getModelType();
+  }
 }

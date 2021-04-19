@@ -36,7 +36,6 @@ import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.Configuration;
 import gov.nist.secauto.metaschema.binding.io.Feature;
-import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
@@ -49,8 +48,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
-public class DefaultJsonDeserializer<CLASS>
-    extends AbstractDeserializer<CLASS> {
+public class DefaultJsonDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
   private static final Logger logger = LogManager.getLogger(DefaultJsonDeserializer.class);
 
   private JsonFactory jsonFactory;
@@ -60,10 +58,10 @@ public class DefaultJsonDeserializer<CLASS>
     super(bindingContext, classBinding, configuration);
   }
 
-  @Override
-  public Format supportedFromat() {
-    return Format.JSON;
-  }
+  // @Override
+  // public Format supportedFromat() {
+  // return Format.JSON;
+  // }
 
   protected JsonFactory getJsonFactoryInstance() {
     return JsonFactoryFactory.singletonInstance();
@@ -126,11 +124,10 @@ public class DefaultJsonDeserializer<CLASS>
     String rootFieldName = classBinding.getJsonRootName();
     if (getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT, false) && rootFieldName == null
         && logger.isDebugEnabled()) {
-      logger.debug(
-          String.format(
-              "Root parsing is enabled (DESERIALIZE_ROOT),"
-                  + " but class '%s' does not have a configured root name using the '%s' annotation.",
-              clazz.getName(), MetaschemaAssembly.class.getName()));
+      logger.debug(String.format(
+          "Root parsing is enabled (DESERIALIZE_ROOT),"
+              + " but class '%s' does not have a configured root name using the '%s' annotation.",
+          clazz.getName(), MetaschemaAssembly.class.getName()));
     }
 
     JsonParsingContext parsingContext = new DefaultJsonParsingContext(parser);

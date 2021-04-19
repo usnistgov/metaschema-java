@@ -31,6 +31,7 @@ import gov.nist.itl.metaschema.model.m4.xml.ChoiceDocument;
 import gov.nist.itl.metaschema.model.m4.xml.FieldDocument;
 import gov.nist.itl.metaschema.model.m4.xml.LocalAssemblyDefinition;
 import gov.nist.itl.metaschema.model.m4.xml.LocalFieldDefinition;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractChoiceInstance;
 import gov.nist.secauto.metaschema.model.instances.AssemblyInstance;
@@ -169,5 +170,11 @@ public class XmlChoiceInstance
   @Override
   public List<ModelInstance> getModelInstances() {
     return modelInstances;
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    // TODO: add support if remarks are added
+    return null;
   }
 }

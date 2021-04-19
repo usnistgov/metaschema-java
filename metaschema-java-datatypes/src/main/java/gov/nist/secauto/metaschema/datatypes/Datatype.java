@@ -28,6 +28,10 @@ package gov.nist.secauto.metaschema.datatypes;
 
 public interface Datatype<TYPE extends Datatype<TYPE>> {
 
+  /**
+   * Provides a copy of the data value associated with the Datatype instance.
+   * 
+   * @return the copy
+   */
   TYPE copy();
-
 }

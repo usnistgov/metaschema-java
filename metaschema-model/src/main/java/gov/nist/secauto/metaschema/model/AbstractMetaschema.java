@@ -93,7 +93,7 @@ public abstract class AbstractMetaschema implements Metaschema {
     @Override
     public boolean test(DEF definition) {
       return ModuleScopeEnum.INHERITED.equals(definition.getModuleScope())
-          || (ModelType.ASSEMBLY.equals(definition.getModelType()) && ((AssemblyDefinition) definition).isRoot());
+          || ModelType.ASSEMBLY.equals(definition.getModelType()) && ((AssemblyDefinition) definition).isRoot();
     }
   }
 

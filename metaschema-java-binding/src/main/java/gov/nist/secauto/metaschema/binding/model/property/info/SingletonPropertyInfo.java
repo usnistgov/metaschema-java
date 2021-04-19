@@ -102,7 +102,8 @@ public class SingletonPropertyInfo
   @Override
   public void writeValue(Object parentInstance, JsonWritingContext context) throws IOException {
     ModelProperty property = getProperty();
-    getProperty().getBindingSupplier().writeItems(Collections.singleton(property.getValue(parentInstance)), true, context);
+    getProperty().getBindingSupplier().writeItems(Collections.singleton(property.getValue(parentInstance)), true,
+        context);
   }
 
   @Override

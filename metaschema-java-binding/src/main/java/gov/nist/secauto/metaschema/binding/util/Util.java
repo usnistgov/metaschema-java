@@ -33,6 +33,7 @@ public class Util {
   private Util() {
     // disable construction
   }
+
   public static <T> Iterable<T> toIterable(Iterator<T> iterator) {
     return new Iterable<T>() {
       @Override

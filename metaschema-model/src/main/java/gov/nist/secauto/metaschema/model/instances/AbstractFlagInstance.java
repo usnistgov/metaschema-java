@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.model.definitions.JsonValueKeyTypeEnum;
 import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 
 public abstract class AbstractFlagInstance<DEF extends FlagDefinition>
-    extends AbstractInfoElementInstance<ObjectDefinition, DEF>
+    extends AbstractDefinedInfoElementInstance<ObjectDefinition, DEF>
     implements FlagInstance<DEF> {
 
   /**

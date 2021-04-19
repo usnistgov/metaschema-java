@@ -26,11 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.FieldDocument;
 import gov.nist.itl.metaschema.model.m4.xml.FlagDocument;
 import gov.nist.itl.metaschema.model.m4.xml.LocalFieldDefinition;
 import gov.nist.itl.metaschema.model.m4.xml.LocalFlagDefinition;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.definitions.AbstractFieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
@@ -91,7 +91,7 @@ public class XmlLocalFieldDefinition
       // default value
       retval = Metaschema.DEFAULT_FIELD_XML_WRAPPER;
       if (getXmlField().isSetInXml()) {
-        retval = FieldDocument.Field.InXml.WITH_WRAPPER.equals(getXmlField().getInXml());
+        retval = LocalFieldDefinition.InXml.WITH_WRAPPER.equals(getXmlField().getInXml());
       }
     } else {
       // All other data types get "wrapped"
@@ -155,6 +155,11 @@ public class XmlLocalFieldDefinition
       retval = XmlGroupAsBehavior.lookup(getXmlField().getGroupAs().getInXml());
     }
     return retval;
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
   }
 
   public class InternalFieldDefinition
@@ -284,6 +289,11 @@ public class XmlLocalFieldDefinition
         retval = getFlagInstanceByName(getXmlField().getJsonKey().getFlagName());
       }
       return retval;
+    }
+
+    @Override
+    public MarkupMultiline getRemarks() {
+      return XmlLocalFieldDefinition.this.getRemarks();
     }
   }
 }
