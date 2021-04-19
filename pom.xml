@@ -103,7 +103,7 @@
 		<dependency.flexmark.version>0.50.46</dependency.flexmark.version>
 		<dependency.woodstox.version>6.0.3</dependency.woodstox.version>
 		<dependency.jackson.version>2.12.1</dependency.jackson.version>
-		<dependency.log4j2.version>2.12.1</dependency.log4j2.version>
+		<dependency.log4j2.version>2.14.0</dependency.log4j2.version>
 		<dependency.junit5.version>5.6.0</dependency.junit5.version>
 		<dependency.xmlbeans.version>3.1.0</dependency.xmlbeans.version>
 		<dependency.freemarker.version>2.3.30</dependency.freemarker.version>
