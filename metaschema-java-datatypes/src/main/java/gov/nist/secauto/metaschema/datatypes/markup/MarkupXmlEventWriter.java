@@ -41,6 +41,7 @@ import java.util.Objects;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
@@ -79,11 +80,15 @@ public class MarkupXmlEventWriter
   }
 
   @Override
-  protected void handleInsertAnchor(InsertAnchorNode node, XMLEventWriter writer, QName name, String paramId)
+  protected void handleInsertAnchor(InsertAnchorNode node, XMLEventWriter writer, QName name)
       throws XMLStreamException {
     List<Attribute> attributes = new LinkedList<>();
-    if (node.getName() != null) {
-      attributes.add(eventFactory.createAttribute("param-id", paramId));
+    if (node.getType() != null) {
+      attributes.add(eventFactory.createAttribute("type", node.getType().toString()));
+    }
+
+    if (node.getIdReference() != null) {
+      attributes.add(eventFactory.createAttribute("id-ref", node.getIdReference().toString()));
     }
 
     StartElement start = eventFactory.createStartElement(name, attributes.iterator(), null);
@@ -97,8 +102,13 @@ public class MarkupXmlEventWriter
   }
 
   @Override
-  protected void handleText(XMLEventWriter writer, String text) throws XMLStreamException {
+  protected void writeText(XMLEventWriter writer, String text) throws XMLStreamException {
     writer.add(eventFactory.createCharacters(text));
+  }
+
+  @Override
+  protected void writeHtmlEntity(XMLEventWriter writer, String entityText) throws XMLStreamException {
+    writer.add(eventFactory.createEntityReference(entityText, null));
   }
 
   @Override

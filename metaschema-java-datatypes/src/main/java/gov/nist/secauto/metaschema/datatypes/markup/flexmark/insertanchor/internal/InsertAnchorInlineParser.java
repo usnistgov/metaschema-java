@@ -41,7 +41,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class InsertAnchorInlineParser implements InlineParserExtension {
-  private static final Pattern PATTERN = Pattern.compile("\\{\\{\\s*([^\\s]+)\\s*\\}\\}");
+  private static final Pattern PATTERN = Pattern.compile("\\{\\{\\s*insert:\\s*([^\\s]+),\\s*([^\\s]+)\\s*\\}\\}");
 
   public InsertAnchorInlineParser(LightInlineParser inlineParser) {
   }
@@ -60,8 +60,9 @@ public class InsertAnchorInlineParser implements InlineParserExtension {
       BasedSequence input = inlineParser.getInput();
       Matcher matcher = inlineParser.matcher(PATTERN);
       if (matcher != null) {
-        BasedSequence insert = input.subSequence(matcher.start(1), matcher.end(1));
-        inlineParser.appendNode(new InsertAnchorNode(insert));
+        BasedSequence type = input.subSequence(matcher.start(1), matcher.end(1));
+        BasedSequence idReference = input.subSequence(matcher.start(2), matcher.end(2));
+        inlineParser.appendNode(new InsertAnchorNode(type, idReference));
         return true;
       }
     }

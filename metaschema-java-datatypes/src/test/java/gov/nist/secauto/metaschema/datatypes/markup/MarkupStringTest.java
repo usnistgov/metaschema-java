@@ -30,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.ctc.wstx.api.WstxOutputProperties;
+import com.ctc.wstx.stax.WstxOutputFactory;
 import com.vladsch.flexmark.ast.Emphasis;
 import com.vladsch.flexmark.ast.Paragraph;
 import com.vladsch.flexmark.ast.StrongEmphasis;
@@ -44,16 +46,40 @@ import gov.nist.secauto.metaschema.datatypes.markup.flexmark.AstCollectingVisito
 import gov.nist.secauto.metaschema.datatypes.markup.flexmark.insertanchor.InsertAnchorNode;
 import gov.nist.secauto.metaschema.datatypes.util.IteratorUtil;
 
+import org.codehaus.stax2.XMLOutputFactory2;
+import org.codehaus.stax2.XMLStreamWriter2;
+import org.codehaus.stax2.ri.evt.MergedNsContext;
+import org.codehaus.stax2.ri.evt.NamespaceEventImpl;
 import org.junit.jupiter.api.Test;
 
+import java.io.StringWriter;
 import java.util.List;
 
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.stream.XMLStreamException;
+
 class MarkupStringTest {
+  private static final String MARKUP_HTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+  private static final String MARKUP_HTML_PREFIX = "";
+
+  MarkupXmlStreamWriter newMarkupXmlStreamWriter(boolean handleBlockElements) {
+    return new MarkupXmlStreamWriter(MARKUP_HTML_NAMESPACE, handleBlockElements);
+  }
+
+  XMLStreamWriter2 newXmlStreamWriter(StringWriter stringWriter) throws XMLStreamException {
+    XMLOutputFactory2 factory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
+    factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
+    XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(stringWriter);
+    NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
+        List.of(NamespaceEventImpl.constructNamespace(null, MARKUP_HTML_PREFIX, MARKUP_HTML_NAMESPACE)));
+    xmlStreamWriter.setNamespaceContext(nsContext);
+    return xmlStreamWriter;
+  }
 
   @Test
   void markupLineFromMarkdownTest() {
-    String markdown = "Some \\**more* **text** and a param: {{ insert }}.\n";
-    String html = "<p>Some *<em>more</em> <strong>text</strong> and a param: <insert param-id=\"insert\" />.</p>\n";
+    String markdown = "Some \\**more* **text** and a param: {{ insert: param, insert }}.\n";
+    String html = "<p>Some *<em>more</em> <strong>text</strong> and a param: <insert type=\"param\" id-ref=\"insert\" />.</p>\n";
 
     MarkupLine ms = MarkupLine.fromMarkdown(markdown);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
@@ -145,10 +171,10 @@ class MarkupStringTest {
 
   @Test
   void markupMultilineFromMarkdownTest() {
-    String markdown = "# Example\n\nSome \"\\**more*\" **text**\n\nA param: {{ insert }}.\n";
+    String markdown = "# Example\n\nSome \"\\**more*\" **text**\n\nA param: {{ insert: param, insert }}.\n";
     String html = "<h1>Example</h1>\n"
         + "<p>Some <q>*<em>more</em></q> <strong>text</strong></p>\n"
-        + "<p>A param: <insert param-id=\"insert\" />.</p>\n";
+        + "<p>A param: <insert type=\"param\" id-ref=\"insert\" />.</p>\n";
     MarkupMultiline ms = MarkupMultiline.fromMarkdown(markdown);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
     visitor.collect(ms.getDocument());
@@ -176,8 +202,8 @@ class MarkupStringTest {
         + "<tr><th>Heading 1</th></tr>\n"
         + "</thead>\n"
         + "<tbody>\n"
-        + "<tr><td><q>data1</q> <insert param-id=\"insert\" /></td></tr>\n"
-        + "<tr><td><q>data2</q> <insert param-id=\"insert\" /></td></tr>\n"
+        + "<tr><td><q>data1</q> <insert type=\"param\" id-ref=\"insert\" /></td></tr>\n"
+        + "<tr><td><q>data2</q> <insert type=\"param\" id-ref=\"insert\" /></td></tr>\n"
         + "</tbody>\n"
         + "</table>\n"
         + "<p>Some <q><em>more</em></q> <strong>text</strong> <img src=\"src\" alt=\"alt\" /></p>\n";
@@ -185,10 +211,10 @@ class MarkupStringTest {
         + "\n"
         + "[text](link)\"quote1\"\n"
         + "\n"
-        + "|      Heading 1       |\n"
-        + "|----------------------|\n"
-        + "| \"data1\" {{ insert }} |\n"
-        + "| \"data2\" {{ insert }} |\n"
+        + "|              Heading 1              |\n"
+        + "|-------------------------------------|\n"
+        + "| \"data1\" {{ insert: param, insert }} |\n"
+        + "| \"data2\" {{ insert: param, insert }} |\n"
         + "\n"
         + "Some \"*more*\" **text** ![alt](src)\n";
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
@@ -241,5 +267,91 @@ class MarkupStringTest {
     System.out.println("Markdown Output");
     System.out.println("===============");
     System.out.println(ms.toMarkdown());
+  }
+  
+  @Test
+  void testEntityRoundTrip() throws XMLStreamException {
+    String markdown = "hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).\n";
+    String html = "<p>hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).</p>";
+
+    MarkupLine ms = MarkupLine.fromMarkdown(markdown);
+    AstCollectingVisitor visitor = new AstCollectingVisitor();
+    Document document = ms.getDocument();
+
+    assertNotNull(document);
+    visitor.collect(document);
+    System.out.println("Markup AST");
+    System.out.println("==========");
+    System.out.println(visitor.getAst());
+    System.out.println("HTML Output");
+    System.out.println("===========");
+    System.out.println(ms.toHtml());
+    System.out.println("Markdown Output");
+    System.out.println("===============");
+    System.out.println(ms.toMarkdown());
+
+    assertEquals(markdown, ms.toMarkdown());
+    assertEquals(html, ms.toHtml().trim());
+
+    MarkupXmlStreamWriter writer = newMarkupXmlStreamWriter(true);
+    StringWriter stringWriter = new StringWriter();
+    XMLStreamWriter2 xmlStreamWriter = newXmlStreamWriter(stringWriter);
+    
+    writer.visitChildren(ms.getDocument(), xmlStreamWriter);
+    xmlStreamWriter.close();
+    
+    assertEquals(html, stringWriter.toString());
+  }
+  
+  @Test
+  void testAposRoundTrip() throws XMLStreamException {
+    String markdown = "a user’s identity\n";
+    String html = "<p>a user’s identity</p>";
+
+    // test from Markdown source
+    MarkupLine ms = MarkupLine.fromMarkdown(markdown);
+    AstCollectingVisitor visitor = new AstCollectingVisitor();
+    Document document = ms.getDocument();
+
+    assertNotNull(document);
+    visitor.collect(document);
+    System.out.println("Markup AST");
+    System.out.println("==========");
+    System.out.println(visitor.getAst());
+    System.out.println("HTML Output");
+    System.out.println("===========");
+    System.out.println(ms.toHtml());
+    System.out.println("Markdown Output");
+    System.out.println("===============");
+    System.out.println(ms.toMarkdown());
+
+    assertEquals(markdown, ms.toMarkdown());
+    assertEquals(html, ms.toHtml().trim());
+
+    MarkupXmlStreamWriter writer = newMarkupXmlStreamWriter(true);
+    StringWriter stringWriter = new StringWriter();
+    XMLStreamWriter2 xmlStreamWriter = newXmlStreamWriter(stringWriter);
+    
+    writer.visitChildren(ms.getDocument(), xmlStreamWriter);
+    xmlStreamWriter.close();
+    
+    assertEquals(html, stringWriter.toString());
+
+    // test from HTML source
+    ms = MarkupLine.fromHtml(html);
+    document = ms.getDocument();
+
+    assertNotNull(document);
+    visitor.collect(document);
+    System.out.println("Markup AST");
+    System.out.println("==========");
+    System.out.println(visitor.getAst());
+    System.out.println("HTML Output");
+    System.out.println("===========");
+    System.out.println(ms.toHtml());
+    System.out.println("Markdown Output");
+    System.out.println("===============");
+    System.out.println(ms.toMarkdown());
+
   }
 }

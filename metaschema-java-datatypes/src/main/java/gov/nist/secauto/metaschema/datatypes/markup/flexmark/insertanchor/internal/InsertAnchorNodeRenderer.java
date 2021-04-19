@@ -53,7 +53,7 @@ public class InsertAnchorNodeRenderer implements NodeRenderer {
 
   protected void render(InsertAnchorNode node, NodeRendererContext context, HtmlWriter html) {
     if (options.enableRendering) {
-      html.attr("param-id", node.getName()).withAttr().tag("insert", true);
+      html.attr("type", node.getType()).attr("id-ref", node.getIdReference()).withAttr().tagVoid("insert");
     }
   }
 

@@ -55,8 +55,10 @@ public class InsertAnchorHtmlNodeRenderer implements HtmlNodeRenderer {
   }
 
   private void processInsert(Element node, HtmlNodeConverterContext context, HtmlMarkdownWriter out) {
-    out.append("{{ ");
-    out.append(context.getCurrentNode().attr("param-id"));
+    out.append("{{ insert: ");
+    out.append(context.getCurrentNode().attr("type"));
+    out.append(", ");
+    out.append(context.getCurrentNode().attr("id-ref"));
     out.append(" }}");
   }
 

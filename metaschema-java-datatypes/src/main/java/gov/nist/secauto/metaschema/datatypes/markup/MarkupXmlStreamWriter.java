@@ -53,16 +53,27 @@ public class MarkupXmlStreamWriter
   }
 
   @Override
-  protected void handleInsertAnchor(InsertAnchorNode node, XMLStreamWriter writer, QName name, String paramId)
+  protected void handleInsertAnchor(InsertAnchorNode node, XMLStreamWriter writer, QName name)
       throws XMLStreamException {
     writer.writeEmptyElement(name.getNamespaceURI(), name.getLocalPart());
 
-    writer.writeAttribute("param-id", paramId);
+    if (node.getType() != null) {
+      writer.writeAttribute("type", node.getType().toString());
+    }
+
+    if (node.getIdReference() != null) {
+      writer.writeAttribute("id-ref", node.getIdReference().toString());
+    }
   }
 
   @Override
-  protected void handleText(XMLStreamWriter writer, String text) throws XMLStreamException {
+  protected void writeText(XMLStreamWriter writer, String text) throws XMLStreamException {
     writer.writeCharacters(text);
+  }
+
+  @Override
+  protected void writeHtmlEntity(XMLStreamWriter writer, String entityText) throws XMLStreamException {
+    writer.writeEntityRef(entityText);
   }
 
   @Override

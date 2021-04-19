@@ -837,11 +837,12 @@ public class MarkupParser {
   }
 
   private void handleInlineInsert(Node node, XMLEventReader2 reader, StartElement start) throws XMLStreamException {
-    Attribute paramId = start.getAttributeByName(new QName("param-id"));
-    if (paramId == null) {
-      throw new IllegalStateException("param-id is missing on insert element");
+    Attribute type = start.getAttributeByName(new QName("type"));
+    Attribute idReference = start.getAttributeByName(new QName("id-ref"));
+    if (type == null || idReference == null) {
+      throw new IllegalStateException("type and id-ref are required on an insert element");
     }
-    InsertAnchorNode insert = new InsertAnchorNode(paramId.getValue());
+    InsertAnchorNode insert = new InsertAnchorNode(type.getValue(), idReference.getValue());
     node.appendChild(insert);
 
     // consume this element

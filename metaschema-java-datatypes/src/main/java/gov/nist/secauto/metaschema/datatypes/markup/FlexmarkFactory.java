@@ -39,6 +39,7 @@ import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.builder.BuilderBase;
 import com.vladsch.flexmark.util.data.DataHolder;
 import com.vladsch.flexmark.util.misc.Extension;
+import com.vladsch.flexmark.util.sequence.LineAppendable;
 
 import gov.nist.secauto.metaschema.datatypes.markup.flexmark.insertanchor.InsertAnchorExtension;
 import gov.nist.secauto.metaschema.datatypes.markup.flexmark.q.HtmlQuoteTagExtension;
@@ -59,23 +60,23 @@ public class FlexmarkFactory {
   static {
     TYPOGRAPHIC_REPLACEMENT_MAP.put("“", "\"");
     TYPOGRAPHIC_REPLACEMENT_MAP.put("”", "\"");
-    TYPOGRAPHIC_REPLACEMENT_MAP.put("&ldquo;", "\"");
-    TYPOGRAPHIC_REPLACEMENT_MAP.put("&rdquo;", "\"");
+    TYPOGRAPHIC_REPLACEMENT_MAP.put("&ldquo;", "“");
+    TYPOGRAPHIC_REPLACEMENT_MAP.put("&rdquo;", "”");
 //    TYPOGRAPHIC_REPLACEMENT_MAP.put("‘", "'");
 //    TYPOGRAPHIC_REPLACEMENT_MAP.put("’", "'");
-//    TYPOGRAPHIC_REPLACEMENT_MAP.put("&lsquo;", "'");
-//    TYPOGRAPHIC_REPLACEMENT_MAP.put("&rsquo;", "'");
-    TYPOGRAPHIC_REPLACEMENT_MAP.put("&apos;", "'");
+    TYPOGRAPHIC_REPLACEMENT_MAP.put("&lsquo;", "‘");
+    TYPOGRAPHIC_REPLACEMENT_MAP.put("&rsquo;", "’");
+    TYPOGRAPHIC_REPLACEMENT_MAP.put("&apos;", "’");
 //    TYPOGRAPHIC_REPLACEMENT_MAP.put("«", "<<");
-//    TYPOGRAPHIC_REPLACEMENT_MAP.put("&laquo;", "<<");
+    TYPOGRAPHIC_REPLACEMENT_MAP.put("&laquo;", "«");
 //    TYPOGRAPHIC_REPLACEMENT_MAP.put("»", ">>");
-//    TYPOGRAPHIC_REPLACEMENT_MAP.put("&raquo;", ">>");
+    TYPOGRAPHIC_REPLACEMENT_MAP.put("&raquo;", "»");
 //    TYPOGRAPHIC_REPLACEMENT_MAP.put("…", "...");
-//    TYPOGRAPHIC_REPLACEMENT_MAP.put("&hellip;", "...");
+    TYPOGRAPHIC_REPLACEMENT_MAP.put("&hellip;", "…");
 //    TYPOGRAPHIC_REPLACEMENT_MAP.put("–", "--");
-//    TYPOGRAPHIC_REPLACEMENT_MAP.put("&endash;", "--");
+    TYPOGRAPHIC_REPLACEMENT_MAP.put("&endash;", "–");
 //    TYPOGRAPHIC_REPLACEMENT_MAP.put("—", "---");
-//    TYPOGRAPHIC_REPLACEMENT_MAP.put("&emdash;", "---");
+    TYPOGRAPHIC_REPLACEMENT_MAP.put("&emdash;", "—");
   }
 
   public static FlexmarkFactory instance() {
@@ -128,9 +129,11 @@ public class FlexmarkFactory {
     builder.set(TypographicExtension.ENABLE_SMARTS, true);
     builder.set(TypographicExtension.DOUBLE_QUOTE_OPEN, "\"");
     builder.set(TypographicExtension.DOUBLE_QUOTE_CLOSE, "\"");
-//    builder.set(FlexmarkHtmlConverter.TYPOGRAPHIC_REPLACEMENT_MAP, TYPOGRAPHIC_REPLACEMENT_MAP);
+    builder.set(FlexmarkHtmlConverter.TYPOGRAPHIC_REPLACEMENT_MAP, TYPOGRAPHIC_REPLACEMENT_MAP);
 //    builder.set(FlexmarkHtmlConverter.OUTPUT_UNKNOWN_TAGS, true);
+//    builder.set(HtmlRenderer.UNESCAPE_HTML_ENTITIES, true);
     builder.set(FlexmarkHtmlConverter.SETEXT_HEADINGS, false);
+    builder.set(FlexmarkHtmlConverter.ADD_TRAILING_EOL, false);
 
     List<Extension> extensions = List.of(
         // Metaschema insert

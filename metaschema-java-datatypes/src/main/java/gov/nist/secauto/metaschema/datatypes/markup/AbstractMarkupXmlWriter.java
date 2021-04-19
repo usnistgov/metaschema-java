@@ -31,6 +31,7 @@ import com.vladsch.flexmark.ast.BulletList;
 import com.vladsch.flexmark.ast.Code;
 import com.vladsch.flexmark.ast.Emphasis;
 import com.vladsch.flexmark.ast.Heading;
+import com.vladsch.flexmark.ast.HtmlEntity;
 import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.ast.Image;
 import com.vladsch.flexmark.ast.Link;
@@ -57,18 +58,19 @@ import gov.nist.secauto.metaschema.datatypes.markup.flexmark.q.DoubleQuoteNode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 public abstract class AbstractMarkupXmlWriter<WRITER> {
+  private static final Pattern ENTITY_PATTERN = Pattern.compile("^&([^;]+);$");
   private static final Map<String, String> entityMap;
 
   static {
     entityMap = new HashMap<>();
     entityMap.put("&amp;", "&");
-    entityMap.put("&lt;", "<");
-    entityMap.put("&gt;", ">");
     entityMap.put("&lsquo;", "‘");
     entityMap.put("&rsquo;", "’");
     entityMap.put("&hellip;", "…");
@@ -78,7 +80,6 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
     entityMap.put("&rdquo;", "”");
     entityMap.put("&laquo;", "«");
     entityMap.put("&raquo;", "»");
-
   }
 
   private final String namespace;
@@ -121,13 +122,19 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
     }
   }
 
+  protected abstract void writeText(WRITER writer, String text) throws XMLStreamException;
+  protected abstract void writeHtmlEntity(WRITER writer, String entityText) throws XMLStreamException;
+
   protected boolean handleInlineElements(Node node, WRITER writer) throws XMLStreamException {
     boolean retval = false;
     if (node instanceof Text) {
-      handleText(writer, node.getChars().toString());
+      writeText(writer, node.getChars().toString());
       retval = true;
     } else if (node instanceof EscapedCharacter) {
       handleEscapedCharacter((EscapedCharacter) node, writer);
+      retval = true;
+    } else if (node instanceof HtmlEntity) {
+      handleHtmlEntity(((HtmlEntity) node).getChars().toString(), writer);
       retval = true;
     } else if (node instanceof TypographicSmarts) {
       handleTypographicSmarts((TypographicSmarts) node, writer);
@@ -228,10 +235,10 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
   protected void handleInsertAnchor(InsertAnchorNode node, WRITER writer) throws XMLStreamException {
     // TODO: update OSCAL to add an insert type attribute
     QName name = new QName(getNamespace(), "insert");
-    handleInsertAnchor(node, writer, name, node.getName().toString());
+    handleInsertAnchor(node, writer, name);
   }
 
-  protected abstract void handleInsertAnchor(InsertAnchorNode node, WRITER writer, QName name, String paramId)
+  protected abstract void handleInsertAnchor(InsertAnchorNode node, WRITER writer, QName name)
       throws XMLStreamException;
 
   protected void handleHeading(Heading node, WRITER writer) throws XMLStreamException {
@@ -240,29 +247,36 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
     handleBasicElement(node, writer, String.format("h%d", level));
   }
 
-  protected abstract void handleText(WRITER writer, String text) throws XMLStreamException;
-
   protected void handleEscapedCharacter(EscapedCharacter node, WRITER writer) throws XMLStreamException {
-    handleText(writer, node.getChars().unescape());
+    writeText(writer, node.getChars().unescape());
   }
 
   protected void handleTypographicSmarts(TypographicQuotes node, WRITER writer) throws XMLStreamException {
     if (node.getTypographicOpening() != null && !node.getTypographicOpening().isEmpty()) {
-      handleText(writer, mapEntity(node.getTypographicOpening()));
+      handleHtmlEntity(node.getTypographicOpening(), writer);
     }
     visitChildren(node, writer);
     if (node.getTypographicClosing() != null && !node.getTypographicClosing().isEmpty()) {
-      handleText(writer, mapEntity(node.getTypographicClosing()));
+      handleHtmlEntity(node.getTypographicClosing(), writer);
     }
   }
 
   protected void handleTypographicSmarts(TypographicSmarts node, WRITER writer) throws XMLStreamException {
-    handleText(writer, mapEntity(node.getTypographicText()));
+    handleHtmlEntity(node.getTypographicText(), writer);
   }
 
-  protected String mapEntity(String entity) {
-    String replacement = entityMap.get(entity);
-    return replacement != null ? replacement : entity;
+  protected void handleHtmlEntity(String entityText, WRITER writer) throws XMLStreamException {
+    String replacement = entityMap.get(entityText);
+    if (replacement != null) {
+      writeText(writer, replacement);
+    } else {
+      Matcher matcher = ENTITY_PATTERN.matcher(entityText);
+      if (matcher.matches()) {
+        writeHtmlEntity(writer, matcher.group(1));
+      } else {
+        writeText(writer, replacement);
+      }
+    }
   }
 
   protected void handleBasicElement(Node node, WRITER writer, String localName) throws XMLStreamException {
@@ -292,7 +306,7 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
 
   protected void handleSoftLineBreak(@SuppressWarnings("unused") SoftLineBreak node, WRITER writer)
       throws XMLStreamException {
-    handleText(writer, " ");
+    writeText(writer, " ");
   }
 
   private void handleHtmlInline(HtmlInline node, WRITER writer) throws XMLStreamException {
