@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.datatypes.markup;
 
 import com.vladsch.flexmark.util.ast.Document;
 
+import gov.nist.secauto.metaschema.datatypes.markup.flexmark.FlexmarkFactory;
+
 public class MarkupMultiline
     extends AbstractMarkupString<MarkupMultiline> {
 

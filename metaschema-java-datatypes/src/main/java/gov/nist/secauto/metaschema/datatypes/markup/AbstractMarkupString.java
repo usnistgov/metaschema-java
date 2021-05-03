@@ -34,6 +34,7 @@ import com.vladsch.flexmark.util.ast.Document;
 
 import gov.nist.secauto.metaschema.datatypes.Datatype;
 import gov.nist.secauto.metaschema.datatypes.markup.flexmark.AstCollectingVisitor;
+import gov.nist.secauto.metaschema.datatypes.markup.flexmark.FlexmarkFactory;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;

@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.datatypes.markup;
+package gov.nist.secauto.metaschema.datatypes.markup.flexmark;
 
 import com.vladsch.flexmark.ext.escaped.character.EscapedCharacterExtension;
 import com.vladsch.flexmark.ext.gfm.strikethrough.SubscriptExtension;
@@ -134,6 +134,8 @@ public class FlexmarkFactory {
 //    builder.set(HtmlRenderer.UNESCAPE_HTML_ENTITIES, true);
     builder.set(FlexmarkHtmlConverter.SETEXT_HEADINGS, false);
     builder.set(FlexmarkHtmlConverter.ADD_TRAILING_EOL, false);
+    builder.set(Formatter.MAX_TRAILING_BLANK_LINES, -1);
+    builder.set(HtmlRenderer.MAX_TRAILING_BLANK_LINES, -1);
 
     List<Extension> extensions = List.of(
         // Metaschema insert

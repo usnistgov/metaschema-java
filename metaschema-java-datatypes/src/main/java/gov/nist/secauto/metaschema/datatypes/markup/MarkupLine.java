@@ -32,6 +32,8 @@ import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 
+import gov.nist.secauto.metaschema.datatypes.markup.flexmark.FlexmarkFactory;
+
 public class MarkupLine
     extends AbstractMarkupString<MarkupLine> {
   private static final Parser markdownParser;

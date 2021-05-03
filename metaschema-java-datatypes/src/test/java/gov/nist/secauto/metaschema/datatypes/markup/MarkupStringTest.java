@@ -78,8 +78,8 @@ class MarkupStringTest {
 
   @Test
   void markupLineFromMarkdownTest() {
-    String markdown = "Some \\**more* **text** and a param: {{ insert: param, insert }}.\n";
-    String html = "<p>Some *<em>more</em> <strong>text</strong> and a param: <insert type=\"param\" id-ref=\"insert\" />.</p>\n";
+    String markdown = "Some \\**more* **text** and a param: {{ insert: param, insert }}.";
+    String html = "<p>Some *<em>more</em> <strong>text</strong> and a param: <insert type=\"param\" id-ref=\"insert\" />.</p>";
 
     MarkupLine ms = MarkupLine.fromMarkdown(markdown);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
@@ -171,10 +171,10 @@ class MarkupStringTest {
 
   @Test
   void markupMultilineFromMarkdownTest() {
-    String markdown = "# Example\n\nSome \"\\**more*\" **text**\n\nA param: {{ insert: param, insert }}.\n";
+    String markdown = "# Example\n\nSome \"\\**more*\" **text**\n\nA param: {{ insert: param, insert }}.";
     String html = "<h1>Example</h1>\n"
         + "<p>Some <q>*<em>more</em></q> <strong>text</strong></p>\n"
-        + "<p>A param: <insert type=\"param\" id-ref=\"insert\" />.</p>\n";
+        + "<p>A param: <insert type=\"param\" id-ref=\"insert\" />.</p>";
     MarkupMultiline ms = MarkupMultiline.fromMarkdown(markdown);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
     visitor.collect(ms.getDocument());
@@ -206,7 +206,7 @@ class MarkupStringTest {
         + "<tr><td><q>data2</q> <insert type=\"param\" id-ref=\"insert\" /></td></tr>\n"
         + "</tbody>\n"
         + "</table>\n"
-        + "<p>Some <q><em>more</em></q> <strong>text</strong> <img src=\"src\" alt=\"alt\" /></p>\n";
+        + "<p>Some <q><em>more</em></q> <strong>text</strong> <img src=\"src\" alt=\"alt\" /></p>";
     String markdown ="# Example\n"
         + "\n"
         + "[text](link)\"quote1\"\n"
@@ -216,7 +216,7 @@ class MarkupStringTest {
         + "| \"data1\" {{ insert: param, insert }} |\n"
         + "| \"data2\" {{ insert: param, insert }} |\n"
         + "\n"
-        + "Some \"*more*\" **text** ![alt](src)\n";
+        + "Some \"*more*\" **text** ![alt](src)";
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
     visitor.collect(ms.getDocument());
@@ -271,7 +271,7 @@ class MarkupStringTest {
   
   @Test
   void testEntityRoundTrip() throws XMLStreamException {
-    String markdown = "hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).\n";
+    String markdown = "hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).";
     String html = "<p>hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).</p>";
 
     MarkupLine ms = MarkupLine.fromMarkdown(markdown);
@@ -305,7 +305,7 @@ class MarkupStringTest {
   
   @Test
   void testAposRoundTrip() throws XMLStreamException {
-    String markdown = "a user’s identity\n";
+    String markdown = "a user’s identity";
     String html = "<p>a user’s identity</p>";
 
     // test from Markdown source
