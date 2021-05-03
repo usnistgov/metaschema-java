@@ -84,14 +84,12 @@ public class DefaultFieldClassBinding
    * @param bindingContext
    *          the Metaschema binding environment context
    * @return the Metaschema field binding for the class
-   * @throws BindingException
-   *           if an error occurred while parsing the class data
    */
   public static DefaultFieldClassBinding createInstance(Class<?> clazz, BindingContext bindingContext) {
     Objects.requireNonNull(clazz, "clazz");
     if (!clazz.isAnnotationPresent(MetaschemaField.class)) {
-      throw new IllegalArgumentException(String.format("Class '%s' is missing the '%' annotation.",
-          clazz.getName(), MetaschemaField.class.getName()));
+      throw new IllegalArgumentException(
+          String.format("Class '%s' is missing the '%' annotation.", clazz.getName(), MetaschemaField.class.getName()));
     }
     DefaultFieldClassBinding retval = new DefaultFieldClassBinding(clazz, bindingContext);
     retval.initialize();
@@ -108,8 +106,7 @@ public class DefaultFieldClassBinding
    * @param clazz
    *          the Java bean class
    * @param bindingContext
-   * @throws BindingException
-   *           if an error occurred while parsing the class data
+   *          the class binding context for which this class is participating
    */
   protected DefaultFieldClassBinding(Class<?> clazz, BindingContext bindingContext) {
     super(clazz, bindingContext);
@@ -164,8 +161,7 @@ public class DefaultFieldClassBinding
     String valuePropertyName = fieldValue.getJsonPropertyName();
     Map<String, ? extends NamedProperty> retval;
     if (valuePropertyName != null) {
-      retval = Stream.concat(
-          super.getProperties(flagFilter).values().stream(), Stream.of(fieldValue))
+      retval = Stream.concat(super.getProperties(flagFilter).values().stream(), Stream.of(fieldValue))
           .collect(Collectors.toMap(Property::getJsonPropertyName, Function.identity()));
     } else {
       retval = super.getProperties(flagFilter);
@@ -484,7 +480,7 @@ public class DefaultFieldClassBinding
       JsonWritingContext context) throws IOException {
     CollapseKeyBuilder builder = new CollapseKeyBuilder(this);
     builder.addAll(items);
-    
+
     builder.write(writeObjectWrapper, context);
   }
 

@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -41,6 +42,7 @@ class JavaGeneratorTest {
   // File generationDir;
   File generationDir = new File("target/generated-sources/metaschema");
 
+  @Disabled
   @Test
   void test() throws IOException, MetaschemaException {
     File metaschemaFile = new File("../../liboscal-java/OSCAL/src/metaschema/oscal_catalog_metaschema.xml");

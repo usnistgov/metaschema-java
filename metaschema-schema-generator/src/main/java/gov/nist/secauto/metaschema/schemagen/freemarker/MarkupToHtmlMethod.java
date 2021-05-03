@@ -82,7 +82,7 @@ public class MarkupToHtmlMethod implements TemplateMethodModelEx {
 
     XMLOutputFactory2 factory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
     factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
-    try (ByteArrayOutputStream os = new ByteArrayOutputStream()){
+    try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
       XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
       NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
           List.of(NamespaceEventImpl.constructNamespace(null, prefix != null ? prefix : "", namespace)));

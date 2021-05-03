@@ -144,10 +144,6 @@ public enum DataType {
       gov.nist.secauto.metaschema.model.definitions.DataType.MARKUP_MULTILINE,
       MarkupMultiline.class,
       MarkupMultilineAdapter.class),
-  EMPTY(
-      gov.nist.secauto.metaschema.model.definitions.DataType.EMPTY,
-      Void.class,
-      null),
   BOOLEAN(
       gov.nist.secauto.metaschema.model.definitions.DataType.BOOLEAN,
       Boolean.class,

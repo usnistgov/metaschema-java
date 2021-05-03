@@ -133,7 +133,8 @@ public interface ClassBinding {
    *          used to gather Java instances
    * @param parentInstance
    *          the Java instance for the object containing this object
-   * @param start the containing start element
+   * @param start
+   *          the containing start element
    * @param context
    *          the parsing context
    * @return {@code true} if data was parsed, {@code false} otherwise

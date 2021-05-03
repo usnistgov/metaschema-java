@@ -49,7 +49,8 @@ public interface InfoElement {
 
   /**
    * Retrieve the remarks associated with this information element, if any.
-   * @return the remarks or {@code null} if no remarks are defined 
+   * 
+   * @return the remarks or {@code null} if no remarks are defined
    */
   MarkupMultiline getRemarks();
 }

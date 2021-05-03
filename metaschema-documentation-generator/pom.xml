@@ -14,7 +14,7 @@
   <url>https://pages.nist.gov/metaschema</url>
 
   <scm>
-    <url>https://github.com/usnistgov/metaschema-java/tree/master/metaschema-documentation-generator</url>
+    <url>https://github.com/usnistgov/metaschema-java/tree/main/metaschema-documentation-generator</url>
   </scm>
 
 	<build>

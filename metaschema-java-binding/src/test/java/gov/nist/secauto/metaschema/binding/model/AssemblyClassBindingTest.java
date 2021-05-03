@@ -224,20 +224,21 @@ class AssemblyClassBindingTest {
     assertEquals("idvalue", obj.getId());
     assertEquals("single-simple-value", obj.getSingleSimpleField());
     assertNotNull(obj.getGroupedListSimpleField());
-    assertIterableEquals(List.of("grouped-list-simple-item-value-1", "grouped-list-simple-item-value-2"), obj.getGroupedListSimpleField());
+    assertIterableEquals(List.of("grouped-list-simple-item-value-1", "grouped-list-simple-item-value-2"),
+        obj.getGroupedListSimpleField());
 
     assertNotNull(obj.getSingleFlaggedField());
     FlaggedField flaggedField = obj.getSingleFlaggedField();
     assertEquals("single-flagged-id", flaggedField.getId());
     assertEquals("single-flagged-value", flaggedField.getValue());
-//    
-//    
-//    assertNotNull(obj.getGroupedListField());
-//    assertTrue(obj.getGroupedListField().isEmpty());
-//    assertNotNull(obj.getUngroupedListField());
-//    assertTrue(obj.getUngroupedListField().isEmpty());
-//    assertNotNull(obj.getMappedField());
-//    assertTrue(obj.getMappedField().isEmpty());
+    //
+    //
+    // assertNotNull(obj.getGroupedListField());
+    // assertTrue(obj.getGroupedListField().isEmpty());
+    // assertNotNull(obj.getUngroupedListField());
+    // assertTrue(obj.getUngroupedListField().isEmpty());
+    // assertNotNull(obj.getMappedField());
+    // assertTrue(obj.getMappedField().isEmpty());
 
     context.assertIsSatisfied();
   }

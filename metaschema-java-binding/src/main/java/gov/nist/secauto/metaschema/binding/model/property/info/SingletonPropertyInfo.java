@@ -110,6 +110,5 @@ public class SingletonPropertyInfo
   public boolean isValueSet(Object parentInstance) throws IOException {
     return getProperty().getValue(parentInstance) != null;
   }
-  
-  
+
 }

@@ -49,7 +49,8 @@ import java.util.List;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 
-public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYPE>> implements MarkupText, Datatype<TYPE> {
+public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYPE>>
+    implements MarkupText, Datatype<TYPE> {
   private static final String DEFAULT_HTML_NS = "http://www.w3.org/1999/xhtml";
   private static final String DEFAULT_HTML_PREFIX = "";
   private final Document document;
@@ -68,7 +69,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   }
 
   public void toHtmlAsStream(OutputStream os, String namespace, String prefix) throws XMLStreamException {
-    
+
     if (namespace == null) {
       namespace = DEFAULT_HTML_NS;
     }
@@ -92,7 +93,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   public String toHtml() {
     return toHTML(FlexmarkFactory.instance().getHtmlRenderer());
   }
-  
+
   protected String toHTML(HtmlRenderer renderer) {
     return renderer.render(getDocument());
   }

@@ -32,7 +32,8 @@ import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFlagInstance;
 
-public class XmlFlagInstance extends AbstractFlagInstance<XmlGlobalFlagDefinition> {
+public class XmlFlagInstance
+    extends AbstractFlagInstance<XmlGlobalFlagDefinition> {
   private final FlagDocument.Flag xmlFlag;
 
   /**

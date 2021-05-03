@@ -57,7 +57,7 @@ public @interface FieldValue {
 
   /**
    * If the data type allows it, determines if the field's value must be wrapped with an element
-   * having the specified {@link #name()} and {@link #namespace()}.
+   * having the specified {@link #name()}.
    * 
    * @return {@code true} if the field must be wrapped, or {@code false} otherwise
    */

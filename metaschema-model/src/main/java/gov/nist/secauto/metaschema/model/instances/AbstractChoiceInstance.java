@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.model.instances;
 
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 
-public abstract class AbstractChoiceInstance extends AbstractInfoElementInstance<AssemblyDefinition>
+public abstract class AbstractChoiceInstance
+    extends AbstractInfoElementInstance<AssemblyDefinition>
     implements ChoiceInstance {
 
   /**

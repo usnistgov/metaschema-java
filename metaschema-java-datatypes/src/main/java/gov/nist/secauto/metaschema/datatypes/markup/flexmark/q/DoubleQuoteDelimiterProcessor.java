@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.datatypes.markup.flexmark.q;
 
 import com.vladsch.flexmark.ext.typographic.TypographicQuotes;
@@ -39,11 +40,11 @@ public class DoubleQuoteDelimiterProcessor
 
   @Override
   public void process(Delimiter opener, Delimiter closer, int delimitersUsed) {
-//    TypographicQuotes node = new DoubleQuoteNode(opener.getTailChars(delimitersUsed), BasedSequence.NULL, closer.getLeadChars(delimitersUsed));
-//    node.setTypographicOpening(myOpener);
-//    node.setTypographicClosing(myCloser);
-//    opener.moveNodesBetweenDelimitersTo(node, closer);
+    // TypographicQuotes node = new DoubleQuoteNode(opener.getTailChars(delimitersUsed),
+    // BasedSequence.NULL, closer.getLeadChars(delimitersUsed));
+    // node.setTypographicOpening(myOpener);
+    // node.setTypographicClosing(myCloser);
+    // opener.moveNodesBetweenDelimitersTo(node, closer);
   }
 
-  
 }

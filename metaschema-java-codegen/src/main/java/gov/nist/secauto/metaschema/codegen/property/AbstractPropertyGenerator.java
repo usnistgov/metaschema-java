@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.codegen.support.ClassUtils;
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
-import gov.nist.secauto.metaschema.model.instances.InfoElementInstance;
+import gov.nist.secauto.metaschema.model.instances.FlagInstance;
 import gov.nist.secauto.metaschema.model.instances.ModelInstance;
 
 import java.util.Collections;
@@ -132,7 +132,7 @@ public abstract class AbstractPropertyGenerator<CLASS_GENERATOR extends JavaClas
    * group-as name, else this will be the use name.
    * 
    * @return the name
-   * @see InfoElementInstance#getUseName()
+   * @see FlagInstance#getUseName()
    * @see ModelInstance#getGroupAsName()
    */
   protected abstract String getInstanceName();

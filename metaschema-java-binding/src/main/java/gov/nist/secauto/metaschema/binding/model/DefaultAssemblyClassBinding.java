@@ -87,8 +87,6 @@ public class DefaultAssemblyClassBinding
    * @param bindingContext
    *          the Metaschema binding environment context
    * @return the Metaschema assembly binding for the class
-   * @throws BindingException
-   *           if an error occurred while parsing the class data
    */
   public static DefaultAssemblyClassBinding createInstance(Class<?> clazz, BindingContext bindingContext) {
     DefaultAssemblyClassBinding retval = new DefaultAssemblyClassBinding(clazz, bindingContext);
@@ -107,15 +105,14 @@ public class DefaultAssemblyClassBinding
    * @param clazz
    *          the Java bean class
    * @param bindingContext
-   * @throws BindingException
-   *           if an error occurred while parsing the class data
+   *          the class binding context for which this class is participating
    */
   protected DefaultAssemblyClassBinding(Class<?> clazz, BindingContext bindingContext) {
     super(clazz, bindingContext);
     Objects.requireNonNull(clazz, "clazz");
     if (!clazz.isAnnotationPresent(MetaschemaAssembly.class)) {
-      throw new IllegalArgumentException(String.format("Class '%s' is missing the '%' annotation.",
-          clazz.getName(), Assembly.class.getName()));
+      throw new IllegalArgumentException(
+          String.format("Class '%s' is missing the '%' annotation.", clazz.getName(), Assembly.class.getName()));
     }
     this.metaschemaAssembly = clazz.getAnnotation(MetaschemaAssembly.class);
     String namespace = ModelUtil.resolveNamespace(this.metaschemaAssembly.rootNamespace(), this, false);
@@ -138,18 +135,14 @@ public class DefaultAssemblyClassBinding
     Assembly assemblyAnnotation = field.getAnnotation(Assembly.class);
     if (assemblyAnnotation != null) {
       DefaultAssemblyProperty property;
-      property = DefaultAssemblyProperty.createInstance(
-          this,
-          field);
+      property = DefaultAssemblyProperty.createInstance(this, field);
       modelProperties.add(property);
       handled = true;
     } else {
       Field fieldAnnotation = field.getAnnotation(Field.class);
       if (fieldAnnotation != null) {
         DefaultFieldProperty property;
-        property = DefaultFieldProperty.createInstance(
-            this,
-            field);
+        property = DefaultFieldProperty.createInstance(this, field);
         modelProperties.add(property);
         handled = true;
       }
@@ -195,8 +188,7 @@ public class DefaultAssemblyClassBinding
 
   @Override
   public Map<String, ? extends NamedProperty> getProperties(Predicate<FlagProperty> flagFilter) {
-    return Stream.concat(
-        super.getProperties(flagFilter).values().stream(), getModelProperties().stream())
+    return Stream.concat(super.getProperties(flagFilter).values().stream(), getModelProperties().stream())
         .collect(Collectors.toMap(NamedProperty::getJsonPropertyName, Function.identity()));
   }
 
@@ -270,8 +262,7 @@ public class DefaultAssemblyClassBinding
         // ignore the field
         JsonUtil.skipNextValue(parser);
       } else {
-        if (!context.getProblemHandler().handleUnknownRootProperty(instance, this,
-            fieldName, context)) {
+        if (!context.getProblemHandler().handleUnknownRootProperty(instance, this, fieldName, context)) {
           logger.warn("Skipping unhandled top-level JSON field '{}'.", fieldName);
           JsonUtil.skipNextValue(parser);
         }
@@ -327,8 +318,7 @@ public class DefaultAssemblyClassBinding
   }
 
   protected void readInternal(@SuppressWarnings("unused") Object parentInstance, Object instance,
-      JsonParsingContext context)
-      throws BindingException, IOException {
+      JsonParsingContext context) throws BindingException, IOException {
     JsonParser jsonParser = context.getReader();
 
     JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME);
@@ -427,11 +417,16 @@ public class DefaultAssemblyClassBinding
   }
 
   /**
+   * Serializes the provided instance in JSON.
    * 
    * @param instance
-   * @param writeObjectWrapper 
+   *          the instance to serialize
+   * @param writeObjectWrapper
+   *          {@code true} if the start and end object should be written, or {@code false} otherwise
    * @param context
+   *          the JSON writing context used to generate output
    * @throws IOException
+   *           if an error occurs while writing to the output context
    * @throws NullPointerException
    *           if there is a JSON key configured and the key property's value is {@code null}
    */

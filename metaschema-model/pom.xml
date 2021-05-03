@@ -16,7 +16,7 @@
 	<url>https://pages.nist.gov/metaschema</url>
 
 	<scm>
-		<url>https://github.com/usnistgov/metaschema-java/tree/master/metaschema-model</url>
+		<url>https://github.com/usnistgov/metaschema-java/tree/main/metaschema-model</url>
 	</scm>
 
 	<dependencies>
@@ -51,39 +51,44 @@
 					<artifactId>maven-pmd-plugin</artifactId>
 					<configuration>
 						<excludeRoots>
-							<excludeRoot>${project.build.directory}/generated-sources/xmlbeans-M4</excludeRoot>
+							<excludeRoot>${project.build.directory}/generated-sources/xmlbeans</excludeRoot>
 						</excludeRoots>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<configuration>
+						<excludePackageNames>gov.nist.itl.metaschema.model.m4.xml:gov.nist.itl.metaschema.model.m4.xml.impl</excludePackageNames>
 					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
 			<plugin>
-				<groupId>com.googlecode.maven-download-plugin</groupId>
-				<artifactId>download-maven-plugin</artifactId>
-				<version>1.4.2</version>
-				<configuration>
-					<skipCache>true</skipCache>
-					<overwrite>false</overwrite>
-				</configuration>
+				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
-					<!-- ##################### -->
-					<!-- # OSCAL Metaschemas # -->
-					<!-- ##################### -->
 					<execution>
-						<id>download-metaschema-m4</id>
-						<phase>initialize</phase>
+						<id>copy-resources</id>
+						<phase>validate</phase>
 						<goals>
-							<goal>wget</goal>
+							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<uri>https://github.com/usnistgov/metaschema/raw/metaschema-m4-integration/toolchains/xslt-M4/validate/metaschema.xsd</uri>
-							<outputDirectory>${project.build.directory}/download/metaschema-M4/xsd</outputDirectory>
+							<outputDirectory>${project.build.directory}/schema/xsd</outputDirectory>
+							<resources>
+								<resource>
+									<directory>../metaschema/toolchains/xslt-M4/validate</directory>
+									<includes>
+										<include>metaschema.xsd</include>
+									</includes>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>xmlbeans-maven-plugin</artifactId>
@@ -94,10 +99,8 @@
 							<goal>xmlbeans</goal>
 						</goals>
 						<configuration>
-							<!-- TODO: update to a permanent location, where this is retrieved -->
-							<schemaDirectory>${basedir}/src/main/xsd/M4</schemaDirectory>
-							<!-- <schemaDirectory>${project.build.directory}/download/metaschema-M4/xsd</schemaDirectory> -->
-							<sourceGenerationDirectory>${project.build.directory}/generated-sources/xmlbeans-M4</sourceGenerationDirectory>
+							<schemaDirectory>${project.build.directory}/schema/xsd</schemaDirectory>
+							<sourceGenerationDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceGenerationDirectory>
 							<xmlConfigs>
 								<xmlConfig implementation="java.io.File">${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</xmlConfig>
 							</xmlConfigs>
@@ -125,5 +128,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

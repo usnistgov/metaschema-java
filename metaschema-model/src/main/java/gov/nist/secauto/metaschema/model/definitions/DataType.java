@@ -53,8 +53,7 @@ public enum DataType {
   URI_REFERENCE(SimpleDatatypes.URI_REFERENCE.toString(), "STRVALUE"),
   UUID(SimpleDatatypes.UUID.toString(), "STRVALUE"),
   MARKUP_LINE(FieldTypes.Member.MARKUP_LINE.toString(), "RICHTEXT"),
-  MARKUP_MULTILINE(FieldTypes.Member.MARKUP_MULTILINE.toString(), "PROSE"),
-  EMPTY(FieldTypes.Member.EMPTY.toString(), null);
+  MARKUP_MULTILINE(FieldTypes.Member.MARKUP_MULTILINE.toString(), "PROSE");
 
   private static final Map<String, DataType> nameToEnumMap;
 

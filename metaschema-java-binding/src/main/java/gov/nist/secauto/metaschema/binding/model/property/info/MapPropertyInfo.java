@@ -151,7 +151,7 @@ public class MapPropertyInfo
       throws XMLStreamException, IOException {
     ModelProperty property = getProperty();
     @SuppressWarnings("unchecked")
-    Map<String, ? extends Object> items = (Map<String, ? extends Object>)property.getValue(parentInstance);
+    Map<String, ? extends Object> items = (Map<String, ? extends Object>) property.getValue(parentInstance);
     for (Object item : items.values()) {
       property.writeItem(item, parentName, context);
     }
@@ -197,7 +197,6 @@ public class MapPropertyInfo
       return map;
     }
   }
-  
 
   @Override
   public void writeValue(Object parentInstance, JsonWritingContext context) throws IOException {

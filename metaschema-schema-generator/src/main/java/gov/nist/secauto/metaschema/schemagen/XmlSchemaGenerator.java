@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.schemagen;
 
 import freemarker.core.ParseException;
@@ -38,10 +39,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
 
-public class XmlSchemaGenerator extends AbstractSchemaGenerator {
+public class XmlSchemaGenerator
+    extends AbstractSchemaGenerator {
 
   @Override
-  protected Template getTemplate(Configuration cfg) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException {
+  protected Template getTemplate(Configuration cfg)
+      throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException {
     return cfg.getTemplate("xml-schema.ftlx");
   }
 

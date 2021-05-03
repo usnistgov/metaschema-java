@@ -107,7 +107,7 @@ public class BoundClass {
 
   @Assembly(name = "single-flagged-assembly")
   private FlaggedAssemblyClass singleFlaggedAssembly;
-  
+
   public BoundClass() {
   }
 

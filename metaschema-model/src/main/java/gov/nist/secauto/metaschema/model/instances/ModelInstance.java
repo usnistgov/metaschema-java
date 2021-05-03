@@ -72,7 +72,7 @@ public interface ModelInstance extends InfoElementInstance<AssemblyDefinition> {
 
   /**
    * Gets the configured JSON group-as strategy. A JSON group-as strategy is only required when
-   * {@link #getMaxOccurs()} > 1.
+   * {@link #getMaxOccurs()} &gt; 1.
    * 
    * @return the JSON group-as strategy, or {@code null} if {@link #getMaxOccurs()} = 1
    */
@@ -80,7 +80,7 @@ public interface ModelInstance extends InfoElementInstance<AssemblyDefinition> {
 
   /**
    * Gets the configured XML group-as strategy. A XML group-as strategy is only required when
-   * {@link #getMaxOccurs()} > 1.
+   * {@link #getMaxOccurs()} &gt; 1.
    * 
    * @return the JSON group-as strategy, or {@code null} if {@link #getMaxOccurs()} = 1
    */

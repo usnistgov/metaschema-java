@@ -2,59 +2,30 @@ on:
   push:
     branches:
       - master
+      - develop
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
     branches:
-      - master
+      - main
+      - develop
 name: Build Code
 env:
   # the name of the repo
-  HOME_REPO: usnistgov/OSCAL
-  HOME_BRANCH: master
-  # dependency versions
-  SAXON_VERSION: 9.9.0-1
-  HUGO_VERSION: 0.69.2
-  # build-specific environment
-  CONTENT_CONFIG_PATH: src/config
-  SCHEMATRON_HOME: git-content/schematron
-  OSCAL_HOME: git-content/oscal
-  OSCAL_CICD_PATH: git-content/oscal/build/ci-cd
-  OSCAL_WORKING_PATH: git-content/oscal
-  OSCAL_WEBSITE_PATH: git-content/oscal/docs
-  OSCAL_SCRATCH_PATH: oscal-scratch
+  HOME_REPO: usnistgov/metaschema
+  HOME_BRANCH_RELEASE: main
+  HOME_BRANCH_DEVELOPMENT: develop
+  # paths
+  REPO_PATH: git-content/metaschema-java
 jobs:
-  build-and-publish-metaschema-artifacts:
-    name: Produce Metaschema Artifacts
+  build-artifacts:
+    name: Build and Test Java Artifacts
     runs-on: ubuntu-18.04
     steps:
-      # use this for main repo master builds
       - uses: actions/checkout@v2
-        if: ${{ github.repository == env.HOME_REPO && github.ref == format('refs/heads/{0}',env.HOME_BRANCH) }}
         with:
-          path: ${{ env.OSCAL_HOME }}
+          path: ${{ env.REPO_PATH }}
           submodules: recursive
-          token: ${{ secrets.COMMIT_TOKEN }}
-      # use this for pull request builds where checkout uses the builtin token
-      - uses: actions/checkout@v2
-        if: ${{ github.repository != env.HOME_REPO || github.ref != format('refs/heads/{0}',env.HOME_BRANCH) }}
-        with:
-          path: ${{ env.OSCAL_HOME }}
-          submodules: recursive
-      # -------------------------
-      # Setup GPG
-      - name: Import GPG key
-        id: import_gpg
-        uses: crazy-max/ghaction-import-gpg@v3
-        with:
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.GPG_PASSPHRASE }}
-      - name: GPG user IDs
-        run: |
-          echo "fingerprint: ${{ steps.import_gpg.outputs.fingerprint }}"
-          echo "keyid:       ${{ steps.import_gpg.outputs.keyid }}"
-          echo "name:        ${{ steps.import_gpg.outputs.name }}"
-          echo "email:       ${{ steps.import_gpg.outputs.email }}"      # Setup runtime environment
       # -------------------------
       # Java JDK 11
       - name: Set up JDK 11
@@ -68,3 +39,19 @@ jobs:
           path: ~/.m2/repository
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2-
+      # -------------------------
+      # Maven Build
+      - name: Build and run tests
+        run: |
+          mvn -Prelease verify
+        working-directory: ${{ env.REPO_PATH }}
+      - name: Gathering JAR files
+        run: |
+          mkdir staging
+          find . -path "*/target/*.jar" -exec cp {} ./staging/ \;
+        working-directory: ${{ env.REPO_PATH }}
+      - name: Saving built artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Package
+          path: staging

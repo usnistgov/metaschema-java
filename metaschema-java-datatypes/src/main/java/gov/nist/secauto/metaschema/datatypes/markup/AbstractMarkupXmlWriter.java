@@ -123,6 +123,7 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
   }
 
   protected abstract void writeText(WRITER writer, String text) throws XMLStreamException;
+
   protected abstract void writeHtmlEntity(WRITER writer, String entityText) throws XMLStreamException;
 
   protected boolean handleInlineElements(Node node, WRITER writer) throws XMLStreamException {
@@ -310,16 +311,17 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
   }
 
   private void handleHtmlInline(HtmlInline node, WRITER writer) throws XMLStreamException {
-    throw new UnsupportedOperationException(String.format("Unable to process inline HTML characters: %s",node.getChars().toString()));
-//    String htmlText = node.getChars().toString();
-//
-//    QName name = new QName(getNamespace(), "name");
-//    handleBasicElementStart(node, writer, name);
-//
-//    if (node.hasChildren()) {
-//      visitChildren(node, writer);
-//    }
-//
-//    handleBasicElementEnd(node, writer, name);
+    throw new UnsupportedOperationException(
+        String.format("Unable to process inline HTML characters: %s", node.getChars().toString()));
+    // String htmlText = node.getChars().toString();
+    //
+    // QName name = new QName(getNamespace(), "name");
+    // handleBasicElementStart(node, writer, name);
+    //
+    // if (node.hasChildren()) {
+    // visitChildren(node, writer);
+    // }
+    //
+    // handleBasicElementEnd(node, writer, name);
   }
 }

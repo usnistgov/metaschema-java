@@ -76,8 +76,7 @@ public @interface Field {
   /**
    * The name of the JSON property that contains the field's value. If this value is provided, the the
    * name will be used as the property name. Use of this annotation is mutually exclusive with the
-   * {@link JsonFieldValueKey} annotation on a class with the {@link MetaschemaAssembly} with
-   * {@link DefinitionType#FIELD}.
+   * {@link JsonFieldValueKey} annotation.
    * 
    * @return the name
    */

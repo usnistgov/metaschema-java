@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>18-SNAPSHOT</version>
+		<version>18</version>
 	</parent>
 	<groupId>gov.nist.secauto.metaschema</groupId>
 	<artifactId>metaschema-framework</artifactId>
@@ -23,12 +23,11 @@
 		<url>https://github.com/usnistgov/metaschema-java/issues</url>
 	</issueManagement>
 
-	<scm>
-		<url>https://github.com/usnistgov/metaschema-java</url>
-		<connection>scm:git:https://github.com/usnistgov/metaschema-java.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com:usnistgov/metaschema-java.git</developerConnection>
-		<tag>HEAD</tag>
-	</scm>
+  <scm>
+    <url>https://github.com/usnistgov/metaschema-java/tree/main</url>
+    <connection>scm:git:git@github.com/usnistgov/metaschema-java.git</connection>
+    <developerConnection>scm:git:git@github.com:usnistgov/metaschema-java.git</developerConnection>
+  </scm>
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -92,6 +91,11 @@
 	</mailingLists>
 
 	<properties>
+	   <!-- site configuration -->
+    <site.url>https://pages.nist.gov/metaschema-java</site.url>
+    <scm.url>https://github.com/usnistgov/metaschema-java</scm.url>
+    <issueManagement.url>https://github.com/usnistgov/metaschema-java/issues</issueManagement.url>
+	
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.release>11</maven.compiler.release>
@@ -347,6 +351,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.2.0</version>
 					<configuration>
 						<!-- this is a hack to fix a javadoc bug -->
 						<detectJavaApiLink>false</detectJavaApiLink>
@@ -379,29 +384,29 @@
 							<licenseSet>
 								<header>license/nist/license.txt</header>
 								<includes>
-									<include>**/*.java</include>
+									<include>src/**/*.java</include>
 								</includes>
 							</licenseSet>
 						</licenseSets>
 						<failIfMissing>true</failIfMissing>
 					</configuration>
-					<executions>
-						<execution>
-							<id>check-license</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>check</goal>
-							</goals>
-						</execution>
-					</executions>
-					<dependencies>
-						<dependency>
-							<groupId>gov.nist.secauto</groupId>
-							<artifactId>oss-build-support</artifactId>
-							<version>17</version>
-							<scope>compile</scope>
-						</dependency>
-					</dependencies>
+					<!-- <executions> -->
+					<!-- <execution> -->
+					<!-- <id>check-license</id> -->
+					<!-- <phase>verify</phase> -->
+					<!-- <goals> -->
+					<!-- <goal>check</goal> -->
+					<!-- </goals> -->
+					<!-- </execution> -->
+					<!-- </executions> -->
+					<!-- <dependencies> -->
+					<!-- <dependency> -->
+					<!-- <groupId>gov.nist.secauto</groupId> -->
+					<!-- <artifactId>oss-build-support</artifactId> -->
+					<!-- <version>17</version> -->
+					<!-- <scope>compile</scope> -->
+					<!-- </dependency> -->
+					<!-- </dependencies> -->
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -419,7 +424,115 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>enforce-java</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <fail>true</fail>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>reporting</id>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jxr-plugin</artifactId>
+            <version>${version.plugin.jxr}</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-project-info-reports-plugin</artifactId>
+            <version>${version.plugin.maven-project-info-reports}</version>
+            <reportSets>
+              <reportSet>
+                <id>default</id>
+                <reports>
+                  <report>index</report>
+                  <report>dependency-info</report>
+                  <report>team</report>
+                  <report>mailing-lists</report>
+                  <report>scm</report>
+                </reports>
+              </reportSet>
+              <!-- <reportSet> -->
+              <!-- <id>developer</id> -->
+              <!-- <reports> -->
+              <!-- <report>dependencies</report> -->
+              <!-- <report>dependency-convergence</report> -->
+              <!-- <report>dependency-management</report> -->
+              <!-- <report>ci-management</report> -->
+              <!-- <report>issue-management</report> -->
+              <!-- <report>licenses</report> -->
+              <!-- </reports> -->
+              <!-- </reportSet> -->
+            </reportSets>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-pmd-plugin</artifactId>
+            <version>${version.plugin.pmd}</version>
+          </plugin>
+        </plugins>
+      </reporting>
+    </profile>
+    <profile>
+      <id>gpg</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${version.plugin.gpg}</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <configuration>
+                  <skip>false</skip>
+                  <gpgArguments>
+                    <arg>--pinentry-mode</arg>
+                    <arg>loopback</arg>
+                  </gpgArguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 	<modules>
 		<module>metaschema-model</module>

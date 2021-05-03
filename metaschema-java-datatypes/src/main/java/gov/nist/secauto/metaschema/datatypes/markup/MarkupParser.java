@@ -388,7 +388,6 @@ public class MarkupParser {
    *          the event stream reader
    * @param start
    *          the handled block's event
-   * @return the AST for the handled block
    * @throws XMLStreamException
    *           if a parse error occurs
    * @throws IllegalStateException
@@ -484,7 +483,6 @@ public class MarkupParser {
    *          the event stream reader
    * @param start
    *          the handled block's event
-   * @return the AST for the handled block
    * @throws XMLStreamException
    *           if a parse error occurs
    * @throws IllegalStateException
@@ -608,7 +606,7 @@ public class MarkupParser {
           break;
         }
         default:
-          throw new RuntimeException(String.format("Unrecognized tag '%s'",nextName.getLocalPart()));
+          throw new RuntimeException(String.format("Unrecognized tag '%s'", nextName.getLocalPart()));
         }
       }
 
@@ -754,7 +752,6 @@ public class MarkupParser {
    *          the event stream reader
    * @param start
    *          the handled block's event
-   * @return the AST for the handled block
    * @throws XMLStreamException
    *           if a parse error occurs
    * @throws IllegalStateException
@@ -964,7 +961,6 @@ public class MarkupParser {
    *          the event stream reader
    * @param start
    *          the handled block's event
-   * @return the AST for the handled element
    * @throws XMLStreamException
    *           if a parse error occurs
    * @throws IllegalStateException

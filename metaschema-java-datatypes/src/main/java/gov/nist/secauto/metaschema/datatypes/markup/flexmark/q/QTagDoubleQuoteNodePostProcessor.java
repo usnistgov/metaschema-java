@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.datatypes.markup.flexmark.q;
 
 import com.vladsch.flexmark.ext.escaped.character.internal.EscapedCharacterNodePostProcessor;
@@ -36,7 +37,8 @@ import com.vladsch.flexmark.util.ast.NodeTracker;
 
 import org.jetbrains.annotations.NotNull;
 
-public class QTagDoubleQuoteNodePostProcessor extends NodePostProcessor {
+public class QTagDoubleQuoteNodePostProcessor
+    extends NodePostProcessor {
 
   @Override
   public void process(@NotNull NodeTracker state, @NotNull Node node) {
@@ -52,16 +54,17 @@ public class QTagDoubleQuoteNodePostProcessor extends NodePostProcessor {
     }
   }
 
-  public static class Factory extends NodePostProcessorFactory {
+  public static class Factory
+      extends NodePostProcessorFactory {
     public Factory() {
-        super(false);
-        addNodeWithExclusions(TypographicQuotes.class, DoNotDecorate.class);
+      super(false);
+      addNodeWithExclusions(TypographicQuotes.class, DoNotDecorate.class);
     }
 
     @NotNull
     @Override
     public NodePostProcessor apply(@NotNull Document document) {
-        return new QTagDoubleQuoteNodePostProcessor();
+      return new QTagDoubleQuoteNodePostProcessor();
     }
-}
+  }
 }

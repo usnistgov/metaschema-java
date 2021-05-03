@@ -34,7 +34,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.codegen.property.FieldValuePropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.FlagPropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.PropertyGenerator;
-import gov.nist.secauto.metaschema.codegen.type.DataType;
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
@@ -64,13 +63,7 @@ public class FieldJavaClassGenerator
    */
   public FieldJavaClassGenerator(FieldDefinition definition, TypeResolver typeResolver) {
     super(definition, typeResolver);
-
-    if (!DataType.EMPTY.equals(FieldValuePropertyGenerator.getValueDataType(definition))) {
-      this.fieldValueInstance = newFieldValueInstance();
-    } else {
-      // "empty" typed fields do not have a value
-      this.fieldValueInstance = null;
-    }
+    this.fieldValueInstance = newFieldValueInstance();
   }
 
   @Override

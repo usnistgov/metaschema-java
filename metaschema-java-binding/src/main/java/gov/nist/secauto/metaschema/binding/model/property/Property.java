@@ -52,7 +52,7 @@ import javax.xml.stream.events.XMLEvent;
  * In XML key characteristics of a property binding include:
  * <ul>
  * <li>The name and namespace of the property which will be used for the associated element or
- * attribute provided by the {@link #getXmlQName()} method.
+ * attribute.
  * </ul>
  * <p>
  * In JSON/YAML key characteristics of a property binding include:

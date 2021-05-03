@@ -8,21 +8,18 @@
       <span class="color-highlight">Metaschema Java Tools</span> Maven Project
       ]]>
 		</name>
-		<href>http://pages.nist.gov/metaschema-java/</href>
+		<href>${this.site.url}</href>
 	</bannerLeft>
 
 	<publishDate position="bottom" format="yyyy-MM-dd" />
 	<version position="left" />
 
-	<skin>
-	
-<!--  		<groupId>io.github.devacfr.maven.skins</groupId> -->
-<!--         <artifactId>reflow-maven-skin</artifactId> -->
-<!--         <version>1.4.2</version> -->
-		<groupId>gov.nist.secauto</groupId>
-		<artifactId>reflow-maven-skin</artifactId>
-		<version>15-SNAPSHOT</version>
-	</skin>
+  <skin>
+    <groupId>io.github.devacfr.maven.skins</groupId>
+    <artifactId>reflow-maven-skin</artifactId>
+    <version>2.2.0</version>
+  </skin>
+
 	<custom>
 		<reflowSkin>
 			<!-- Make this to 'false' for local development, i.e. file:// URLs -->
@@ -43,7 +40,7 @@
             <span class="color-highlight">Metaschema Java Tools</span> Maven Project
             ]]>
 				</name>
-				<href>http://pages.nist.gov/metaschema-java/</href>
+				<href>${project.site.url}</href>
 			</brand>
 			<slogan>Providing Java-based Metaschema tools</slogan>
 			<titleTemplate>%2$s | %1$s</titleTemplate>

@@ -85,9 +85,6 @@ public abstract class AbstractModelProperty
    * Gets information about the bound property.
    * 
    * @return the property information for the bound property
-   * @throws BindingException
-   *           if an error occurred while generating the property info
-   *           
    */
   protected synchronized ModelPropertyInfo getPropertyInfo() {
     if (propertyInfo == null) {

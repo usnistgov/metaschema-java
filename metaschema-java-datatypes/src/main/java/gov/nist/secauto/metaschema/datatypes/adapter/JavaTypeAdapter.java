@@ -75,7 +75,7 @@ public interface JavaTypeAdapter<TYPE> {
   TYPE copy(TYPE obj);
 
   /**
-   * Indicates if the adapter will parse the {@link XMLEvents#START_ELEMNT} before parsing the value
+   * Indicates if the adapter will parse the {@link XMLEvent#START_ELEMENT} before parsing the value
    * data.
    * 
    * @return {@code true} if the adapter requires the start element for parsing, or {@code false}
@@ -113,13 +113,13 @@ public interface JavaTypeAdapter<TYPE> {
   /**
    * This method is expected to parse content starting at the next event. Parsing will continue until
    * the next event represents content that is not handled by this adapter. This means the event
-   * stream should be positioned after any {@link XMLEvents#END_ELEMNT} that corresponds to an
-   * {@link XMLEvents#START_ELEMNT} parsed by this adapter.
+   * stream should be positioned after any {@link XMLEvent#END_ELEMENT} that corresponds to an
+   * {@link XMLEvent#START_ELEMENT} parsed by this adapter.
    * <p>
    * If {@link #isParsingStartElement()} returns {@code true}, then the first event to parse will be
    * the {@link XMLEvent#START_ELEMENT} for the element that contains the value data, then the value
    * data. If this is the case, this method must also parse the corresponding
-   * {@link XMLEvents#END_ELEMNT}. Otherwise, the first event to parse will be the value data.
+   * {@link XMLEvent#END_ELEMENT}. Otherwise, the first event to parse will be the value data.
    * <p>
    * The value data is expected to be parsed completely, leaving the event stream on a peeked event
    * corresponding to content that is not handled by this method.
@@ -162,7 +162,7 @@ public interface JavaTypeAdapter<TYPE> {
   }
 
   /**
-   * Parses a provided string using {@link #parse(XmlParsingContext)}.
+   * Parses a provided string using {@link JavaTypeAdapter#parse(XMLEventReader2)}.
    * <p>
    * This method may pre-parse the data and then return copies, since the data can only be parsed
    * once, but the supplier might be called multiple times.
@@ -181,7 +181,7 @@ public interface JavaTypeAdapter<TYPE> {
   }
 
   /**
-   * Parses a provided string using {@link #parse(JsonParsingContext)}.
+   * Parses a provided string using {@link #parse(JsonParser)}.
    * <p>
    * This method may pre-parse the data and then return copies, since the data can only be parsed
    * once, but the supplier might be called multiple times.

@@ -100,12 +100,6 @@ public class FieldValuePropertyGenerator
     DataType valueDataType = getValueDataType(definition);
 
     // a field object always has a single value
-    if (DataType.EMPTY.equals(valueDataType)) {
-      String msg = "A field should never be generated with an empty value. Something wierd happened.";
-      logger.error(msg);
-      throw new RuntimeException(msg);
-    }
-
     switch (definition.getJsonValueKeyType()) {
     case NONE:
     case STATIC_LABEL:

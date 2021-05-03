@@ -125,14 +125,7 @@ public class ModelInstancePropertyGenerator
     AnnotationSpec.Builder fieldAnnoation;
     ObjectModelInstance<?> modelInstance = getModelInstance();
     if (modelInstance instanceof FieldInstance) {
-      FieldInstance<?> fieldInstance = (FieldInstance<?>) modelInstance;
-      if (gov.nist.secauto.metaschema.model.definitions.DataType.EMPTY
-          .equals(fieldInstance.getDefinition().getDatatype())) {
-        // treat "empty" fields as an assembly
-        fieldAnnoation = AnnotationSpec.builder(Assembly.class);
-      } else {
-        fieldAnnoation = AnnotationSpec.builder(Field.class);
-      }
+      fieldAnnoation = AnnotationSpec.builder(Field.class);
     } else if (modelInstance instanceof AssemblyInstance) {
       fieldAnnoation = AnnotationSpec.builder(Assembly.class);
     } else {
@@ -158,21 +151,18 @@ public class ModelInstancePropertyGenerator
       FieldDefinition fieldDefinition = (FieldDefinition) definition;
       DataType valueDataType = FieldValuePropertyGenerator.getValueDataType(fieldDefinition);
 
-      // a field object always has a single value, unless its "empty", which is treated as an empty
-      // assembly
-      if (!DataType.EMPTY.equals(valueDataType)) {
-        if (!fieldInstance.hasXmlWrapper()) {
-          fieldAnnoation.addMember("inXmlWrapped", "$L", false);
-        }
-        if (fieldDefinition.getFlagInstances().isEmpty()) {
-          // this is a simple field, without flags
-          // we need to add the FieldValue annotation to the property
+      // a field object always has a single value
+      if (!fieldInstance.hasXmlWrapper()) {
+        fieldAnnoation.addMember("inXmlWrapped", "$L", false);
+      }
+      if (fieldDefinition.getFlagInstances().isEmpty()) {
+        // this is a simple field, without flags
+        // we need to add the FieldValue annotation to the property
 
-          fieldAnnoation.addMember("valueName", "$S", fieldDefinition.getJsonValueKeyName());
+        fieldAnnoation.addMember("valueName", "$S", fieldDefinition.getJsonValueKeyName());
 
-          fieldAnnoation.addMember("typeAdapter", "$T.class",
-              valueDataType.getJavaTypeAdapterClass());
-        }
+        fieldAnnoation.addMember("typeAdapter", "$T.class",
+            valueDataType.getJavaTypeAdapterClass());
       }
     }
 

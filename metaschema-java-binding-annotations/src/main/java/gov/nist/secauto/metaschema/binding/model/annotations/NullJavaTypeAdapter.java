@@ -34,7 +34,9 @@ import java.io.IOException;
 /**
  * Used to mark a Java type that has no configured adapter.
  */
-public class NullJavaTypeAdapter extends AbstractJavaTypeAdapter<Void> implements JavaTypeAdapter<Void> {
+public class NullJavaTypeAdapter
+    extends AbstractJavaTypeAdapter<Void>
+    implements JavaTypeAdapter<Void> {
 
   /**
    * Construct a new adapter.

@@ -74,7 +74,6 @@ public class JsonUtil {
     return currentToken;
   }
 
-
   public static JsonToken skipNextValue(JsonParser parser) throws IOException {
 
     JsonToken currentToken = parser.currentToken();

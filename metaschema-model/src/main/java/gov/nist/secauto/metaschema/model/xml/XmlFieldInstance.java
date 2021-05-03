@@ -37,7 +37,8 @@ import gov.nist.secauto.metaschema.model.instances.XmlGroupAsBehavior;
 
 import java.math.BigInteger;
 
-public class XmlFieldInstance extends AbstractFieldInstance<XmlGlobalFieldDefinition> {
+public class XmlFieldInstance
+    extends AbstractFieldInstance<XmlGlobalFieldDefinition> {
   // private static final Logger logger = LogManager.getLogger(XmlFieldInstance.class);
 
   private final FieldDocument.Field xmlField;

@@ -48,7 +48,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
-public class DefaultJsonDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
+public class DefaultJsonDeserializer<CLASS>
+    extends AbstractDeserializer<CLASS> {
   private static final Logger logger = LogManager.getLogger(DefaultJsonDeserializer.class);
 
   private JsonFactory jsonFactory;

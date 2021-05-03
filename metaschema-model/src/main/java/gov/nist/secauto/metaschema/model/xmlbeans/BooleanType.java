@@ -30,7 +30,8 @@ public class BooleanType {
   /**
    * Sets the value of obj onto the given simple value target.
    * 
-   * @param obj the boolean value to set
+   * @param obj
+   *          the boolean value to set
    * @param target
    *          the XML value to cast to a boolean
    */

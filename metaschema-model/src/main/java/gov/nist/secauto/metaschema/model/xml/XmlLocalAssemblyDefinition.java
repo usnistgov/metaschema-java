@@ -42,7 +42,7 @@ import gov.nist.secauto.metaschema.model.xml.XmlLocalAssemblyDefinition.Internal
 import java.math.BigInteger;
 
 /**
- * Represents a Metaschema assembly definition declared locally as an instance. 
+ * Represents a Metaschema assembly definition declared locally as an instance.
  */
 public class XmlLocalAssemblyDefinition
     extends AbstractAssemblyInstance<InternalAssemblyDefinition> {

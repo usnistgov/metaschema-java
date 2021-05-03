@@ -33,7 +33,9 @@ import com.vladsch.flexmark.util.data.MutableDataHolder;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HtmlQuoteTagExtension implements Parser.ParserExtension, HtmlRenderer.HtmlRendererExtension,  FlexmarkHtmlConverter.HtmlConverterExtension {
+public class HtmlQuoteTagExtension
+    implements Parser.ParserExtension, HtmlRenderer.HtmlRendererExtension,
+    FlexmarkHtmlConverter.HtmlConverterExtension {
 
   public static HtmlQuoteTagExtension create() {
     return new HtmlQuoteTagExtension();
@@ -56,7 +58,6 @@ public class HtmlQuoteTagExtension implements Parser.ParserExtension, HtmlRender
   public void extend(com.vladsch.flexmark.parser.Parser.Builder parserBuilder) {
     parserBuilder.postProcessorFactory(new QTagDoubleQuoteNodePostProcessor.Factory());
   }
-
 
   @Override
   public void extend(FlexmarkHtmlConverter.Builder builder) {

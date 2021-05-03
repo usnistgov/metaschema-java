@@ -37,7 +37,8 @@ import java.util.function.Function;
 /**
  * This model walker can be used to gather metaschema definitions that are defined globally.
  */
-public class UsedDefinitionModelWalker extends DefinitionCollectingModelWalker {
+public class UsedDefinitionModelWalker
+    extends DefinitionCollectingModelWalker {
   private static final Function<InfoElementDefinition, Boolean> FILTER = (def) -> {
     return true;
     // return def.isGlobal();

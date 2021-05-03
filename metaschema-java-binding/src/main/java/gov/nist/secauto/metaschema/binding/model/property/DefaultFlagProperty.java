@@ -57,7 +57,7 @@ import javax.xml.stream.events.StartElement;
 public class DefaultFlagProperty
     extends AbstractNamedProperty<ClassBinding>
     implements FlagProperty {
-  //  private static final Logger logger = LogManager.getLogger(DefaultFlagProperty.class);
+  // private static final Logger logger = LogManager.getLogger(DefaultFlagProperty.class);
 
   private final Flag flag;
   private final JavaTypeAdapter<?> javaTypeAdapter;

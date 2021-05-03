@@ -38,6 +38,7 @@ import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
 import gov.nist.secauto.metaschema.model.util.UsedDefinitionModelWalker;
 
 import org.apache.commons.io.output.TeeOutputStream;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -49,28 +50,35 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class TestXmlSchemaGenerator {
+  @Disabled
   @Test
   void test() throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException,
       MetaschemaException, TemplateException {
     XmlSchemaGenerator generator = new XmlSchemaGenerator();
 
-
     MetaschemaLoader loader = new MetaschemaLoader();
 
     List<Metaschema> metaschemas = new LinkedList<>();
-    Metaschema metaschema = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_catalog_metaschema.xml"));
+    Metaschema metaschema
+        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_catalog_metaschema.xml"));
     metaschemas.add(metaschema);
-    metaschema = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_profile_metaschema.xml"));
+    metaschema
+        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_profile_metaschema.xml"));
     metaschemas.add(metaschema);
-    metaschema = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_component_metaschema.xml"));
+    metaschema
+        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_component_metaschema.xml"));
     metaschemas.add(metaschema);
-    metaschema = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_ssp_metaschema.xml"));
+    metaschema
+        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_ssp_metaschema.xml"));
     metaschemas.add(metaschema);
-    metaschema = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_assessment-plan_metaschema.xml"));
+    metaschema = loader
+        .loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_assessment-plan_metaschema.xml"));
     metaschemas.add(metaschema);
-    metaschema = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_assessment-results_metaschema.xml"));
+    metaschema = loader.loadXmlMetaschema(
+        new File("../../liboscal-java/oscal/src/metaschema/oscal_assessment-results_metaschema.xml"));
     metaschemas.add(metaschema);
-    metaschema = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_poam_metaschema.xml"));
+    metaschema
+        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_poam_metaschema.xml"));
     metaschemas.add(metaschema);
 
     Collection<? extends InfoElementDefinition> definitions

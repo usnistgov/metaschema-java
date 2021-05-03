@@ -60,7 +60,7 @@ public interface ModelPropertyInfo {
   /**
    * Read the value data for the property. At the point that this is called, the parser must be
    * located just after the property/field name has been parsed. This method will return a value based
-   * on the property's value type as reported by {@link #getType()}.
+   * on the property's value type as reported by {@link #getProperty()}.
    * 
    * @param collector
    * @param parentInstance

@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -42,6 +43,7 @@ import java.util.Collection;
 class UsedDefinitionModelWalkerTest {
   private static final Logger logger = LogManager.getLogger(UsedDefinitionModelWalkerTest.class);
 
+  @Disabled
   @Test
   void test() throws MetaschemaException, IOException {
     MetaschemaLoader loader = new MetaschemaLoader();
@@ -49,8 +51,9 @@ class UsedDefinitionModelWalkerTest {
     Metaschema metaschema
         = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_catalog_metaschema.xml"));
 
-    Collection<? extends InfoElementDefinition> definitions = UsedDefinitionModelWalker.collectUsedDefinitions(metaschema);
-    
+    Collection<? extends InfoElementDefinition> definitions
+        = UsedDefinitionModelWalker.collectUsedDefinitions(metaschema);
+
     for (InfoElementDefinition definition : definitions) {
       logger.info(String.format("%s: %s %s",
           definition.getContainingMetaschema().getShortName(), definition.getModelType().name(), definition.getName()));

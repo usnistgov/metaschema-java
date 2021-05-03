@@ -14,7 +14,7 @@
 	<url>https://pages.nist.gov/metaschema</url>
 
 	<scm>
-		<url>https://github.com/usnistgov/metaschema-java/tree/master/metaschema-binding-annotations</url>
+		<url>https://github.com/usnistgov/metaschema-java/tree/main/metaschema-binding-annotations</url>
 	</scm>
 
 	<dependencies>

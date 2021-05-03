@@ -23,15 +23,17 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.datatypes.markup.flexmark.q;
 
 import com.vladsch.flexmark.ext.typographic.TypographicQuotes;
 import com.vladsch.flexmark.util.ast.Node;
 
-public class DoubleQuoteNode extends TypographicQuotes {
+public class DoubleQuoteNode
+    extends TypographicQuotes {
 
   public DoubleQuoteNode(TypographicQuotes node) {
-    super(node.getOpeningMarker(),node.getText(), node.getClosingMarker());
+    super(node.getOpeningMarker(), node.getText(), node.getClosingMarker());
     setTypographicOpening(node.getTypographicOpening());
     setTypographicClosing(node.getTypographicClosing());
     for (Node child : node.getChildren()) {

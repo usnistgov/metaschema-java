@@ -60,7 +60,8 @@ import java.util.stream.Stream;
  * Goal which generates Java source files for a given set of Metaschema definitions.
  */
 @Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.PROCESS_SOURCES)
-public class MetaschemaMojo extends AbstractMojo {
+public class MetaschemaMojo
+    extends AbstractMojo {
   private static final String SYSTEM_FILE_ENCODING_PROPERTY = "file.encoding";
   private static final String METASCHEMA_STAE_FILE_NAME = "metaschemaStateFile";
   private static final String[] DEFAULT_INCLUDES = { "**/*.xml" };
@@ -249,7 +250,6 @@ public class MetaschemaMojo extends AbstractMojo {
    * </ol>
    *
    * @return The encoding to be used by this AbstractJaxbMojo and its tools.
-   * @see #encoding
    */
   protected final String getEncoding() {
     String encoding;

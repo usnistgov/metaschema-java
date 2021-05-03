@@ -44,7 +44,8 @@ import java.util.function.Function;
  * Supports walking a portion of a metaschema model collecting a set of definitions that match the
  * provided filter. For a definition to be collected, the filter must return {@code true}.
  */
-public abstract class DefinitionCollectingModelWalker extends ModelWalker {
+public abstract class DefinitionCollectingModelWalker
+    extends ModelWalker {
   private static final Logger logger = LogManager.getLogger(DefinitionCollectingModelWalker.class);
 
   private final Function<InfoElementDefinition, Boolean> filter;

@@ -17,7 +17,7 @@
 	<url>https://pages.nist.gov/metaschema</url>
 
 	<scm>
-		<url>https://github.com/usnistgov/metaschema-java/tree/master/metaschema-maven-plugin</url>
+		<url>https://github.com/usnistgov/metaschema-java/tree/main/metaschema-maven-plugin</url>
 	</scm>
 
 	<properties>

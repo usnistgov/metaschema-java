@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.schemagen;
 
 import freemarker.core.ParseException;
@@ -38,6 +39,9 @@ import java.io.Writer;
 import java.util.Collection;
 
 public interface SchemaGenerator {
-  void generateFromMetaschemas(Collection<? extends Metaschema> metaschemas, Writer out) throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException;
-  void generateFromDefinitions(Collection<? extends InfoElementDefinition> definitions, Writer out) throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException;
+  void generateFromMetaschemas(Collection<? extends Metaschema> metaschemas, Writer out)
+      throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException;
+
+  void generateFromDefinitions(Collection<? extends InfoElementDefinition> definitions, Writer out)
+      throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException;
 }

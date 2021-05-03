@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.datatypes.markup.flexmark.q;
 
 import com.vladsch.flexmark.html2md.converter.HtmlMarkdownWriter;
@@ -47,7 +48,6 @@ public class QTagHtmlNodeRenderer implements HtmlNodeRenderer {
   private void renderMarkdown(Element element, HtmlNodeConverterContext context, HtmlMarkdownWriter out) {
     context.wrapTextNodes(element, "\"", element.nextElementSibling() != null);
   }
-
 
   public static class Factory implements HtmlNodeRendererFactory {
 

@@ -49,7 +49,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class DefaultAssemblyProperty extends AbstractModelProperty implements AssemblyProperty {
+public class DefaultAssemblyProperty
+    extends AbstractModelProperty
+    implements AssemblyProperty {
 
   public static DefaultAssemblyProperty createInstance(AssemblyClassBinding parentClassBinding, Field field) {
     DefaultAssemblyProperty retval = new DefaultAssemblyProperty(parentClassBinding, field);

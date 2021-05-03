@@ -79,7 +79,8 @@ class MarkupStringTest {
   @Test
   void markupLineFromMarkdownTest() {
     String markdown = "Some \\**more* **text** and a param: {{ insert: param, insert }}.";
-    String html = "<p>Some *<em>more</em> <strong>text</strong> and a param: <insert type=\"param\" id-ref=\"insert\" />.</p>";
+    String html
+        = "<p>Some *<em>more</em> <strong>text</strong> and a param: <insert type=\"param\" id-ref=\"insert\" />.</p>";
 
     MarkupLine ms = MarkupLine.fromMarkdown(markdown);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
@@ -192,7 +193,10 @@ class MarkupStringTest {
     assertEquals(html, ms.toHtml());
   }
 
-  /* {@link HtmlConverterCoreNodeRenderer} has a bug on line 629 in the call to "wrapTextNodes", which can add spaces to the HTML string */
+  /*
+   * {@link HtmlConverterCoreNodeRenderer} has a bug on line 629 in the call to "wrapTextNodes", which
+   * can add spaces to the HTML string
+   */
   @Test
   void markupMultilineFromHtmlTest() {
     String html = "<h1>Example</h1>\n"
@@ -207,7 +211,7 @@ class MarkupStringTest {
         + "</tbody>\n"
         + "</table>\n"
         + "<p>Some <q><em>more</em></q> <strong>text</strong> <img src=\"src\" alt=\"alt\" /></p>";
-    String markdown ="# Example\n"
+    String markdown = "# Example\n"
         + "\n"
         + "[text](link)\"quote1\"\n"
         + "\n"
@@ -268,7 +272,7 @@ class MarkupStringTest {
     System.out.println("===============");
     System.out.println(ms.toMarkdown());
   }
-  
+
   @Test
   void testEntityRoundTrip() throws XMLStreamException {
     String markdown = "hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).";
@@ -296,13 +300,13 @@ class MarkupStringTest {
     MarkupXmlStreamWriter writer = newMarkupXmlStreamWriter(true);
     StringWriter stringWriter = new StringWriter();
     XMLStreamWriter2 xmlStreamWriter = newXmlStreamWriter(stringWriter);
-    
+
     writer.visitChildren(ms.getDocument(), xmlStreamWriter);
     xmlStreamWriter.close();
-    
+
     assertEquals(html, stringWriter.toString());
   }
-  
+
   @Test
   void testAposRoundTrip() throws XMLStreamException {
     String markdown = "a user’s identity";
@@ -331,10 +335,10 @@ class MarkupStringTest {
     MarkupXmlStreamWriter writer = newMarkupXmlStreamWriter(true);
     StringWriter stringWriter = new StringWriter();
     XMLStreamWriter2 xmlStreamWriter = newXmlStreamWriter(stringWriter);
-    
+
     writer.visitChildren(ms.getDocument(), xmlStreamWriter);
     xmlStreamWriter.close();
-    
+
     assertEquals(html, stringWriter.toString());
 
     // test from HTML source

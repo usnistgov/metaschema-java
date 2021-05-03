@@ -72,8 +72,7 @@ public abstract class AbstractClassBinding implements ClassBinding {
    * @param clazz
    *          the bound class
    * @param bindingContext
-   * @throws BindingException
-   *           if an error occurred while processing the class binding
+   *          the class binding context for which this class is participating
    */
   public AbstractClassBinding(Class<?> clazz, BindingContext bindingContext) {
     Objects.requireNonNull(bindingContext, "bindingContext");
@@ -86,9 +85,6 @@ public abstract class AbstractClassBinding implements ClassBinding {
 
   /**
    * Initialize the content model of the class.
-   * 
-   * @throws BindingException
-   *           if an error occurred while processing the class binding
    */
   protected void initialize() {
 

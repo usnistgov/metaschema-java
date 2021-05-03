@@ -17,7 +17,7 @@
 	<url>https://pages.nist.gov/metaschema</url>
 
 	<scm>
-		<url>https://github.com/usnistgov/metaschema-java/tree/master/metaschema-schema-generator</url>
+		<url>https://github.com/usnistgov/metaschema-java/tree/main/metaschema-schema-generator</url>
 	</scm>
 
 	<dependencies>
@@ -47,10 +47,6 @@
 	</dependencies>
 	<build>
 		<plugins>
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-checkstyle-plugin</artifactId> -->
-<!-- 			</plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
@@ -58,6 +54,10 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-checkstyle-plugin</artifactId> -->
+			<!-- </plugin> -->
 		</plugins>
 	</build>
 
