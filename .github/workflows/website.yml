@@ -39,7 +39,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2-
       # -------------------------
       # Maven Deploy Website
-      - name: Deploy Website
+      - name: Build Website
         run: |
             mvn -Preporting -Prelease package site site:stage
         working-directory: ${{ env.REPO_PATH }}
