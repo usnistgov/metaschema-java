@@ -2,14 +2,10 @@ on:
   push:
     branches:
       - main
-      - develop
-  pull_request:
-    types: [opened, synchronize, reopened]
   workflow_dispatch:
     branches:
       - main
-      - develop
-name: Build Code
+name: Deploy Tagged Release
 env:
   # the name of the repo
   HOME_REPO: usnistgov/metaschema
@@ -18,14 +14,16 @@ env:
   # paths
   REPO_PATH: git-content/metaschema-java
 jobs:
-  build-artifacts:
-    name: Build and Test Java Artifacts
+  deploy-website:
+    name: Build and Publish Website
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
+        if: ${{ github.repository == env.HOME_REPO && github.ref == format('refs/heads/{0}',env.HOME_BRANCH_RELEASE) }}
         with:
           path: ${{ env.REPO_PATH }}
           submodules: recursive
+          token: ${{ secrets.COMMIT_TOKEN }}
       # -------------------------
       # Java JDK 11
       - name: Set up JDK 11
@@ -40,18 +38,13 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2-
       # -------------------------
-      # Maven Build
-      - name: Build and run tests
+      # Maven Deploy Website
+      - name: Deploy Website
         run: |
-          mvn -Prelease verify
+            mvn -Preporting -Prelease package site site:stage
         working-directory: ${{ env.REPO_PATH }}
-      - name: Gathering JAR files
+      - name: Run deploy script
         run: |
-          mkdir staging
-          find . -path "*/target/*.jar" -exec cp {} ./staging/ \;
+          touch target/staging/.nojekyll
+          bash build/deploy.sh --push-only -v -m "Deploying website [ci skip]"
         working-directory: ${{ env.REPO_PATH }}
-      - name: Saving built artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: Package
-          path: staging
