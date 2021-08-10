@@ -26,19 +26,20 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.GlobalAssemblyDefinition;
-import gov.nist.itl.metaschema.model.m4.xml.ScopeType;
+import gov.nist.itl.metaschema.model.m4.xml.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.Metaschema;
+import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.definitions.GlobalInfoElementDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.instances.FlagInstance;
 
 public class XmlGlobalAssemblyDefinition
     extends AbstractXmlAssemblyDefinition<XmlGlobalAssemblyDefinition, XmlAssemblyInstance>
     implements GlobalInfoElementDefinition {
-  private final GlobalAssemblyDefinition xmlAssembly;
+  private final GlobalAssemblyDefinitionType xmlAssembly;
 
   /**
    * Constructs a new Metaschema Assembly definition from an XML representation bound to Java objects.
@@ -48,7 +49,7 @@ public class XmlGlobalAssemblyDefinition
    * @param metaschema
    *          the containing Metaschema
    */
-  public XmlGlobalAssemblyDefinition(GlobalAssemblyDefinition xmlAssembly, XmlMetaschema metaschema) {
+  public XmlGlobalAssemblyDefinition(GlobalAssemblyDefinitionType xmlAssembly, XmlMetaschema metaschema) {
     super(metaschema);
     this.xmlAssembly = xmlAssembly;
   }
@@ -59,13 +60,23 @@ public class XmlGlobalAssemblyDefinition
    * @return the underlying XML data
    */
   @Override
-  protected GlobalAssemblyDefinition getXmlAssembly() {
+  protected GlobalAssemblyDefinitionType getXmlAssembly() {
     return xmlAssembly;
   }
 
   @Override
   public String getName() {
     return getXmlAssembly().getName();
+  }
+
+  @Override
+  public String getUseName() {
+    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName() : getName();
+  }
+
+  @Override
+  public String getXmlNamespace() {
+    return getContainingMetaschema().getXmlNamespace().toString();
   }
 
   @Override
@@ -104,25 +115,11 @@ public class XmlGlobalAssemblyDefinition
 
   @Override
   public ModuleScopeEnum getModuleScope() {
-    ModuleScopeEnum retval = Metaschema.DEFAULT_MODEL_SCOPE;
+    ModuleScopeEnum retval = MetaschemaDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
     if (getXmlAssembly().isSetScope()) {
-      switch (getXmlAssembly().getScope().intValue()) {
-      case ScopeType.INT_GLOBAL:
-        retval = ModuleScopeEnum.INHERITED;
-        break;
-      case ScopeType.INT_LOCAL:
-        retval = ModuleScopeEnum.LOCAL;
-        break;
-      default:
-        throw new UnsupportedOperationException(getXmlAssembly().getScope().toString());
-      }
+      retval = getXmlAssembly().getScope();
     }
     return retval;
-  }
-
-  @Override
-  public String getUseName() {
-    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName() : getName();
   }
 
   @Override

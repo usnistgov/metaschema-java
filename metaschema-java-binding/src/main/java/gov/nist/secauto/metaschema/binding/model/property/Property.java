@@ -32,6 +32,8 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
+import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -104,14 +106,6 @@ public interface Property {
   String getJavaPropertyName();
 
   /**
-   * Get the name to use for reading and writing the JSON/YAML property/field associated with this
-   * Java property.
-   * 
-   * @return the JSON/YAML property/field name
-   */
-  String getJsonPropertyName();
-
-  /**
    * Set the provided value on the provided object. The provided object must be of the item's type
    * associated with this property.
    * 
@@ -136,6 +130,12 @@ public interface Property {
    *           if an error occurs while getting the value
    */
   Object getValue(Object parentInstance) throws IOException;
+
+  PropertyCollector newPropertyCollector();
+
+  // TODO: replace this with just "read"
+  boolean readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+      throws IOException, BindingException;
 
   /**
    * Read JSON data associated with this property and apply it to the provided parent object on which

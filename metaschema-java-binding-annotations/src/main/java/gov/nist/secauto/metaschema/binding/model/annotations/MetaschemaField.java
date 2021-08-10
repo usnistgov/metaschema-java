@@ -50,6 +50,6 @@ public @interface MetaschemaField {
    * 
    * @return {@code true} if the field is collapsible, or {@code false} otherwise
    */
-  boolean isCollapsible() default true;
+  boolean isCollapsible() default false;
 
 }

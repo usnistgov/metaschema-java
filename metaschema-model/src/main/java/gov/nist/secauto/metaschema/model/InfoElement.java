@@ -26,19 +26,13 @@
 
 package gov.nist.secauto.metaschema.model;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.IModelElement;
 
 /**
  * A marker interface for a Metaschema information element.
  */
-public interface InfoElement {
+public interface InfoElement extends IModelElement {
 
-  /**
-   * Get the Metaschema model type of the information element.
-   * 
-   * @return the type
-   */
-  ModelType getModelType();
 
   /**
    * Retrieves the Metaschema instance that contains for the information element's declaration.
@@ -46,11 +40,4 @@ public interface InfoElement {
    * @return the Metaschema instance
    */
   Metaschema getContainingMetaschema();
-
-  /**
-   * Retrieve the remarks associated with this information element, if any.
-   * 
-   * @return the remarks or {@code null} if no remarks are defined
-   */
-  MarkupMultiline getRemarks();
 }

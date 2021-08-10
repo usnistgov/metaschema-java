@@ -36,9 +36,9 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.annotations.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.binding.model.property.ModelProperty;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 
 import org.codehaus.stax2.XMLEventReader2;
 
@@ -55,7 +55,7 @@ public class ListPropertyInfo
     extends AbstractModelPropertyInfo<ParameterizedType>
     implements ModelPropertyInfo {
 
-  public ListPropertyInfo(ModelProperty property) {
+  public ListPropertyInfo(NamedModelProperty property) {
     super(property);
     if (!List.class.isAssignableFrom(property.getRawType())) {
       throw new RuntimeException(String.format(
@@ -159,7 +159,7 @@ public class ListPropertyInfo
   @Override
   public boolean writeValue(Object parentInstance, QName parentName, XmlWritingContext context)
       throws XMLStreamException, IOException {
-    ModelProperty property = getProperty();
+    NamedModelProperty property = getProperty();
     @SuppressWarnings("unchecked")
     List<? extends Object> items = (List<? extends Object>) property.getValue(parentInstance);
     for (Object item : items) {
@@ -170,7 +170,7 @@ public class ListPropertyInfo
 
   @Override
   public void writeValue(Object parentInstance, JsonWritingContext context) throws IOException {
-    ModelProperty property = getProperty();
+    NamedModelProperty property = getProperty();
     @SuppressWarnings("unchecked")
     List<? extends Object> items = (List<? extends Object>) property.getValue(parentInstance);
 
@@ -198,7 +198,7 @@ public class ListPropertyInfo
 
   @Override
   public boolean isValueSet(Object parentInstance) throws IOException {
-    ModelProperty property = getProperty();
+    NamedModelProperty property = getProperty();
     @SuppressWarnings("unchecked")
     List<? extends Object> items = (List<? extends Object>) property.getValue(parentInstance);
     return items != null && !items.isEmpty();

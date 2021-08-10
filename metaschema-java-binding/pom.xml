@@ -11,19 +11,19 @@
 
 	<name>Metaschema XML, JSON, and YAML Data Binding</name>
 	<description>A Metaschema binding-based parser for Java objects supporting serialization of conformant XML, JSON, and YAML data.</description>
-	<url>https://pages.nist.gov/metaschema</url>
 
-	<scm>
-		<url>https://github.com/usnistgov/metaschema-java/tree/main</url>
-	  <tag>HEAD</tag>
-    <connection>scm:git:git@github.com/usnistgov/metaschema-java.git</connection>
-    <developerConnection>scm:git:git@github.com:usnistgov/metaschema-java.git</developerConnection>
-  </scm>
+  <url>${site.url}${project.artifactId}/</url>
+  <distributionManagement>
+    <site>
+      <id>nist-pages</id>
+      <url>${site.url}${project.artifactId}/</url>
+    </site>
+  </distributionManagement>
 
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>metaschema-java-datatypes</artifactId>
+			<artifactId>metaschema-model-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>

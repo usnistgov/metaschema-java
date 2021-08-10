@@ -35,7 +35,7 @@ import gov.nist.csrc.ns.metaschemaBinding.x10.ModelBindingType;
 import gov.nist.csrc.ns.metaschemaBinding.x10.ObjectDefinitionBindingType;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 
 import org.apache.xmlbeans.XmlException;
 import org.glassfish.jaxb.core.api.impl.NameConverter;
@@ -70,7 +70,7 @@ public class DefaultBindingConfiguration implements BindingConfiguration {
   }
 
   @Override
-  public String getClassName(ObjectDefinition definition) {
+  public String getClassName(MetaschemaFlaggedDefinition definition) {
     DefinitionBindingConfiguration config = getDefinitionBindingConfiguration(definition);
 
     String retval = null;
@@ -163,7 +163,7 @@ public class DefaultBindingConfiguration implements BindingConfiguration {
   // metaschemaConfigs.put(name, managedObjectConfig);
   // }
 
-  protected DefinitionBindingConfiguration getDefinitionBindingConfiguration(ObjectDefinition definition) {
+  protected DefinitionBindingConfiguration getDefinitionBindingConfiguration(MetaschemaFlaggedDefinition definition) {
     String metaschemaUri = definition.getContainingMetaschema().getLocation().toString();
     String definitionName = definition.getName();
 

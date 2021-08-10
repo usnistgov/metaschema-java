@@ -35,18 +35,18 @@ import com.squareup.javapoet.TypeName;
 import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.codegen.AssemblyJavaClassGenerator;
-import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
-import gov.nist.secauto.metaschema.codegen.type.DataType;
+import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 import gov.nist.secauto.metaschema.model.instances.AssemblyInstance;
+import gov.nist.secauto.metaschema.model.instances.AssemblyModelInstance;
 import gov.nist.secauto.metaschema.model.instances.FieldInstance;
-import gov.nist.secauto.metaschema.model.instances.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.instances.ModelInstance;
 import gov.nist.secauto.metaschema.model.instances.ObjectModelInstance;
-import gov.nist.secauto.metaschema.model.instances.XmlGroupAsBehavior;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -89,15 +89,15 @@ public class ModelInstancePropertyGenerator
 
   @Override
   protected String getInstanceName() {
-    ModelInstance modelInstance = getModelInstance();
+    AssemblyModelInstance modelInstance = getModelInstance();
     String retval = null;
     if (modelInstance.getMaxOccurs() == 1) {
       // an instance name only applies to an assembly or field. a choice does not have a name and doesn't
       // result in a generated instance.
       if (modelInstance instanceof AssemblyInstance) {
-        retval = ((AssemblyInstance<?>) modelInstance).getUseName();
+        retval = ((AssemblyInstance<?>) modelInstance).getEffectiveName();
       } else if (modelInstance instanceof FieldInstance) {
-        retval = ((FieldInstance<?>) modelInstance).getUseName();
+        retval = ((FieldInstance<?>) modelInstance).getEffectiveName();
       }
     } else if (modelInstance.getMaxOccurs() == -1 || modelInstance.getMaxOccurs() > 1) {
       retval = modelInstance.getGroupAsName();
@@ -118,8 +118,8 @@ public class ModelInstancePropertyGenerator
   }
 
   @Override
-  public Set<ObjectDefinition> buildField(FieldSpec.Builder builder) {
-    Set<ObjectDefinition> retval = new HashSet<>();
+  public Set<MetaschemaFlaggedDefinition> buildField(FieldSpec.Builder builder) {
+    Set<MetaschemaFlaggedDefinition> retval = new HashSet<>();
     retval.addAll(super.buildField(builder));
 
     AnnotationSpec.Builder fieldAnnoation;
@@ -133,11 +133,11 @@ public class ModelInstancePropertyGenerator
           modelInstance.getName(), modelInstance.getClass().getName()));
     }
 
-    ObjectDefinition definition = getModelInstance().getDefinition();
+    MetaschemaFlaggedDefinition definition = getModelInstance().getDefinition();
     if (!definition.isGlobal()) {
       retval.add(definition);
     }
-    fieldAnnoation.addMember("name", "$S", getModelInstance().getUseName());
+    fieldAnnoation.addMember("useName", "$S", getModelInstance().getUseName());
 
     String namespace = definition.getContainingMetaschema().getXmlNamespace().toString();
     String containingNamespace
@@ -149,10 +149,10 @@ public class ModelInstancePropertyGenerator
     if (modelInstance instanceof FieldInstance) {
       FieldInstance<?> fieldInstance = (FieldInstance<?>) modelInstance;
       FieldDefinition fieldDefinition = (FieldDefinition) definition;
-      DataType valueDataType = FieldValuePropertyGenerator.getValueDataType(fieldDefinition);
+      DataTypes valueDataType = fieldDefinition.getDatatype();
 
       // a field object always has a single value
-      if (!fieldInstance.hasXmlWrapper()) {
+      if (!fieldInstance.isInXmlWrapped()) {
         fieldAnnoation.addMember("inXmlWrapped", "$L", false);
       }
       if (fieldDefinition.getFlagInstances().isEmpty()) {
@@ -162,17 +162,17 @@ public class ModelInstancePropertyGenerator
         fieldAnnoation.addMember("valueName", "$S", fieldDefinition.getJsonValueKeyName());
 
         fieldAnnoation.addMember("typeAdapter", "$T.class",
-            valueDataType.getJavaTypeAdapterClass());
+            valueDataType.getJavaTypeAdapter().getClass());
       }
     }
 
     int maxOccurs = modelInstance.getMaxOccurs();
     int minOccurs = modelInstance.getMinOccurs();
 
-    if (minOccurs != 0) {
+    if (minOccurs != Defaults.DEFAULT_GROUP_AS_MIN_OCCURS) {
       fieldAnnoation.addMember("minOccurs", "$L", minOccurs);
     }
-    if (maxOccurs != 1) {
+    if (maxOccurs != Defaults.DEFAULT_GROUP_AS_MAX_OCCURS) {
       fieldAnnoation.addMember("maxOccurs", "$L", maxOccurs);
     }
 
@@ -184,18 +184,16 @@ public class ModelInstancePropertyGenerator
       }
 
       JsonGroupAsBehavior jsonGroupAsBehavior = modelInstance.getJsonGroupAsBehavior();
-      if (!AnnotationUtils.getDefaultValue(Field.class, "inJson").equals(jsonGroupAsBehavior)) {
-        fieldAnnoation.addMember("inJson", "$T.$L",
-            gov.nist.secauto.metaschema.binding.model.annotations.JsonGroupAsBehavior.class,
-            jsonGroupAsBehavior.toString());
-      }
+      assert jsonGroupAsBehavior != null;
+      fieldAnnoation.addMember("inJson", "$T.$L",
+          gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior.class,
+          jsonGroupAsBehavior.toString());
 
       XmlGroupAsBehavior xmlGroupAsBehavior = modelInstance.getXmlGroupAsBehavior();
-      if (!AnnotationUtils.getDefaultValue(Field.class, "inXml").equals(xmlGroupAsBehavior)) {
-        fieldAnnoation.addMember("inXml", "$T.$L",
-            gov.nist.secauto.metaschema.binding.model.annotations.XmlGroupAsBehavior.class,
-            xmlGroupAsBehavior.toString());
-      }
+      assert xmlGroupAsBehavior != null;
+      fieldAnnoation.addMember("inXml", "$T.$L",
+          gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior.class,
+          xmlGroupAsBehavior.toString());
     }
     builder.addAnnotation(fieldAnnoation.build());
     return retval.isEmpty() ? Collections.emptySet() : Collections.unmodifiableSet(retval);
@@ -209,9 +207,9 @@ public class ModelInstancePropertyGenerator
     if (instance instanceof FieldInstance) {
       FieldInstance<?> fieldInstance = (FieldInstance<?>) instance;
       if (fieldInstance.getDefinition().getFlagInstances().isEmpty()) {
-        DataType dataType = DataType.lookupByDatatype(fieldInstance.getDefinition().getDatatype());
+        DataTypes dataType = fieldInstance.getDefinition().getDatatype();
         // this is a simple value
-        item = dataType.getTypeName();
+        item = ClassName.get(dataType.getJavaTypeAdapter().getJavaClass());
       } else {
         item = getClassGenerator().getTypeResolver().getClassName(fieldInstance.getDefinition());
       }
@@ -221,7 +219,7 @@ public class ModelInstancePropertyGenerator
       if (assemblyDefinition.getFlagInstances().isEmpty() && assemblyDefinition.getModelInstances().isEmpty()) {
         // make this a boolean type, since this is a marker without any contents
         // TODO: make sure global definitions of this type are suppressed
-        item = DataType.BOOLEAN.getTypeName();
+        item = ClassName.get(DataTypes.BOOLEAN.getJavaTypeAdapter().getJavaClass());
       } else {
         item = getClassGenerator().getTypeResolver().getClassName(assemblyInstance.getDefinition());
       }

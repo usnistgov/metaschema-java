@@ -36,7 +36,7 @@ import gov.nist.secauto.metaschema.codegen.property.FlagPropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.PropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 import gov.nist.secauto.metaschema.model.instances.FlagInstance;
 
 import org.apache.logging.log4j.LogManager;
@@ -64,14 +64,11 @@ public class FieldJavaClassGenerator
   public FieldJavaClassGenerator(FieldDefinition definition, TypeResolver typeResolver) {
     super(definition, typeResolver);
     this.fieldValueInstance = newFieldValueInstance();
+    this.hasJsonValueKeyFlag = definition.hasJsonValueKeyFlagInstance();
   }
 
   @Override
   public FlagPropertyGenerator newFlagPropertyGenerator(FlagInstance<?> instance) {
-    // check for a JSON "value key"
-    if (instance.isJsonValueKeyFlag()) {
-      hasJsonValueKeyFlag = true;
-    }
     return super.newFlagPropertyGenerator(instance);
   }
 
@@ -82,8 +79,8 @@ public class FieldJavaClassGenerator
   }
 
   @Override
-  protected Set<ObjectDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
-    Set<ObjectDefinition> retval = new HashSet<>();
+  protected Set<MetaschemaFlaggedDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
+    Set<MetaschemaFlaggedDefinition> retval = new HashSet<>();
     retval.addAll(super.buildClass(builder));
 
     if (getFieldValueInstance() == null) {

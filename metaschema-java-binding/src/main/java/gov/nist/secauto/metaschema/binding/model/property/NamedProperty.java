@@ -26,29 +26,10 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
-import java.io.IOException;
-
-import javax.xml.namespace.QName;
-
-public interface NamedProperty extends Property {
-
-  /**
-   * Get the XML qualified name for reading and writing XML associated with this Java property.
-   * 
-   * @return the XML qualified name, or {@code null} if the property is not wrapped by an XML an XML
-   *         element or attribute
-   */
-  QName getXmlQName();
-
-  PropertyCollector newPropertyCollector();
-
-  // TODO: replace this with just "read"
-  boolean readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
-      throws IOException, BindingException;
+public interface NamedProperty
+    extends Property, INamedInstance {
 
   // void writeValue(Object parentInstance, JsonParsingContext context);
 }

@@ -27,13 +27,13 @@
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.itl.metaschema.model.m4.xml.FieldDocument;
+import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.Metaschema;
+import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.definitions.DataType;
 import gov.nist.secauto.metaschema.model.instances.AbstractFieldInstance;
-import gov.nist.secauto.metaschema.model.instances.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.instances.XmlGroupAsBehavior;
 
 import java.math.BigInteger;
 
@@ -73,13 +73,13 @@ public class XmlFieldInstance
   }
 
   @Override
-  public boolean hasXmlWrapper() {
+  public boolean isInXmlWrapped() {
     boolean retval;
-    if (DataType.MARKUP_MULTILINE.equals(getDefinition().getDatatype())) {
+    if (DataTypes.MARKUP_MULTILINE.equals(getDefinition().getDatatype())) {
       // default value
-      retval = Metaschema.DEFAULT_FIELD_XML_WRAPPER;
+      retval = Defaults.DEFAULT_FIELD_IN_XML_WRAPPED;
       if (getXmlField().isSetInXml()) {
-        retval = FieldDocument.Field.InXml.WITH_WRAPPER.equals(getXmlField().getInXml());
+        retval = getXmlField().getInXml().booleanValue();
       }
     } else {
       // All other data types get "wrapped"
@@ -104,13 +104,23 @@ public class XmlFieldInstance
   }
 
   @Override
+  public String getXmlNamespace() {
+    return getContainingDefinition().getXmlNamespace();
+  }
+
+  @Override
   public String getGroupAsName() {
     return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : null;
   }
 
   @Override
+  public String getGroupAsXmlNamespace() {
+    return getContainingDefinition().getXmlNamespace();
+  }
+
+  @Override
   public int getMinOccurs() {
-    int retval = Metaschema.DEFAULT_GROUP_AS_MIN_OCCURS;
+    int retval = Defaults.DEFAULT_GROUP_AS_MIN_OCCURS;
     if (getXmlField().isSetMinOccurs()) {
       retval = getXmlField().getMinOccurs().intValueExact();
     }
@@ -119,7 +129,7 @@ public class XmlFieldInstance
 
   @Override
   public int getMaxOccurs() {
-    int retval = Metaschema.DEFAULT_GROUP_AS_MAX_OCCURS;
+    int retval = Defaults.DEFAULT_GROUP_AS_MAX_OCCURS;
     if (getXmlField().isSetMaxOccurs()) {
       Object value = getXmlField().getMaxOccurs();
       if (value instanceof String) {
@@ -136,7 +146,7 @@ public class XmlFieldInstance
   public JsonGroupAsBehavior getJsonGroupAsBehavior() {
     JsonGroupAsBehavior retval = JsonGroupAsBehavior.SINGLETON_OR_LIST;
     if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInJson()) {
-      retval = JsonGroupAsBehavior.lookup(getXmlField().getGroupAs().getInJson());
+      retval = getXmlField().getGroupAs().getInJson();
     }
     return retval;
   }
@@ -145,7 +155,7 @@ public class XmlFieldInstance
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
     XmlGroupAsBehavior retval = XmlGroupAsBehavior.UNGROUPED;
     if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInXml()) {
-      retval = XmlGroupAsBehavior.lookup(getXmlField().getGroupAs().getInXml());
+      retval = getXmlField().getGroupAs().getInXml();
     }
     return retval;
   }

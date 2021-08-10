@@ -35,11 +35,12 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateNotFoundException;
 
+import gov.nist.secauto.metaschema.freemarker.support.AbstractFreemarkerGenerator;
+import gov.nist.secauto.metaschema.freemarker.support.MarkupToHtmlMethod;
+import gov.nist.secauto.metaschema.freemarker.support.ToCamelCaseMethod;
 import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
-import gov.nist.secauto.metaschema.model.util.UsedDefinitionModelWalker;
-import gov.nist.secauto.metaschema.schemagen.freemarker.MarkupToHtmlMethod;
-import gov.nist.secauto.metaschema.schemagen.freemarker.ToCamelCaseMethod;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
+import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -50,77 +51,5 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public abstract class AbstractSchemaGenerator implements SchemaGenerator {
-  private boolean debug = false;
-
-  protected Configuration newConfiguration() {
-    // Create your Configuration instance, and specify if up to what FreeMarker
-    // version (here 2.3.29) do you want to apply the fixes that are not 100%
-    // backward-compatible. See the Configuration JavaDoc for details.
-    Configuration cfg = new Configuration(Configuration.VERSION_2_3_30);
-
-    // // Specify the source where the template files come from. Here I set a
-    // // plain directory for it, but non-file-system sources are possible too:
-    // cfg.setDirectoryForTemplateLoading(new File("/where/you/store/templates"));
-    ClassTemplateLoader ctl = new ClassTemplateLoader(getClass(), "/templates");
-    cfg.setTemplateLoader(ctl);
-
-    if (debug) {
-      cfg.setTemplateExceptionHandler(TemplateExceptionHandler.DEBUG_HANDLER);
-    } else {
-      cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-    }
-
-    // Don't log exceptions inside FreeMarker that it will thrown at you anyway:
-    cfg.setLogTemplateExceptions(false);
-
-    // Wrap unchecked exceptions thrown during template processing into TemplateException-s:
-    cfg.setWrapUncheckedExceptions(true);
-
-    // Do not fall back to higher scopes when reading a null loop variable:
-    cfg.setFallbackOnNullLoopVariable(false);
-
-    return cfg;
-  }
-
-  public void generateFromMetaschemas(Collection<? extends Metaschema> metaschemas, Writer out)
-      throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException {
-    Objects.requireNonNull(metaschemas, "metaschemas");
-
-    Collection<? extends InfoElementDefinition> definitions
-        = UsedDefinitionModelWalker.collectUsedDefinitions(metaschemas);
-    generateFromDefinitions(definitions, out);
-  }
-
-  public void generateFromDefinitions(Collection<? extends InfoElementDefinition> definitions, Writer out)
-      throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException {
-    Objects.requireNonNull(definitions, "definitions");
-    Set<Metaschema> metaschemas = new LinkedHashSet<>();
-    for (InfoElementDefinition definition : definitions) {
-      Metaschema metaschema = definition.getContainingMetaschema();
-      if (!metaschemas.contains(metaschema)) {
-        metaschemas.add(metaschema);
-      }
-    }
-
-    Configuration cfg = newConfiguration();
-
-    // Create the root hash. We use a Map here, but it could be a JavaBean too.
-    Map<String, Object> root = new HashMap<>();
-
-    // add directives
-    root.put("toCamelCase", new ToCamelCaseMethod());
-    root.put("markupToHTML", new MarkupToHtmlMethod());
-
-    // add metaschema model
-    root.put("metaschemas", metaschemas);
-    root.put("definitions", definitions);
-
-    Template template = getTemplate(cfg);
-
-    template.process(root, out);
-  }
-
-  protected abstract Template getTemplate(Configuration cfg)
-      throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException;
+public abstract class AbstractSchemaGenerator extends AbstractFreemarkerGenerator implements SchemaGenerator {
 }

@@ -259,7 +259,7 @@ public interface JavaTypeAdapter<TYPE> {
    * 
    * @return the default field name to use
    */
-  String getDefaultJsonFieldName();
+  String getDefaultJsonValueKey();
 
   /**
    * Determines if the data type's value is allowed to be unwrapped in XML when the value is a field

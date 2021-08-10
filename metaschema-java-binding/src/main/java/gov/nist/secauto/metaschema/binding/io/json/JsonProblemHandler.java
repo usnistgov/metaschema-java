@@ -43,7 +43,7 @@ public interface JsonProblemHandler extends ProblemHandler {
   boolean canHandleUnknownProperty(ClassBinding classBinding, String propertyName, JsonParsingContext parsingContext)
       throws BindingException, IOException;
 
-  Map<Property, JsonBindingSupplier> handleUnknownProperty(ClassBinding classBinding, String propertyName,
+  boolean handleUnknownProperty(ClassBinding classBinding, String propertyName,
       JsonParsingContext parsingContext) throws BindingException, IOException;
 
   /**

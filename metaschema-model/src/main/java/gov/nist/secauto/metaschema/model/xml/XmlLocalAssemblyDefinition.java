@@ -26,17 +26,17 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.LocalAssemblyDefinition;
+import gov.nist.itl.metaschema.model.m4.xml.LocalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.Metaschema;
+import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.LocalInfoElementDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.instances.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.model.instances.FlagInstance;
-import gov.nist.secauto.metaschema.model.instances.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.instances.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.xml.XmlLocalAssemblyDefinition.InternalAssemblyDefinition;
 
 import java.math.BigInteger;
@@ -46,7 +46,7 @@ import java.math.BigInteger;
  */
 public class XmlLocalAssemblyDefinition
     extends AbstractAssemblyInstance<InternalAssemblyDefinition> {
-  private final LocalAssemblyDefinition xmlAssembly;
+  private final LocalAssemblyDefinitionType xmlAssembly;
   private final InternalAssemblyDefinition assemblyDefinition;
 
   /**
@@ -57,7 +57,7 @@ public class XmlLocalAssemblyDefinition
    * @param parent
    *          the parent assembly definition
    */
-  public XmlLocalAssemblyDefinition(LocalAssemblyDefinition xmlAssembly, AssemblyDefinition parent) {
+  public XmlLocalAssemblyDefinition(LocalAssemblyDefinitionType xmlAssembly, AssemblyDefinition parent) {
     super(parent);
     this.xmlAssembly = xmlAssembly;
     this.assemblyDefinition = new InternalAssemblyDefinition();
@@ -68,7 +68,7 @@ public class XmlLocalAssemblyDefinition
    * 
    * @return the XML model
    */
-  protected LocalAssemblyDefinition getXmlAssembly() {
+  protected LocalAssemblyDefinitionType getXmlAssembly() {
     return xmlAssembly;
   }
 
@@ -94,7 +94,7 @@ public class XmlLocalAssemblyDefinition
 
   @Override
   public int getMinOccurs() {
-    int retval = Metaschema.DEFAULT_GROUP_AS_MIN_OCCURS;
+    int retval = Defaults.DEFAULT_GROUP_AS_MIN_OCCURS;
     if (getXmlAssembly().isSetMinOccurs()) {
       retval = getXmlAssembly().getMinOccurs().intValueExact();
     }
@@ -103,7 +103,7 @@ public class XmlLocalAssemblyDefinition
 
   @Override
   public int getMaxOccurs() {
-    int retval = Metaschema.DEFAULT_GROUP_AS_MAX_OCCURS;
+    int retval = Defaults.DEFAULT_GROUP_AS_MAX_OCCURS;
     if (getXmlAssembly().isSetMaxOccurs()) {
       Object value = getXmlAssembly().getMaxOccurs();
       if (value instanceof String) {
@@ -120,7 +120,7 @@ public class XmlLocalAssemblyDefinition
   public JsonGroupAsBehavior getJsonGroupAsBehavior() {
     JsonGroupAsBehavior retval = JsonGroupAsBehavior.SINGLETON_OR_LIST;
     if (getXmlAssembly().isSetGroupAs() && getXmlAssembly().getGroupAs().isSetInJson()) {
-      retval = JsonGroupAsBehavior.lookup(getXmlAssembly().getGroupAs().getInJson());
+      retval = getXmlAssembly().getGroupAs().getInJson();
     }
     return retval;
   }
@@ -129,7 +129,7 @@ public class XmlLocalAssemblyDefinition
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
     XmlGroupAsBehavior retval = XmlGroupAsBehavior.UNGROUPED;
     if (getXmlAssembly().isSetGroupAs() && getXmlAssembly().getGroupAs().isSetInXml()) {
-      retval = XmlGroupAsBehavior.lookup(getXmlAssembly().getGroupAs().getInXml());
+      retval = getXmlAssembly().getGroupAs().getInXml();
     }
     return retval;
   }
@@ -151,7 +151,7 @@ public class XmlLocalAssemblyDefinition
     }
 
     @Override
-    protected LocalAssemblyDefinition getXmlAssembly() {
+    protected LocalAssemblyDefinitionType getXmlAssembly() {
       return XmlLocalAssemblyDefinition.this.getXmlAssembly();
     }
 
@@ -172,7 +172,7 @@ public class XmlLocalAssemblyDefinition
 
     @Override
     public String getName() {
-      return getXmlAssembly().getName();
+      return XmlLocalAssemblyDefinition.this.getName();
     }
 
     @Override
@@ -181,7 +181,13 @@ public class XmlLocalAssemblyDefinition
     }
 
     @Override
+    public String getXmlNamespace() {
+      return XmlLocalAssemblyDefinition.this.getXmlNamespace();
+    }
+
+    @Override
     public boolean isRoot() {
+      // a local assembly is never a root
       return false;
     }
 

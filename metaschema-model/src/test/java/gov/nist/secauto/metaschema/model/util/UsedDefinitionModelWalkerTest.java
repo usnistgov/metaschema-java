@@ -29,15 +29,17 @@ package gov.nist.secauto.metaschema.model.util;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
-import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
+import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Collection;
 
 class UsedDefinitionModelWalkerTest {
@@ -48,15 +50,14 @@ class UsedDefinitionModelWalkerTest {
   void test() throws MetaschemaException, IOException {
     MetaschemaLoader loader = new MetaschemaLoader();
 
-    Metaschema metaschema
-        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_catalog_metaschema.xml"));
+    Metaschema metaschema = loader.loadXmlMetaschema(new URL(
+        "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
 
-    Collection<? extends InfoElementDefinition> definitions
+    Collection<? extends IDefinition> definitions
         = UsedDefinitionModelWalker.collectUsedDefinitions(metaschema);
 
-    for (InfoElementDefinition definition : definitions) {
-      logger.info(String.format("%s: %s %s",
-          definition.getContainingMetaschema().getShortName(), definition.getModelType().name(), definition.getName()));
+    for (IDefinition definition : definitions) {
+      logger.info(String.format("%s", definition.toCoordinates()));
     }
   }
 

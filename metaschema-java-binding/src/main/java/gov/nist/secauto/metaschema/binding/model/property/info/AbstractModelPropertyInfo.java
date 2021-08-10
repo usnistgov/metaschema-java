@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.model.property.info;
 
-import gov.nist.secauto.metaschema.binding.model.property.ModelProperty;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -34,15 +34,15 @@ import java.util.Objects;
 public abstract class AbstractModelPropertyInfo<TYPE extends Type>
     implements ModelPropertyInfo {
 
-  private final ModelProperty property;
+  private final NamedModelProperty property;
 
-  public AbstractModelPropertyInfo(ModelProperty property) {
+  public AbstractModelPropertyInfo(NamedModelProperty property) {
     Objects.requireNonNull(property, "property");
     this.property = property;
   }
 
   @Override
-  public ModelProperty getProperty() {
+  public NamedModelProperty getProperty() {
     return property;
   }
 

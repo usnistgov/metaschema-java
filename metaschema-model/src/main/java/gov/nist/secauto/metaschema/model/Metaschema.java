@@ -27,13 +27,9 @@
 package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.definitions.DataType;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
-import gov.nist.secauto.metaschema.model.instances.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.instances.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 
 import java.net.URI;
 import java.util.Collection;
@@ -41,16 +37,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface Metaschema {
-  boolean DEFAULT_REQUIRED = false;
-  DataType DEFAULT_DATA_TYPE = DataType.STRING;
-  int DEFAULT_GROUP_AS_MIN_OCCURS = 0;
-  int DEFAULT_GROUP_AS_MAX_OCCURS = 1;
-  boolean DEFAULT_FIELD_XML_WRAPPER = true;
-  ModuleScopeEnum DEFAULT_MODEL_SCOPE = ModuleScopeEnum.INHERITED;
-  boolean DEFAULT_COLLAPSIBLE = true;
-  JsonGroupAsBehavior DEFAULT_JSON_GROUP_AS_BEHAVIOR = JsonGroupAsBehavior.SINGLETON_OR_LIST;
-  XmlGroupAsBehavior DEFAULT_XML_GROUP_AS_BEHAVIOR = XmlGroupAsBehavior.UNGROUPED;
-
   /**
    * Retrieves the location where the Metaschema was loaded from.
    * 
@@ -99,7 +85,7 @@ public interface Metaschema {
    * 
    * @return a listing of assembly and field definitions
    */
-  List<? extends ObjectDefinition> getAssemblyAndFieldDefinitions();
+  List<? extends MetaschemaFlaggedDefinition> getAssemblyAndFieldDefinitions();
 
   /**
    * Retrieves the top-level flag definitions in this Metaschema.

@@ -88,7 +88,7 @@ class DefaultFieldValuePropertyTest {
         will(returnValue(theClass));
         allowing(classBinding).getBindingContext();
         will(returnValue(bindingContext));
-        allowing(classBinding).getJsonValueKeyFlag();
+        allowing(classBinding).getJsonValueKeyFlagInstance();
         will(returnValue(null));
 
         allowing(jsonParsingContext).getReader();
@@ -187,7 +187,7 @@ class DefaultFieldValuePropertyTest {
         will(returnValue(theClass));
         allowing(classBinding).getBoundClass();
         will(returnValue(theClass));
-        allowing(classBinding).getJsonValueKeyFlag();
+        allowing(classBinding).getJsonValueKeyFlagInstance();
         will(returnValue(null));
         allowing(classBinding).getBindingContext();
         will(returnValue(bindingContext));

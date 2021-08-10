@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
 
 @MetaschemaAssembly
 public class FlaggedAssemblyClass {
-  @Flag(name = "id", typeAdapter = StringAdapter.class)
+  @Flag(useName = "id", typeAdapter = StringAdapter.class)
   private String id;
 
   public FlaggedAssemblyClass() {

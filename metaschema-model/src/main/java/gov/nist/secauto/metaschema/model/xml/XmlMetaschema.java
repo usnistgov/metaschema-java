@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.GlobalAssemblyDefinition;
-import gov.nist.itl.metaschema.model.m4.xml.GlobalFieldDefinition;
-import gov.nist.itl.metaschema.model.m4.xml.GlobalFlagDefinition;
+import gov.nist.itl.metaschema.model.m4.xml.GlobalAssemblyDefinitionType;
+import gov.nist.itl.metaschema.model.m4.xml.GlobalFieldDefinitionType;
+import gov.nist.itl.metaschema.model.m4.xml.GlobalFlagDefinitionType;
 import gov.nist.itl.metaschema.model.m4.xml.METASCHEMADocument;
 import gov.nist.itl.metaschema.model.m4.xml.METASCHEMADocument.METASCHEMA;
 import gov.nist.secauto.metaschema.model.AbstractMetaschema;
@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,8 +52,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class XmlMetaschema
-    extends AbstractMetaschema {
+public class XmlMetaschema extends AbstractMetaschema {
   private static final Logger logger = LogManager.getLogger(XmlMetaschema.class);
 
   private final METASCHEMADocument metaschema;
@@ -87,12 +86,11 @@ public class XmlMetaschema
       Map<String, FlagDefinition> flagDefinitions = new LinkedHashMap<>();
 
       XmlCursor cursor = metaschemaNode.newCursor();
-      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
-          + "$this/m:define-flag");
+      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" + "$this/m:define-flag");
 
       while (cursor.toNextSelection()) {
         XmlObject obj = cursor.getObject();
-        XmlGlobalFlagDefinition flag = new XmlGlobalFlagDefinition((GlobalFlagDefinition) obj, this);
+        XmlGlobalFlagDefinition flag = new XmlGlobalFlagDefinition((GlobalFlagDefinitionType) obj, this);
         logger.trace("New flag definition '{}'", flag.toCoordinates());
         flagDefinitions.put(flag.getName(), flag);
       }
@@ -105,12 +103,11 @@ public class XmlMetaschema
       Map<String, FieldDefinition> fieldDefinitions = new LinkedHashMap<>();
 
       XmlCursor cursor = metaschemaNode.newCursor();
-      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
-          + "$this/m:define-field");
+      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" + "$this/m:define-field");
 
       while (cursor.toNextSelection()) {
         XmlObject obj = cursor.getObject();
-        XmlGlobalFieldDefinition field = new XmlGlobalFieldDefinition((GlobalFieldDefinition) obj, this);
+        XmlGlobalFieldDefinition field = new XmlGlobalFieldDefinition((GlobalFieldDefinitionType) obj, this);
         logger.trace("New field definition '{}'", field.toCoordinates());
         fieldDefinitions.put(field.getName(), field);
       }
@@ -125,12 +122,13 @@ public class XmlMetaschema
       Map<String, AssemblyDefinition> rootAssemblyDefinitions = new LinkedHashMap<>();
 
       XmlCursor cursor = metaschemaNode.newCursor();
-      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
-          + "$this/m:define-assembly");
+      cursor.selectPath(
+          "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" + "$this/m:define-assembly");
 
       while (cursor.toNextSelection()) {
         XmlObject obj = cursor.getObject();
-        XmlGlobalAssemblyDefinition assembly = new XmlGlobalAssemblyDefinition((GlobalAssemblyDefinition) obj, this);
+        XmlGlobalAssemblyDefinition assembly
+            = new XmlGlobalAssemblyDefinition((GlobalAssemblyDefinitionType) obj, this);
         logger.trace("New assembly definition '{}'", assembly.toCoordinates());
         assemblyDefinitions.put(assembly.getName(), assembly);
         if (assembly.isRoot()) {
@@ -140,9 +138,8 @@ public class XmlMetaschema
 
       this.assemblyDefinitions
           = assemblyDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(assemblyDefinitions);
-      this.rootAssemblyDefinitions
-          = rootAssemblyDefinitions.isEmpty() ? Collections.emptyMap()
-              : Collections.unmodifiableMap(rootAssemblyDefinitions);
+      this.rootAssemblyDefinitions = rootAssemblyDefinitions.isEmpty() ? Collections.emptyMap()
+          : Collections.unmodifiableMap(rootAssemblyDefinitions);
     }
 
     parseExportedDefinitions();
@@ -169,9 +166,8 @@ public class XmlMetaschema
   }
 
   @Override
-  public List<? extends ObjectDefinition> getAssemblyAndFieldDefinitions() {
-    return Stream.of(getAssemblyDefinitions().values(), getFieldDefinitions().values())
-        .flatMap(x -> x.stream())
+  public List<? extends MetaschemaFlaggedDefinition> getAssemblyAndFieldDefinitions() {
+    return Stream.of(getAssemblyDefinitions().values(), getFieldDefinitions().values()).flatMap(x -> x.stream())
         .collect(Collectors.toList());
   }
 

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>gov.nist.secauto.metaschema</groupId>
+		<artifactId>metaschema-framework</artifactId>
+		<version>0.4.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>metaschema-model-common</artifactId>
+
+	<name>Metaschema Common Model</name>
+
+	<url>${site.url}${project.artifactId}/</url>
+	<distributionManagement>
+		<site>
+			<id>nist-pages</id>
+			<url>${site.url}${project.artifactId}/</url>
+		</site>
+	</distributionManagement>
+
+	<description>A simple metaschema-model-common.</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>metaschema-java-datatypes</artifactId>
+		</dependency>
+	</dependencies>
+</project>

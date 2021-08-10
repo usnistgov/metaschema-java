@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.definitions;
 
-public interface GlobalInfoElementDefinition extends InfoElementDefinition {
+public interface GlobalInfoElementDefinition extends MetaschemaDefinition {
 
   @Override
   default boolean isGlobal() {

@@ -39,7 +39,7 @@ public @interface JsonFieldValueName {
   /**
    * The name of the JSON property that contains the field's value. If this value is provided, the the
    * name will be used as the property name. Use of this annotation is mutually exclusive with the
-   * {@link JsonFieldValueKey} annotation.
+   * {@link JsonFieldValueKeyFlag} annotation.
    * 
    * @return the name
    */

@@ -29,8 +29,9 @@ package gov.nist.secauto.metaschema.binding.model;
 import gov.nist.secauto.metaschema.binding.model.property.FieldValueProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.Property;
+import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 
-public interface FieldClassBinding extends ClassBinding {
+public interface FieldClassBinding extends ClassBinding, IFieldDefinition {
   /**
    * Get the {@link Property} that represents the Metaschema Field's value.
    * 
@@ -43,7 +44,7 @@ public interface FieldClassBinding extends ClassBinding {
    * 
    * @return the value key flag, or {@code null} if no value key flag is configured
    */
-  FlagProperty getJsonValueKeyFlag();
+  FlagProperty getJsonValueKeyFlagInstance();
 
   /**
    * Determines if the Metaschema can be collapsed in JSON/YAML representations. A collapsible field

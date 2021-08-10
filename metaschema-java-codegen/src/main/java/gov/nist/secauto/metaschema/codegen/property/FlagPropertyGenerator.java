@@ -27,18 +27,21 @@
 package gov.nist.secauto.metaschema.codegen.property;
 
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeName;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
-import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.codegen.AbstractJavaClassGenerator;
-import gov.nist.secauto.metaschema.codegen.type.DataType;
+import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 import gov.nist.secauto.metaschema.model.instances.FlagInstance;
 
 import org.apache.logging.log4j.LogManager;
@@ -52,27 +55,26 @@ public class FlagPropertyGenerator
   private static final Logger logger = LogManager.getLogger(FlagPropertyGenerator.class);
 
   private final FlagInstance<?> instance;
-  private final DataType dataType;
+  private final DataTypes dataType;
 
   public FlagPropertyGenerator(FlagInstance<?> instance, AbstractJavaClassGenerator<?> classGenerator) {
     super(classGenerator);
     this.instance = instance;
 
-    FlagDefinition definition = instance.getDefinition();
-    gov.nist.secauto.metaschema.model.definitions.DataType type = definition.getDatatype();
-    DataType dt = DataType.lookupByDatatype(type);
-    if (dt == null) {
-      logger.warn("Unsupported datatype '{}', using String", type);
-      dt = DataType.STRING;
+    IFlagDefinition definition = instance.getDefinition();
+    DataTypes type = definition.getDatatype();
+    if (type == null) {
+      logger.warn("Unsupported datatype '{}', using {}", type, DataTypes.DEFAULT_DATA_TYPE);
+      type = DataTypes.DEFAULT_DATA_TYPE;
     }
-    this.dataType = dt;
+    this.dataType = type;
   }
 
-  protected FlagInstance<?> getInstance() {
+  protected IFlagInstance getInstance() {
     return instance;
   }
 
-  public DataType getDataType() {
+  public DataTypes getDataType() {
     return dataType;
   }
 
@@ -83,7 +85,7 @@ public class FlagPropertyGenerator
 
   @Override
   protected TypeName getJavaType() {
-    return getDataType().getTypeName();
+    return ClassName.get(getDataType().getJavaTypeAdapter().getJavaClass());
   }
 
   @Override
@@ -92,28 +94,32 @@ public class FlagPropertyGenerator
   }
 
   @Override
-  protected Set<ObjectDefinition> buildField(FieldSpec.Builder builder) {
+  protected Set<MetaschemaFlaggedDefinition> buildField(FieldSpec.Builder builder) {
     AnnotationSpec.Builder annotation = AnnotationSpec.builder(Flag.class)
-        .addMember("name", "$S", instance.getName());
+        .addMember("useName", "$S", instance.getName());
 
     if (getInstance().isRequired()) {
       annotation.addMember("required", "$L", true);
     }
 
-    DataType valueDataType = getDataType();
+    DataTypes valueDataType = getDataType();
     annotation.addMember("typeAdapter", "$T.class",
-        valueDataType.getJavaTypeAdapterClass());
+        valueDataType.getJavaTypeAdapter().getClass());
 
     builder.addAnnotation(annotation.build());
 
-    FlagInstance<?> instance = getInstance();
-    ObjectDefinition parent = instance.getContainingDefinition();
+    IFlagInstance instance = getInstance();
+    IFlaggedDefinition parent = instance.getContainingDefinition();
     if (parent.hasJsonKey() && instance.equals(parent.getJsonKeyFlagInstance())) {
       builder.addAnnotation(JsonKey.class);
     }
 
-    if (parent instanceof FieldDefinition && instance.isJsonValueKeyFlag()) {
-      builder.addAnnotation(JsonFieldValueKey.class);
+    if (parent instanceof IFieldDefinition) {
+      IFieldDefinition parentField = (IFieldDefinition)parent;
+      
+      if (parentField.hasJsonValueKeyFlagInstance() && instance.equals(parentField.getJsonValueKeyFlagInstance())) {
+        builder.addAnnotation(JsonFieldValueKeyFlag.class);
+      }
     }
     return Collections.emptySet();
   }

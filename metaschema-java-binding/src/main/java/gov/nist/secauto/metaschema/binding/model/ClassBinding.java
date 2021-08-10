@@ -37,8 +37,9 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
-import gov.nist.secauto.metaschema.binding.model.property.Property;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
+import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
 import org.codehaus.stax2.XMLStreamReader2;
 
@@ -54,7 +55,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public interface ClassBinding {
+public interface ClassBinding extends IFlaggedDefinition {
   BindingContext getBindingContext();
 
   /**
@@ -64,26 +65,14 @@ public interface ClassBinding {
    */
   Class<?> getBoundClass();
 
-  /**
-   * Get the JSON key flag, if there is one.
-   * 
-   * @return the JSON key flag, or {@code null} if there isn't one
-   */
-  FlagProperty getJsonKey();
 
-  /**
-   * Get the class's flag properties.
-   * 
-   * @return a mapping of field name to property
-   */
-  Map<String, FlagProperty> getFlagProperties();
+  // Provides a compatible return value
+  @Override
+  Map<String, ? extends FlagProperty> getFlagInstances();
 
-  /**
-   * Get the class's properties.
-   * 
-   * @return a mapping of field name to property
-   */
-  Map<String, ? extends Property> getProperties();
+  // Provides a compatible return value
+  @Override
+  FlagProperty getJsonKeyFlagInstance();
 
   /**
    * Get the class's properties that match the filter.
@@ -92,7 +81,7 @@ public interface ClassBinding {
    *          a filter to apply or {@code null} if no filtering is needed
    * @return a collection of properties
    */
-  Map<String, ? extends NamedProperty> getProperties(Predicate<FlagProperty> flagFilter);
+  Map<String, ? extends NamedProperty> getNamedInstances(Predicate<FlagProperty> flagFilter);
 
   /**
    * Reads a JSON/YAML object storing the associated data in a Java class instance and adds the

@@ -113,7 +113,7 @@ public class MarkupLineAdapter
   }
 
   @Override
-  public String getDefaultJsonFieldName() {
+  public String getDefaultJsonValueKey() {
     return "RICHTEXT";
   }
 }

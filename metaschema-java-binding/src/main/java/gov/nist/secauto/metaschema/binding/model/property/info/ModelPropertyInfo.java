@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.property.ModelProperty;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
 import java.io.IOException;
 
@@ -45,7 +45,7 @@ public interface ModelPropertyInfo {
    * 
    * @return the property
    */
-  ModelProperty getProperty();
+  NamedModelProperty getProperty();
 
   /**
    * Get the type of the bound object.

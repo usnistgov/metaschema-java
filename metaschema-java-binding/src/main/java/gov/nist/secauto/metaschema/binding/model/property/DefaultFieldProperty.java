@@ -30,21 +30,30 @@ import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
-import gov.nist.secauto.metaschema.binding.model.annotations.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
-import gov.nist.secauto.metaschema.binding.model.annotations.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.XmlBindingSupplier;
+import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -52,8 +61,8 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 public class DefaultFieldProperty
-    extends AbstractModelProperty
-    implements ModelProperty {
+    extends AbstractNamedModelProperty
+    implements FieldProperty {
 
   public static DefaultFieldProperty createInstance(AssemblyClassBinding parentClassBinding,
       java.lang.reflect.Field field) {
@@ -63,6 +72,7 @@ public class DefaultFieldProperty
 
   private final Field field;
   private final JavaTypeAdapter<?> javaTypeAdapter;
+  private IFieldDefinition definition;
 
   public DefaultFieldProperty(AssemblyClassBinding parentClassBinding, java.lang.reflect.Field field) {
     super(parentClassBinding, field);
@@ -90,27 +100,28 @@ public class DefaultFieldProperty
     return javaTypeAdapter;
   }
 
-  public boolean isXmlWrapped() {
+  @Override
+  public boolean isInXmlWrapped() {
     return getFieldAnnotation().inXmlWrapped();
   }
 
   @Override
-  public int getMinimumOccurance() {
+  public int getMinOccurs() {
     return getFieldAnnotation().minOccurs();
   }
 
   @Override
-  public int getMaximumOccurance() {
+  public int getMaxOccurs() {
     return getFieldAnnotation().maxOccurs();
   }
 
   @Override
-  protected String getXmlGroupLocalName() {
+  public String getGroupAsName() {
     return ModelUtil.resolveLocalName(getFieldAnnotation().groupName(), null);
   }
 
   @Override
-  protected String getXmlGroupNamespace() {
+  public String getGroupAsXmlNamespace() {
     return ModelUtil.resolveNamespace(getFieldAnnotation().groupNamespace(), getParentClassBinding(), false);
   }
 
@@ -125,12 +136,12 @@ public class DefaultFieldProperty
   }
 
   @Override
-  protected String getXmlLocalName() {
-    return ModelUtil.resolveLocalName(getFieldAnnotation().name(), getJavaPropertyName());
+  public String getUseName() {
+    return ModelUtil.resolveLocalName(getFieldAnnotation().useName(), getJavaPropertyName());
   }
 
   @Override
-  protected String getXmlNamespace() {
+  public String getXmlNamespace() {
     return ModelUtil.resolveNamespace(getFieldAnnotation().namespace(), getParentClassBinding(), false);
   }
 
@@ -144,7 +155,7 @@ public class DefaultFieldProperty
     // figure out if we need to parse the wrapper or not
     JavaTypeAdapter<?> adapter = getJavaTypeAdapter();
     boolean parseWrapper = true;
-    if (adapter != null && !isXmlWrapped() && adapter.isUnrappedValueAllowedInXml()) {
+    if (adapter != null && !isInXmlWrapped() && adapter.isUnrappedValueAllowedInXml()) {
       parseWrapper = false;
     }
 
@@ -188,7 +199,7 @@ public class DefaultFieldProperty
     DataTypeHandler handler = getBindingSupplier();
 
     // figure out if we need to parse the wrapper or not
-    boolean writeWrapper = isXmlWrapped() || !handler.isUnrappedValueAllowedInXml();
+    boolean writeWrapper = isInXmlWrapped() || !handler.isUnrappedValueAllowedInXml();
 
     XMLStreamWriter2 writer = context.getWriter();
 
@@ -207,5 +218,109 @@ public class DefaultFieldProperty
       writer.writeEndElement();
     }
     return true;
+  }
+
+  @Override
+  public AssemblyClassBinding getContainingDefinition() {
+    return getParentClassBinding();
+  }
+
+  @Override
+  public String toCoordinates() {
+    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(), getName(), getParentClassBinding().getBoundClass().getName(), getField().getName());
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public IFieldDefinition getDefinition() {
+    synchronized (this) {
+      if (definition == null) {
+        DataTypeHandler handler = getBindingSupplier();
+        ClassBinding classBinding = handler.getClassBinding();
+        if (classBinding == null) {
+          definition = new ScalarFieldDefinition();
+        } else {
+          definition = (FieldClassBinding)classBinding;
+        }
+      }
+    }
+    return definition;
+  }
+
+  private class ScalarFieldDefinition implements IFieldDefinition {
+    @Override
+    public DataTypes getDatatype() {
+      return DataTypes.getDataTypeForAdapter(getJavaTypeAdapter());
+    }
+
+    @Override
+    public String getName() {
+      return DefaultFieldProperty.this.getName();
+    }
+
+    @Override
+    public String getUseName() {
+      return null;
+    }
+
+    @Override
+    public String getXmlNamespace() {
+      return DefaultFieldProperty.this.getXmlNamespace();
+    }
+
+    @Override
+    public MarkupMultiline getRemarks() {
+      return DefaultFieldProperty.this.getRemarks();
+    }
+
+    @Override
+    public String toCoordinates() {
+      return DefaultFieldProperty.this.toCoordinates();
+    }
+
+    @Override
+    public Map<String, ? extends IFlagInstance> getFlagInstances() {
+      return Collections.emptyMap();
+    }
+
+    @Override
+    public boolean hasJsonKey() {
+      return false;
+    }
+
+    @Override
+    public IFlagInstance getJsonKeyFlagInstance() {
+      return null;
+    }
+
+//    @Override
+//    public boolean hasJsonValueKey() {
+//      return false;
+//    }
+
+    @Override
+    public IFlagInstance getJsonValueKeyFlagInstance() {
+      return null;
+    }
+
+    @Override
+    public String getJsonValueKeyName() {
+      return null;
+    }
+
+    @Override
+    public boolean isCollapsible() {
+      return false;
+    }
+
+    @Override
+    public ModelType getModelType() {
+      // TODO Auto-generated method stub
+      return null;
+    }
   }
 }

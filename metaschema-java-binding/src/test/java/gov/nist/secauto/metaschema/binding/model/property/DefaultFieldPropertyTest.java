@@ -43,10 +43,10 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
-import gov.nist.secauto.metaschema.binding.model.annotations.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-import gov.nist.secauto.metaschema.binding.model.annotations.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
+import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.jmock.Expectations;
@@ -278,11 +278,13 @@ class DefaultFieldPropertyTest {
   @MetaschemaAssembly
   public static class TestField {
     @Field(
-        typeAdapter = StringAdapter.class)
+        typeAdapter = StringAdapter.class,
+        inJson = JsonGroupAsBehavior.NONE,
+        inXml = XmlGroupAsBehavior.UNGROUPED)
     private String field1;
 
     @Field(
-        name = "field2",
+        useName = "field2",
         groupName = "fields2",
         maxOccurs = -1,
         inXml = XmlGroupAsBehavior.GROUPED,

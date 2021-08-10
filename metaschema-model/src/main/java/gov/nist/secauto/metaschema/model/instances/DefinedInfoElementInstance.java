@@ -26,11 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.instances;
 
-import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 
-public interface DefinedInfoElementInstance<PARENT extends ObjectDefinition, DEF extends InfoElementDefinition>
-    extends InfoElementInstance<PARENT> {
+/**
+ * Represents an information element instance that has an associated definition.
+ *
+ * @param <DEFINITION> the type of the element's definition
+ */
+public interface DefinedInfoElementInstance<DEFINITION extends MetaschemaDefinition>
+    extends MetaschemaInstance, INamedInstance {
 
   /**
    * Generates a "coordinate" string for the provided information element instance.
@@ -46,9 +51,10 @@ public interface DefinedInfoElementInstance<PARENT extends ObjectDefinition, DEF
    * 
    * @return the coordinate
    */
+  @Override
   default String toCoordinates() {
-    InfoElementDefinition containingDefinition = getContainingDefinition();
-    InfoElementDefinition definition = getDefinition();
+    MetaschemaDefinition containingDefinition = getContainingDefinition();
+    MetaschemaDefinition definition = getDefinition();
 
     return String.format("%s:%s:%s@%d(%d)", containingDefinition.getContainingMetaschema().getShortName(),
         getModelType(), definition != null ? definition.getName() : "N/A", hashCode(),
@@ -60,5 +66,6 @@ public interface DefinedInfoElementInstance<PARENT extends ObjectDefinition, DEF
    * 
    * @return the corresponding info element definition
    */
-  DEF getDefinition();
+  @Override
+  DEFINITION getDefinition();
 }

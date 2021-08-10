@@ -26,20 +26,19 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.GlobalFlagDefinition;
-import gov.nist.itl.metaschema.model.m4.xml.ScopeType;
+import gov.nist.itl.metaschema.model.m4.xml.GlobalFlagDefinitionType;
+import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.definitions.AbstractFlagDefinition;
-import gov.nist.secauto.metaschema.model.definitions.DataType;
+import gov.nist.secauto.metaschema.model.definitions.AbstractInfoElementDefinition;
+import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.GlobalInfoElementDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
 
-public class XmlGlobalFlagDefinition
-    extends AbstractFlagDefinition
-    implements GlobalInfoElementDefinition {
-  private final GlobalFlagDefinition xmlFlag;
+public class XmlGlobalFlagDefinition extends AbstractInfoElementDefinition
+    implements FlagDefinition, GlobalInfoElementDefinition {
+  private final GlobalFlagDefinitionType xmlFlag;
 
   /**
    * Constructs a new Metaschema flag definition from an XML representation bound to Java objects.
@@ -49,7 +48,7 @@ public class XmlGlobalFlagDefinition
    * @param metaschema
    *          the containing Metaschema
    */
-  public XmlGlobalFlagDefinition(GlobalFlagDefinition xmlFlag, XmlMetaschema metaschema) {
+  public XmlGlobalFlagDefinition(GlobalFlagDefinitionType xmlFlag, XmlMetaschema metaschema) {
     super(metaschema);
     this.xmlFlag = xmlFlag;
   }
@@ -59,26 +58,22 @@ public class XmlGlobalFlagDefinition
    * 
    * @return the underlying XML data
    */
-  protected GlobalFlagDefinition getXmlFlag() {
+  protected GlobalFlagDefinitionType getXmlFlag() {
     return xmlFlag;
   }
 
   @Override
   public ModuleScopeEnum getModuleScope() {
-    ModuleScopeEnum retval = Metaschema.DEFAULT_MODEL_SCOPE;
+    ModuleScopeEnum retval = MetaschemaDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
     if (getXmlFlag().isSetScope()) {
-      switch (getXmlFlag().getScope().intValue()) {
-      case ScopeType.INT_GLOBAL:
-        retval = ModuleScopeEnum.INHERITED;
-        break;
-      case ScopeType.INT_LOCAL:
-        retval = ModuleScopeEnum.LOCAL;
-        break;
-      default:
-        throw new UnsupportedOperationException(getXmlFlag().getScope().toString());
-      }
+      retval = getXmlFlag().getScope();
     }
     return retval;
+  }
+
+  @Override
+  public String getName() {
+    return getXmlFlag().getName();
   }
 
   @Override
@@ -88,6 +83,12 @@ public class XmlGlobalFlagDefinition
       retval = getName();
     }
     return retval;
+  }
+
+  @Override
+  public String getXmlNamespace() {
+    return null;
+    // return getContainingMetaschema().getXmlNamespace().toString();
   }
 
   @Override
@@ -101,18 +102,13 @@ public class XmlGlobalFlagDefinition
   }
 
   @Override
-  public String getName() {
-    return getXmlFlag().getName();
-  }
-
-  @Override
-  public DataType getDatatype() {
-    DataType retval;
+  public DataTypes getDatatype() {
+    DataTypes retval;
     if (getXmlFlag().isSetAsType()) {
-      retval = DataType.lookup(getXmlFlag().getAsType());
+      retval = getXmlFlag().getAsType();
     } else {
       // the default
-      retval = Metaschema.DEFAULT_DATA_TYPE;
+      retval = DataTypes.DEFAULT_DATA_TYPE;
     }
     return retval;
   }

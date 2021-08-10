@@ -34,9 +34,10 @@ import com.squareup.javapoet.TypeSpec;
 import gov.nist.secauto.metaschema.codegen.property.FlagPropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.PropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
+import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 import gov.nist.secauto.metaschema.model.instances.FlagInstance;
 
 import org.apache.commons.lang3.builder.MultilineRecursiveToStringStyle;
@@ -56,7 +57,8 @@ import java.util.Set;
 
 import javax.lang.model.element.Modifier;
 
-public abstract class AbstractJavaClassGenerator<DEFINITION extends ObjectDefinition> implements JavaClassGenerator {
+public abstract class AbstractJavaClassGenerator<DEFINITION extends MetaschemaFlaggedDefinition>
+    implements JavaClassGenerator {
   private static final Logger logger = LogManager.getLogger(AbstractJavaClassGenerator.class);
 
   private final DEFINITION definition;
@@ -77,6 +79,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends ObjectDefini
     Objects.requireNonNull(typeResolver, "typeResolver");
     this.definition = definition;
     this.typeResolver = typeResolver;
+    this.hasJsonKeyFlag = definition.hasJsonKey();
 
     // create Java properties for the definition's flags
     for (FlagInstance<?> instance : definition.getFlagInstances().values()) {
@@ -140,15 +143,14 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends ObjectDefini
    */
   protected TypeSpec.Builder generateClass(ClassName className, boolean isChild) throws IOException {
 
-    TypeSpec.Builder builder = TypeSpec.classBuilder(className)
-        .addModifiers(Modifier.PUBLIC);
+    TypeSpec.Builder builder = TypeSpec.classBuilder(className).addModifiers(Modifier.PUBLIC);
     if (isChild) {
       builder.addModifiers(Modifier.STATIC);
     }
 
-    Set<ObjectDefinition> additionalChildClasses = buildClass(builder);
+    Set<MetaschemaFlaggedDefinition> additionalChildClasses = buildClass(builder);
 
-    for (ObjectDefinition definition : additionalChildClasses) {
+    for (MetaschemaFlaggedDefinition definition : additionalChildClasses) {
       TypeSpec.Builder childBuilder;
       switch (definition.getModelType()) {
       case ASSEMBLY:
@@ -170,7 +172,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends ObjectDefini
 
   /**
    * Identifies if this class to generate is a root data element in the bound (.i.e., XML, JSON, etc.)
-   * model. This provides a conveninient way to query the root status of the underlying object
+   * model. This provides a convenient way to query the root status of the underlying object
    * definition based on what is known in the subclasses of this class.
    * 
    * @return {@code true} if the class to be generated is a possible model root, or {@code false}
@@ -202,9 +204,6 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends ObjectDefini
    * @return the new property generator
    */
   public FlagPropertyGenerator newFlagPropertyGenerator(FlagInstance<?> instance) {
-    if (instance.isJsonKeyFlag()) {
-      hasJsonKeyFlag = true;
-    }
     FlagPropertyGenerator context = new FlagPropertyGenerator(instance, this);
     addPropertyGenerator(context);
     return context;
@@ -243,28 +242,22 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends ObjectDefini
    * @throws IOException
    *           if an error occurred while building the class
    */
-  protected Set<ObjectDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
+  protected Set<MetaschemaFlaggedDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
     builder.addJavadoc(getDefinition().getDescription().toHtml());
 
     // generate a no-arg constructor
-    builder.addMethod(MethodSpec.constructorBuilder()
-        .addModifiers(Modifier.PUBLIC)
-        .build());
+    builder.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC).build());
 
     // generate all the properties and access methods
-    Set<ObjectDefinition> additionalChildClasses = new HashSet<>();
+    Set<MetaschemaFlaggedDefinition> additionalChildClasses = new HashSet<>();
     for (PropertyGenerator property : getPropertyGenerators()) {
       additionalChildClasses.addAll(property.build(builder, getTypeResolver()));
     }
 
     // generate a toString method that will help with debugging
-    MethodSpec.Builder toString
-        = MethodSpec.methodBuilder("toString")
-            .addModifiers(Modifier.PUBLIC)
-            .returns(String.class)
-            .addAnnotation(Override.class);
-    toString.addStatement("return new $T(this, $T.MULTI_LINE_STYLE).toString()",
-        ReflectionToStringBuilder.class,
+    MethodSpec.Builder toString = MethodSpec.methodBuilder("toString").addModifiers(Modifier.PUBLIC)
+        .returns(String.class).addAnnotation(Override.class);
+    toString.addStatement("return new $T(this, $T.MULTI_LINE_STYLE).toString()", ReflectionToStringBuilder.class,
         MultilineRecursiveToStringStyle.class);
     builder.addMethod(toString.build());
     return Collections.unmodifiableSet(additionalChildClasses);

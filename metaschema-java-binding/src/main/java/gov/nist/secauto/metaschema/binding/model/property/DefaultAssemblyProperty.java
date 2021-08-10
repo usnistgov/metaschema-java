@@ -32,11 +32,13 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
-import gov.nist.secauto.metaschema.binding.model.annotations.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.binding.model.annotations.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -50,7 +52,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 public class DefaultAssemblyProperty
-    extends AbstractModelProperty
+    extends AbstractNamedModelProperty
     implements AssemblyProperty {
 
   public static DefaultAssemblyProperty createInstance(AssemblyClassBinding parentClassBinding, Field field) {
@@ -74,32 +76,32 @@ public class DefaultAssemblyProperty
   }
 
   @Override
-  protected String getXmlLocalName() {
-    return ModelUtil.resolveLocalName(getAssemblyAnnotation().name(), getJavaPropertyName());
+  public String getUseName() {
+    return ModelUtil.resolveLocalName(getAssemblyAnnotation().useName(), getName());
   }
 
   @Override
-  protected String getXmlNamespace() {
+  public String getXmlNamespace() {
     return ModelUtil.resolveNamespace(getAssemblyAnnotation().namespace(), getParentClassBinding(), false);
   }
 
   @Override
-  public int getMinimumOccurance() {
+  public int getMinOccurs() {
     return getAssemblyAnnotation().minOccurs();
   }
 
   @Override
-  public int getMaximumOccurance() {
+  public int getMaxOccurs() {
     return getAssemblyAnnotation().maxOccurs();
   }
 
   @Override
-  protected String getXmlGroupLocalName() {
+  public String getGroupAsName() {
     return ModelUtil.resolveLocalName(getAssemblyAnnotation().groupName(), null);
   }
 
   @Override
-  protected String getXmlGroupNamespace() {
+  public String getGroupAsXmlNamespace() {
     return ModelUtil.resolveNamespace(getAssemblyAnnotation().groupNamespace(), getParentClassBinding(), false);
   }
 
@@ -162,5 +164,26 @@ public class DefaultAssemblyProperty
     writer.writeEndElement();
 
     return true;
+  }
+
+  @Override
+  public AssemblyClassBinding getContainingDefinition() {
+    return getParentClassBinding();
+  }
+
+  @Override
+  public String toCoordinates() {
+    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(), getName(), getParentClassBinding().getBoundClass().getName(), getField().getName());
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public AssemblyClassBinding getDefinition() {
+    DataTypeHandler handler = getBindingSupplier();
+    return (AssemblyClassBinding)handler.getClassBinding();
   }
 }

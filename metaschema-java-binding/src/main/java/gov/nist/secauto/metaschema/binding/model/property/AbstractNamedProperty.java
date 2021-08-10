@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,40 +42,18 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-import javax.xml.namespace.QName;
-
 public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
     extends AbstractProperty<CLASS_BINDING>
-    implements NamedProperty {
+    implements NamedProperty, INamedInstance {
   private static final Logger logger = LogManager.getLogger(AbstractNamedProperty.class);
-
-  private QName xmlQName;
 
   public AbstractNamedProperty(Field field, CLASS_BINDING parentClassBinding) {
     super(field, parentClassBinding);
   }
 
   @Override
-  public String getJsonPropertyName() {
-    return getXmlQName().getLocalPart();
-  }
-
-  protected abstract String getXmlLocalName();
-
-  protected abstract String getXmlNamespace();
-
-  @Override
-  public synchronized QName getXmlQName() {
-    if (xmlQName == null) {
-      String localName = getXmlLocalName();
-      String namespace = getXmlNamespace();
-      if (namespace != null) {
-        xmlQName = new QName(namespace, localName);
-      } else {
-        xmlQName = new QName(localName);
-      }
-    }
-    return xmlQName;
+  public String getName() {
+    return getJavaPropertyName();
   }
 
   @Override
@@ -89,7 +68,7 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
       logger.trace("reading property {}", propertyName);
     }
     boolean handled = false;
-    if (getJsonPropertyName().equals(propertyName)) {
+    if (getJsonName().equals(propertyName)) {
       // advance past the property name
       parser.nextFieldName();
       // parse the value

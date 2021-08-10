@@ -152,12 +152,12 @@ class DefaultFlagPropertyTest {
       rootNamespace = "http://example.com/ns")
   private static class SimpleAssembly {
     @Flag(
-        name = "id",
+        useName = "id",
         typeAdapter = StringAdapter.class)
     private String _id;
 
     @Flag(
-        name = "number",
+        useName = "number",
         typeAdapter = IntegerAdapter.class)
     private BigInteger _number;
 

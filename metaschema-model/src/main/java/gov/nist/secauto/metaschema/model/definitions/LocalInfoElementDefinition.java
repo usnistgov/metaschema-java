@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.definitions;
 
 import gov.nist.secauto.metaschema.model.instances.DefinedInfoElementInstance;
-import gov.nist.secauto.metaschema.model.instances.InfoElementInstance;
+import gov.nist.secauto.metaschema.model.instances.MetaschemaInstance;
 
 /**
  * A trait indicating that the implementation is a localized information element definition that is
@@ -36,9 +36,8 @@ import gov.nist.secauto.metaschema.model.instances.InfoElementInstance;
  * @param <INSTANCE>
  *          the associated instance type
  */
-public interface LocalInfoElementDefinition<INSTANCE extends DefinedInfoElementInstance<?,
-    ? extends LocalInfoElementDefinition<INSTANCE>>>
-    extends InfoElementDefinition {
+public interface LocalInfoElementDefinition<INSTANCE extends DefinedInfoElementInstance<
+    ? extends LocalInfoElementDefinition<INSTANCE>>> extends MetaschemaDefinition {
 
   @Override
   default boolean isGlobal() {
@@ -46,7 +45,7 @@ public interface LocalInfoElementDefinition<INSTANCE extends DefinedInfoElementI
   }
 
   /**
-   * Retrieves the {@link InfoElementInstance} associated with this definition.
+   * Retrieves the {@link MetaschemaInstance} associated with this definition.
    * 
    * @return the associated instance
    */

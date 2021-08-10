@@ -33,11 +33,12 @@ import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.codegen.property.ModelInstancePropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.PropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
+import gov.nist.secauto.metaschema.model.common.IModelContainer;
+import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ModelContainer;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.instances.AssemblyModelInstance;
 import gov.nist.secauto.metaschema.model.instances.ChoiceInstance;
-import gov.nist.secauto.metaschema.model.instances.ModelInstance;
 import gov.nist.secauto.metaschema.model.instances.ObjectModelInstance;
 
 import java.io.IOException;
@@ -68,8 +69,8 @@ public class AssemblyJavaClassGenerator
   }
 
   @Override
-  protected Set<ObjectDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
-    Set<ObjectDefinition> retval = new HashSet<>();
+  protected Set<MetaschemaFlaggedDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
+    Set<MetaschemaFlaggedDefinition> retval = new HashSet<>();
     retval.addAll(super.buildClass(builder));
 
     AnnotationSpec.Builder metaschemaAssembly = AnnotationSpec.builder(MetaschemaAssembly.class);
@@ -83,9 +84,9 @@ public class AssemblyJavaClassGenerator
     return retval;
   }
 
-  private void processModel(ModelContainer model) {
+  private void processModel(IModelContainer model) {
     // create model instances for the model
-    for (ModelInstance instance : model.getModelInstances()) {
+    for (IModelInstance instance : model.getModelInstances()) {
       if (instance instanceof ChoiceInstance) {
         processModel((ChoiceInstance) instance);
         continue;
@@ -97,7 +98,7 @@ public class AssemblyJavaClassGenerator
   }
 
   /**
-   * Creates a new {@link PropertyGenerator} for the provided {@link ModelInstance} and registers it
+   * Creates a new {@link PropertyGenerator} for the provided {@link AssemblyModelInstance} and registers it
    * with this class generator.
    * 
    * @param instance

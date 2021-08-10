@@ -82,7 +82,7 @@ public abstract class AbstractJavaTypeAdapter<TYPE> implements JavaTypeAdapter<T
   }
 
   @Override
-  public String getDefaultJsonFieldName() {
+  public String getDefaultJsonValueKey() {
     return DEFAULT_JSON_FIELD_NAME;
   }
 

@@ -72,11 +72,10 @@ public class DefaultJsonProblemHandler implements JsonProblemHandler {
     return false;
   }
 
-  // TODO: implement this
   @Override
-  public Map<Property, JsonBindingSupplier> handleUnknownProperty(ClassBinding classBinding, String propertyName,
+  public boolean handleUnknownProperty(ClassBinding classBinding, String propertyName,
       JsonParsingContext parsingContext) throws BindingException, IOException {
-    return Collections.emptyMap();
+    return false;
   }
 
   // TODO: implement this

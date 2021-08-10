@@ -39,13 +39,14 @@ import java.lang.annotation.Target;
 @Target({ FIELD, METHOD })
 public @interface Flag {
   /**
-   * Name of the XML Schema element.
+   * The model name to use for singleton values. This name will be used for associated XML attributes
+   * and JSON properties.
    * <p>
    * If the value is "##default", then element name is derived from the JavaBean property name.
    * 
    * @return the name
    */
-  String name() default "##default";
+  String useName() default "##default";
 
   /**
    * XML target namespace of the XML Schema element.

@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.property.ModelProperty;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -49,14 +49,14 @@ public class SingletonPropertyInfo
     extends AbstractModelPropertyInfo<Type>
     implements ModelPropertyInfo {
 
-  public SingletonPropertyInfo(ModelProperty property) {
+  public SingletonPropertyInfo(NamedModelProperty property) {
     super(property);
   }
 
   @Override
   public boolean readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
-    ModelProperty property = getProperty();
+    NamedModelProperty property = getProperty();
 
     JsonParser parser = context.getReader();
 
@@ -95,13 +95,13 @@ public class SingletonPropertyInfo
   @Override
   public boolean writeValue(Object parentInstance, QName parentName, XmlWritingContext context)
       throws XMLStreamException, IOException {
-    ModelProperty property = getProperty();
+    NamedModelProperty property = getProperty();
     return property.writeItem(property.getValue(parentInstance), parentName, context);
   }
 
   @Override
   public void writeValue(Object parentInstance, JsonWritingContext context) throws IOException {
-    ModelProperty property = getProperty();
+    NamedModelProperty property = getProperty();
     getProperty().getBindingSupplier().writeItems(Collections.singleton(property.getValue(parentInstance)), true,
         context);
   }

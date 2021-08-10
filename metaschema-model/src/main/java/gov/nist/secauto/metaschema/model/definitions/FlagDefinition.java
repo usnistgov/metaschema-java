@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.definitions;
 
-import gov.nist.secauto.metaschema.model.Flag;
+import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 
-public interface FlagDefinition extends InfoElementDefinition, Flag, ValuedObject {
+public interface FlagDefinition extends MetaschemaDefinition, IFlagDefinition {
 }

@@ -122,7 +122,7 @@ public class DefaultJsonDeserializer<CLASS>
     // }
 
     AssemblyClassBinding classBinding = getClassBinding();
-    String rootFieldName = classBinding.getJsonRootName();
+    String rootFieldName = classBinding.getRootJsonName();
     if (getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT, false) && rootFieldName == null
         && logger.isDebugEnabled()) {
       logger.debug(String.format(

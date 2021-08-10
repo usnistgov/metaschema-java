@@ -33,6 +33,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+//TODO: remove this and move this to MetaschemaField/MetaschemaAssembly
 @Retention(RUNTIME)
 @Target({ FIELD, METHOD })
 public @interface JsonKey {

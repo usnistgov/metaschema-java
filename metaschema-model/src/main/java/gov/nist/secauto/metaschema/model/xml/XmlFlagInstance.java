@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.itl.metaschema.model.m4.xml.FlagDocument;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFlagInstance;
 
 public class XmlFlagInstance
@@ -45,7 +45,7 @@ public class XmlFlagInstance
    * @param parent
    *          the field definition this object is an instance of
    */
-  public XmlFlagInstance(FlagDocument.Flag xmlFlag, ObjectDefinition parent) {
+  public XmlFlagInstance(FlagDocument.Flag xmlFlag, MetaschemaFlaggedDefinition parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
   }
@@ -71,6 +71,11 @@ public class XmlFlagInstance
   }
 
   @Override
+  public String getXmlNamespace() {
+    return null;
+  }
+
+  @Override
   public MarkupMultiline getRemarks() {
     return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
   }
@@ -86,7 +91,7 @@ public class XmlFlagInstance
 
   @Override
   public boolean isRequired() {
-    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : Metaschema.DEFAULT_REQUIRED;
+    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : Defaults.DEFAULT_FLAG_REQUIRED;
   }
 
   @Override

@@ -26,10 +26,11 @@
 
 package gov.nist.secauto.metaschema.model;
 
+import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
-import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
 
 import org.apache.logging.log4j.LogManager;
@@ -89,7 +90,7 @@ public abstract class AbstractMetaschema implements Metaschema {
     return Collections.unmodifiableMap(exportedAssemblyDefinitions);
   }
 
-  private static class ExportedDefinitionsFilter<DEF extends InfoElementDefinition> implements Predicate<DEF> {
+  private static class ExportedDefinitionsFilter<DEF extends MetaschemaDefinition> implements Predicate<DEF> {
     @Override
     public boolean test(DEF definition) {
       return ModuleScopeEnum.INHERITED.equals(definition.getModuleScope())
@@ -103,7 +104,7 @@ public abstract class AbstractMetaschema implements Metaschema {
     throw new UnsupportedOperationException();
   }
 
-  private static <DEF extends InfoElementDefinition> void addToMap(Collection<DEF> items,
+  private static <DEF extends MetaschemaDefinition> void addToMap(Collection<DEF> items,
       Map<String, DEF> existingMap) {
     for (DEF item : items) {
       DEF oldItem = existingMap.put(item.getName(), item);

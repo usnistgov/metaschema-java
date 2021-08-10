@@ -37,11 +37,14 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
-import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
+import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 
@@ -61,6 +64,7 @@ public class DefaultFlagProperty
 
   private final Flag flag;
   private final JavaTypeAdapter<?> javaTypeAdapter;
+  private InternalFlagDefinition definition;
 
   public DefaultFlagProperty(ClassBinding parentClassBinding, Field field, BindingContext bindingContext) {
     super(field, parentClassBinding);
@@ -72,27 +76,32 @@ public class DefaultFlagProperty
     return flag;
   }
 
-  @Override
-  public boolean isJsonKey() {
-    return getField().isAnnotationPresent(JsonKey.class);
-  }
+//  @Override
+//  public boolean isJsonKey() {
+//    return getField().isAnnotationPresent(JsonKey.class);
+//  }
+
+//  @Override
+//  public boolean isJsonValueKey() {
+//    return getField().isAnnotationPresent(JsonFieldValueKeyFlag.class);
+//  }
 
   @Override
-  public boolean isJsonValueKey() {
-    return getField().isAnnotationPresent(JsonFieldValueKey.class);
+  public boolean isRequired() {
+    return getFlagAnnotation().required();
   }
-
+  
   public JavaTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
 
   @Override
-  protected String getXmlLocalName() {
-    return ModelUtil.resolveLocalName(getFlagAnnotation().name(), getJavaPropertyName());
+  public String getUseName() {
+    return ModelUtil.resolveLocalName(getFlagAnnotation().useName(), getJavaPropertyName());
   }
 
   @Override
-  protected String getXmlNamespace() {
+  public String getXmlNamespace() {
     return ModelUtil.resolveNamespace(getFlagAnnotation().namespace(), getParentClassBinding(), true);
   }
 
@@ -187,7 +196,7 @@ public class DefaultFlagProperty
     Object value = getValue(instance);
     if (value != null) {
       // write the field name
-      writer.writeFieldName(getJsonPropertyName());
+      writer.writeFieldName(getJsonName());
 
       // write the value
       writeValue(value, context);
@@ -202,5 +211,62 @@ public class DefaultFlagProperty
   @Override
   public void writeValue(Object value, JsonWritingContext context) throws IOException {
     getJavaTypeAdapter().writeJsonValue(value, context.getWriter());
+  }
+
+  @Override
+  public ClassBinding getContainingDefinition() {
+    return getParentClassBinding();
+  }
+
+  @Override
+  public String toCoordinates() {
+    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(), getName(), getParentClassBinding().getBoundClass().getName(), getField().getName());
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public IFlagDefinition getDefinition() {
+    synchronized (this) {
+      if (definition == null) {
+        definition = new InternalFlagDefinition();
+      }
+    }
+    return definition;
+  }
+
+  private class InternalFlagDefinition implements IFlagDefinition {
+    @Override
+    public DataTypes getDatatype() {
+      return DataTypes.getDataTypeForAdapter(getJavaTypeAdapter());
+    }
+
+    @Override
+    public String getName() {
+      return DefaultFlagProperty.this.getName();
+    }
+
+    @Override
+    public String getUseName() {
+      return null;
+    }
+
+    @Override
+    public String getXmlNamespace() {
+      return DefaultFlagProperty.this.getXmlNamespace();
+    }
+
+    @Override
+    public MarkupMultiline getRemarks() {
+      return DefaultFlagProperty.this.getRemarks();
+    }
+
+    @Override
+    public String toCoordinates() {
+      return DefaultFlagProperty.this.toCoordinates();
+    }
   }
 }

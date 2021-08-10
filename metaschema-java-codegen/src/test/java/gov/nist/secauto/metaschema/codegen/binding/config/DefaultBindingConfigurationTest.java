@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
-import gov.nist.secauto.metaschema.model.ModelType;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 
 import org.jmock.Expectations;
 import org.jmock.junit5.JUnit5Mockery;
@@ -52,7 +52,7 @@ class DefaultBindingConfigurationTest {
 
   @RegisterExtension
   JUnit5Mockery context = new JUnit5Mockery();
-  private ObjectDefinition definition = context.mock(ObjectDefinition.class);
+  private MetaschemaFlaggedDefinition definition = context.mock(MetaschemaFlaggedDefinition.class);
   private Metaschema metaschema = context.mock(Metaschema.class);
 
   @Test

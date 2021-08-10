@@ -118,7 +118,7 @@ public class DefaultXmlDeserializer<CLASS>
     AssemblyClassBinding classBinding = getClassBinding();
     Class<?> clazz = getClassBinding().getBoundClass();
 
-    QName rootQName = classBinding.getXmlRootQName();
+    QName rootQName = classBinding.getRootXmlQName();
 
     XmlParsingContext parsingContext = new DefaultXmlParsingContext(reader);
     CLASS retval = null;

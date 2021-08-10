@@ -26,21 +26,22 @@
 
 package gov.nist.secauto.metaschema.model.instances;
 
-import gov.nist.secauto.metaschema.model.Field;
-import gov.nist.secauto.metaschema.model.ModelType;
+import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
 
-public interface FieldInstance<DEF extends FieldDefinition> extends ObjectModelInstance<DEF>, Field {
-
+public interface FieldInstance<DEFINITION extends FieldDefinition>
+    extends ObjectModelInstance<DEFINITION>, IFieldInstance {
   /**
-   * Determines if the field is configured to have a wrapper in XML.
+   * Determines if the instance is a simple field value without flags, or if it has a complex
+   * structure (i.e, flags, model).
    * 
-   * @return {@code true} if an XML wrapper is required, or {@code false} otherwise
+   * @return {@code true} if the instance contains only a value, or {@code false} otherwise
    */
-  boolean hasXmlWrapper();
+  boolean isSimple();
 
   @Override
   default ModelType getModelType() {
-    return Field.super.getModelType();
+    return IFieldInstance.super.getModelType();
   }
 }

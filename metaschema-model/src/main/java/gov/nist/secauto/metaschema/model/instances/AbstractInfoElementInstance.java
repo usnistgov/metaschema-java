@@ -27,10 +27,10 @@
 package gov.nist.secauto.metaschema.model.instances;
 
 import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 
-public abstract class AbstractInfoElementInstance<PARENT extends ObjectDefinition>
-    implements InfoElementInstance<PARENT> {
+public abstract class AbstractInfoElementInstance<PARENT extends MetaschemaFlaggedDefinition>
+    implements MetaschemaInstance {
   private final PARENT parent;
 
   /**

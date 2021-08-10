@@ -49,18 +49,18 @@ public @interface FieldValue {
    * name will be used as the property name. Otherwise, the property name will default to a value
    * defined by the data type.
    * <p>
-   * Use of this annotation is mutually exclusive with the {@link JsonFieldValueKey} annotation.
+   * Use of this annotation is mutually exclusive with the {@link JsonFieldValueKeyFlag} annotation.
    * 
    * @return the name
    */
   String name() default "##none";
-
-  /**
-   * If the data type allows it, determines if the field's value must be wrapped with an element
-   * having the specified {@link #name()}.
-   * 
-   * @return {@code true} if the field must be wrapped, or {@code false} otherwise
-   */
-  boolean inXmlWrapped() default true;
+//
+//  /**
+//   * If the data type allows it, determines if the field's value must be wrapped with an element
+//   * having the specified {@link #name()}.
+//   * 
+//   * @return {@code true} if the field must be wrapped, or {@code false} otherwise
+//   */
+//  boolean inXmlWrapped() default Defaults.DEFAULT_FIELD_IN_XML_WRAPPED;
 
 }

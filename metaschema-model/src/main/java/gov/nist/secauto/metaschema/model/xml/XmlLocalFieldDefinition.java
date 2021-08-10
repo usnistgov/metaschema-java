@@ -27,20 +27,22 @@
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.itl.metaschema.model.m4.xml.FlagDocument;
-import gov.nist.itl.metaschema.model.m4.xml.LocalFieldDefinition;
-import gov.nist.itl.metaschema.model.m4.xml.LocalFlagDefinition;
+import gov.nist.itl.metaschema.model.m4.xml.LocalFieldDefinitionType;
+import gov.nist.itl.metaschema.model.m4.xml.LocalFlagDefinitionType;
+import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.definitions.AbstractFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.definitions.AbstractInfoElementDefinition;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.definitions.DataType;
+import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.LocalInfoElementDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.instances.AbstractFieldInstance;
 import gov.nist.secauto.metaschema.model.instances.FlagInstance;
-import gov.nist.secauto.metaschema.model.instances.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.instances.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.xml.XmlLocalFieldDefinition.InternalFieldDefinition;
 
 import org.apache.xmlbeans.XmlCursor;
@@ -51,9 +53,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class XmlLocalFieldDefinition
-    extends AbstractFieldInstance<InternalFieldDefinition> {
-  private final LocalFieldDefinition xmlField;
+public class XmlLocalFieldDefinition extends AbstractFieldInstance<InternalFieldDefinition> {
+  private final LocalFieldDefinitionType xmlField;
   private final InternalFieldDefinition fieldDefinition;
 
   /**
@@ -64,7 +65,7 @@ public class XmlLocalFieldDefinition
    * @param parent
    *          the parent assembly definition
    */
-  public XmlLocalFieldDefinition(LocalFieldDefinition xmlField, AssemblyDefinition parent) {
+  public XmlLocalFieldDefinition(LocalFieldDefinitionType xmlField, AssemblyDefinition parent) {
     super(parent);
     this.xmlField = xmlField;
     this.fieldDefinition = new InternalFieldDefinition();
@@ -75,7 +76,7 @@ public class XmlLocalFieldDefinition
    * 
    * @return the XML model
    */
-  protected LocalFieldDefinition getXmlField() {
+  protected LocalFieldDefinitionType getXmlField() {
     return xmlField;
   }
 
@@ -85,13 +86,13 @@ public class XmlLocalFieldDefinition
   }
 
   @Override
-  public boolean hasXmlWrapper() {
+  public boolean isInXmlWrapped() {
     boolean retval;
-    if (DataType.MARKUP_MULTILINE.equals(getDefinition().getDatatype())) {
+    if (DataTypes.MARKUP_MULTILINE.equals(getDefinition().getDatatype())) {
       // default value
-      retval = Metaschema.DEFAULT_FIELD_XML_WRAPPER;
+      retval = Defaults.DEFAULT_FIELD_IN_XML_WRAPPED;
       if (getXmlField().isSetInXml()) {
-        retval = LocalFieldDefinition.InXml.WITH_WRAPPER.equals(getXmlField().getInXml());
+        retval = getXmlField().getInXml();
       }
     } else {
       // All other data types get "wrapped"
@@ -111,13 +112,23 @@ public class XmlLocalFieldDefinition
   }
 
   @Override
+  public String getXmlNamespace() {
+    return getContainingDefinition().getXmlNamespace();
+  }
+
+  @Override
   public String getGroupAsName() {
     return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : null;
   }
 
   @Override
+  public String getGroupAsXmlNamespace() {
+    return getContainingDefinition().getXmlNamespace();
+  }
+
+  @Override
   public int getMinOccurs() {
-    int retval = Metaschema.DEFAULT_GROUP_AS_MIN_OCCURS;
+    int retval = Defaults.DEFAULT_GROUP_AS_MIN_OCCURS;
     if (getXmlField().isSetMinOccurs()) {
       retval = getXmlField().getMinOccurs().intValueExact();
     }
@@ -126,7 +137,7 @@ public class XmlLocalFieldDefinition
 
   @Override
   public int getMaxOccurs() {
-    int retval = Metaschema.DEFAULT_GROUP_AS_MAX_OCCURS;
+    int retval = Defaults.DEFAULT_GROUP_AS_MAX_OCCURS;
     if (getXmlField().isSetMaxOccurs()) {
       Object value = getXmlField().getMaxOccurs();
       if (value instanceof String) {
@@ -141,18 +152,18 @@ public class XmlLocalFieldDefinition
 
   @Override
   public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    JsonGroupAsBehavior retval = JsonGroupAsBehavior.SINGLETON_OR_LIST;
+    JsonGroupAsBehavior retval = Defaults.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
     if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInJson()) {
-      retval = JsonGroupAsBehavior.lookup(getXmlField().getGroupAs().getInJson());
+      retval = getXmlField().getGroupAs().getInJson();
     }
     return retval;
   }
 
   @Override
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    XmlGroupAsBehavior retval = XmlGroupAsBehavior.UNGROUPED;
+    XmlGroupAsBehavior retval = Defaults.DEFAULT_XML_GROUP_AS_BEHAVIOR;
     if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInXml()) {
-      retval = XmlGroupAsBehavior.lookup(getXmlField().getGroupAs().getInXml());
+      retval = getXmlField().getGroupAs().getInXml();
     }
     return retval;
   }
@@ -162,9 +173,8 @@ public class XmlLocalFieldDefinition
     return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
   }
 
-  public class InternalFieldDefinition
-      extends AbstractFieldDefinition
-      implements LocalInfoElementDefinition<XmlLocalFieldDefinition> {
+  public class InternalFieldDefinition extends AbstractInfoElementDefinition
+      implements FieldDefinition, LocalInfoElementDefinition<XmlLocalFieldDefinition> {
     private final Map<String, FlagInstance<?>> flagInstances;
 
     /**
@@ -176,18 +186,18 @@ public class XmlLocalFieldDefinition
       // handle flags
       if (getXmlField().getFlagList().size() > 0 || getXmlField().getDefineFlagList().size() > 0) {
         XmlCursor cursor = getXmlField().newCursor();
-        cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
-            + "$this/m:flag|$this/m:define-flag");
+        cursor.selectPath(
+            "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" + "$this/m:flag|$this/m:define-flag");
 
         Map<String, FlagInstance<?>> flagInstances = new LinkedHashMap<>();
         while (cursor.toNextSelection()) {
           XmlObject obj = cursor.getObject();
           if (obj instanceof FlagDocument.Flag) {
             FlagInstance<?> flagInstance = new XmlFlagInstance((FlagDocument.Flag) obj, this);
-            flagInstances.put(flagInstance.getUseName(), flagInstance);
-          } else if (obj instanceof LocalFlagDefinition) {
-            FlagInstance<?> flagInstance = new XmlLocalFlagDefinition((LocalFlagDefinition) obj, this);
-            flagInstances.put(flagInstance.getUseName(), flagInstance);
+            flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
+          } else if (obj instanceof LocalFlagDefinitionType) {
+            FlagInstance<?> flagInstance = new XmlLocalFlagDefinition((LocalFlagDefinitionType) obj, this);
+            flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
           }
         }
         this.flagInstances = Collections.unmodifiableMap(flagInstances);
@@ -214,7 +224,7 @@ public class XmlLocalFieldDefinition
 
     @Override
     public String getName() {
-      return getXmlField().getName();
+      return XmlLocalFieldDefinition.this.getName();
     }
 
     @Override
@@ -223,26 +233,31 @@ public class XmlLocalFieldDefinition
     }
 
     @Override
-    public DataType getDatatype() {
-      DataType retval;
+    public String getXmlNamespace() {
+      return XmlLocalFieldDefinition.this.getXmlNamespace();
+    }
+
+    @Override
+    public DataTypes getDatatype() {
+      DataTypes retval;
       if (getXmlField().isSetAsType()) {
-        retval = DataType.lookup(getXmlField().getAsType());
+        retval = getXmlField().getAsType();
       } else {
         // the default
-        retval = Metaschema.DEFAULT_DATA_TYPE;
+        retval = DataTypes.DEFAULT_DATA_TYPE;
       }
       return retval;
     }
 
     @Override
-    public boolean hasJsonValueKey() {
-      return getXmlField().isSetJsonValueKey();
+    public boolean hasJsonValueKeyFlagInstance() {
+      return getXmlField().isSetJsonValueKey() && getXmlField().getJsonValueKey().isSetFlagName();
     }
 
     @Override
-    public FlagInstance<?> getJsonValueKeyFlagInstance() {
-      FlagInstance<?> retval = null;
-      if (hasJsonValueKey() && getXmlField().getJsonValueKey().isSetFlagName()) {
+    public IFlagInstance getJsonValueKeyFlagInstance() {
+      IFlagInstance retval = null;
+      if (getXmlField().isSetJsonValueKey() && getXmlField().getJsonValueKey().isSetFlagName()) {
         retval = getFlagInstanceByName(getXmlField().getJsonValueKey().getFlagName());
       }
       return retval;
@@ -252,19 +267,19 @@ public class XmlLocalFieldDefinition
     public String getJsonValueKeyName() {
       String retval = null;
 
-      if (hasJsonValueKey()) {
+      if (getXmlField().isSetJsonValueKey()) {
         retval = getXmlField().getJsonValueKey().getStringValue();
       }
 
       if (retval == null || retval.isEmpty()) {
-        retval = getDatatype().getDefaultValueKey();
+        retval = getDatatype().getJavaTypeAdapter().getDefaultJsonValueKey();
       }
       return retval;
     }
 
     @Override
     public boolean isCollapsible() {
-      return getXmlField().isSetCollapsible() ? getXmlField().getCollapsible() : Metaschema.DEFAULT_COLLAPSIBLE;
+      return getXmlField().isSetCollapsible() ? getXmlField().getCollapsible() : Defaults.DEFAULT_FIELD_COLLAPSIBLE;
     }
 
     @Override
@@ -275,6 +290,11 @@ public class XmlLocalFieldDefinition
     @Override
     public Map<String, FlagInstance<?>> getFlagInstances() {
       return flagInstances;
+    }
+
+    @Override
+    public FlagInstance<?> getFlagInstanceByName(String name) {
+      return getFlagInstances().get(name);
     }
 
     @Override

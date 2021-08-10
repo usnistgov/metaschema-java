@@ -30,7 +30,7 @@ import com.squareup.javapoet.ClassName;
 
 import gov.nist.secauto.metaschema.codegen.binding.config.BindingConfiguration;
 import gov.nist.secauto.metaschema.model.definitions.LocalInfoElementDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +45,7 @@ public class DefaultTypeResolver implements TypeResolver {
   private static final Logger logger = LogManager.getLogger(DefaultTypeResolver.class);
 
   private final Map<String, Set<String>> packageToClassNamesMap = new HashMap<>();
-  private final Map<ObjectDefinition, ClassName> definitionToTypeMap = new HashMap<>();
+  private final Map<MetaschemaFlaggedDefinition, ClassName> definitionToTypeMap = new HashMap<>();
 
   private final BindingConfiguration bindingConfiguration;
 
@@ -54,7 +54,7 @@ public class DefaultTypeResolver implements TypeResolver {
   }
 
   @Override
-  public ClassName getClassName(ObjectDefinition definition) {
+  public ClassName getClassName(MetaschemaFlaggedDefinition definition) {
     ClassName retval = definitionToTypeMap.get(definition);
     if (retval == null) {
       String packageName = bindingConfiguration.getPackageNameForMetaschema(definition.getContainingMetaschema());
@@ -63,7 +63,7 @@ public class DefaultTypeResolver implements TypeResolver {
         retval = ClassName.get(packageName, className);
       } else {
         // this is a local definition, which means a child class needs to be generated
-        ObjectDefinition parentDefinition = ((LocalInfoElementDefinition<?>) definition)
+        MetaschemaFlaggedDefinition parentDefinition = ((LocalInfoElementDefinition<?>) definition)
             .getDefiningInstance().getContainingDefinition();
         ClassName parentClassName = getClassName(parentDefinition);
         String name = generateClassName(parentClassName.canonicalName(), definition);
@@ -74,7 +74,7 @@ public class DefaultTypeResolver implements TypeResolver {
     return retval;
   }
 
-  private String generateClassName(String packageOrTypeName, ObjectDefinition definition) {
+  private String generateClassName(String packageOrTypeName, MetaschemaFlaggedDefinition definition) {
     String className = bindingConfiguration.getClassName(definition);
 
     Set<String> classNames = packageToClassNamesMap.get(packageOrTypeName);

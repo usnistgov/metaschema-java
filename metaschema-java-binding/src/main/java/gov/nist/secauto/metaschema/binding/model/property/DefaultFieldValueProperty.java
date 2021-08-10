@@ -67,15 +67,11 @@ public class DefaultFieldValueProperty
     return fieldValue;
   }
 
-  protected String getJsonValueKeyName() {
-    String name;
-    if (getParentClassBinding().getJsonValueKeyFlag() != null) {
-      name = null;
-    } else {
-      name = getFieldValueAnnotation().name();
-      if (name == null || "##none".equals(name)) {
-        name = getJavaTypeAdapter().getDefaultJsonFieldName();
-      }
+  @Override
+  public String getJsonValueKeyName() {
+    String name = getFieldValueAnnotation().name();
+    if ("##none".equals(name)) {
+      name = getJavaTypeAdapter().getDefaultJsonValueKey();
     }
     return name;
   }
@@ -85,25 +81,13 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public QName getXmlQName() {
-    // there is no XML QName, since the value data is represented as child text/elements of the
-    // containing field's element.
-    return null;
-  }
-
-  @Override
-  public String getJsonPropertyName() {
-    return getJsonValueKeyName();
-  }
-
-  @Override
   public boolean read(Object parentInstance, JsonParsingContext context) throws IOException, BindingException {
     boolean handled = false;
     JsonParser parser = context.getReader();
     // There are two modes:
     // 1) use of a JSON value key, or
     // 2) a simple value named "value"
-    FlagProperty jsonValueKey = getParentClassBinding().getJsonValueKeyFlag();
+    FlagProperty jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
     if (jsonValueKey != null) {
       // this is the JSON value key case
       jsonValueKey.setValue(parentInstance, jsonValueKey.readValueFromString(parser.nextFieldName()));
@@ -119,9 +103,8 @@ public class DefaultFieldValueProperty
 
     if (handled) {
       // parse the value
-      PropertyCollector collector = newPropertyCollector();
-      readValue(collector, parentInstance, context);
-      setValue(parentInstance, collector.getValue());
+      Object value = getJavaTypeAdapter().parse(context.getReader());
+      setValue(parentInstance, value);
     }
 
     return handled;
@@ -154,7 +137,7 @@ public class DefaultFieldValueProperty
     }
     return retval;
   }
-
+  
   @Override
   public boolean write(Object instance, QName parentName, XmlWritingContext context)
       throws XMLStreamException, IOException {
@@ -169,8 +152,20 @@ public class DefaultFieldValueProperty
   public void write(Object instance, JsonWritingContext context) throws IOException {
     Object value = getValue(instance);
     if (value != null) {
-      context.getWriter().writeFieldName(getJsonPropertyName());
-      logger.info("FIELD: {}", getJsonPropertyName());
+      // There are two modes:
+      // 1) use of a JSON value key, or
+      // 2) a simple value named "value"
+      FlagProperty jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
+
+      String valueKeyName;
+      if (jsonValueKey != null) {
+        // this is the JSON value key case
+        valueKeyName = jsonValueKey.getValue(instance).toString();
+      } else {
+        valueKeyName = getJsonValueKeyName();
+      }
+      context.getWriter().writeFieldName(valueKeyName);
+      logger.info("FIELD: {}", valueKeyName);
       writeValue(value, context);
     }
   }
@@ -179,5 +174,4 @@ public class DefaultFieldValueProperty
   public void writeValue(Object value, JsonWritingContext context) throws IOException {
     getJavaTypeAdapter().writeJsonValue(value, context.getWriter());
   }
-
 }

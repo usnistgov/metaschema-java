@@ -1,4 +1,4 @@
-# Maven build support for NIST Security Automation Java projects
+# Metaschema Java Tools
 
 This project provides a Java implementation of a [Metaschema](https://pages.nist.gov/metaschema/) toolchain for generating schemas (planned), converters, model documentation (planned), and programming language-specific data APIs.
 

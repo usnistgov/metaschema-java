@@ -38,7 +38,7 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.binding.model.property.ModelProperty;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -58,7 +58,7 @@ public class MapPropertyInfo
     extends AbstractModelPropertyInfo<ParameterizedType>
     implements ModelPropertyInfo {
 
-  public MapPropertyInfo(ModelProperty property) {
+  public MapPropertyInfo(NamedModelProperty property) {
     super(property);
     if (!Map.class.isAssignableFrom(property.getRawType())) {
       throw new RuntimeException(
@@ -106,7 +106,7 @@ public class MapPropertyInfo
     // String.format("Unable to parse type '%s', which is not a known bound class", getItemType()));
     // }
 
-    ModelProperty property = getProperty();
+    NamedModelProperty property = getProperty();
     boolean handled = false;
     // process all map items
     while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
@@ -149,7 +149,7 @@ public class MapPropertyInfo
   @Override
   public boolean writeValue(Object parentInstance, QName parentName, XmlWritingContext context)
       throws XMLStreamException, IOException {
-    ModelProperty property = getProperty();
+    NamedModelProperty property = getProperty();
     @SuppressWarnings("unchecked")
     Map<String, ? extends Object> items = (Map<String, ? extends Object>) property.getValue(parentInstance);
     for (Object item : items.values()) {
@@ -164,9 +164,9 @@ public class MapPropertyInfo
     private final Map<String, Object> map = new LinkedHashMap<>();
     private final FlagProperty jsonKey;
 
-    protected MapPropertyCollector(ModelProperty property) {
+    protected MapPropertyCollector(NamedModelProperty property) {
       ClassBinding classBinding = property.getBindingSupplier().getClassBinding();
-      this.jsonKey = classBinding != null ? classBinding.getJsonKey() : null;
+      this.jsonKey = classBinding != null ? classBinding.getJsonKeyFlagInstance() : null;
       if (this.jsonKey == null) {
         throw new IllegalStateException("No JSON key found");
       }
@@ -200,7 +200,7 @@ public class MapPropertyInfo
 
   @Override
   public void writeValue(Object parentInstance, JsonWritingContext context) throws IOException {
-    ModelProperty property = getProperty();
+    NamedModelProperty property = getProperty();
     @SuppressWarnings("unchecked")
     Map<String, ? extends Object> items = (Map<String, ? extends Object>) property.getValue(parentInstance);
 
@@ -220,7 +220,7 @@ public class MapPropertyInfo
 
   @Override
   public boolean isValueSet(Object parentInstance) throws IOException {
-    ModelProperty property = getProperty();
+    NamedModelProperty property = getProperty();
     @SuppressWarnings("unchecked")
     Map<String, ? extends Object> items = (Map<String, ? extends Object>) property.getValue(parentInstance);
     return items != null && !items.isEmpty();
