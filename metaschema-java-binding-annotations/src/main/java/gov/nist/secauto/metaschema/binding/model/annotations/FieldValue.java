@@ -54,13 +54,13 @@ public @interface FieldValue {
    * @return the name
    */
   String name() default "##none";
-//
-//  /**
-//   * If the data type allows it, determines if the field's value must be wrapped with an element
-//   * having the specified {@link #name()}.
-//   * 
-//   * @return {@code true} if the field must be wrapped, or {@code false} otherwise
-//   */
-//  boolean inXmlWrapped() default Defaults.DEFAULT_FIELD_IN_XML_WRAPPED;
+  //
+  // /**
+  // * If the data type allows it, determines if the field's value must be wrapped with an element
+  // * having the specified {@link #name()}.
+  // *
+  // * @return {@code true} if the field must be wrapped, or {@code false} otherwise
+  // */
+  // boolean inXmlWrapped() default Defaults.DEFAULT_FIELD_IN_XML_WRAPPED;
 
 }

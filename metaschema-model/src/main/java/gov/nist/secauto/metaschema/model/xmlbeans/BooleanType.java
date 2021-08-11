@@ -27,6 +27,10 @@
 package gov.nist.secauto.metaschema.model.xmlbeans;
 
 public class BooleanType {
+  private BooleanType() {
+    // disable
+  }
+
   /**
    * Sets the value of obj onto the given simple value target.
    * 

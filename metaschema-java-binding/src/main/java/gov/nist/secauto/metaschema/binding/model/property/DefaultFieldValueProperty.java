@@ -76,6 +76,7 @@ public class DefaultFieldValueProperty
     return name;
   }
 
+  @Override
   public JavaTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }

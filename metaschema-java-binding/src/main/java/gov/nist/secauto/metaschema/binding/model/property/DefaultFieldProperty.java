@@ -43,6 +43,7 @@ import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
@@ -53,6 +54,7 @@ import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -60,9 +62,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class DefaultFieldProperty
-    extends AbstractNamedModelProperty
-    implements FieldProperty {
+public class DefaultFieldProperty extends AbstractNamedModelProperty implements FieldProperty {
 
   public static DefaultFieldProperty createInstance(AssemblyClassBinding parentClassBinding,
       java.lang.reflect.Field field) {
@@ -147,8 +147,7 @@ public class DefaultFieldProperty
 
   @Override
   public boolean readItem(PropertyCollector collector, Object parentInstance, StartElement start,
-      XmlParsingContext context)
-      throws BindingException, XMLStreamException, IOException {
+      XmlParsingContext context) throws BindingException, XMLStreamException, IOException {
     // figure out how to parse the item
     XmlBindingSupplier supplier = getBindingSupplier();
 
@@ -227,7 +226,8 @@ public class DefaultFieldProperty
 
   @Override
   public String toCoordinates() {
-    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(), getName(), getParentClassBinding().getBoundClass().getName(), getField().getName());
+    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(), getName(),
+        getParentClassBinding().getBoundClass().getName(), getField().getName());
   }
 
   @Override
@@ -244,7 +244,7 @@ public class DefaultFieldProperty
         if (classBinding == null) {
           definition = new ScalarFieldDefinition();
         } else {
-          definition = (FieldClassBinding)classBinding;
+          definition = (FieldClassBinding) classBinding;
         }
       }
     }
@@ -278,6 +278,12 @@ public class DefaultFieldProperty
     }
 
     @Override
+    public List<IConstraint> getConstraints() {
+      // TODO: implement this
+      return Collections.emptyList();
+    }
+
+    @Override
     public String toCoordinates() {
       return DefaultFieldProperty.this.toCoordinates();
     }
@@ -297,10 +303,10 @@ public class DefaultFieldProperty
       return null;
     }
 
-//    @Override
-//    public boolean hasJsonValueKey() {
-//      return false;
-//    }
+    // @Override
+    // public boolean hasJsonValueKey() {
+    // return false;
+    // }
 
     @Override
     public IFlagInstance getJsonValueKeyFlagInstance() {

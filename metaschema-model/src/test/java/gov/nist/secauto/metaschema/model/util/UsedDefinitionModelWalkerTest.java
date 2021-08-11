@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;
 
 import org.apache.logging.log4j.LogManager;
@@ -54,7 +53,7 @@ class UsedDefinitionModelWalkerTest {
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
 
     Collection<? extends IDefinition> definitions
-        = UsedDefinitionModelWalker.collectUsedDefinitions(metaschema);
+        = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
 
     for (IDefinition definition : definitions) {
       logger.info(String.format("%s", definition.toCoordinates()));

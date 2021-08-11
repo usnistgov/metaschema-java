@@ -173,7 +173,7 @@ public class TreeBuildingModelWalker extends ModelWalker<TreeBuildingModelWalker
 
   @Override
   protected boolean visit(IAssemblyDefinition def, TreeBuildingModelWalker.WalkerData data) {
-    if (logger.isInfoEnabled() && def.equals(data)) {
+    if (logger.isInfoEnabled() && def.equals(data.getRootAssemblyDefinition())) {
       logger.info("Root:         {} {}", String.join("", Collections.nCopies(depth * 2, " ")), def.toCoordinates());
     }
     return true;

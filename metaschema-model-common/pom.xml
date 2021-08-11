@@ -28,5 +28,10 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>metaschema-java-datatypes</artifactId>
 		</dependency>
+		    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>metaschema-metapath</artifactId>
+    </dependency>
+		
 	</dependencies>
 </project>

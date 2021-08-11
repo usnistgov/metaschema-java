@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding.model.property.info;
 
-import java.io.IOException;
 import java.util.Collection;
 
 public class SingletonPropertyCollector implements PropertyCollector {
@@ -44,7 +43,7 @@ public class SingletonPropertyCollector implements PropertyCollector {
   }
 
   @Override
-  public void addAll(Collection<?> items) throws IllegalStateException, IOException {
+  public void addAll(Collection<?> items) throws IllegalStateException {
     int size = items.size();
     if (size > 1) {
       throw new IllegalStateException("Multiple values cannot be set for this singleton");

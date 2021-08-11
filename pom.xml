@@ -113,6 +113,7 @@
 		<project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+    <dependency.antlr4.version>4.9.2</dependency.antlr4.version>
 		<dependency.commons-lang3.version>3.11</dependency.commons-lang3.version>
 		<dependency.flexmark.version>0.62.2</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.30</dependency.freemarker.version>
@@ -124,7 +125,6 @@
 		<dependency.moxy.version>3.0.0</dependency.moxy.version>
 		<dependency.woodstox.version>6.2.3</dependency.woodstox.version>
 		<dependency.xmlbeans.version>3.1.0</dependency.xmlbeans.version>
-		<dependency.antlr4.version>4.9.1</dependency.antlr4.version>
 		<!-- <dependency.xmlbeans.version>4.0.0</dependency.xmlbeans.version> -->
 		<plugin.license.version>4.0.rc1</plugin.license.version>
 		<plugin.antlr4test.version>1.17</plugin.antlr4test.version>
@@ -141,6 +141,11 @@
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>metaschema-model-common</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>metaschema-metapath</artifactId>
         <version>${project.version}</version>
       </dependency>
 			<dependency>

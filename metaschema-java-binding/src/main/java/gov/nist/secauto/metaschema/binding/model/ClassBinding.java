@@ -39,8 +39,6 @@ import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-
 import org.codehaus.stax2.XMLStreamReader2;
 
 import java.io.IOException;
@@ -64,7 +62,6 @@ public interface ClassBinding extends IFlaggedDefinition {
    * @return the bound class
    */
   Class<?> getBoundClass();
-
 
   // Provides a compatible return value
   @Override
@@ -101,7 +98,9 @@ public interface ClassBinding extends IFlaggedDefinition {
    *          the parsing context
    * @return {@code true} if data was parsed, {@code false} otherwise
    * @throws IOException
+   *           if an error occurred while reading the parsed content
    * @throws BindingException
+   *           if an error occurred parsing content into java instances
    */
   // TODO: check if a boolean return value is needed
   boolean readItem(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
@@ -128,8 +127,11 @@ public interface ClassBinding extends IFlaggedDefinition {
    *          the parsing context
    * @return {@code true} if data was parsed, {@code false} otherwise
    * @throws IOException
+   *           if an error occurred while reading the parsed content
    * @throws BindingException
+   *           if an error occurred parsing content into java instances
    * @throws XMLStreamException
+   *           if an error occurred while parsing the content as XML
    */
   boolean readItem(PropertyCollector collector, Object parentInstance, StartElement start, XmlParsingContext context)
       throws BindingException, IOException, XMLStreamException;

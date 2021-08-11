@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -50,6 +51,7 @@ public abstract class AbstractMetaschema implements Metaschema {
 
   private final URI location;
   private final Map<URI, Metaschema> importedMetaschema;
+  private final Map<String, Metaschema> importedMetaschemaByName;
   private Map<String, FlagDefinition> exportedFlagDefinitions;
   private Map<String, FieldDefinition> exportedFieldDefinitions;
   private Map<String, AssemblyDefinition> exportedAssemblyDefinitions;
@@ -67,12 +69,24 @@ public abstract class AbstractMetaschema implements Metaschema {
     Objects.requireNonNull(importedMetaschema, "importedMetaschema");
     this.location = metaschemaResource;
     this.importedMetaschema = Collections.unmodifiableMap(importedMetaschema);
+    this.importedMetaschemaByName = Collections.unmodifiableMap(
+        importedMetaschema.values().stream().collect(Collectors.toMap(Metaschema::getShortName, Function.identity())));
     logger.trace("Creating metaschema '{}'", metaschemaResource);
   }
 
   @Override
   public Map<URI, Metaschema> getImportedMetaschema() {
     return importedMetaschema;
+  }
+
+  @Override
+  public Map<String, Metaschema> getImportedMetaschemaByShortNames() {
+    return importedMetaschemaByName;
+  }
+
+  @Override
+  public Metaschema getImportedMetaschemaByShortName(String name) {
+    return getImportedMetaschemaByShortNames().get(name);
   }
 
   @Override
@@ -104,8 +118,7 @@ public abstract class AbstractMetaschema implements Metaschema {
     throw new UnsupportedOperationException();
   }
 
-  private static <DEF extends MetaschemaDefinition> void addToMap(Collection<DEF> items,
-      Map<String, DEF> existingMap) {
+  private static <DEF extends MetaschemaDefinition> void addToMap(Collection<DEF> items, Map<String, DEF> existingMap) {
     for (DEF item : items) {
       DEF oldItem = existingMap.put(item.getName(), item);
       if (oldItem != null && oldItem != item && logger.isWarnEnabled()) {

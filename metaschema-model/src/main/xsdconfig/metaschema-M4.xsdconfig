@@ -36,4 +36,12 @@
     javaname="gov.nist.secauto.metaschema.datatypes.DataTypes">
     <xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.DatatypesHandler</xb:staticHandler>
   </xb:usertype>
+  <xb:usertype name="meta:MetaschemaPathType"
+    javaname="gov.nist.secauto.metaschema.metapath.MetapathExpression">
+    <xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.MetapathExpressionHandler</xb:staticHandler>
+  </xb:usertype>
+  <xb:usertype name="meta:RegexType"
+    javaname="java.util.regex.Pattern">
+    <xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.RegexTypeHandler</xb:staticHandler>
+  </xb:usertype>
 </xb:config>

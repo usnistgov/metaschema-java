@@ -89,7 +89,7 @@ public abstract class AbstractFreemarkerGenerator implements FreemarkerGenerator
     Objects.requireNonNull(metaschemas, "metaschemas");
 
     Collection<? extends IDefinition> definitions
-        = UsedDefinitionModelWalker.collectUsedDefinitions(metaschemas);
+        = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschemas);
     generateFromDefinitions(definitions, out);
   }
 

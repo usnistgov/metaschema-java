@@ -29,8 +29,6 @@ package gov.nist.secauto.metaschema.model.xml;
 import gov.nist.itl.metaschema.model.m4.xml.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.ModelType;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.definitions.GlobalInfoElementDefinition;
 import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;

@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.model.tree;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,13 +51,14 @@ class TreeBuildingModelWalkerTest {
     Metaschema metaschema = loader.loadXmlMetaschema(new URL(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
 
-    Collection<? extends Node> roots
+    Collection<? extends Node<?,?>> roots
         = TreeBuildingModelWalker.buildTrees(Collections.singleton(metaschema));
-//
-//    for (MetaschemaDefinition definition : definitions) {
-//      logger.info(String.format("%s: %s %s", definition.getContainingMetaschema().getShortName(),
-//          definition.getModelType().name(), definition.getName()));
-//    }
+
+    for (Node<?,?> node : roots) {
+      MetaschemaDefinition definition = node.getDefinition();
+      logger.info(String.format("%s: %s %s", definition.getContainingMetaschema().getShortName(),
+          definition.getModelType().name(), definition.getName()));
+    }
   }
 
 }

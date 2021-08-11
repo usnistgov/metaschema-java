@@ -103,7 +103,6 @@ public class JavaGenerator {
     Objects.requireNonNull(bindingConfiguration, "bindingConfiguration");
     logger.info("Generating Java classes in: {}", targetDirectory.getPath());
 
-    Map<Metaschema, List<GeneratedClass>> retval = new HashMap<>();
     Map<URI, String> xmlNamespaceToPackageNameMap = new HashMap<>();
     Map<URI, Set<Metaschema>> xmlNamespaceToMetaschemaMap = new HashMap<>();
 
@@ -111,6 +110,8 @@ public class JavaGenerator {
 
     Map<Metaschema, List<? extends MetaschemaDefinition>> metaschemaToInformationElementsMap
         = buildMetaschemaMap(metaschemas);
+
+    Map<Metaschema, List<GeneratedClass>> retval = new HashMap<>();
     for (Map.Entry<Metaschema, List<? extends MetaschemaDefinition>> entry : metaschemaToInformationElementsMap
         .entrySet()) {
       Metaschema metaschema = entry.getKey();
@@ -196,7 +197,14 @@ public class JavaGenerator {
       }
 
       for (Metaschema metaschema : xmlNamespaceToMetaschemaMap.get(namespace)) {
-        retval.get(metaschema).add(new GeneratedClass(packageInfo, ClassName.get(packageName, "package-info"), false));
+        GeneratedClass packageInfoClass
+            = new GeneratedClass(packageInfo, ClassName.get(packageName, "package-info"), false);
+        List<GeneratedClass> generatedClasses = retval.get(metaschema);
+        if (generatedClasses == null) {
+          generatedClasses = Collections.singletonList(packageInfoClass);
+        } else {
+          generatedClasses.add(packageInfoClass);
+        }
       }
     }
     return Collections.unmodifiableMap(retval);

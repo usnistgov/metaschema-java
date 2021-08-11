@@ -74,7 +74,7 @@ public interface IFieldDefinition extends IValuedDefinition, IFlaggedDefinition,
    * property that contains an array of values. This packing of values can make the resulting JSON
    * more concise.
    * 
-   * @return {@code true} if the field is collapsible, or {@code false} otherwise
+   * @return {@code true} if the field is eligible for collapsing, or {@code false} otherwise
    */
   boolean isCollapsible();
 }

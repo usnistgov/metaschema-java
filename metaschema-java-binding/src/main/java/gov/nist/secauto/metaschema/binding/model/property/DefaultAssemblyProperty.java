@@ -51,9 +51,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class DefaultAssemblyProperty
-    extends AbstractNamedModelProperty
-    implements AssemblyProperty {
+public class DefaultAssemblyProperty extends AbstractNamedModelProperty implements AssemblyProperty {
 
   public static DefaultAssemblyProperty createInstance(AssemblyClassBinding parentClassBinding, Field field) {
     DefaultAssemblyProperty retval = new DefaultAssemblyProperty(parentClassBinding, field);
@@ -173,7 +171,8 @@ public class DefaultAssemblyProperty
 
   @Override
   public String toCoordinates() {
-    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(), getName(), getParentClassBinding().getBoundClass().getName(), getField().getName());
+    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(), getName(),
+        getParentClassBinding().getBoundClass().getName(), getField().getName());
   }
 
   @Override
@@ -184,6 +183,6 @@ public class DefaultAssemblyProperty
   @Override
   public AssemblyClassBinding getDefinition() {
     DataTypeHandler handler = getBindingSupplier();
-    return (AssemblyClassBinding)handler.getClassBinding();
+    return (AssemblyClassBinding) handler.getClassBinding();
   }
 }

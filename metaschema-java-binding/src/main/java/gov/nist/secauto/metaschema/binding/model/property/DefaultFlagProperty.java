@@ -37,19 +37,20 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
-import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFlag;
-import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
@@ -57,9 +58,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
-public class DefaultFlagProperty
-    extends AbstractNamedProperty<ClassBinding>
-    implements FlagProperty {
+public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> implements FlagProperty {
   // private static final Logger logger = LogManager.getLogger(DefaultFlagProperty.class);
 
   private final Flag flag;
@@ -76,21 +75,21 @@ public class DefaultFlagProperty
     return flag;
   }
 
-//  @Override
-//  public boolean isJsonKey() {
-//    return getField().isAnnotationPresent(JsonKey.class);
-//  }
+  // @Override
+  // public boolean isJsonKey() {
+  // return getField().isAnnotationPresent(JsonKey.class);
+  // }
 
-//  @Override
-//  public boolean isJsonValueKey() {
-//    return getField().isAnnotationPresent(JsonFieldValueKeyFlag.class);
-//  }
+  // @Override
+  // public boolean isJsonValueKey() {
+  // return getField().isAnnotationPresent(JsonFieldValueKeyFlag.class);
+  // }
 
   @Override
   public boolean isRequired() {
     return getFlagAnnotation().required();
   }
-  
+
   public JavaTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
@@ -220,7 +219,8 @@ public class DefaultFlagProperty
 
   @Override
   public String toCoordinates() {
-    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(), getName(), getParentClassBinding().getBoundClass().getName(), getField().getName());
+    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(), getName(),
+        getParentClassBinding().getBoundClass().getName(), getField().getName());
   }
 
   @Override
@@ -262,6 +262,12 @@ public class DefaultFlagProperty
     @Override
     public MarkupMultiline getRemarks() {
       return DefaultFlagProperty.this.getRemarks();
+    }
+
+    @Override
+    public List<IConstraint> getConstraints() {
+      // TODO: implement this
+      return Collections.emptyList();
     }
 
     @Override

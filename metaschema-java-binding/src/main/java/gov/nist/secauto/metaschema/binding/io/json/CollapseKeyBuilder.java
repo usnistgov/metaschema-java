@@ -62,13 +62,13 @@ public class CollapseKeyBuilder {
     return flagProperties;
   }
 
-  public void addAll(Collection<? extends Object> instances) throws IOException {
+  public void addAll(Collection<? extends Object> instances) {
     for (Object instance : instances) {
       add(instance);
     }
   }
 
-  public void add(Object instance) throws IOException {
+  public void add(Object instance) {
     int size = getFlagProperties().size();
     Object[] flagValues = new Object[size];
     int index = 0;

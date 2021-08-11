@@ -33,8 +33,6 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -114,10 +112,8 @@ public interface Property {
    * @param value
    *          a value, which may be a simple {@link Type} or a {@link ParameterizedType} for a
    *          collection
-   * @throws IOException
-   *           if an error occurs while applying the value
    */
-  void setValue(Object parentInstance, Object value) throws IOException;
+  void setValue(Object parentInstance, Object value);
 
   /**
    * Get the current value from the provided object. The provided object must be of the item's type
@@ -126,10 +122,8 @@ public interface Property {
    * @param parentInstance
    *          the object
    * @return the value if set, or {@code null} otherwise
-   * @throws IOException
-   *           if an error occurs while getting the value
    */
-  Object getValue(Object parentInstance) throws IOException;
+  Object getValue(Object parentInstance);
 
   PropertyCollector newPropertyCollector();
 

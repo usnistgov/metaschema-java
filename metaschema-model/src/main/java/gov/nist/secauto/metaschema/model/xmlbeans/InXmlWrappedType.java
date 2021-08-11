@@ -26,10 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.xmlbeans;
 
-import gov.nist.secauto.metaschema.model.common.Defaults;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
-
 public class InXmlWrappedType {
   /**
    * Sets the value of obj onto the given simple value target.
@@ -63,11 +59,12 @@ public class InXmlWrappedType {
     case "WITH_WRAPPER":
       retval = Boolean.TRUE;
       break;
-    case "local":
+    case "UNWRAPPED":
       retval = Boolean.FALSE;
       break;
     default:
-      throw new UnsupportedOperationException(value);    }
+      throw new UnsupportedOperationException(String.format("Unsupported InXML type '%s'",value));
+    }
     return retval;
   }
 }

@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding.model.property.info;
 
-import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -41,9 +40,8 @@ public interface PropertyCollector {
    *          the item to add
    * @throws IllegalStateException
    *           if the item cannot be added due to a model inconsistency
-   * @throws IOException
    */
-  void add(Object item) throws IllegalStateException, IOException;
+  void add(Object item) throws IllegalStateException;
 
   /**
    * Add a collection of item to the "collection", who's type depends on the property configuration.
@@ -52,9 +50,8 @@ public interface PropertyCollector {
    *          the items to add
    * @throws IllegalStateException
    *           if the item cannot be added due to a model inconsistency
-   * @throws IOException
    */
-  void addAll(Collection<?> items) throws IllegalStateException, IOException;
+  void addAll(Collection<?> items) throws IllegalStateException;
 
   /**
    * Get the current state of the "collection".

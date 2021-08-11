@@ -32,8 +32,6 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
@@ -54,8 +52,8 @@ public interface NamedModelProperty
   /**
    * Reads an individual XML item from the XML stream.
    * 
-   * @param collector
-   * @param parentInstance
+   * @param collector used to hold parsed values
+   * @param parentInstance the object the data is parsed into
    * @param start
    *          the current containing XML element
    * @param context
@@ -74,8 +72,8 @@ public interface NamedModelProperty
   /**
    * Reads a set of JSON items from the JSON stream.
    * 
-   * @param collector
-   * @param parentInstance
+   * @param collector used to hold parsed values
+   * @param parentInstance the object the data is parsed into
    * @param context
    *          the JSON/YAML parsing context
    * @return the item read, or {@code null} if no item was read

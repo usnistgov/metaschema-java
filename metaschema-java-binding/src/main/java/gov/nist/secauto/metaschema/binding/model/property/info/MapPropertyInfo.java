@@ -177,7 +177,7 @@ public class MapPropertyInfo
     }
 
     @Override
-    public void add(Object item) throws IOException {
+    public void add(Object item) {
       assert item != null;
 
       // lookup the key
@@ -186,7 +186,7 @@ public class MapPropertyInfo
     }
 
     @Override
-    public void addAll(Collection<?> items) throws IllegalStateException, IOException {
+    public void addAll(Collection<?> items) {
       for (Object item : items) {
         add(item);
       }

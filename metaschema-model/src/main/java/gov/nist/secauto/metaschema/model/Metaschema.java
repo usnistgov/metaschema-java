@@ -104,7 +104,8 @@ public interface Metaschema {
   Collection<InfoElement> getInfoElementByMetaPath(String path);
 
   /**
-   * Retrieves the assembly definition with a matching name from either: 1) the top-level assembly
+   * Retrieves the assembly definition with a matching name fro@Override
+  m either: 1) the top-level assembly
    * definitions from this Metaschema, or 2) global assembly definitions from each imported Metaschema
    * in reverse order of import.
    * 
@@ -176,4 +177,8 @@ public interface Metaschema {
    * @return a mapping of name to assembly definition
    */
   Map<String, AssemblyDefinition> getExportedAssemblyDefinitions();
+
+  Map<String, Metaschema> getImportedMetaschemaByShortNames();
+
+  Metaschema getImportedMetaschemaByShortName(String name);
 }

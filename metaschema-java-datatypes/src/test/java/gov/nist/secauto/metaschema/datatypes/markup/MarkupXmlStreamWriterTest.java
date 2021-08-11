@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.datatypes.markup;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
 

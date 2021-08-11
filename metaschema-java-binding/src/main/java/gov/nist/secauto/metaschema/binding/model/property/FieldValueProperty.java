@@ -26,10 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 
 import java.io.IOException;
@@ -46,7 +43,4 @@ public interface FieldValueProperty extends Property {
   String getJsonValueKeyName();
 
   void writeValue(Object value, JsonWritingContext context) throws IOException;
-
-  boolean readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
-      throws IOException, BindingException;
 }

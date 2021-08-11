@@ -23,9 +23,14 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.definition;
 
 import gov.nist.secauto.metaschema.model.common.INamedModelElement;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+
+import java.util.List;
 
 public interface IDefinition extends INamedModelElement {
+  List<? extends IConstraint> getConstraints();
 }

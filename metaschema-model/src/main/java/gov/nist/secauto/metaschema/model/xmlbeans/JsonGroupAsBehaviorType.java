@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.xmlbeans;
 
-import gov.nist.secauto.metaschema.model.common.Defaults;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 
 public class JsonGroupAsBehaviorType {

@@ -38,7 +38,6 @@ import com.vladsch.flexmark.ast.StrongEmphasis;
 import com.vladsch.flexmark.ast.Text;
 import com.vladsch.flexmark.ast.TextBase;
 import com.vladsch.flexmark.ext.escaped.character.EscapedCharacter;
-import com.vladsch.flexmark.html2md.converter.internal.HtmlConverterCoreNodeRenderer;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 

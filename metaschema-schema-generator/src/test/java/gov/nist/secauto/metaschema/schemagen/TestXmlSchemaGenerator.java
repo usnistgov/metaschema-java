@@ -82,7 +82,7 @@ public class TestXmlSchemaGenerator {
     metaschemas.add(metaschema);
 
     Collection<? extends IDefinition> definitions
-        = UsedDefinitionModelWalker.collectUsedDefinitions(metaschemas);
+        = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschemas);
 
     try (FileOutputStream fos = new FileOutputStream("schema.out.xsd")) {
       TeeOutputStream out = new TeeOutputStream(System.out, fos);

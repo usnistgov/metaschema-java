@@ -27,25 +27,35 @@
 package gov.nist.secauto.metaschema.model.tree;
 
 import gov.nist.secauto.metaschema.model.Metaschema;
+import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
  * This model walker can be used to gather metaschema definitions that are defined globally.
  */
-public class UsedDefinitionModelWalker
-    extends DefinitionCollectingModelWalker {
+public class UsedDefinitionModelWalker extends DefinitionCollectingModelWalker {
   private static final Function<IDefinition, Boolean> FILTER = (def) -> {
     return true;
     // return def.isGlobal();
     // return def.isGlobal() || (def instanceof AssemblyDefinition &&
     // ((AssemblyDefinition)def).getRootName() != null);
   };
+
+  public static Collection<? extends IDefinition>
+      collectUsedDefinitions(Collection<? extends IAssemblyDefinition> definitions) {
+    UsedDefinitionModelWalker walker = new UsedDefinitionModelWalker();
+    for (IAssemblyDefinition definition : definitions) {
+      walker.walk(definition);
+    }
+    return walker.getDefinitions();
+  }
 
   /**
    * Collect the globally defined metaschema definitions from the provided metaschemas, and any
@@ -56,22 +66,22 @@ public class UsedDefinitionModelWalker
    * @return a collection of matching definitions
    */
   public static Collection<? extends IDefinition>
-      collectUsedDefinitions(Collection<? extends Metaschema> metaschemas) {
-    UsedDefinitionModelWalker walker = new UsedDefinitionModelWalker();
+      collectUsedDefinitionsFromMetaschema(Collection<? extends Metaschema> metaschemas) {
+    Set<IAssemblyDefinition> definitions = new HashSet<>();
     for (Metaschema metaschema : metaschemas) {
       // get local roots in case they are scope=local
       for (AssemblyDefinition rootDef : metaschema.getRootAssemblyDefinitions().values()) {
-        walker.walk(rootDef);
+        definitions.add(rootDef);
       }
 
       // get roots from exported
       for (AssemblyDefinition assembly : metaschema.getExportedAssemblyDefinitions().values()) {
         if (assembly.isRoot()) {
-          walker.walk(assembly);
+          definitions.add(assembly);
         }
       }
     }
-    return walker.getDefinitions();
+    return collectUsedDefinitions(definitions);
   }
 
   /**
@@ -82,8 +92,8 @@ public class UsedDefinitionModelWalker
    *          the metaschema to analyze
    * @return a collection of matching definitions
    */
-  public static Collection<? extends IDefinition> collectUsedDefinitions(Metaschema metaschema) {
-    return collectUsedDefinitions(Collections.singleton(metaschema));
+  public static Collection<? extends IDefinition> collectUsedDefinitionsFromMetaschema(Metaschema metaschema) {
+    return collectUsedDefinitionsFromMetaschema(Collections.singleton(metaschema));
   }
 
   /**

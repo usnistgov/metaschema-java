@@ -198,7 +198,7 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
     if (this.modelInstances == null) {
       Map<String, NamedModelProperty> modelInstances = new LinkedHashMap<>();
       for (java.lang.reflect.Field field : getModelInstanceFields(getBoundClass())) {
-  
+
         Assembly assemblyAnnotation = field.getAnnotation(Assembly.class);
         if (assemblyAnnotation != null) {
           DefaultAssemblyProperty instance = DefaultAssemblyProperty.createInstance(this, field);
@@ -211,7 +211,8 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
           }
         }
       }
-      this.modelInstances = modelInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(modelInstances);
+      this.modelInstances
+          = modelInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(modelInstances);
     }
   }
 
@@ -241,9 +242,9 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
 
   @Override
   public Map<String, ? extends AssemblyProperty> getAssemblyInstances() {
-    return Collections.unmodifiableMap(
-        getNamedModelInstances().values().stream().filter(x -> x instanceof AssemblyProperty).map(x -> (AssemblyProperty) x)
-            .collect(Collectors.toMap(AssemblyProperty::getEffectiveName, Function.identity())));
+    return Collections.unmodifiableMap(getNamedModelInstances().values().stream()
+        .filter(x -> x instanceof AssemblyProperty).map(x -> (AssemblyProperty) x)
+        .collect(Collectors.toMap(AssemblyProperty::getEffectiveName, Function.identity())));
   }
 
   @Override

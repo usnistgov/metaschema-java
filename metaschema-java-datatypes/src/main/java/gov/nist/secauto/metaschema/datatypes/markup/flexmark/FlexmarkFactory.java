@@ -39,8 +39,6 @@ import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.builder.BuilderBase;
 import com.vladsch.flexmark.util.data.DataHolder;
 import com.vladsch.flexmark.util.misc.Extension;
-import com.vladsch.flexmark.util.sequence.LineAppendable;
-
 import gov.nist.secauto.metaschema.datatypes.markup.flexmark.insertanchor.InsertAnchorExtension;
 import gov.nist.secauto.metaschema.datatypes.markup.flexmark.q.HtmlQuoteTagExtension;
 
@@ -57,6 +55,7 @@ public class FlexmarkFactory {
   private static final FlexmarkFactory instance = new FlexmarkFactory();
 
   static Map<String, String> TYPOGRAPHIC_REPLACEMENT_MAP = new HashMap<>();
+
   static {
     TYPOGRAPHIC_REPLACEMENT_MAP.put("“", "\"");
     TYPOGRAPHIC_REPLACEMENT_MAP.put("”", "\"");
@@ -141,13 +140,9 @@ public class FlexmarkFactory {
         // Metaschema insert
         InsertAnchorExtension.create(),
         // q tag handling
-        HtmlQuoteTagExtension.create(),
-        TypographicExtension.create(),
-        TablesExtension.create(),
+        HtmlQuoteTagExtension.create(), TypographicExtension.create(), TablesExtension.create(),
         // to ensure that escaped characters are not lost
-        EscapedCharacterExtension.create(),
-        SuperscriptExtension.create(),
-        SubscriptExtension.create());
+        EscapedCharacterExtension.create(), SuperscriptExtension.create(), SubscriptExtension.create());
     builder.extensions(extensions);
   }
 
