@@ -29,6 +29,11 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import java.util.List;
 
 public interface IKeyConstraint extends IConstraint {
+  /**
+   * Retrieve the list of keys to use in creating and looking up an entry in a given index.
+   * 
+   * @return one or more keys
+   */
   List<? extends IKeyField> getKeyFields();
 
 }

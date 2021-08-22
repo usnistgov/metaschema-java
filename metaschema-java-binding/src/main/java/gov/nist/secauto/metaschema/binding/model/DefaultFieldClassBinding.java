@@ -52,6 +52,11 @@ import gov.nist.secauto.metaschema.binding.model.property.info.ListPropertyColle
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -641,6 +646,30 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
   @Override
   public DataTypes getDatatype() {
     return DataTypes.getDataTypeForAdapter(getFieldValue().getJavaTypeAdapter());
+  }
+
+  @Override
+  public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<? extends IMatchesConstraint> getMatchesConstraints() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<? extends IExpectConstraint> getExpectConstraints() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

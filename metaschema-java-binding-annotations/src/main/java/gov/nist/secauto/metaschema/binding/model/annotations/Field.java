@@ -29,14 +29,20 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValues;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.Defaults;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+@Documented
 @Retention(RUNTIME)
 @Target({ FIELD })
 public @interface Field {
@@ -129,4 +135,32 @@ public @interface Field {
    * @return the XML collection strategy
    */
   XmlGroupAsBehavior inXml() default XmlGroupAsBehavior.UNGROUPED;
+
+  /**
+   * Get the allowed value constraints for this field.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  AllowedValues[] allowedValues() default {};
+
+  /**
+   * Get the matches constraints for this field.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  Matches[] matches() default {};
+
+  /**
+   * Get the index-has-key constraints for this field.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  IndexHasKey[] indexHasKey() default {};
+
+  /**
+   * Get the expect constraints for this field.
+   * 
+   * @return the expected constraints or an empty array if no expected constraints are defined
+   */
+  Expect[] expect() default {};
 }

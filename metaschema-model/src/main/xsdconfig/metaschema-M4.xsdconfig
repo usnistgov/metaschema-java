@@ -6,17 +6,18 @@
                       http://svn.apache.org/viewvc/xmlbeans/trunk/src/main/schema/config/xmlconfig.xsd?view=co">
 	<xb:namespace
 		uri="http://csrc.nist.gov/ns/oscal/metaschema/1.0">
-		<xb:package>gov.nist.itl.metaschema.model.m4.xml</xb:package>
+		<xb:package>gov.nist.secauto.metaschema.model.xmlbeans.xml</xb:package>
 	</xb:namespace>
-	<xb:usertype name="meta:boolean"
+
+	<xb:usertype name="meta:BooleanType"
 		javaname="java.lang.Boolean">
 		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.BooleanType</xb:staticHandler>
 	</xb:usertype>
-  <xb:usertype name="meta:JsonGroupAsBehavior"
+  <xb:usertype name="meta:JsonGroupAsBehaviorType"
     javaname="gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior">
     <xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.JsonGroupAsBehaviorType</xb:staticHandler>
   </xb:usertype>
-  <xb:usertype name="meta:XmlGroupAsBehavior"
+  <xb:usertype name="meta:XmlGroupAsBehaviorType"
     javaname="gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior">
     <xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.XmlGroupAsBehaviorType</xb:staticHandler>
   </xb:usertype>

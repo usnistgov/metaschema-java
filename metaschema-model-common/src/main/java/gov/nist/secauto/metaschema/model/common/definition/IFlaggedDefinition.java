@@ -26,8 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.common.definition;
 
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -78,4 +83,31 @@ public interface IFlaggedDefinition extends IDefinition {
    */
   IFlagInstance getJsonKeyFlagInstance();
 
+  /**
+   * Retrieve the list of allowed value constraints that apply to this definition's descendant flag or field values.
+   * 
+   * @return the list of allowed value constraints
+   */
+  List<? extends IAllowedValuesConstraint> getAllowedValuesContraints();
+
+  /**
+   * Retrieve the list of matches constraints that apply to this definition's descendant flag or field values.
+   * 
+   * @return the list of matches constraints
+   */
+  List<? extends IMatchesConstraint> getMatchesConstraints();
+
+  /**
+   * Retrieve the list of key reference constraints that apply to this definition's descendant flag or field values.
+   * 
+   * @return the list of key reference constraints
+   */
+  List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints();
+
+  /**
+   * Retrieve the list of expect constraints that apply to this definition's descendant flag or field values.
+   * 
+   * @return the list of expect constraints
+   */
+  List<? extends IExpectConstraint> getExpectConstraints();
 }

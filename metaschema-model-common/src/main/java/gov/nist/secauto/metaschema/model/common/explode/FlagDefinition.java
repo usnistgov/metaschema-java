@@ -27,7 +27,14 @@
 package gov.nist.secauto.metaschema.model.common.explode;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
+
+import java.util.List;
 
 public class FlagDefinition extends AbstractDefinition<IFlagDefinition> implements IFlagDefinition {
 
@@ -38,5 +45,30 @@ public class FlagDefinition extends AbstractDefinition<IFlagDefinition> implemen
   @Override
   public DataTypes getDatatype() {
     return getDelegate().getDatatype();
+  }
+
+  @Override
+  public List<? extends IConstraint> getConstraints() {
+    return getDelegate().getConstraints();
+  }
+
+  @Override
+  public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+    return getDelegate().getAllowedValuesContraints();
+  }
+
+  @Override
+  public List<? extends IMatchesConstraint> getMatchesConstraints() {
+    return getDelegate().getMatchesConstraints();
+  }
+
+  @Override
+  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+    return getDelegate().getIndexHasKeyConstraints();
+  }
+
+  @Override
+  public List<? extends IExpectConstraint> getExpectConstraints() {
+    return getDelegate().getExpectConstraints();
   }
 }

@@ -29,11 +29,17 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValues;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+@Documented
 @Retention(RUNTIME)
 @Target({ FIELD })
 public @interface FieldValue {
@@ -62,5 +68,4 @@ public @interface FieldValue {
   // * @return {@code true} if the field must be wrapped, or {@code false} otherwise
   // */
   // boolean inXmlWrapped() default Defaults.DEFAULT_FIELD_IN_XML_WRAPPED;
-
 }

@@ -26,11 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.GlobalAssemblyDefinitionType;
-import gov.nist.itl.metaschema.model.m4.xml.GlobalFieldDefinitionType;
-import gov.nist.itl.metaschema.model.m4.xml.GlobalFlagDefinitionType;
-import gov.nist.itl.metaschema.model.m4.xml.METASCHEMADocument;
-import gov.nist.itl.metaschema.model.m4.xml.METASCHEMADocument.METASCHEMA;
 import gov.nist.secauto.metaschema.model.AbstractMetaschema;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
@@ -38,6 +33,11 @@ import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalFieldDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalFlagDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.METASCHEMADocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.METASCHEMADocument.METASCHEMA;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

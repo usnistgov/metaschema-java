@@ -29,8 +29,12 @@ package gov.nist.secauto.metaschema.model.xmlbeans;
 import gov.nist.secauto.metaschema.metapath.Metapath;
 import gov.nist.secauto.metaschema.metapath.MetapathExpression;
 
-import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.apache.xmlbeans.SimpleValue;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlCursor.XmlBookmark;
+import org.apache.xmlbeans.XmlLineNumber;
+import org.apache.xmlbeans.impl.values.XmlValueNotSupportedException;
 
 public class MetapathExpressionHandler {
   private MetapathExpressionHandler() {
@@ -41,8 +45,26 @@ public class MetapathExpressionHandler {
     String value = obj.getStringValue();
     try {
       return Metapath.parseMetapathString(value);
-    } catch (RecognitionException e) {
-      throw e;
+    } catch (ParseCancellationException ex) {
+      StringBuilder builder = new StringBuilder();
+      builder.append("Error parsing metapath '");
+      builder.append(value);
+      builder.append("'");
+      
+      XmlCursor cursor = obj.newCursor();
+      cursor.toParent();
+      XmlBookmark bookmark = cursor.getBookmark(XmlLineNumber.class);
+      if (bookmark != null) {
+        XmlLineNumber lineNumber = (XmlLineNumber)bookmark.getKey();
+        builder.append(" at location ");
+        builder.append(lineNumber.getLine());
+        builder.append(':');
+        builder.append(lineNumber.getColumn());
+      }
+      XmlValueNotSupportedException exNew
+          = new XmlValueNotSupportedException(builder.toString());
+      exNew.initCause(ex);
+      throw exNew;
     }
   }
 

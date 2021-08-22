@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.codegen.AbstractJavaClassGenerator;
+import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
@@ -96,7 +97,7 @@ public class FlagPropertyGenerator
   @Override
   protected Set<MetaschemaFlaggedDefinition> buildField(FieldSpec.Builder builder) {
     AnnotationSpec.Builder annotation = AnnotationSpec.builder(Flag.class)
-        .addMember("useName", "$S", instance.getName());
+        .addMember("useName", "$S", instance.getEffectiveName());
 
     if (getInstance().isRequired()) {
       annotation.addMember("required", "$L", true);
@@ -105,6 +106,11 @@ public class FlagPropertyGenerator
     DataTypes valueDataType = getDataType();
     annotation.addMember("typeAdapter", "$T.class",
         valueDataType.getJavaTypeAdapter().getClass());
+
+    AnnotationUtils.applyAllowedValuesConstraints(annotation, getInstance().getDefinition().getAllowedValuesContraints());
+    AnnotationUtils.applyIndexHasKeyConstraints(annotation, getInstance().getDefinition().getIndexHasKeyConstraints());
+    AnnotationUtils.applyMatchesConstraints(annotation, getInstance().getDefinition().getMatchesConstraints());
+    AnnotationUtils.applyExpectConstraints(annotation, getInstance().getDefinition().getExpectConstraints());
 
     builder.addAnnotation(annotation.build());
 

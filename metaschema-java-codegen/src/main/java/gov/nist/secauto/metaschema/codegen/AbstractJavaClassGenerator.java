@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.codegen;
 
+import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -33,6 +34,7 @@ import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.codegen.property.FlagPropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.PropertyGenerator;
+import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
@@ -107,6 +109,13 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends MetaschemaFl
    */
   public TypeResolver getTypeResolver() {
     return typeResolver;
+  }
+
+  protected void applyConstraints(AnnotationSpec.Builder annotation) {
+    AnnotationUtils.applyAllowedValuesConstraints(annotation, getDefinition().getAllowedValuesContraints());
+    AnnotationUtils.applyIndexHasKeyConstraints(annotation, getDefinition().getIndexHasKeyConstraints());
+    AnnotationUtils.applyMatchesConstraints(annotation, getDefinition().getMatchesConstraints());
+    AnnotationUtils.applyExpectConstraints(annotation, getDefinition().getExpectConstraints());
   }
 
   @Override

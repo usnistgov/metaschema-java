@@ -26,6 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.explode;
 
+import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
@@ -123,5 +127,20 @@ public class ProxiedAssemblyDefinition extends AbstractFlaggedDefinition<IAssemb
   @Override
   public Collection<? extends IModelInstance> getModelInstances() {
     return modelInstances;
+  }
+
+  @Override
+  public List<? extends IIndexConstraint> getIndexContraints() {
+    return getDelegate().getIndexContraints();
+  }
+
+  @Override
+  public List<? extends IUniqueConstraint> getUniqueConstraints() {
+    return getDelegate().getUniqueConstraints();
+  }
+
+  @Override
+  public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
+    return getDelegate().getHasCardinalityConstraints();
   }
 }

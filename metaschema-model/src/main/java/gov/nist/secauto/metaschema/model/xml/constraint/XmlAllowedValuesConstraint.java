@@ -24,79 +24,43 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.xml;
+package gov.nist.secauto.metaschema.model.xml.constraint;
 
-import gov.nist.itl.metaschema.model.m4.xml.AllowedValuesType;
-import gov.nist.itl.metaschema.model.m4.xml.AssemblyConstraintType;
-import gov.nist.itl.metaschema.model.m4.xml.EnumDocument;
-import gov.nist.itl.metaschema.model.m4.xml.ModelConstraintType;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.constraint.AbstractAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValue;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.xml.MarkupStringConverter;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.AllowedValuesType;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.EnumDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.ScopedAllowedValuesType;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
-public class XmlAllowedValuesConstraint extends AbstractAllowedValuesConstraint {
-  private final String id;
-  private final MetapathExpression target;
-  private final boolean allowedOther;
-  private final Map<String, DefaultAllowedValue> allowedValues;
-  private final MarkupMultiline remarks;
-
-  public XmlAllowedValuesConstraint(AssemblyConstraintType.AllowedValues xmlConstraint) {
-    this(xmlConstraint, xmlConstraint.getTarget());
-  }
-
-  public XmlAllowedValuesConstraint(ModelConstraintType.AllowedValues xmlConstraint) {
-    this(xmlConstraint, xmlConstraint.getTarget());
-  }
-
-  public XmlAllowedValuesConstraint(AllowedValuesType xmlConstraint, MetapathExpression target) {
-    Objects.requireNonNull(target);
-    this.id = xmlConstraint.isSetId() ? xmlConstraint.getId() : null;
-    this.target = target;
-    this.allowedOther = xmlConstraint.isSetAllowOther() ? xmlConstraint.getAllowOther()
-        : IAllowedValuesConstraint.ALLOWED_OTHER_DEFAULT;
-
+public class XmlAllowedValuesConstraint extends AbstractAllowedValuesConstraint<DefaultAllowedValue> {
+  static Map<String, DefaultAllowedValue> toAllowedValues(AllowedValuesType xmlConstraint) {
     Map<String, DefaultAllowedValue> allowedValues = new LinkedHashMap<>(xmlConstraint.sizeOfEnumArray());
     for (EnumDocument.Enum1 xmlEnum : xmlConstraint.getEnumList()) {
       DefaultAllowedValue allowedValue
           = new DefaultAllowedValue(xmlEnum.getValue(), MarkupStringConverter.toMarkupString(xmlEnum));
       allowedValues.put(allowedValue.getValue(), allowedValue);
     }
-    this.allowedValues = Collections.unmodifiableMap(allowedValues);
-    this.remarks
-        = xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null;
+    return Collections.unmodifiableMap(allowedValues);
   }
 
-  @Override
-  public Map<String, DefaultAllowedValue> getAllowedValues() {
-    return allowedValues;
+  public XmlAllowedValuesConstraint(ScopedAllowedValuesType xmlConstraint) {
+    this(xmlConstraint, xmlConstraint.getTarget());
   }
 
-  @Override
-  public boolean isAllowedOther() {
-    return allowedOther;
+  public XmlAllowedValuesConstraint(AllowedValuesType xmlConstraint, MetapathExpression target) {
+    super(xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
+        target == null ? IConstraint.DEFAULT_TARGET : target,
+        toAllowedValues(xmlConstraint),
+        xmlConstraint.isSetAllowOther() ? xmlConstraint.getAllowOther()
+            : IAllowedValuesConstraint.ALLOWED_OTHER_DEFAULT,
+        xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
   }
-
-  @Override
-  public String getId() {
-    return id;
-  }
-
-  @Override
-  public MetapathExpression getTarget() {
-    return target;
-  }
-
-  @Override
-  public MarkupMultiline getRemarks() {
-    return remarks;
-  }
-
 }

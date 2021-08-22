@@ -43,7 +43,11 @@ import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
@@ -278,12 +282,6 @@ public class DefaultFieldProperty extends AbstractNamedModelProperty implements 
     }
 
     @Override
-    public List<IConstraint> getConstraints() {
-      // TODO: implement this
-      return Collections.emptyList();
-    }
-
-    @Override
     public String toCoordinates() {
       return DefaultFieldProperty.this.toCoordinates();
     }
@@ -324,7 +322,31 @@ public class DefaultFieldProperty extends AbstractNamedModelProperty implements 
     }
 
     @Override
-    public ModelType getModelType() {
+    public List<? extends IConstraint> getConstraints() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public List<? extends IMatchesConstraint> getMatchesConstraints() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public List<? extends IExpectConstraint> getExpectConstraints() {
       // TODO Auto-generated method stub
       return null;
     }

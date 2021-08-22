@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.AnnotationSpec.Builder;
 import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
@@ -83,26 +84,22 @@ public class FieldJavaClassGenerator
     Set<MetaschemaFlaggedDefinition> retval = new HashSet<>();
     retval.addAll(super.buildClass(builder));
 
-    if (getFieldValueInstance() == null) {
-      // this is an "empty" field, which will be treated as an assembly
-      builder.addAnnotation(MetaschemaAssembly.class);
-    } else {
-      AnnotationSpec.Builder metaschemaField = AnnotationSpec.builder(MetaschemaField.class);
-      boolean isCollapsible = false;
-      if (getDefinition().isCollapsible()) {
-        if (getDefinition().hasJsonKey()) {
-          logger.warn(
-              "A field binding cannot implement a json-key and be collapsible."
-                  + " Ignoring the collapsible for class '{}'.",
-              getTypeResolver().getClassName(getDefinition()).canonicalName());
-        } else {
-          isCollapsible = true;
-        }
+    AnnotationSpec.Builder metaschemaField = AnnotationSpec.builder(MetaschemaField.class);
+    boolean isCollapsible = false;
+    if (getDefinition().isCollapsible()) {
+      if (getDefinition().hasJsonKey()) {
+        logger.warn(
+            "A field binding cannot implement a json-key and be collapsible."
+                + " Ignoring the collapsible for class '{}'.",
+            getTypeResolver().getClassName(getDefinition()).canonicalName());
+      } else {
+        isCollapsible = true;
       }
-      metaschemaField.addMember("isCollapsible", "$L", isCollapsible);
-
-      builder.addAnnotation(metaschemaField.build());
     }
+    metaschemaField.addMember("isCollapsible", "$L", isCollapsible);
+    applyConstraints(metaschemaField);
+
+    builder.addAnnotation(metaschemaField.build());
     return retval;
   }
 

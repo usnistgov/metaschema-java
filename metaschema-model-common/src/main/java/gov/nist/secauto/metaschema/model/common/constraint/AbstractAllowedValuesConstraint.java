@@ -26,6 +26,28 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-public abstract class AbstractAllowedValuesConstraint extends AbstractConstraint implements IAllowedValuesConstraint {
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.metapath.MetapathExpression;
 
+import java.util.Map;
+
+public abstract class AbstractAllowedValuesConstraint<ALLOWED_VALUE extends IAllowedValue> extends AbstractConstraint implements IAllowedValuesConstraint {
+  private final boolean allowedOther;
+  private final Map<String, ALLOWED_VALUE> allowedValues;
+
+  public AbstractAllowedValuesConstraint(String id, MetapathExpression target, Map<String, ALLOWED_VALUE> allowedValues, boolean allowedOther, MarkupMultiline remarks) {
+    super(id, target, remarks);
+    this.allowedValues = allowedValues;
+    this.allowedOther = allowedOther;
+  }
+
+  @Override
+  public Map<String, ALLOWED_VALUE> getAllowedValues() {
+    return allowedValues;
+  }
+
+  @Override
+  public boolean isAllowedOther() {
+    return allowedOther;
+  }
 }

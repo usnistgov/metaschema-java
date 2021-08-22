@@ -26,5 +26,25 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-public abstract class AbstractIndexHasKeyConstraint extends AbstractKeyConstraint implements IIndexHasKeyConstraint {
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.metapath.MetapathExpression;
+
+import java.util.List;
+
+public abstract class AbstractIndexHasKeyConstraint<KEY extends IKeyField> extends AbstractKeyConstraint<KEY> implements IIndexHasKeyConstraint {
+  private final String indexName;
+
+  public AbstractIndexHasKeyConstraint(String id, MetapathExpression target, String indexName, List<KEY> keyFields,
+      MarkupMultiline remarks) {
+    super(id, target, keyFields, remarks);
+    if (indexName.isBlank()) {
+      throw new IllegalArgumentException("The index name must be a non-blank string");
+    }
+    this.indexName = indexName;
+  }
+
+  @Override
+  public String getIndexName() {
+    return indexName;
+  }
 }

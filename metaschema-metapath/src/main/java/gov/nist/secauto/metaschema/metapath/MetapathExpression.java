@@ -34,16 +34,22 @@ import gov.nist.secauto.metaschema.metapath.ast.Expression;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 public class MetapathExpression {
-  public static final MetapathExpression CONTEXT_NODE = new MetapathExpression(new ContextItem());
+  public static final MetapathExpression CONTEXT_NODE = new MetapathExpression(".",new ContextItem());
 
+  private final String path;
   private final Expression node;
 
   public MetapathExpression(ParseTree tree) {
-    this((Expression) new BuildAstVisitor().visit(tree));
+    this(tree.getText(),(Expression) new BuildAstVisitor().visit(tree));
   }
 
-  public MetapathExpression(Expression expr) {
+  public MetapathExpression(String path,Expression expr) {
+    this.path = path;
     this.node = expr;
+  }
+
+  public String getPath() {
+    return path;
   }
 
   public Expression getASTNode() {

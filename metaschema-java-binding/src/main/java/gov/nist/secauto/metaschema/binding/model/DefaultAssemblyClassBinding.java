@@ -50,6 +50,14 @@ import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
 
 import org.apache.logging.log4j.LogManager;
@@ -547,6 +555,48 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
     for (Object item : items) {
       writeInternal(item, writeObjectWrapper, context);
     }
+  }
+
+  @Override
+  public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<? extends IMatchesConstraint> getMatchesConstraints() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<? extends IExpectConstraint> getExpectConstraints() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<? extends IIndexConstraint> getIndexContraints() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<? extends IUniqueConstraint> getUniqueConstraints() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

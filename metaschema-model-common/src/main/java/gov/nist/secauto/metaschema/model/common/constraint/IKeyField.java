@@ -42,5 +42,10 @@ public interface IKeyField {
    */
   Pattern getPattern();
 
+  /**
+   * Any remarks about the key field as markup text.
+   * 
+   * @return markup text or {@code null} if no text is provided
+   */
   MarkupMultiline getRemarks();
 }

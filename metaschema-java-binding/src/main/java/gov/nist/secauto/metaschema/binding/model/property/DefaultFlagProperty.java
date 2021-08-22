@@ -42,7 +42,12 @@ import gov.nist.secauto.metaschema.binding.model.property.info.SingletonProperty
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -265,14 +270,38 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
     }
 
     @Override
+    public String toCoordinates() {
+      return DefaultFlagProperty.this.toCoordinates();
+    }
+
+    @Override
     public List<IConstraint> getConstraints() {
       // TODO: implement this
       return Collections.emptyList();
     }
 
     @Override
-    public String toCoordinates() {
-      return DefaultFlagProperty.this.toCoordinates();
+    public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public List<? extends IMatchesConstraint> getMatchesConstraints() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public List<? extends IExpectConstraint> getExpectConstraints() {
+      // TODO Auto-generated method stub
+      return null;
     }
   }
 }

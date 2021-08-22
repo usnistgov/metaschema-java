@@ -26,13 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.FlagDocument;
-import gov.nist.itl.metaschema.model.m4.xml.LocalFieldDefinitionType;
-import gov.nist.itl.metaschema.model.m4.xml.LocalFlagDefinitionType;
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
@@ -44,6 +46,11 @@ import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.instances.AbstractFieldInstance;
 import gov.nist.secauto.metaschema.model.instances.FlagInstance;
 import gov.nist.secauto.metaschema.model.xml.XmlLocalFieldDefinition.InternalFieldDefinition;
+import gov.nist.secauto.metaschema.model.xml.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.xml.constraint.ValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.FlagDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFieldDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFlagDefinitionType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -51,11 +58,13 @@ import org.apache.xmlbeans.XmlObject;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class XmlLocalFieldDefinition extends AbstractFieldInstance<InternalFieldDefinition> {
   private final LocalFieldDefinitionType xmlField;
   private final InternalFieldDefinition fieldDefinition;
+  private IValueConstraintSupport constraints;
 
   /**
    * Constructs a new Metaschema field definition from an XML representation bound to Java objects.
@@ -78,6 +87,20 @@ public class XmlLocalFieldDefinition extends AbstractFieldInstance<InternalField
    */
   protected LocalFieldDefinitionType getXmlField() {
     return xmlField;
+  }
+
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+   * first accessed.
+   */
+  protected synchronized void checkModelConstraints() {
+    if (constraints == null) {
+      if (getXmlField().isSetConstraint()) {
+        constraints = new ValueConstraintSupport(getXmlField().getConstraint());
+      } else {
+        constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+      }
+    }
   }
 
   @Override
@@ -309,6 +332,36 @@ public class XmlLocalFieldDefinition extends AbstractFieldInstance<InternalField
         retval = getFlagInstanceByName(getXmlField().getJsonKey().getFlagName());
       }
       return retval;
+    }
+
+    @Override
+    public List<? extends IConstraint> getConstraints() {
+      checkModelConstraints();
+      return constraints.getConstraints();
+    }
+
+    @Override
+    public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+      checkModelConstraints();
+      return constraints.getAllowedValuesContraints();
+    }
+
+    @Override
+    public List<? extends IMatchesConstraint> getMatchesConstraints() {
+      checkModelConstraints();
+      return constraints.getMatchesConstraints();
+    }
+
+    @Override
+    public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+      checkModelConstraints();
+      return constraints.getIndexHasKeyConstraints();
+    }
+
+    @Override
+    public List<? extends IExpectConstraint> getExpectConstraints() {
+      checkModelConstraints();
+      return constraints.getExpectConstraints();
     }
 
     @Override

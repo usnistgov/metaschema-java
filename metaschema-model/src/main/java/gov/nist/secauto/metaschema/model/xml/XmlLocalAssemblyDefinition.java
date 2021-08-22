@@ -26,10 +26,17 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.LocalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
@@ -38,16 +45,20 @@ import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.instances.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.model.instances.FlagInstance;
 import gov.nist.secauto.metaschema.model.xml.XmlLocalAssemblyDefinition.InternalAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.xml.constraint.AssemblyConstraintSupport;
+import gov.nist.secauto.metaschema.model.xml.constraint.IAssemblyConstraintSupport;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalAssemblyDefinitionType;
 
 import java.math.BigInteger;
+import java.util.List;
 
 /**
  * Represents a Metaschema assembly definition declared locally as an instance.
  */
-public class XmlLocalAssemblyDefinition
-    extends AbstractAssemblyInstance<InternalAssemblyDefinition> {
+public class XmlLocalAssemblyDefinition extends AbstractAssemblyInstance<InternalAssemblyDefinition> {
   private final LocalAssemblyDefinitionType xmlAssembly;
   private final InternalAssemblyDefinition assemblyDefinition;
+  private IAssemblyConstraintSupport constraints;
 
   /**
    * Constructs a new Metaschema assembly definition from an XML representation bound to Java objects.
@@ -70,6 +81,20 @@ public class XmlLocalAssemblyDefinition
    */
   protected LocalAssemblyDefinitionType getXmlAssembly() {
     return xmlAssembly;
+  }
+
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+   * first accessed.
+   */
+  protected synchronized void checkModelConstraints() {
+    if (constraints == null) {
+      if (getXmlAssembly().isSetConstraint()) {
+        constraints = new AssemblyConstraintSupport(getXmlAssembly().getConstraint());
+      } else {
+        constraints = IAssemblyConstraintSupport.NULL_CONSTRAINT;
+      }
+    }
   }
 
   @Override
@@ -213,6 +238,54 @@ public class XmlLocalAssemblyDefinition
     @Override
     public XmlLocalAssemblyDefinition getDefiningInstance() {
       return XmlLocalAssemblyDefinition.this;
+    }
+
+    @Override
+    public List<? extends IConstraint> getConstraints() {
+      checkModelConstraints();
+      return constraints.getConstraints();
+    }
+
+    @Override
+    public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+      checkModelConstraints();
+      return constraints.getAllowedValuesContraints();
+    }
+
+    @Override
+    public List<? extends IMatchesConstraint> getMatchesConstraints() {
+      checkModelConstraints();
+      return constraints.getMatchesConstraints();
+    }
+
+    @Override
+    public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+      checkModelConstraints();
+      return constraints.getIndexHasKeyConstraints();
+    }
+
+    @Override
+    public List<? extends IExpectConstraint> getExpectConstraints() {
+      checkModelConstraints();
+      return constraints.getExpectConstraints();
+    }
+
+    @Override
+    public List<? extends IIndexConstraint> getIndexContraints() {
+      checkModelConstraints();
+      return constraints.getIndexContraints();
+    }
+
+    @Override
+    public List<? extends IUniqueConstraint> getUniqueConstraints() {
+      checkModelConstraints();
+      return constraints.getUniqueConstraints();
+    }
+
+    @Override
+    public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
+      checkModelConstraints();
+      return constraints.getHasCardinalityConstraints();
     }
 
     @Override

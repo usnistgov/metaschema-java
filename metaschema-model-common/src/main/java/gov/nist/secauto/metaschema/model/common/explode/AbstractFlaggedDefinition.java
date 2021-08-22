@@ -26,11 +26,17 @@
 
 package gov.nist.secauto.metaschema.model.common.explode;
 
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractFlaggedDefinition<DELEGATE extends IFlaggedDefinition>
@@ -75,4 +81,28 @@ public abstract class AbstractFlaggedDefinition<DELEGATE extends IFlaggedDefinit
     return instance != null ? getFlagInstanceByName(instance.getEffectiveName()) : null;
   }
 
+  @Override
+  public List<? extends IConstraint> getConstraints() {
+    return getDelegate().getConstraints();
+  }
+
+  @Override
+  public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+    return getDelegate().getAllowedValuesContraints();
+  }
+
+  @Override
+  public List<? extends IMatchesConstraint> getMatchesConstraints() {
+    return getDelegate().getMatchesConstraints();
+  }
+
+  @Override
+  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+    return getDelegate().getIndexHasKeyConstraints();
+  }
+
+  @Override
+  public List<? extends IExpectConstraint> getExpectConstraints() {
+    return getDelegate().getExpectConstraints();
+  }
 }

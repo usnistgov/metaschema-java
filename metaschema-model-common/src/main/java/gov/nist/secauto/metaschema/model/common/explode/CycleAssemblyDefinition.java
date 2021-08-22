@@ -27,7 +27,14 @@
 package gov.nist.secauto.metaschema.model.common.explode;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
@@ -95,11 +102,6 @@ public class CycleAssemblyDefinition implements AssemblyDefinition {
   }
 
   @Override
-  public List<? extends IConstraint> getConstraints() {
-    return getCycle().getConstraints();
-  }
-
-  @Override
   public Map<String, ? extends IModelInstance> getNamedModelInstances() {
     return getCycle().getNamedModelInstances();
   }
@@ -132,5 +134,45 @@ public class CycleAssemblyDefinition implements AssemblyDefinition {
   @Override
   public String getRootName() {
     return getCycle().getRootName();
+  }
+
+  @Override
+  public List<? extends IConstraint> getConstraints() {
+    return getCycle().getConstraints();
+  }
+
+  @Override
+  public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+    return getCycle().getAllowedValuesContraints();
+  }
+
+  @Override
+  public List<? extends IMatchesConstraint> getMatchesConstraints() {
+    return getCycle().getMatchesConstraints();
+  }
+
+  @Override
+  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+    return getCycle().getIndexHasKeyConstraints();
+  }
+
+  @Override
+  public List<? extends IExpectConstraint> getExpectConstraints() {
+    return getCycle().getExpectConstraints();
+  }
+
+  @Override
+  public List<? extends IIndexConstraint> getIndexContraints() {
+    return getCycle().getIndexContraints();
+  }
+
+  @Override
+  public List<? extends IUniqueConstraint> getUniqueConstraints() {
+    return getCycle().getUniqueConstraints();
+  }
+
+  @Override
+  public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
+    return getCycle().getHasCardinalityConstraints();
   }
 }

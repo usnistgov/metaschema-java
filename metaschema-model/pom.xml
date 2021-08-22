@@ -22,10 +22,10 @@
 	</distributionManagement>
 
 	<dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>metaschema-model-common</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>metaschema-model-common</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
@@ -47,6 +47,13 @@
 		</dependency>
 	</dependencies>
 	<build>
+		<resources>
+			<resource>
+				<directory>${project.build.directory}/generated-resources/xmlbeans</directory>
+			</resource>
+		</resources>
+<!-- 		<sourceDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceDirectory> -->
+<!--     <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory> -->
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -92,21 +99,21 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>xmlbeans-maven-plugin</artifactId>
+				<groupId>org.apache.xmlbeans</groupId>
+				<artifactId>xmlbeans</artifactId>
 				<executions>
 					<execution>
 						<id>metaschema-M4</id>
 						<goals>
-							<goal>xmlbeans</goal>
+							<goal>compile</goal>
 						</goals>
 						<configuration>
-							<schemaDirectory>${project.build.directory}/schema/xsd</schemaDirectory>
-							<sourceGenerationDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceGenerationDirectory>
-							<xmlConfigs>
-								<xmlConfig implementation="java.io.File">${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</xmlConfig>
-							</xmlConfigs>
-							<staleFile>${project.build.directory}/generated-sources/xmlbeans-M4/.staleFlag</staleFile>
+							<sourceDir>${project.build.directory}/schema/xsd</sourceDir>
+							<javaTargetDir>${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
+							<xmlConfigs>${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</xmlConfigs>
+							<classTargetDir>${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
+							<name>metaschema</name>
+							<repackage>gov.nist.secauto.metaschema.model.xmlbeans.metadata</repackage>
 						</configuration>
 					</execution>
 				</executions>

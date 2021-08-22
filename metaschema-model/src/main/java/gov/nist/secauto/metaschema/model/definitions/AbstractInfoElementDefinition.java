@@ -27,10 +27,6 @@
 package gov.nist.secauto.metaschema.model.definitions;
 
 import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
-
-import java.util.Collections;
-import java.util.List;
 
 public abstract class AbstractInfoElementDefinition implements MetaschemaDefinition {
   private final Metaschema metaschema;
@@ -48,12 +44,6 @@ public abstract class AbstractInfoElementDefinition implements MetaschemaDefinit
   @Override
   public Metaschema getContainingMetaschema() {
     return metaschema;
-  }
-
-  @Override
-  public List<? extends IConstraint> getConstraints() {
-    // TODO: remove this once implemented
-    return Collections.emptyList();
   }
 
 }

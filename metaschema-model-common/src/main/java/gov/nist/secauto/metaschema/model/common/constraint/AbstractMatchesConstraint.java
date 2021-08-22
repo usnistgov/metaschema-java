@@ -26,5 +26,33 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import gov.nist.secauto.metaschema.datatypes.DataTypes;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.metapath.MetapathExpression;
+
+import java.util.regex.Pattern;
+
 public abstract class AbstractMatchesConstraint extends AbstractConstraint implements IMatchesConstraint {
+  private final Pattern pattern;
+  private final DataTypes dataType;
+
+  public AbstractMatchesConstraint(String id, MetapathExpression target, Pattern pattern, DataTypes dataType, MarkupMultiline remarks) {
+    super(id, target, remarks);
+    if (pattern == null && dataType == null) {
+      throw new IllegalArgumentException("a pattern or data type must be provided");
+    }
+    this.pattern = pattern;
+    this.dataType = dataType;
+  }
+
+  @Override
+  public Pattern getPattern() {
+    return pattern;
+  }
+
+  @Override
+  public DataTypes getDataType() {
+    return dataType;
+  }
+
 }

@@ -27,10 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.explode;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
-
-import java.util.List;
 
 public abstract class AbstractDefinition<DELEGATE extends IDefinition> implements IDefinition {
   private final DELEGATE delegate;
@@ -66,10 +63,5 @@ public abstract class AbstractDefinition<DELEGATE extends IDefinition> implement
   @Override
   public MarkupMultiline getRemarks() {
     return getDelegate().getRemarks();
-  }
-
-  @Override
-  public List<? extends IConstraint> getConstraints() {
-    return getDelegate().getConstraints();
   }
 }

@@ -26,13 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.AssemblyDocument;
-import gov.nist.itl.metaschema.model.m4.xml.ChoiceDocument;
-import gov.nist.itl.metaschema.model.m4.xml.FieldDocument;
-import gov.nist.itl.metaschema.model.m4.xml.FlagDocument;
-import gov.nist.itl.metaschema.model.m4.xml.LocalAssemblyDefinitionType;
-import gov.nist.itl.metaschema.model.m4.xml.LocalFieldDefinitionType;
-import gov.nist.itl.metaschema.model.m4.xml.LocalFlagDefinitionType;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.definitions.AbstractInfoElementDefinition;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
@@ -42,6 +35,13 @@ import gov.nist.secauto.metaschema.model.instances.ChoiceInstance;
 import gov.nist.secauto.metaschema.model.instances.FieldInstance;
 import gov.nist.secauto.metaschema.model.instances.FlagInstance;
 import gov.nist.secauto.metaschema.model.instances.ObjectModelInstance;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.AssemblyDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.ChoiceDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.FieldDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.FlagDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFieldDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFlagDefinitionType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;

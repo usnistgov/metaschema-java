@@ -24,62 +24,27 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
+package gov.nist.secauto.metaschema.model.xml.constraint;
 
-package gov.nist.secauto.metaschema.model.xml;
-
-import gov.nist.itl.metaschema.model.m4.xml.MatchesConstraintType;
-import gov.nist.itl.metaschema.model.m4.xml.ScopedMatchesConstraintType;
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.constraint.AbstractMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.AbstractIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultKeyField;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.xml.MarkupStringConverter;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.IndexHasKeyConstraintType;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.ScopedIndexHasKeyConstraintType;
 
-import java.util.Objects;
-import java.util.regex.Pattern;
+public class XmlIndexHasKeyConstraint extends AbstractIndexHasKeyConstraint<DefaultKeyField> {
 
-public class XmlMatchesConstraint extends AbstractMatchesConstraint {
-  private final String id;
-  private final MetapathExpression target;
-  private final Pattern pattern;
-  private final DataTypes dataType;
-  private final MarkupMultiline remarks;
-
-  public XmlMatchesConstraint(ScopedMatchesConstraintType xmlConstraint) {
+  public XmlIndexHasKeyConstraint(ScopedIndexHasKeyConstraintType xmlConstraint) {
     this(xmlConstraint, xmlConstraint.getTarget());
   }
 
-  public XmlMatchesConstraint(MatchesConstraintType xmlConstraint, MetapathExpression target) {
-    Objects.requireNonNull(target);
-    this.id = xmlConstraint.isSetId() ? xmlConstraint.getId() : null;
-    this.target = target;
-    this.pattern = xmlConstraint.isSetRegex() ? xmlConstraint.getRegex() : null;
-    this.dataType = xmlConstraint.isSetDatatype() ? xmlConstraint.getDatatype() : null;
-    this.remarks
-        = xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null;
-  }
-
-  @Override
-  public Pattern getPattern() {
-    return pattern;
-  }
-
-  @Override
-  public DataTypes getDataType() {
-    return dataType;
-  }
-
-  @Override
-  public String getId() {
-    return id;
-  }
-
-  @Override
-  public MetapathExpression getTarget() {
-    return target;
-  }
-
-  @Override
-  public MarkupMultiline getRemarks() {
-    return remarks;
+  public XmlIndexHasKeyConstraint(IndexHasKeyConstraintType xmlConstraint, MetapathExpression target) {
+    super(xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
+        target == null ? IConstraint.DEFAULT_TARGET : target,
+        xmlConstraint.getName(),
+        ValueConstraintSupport.toKeyFields(xmlConstraint),
+        xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
   }
 }

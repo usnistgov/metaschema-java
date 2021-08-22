@@ -27,6 +27,12 @@
 package gov.nist.secauto.metaschema.model.common.definition;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+
+import java.util.List;
 
 /**
  * Identifies Metaschema definition types that have associated values (i.e., field, flag).
@@ -38,4 +44,34 @@ public interface IValuedDefinition extends IDefinition {
    * @return the data type
    */
   DataTypes getDatatype();
+
+  /**
+   * Retrieve the list of allowed value constraints that apply to this definition's value.
+   * 
+   * @return the list of allowed value constraints
+   */
+  List<? extends IAllowedValuesConstraint> getAllowedValuesContraints();
+
+  /**
+   * Retrieve the list of matches constraints that apply to this definition's value.
+   * 
+   * @return the list of matches constraints
+   */
+  List<? extends IMatchesConstraint> getMatchesConstraints();
+
+  /**
+   * Retrieve the list of key reference constraints that apply to this definition's value.
+   * 
+   * @return the list of key reference constraints
+   */
+  List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints();
+  
+
+  /**
+   * Retrieve the list of expect constraints that apply to this definition's value.
+   * 
+   * @return the list of expect constraints
+   */
+  List<? extends IExpectConstraint> getExpectConstraints();
+
 }

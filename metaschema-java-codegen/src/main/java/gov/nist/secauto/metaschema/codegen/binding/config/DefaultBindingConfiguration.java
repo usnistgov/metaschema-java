@@ -250,9 +250,8 @@ public class DefaultBindingConfiguration implements BindingConfiguration {
     }
   }
 
-  private MutableDefinitionBindingConfiguration
-      processDefinitionBindingConfiguration(DefinitionBindingConfiguration oldConfig,
-          ObjectDefinitionBindingType objectDefinitionBinding) {
+  private MutableDefinitionBindingConfiguration processDefinitionBindingConfiguration(
+      DefinitionBindingConfiguration oldConfig, ObjectDefinitionBindingType objectDefinitionBinding) {
     MutableDefinitionBindingConfiguration config;
     if (oldConfig != null) {
       config = new DefaultDefinitionBindingConfiguration(oldConfig);

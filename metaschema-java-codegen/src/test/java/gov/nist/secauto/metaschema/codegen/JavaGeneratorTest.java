@@ -30,25 +30,129 @@ import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfigur
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValue;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
+import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 class JavaGeneratorTest {
   // @TempDir
   // File generationDir;
   File generationDir = new File("target/generated-sources/metaschema");
 
-  @Disabled
   @Test
   void test() throws IOException, MetaschemaException {
-    File metaschemaFile = new File("../../liboscal-java/OSCAL/src/metaschema/oscal_catalog_metaschema.xml");
-    Metaschema metaschema = new MetaschemaLoader().loadXmlMetaschema(metaschemaFile);
+    // Metaschema metaschema = new MetaschemaLoader().loadXmlMetaschema(new URL(
+    // "https://raw.githubusercontent.com/usnistgov/OSCAL/main/src/metaschema/oscal_complete_metaschema.xml"));
+    Metaschema metaschema;
+    try {
+      MetaschemaLoader loader = new MetaschemaLoader();
+      loader.allowEntityResolution();
+      metaschema = loader
+          .loadXmlMetaschema(new File("../../OSCAL/src/metaschema/oscal_complete_metaschema.xml"));
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      throw ex;
+    }
 
     DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
     JavaGenerator.generate(metaschema, generationDir, bindingConfiguration);
+
+    for (IDefinition definition : UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema)) {
+      printDefinition(definition, "");
+    }
+    AssemblyDefinition definition = metaschema.getAssemblyDefinitionByName("system-component");
+
+  }
+
+  private void printDefinition(IDefinition definition, String padding) {
+    if (definition instanceof IFlagDefinition) {
+      printFlag((IFlagDefinition) definition, padding);
+    } else if (definition instanceof IFieldDefinition) {
+      printField((IFieldDefinition) definition, padding);
+    } else if (definition instanceof IAssemblyDefinition) {
+      printAssembly((IAssemblyDefinition) definition, padding);
+    }
+  }
+
+  private void printFlag(IFlagDefinition flag, String padding) {
+    System.out.println(String.format("%sFlag Definition: %s", padding, flag.getName()));
+    List<? extends IAllowedValuesConstraint> constraints;
+    try {
+      constraints = flag.getAllowedValuesContraints();
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      throw ex;
+    }
+
+    printConstraints(constraints, padding);
+  }
+
+  private void printField(IFieldDefinition field, String padding) {
+    System.out.println(String.format("%sField Definition: %s", padding, field.getName()));
+
+    List<? extends IAllowedValuesConstraint> constraints;
+    try {
+      constraints = field.getAllowedValuesContraints();
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      throw ex;
+    }
+
+    printConstraints(constraints, padding);
+
+    for (IFlagInstance flag : field.getFlagInstances().values()) {
+      printFlag(flag.getDefinition(), padding + "  ");
+    }
+  }
+
+
+  private void printAssembly(IAssemblyDefinition assembly, String padding) {
+    System.out.println(String.format("%sAssembly Definition: %s", padding, assembly.getName()));
+
+    List<? extends IAllowedValuesConstraint> constraints;
+    try {
+      constraints = assembly.getAllowedValuesContraints();
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      throw ex;
+    }
+
+    printConstraints(constraints, padding);
+
+    for (IFlagInstance flag : assembly.getFlagInstances().values()) {
+      printFlag(flag.getDefinition(), padding + "  ");
+    }
+
+    for (IModelInstance instance : assembly.getNamedModelInstances().values()) {
+      if (instance instanceof IFieldInstance) {
+        printField(((IFieldInstance) instance).getDefinition(), padding + "  ");
+      } else if (instance instanceof IAssemblyInstance) {
+//        printAssembly(((IAssemblyInstance) instance).getDefinition(), padding + "  ");
+      }
+    }
+  }
+
+  private void printConstraints(List<? extends IAllowedValuesConstraint> constraints, String padding) {
+    for (IAllowedValuesConstraint constraint : constraints) {
+      System.out.println(String.format("%s  %s: %s", padding, constraint.getId(), constraint.getTarget().getPath()));
+      for (IAllowedValue value : constraint.getAllowedValues().values()) {
+        System.out.println(String.format("%s    %s: %s", padding, value.getValue(), value.getDescription().toMarkdown()));
+      }
+    }
   }
 }

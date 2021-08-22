@@ -28,8 +28,12 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.metapath.ast.ContextItem;
 
 public interface IConstraint {
+  public static final MetapathExpression DEFAULT_TARGET = MetapathExpression.CONTEXT_NODE;
+  public static final String DEFAULT_TARGET_PATH = ".";
+
   String getId();
 
   MetapathExpression getTarget();

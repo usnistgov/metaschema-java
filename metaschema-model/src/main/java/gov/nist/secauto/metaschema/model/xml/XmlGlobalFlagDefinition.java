@@ -26,32 +26,29 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.AllowedValuesType;
-import gov.nist.itl.metaschema.model.m4.xml.GlobalFlagDefinitionType;
-import gov.nist.itl.metaschema.model.m4.xml.IndexConstraintType;
-import gov.nist.itl.metaschema.model.m4.xml.MatchesConstraintType;
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.definitions.AbstractInfoElementDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.GlobalInfoElementDefinition;
 import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.model.xml.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.xml.constraint.ValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalFlagDefinitionType;
 
-import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlObject;
-
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 public class XmlGlobalFlagDefinition extends AbstractInfoElementDefinition
     implements FlagDefinition, GlobalInfoElementDefinition {
   private final GlobalFlagDefinitionType xmlFlag;
-  private List<IConstraint> constraints;
+  private IValueConstraintSupport constraints;
 
   /**
    * Constructs a new Metaschema flag definition from an XML representation bound to Java objects.
@@ -76,46 +73,47 @@ public class XmlGlobalFlagDefinition extends AbstractInfoElementDefinition
   }
 
   /**
-   * Used to generate the instances for the assembly's model in a lazy fashion when the model is first
-   * accessed.
+   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+   * first accessed.
    */
-  protected void generateModelConstraints() {
-    // handle constraints
-    if (getXmlFlag().isSetConstraint()) {
-      XmlCursor cursor = getXmlFlag().getConstraint().newCursor();
-      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
-          + "$this/m:allowed-values|$this/m:matches|$this/m:index-has-key");
-
-      List<IConstraint> constraints = new LinkedList<>();
-      while (cursor.toNextSelection()) {
-        XmlObject obj = cursor.getObject();
-        if (obj instanceof AllowedValuesType) {
-          XmlAllowedValuesConstraint constraint
-              = new XmlAllowedValuesConstraint((AllowedValuesType) obj, MetapathExpression.CONTEXT_NODE);
-          constraints.add(constraint);
-        } else if (obj instanceof MatchesConstraintType) {
-          XmlMatchesConstraint constraint
-              = new XmlMatchesConstraint((MatchesConstraintType) obj, MetapathExpression.CONTEXT_NODE);
-          constraints.add(constraint);
-        } else if (obj instanceof IndexConstraintType) {
-          XmlIndexHasKeyConstraint constraint = new XmlIndexHasKeyConstraint((IndexConstraintType) obj);
-          constraints.add(constraint);
-        }
+  protected synchronized void checkModelConstraints() {
+    if (constraints == null) {
+      if (getXmlFlag().isSetConstraint()) {
+        constraints = new ValueConstraintSupport(getXmlFlag().getConstraint());
+      } else {
+        constraints = IValueConstraintSupport.NULL_CONSTRAINT;
       }
-      this.constraints = constraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(constraints);
-    } else {
-      this.constraints = Collections.emptyList();
     }
   }
 
   @Override
   public List<? extends IConstraint> getConstraints() {
-    synchronized (this) {
-      if (constraints == null) {
-        generateModelConstraints();
-      }
-    }
-    return constraints;
+    checkModelConstraints();
+    return constraints.getConstraints();
+  }
+
+  @Override
+  public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+    checkModelConstraints();
+    return constraints.getAllowedValuesContraints();
+  }
+
+  @Override
+  public List<? extends IMatchesConstraint> getMatchesConstraints() {
+    checkModelConstraints();
+    return constraints.getMatchesConstraints();
+  }
+
+  @Override
+  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+    checkModelConstraints();
+    return constraints.getIndexHasKeyConstraints();
+  }
+
+  @Override
+  public List<? extends IExpectConstraint> getExpectConstraints() {
+    checkModelConstraints();
+    return constraints.getExpectConstraints();
   }
 
   @Override

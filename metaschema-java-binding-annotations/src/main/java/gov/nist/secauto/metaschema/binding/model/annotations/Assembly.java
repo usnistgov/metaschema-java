@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.model.common.Defaults;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -44,6 +45,7 @@ import java.lang.annotation.Target;
  * <p>
  * For JSON and YAML serialization, the {@link #useName()} identifies the field name to use.
  */
+@Documented
 @Retention(RUNTIME)
 @Target({ FIELD })
 public @interface Assembly {

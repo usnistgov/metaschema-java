@@ -30,11 +30,16 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValues;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+@Documented
 @Retention(RUNTIME)
 @Target({ FIELD, METHOD })
 public @interface Flag {
@@ -90,4 +95,25 @@ public @interface Flag {
    * @return the data type adapter
    */
   Class<? extends JavaTypeAdapter<?>> typeAdapter();
+
+  /**
+   * Get the allowed value constraints for this flag.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  AllowedValues[] allowedValues() default {};
+
+  /**
+   * Get the matches constraints for this flag.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  Matches[] matches() default {};
+
+  /**
+   * Get the index-has-key constraints for this flag.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  IndexHasKey[] indexHasKey() default {};
 }

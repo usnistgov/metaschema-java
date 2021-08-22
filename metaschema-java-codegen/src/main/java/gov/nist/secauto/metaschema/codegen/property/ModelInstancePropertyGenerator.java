@@ -35,6 +35,7 @@ import com.squareup.javapoet.TypeName;
 import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.codegen.AssemblyJavaClassGenerator;
+import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.Defaults;
@@ -137,7 +138,7 @@ public class ModelInstancePropertyGenerator
     if (!definition.isGlobal()) {
       retval.add(definition);
     }
-    fieldAnnoation.addMember("useName", "$S", getModelInstance().getUseName());
+    fieldAnnoation.addMember("useName", "$S", getModelInstance().getEffectiveName());
 
     String namespace = definition.getContainingMetaschema().getXmlNamespace().toString();
     String containingNamespace
@@ -163,6 +164,11 @@ public class ModelInstancePropertyGenerator
 
         fieldAnnoation.addMember("typeAdapter", "$T.class",
             valueDataType.getJavaTypeAdapter().getClass());
+
+        AnnotationUtils.applyAllowedValuesConstraints(fieldAnnoation, fieldDefinition.getAllowedValuesContraints());
+        AnnotationUtils.applyIndexHasKeyConstraints(fieldAnnoation, fieldDefinition.getIndexHasKeyConstraints());
+        AnnotationUtils.applyMatchesConstraints(fieldAnnoation, fieldDefinition.getMatchesConstraints());
+        AnnotationUtils.applyExpectConstraints(fieldAnnoation, fieldDefinition.getExpectConstraints());
       }
     }
 

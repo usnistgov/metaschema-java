@@ -29,8 +29,14 @@ package gov.nist.secauto.metaschema.model.common.definition;
 import gov.nist.secauto.metaschema.model.common.INamedModelElement;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 
+import java.util.Collections;
 import java.util.List;
 
 public interface IDefinition extends INamedModelElement {
+
+  /**
+   * Retrieve the list of constraints associated with this definition.
+   * @return the list of constraints
+   */
   List<? extends IConstraint> getConstraints();
 }

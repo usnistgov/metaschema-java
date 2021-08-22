@@ -37,7 +37,7 @@ public class JsonGroupAsBehaviorType {
    * @param target
    *          the XML value to cast to a boolean
    */
-  public static void encodeJsonGroupAsBehavior(JsonGroupAsBehavior obj, org.apache.xmlbeans.SimpleValue target) {
+  public static void encodeJsonGroupAsBehaviorType(JsonGroupAsBehavior obj, org.apache.xmlbeans.SimpleValue target) {
     if (obj != null) {
       switch (obj) {
       case LIST:
@@ -63,7 +63,7 @@ public class JsonGroupAsBehaviorType {
    *          the XML value to cast to a boolean
    * @return the associated boolean value
    */
-  public static JsonGroupAsBehavior decodeJsonGroupAsBehavior(org.apache.xmlbeans.SimpleValue obj) {
+  public static JsonGroupAsBehavior decodeJsonGroupAsBehaviorType(org.apache.xmlbeans.SimpleValue obj) {
     String value = obj.getStringValue();
     JsonGroupAsBehavior retval;
     switch (value) {

@@ -26,5 +26,24 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-public abstract class AbstractKeyConstraint extends AbstractConstraint implements IKeyConstraint {
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.metapath.MetapathExpression;
+
+import java.util.List;
+
+public abstract class AbstractKeyConstraint<KEY extends IKeyField> extends AbstractConstraint implements IKeyConstraint {
+  private final List<KEY> keyFields;
+
+  public AbstractKeyConstraint(String id, MetapathExpression target, List<KEY> keyFields, MarkupMultiline remarks) {
+    super(id, target, remarks);
+    if (keyFields.isEmpty()) {
+      throw new IllegalArgumentException("an empty list of key fields is not allowed");
+    }
+    this.keyFields = keyFields;
+  }
+
+  @Override
+  public List<KEY> getKeyFields() {
+    return keyFields;
+  }
 }

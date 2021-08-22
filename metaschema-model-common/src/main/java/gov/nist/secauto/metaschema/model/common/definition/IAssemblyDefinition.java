@@ -28,6 +28,11 @@ package gov.nist.secauto.metaschema.model.common.definition;
 
 import gov.nist.secauto.metaschema.model.common.Assembly;
 import gov.nist.secauto.metaschema.model.common.IModelContainer;
+import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
+
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -75,5 +80,10 @@ public interface IAssemblyDefinition extends IFlaggedDefinition, IModelContainer
     return getRootName();
   }
 
-  
+  List<? extends IIndexConstraint> getIndexContraints();
+
+  List<? extends IUniqueConstraint> getUniqueConstraints();
+
+  List<? extends ICardinalityConstraint> getHasCardinalityConstraints();
+
 }

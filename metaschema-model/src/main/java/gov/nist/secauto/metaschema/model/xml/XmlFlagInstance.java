@@ -26,11 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.FlagDocument;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.Defaults;
 import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFlagInstance;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.FlagDocument;
 
 public class XmlFlagInstance
     extends AbstractFlagInstance<XmlGlobalFlagDefinition> {

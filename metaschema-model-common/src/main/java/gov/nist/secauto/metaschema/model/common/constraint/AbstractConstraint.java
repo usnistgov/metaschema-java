@@ -26,5 +26,35 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.metapath.MetapathExpression;
+
+import java.util.Objects;
+
 public abstract class AbstractConstraint implements IConstraint {
+  private final String id;
+  private final MetapathExpression target;
+  private final MarkupMultiline remarks;
+
+  public AbstractConstraint(String id, MetapathExpression target, MarkupMultiline remarks) {
+    Objects.requireNonNull(target);
+    this.id = id;
+    this.target = target;
+    this.remarks = remarks;
+  }
+
+  @Override
+  public String getId() {
+    return id;
+  }
+
+  @Override
+  public MetapathExpression getTarget() {
+    return target;
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    return remarks;
+  }
 }

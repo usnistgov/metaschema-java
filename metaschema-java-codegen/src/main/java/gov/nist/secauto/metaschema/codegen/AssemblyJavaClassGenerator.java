@@ -32,6 +32,7 @@ import com.squareup.javapoet.TypeSpec;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.codegen.property.ModelInstancePropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.PropertyGenerator;
+import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
 import gov.nist.secauto.metaschema.model.common.IModelContainer;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
@@ -69,6 +70,16 @@ public class AssemblyJavaClassGenerator
   }
 
   @Override
+  protected void applyConstraints(AnnotationSpec.Builder annotation) {
+    super.applyConstraints(annotation);
+
+    AnnotationUtils.applyIndexConstraints(annotation, getDefinition().getIndexContraints());
+    AnnotationUtils.applyUniqueConstraints(annotation, getDefinition().getUniqueConstraints());
+    AnnotationUtils.applyHasCardinalityConstraints(annotation, getDefinition().getHasCardinalityConstraints());
+
+  }
+
+  @Override
   protected Set<MetaschemaFlaggedDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
     Set<MetaschemaFlaggedDefinition> retval = new HashSet<>();
     retval.addAll(super.buildClass(builder));
@@ -78,6 +89,7 @@ public class AssemblyJavaClassGenerator
     if (definition.isRoot()) {
       metaschemaAssembly.addMember("rootName", "$S", definition.getRootName());
     }
+    applyConstraints(metaschemaAssembly);
 
     builder.addAnnotation(metaschemaAssembly.build());
 

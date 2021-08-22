@@ -26,11 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.LocalFlagDefinitionType;
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.definitions.AbstractInfoElementDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.LocalInfoElementDefinition;
@@ -38,10 +42,16 @@ import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition
 import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.instances.AbstractFlagInstance;
 import gov.nist.secauto.metaschema.model.xml.XmlLocalFlagDefinition.InternalFlagDefinition;
+import gov.nist.secauto.metaschema.model.xml.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.xml.constraint.ValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFlagDefinitionType;
+
+import java.util.List;
 
 public class XmlLocalFlagDefinition extends AbstractFlagInstance<InternalFlagDefinition> {
   private final LocalFlagDefinitionType xmlFlag;
   private final InternalFlagDefinition flagDefinition;
+  private IValueConstraintSupport constraints;
 
   /**
    * Constructs a new Metaschema flag definition from an XML representation bound to Java objects.
@@ -55,6 +65,20 @@ public class XmlLocalFlagDefinition extends AbstractFlagInstance<InternalFlagDef
     super(parent);
     this.xmlFlag = xmlFlag;
     this.flagDefinition = new InternalFlagDefinition();
+  }
+
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+   * first accessed.
+   */
+  protected synchronized void checkModelConstraints() {
+    if (constraints == null) {
+      if (getXmlFlag().isSetConstraint()) {
+        constraints = new ValueConstraintSupport(getXmlFlag().getConstraint());
+      } else {
+        constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+      }
+    }
   }
 
   /**
@@ -106,7 +130,6 @@ public class XmlLocalFlagDefinition extends AbstractFlagInstance<InternalFlagDef
       super(XmlLocalFlagDefinition.this.getContainingDefinition().getContainingMetaschema());
     }
 
-
     @Override
     public String getName() {
       return XmlLocalFlagDefinition.this.getName();
@@ -152,6 +175,36 @@ public class XmlLocalFlagDefinition extends AbstractFlagInstance<InternalFlagDef
     @Override
     public XmlLocalFlagDefinition getDefiningInstance() {
       return XmlLocalFlagDefinition.this;
+    }
+
+    @Override
+    public List<? extends IConstraint> getConstraints() {
+      checkModelConstraints();
+      return constraints.getConstraints();
+    }
+
+    @Override
+    public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+      checkModelConstraints();
+      return constraints.getAllowedValuesContraints();
+    }
+
+    @Override
+    public List<? extends IMatchesConstraint> getMatchesConstraints() {
+      checkModelConstraints();
+      return constraints.getMatchesConstraints();
+    }
+
+    @Override
+    public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+      checkModelConstraints();
+      return constraints.getIndexHasKeyConstraints();
+    }
+
+    @Override
+    public List<? extends IExpectConstraint> getExpectConstraints() {
+      checkModelConstraints();
+      return constraints.getExpectConstraints();
     }
 
     @Override

@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.MarkupLineType;
-import gov.nist.itl.metaschema.model.m4.xml.MarkupMultilineType;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.MarkupLineType;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.MarkupMultilineType;
 
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlTokenSource;

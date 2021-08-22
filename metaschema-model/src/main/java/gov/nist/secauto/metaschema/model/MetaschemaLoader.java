@@ -26,13 +26,18 @@
 
 package gov.nist.secauto.metaschema.model;
 
-import gov.nist.itl.metaschema.model.m4.xml.ImportDocument;
-import gov.nist.itl.metaschema.model.m4.xml.METASCHEMADocument;
 import gov.nist.secauto.metaschema.model.xml.XmlMetaschema;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.ImportDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.METASCHEMADocument;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,16 +53,26 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 public class MetaschemaLoader {
   private static final Logger logger = LogManager.getLogger(MetaschemaLoader.class);
 
   private final Set<XmlMetaschema> loadedMetaschema = new LinkedHashSet<>();
   private final Map<URI, XmlMetaschema> metaschemaCache = new LinkedHashMap<>();
+  private boolean resolveEntities = false;
 
   /**
    * Create a new Metaschema loader.
    */
   public MetaschemaLoader() {
+  }
+
+  public void allowEntityResolution() {
+    resolveEntities = true;
   }
 
   /**
@@ -173,7 +188,7 @@ public class MetaschemaLoader {
    * @throws IOException
    *           if an error occurred parsing the Metaschema
    */
-  private XmlMetaschema loadXmlMetaschema(URI resource, Stack<URI> visitedMetaschema,
+  protected XmlMetaschema loadXmlMetaschema(URI resource, Stack<URI> visitedMetaschema,
       Map<URI, XmlMetaschema> metaschemaCache) throws MetaschemaException, MalformedURLException, IOException {
     // first check if the current Metaschema has been visited to prevent cycles
     if (visitedMetaschema.contains(resource)) {
@@ -187,7 +202,50 @@ public class MetaschemaLoader {
       // parse this metaschema
       METASCHEMADocument metaschemaXml;
       try {
-        metaschemaXml = METASCHEMADocument.Factory.parse(resource.toURL());
+        XmlOptions options = new XmlOptions();
+        if (resolveEntities) {
+          SAXParserFactory factory = SAXParserFactory.newInstance();
+
+          try {
+//            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", true);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", true);
+            SAXParser parser = factory.newSAXParser();
+            parser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "file"); // ,jar:file
+            XMLReader reader = parser.getXMLReader();
+            reader.setEntityResolver(new EntityResolver() {
+
+              @Override
+              public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+                return null;
+              }
+              
+            });
+            options.setLoadUseXMLReader(reader);
+          } catch (SAXException | ParserConfigurationException ex) {
+            throw new MetaschemaException(ex);
+          }
+//          options.setLoadEntityBytesLimit(204800);
+//          options.setLoadUseDefaultResolver();
+          options.setEntityResolver(new EntityResolver() {
+
+              @Override
+              public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+                // It's very odd that the system id looks like this. Need to investigate. 
+                if (systemId.startsWith("file://file://")) {
+                  systemId = systemId.substring(14);
+                }
+                URI resolvedSystemId = resource.resolve(systemId);
+                return new InputSource(resolvedSystemId.toString());
+              }
+              
+            });
+          options.setLoadDTDGrammar(true);
+        }
+        options.setBaseURI(resource);
+        options.setLoadLineNumbers();
+        metaschemaXml = (METASCHEMADocument) METASCHEMADocument.Factory.parse(resource.toURL(), options);
       } catch (XmlException e) {
         throw new MetaschemaException(e);
       }

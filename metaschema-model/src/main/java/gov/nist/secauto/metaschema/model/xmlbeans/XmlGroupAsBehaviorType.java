@@ -38,7 +38,7 @@ public class XmlGroupAsBehaviorType {
    * @param target
    *          the XML value to cast to a boolean
    */
-  public static void encodeXmlGroupAsBehavior(XmlGroupAsBehavior obj, org.apache.xmlbeans.SimpleValue target) {
+  public static void encodeXmlGroupAsBehaviorType(XmlGroupAsBehavior obj, org.apache.xmlbeans.SimpleValue target) {
     if (obj != null) {
       switch (obj) {
       case GROUPED:
@@ -61,7 +61,7 @@ public class XmlGroupAsBehaviorType {
    *          the XML value to cast to a boolean
    * @return the associated boolean value
    */
-  public static XmlGroupAsBehavior decodeXmlGroupAsBehavior(org.apache.xmlbeans.SimpleValue obj) {
+  public static XmlGroupAsBehavior decodeXmlGroupAsBehaviorType(org.apache.xmlbeans.SimpleValue obj) {
     String value = obj.getStringValue();
     XmlGroupAsBehavior retval;
     switch (value) {

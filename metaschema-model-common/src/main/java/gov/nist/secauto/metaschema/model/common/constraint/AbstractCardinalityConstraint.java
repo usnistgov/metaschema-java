@@ -23,68 +23,32 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.constraint;
 
-package gov.nist.secauto.metaschema.model.xml;
-
-import gov.nist.itl.metaschema.model.m4.xml.IndexConstraintType;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.constraint.AbstractIndexConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.DefaultKeyField;
-import gov.nist.secauto.metaschema.model.common.constraint.IKeyField;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+public class AbstractCardinalityConstraint extends AbstractConstraint implements ICardinalityConstraint {
+  private final Integer minOccurs;
+  private final Integer maxOccurs;
 
-public class XmlIndexConstraint extends AbstractIndexConstraint {
-  private final String id;
-  private final String name;
-  private final MetapathExpression target;
-  List<DefaultKeyField> keyFields;
-  private final MarkupMultiline remarks;
-
-  public XmlIndexConstraint(IndexConstraintType xmlConstraint) {
-    this.id = xmlConstraint.isSetId() ? xmlConstraint.getId() : null;
-    this.name = xmlConstraint.getName();
-    this.target = xmlConstraint.getTarget();
-
-    List<DefaultKeyField> keyFields = new ArrayList<>(xmlConstraint.sizeOfKeyFieldArray());
-    for (IndexConstraintType.KeyField xmlKeyField : xmlConstraint.getKeyFieldList()) {
-      DefaultKeyField keyField
-          = new DefaultKeyField(xmlKeyField.getTarget(), xmlKeyField.isSetPattern() ? xmlKeyField.getPattern() : null,
-              xmlKeyField.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlKeyField.getRemarks()) : null);
-      keyFields.add(keyField);
+  public AbstractCardinalityConstraint(String id, MetapathExpression target, Integer minOccurs, Integer maxOccurs, MarkupMultiline remarks) {
+    super(id, target, remarks);
+    if (minOccurs == null && maxOccurs == null) {
+      throw new IllegalArgumentException("a pattern or data type must be provided");
     }
-    this.keyFields = Collections.unmodifiableList(keyFields);
-    this.remarks
-        = xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null;
-
+    this.minOccurs = minOccurs;
+    this.maxOccurs = maxOccurs;
   }
 
   @Override
-  public String getName() {
-    return name;
+  public Integer getMinOccurs() {
+    return minOccurs;
   }
 
   @Override
-  public List<? extends IKeyField> getKeyFields() {
-    return keyFields;
-  }
-
-  @Override
-  public String getId() {
-    return id;
-  }
-
-  @Override
-  public MetapathExpression getTarget() {
-    return target;
-  }
-
-  @Override
-  public MarkupMultiline getRemarks() {
-    return remarks;
+  public Integer getMaxOccurs() {
+    return maxOccurs;
   }
 
 }

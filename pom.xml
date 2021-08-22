@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
@@ -113,7 +115,7 @@
 		<project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <dependency.antlr4.version>4.9.2</dependency.antlr4.version>
+		<dependency.antlr4.version>4.9.2</dependency.antlr4.version>
 		<dependency.commons-lang3.version>3.11</dependency.commons-lang3.version>
 		<dependency.flexmark.version>0.62.2</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.30</dependency.freemarker.version>
@@ -124,7 +126,7 @@
 		<dependency.log4j2.version>2.14.0</dependency.log4j2.version>
 		<dependency.moxy.version>3.0.0</dependency.moxy.version>
 		<dependency.woodstox.version>6.2.3</dependency.woodstox.version>
-		<dependency.xmlbeans.version>3.1.0</dependency.xmlbeans.version>
+		<dependency.xmlbeans.version>5.0.1</dependency.xmlbeans.version>
 		<!-- <dependency.xmlbeans.version>4.0.0</dependency.xmlbeans.version> -->
 		<plugin.license.version>4.0.rc1</plugin.license.version>
 		<plugin.antlr4test.version>1.17</plugin.antlr4test.version>
@@ -138,16 +140,16 @@
 				<artifactId>metaschema-model</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>metaschema-model-common</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>metaschema-metapath</artifactId>
-        <version>${project.version}</version>
-      </dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>metaschema-model-common</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>metaschema-metapath</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>metaschema-java-datatypes</artifactId>
@@ -166,7 +168,7 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>metaschema-freemarker-support</artifactId>
-        <version>${project.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
@@ -383,23 +385,35 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>xmlbeans-maven-plugin</artifactId>
-					<version>2.3.3</version>
+					<groupId>org.apache.xmlbeans</groupId>
+					<artifactId>xmlbeans</artifactId>
+					<version>${dependency.xmlbeans.version}</version>
 					<configuration>
-						<noUpa>false</noUpa>
-						<javaSource>1.5</javaSource>
+<!-- 						<sourceOnly>true</sourceOnly> -->
+<!-- 						<noUpa>false</noUpa> -->
+						<!-- <javaSource>1.5</javaSource> -->
 						<!-- <javaSource combine.self="override"></javaSource> -->
-						<noJavac>true</noJavac>
+<!-- 						<noJavac>true</noJavac> -->
 					</configuration>
-					<dependencies>
-						<dependency>
-							<groupId>org.apache.xmlbeans</groupId>
-							<artifactId>xmlbeans</artifactId>
-							<version>${dependency.xmlbeans.version}</version>
-						</dependency>
-					</dependencies>
 				</plugin>
+				<!-- <plugin> -->
+				<!-- <groupId>org.codehaus.mojo</groupId> -->
+				<!-- <artifactId>xmlbeans-maven-plugin</artifactId> -->
+				<!-- <version>2.3.3</version> -->
+				<!-- <configuration> -->
+				<!-- <noUpa>false</noUpa> -->
+				<!-- <javaSource>1.5</javaSource> -->
+				<!-- <javaSource combine.self="override"></javaSource> -->
+				<!-- <noJavac>true</noJavac> -->
+				<!-- </configuration> -->
+				<!-- <dependencies> -->
+				<!-- <dependency> -->
+				<!-- <groupId>org.apache.xmlbeans</groupId> -->
+				<!-- <artifactId>xmlbeans</artifactId> -->
+				<!-- <version>${dependency.xmlbeans.version}</version> -->
+				<!-- </dependency> -->
+				<!-- </dependencies> -->
+				<!-- </plugin> -->
 				<plugin>
 					<groupId>com.mycila</groupId>
 					<artifactId>license-maven-plugin</artifactId>
@@ -452,6 +466,37 @@
 					<artifactId>maven-site-plugin</artifactId>
 					<configuration>
 						<topSiteURL>${site.url}</topSiteURL>
+					</configuration>
+				</plugin>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.xmlbeans
+										</groupId>
+										<artifactId>
+											xmlbeans
+										</artifactId>
+										<versionRange>
+											[5.0.1,)
+										</versionRange>
+										<goals>
+											<goal>compile</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -584,6 +629,6 @@
 		<module>metaschema-metapath</module>
 		<module>metaschema-documentation-generator</module>
 		<module>metaschema-freemarker-support</module>
-    <module>metaschema-model-common</module>
-  </modules>
+		<module>metaschema-model-common</module>
+	</modules>
 </project>

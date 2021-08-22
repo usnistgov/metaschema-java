@@ -26,10 +26,14 @@
 
 package gov.nist.secauto.metaschema.metapath;
 
+import gov.nist.secauto.metaschema.metapath.ast.ASTPrinter;
+
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.tree.ParseTree;
+
+import java.util.Arrays;
 
 import src.main.antlr4.metapath10Lexer;
 import src.main.antlr4.metapath10Parser;
@@ -42,6 +46,8 @@ public class Metapath {
     metapath10Parser parser = new metapath10Parser(tokens);
     parser.addErrorListener(new FailingErrorListener());
     ParseTree tree = parser.expr();
+//    CSTPrinter printer = new CSTPrinter();
+//    printer.print(tree, Arrays.asList(parser.getRuleNames()));
     return new MetapathExpression(tree);
   }
 
@@ -49,7 +55,6 @@ public class Metapath {
     // MetapathExpression exp = Metapath.parseMetapathString("./test/@flag");
     // MetapathExpression exp = Metapath.parseMetapathString("//test/@flag = 1+1+1");
     MetapathExpression exp = Metapath.parseMetapathString("//test[@flag='value']/@flag = 0.1");
-    // CSTPrinter printer = new CSTPrinter();
-    System.out.println(exp.getASTNode().toASTString());
+    System.out.println(new ASTPrinter().visit(exp.getASTNode(), null));
   }
 }
