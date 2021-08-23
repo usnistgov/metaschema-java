@@ -27,4 +27,10 @@
 package gov.nist.secauto.metaschema.metapath.ast;
 
 public interface IBooleanLogicExpression extends IExpression {
+
+  @Override
+  default boolean isNodeExpression() {
+    return false;
+  }
+
 }

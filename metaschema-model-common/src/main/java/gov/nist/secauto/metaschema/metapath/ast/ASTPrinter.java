@@ -125,8 +125,8 @@ public class ASTPrinter extends AbstractExpressionVisitor<String, Void> {
   }
 
   @Override
-  public String visitFunction(Function expr, Void context) {
-    return appendNode(expr, super.visitFunction(expr, context));
+  public String visitFunctionCall(FunctionCall expr, Void context) {
+    return appendNode(expr, super.visitFunctionCall(expr, context));
   }
 
   @Override

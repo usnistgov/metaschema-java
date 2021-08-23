@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.metapath.ast.ASTPrinter;
 import gov.nist.secauto.metaschema.metapath.ast.BuildAstVisitor;
 import gov.nist.secauto.metaschema.metapath.ast.ContextItem;
 import gov.nist.secauto.metaschema.metapath.ast.IExpression;
-import gov.nist.secauto.metaschema.metapath.ast.INodeExpression;
 import gov.nist.secauto.metaschema.metapath.evaluate.IInstanceSet;
 import gov.nist.secauto.metaschema.metapath.evaluate.IMetaschemaContext;
 import gov.nist.secauto.metaschema.metapath.evaluate.INodeContext;
@@ -69,18 +68,20 @@ public class MetapathExpression {
 
   public IInstanceSet evaluateMetaschemaInstance(IMetaschemaContext context) {
     IExpression node = getASTNode();
-    if (!(node instanceof INodeExpression)) {
-      throw new UnsupportedOperationException();
+    if (!node.isNodeExpression()) {
+      throw new UnsupportedOperationException(String.format("The expression '%s' is not a node expression", getPath()));
     }
     return new MetaschemaInstanceEvaluationVisitor().visit(node, context);
   }
 
   public INodeSet evaluateNodeSet(INodeContext context) {
     IExpression node = getASTNode();
-    if (!(node instanceof INodeExpression)) {
-      throw new UnsupportedOperationException();
+    if (!node.isNodeExpression()) {
+      throw new UnsupportedOperationException(String.format("The expression '%s' is not a node expression", getPath()));
     }
-    return ((INodeExpression)node).evaluateNodeSet(context);
+    // TODO: implement
+    throw new UnsupportedOperationException();
+//    return ((INodeExpression)node).evaluateNodeSet(context);
   }
 
   public boolean evaluate(INodeContext context) {

@@ -23,20 +23,41 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.metapath.ast;
 
-import gov.nist.secauto.metaschema.metapath.evaluate.IInstanceSet;
-import gov.nist.secauto.metaschema.metapath.evaluate.IMetaschemaContext;
-import gov.nist.secauto.metaschema.metapath.evaluate.INodeContext;
-import gov.nist.secauto.metaschema.metapath.evaluate.INodeSet;
+import java.util.List;
+import java.util.Objects;
 
-public interface INodeExpression extends IExpression {
+public class FunctionCall implements IExpression {
+  private final String name;
+  private final List<IExpression> arguments;
 
-  default IInstanceSet evaluateMetaschemaInstance(IMetaschemaContext context) {
-    throw new UnsupportedOperationException();
+  public FunctionCall(String name, List<IExpression> arguments) {
+    Objects.requireNonNull(name);
+    Objects.requireNonNull(arguments);
+    this.name = name;
+    this.arguments = arguments;
   }
 
-  default INodeSet evaluateNodeSet(INodeContext context) {
-    throw new UnsupportedOperationException();
+  @Override
+  public String toASTString() {
+    return String.format("%s[name=%s]", getClass().getName(), name);
+  }
+
+  @Override
+  public List<? extends IExpression> getChildren() {
+    return arguments;
+  }
+
+  @Override
+  public boolean isNodeExpression() {
+    // TODO: implement this based on what the function returns
+    return true;
+  }
+
+  @Override
+  public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitFunctionCall(this, context);
   }
 }

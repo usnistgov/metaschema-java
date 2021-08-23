@@ -41,6 +41,8 @@ public interface IExpression {
     return getChildren().get(index);
   }
 
+  boolean isNodeExpression();
+
   default String toASTString() {
     return String.format("%s[]", getClass().getName());
   }

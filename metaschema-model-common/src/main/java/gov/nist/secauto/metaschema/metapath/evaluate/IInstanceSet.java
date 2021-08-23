@@ -23,19 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-  HOUT ANY WARRANTY OF ANY KIND, EITHER
- * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
- * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
- * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
- * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
- * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
- * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
- * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
- * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
- * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
- * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
- */
+
 package gov.nist.secauto.metaschema.metapath.evaluate;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
@@ -49,13 +37,14 @@ import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public interface IInstanceSet {
   public static final IInstanceSet EMPTY_INSTANCE_SET = new DefaultInstanceSet(Collections.emptyList());
 
-  List<? extends IInstance> getInstances();
+  Collection<? extends IInstance> getInstances();
 
 
   public static IInstanceSet newInstanceSet(IAssemblyDefinition definition) {
@@ -267,5 +256,21 @@ public interface IInstanceSet {
       }
       
     };
+  }
+
+
+  public static IInstanceSet newInstanceSet(Collection<? extends IInstance> instances) {
+    IInstanceSet retval;
+    if (instances.isEmpty()) {
+      retval = EMPTY_INSTANCE_SET;
+    } else {
+      retval = new IInstanceSet() {
+        @Override
+        public Collection<? extends IInstance> getInstances() {
+          return instances;
+        }
+      };
+    }
+    return retval;
   }
 }

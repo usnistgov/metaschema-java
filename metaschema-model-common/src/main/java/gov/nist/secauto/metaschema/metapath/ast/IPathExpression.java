@@ -26,6 +26,6 @@
 
 package gov.nist.secauto.metaschema.metapath.ast;
 
-public interface IPathExpression extends INodeExpression {
+public interface IPathExpression extends IExpression {
 
 }

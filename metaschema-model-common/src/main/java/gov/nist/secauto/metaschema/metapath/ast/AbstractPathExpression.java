@@ -27,4 +27,9 @@ package gov.nist.secauto.metaschema.metapath.ast;
 
 public abstract class AbstractPathExpression implements IPathExpression {
 
+  @Override
+  public boolean isNodeExpression() {
+    return true;
+  }
+
 }

@@ -36,7 +36,7 @@ public class RootSlashOnlyPath extends AbstractRootPathExpression {
   }
 
   @Override
-  public List<? extends IExpression> getChildren() {
+  public List<? extends IPathExpression> getChildren() {
     return Collections.emptyList();
   }
 

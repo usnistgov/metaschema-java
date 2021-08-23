@@ -26,26 +26,9 @@
 
 package gov.nist.secauto.metaschema.metapath.ast;
 
-import gov.nist.secauto.metaschema.metapath.evaluate.IInstanceSet;
-import gov.nist.secauto.metaschema.metapath.evaluate.IMetaschemaContext;
-import gov.nist.secauto.metaschema.metapath.evaluate.INodeContext;
-import gov.nist.secauto.metaschema.metapath.evaluate.INodeSet;
-
 public abstract class AbstractArithmeticExpr extends AbstractBinaryExpr implements IArithmeticExpression {
 
   public AbstractArithmeticExpr(IExpression left, IExpression right) {
     super(left, right);
   }
-
-  @Override
-  public IInstanceSet evaluateMetaschemaInstance(IMetaschemaContext context) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public INodeSet evaluateNodeSet(INodeContext context) {
-    throw new UnsupportedOperationException();
-  }
-
-  
 }

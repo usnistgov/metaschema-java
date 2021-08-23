@@ -29,11 +29,16 @@ package gov.nist.secauto.metaschema.metapath.ast;
 import java.util.Collections;
 import java.util.List;
 
-public class Wildcard implements IExpression {
+public class Wildcard implements INameExpression {
 
   @Override
   public List<? extends IExpression> getChildren() {
     return Collections.emptyList();
+  }
+
+  @Override
+  public boolean isNodeExpression() {
+    return true;
   }
 
   @Override

@@ -28,10 +28,22 @@ package gov.nist.secauto.metaschema.metapath.ast;
 
 import java.util.List;
 
-public class Union extends AbstractNAryExpression<IExpression> implements INodeExpression {
+public class Union extends AbstractNAryExpression<IExpression> implements IExpression {
 
   public Union(List<IExpression> children) {
     super(children);
+  }
+
+  @Override
+  public boolean isNodeExpression() {
+    boolean retval = true;
+    for (IExpression expr : getChildren()) {
+      if (!expr.isNodeExpression()) {
+        retval = false;
+        break;
+      }
+    }
+    return retval;
   }
 
   @Override

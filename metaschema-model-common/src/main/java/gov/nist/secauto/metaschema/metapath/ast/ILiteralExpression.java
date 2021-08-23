@@ -29,11 +29,16 @@ package gov.nist.secauto.metaschema.metapath.ast;
 import java.util.Collections;
 import java.util.List;
 
-public interface ILiteralExpression extends INodeExpression {
+public interface ILiteralExpression extends IExpression {
 
   @Override
   default List<? extends IExpression> getChildren() {
     // a literal never has children
     return Collections.emptyList();
+  }
+
+  @Override
+  default boolean isNodeExpression() {
+    return false;
   }
 }

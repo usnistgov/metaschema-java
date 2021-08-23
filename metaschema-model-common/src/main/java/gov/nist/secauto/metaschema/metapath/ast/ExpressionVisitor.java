@@ -44,7 +44,7 @@ public interface ExpressionVisitor<RESULT, CONTEXT> {
 
   RESULT visitFlag(Flag expr, CONTEXT context);
 
-  RESULT visitFunction(Function expr, CONTEXT context);
+  RESULT visitFunctionCall(FunctionCall expr, CONTEXT context);
 
   RESULT visitIntegerDivision(IntegerDivision expr, CONTEXT context);
 

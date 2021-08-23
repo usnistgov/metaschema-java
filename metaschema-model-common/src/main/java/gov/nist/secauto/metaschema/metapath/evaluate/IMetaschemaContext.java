@@ -25,8 +25,9 @@
  */
 package gov.nist.secauto.metaschema.metapath.evaluate;
 
-import gov.nist.secauto.metaschema.metapath.ast.IPathExpression;
+import gov.nist.secauto.metaschema.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.metapath.ast.RelativeDoubleSlashPath;
+import gov.nist.secauto.metaschema.metapath.ast.RootDoubleSlashPath;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 
 import java.util.function.Predicate;
@@ -41,8 +42,6 @@ public interface IMetaschemaContext extends IContext {
 
   IInstanceSet getChildModelInstance(Predicate<IInstance> filter);
 
-  IInstanceSet search(RelativeDoubleSlashPath expr);
-
-  IInstanceSet search(IPathExpression expr);
+  IInstanceSet search(MetaschemaInstanceEvaluationVisitor visitor, IExpression right, IMetaschemaContext newInstanceMetaschemaContext);
 
 }

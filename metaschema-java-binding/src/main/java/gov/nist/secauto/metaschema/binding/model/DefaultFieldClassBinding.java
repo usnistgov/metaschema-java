@@ -212,9 +212,9 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
   // if (valuePropertyName != null) {
   //// retval = Stream.concat(super.getNamedInstances(flagFilter).values().stream(),
   // Stream.of(fieldValue))
-  //// .collect(Collectors.toMap(NamedProperty::getJsonName, Function.identity()));
+  //// .collect(Collectors.toMap(NamedProperty::getJsonName, FunctionCall.identity()));
   // retval = super.getNamedInstances(flagFilter).values().stream()
-  // .collect(Collectors.toMap(NamedProperty::getJsonName, Function.identity()));
+  // .collect(Collectors.toMap(NamedProperty::getJsonName, FunctionCall.identity()));
   // } else {
   // retval = super.getNamedInstances(flagFilter);
   // }

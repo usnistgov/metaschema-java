@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.metapath.ast.AbstractExpressionVisitor;
 import gov.nist.secauto.metaschema.metapath.ast.ContextItem;
 import gov.nist.secauto.metaschema.metapath.ast.Flag;
 import gov.nist.secauto.metaschema.metapath.ast.IExpression;
-import gov.nist.secauto.metaschema.metapath.ast.IPathExpression;
 import gov.nist.secauto.metaschema.metapath.ast.Metapath;
 import gov.nist.secauto.metaschema.metapath.ast.ModelInstance;
 import gov.nist.secauto.metaschema.metapath.ast.ParenthesizedExpression;
@@ -75,13 +74,7 @@ public class MetaschemaInstanceEvaluationVisitor extends AbstractExpressionVisit
   @Override
   public IInstanceSet visitRootDoubleSlashPath(RootDoubleSlashPath expr, IMetaschemaContext context) {
     if (isallowedRoot()) {
-      IExpression node = expr.getNode();
-      
-      if (node instanceof IPathExpression) {
-        return context.search((IPathExpression)expr);
-      } else {
-        return IInstanceSet.EMPTY_INSTANCE_SET;
-      }
+      return context.search(this, expr.getNode(), context);
     } else {
       throw new UnsupportedOperationException("root searching is not supported");
     }
@@ -116,7 +109,9 @@ public class MetaschemaInstanceEvaluationVisitor extends AbstractExpressionVisit
 
   @Override
   public IInstanceSet visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr, IMetaschemaContext context) {
-    return context.search(expr);
+    IInstanceSet leftResult = expr.getLeft().accept(this, context);
+    
+    return context.search(this, expr.getRight(), context.newInstanceMetaschemaContext(leftResult));
   }
 
   @Override

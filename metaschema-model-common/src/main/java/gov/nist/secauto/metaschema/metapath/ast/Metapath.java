@@ -28,10 +28,22 @@ package gov.nist.secauto.metaschema.metapath.ast;
 
 import java.util.List;
 
-public class Metapath extends AbstractNAryExpression<IExpression> implements INodeExpression {
+public class Metapath extends AbstractNAryExpression<IExpression> implements IExpression {
 
   public Metapath(List<IExpression> children) {
     super(children);
+  }
+
+  @Override
+  public boolean isNodeExpression() {
+    boolean retval = true;
+    for (IExpression expr : getChildren()) {
+      if (!expr.isNodeExpression()) {
+        retval = false;
+        break;
+      }
+    }
+    return retval;
   }
 
   @Override

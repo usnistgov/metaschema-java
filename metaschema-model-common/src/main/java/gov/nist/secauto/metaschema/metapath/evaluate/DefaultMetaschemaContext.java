@@ -26,19 +26,21 @@
 
 package gov.nist.secauto.metaschema.metapath.evaluate;
 
-import gov.nist.secauto.metaschema.metapath.ast.IPathExpression;
-import gov.nist.secauto.metaschema.metapath.ast.RelativeDoubleSlashPath;
+import gov.nist.secauto.metaschema.metapath.ast.Flag;
+import gov.nist.secauto.metaschema.metapath.ast.IExpression;
+import gov.nist.secauto.metaschema.metapath.ast.ModelInstance;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.instance.RootAssemblyDefinitionInstance;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -71,11 +73,20 @@ public class DefaultMetaschemaContext implements IMetaschemaContext {
     return retval;
   }
 
-
   @Override
   public IInstanceSet getChildFlag(Predicate<IInstance> filter) {
-    List<IInstance> result = new LinkedList<>();
-    for (IInstance instance : getInstanceSet().getInstances()) {
+    return IInstanceSet.newInstanceSet(searchFlags(getInstanceSet().getInstances(), filter));
+  }
+
+  @Override
+  public IInstanceSet getChildModelInstance(Predicate<IInstance> filter) {
+    return IInstanceSet.newInstanceSet(searchModelInstances(getInstanceSet().getInstances(), filter, false));
+  }
+
+  protected Collection<? extends IInstance> searchFlags(Collection<? extends IInstance> instances,
+      Predicate<IInstance> searchFilter) {
+    Set<IInstance> retval = new LinkedHashSet<>();
+    for (IInstance instance : instances) {
       Collection<? extends IFlagInstance> flags = null;
       if (instance instanceof IAssemblyInstance) {
         flags = ((IAssemblyInstance) instance).getDefinition().getFlagInstances().values();
@@ -84,37 +95,73 @@ public class DefaultMetaschemaContext implements IMetaschemaContext {
       }
 
       if (flags != null && !flags.isEmpty()) {
-        flags.stream().filter(filter).collect(Collectors.toCollection(() -> result));
+        retval.addAll(flags.stream().filter(searchFilter).collect(Collectors.toList()));
       }
     }
-    return new DefaultInstanceSet(result);
+    return retval;
   }
 
-  @Override
-  public IInstanceSet getChildModelInstance(Predicate<IInstance> filter) {
-    List<IModelInstance> result = new LinkedList<>();
-    for (IInstance instance : getInstanceSet().getInstances()) {
-      Collection<? extends IModelInstance> modelInstances = null;
+  protected Collection<? extends IInstance> searchModelInstances(Collection<? extends IInstance> instances,
+      Predicate<IInstance> searchFilter, boolean recurse) {
+    Set<IInstance> retval = new LinkedHashSet<>();
+    for (IInstance instance : instances) {
+      // get all instances
+      Collection<? extends IInstance> modelInstances = null;
       if (instance instanceof IAssemblyInstance) {
         modelInstances = ((IAssemblyInstance) instance).getDefinition().getModelInstances();
       }
 
       if (modelInstances != null && !modelInstances.isEmpty()) {
-        modelInstances.stream().filter(filter).collect(Collectors.toCollection(() -> result));
+        // add the matching instances to the result
+        retval.addAll(modelInstances.stream().filter(searchFilter).collect(Collectors.toList()));
+
+        if (recurse) {
+          // recurse
+          retval.addAll(searchModelInstances(modelInstances, searchFilter, recurse));
+        }
       }
     }
-    return new DefaultInstanceSet(result);
+    return retval;
+  }
+
+  protected Collection<? extends IInstance> searchExpression(MetaschemaInstanceEvaluationVisitor visitor, IExpression expr,
+      Collection<? extends IInstance> instances) {
+    Set<IInstance> retval = new LinkedHashSet<>();
+    for (IInstance instance : instances) {
+      // get all instances
+      Collection<IInstance> modelInstances = new LinkedList<>();
+      if (instance instanceof IAssemblyInstance) {
+        Collection<? extends IInstance> resultingInstances = ((IAssemblyInstance) instance).getDefinition().getModelInstances();
+        modelInstances.addAll(resultingInstances);
+      }
+
+      if (modelInstances != null && !modelInstances.isEmpty()) {
+        // add the matching instances to the result
+        retval.addAll(visitor.visit(expr, this.newInstanceMetaschemaContext(IInstanceSet.newInstanceSet(modelInstances))).getInstances());
+
+        // recurse
+        retval.addAll(searchExpression(visitor, expr, modelInstances));
+      }
+    }
+    return retval;
   }
 
   @Override
-  public IInstanceSet search(RelativeDoubleSlashPath expr) {
-    // TODO: implement
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public IInstanceSet search(IPathExpression expr) {
-    // TODO: implement
-    throw new UnsupportedOperationException();
+  public IInstanceSet search(MetaschemaInstanceEvaluationVisitor visitor, IExpression expr,
+      IMetaschemaContext context) {
+    IInstanceSet retval;
+    if (expr instanceof Flag) {
+      // check instances as a flag
+      Predicate<IInstance> filter = ((Flag) expr).getInstanceMatcher();
+      retval = IInstanceSet.newInstanceSet(searchFlags(getInstanceSet().getInstances(), filter));
+    } else if (expr instanceof ModelInstance) {
+      // check instances as a ModelInstance
+      Predicate<IInstance> filter = ((ModelInstance) expr).getInstanceMatcher();
+      retval = IInstanceSet.newInstanceSet(searchModelInstances(getInstanceSet().getInstances(), filter, true));
+    } else {
+      // recurse tree
+      retval = IInstanceSet.newInstanceSet(searchExpression(visitor, expr, getInstanceSet().getInstances()));
+    }
+    return retval;
   }
 }

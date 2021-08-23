@@ -35,6 +35,11 @@ public class StringConcat extends AbstractNAryExpression<IExpression> {
   }
 
   @Override
+  public boolean isNodeExpression() {
+    return false;
+  }
+
+  @Override
   public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitStringConcat(this, context);
   }

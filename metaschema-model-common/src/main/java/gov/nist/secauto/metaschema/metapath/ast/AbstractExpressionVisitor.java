@@ -97,7 +97,7 @@ public class AbstractExpressionVisitor<RESULT, CONTEXT> implements ExpressionVis
   }
 
   @Override
-  public RESULT visitFunction(Function expr, CONTEXT context) {
+  public RESULT visitFunctionCall(FunctionCall expr, CONTEXT context) {
     return visitChildren(expr, context);
   }
 

@@ -26,6 +26,10 @@
 
 package gov.nist.secauto.metaschema.metapath.ast;
 
-public interface IArithmeticExpression extends INodeExpression {
+public interface IArithmeticExpression extends IExpression {
+  @Override
+  default boolean isNodeExpression() {
+    return false;
+  }
 
 }

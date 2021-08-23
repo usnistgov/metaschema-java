@@ -25,11 +25,6 @@
  */
 package gov.nist.secauto.metaschema.metapath.ast;
 
-import gov.nist.secauto.metaschema.metapath.evaluate.IInstanceSet;
-import gov.nist.secauto.metaschema.metapath.evaluate.IMetaschemaContext;
-import gov.nist.secauto.metaschema.metapath.evaluate.INodeContext;
-import gov.nist.secauto.metaschema.metapath.evaluate.INodeSet;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -52,16 +47,6 @@ public abstract class AbstractLiteralExpression<VALUE> implements ILiteralExpres
   @Override
   public List<? extends IExpression> getChildren() {
     return Collections.emptyList();
-  }
-
-  @Override
-  public IInstanceSet evaluateMetaschemaInstance(IMetaschemaContext context) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public INodeSet evaluateNodeSet(INodeContext context) {
-    throw new UnsupportedOperationException();
   }
 
 }

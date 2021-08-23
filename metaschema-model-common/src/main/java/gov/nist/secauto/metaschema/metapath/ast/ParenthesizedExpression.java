@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.metapath.ast;
 
 import java.util.List;
 
-public class ParenthesizedExpression implements INodeExpression {
+public class ParenthesizedExpression implements IExpression {
   private IExpression expr;
 
   public ParenthesizedExpression(IExpression expr) {
@@ -42,6 +42,18 @@ public class ParenthesizedExpression implements INodeExpression {
   @Override
   public List<? extends IExpression> getChildren() {
     return List.of(expr);
+  }
+
+  @Override
+  public boolean isNodeExpression() {
+    boolean retval = true;
+    for (IExpression expr : getChildren()) {
+      if (!expr.isNodeExpression()) {
+        retval = false;
+        break;
+      }
+    }
+    return retval;
   }
 
   @Override

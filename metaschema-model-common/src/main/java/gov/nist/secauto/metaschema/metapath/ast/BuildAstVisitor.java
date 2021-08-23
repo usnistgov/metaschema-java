@@ -503,7 +503,7 @@ public class BuildAstVisitor extends metapath10BaseVisitor<IExpression> {
     String name = nameTree.getText();
     ParseTree argumentListTree = context.getChild(1);
 
-    return new Function(name, parseArgumentList((ArgumentlistContext) argumentListTree));
+    return new FunctionCall(name, parseArgumentList((ArgumentlistContext) argumentListTree));
   }
 
   @Override
