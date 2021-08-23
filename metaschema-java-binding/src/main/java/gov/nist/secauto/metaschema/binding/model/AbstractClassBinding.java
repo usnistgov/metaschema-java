@@ -128,11 +128,6 @@ public abstract class AbstractClassBinding implements ClassBinding {
     return null;
   }
 
-  @Override
-  public List<IConstraint> getConstraints() {
-    return Collections.emptyList();
-  }
-
   /**
    * Collect all fields that are flag instances on this class.
    * 

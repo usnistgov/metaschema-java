@@ -27,6 +27,14 @@
 package gov.nist.secauto.metaschema.model.xml.constraint;
 
 import gov.nist.secauto.metaschema.model.common.constraint.AbstractConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultCardinalityConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultUniqueConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.DefineAssemblyConstraintsType;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.HasCardinalityConstraintType;
@@ -49,55 +57,57 @@ public class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
       + "$this/m:allowed-values|$this/m:index|$this/m:index-has-key|$this/m:is-unique|"
       + "$this/m:has-cardinality|$this/m:matches|$this/m:expect";
   private final List<AbstractConstraint> constraints;
-  private final List<XmlAllowedValuesConstraint> allowedValuesConstraints;
-  private final List<XmlMatchesConstraint> matchesConstraints;
-  private final List<XmlIndexHasKeyConstraint> indexHasKeyConstraints;
-  private final List<XmlExpectConstraint> expectConstraints;
-  private final List<XmlIndexConstraint> indexConstraints;
-  private final List<XmlUniqueConstraint> uniqueConstraints;
-  private final List<XmlCardinalityConstraint> cardinalityConstraints;
+  private final List<DefaultAllowedValuesConstraint> allowedValuesConstraints;
+  private final List<DefaultMatchesConstraint> matchesConstraints;
+  private final List<DefaultIndexHasKeyConstraint> indexHasKeyConstraints;
+  private final List<DefaultExpectConstraint> expectConstraints;
+  private final List<DefaultIndexConstraint> indexConstraints;
+  private final List<DefaultUniqueConstraint> uniqueConstraints;
+  private final List<DefaultCardinalityConstraint> cardinalityConstraints;
 
   public AssemblyConstraintSupport(DefineAssemblyConstraintsType xmlConstraints) {
     XmlCursor cursor = xmlConstraints.newCursor();
     cursor.selectPath(PATH);
 
     List<AbstractConstraint> constraints = new LinkedList<>();
-    List<XmlAllowedValuesConstraint> allowedValuesConstraints = new LinkedList<>();
-    List<XmlMatchesConstraint> matchesConstraints = new LinkedList<>();
-    List<XmlIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
-    List<XmlExpectConstraint> expectConstraints = new LinkedList<>();
-    List<XmlIndexConstraint> indexConstraints = new LinkedList<>();
-    List<XmlUniqueConstraint> uniqueConstraints = new LinkedList<>();
-    List<XmlCardinalityConstraint> cardinalityConstraints = new LinkedList<>();
+    List<DefaultAllowedValuesConstraint> allowedValuesConstraints = new LinkedList<>();
+    List<DefaultMatchesConstraint> matchesConstraints = new LinkedList<>();
+    List<DefaultIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
+    List<DefaultExpectConstraint> expectConstraints = new LinkedList<>();
+    List<DefaultIndexConstraint> indexConstraints = new LinkedList<>();
+    List<DefaultUniqueConstraint> uniqueConstraints = new LinkedList<>();
+    List<DefaultCardinalityConstraint> cardinalityConstraints = new LinkedList<>();
 
     while (cursor.toNextSelection()) {
       XmlObject obj = cursor.getObject();
       if (obj instanceof ScopedAllowedValuesType) {
-        XmlAllowedValuesConstraint constraint = new XmlAllowedValuesConstraint((ScopedAllowedValuesType) obj);
+        DefaultAllowedValuesConstraint constraint
+            = ConstraintFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj);
         constraints.add(constraint);
         allowedValuesConstraints.add(constraint);
       } else if (obj instanceof ScopedIndexConstraintType) {
-        XmlIndexConstraint constraint = new XmlIndexConstraint((ScopedIndexConstraintType) obj);
+        DefaultIndexConstraint constraint = ConstraintFactory.newIndexConstraint((ScopedIndexConstraintType) obj);
         constraints.add(constraint);
         indexConstraints.add(constraint);
       } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
-        XmlIndexHasKeyConstraint constraint = new XmlIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj);
+        DefaultIndexHasKeyConstraint constraint
+            = ConstraintFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj);
         constraints.add(constraint);
         indexHasKeyConstraints.add(constraint);
       } else if (obj instanceof ScopedKeyConstraintType) {
-        XmlUniqueConstraint constraint = new XmlUniqueConstraint((ScopedKeyConstraintType) obj);
+        DefaultUniqueConstraint constraint = ConstraintFactory.newUniqueConstraint((ScopedKeyConstraintType) obj);
         constraints.add(constraint);
         uniqueConstraints.add(constraint);
       } else if (obj instanceof HasCardinalityConstraintType) {
-        XmlCardinalityConstraint constraint = new XmlCardinalityConstraint((HasCardinalityConstraintType) obj);
+        DefaultCardinalityConstraint constraint = ConstraintFactory.newCardinalityConstraint((HasCardinalityConstraintType) obj);
         constraints.add(constraint);
         cardinalityConstraints.add(constraint);
       } else if (obj instanceof ScopedMatchesConstraintType) {
-        XmlMatchesConstraint constraint = new XmlMatchesConstraint((ScopedMatchesConstraintType) obj);
+        DefaultMatchesConstraint constraint = ConstraintFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj);
         constraints.add(constraint);
         matchesConstraints.add(constraint);
       } else if (obj instanceof ScopedExpectConstraintType) {
-        XmlExpectConstraint constraint = new XmlExpectConstraint((ScopedExpectConstraintType) obj);
+        DefaultExpectConstraint constraint = ConstraintFactory.newExpectConstraint((ScopedExpectConstraintType) obj);
         constraints.add(constraint);
         expectConstraints.add(constraint);
       }
@@ -125,37 +135,37 @@ public class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
   }
 
   @Override
-  public List<XmlAllowedValuesConstraint> getAllowedValuesContraints() {
+  public List<DefaultAllowedValuesConstraint> getAllowedValuesContraints() {
     return allowedValuesConstraints;
   }
 
   @Override
-  public List<XmlMatchesConstraint> getMatchesConstraints() {
+  public List<DefaultMatchesConstraint> getMatchesConstraints() {
     return matchesConstraints;
   }
 
   @Override
-  public List<XmlIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+  public List<DefaultIndexHasKeyConstraint> getIndexHasKeyConstraints() {
     return indexHasKeyConstraints;
   }
 
   @Override
-  public List<XmlExpectConstraint> getExpectConstraints() {
+  public List<DefaultExpectConstraint> getExpectConstraints() {
     return expectConstraints;
   }
 
   @Override
-  public List<XmlIndexConstraint> getIndexContraints() {
+  public List<DefaultIndexConstraint> getIndexContraints() {
     return indexConstraints;
   }
 
   @Override
-  public List<XmlUniqueConstraint> getUniqueConstraints() {
+  public List<DefaultUniqueConstraint> getUniqueConstraints() {
     return uniqueConstraints;
   }
 
   @Override
-  public List<XmlCardinalityConstraint> getHasCardinalityConstraints() {
+  public List<DefaultCardinalityConstraint> getHasCardinalityConstraints() {
     return cardinalityConstraints;
   }
 }

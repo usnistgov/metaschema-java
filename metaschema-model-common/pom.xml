@@ -23,15 +23,82 @@
 
 	<description>A simple metaschema-model-common.</description>
 
+  <repositories>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>bintray</name>
+      <url>https://jcenter.bintray.com</url>
+    </repository>
+  </repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>metaschema-java-datatypes</artifactId>
 		</dependency>
-		    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>metaschema-metapath</artifactId>
-    </dependency>
-		
+
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4-runtime</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.adelean</groupId>
+			<artifactId>inject-resources-core</artifactId>
+			<version>0.1.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.adelean</groupId>
+			<artifactId>inject-resources-junit-jupiter</artifactId>
+			<version>0.1.0</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-maven-plugin</artifactId>
+				<configuration>
+					<sourceDirectory>${basedir}</sourceDirectory>
+					<grammars>metapath10.g4</grammars>
+					<visitor>true</visitor>
+					<listener>true</listener>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>antlr4</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.khubla.antlr</groupId>
+				<artifactId>antlr4test-maven-plugin</artifactId>
+				<configuration>
+					<verbose>false</verbose>
+					<showTree>false</showTree>
+					<entryPoint>auxilary</entryPoint>
+					<grammarName>metapath10</grammarName>
+					<packageName />
+					<exampleFiles>examples/</exampleFiles>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

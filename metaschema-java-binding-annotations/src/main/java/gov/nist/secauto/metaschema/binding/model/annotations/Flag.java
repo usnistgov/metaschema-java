@@ -31,6 +31,7 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValues;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
@@ -116,4 +117,11 @@ public @interface Flag {
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
   IndexHasKey[] indexHasKey() default {};
+  
+  /**
+   * Get the expect constraints for this flag.
+   * 
+   * @return the expected constraints or an empty array if no expected constraints are defined
+   */
+  Expect[] expect() default {};
 }

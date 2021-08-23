@@ -27,6 +27,11 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
+import gov.nist.secauto.metaschema.metapath.Metapath;
+import gov.nist.secauto.metaschema.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.metapath.ast.ASTPrinter;
+import gov.nist.secauto.metaschema.metapath.evaluate.DefaultMetaschemaContext;
+import gov.nist.secauto.metaschema.metapath.evaluate.IInstanceSet;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
@@ -39,7 +44,9 @@ import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.util.ConstraintValidatingModelWalker;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;
 
@@ -47,6 +54,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 class JavaGeneratorTest {
@@ -72,11 +80,29 @@ class JavaGeneratorTest {
     DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
     JavaGenerator.generate(metaschema, generationDir, bindingConfiguration);
 
+    ConstraintValidatingModelWalker walker = new ConstraintValidatingModelWalker();
+    List<IAssemblyDefinition> rootDefinitions = new LinkedList<>();
     for (IDefinition definition : UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema)) {
-      printDefinition(definition, "");
+      
+      if (definition instanceof IAssemblyDefinition) {
+        IAssemblyDefinition assembly = (IAssemblyDefinition)definition;
+        if (assembly.isRoot()) {
+          rootDefinitions.add(assembly);
+          walker.walk(assembly);
+        }
+      }
     }
     AssemblyDefinition definition = metaschema.getAssemblyDefinitionByName("system-component");
 
+    MetapathExpression exp = Metapath.parseMetapathString("*/*/@name");
+    // MetapathExpression exp = Metapath.parseMetapathString("//test/@flag = 1+1+1");
+    // MetapathExpression exp = Metapath.parseMetapathString("//test[@flag='value']/@flag = 0.1");
+    System.out.println(new ASTPrinter().visit(exp.getASTNode()));
+
+    IInstanceSet result = exp.evaluateMetaschemaInstance(new DefaultMetaschemaContext(rootDefinitions));
+    for (IInstance instance : result.getInstances()) {
+      System.out.println(instance);
+    }
   }
 
   private void printDefinition(IDefinition definition, String padding) {

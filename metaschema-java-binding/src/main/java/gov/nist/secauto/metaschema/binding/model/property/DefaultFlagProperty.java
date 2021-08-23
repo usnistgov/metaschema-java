@@ -37,24 +37,24 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -69,6 +69,7 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
   private final Flag flag;
   private final JavaTypeAdapter<?> javaTypeAdapter;
   private InternalFlagDefinition definition;
+  private IValueConstraintSupport constraints;
 
   public DefaultFlagProperty(ClassBinding parentClassBinding, Field field, BindingContext bindingContext) {
     super(field, parentClassBinding);
@@ -76,7 +77,7 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
     this.javaTypeAdapter = bindingContext.getJavaTypeAdapterInstance(this.flag.typeAdapter());
   }
 
-  protected Flag getFlagAnnotation() {
+  public Flag getFlagAnnotation() {
     return flag;
   }
 
@@ -107,6 +108,16 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
   @Override
   public String getXmlNamespace() {
     return ModelUtil.resolveNamespace(getFlagAnnotation().namespace(), getParentClassBinding(), true);
+  }
+
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+   * first accessed.
+   */
+  protected synchronized void checkModelConstraints() {
+    if (constraints == null) {
+      constraints = new ValueConstraintSupport(this);
+    }
   }
 
   @Override
@@ -275,33 +286,33 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
     }
 
     @Override
-    public List<IConstraint> getConstraints() {
-      // TODO: implement this
-      return Collections.emptyList();
+    public List<? extends IConstraint> getConstraints() {
+      checkModelConstraints();
+      return constraints.getConstraints();
     }
 
     @Override
     public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
-      // TODO Auto-generated method stub
-      return null;
+      checkModelConstraints();
+      return constraints.getAllowedValuesContraints();
     }
 
     @Override
     public List<? extends IMatchesConstraint> getMatchesConstraints() {
-      // TODO Auto-generated method stub
-      return null;
+      checkModelConstraints();
+      return constraints.getMatchesConstraints();
     }
 
     @Override
     public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-      // TODO Auto-generated method stub
-      return null;
+      checkModelConstraints();
+      return constraints.getIndexHasKeyConstraints();
     }
 
     @Override
     public List<? extends IExpectConstraint> getExpectConstraints() {
-      // TODO Auto-generated method stub
-      return null;
+      checkModelConstraints();
+      return constraints.getExpectConstraints();
     }
   }
 }

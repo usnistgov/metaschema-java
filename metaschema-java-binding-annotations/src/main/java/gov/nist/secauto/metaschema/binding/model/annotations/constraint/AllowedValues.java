@@ -32,6 +32,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 
 import java.lang.annotation.Documented;
@@ -62,7 +63,7 @@ public @interface AllowedValues {
 
   AllowedValue[] values();
 
-  boolean allowOthers() default false;
+  boolean allowOthers() default IAllowedValuesConstraint.DEFAULT_ALLOW_OTHER;
 
   /**
    * Any remarks about the constraint, encoded as an escaped Markdown string.

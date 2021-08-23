@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
+import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.XmlBindingSupplier;
@@ -42,12 +43,12 @@ import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
-import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
@@ -77,6 +78,7 @@ public class DefaultFieldProperty extends AbstractNamedModelProperty implements 
   private final Field field;
   private final JavaTypeAdapter<?> javaTypeAdapter;
   private IFieldDefinition definition;
+  private IValueConstraintSupport constraints;
 
   public DefaultFieldProperty(AssemblyClassBinding parentClassBinding, java.lang.reflect.Field field) {
     super(parentClassBinding, field);
@@ -95,7 +97,7 @@ public class DefaultFieldProperty extends AbstractNamedModelProperty implements 
 
   }
 
-  protected Field getFieldAnnotation() {
+  public Field getFieldAnnotation() {
     return field;
   }
 
@@ -147,6 +149,16 @@ public class DefaultFieldProperty extends AbstractNamedModelProperty implements 
   @Override
   public String getXmlNamespace() {
     return ModelUtil.resolveNamespace(getFieldAnnotation().namespace(), getParentClassBinding(), false);
+  }
+
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+   * first accessed.
+   */
+  protected synchronized void checkModelConstraints() {
+    if (constraints == null) {
+      constraints = new ValueConstraintSupport(this);
+    }
   }
 
   @Override
@@ -323,32 +335,32 @@ public class DefaultFieldProperty extends AbstractNamedModelProperty implements 
 
     @Override
     public List<? extends IConstraint> getConstraints() {
-      // TODO Auto-generated method stub
-      return null;
+      checkModelConstraints();
+      return constraints.getConstraints();
     }
 
     @Override
     public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
-      // TODO Auto-generated method stub
-      return null;
+      checkModelConstraints();
+      return constraints.getAllowedValuesContraints();
     }
 
     @Override
     public List<? extends IMatchesConstraint> getMatchesConstraints() {
-      // TODO Auto-generated method stub
-      return null;
+      checkModelConstraints();
+      return constraints.getMatchesConstraints();
     }
 
     @Override
     public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-      // TODO Auto-generated method stub
-      return null;
+      checkModelConstraints();
+      return constraints.getIndexHasKeyConstraints();
     }
 
     @Override
     public List<? extends IExpectConstraint> getExpectConstraints() {
-      // TODO Auto-generated method stub
-      return null;
+      checkModelConstraints();
+      return constraints.getExpectConstraints();
     }
   }
 }

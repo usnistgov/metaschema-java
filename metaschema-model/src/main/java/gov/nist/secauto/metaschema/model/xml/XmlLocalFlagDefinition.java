@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.definitions.AbstractInfoElementDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.LocalInfoElementDefinition;
@@ -42,7 +43,6 @@ import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition
 import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.instances.AbstractFlagInstance;
 import gov.nist.secauto.metaschema.model.xml.XmlLocalFlagDefinition.InternalFlagDefinition;
-import gov.nist.secauto.metaschema.model.xml.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.xml.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFlagDefinitionType;
 

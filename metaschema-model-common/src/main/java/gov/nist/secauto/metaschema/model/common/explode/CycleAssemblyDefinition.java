@@ -162,8 +162,8 @@ public class CycleAssemblyDefinition implements AssemblyDefinition {
   }
 
   @Override
-  public List<? extends IIndexConstraint> getIndexContraints() {
-    return getCycle().getIndexContraints();
+  public List<? extends IIndexConstraint> getIndexConstraints() {
+    return getCycle().getIndexConstraints();
   }
 
   @Override

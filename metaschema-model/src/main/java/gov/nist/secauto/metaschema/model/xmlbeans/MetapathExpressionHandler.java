@@ -55,7 +55,7 @@ public class MetapathExpressionHandler {
       cursor.toParent();
       XmlBookmark bookmark = cursor.getBookmark(XmlLineNumber.class);
       if (bookmark != null) {
-        XmlLineNumber lineNumber = (XmlLineNumber)bookmark.getKey();
+        XmlLineNumber lineNumber = (XmlLineNumber)bookmark;
         builder.append(" at location ");
         builder.append(lineNumber.getLine());
         builder.append(':');

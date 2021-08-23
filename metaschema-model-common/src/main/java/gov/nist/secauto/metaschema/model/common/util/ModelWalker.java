@@ -58,7 +58,8 @@ public abstract class ModelWalker<DATA> {
    * 
    * @param flag
    *          the metaschema flag definition to walk
-   * @param data additional information to operate on
+   * @param data
+   *          additional information to operate on
    */
   public void walk(IFlagDefinition flag, DATA data) {
     visit(flag, data);
@@ -79,7 +80,8 @@ public abstract class ModelWalker<DATA> {
    * 
    * @param field
    *          the metaschema field definition to walk
-   * @param data additional information to operate on
+   * @param data
+   *          additional information to operate on
    */
   public void walk(IFieldDefinition field, DATA data) {
     if (visit(field, data)) {
@@ -104,7 +106,8 @@ public abstract class ModelWalker<DATA> {
    * 
    * @param assembly
    *          the metaschema assembly definition to walk
-   * @param data additional information to operate on
+   * @param data
+   *          additional information to operate on
    */
   public void walk(IAssemblyDefinition assembly, DATA data) {
     if (visit(assembly, data)) {
@@ -209,7 +212,8 @@ public abstract class ModelWalker<DATA> {
    * 
    * @param def
    *          the definition that is visited
-   * @param data additional information to operate on
+   * @param data
+   *          additional information to operate on
    */
   protected void visit(IFlagDefinition def, DATA data) {
   }
@@ -220,7 +224,8 @@ public abstract class ModelWalker<DATA> {
    * 
    * @param def
    *          the definition that is visited
-   * @param data additional information to operate on
+   * @param data
+   *          additional information to operate on
    * @return {@code true} if child instances are to be walked, or {@code false} otherwise
    */
   protected boolean visit(IFieldDefinition def, DATA data) {
@@ -233,7 +238,8 @@ public abstract class ModelWalker<DATA> {
    * 
    * @param def
    *          the definition that is visited
-   * @param data additional information to operate on
+   * @param data
+   *          additional information to operate on
    * @return {@code true} if child instances are to be walked, or {@code false} otherwise
    */
   protected boolean visit(IAssemblyDefinition def, DATA data) {
@@ -246,7 +252,8 @@ public abstract class ModelWalker<DATA> {
    * 
    * @param instance
    *          the instance that is visited
-   * @param data additional information to operate on
+   * @param data
+   *          additional information to operate on
    * @return {@code true} if the associated definition is to be walked, or {@code false} otherwise
    */
   protected boolean visit(IFlagInstance instance, DATA data) {
@@ -259,7 +266,8 @@ public abstract class ModelWalker<DATA> {
    * 
    * @param instance
    *          the instance that is visited
-   * @param data additional information to operate on
+   * @param data
+   *          additional information to operate on
    * @return {@code true} if the associated definition is to be walked, or {@code false} otherwise
    */
   protected boolean visit(IFieldInstance instance, DATA data) {
@@ -272,7 +280,8 @@ public abstract class ModelWalker<DATA> {
    * 
    * @param instance
    *          the instance that is visited
-   * @param data additional information to operate on
+   * @param data
+   *          additional information to operate on
    * @return {@code true} if the associated definition is to be walked, or {@code false} otherwise
    */
   protected boolean visit(IAssemblyInstance instance, DATA data) {
@@ -285,7 +294,8 @@ public abstract class ModelWalker<DATA> {
    * 
    * @param instance
    *          the instance that is visited
-   * @param data additional information to operate on
+   * @param data
+   *          additional information to operate on
    * @return {@code true} if the child instances are to be walked, or {@code false} otherwise
    */
   protected boolean visit(IChoiceInstance instance, DATA data) {

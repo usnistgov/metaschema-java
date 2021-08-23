@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.model.xml;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
@@ -41,7 +42,6 @@ import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.instances.FlagInstance;
 import gov.nist.secauto.metaschema.model.xml.constraint.AssemblyConstraintSupport;
-import gov.nist.secauto.metaschema.model.xml.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalAssemblyDefinitionType;
 
 import java.util.List;
@@ -120,7 +120,7 @@ public class XmlGlobalAssemblyDefinition
   }
 
   @Override
-  public List<? extends IIndexConstraint> getIndexContraints() {
+  public List<? extends IIndexConstraint> getIndexConstraints() {
     checkModelConstraints();
     return constraints.getIndexContraints();
   }

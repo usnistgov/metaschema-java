@@ -43,6 +43,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
+import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultFieldValueProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FieldValueProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
@@ -52,11 +53,12 @@ import gov.nist.secauto.metaschema.binding.model.property.info.ListPropertyColle
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
-import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -101,6 +103,7 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
   private final MetaschemaField metaschemaField;
   private FieldValueProperty fieldValue;
   private FlagProperty jsonValueKeyFlagInstance;
+  private IValueConstraintSupport constraints;
 
   /**
    * Construct a new {@link ClassBinding} for a Java bean annotated with the {@link Field} annotation.
@@ -115,7 +118,7 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
     this.metaschemaField = clazz.getAnnotation(MetaschemaField.class);
   }
 
-  protected MetaschemaField getMetaschemaFieldAnnotation() {
+  public MetaschemaField getMetaschemaFieldAnnotation() {
     return metaschemaField;
   }
 
@@ -648,28 +651,43 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
     return DataTypes.getDataTypeForAdapter(getFieldValue().getJavaTypeAdapter());
   }
 
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+   * first accessed.
+   */
+  protected synchronized void checkModelConstraints() {
+    if (constraints == null) {
+      constraints = new ValueConstraintSupport(this);
+    }
+  }
+
+  @Override
+  public List<? extends IConstraint> getConstraints() {
+    checkModelConstraints();
+    return constraints.getConstraints();
+  }
+
   @Override
   public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
-    // TODO Auto-generated method stub
-    return null;
+    checkModelConstraints();
+    return constraints.getAllowedValuesContraints();
   }
 
   @Override
   public List<? extends IMatchesConstraint> getMatchesConstraints() {
-    // TODO Auto-generated method stub
-    return null;
+    checkModelConstraints();
+    return constraints.getMatchesConstraints();
   }
 
   @Override
   public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-    // TODO Auto-generated method stub
-    return null;
+    checkModelConstraints();
+    return constraints.getIndexHasKeyConstraints();
   }
 
   @Override
   public List<? extends IExpectConstraint> getExpectConstraints() {
-    // TODO Auto-generated method stub
-    return null;
+    checkModelConstraints();
+    return constraints.getExpectConstraints();
   }
-
 }

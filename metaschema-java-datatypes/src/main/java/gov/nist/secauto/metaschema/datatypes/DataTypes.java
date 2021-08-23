@@ -50,6 +50,7 @@ import gov.nist.secauto.metaschema.datatypes.adapter.types.UriAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.UriReferenceAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.UuidAdapter;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,38 +59,40 @@ import java.util.Map;
  * {@link JavaTypeAdapter} implementation are provided for each type.
  */
 public enum DataTypes {
-  NCNAME(new NcNameAdapter()),
-  TOKEN(new TokenAdapter()),
-  DECIMAL(new DecimalAdapter()),
-  INTEGER(new IntegerAdapter()),
-  NON_NEGATIVE_INTEGER(new NegativeIntegerAdapter()),
-  POSITIVE_INTEGER(new PositiveIntegerAdapter()),
-  DATE(new DateAdapter()),
-  DATE_TIME(new DateTimeAdapter()),
-  DATE_WITH_TZ(new DateWithTZAdapter()),
-  DATE_TIME_WITH_TZ(new DateTimeWithTZAdapter()),
-  BASE64(new Base64Adapter()),
-  EMAIL_ADDRESS(new EmailAddressAdapter()),
-  HOSTNAME(new HostnameAdapter()),
-  IP_V4_ADDRESS(new Ipv4AddressAdapter()),
-  IP_V6_ADDRESS(new IPv6AddressAdapter()),
-  URI(new UriAdapter()),
-  URI_REFERENCE(new UriReferenceAdapter()),
-  UUID(new UuidAdapter()),
-  MARKUP_LINE(new MarkupLineAdapter()),
-  MARKUP_MULTILINE(new MarkupMultilineAdapter()),
-  BOOLEAN(new BooleanAdapter()),
-  STRING(new StringAdapter());
+  NCNAME(NcNameAdapter.class),
+  TOKEN(TokenAdapter.class),
+  DECIMAL(DecimalAdapter.class),
+  INTEGER(IntegerAdapter.class),
+  NON_NEGATIVE_INTEGER(NegativeIntegerAdapter.class),
+  POSITIVE_INTEGER(PositiveIntegerAdapter.class),
+  DATE(DateAdapter.class),
+  DATE_TIME(DateTimeAdapter.class),
+  DATE_WITH_TZ(DateWithTZAdapter.class),
+  DATE_TIME_WITH_TZ(DateTimeWithTZAdapter.class),
+  BASE64(Base64Adapter.class),
+  EMAIL_ADDRESS(EmailAddressAdapter.class),
+  HOSTNAME(HostnameAdapter.class),
+  IP_V4_ADDRESS(Ipv4AddressAdapter.class),
+  IP_V6_ADDRESS(IPv6AddressAdapter.class),
+  URI(UriAdapter.class),
+  URI_REFERENCE(UriReferenceAdapter.class),
+  UUID(UuidAdapter.class),
+  MARKUP_LINE(MarkupLineAdapter.class),
+  MARKUP_MULTILINE(MarkupMultilineAdapter.class),
+  BOOLEAN(BooleanAdapter.class),
+  STRING(StringAdapter.class);
 
   public static final DataTypes DEFAULT_DATA_TYPE = DataTypes.STRING;
 
-  private static final Map<JavaTypeAdapter<?>, DataTypes> adapterToDataTypeMap;
+  private static final Map<Class<? extends JavaTypeAdapter<?>>, DataTypes> adapterToDataTypeMap;
 
   static {
     adapterToDataTypeMap = new HashMap<>();
     for (DataTypes dataType : DataTypes.values()) {
       JavaTypeAdapter<?> adapter = dataType.getJavaTypeAdapter();
-      DataTypes previous = adapterToDataTypeMap.put(adapter, dataType);
+      @SuppressWarnings("unchecked")
+      Class<? extends JavaTypeAdapter<?>> adapterClass = (Class<? extends JavaTypeAdapter<?>>)adapter.getClass();
+      DataTypes previous = adapterToDataTypeMap.put(adapterClass, dataType);
       if (previous != null) {
         throw new RuntimeException(
             String.format("Adapter '%s' is previously bound to data type '%s'. Cannot bind data type '%s'.",
@@ -99,13 +102,26 @@ public enum DataTypes {
   }
 
   public static DataTypes getDataTypeForAdapter(JavaTypeAdapter<?> adapter) {
-    return adapterToDataTypeMap.get(adapter);
+    @SuppressWarnings("unchecked")
+    Class<? extends JavaTypeAdapter<?>> adapterClass = (Class<? extends JavaTypeAdapter<?>>)adapter.getClass();
+    return getDataTypeForAdapter(adapterClass);
+  }
+
+  public static DataTypes getDataTypeForAdapter(Class<? extends JavaTypeAdapter<?>> adapterClass) {
+    return adapterToDataTypeMap.get(adapterClass);
   }
 
   private final JavaTypeAdapter<?> javaTypeAdapter;
 
-  DataTypes(JavaTypeAdapter<?> javaTypeAdapter) {
-    this.javaTypeAdapter = javaTypeAdapter;
+  DataTypes(Class<? extends JavaTypeAdapter<?>> adapterClass) {
+    try {
+      this.javaTypeAdapter = adapterClass.getDeclaredConstructor().newInstance();
+    } catch (NoSuchMethodException ex) {
+      throw new RuntimeException(String.format("Adapter class '%s' does not have a required no-arg constructor", adapterClass.getName()),ex);
+    } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+        | SecurityException ex) {
+      throw new RuntimeException(ex);
+    }
   }
 
   /**

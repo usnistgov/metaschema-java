@@ -130,8 +130,8 @@ public class ProxiedAssemblyDefinition extends AbstractFlaggedDefinition<IAssemb
   }
 
   @Override
-  public List<? extends IIndexConstraint> getIndexContraints() {
-    return getDelegate().getIndexContraints();
+  public List<? extends IIndexConstraint> getIndexConstraints() {
+    return getDelegate().getIndexConstraints();
   }
 
   @Override

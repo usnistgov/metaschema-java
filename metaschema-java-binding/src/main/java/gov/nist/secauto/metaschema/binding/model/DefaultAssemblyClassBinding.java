@@ -41,6 +41,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
+import gov.nist.secauto.metaschema.binding.model.constraint.AssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultAssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultFieldProperty;
@@ -50,9 +51,10 @@ import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
-import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
@@ -107,6 +109,7 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
   private MetaschemaAssembly metaschemaAssembly;
   private Map<String, NamedModelProperty> modelInstances;
   private final QName xmlRootQName;
+  private IAssemblyConstraintSupport constraints;
 
   /**
    * Construct a new {@link ClassBinding} for a Java bean annotated with the {@link Assembly}
@@ -144,7 +147,7 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
    * 
    * @return the annotation
    */
-  protected MetaschemaAssembly getMetaschemaAssemblyAnnotation() {
+  public MetaschemaAssembly getMetaschemaAssemblyAnnotation() {
     return metaschemaAssembly;
   }
 
@@ -259,6 +262,64 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
   public List<? extends IChoiceInstance> getChoiceInstances() {
     // choices are not exposed by this API
     return Collections.emptyList();
+  }
+
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+   * first accessed.
+   */
+  protected synchronized void checkModelConstraints() {
+    if (constraints == null) {
+      constraints = new AssemblyConstraintSupport(this);
+    }
+  }
+
+  @Override
+  public List<? extends IConstraint> getConstraints() {
+    checkModelConstraints();
+    return constraints.getConstraints();
+  }
+
+  @Override
+  public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+    checkModelConstraints();
+    return constraints.getAllowedValuesContraints();
+  }
+
+  @Override
+  public List<? extends IMatchesConstraint> getMatchesConstraints() {
+    checkModelConstraints();
+    return constraints.getMatchesConstraints();
+  }
+
+  @Override
+  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+    checkModelConstraints();
+    return constraints.getIndexHasKeyConstraints();
+  }
+
+  @Override
+  public List<? extends IExpectConstraint> getExpectConstraints() {
+    checkModelConstraints();
+    return constraints.getExpectConstraints();
+  }
+
+  @Override
+  public List<? extends IIndexConstraint> getIndexConstraints() {
+    checkModelConstraints();
+    return constraints.getIndexContraints();
+  }
+
+  @Override
+  public List<? extends IUniqueConstraint> getUniqueConstraints() {
+    checkModelConstraints();
+    return constraints.getUniqueConstraints();
+  }
+
+  @Override
+  public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
+    checkModelConstraints();
+    return constraints.getHasCardinalityConstraints();
   }
 
   @Override
@@ -555,48 +616,6 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
     for (Object item : items) {
       writeInternal(item, writeObjectWrapper, context);
     }
-  }
-
-  @Override
-  public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public List<? extends IMatchesConstraint> getMatchesConstraints() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public List<? extends IExpectConstraint> getExpectConstraints() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public List<? extends IIndexConstraint> getIndexContraints() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public List<? extends IUniqueConstraint> getUniqueConstraints() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
-    // TODO Auto-generated method stub
-    return null;
   }
 
 }

@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import java.util.Map;
 
 public interface IAllowedValuesConstraint extends IConstraint {
-  public static final boolean ALLOWED_OTHER_DEFAULT = false;
+  public static final boolean DEFAULT_ALLOW_OTHER = false;
 
   Map<String, ? extends IAllowedValue> getAllowedValues();
 

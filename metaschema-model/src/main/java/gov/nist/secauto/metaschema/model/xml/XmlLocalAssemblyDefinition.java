@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.Defaults;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
@@ -46,7 +47,6 @@ import gov.nist.secauto.metaschema.model.instances.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.model.instances.FlagInstance;
 import gov.nist.secauto.metaschema.model.xml.XmlLocalAssemblyDefinition.InternalAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.xml.constraint.AssemblyConstraintSupport;
-import gov.nist.secauto.metaschema.model.xml.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalAssemblyDefinitionType;
 
 import java.math.BigInteger;
@@ -271,7 +271,7 @@ public class XmlLocalAssemblyDefinition extends AbstractAssemblyInstance<Interna
     }
 
     @Override
-    public List<? extends IIndexConstraint> getIndexContraints() {
+    public List<? extends IIndexConstraint> getIndexConstraints() {
       checkModelConstraints();
       return constraints.getIndexContraints();
     }

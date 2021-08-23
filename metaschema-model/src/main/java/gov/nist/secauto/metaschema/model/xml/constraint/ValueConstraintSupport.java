@@ -26,17 +26,18 @@
 
 package gov.nist.secauto.metaschema.model.xml.constraint;
 
-import gov.nist.secauto.metaschema.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.constraint.AbstractConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.DefaultKeyField;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
-import gov.nist.secauto.metaschema.model.xml.MarkupStringConverter;
+import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.AllowedValuesType;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.DefineFieldConstraintsType;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.DefineFlagConstraintsType;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.ExpectConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.IndexHasKeyConstraintType;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.KeyConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.MatchesConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.ScopedAllowedValuesType;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.ScopedExpectConstraintType;
@@ -46,61 +47,47 @@ import gov.nist.secauto.metaschema.model.xmlbeans.xml.ScopedMatchesConstraintTyp
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ValueConstraintSupport implements IValueConstraintSupport {
-  static List<DefaultKeyField> toKeyFields(KeyConstraintType xmlConstraint) {
-    List<DefaultKeyField> keyFields = new ArrayList<>(xmlConstraint.sizeOfKeyFieldArray());
-    for (KeyConstraintType.KeyField xmlKeyField : xmlConstraint.getKeyFieldList()) {
-      DefaultKeyField keyField
-          = new DefaultKeyField(xmlKeyField.getTarget(), xmlKeyField.isSetPattern() ? xmlKeyField.getPattern() : null,
-              xmlKeyField.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlKeyField.getRemarks()) : null);
-      keyFields.add(keyField);
-    }
-    return Collections.unmodifiableList(keyFields);
-  }
-
   private static final String PATH = "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
       + "$this/m:allowed-values|$this/m:matches|$this/m:index-has-key|$this/m:expect";
 
   private final List<AbstractConstraint> constraints;
-  private final List<XmlAllowedValuesConstraint> allowedValuesConstraints;
-  private final List<XmlMatchesConstraint> matchesConstraints;
-  private final List<XmlIndexHasKeyConstraint> indexHasKeyConstraints;
-  private final List<XmlExpectConstraint> expectConstraints;
+  private final List<DefaultAllowedValuesConstraint> allowedValuesConstraints;
+  private final List<DefaultMatchesConstraint> matchesConstraints;
+  private final List<DefaultIndexHasKeyConstraint> indexHasKeyConstraints;
+  private final List<DefaultExpectConstraint> expectConstraints;
 
   public ValueConstraintSupport(DefineFlagConstraintsType xmlConstraints) {
     XmlCursor cursor = xmlConstraints.newCursor();
     cursor.selectPath(PATH);
 
     List<AbstractConstraint> constraints = new LinkedList<>();
-    List<XmlAllowedValuesConstraint> allowedValuesConstraints = new LinkedList<>();
-    List<XmlMatchesConstraint> matchesConstraints = new LinkedList<>();
-    List<XmlIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
-    List<XmlExpectConstraint> expectConstraints = new LinkedList<>();
+    List<DefaultAllowedValuesConstraint> allowedValuesConstraints = new LinkedList<>();
+    List<DefaultMatchesConstraint> matchesConstraints = new LinkedList<>();
+    List<DefaultIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
+    List<DefaultExpectConstraint> expectConstraints = new LinkedList<>();
     while (cursor.toNextSelection()) {
       XmlObject obj = cursor.getObject();
       if (obj instanceof AllowedValuesType) {
-        XmlAllowedValuesConstraint constraint
-            = new XmlAllowedValuesConstraint((AllowedValuesType) obj, MetapathExpression.CONTEXT_NODE);
+        DefaultAllowedValuesConstraint constraint
+            = ConstraintFactory.newAllowedValuesConstraint((AllowedValuesType) obj);
         constraints.add(constraint);
         allowedValuesConstraints.add(constraint);
       } else if (obj instanceof MatchesConstraintType) {
-        XmlMatchesConstraint constraint
-            = new XmlMatchesConstraint((MatchesConstraintType) obj, MetapathExpression.CONTEXT_NODE);
+        DefaultMatchesConstraint constraint = ConstraintFactory.newMatchesConstraint((MatchesConstraintType) obj);
         constraints.add(constraint);
         matchesConstraints.add(constraint);
       } else if (obj instanceof IndexHasKeyConstraintType) {
-        XmlIndexHasKeyConstraint constraint
-            = new XmlIndexHasKeyConstraint((IndexHasKeyConstraintType) obj, MetapathExpression.CONTEXT_NODE);
+        DefaultIndexHasKeyConstraint constraint
+            = ConstraintFactory.newIndexHasKeyConstraint((IndexHasKeyConstraintType) obj);
         constraints.add(constraint);
         indexHasKeyConstraints.add(constraint);
       } else if (obj instanceof ExpectConstraintType) {
-        XmlExpectConstraint constraint
-            = new XmlExpectConstraint((ExpectConstraintType) obj, MetapathExpression.CONTEXT_NODE);
+        DefaultExpectConstraint constraint = ConstraintFactory.newExpectConstraint((ExpectConstraintType) obj);
         constraints.add(constraint);
         expectConstraints.add(constraint);
       }
@@ -122,26 +109,28 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
         + "$this/m:allowed-values|$this/m:matches|$this/m:index-has-key|$this/m:expect");
 
     List<AbstractConstraint> constraints = new LinkedList<>();
-    List<XmlAllowedValuesConstraint> allowedValuesConstraints = new LinkedList<>();
-    List<XmlMatchesConstraint> matchesConstraints = new LinkedList<>();
-    List<XmlIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
-    List<XmlExpectConstraint> expectConstraints = new LinkedList<>();
+    List<DefaultAllowedValuesConstraint> allowedValuesConstraints = new LinkedList<>();
+    List<DefaultMatchesConstraint> matchesConstraints = new LinkedList<>();
+    List<DefaultIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
+    List<DefaultExpectConstraint> expectConstraints = new LinkedList<>();
     while (cursor.toNextSelection()) {
       XmlObject obj = cursor.getObject();
       if (obj instanceof ScopedAllowedValuesType) {
-        XmlAllowedValuesConstraint constraint = new XmlAllowedValuesConstraint((ScopedAllowedValuesType) obj);
+        DefaultAllowedValuesConstraint constraint
+            = ConstraintFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj);
         constraints.add(constraint);
         allowedValuesConstraints.add(constraint);
       } else if (obj instanceof ScopedMatchesConstraintType) {
-        XmlMatchesConstraint constraint = new XmlMatchesConstraint((ScopedMatchesConstraintType) obj);
+        DefaultMatchesConstraint constraint = ConstraintFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj);
         constraints.add(constraint);
         matchesConstraints.add(constraint);
       } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
-        XmlIndexHasKeyConstraint constraint = new XmlIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj);
+        DefaultIndexHasKeyConstraint constraint
+            = ConstraintFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj);
         constraints.add(constraint);
         indexHasKeyConstraints.add(constraint);
       } else if (obj instanceof ScopedExpectConstraintType) {
-        XmlExpectConstraint constraint = new XmlExpectConstraint((ScopedExpectConstraintType) obj);
+        DefaultExpectConstraint constraint = ConstraintFactory.newExpectConstraint((ScopedExpectConstraintType) obj);
         constraints.add(constraint);
         expectConstraints.add(constraint);
       }
@@ -163,22 +152,22 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
   }
 
   @Override
-  public List<XmlAllowedValuesConstraint> getAllowedValuesContraints() {
+  public List<DefaultAllowedValuesConstraint> getAllowedValuesContraints() {
     return allowedValuesConstraints;
   }
 
   @Override
-  public List<XmlMatchesConstraint> getMatchesConstraints() {
+  public List<DefaultMatchesConstraint> getMatchesConstraints() {
     return matchesConstraints;
   }
 
   @Override
-  public List<XmlIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+  public List<DefaultIndexHasKeyConstraint> getIndexHasKeyConstraints() {
     return indexHasKeyConstraints;
   }
 
   @Override
-  public List<XmlExpectConstraint> getExpectConstraints() {
+  public List<DefaultExpectConstraint> getExpectConstraints() {
     return expectConstraints;
   }
 }

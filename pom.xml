@@ -147,11 +147,6 @@
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>metaschema-metapath</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
 				<artifactId>metaschema-java-datatypes</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -626,7 +621,6 @@
 		<module>metaschema-maven-plugin</module>
 		<module>metaschema-java-binding</module>
 		<module>metaschema-schema-generator</module>
-		<module>metaschema-metapath</module>
 		<module>metaschema-documentation-generator</module>
 		<module>metaschema-freemarker-support</module>
 		<module>metaschema-model-common</module>

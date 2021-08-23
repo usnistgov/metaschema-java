@@ -34,12 +34,12 @@ import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.definitions.AbstractInfoElementDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.GlobalInfoElementDefinition;
 import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.model.xml.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.xml.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalFlagDefinitionType;
 

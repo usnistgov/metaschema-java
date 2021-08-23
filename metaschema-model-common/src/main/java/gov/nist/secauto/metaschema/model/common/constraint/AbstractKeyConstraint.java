@@ -31,10 +31,10 @@ import gov.nist.secauto.metaschema.metapath.MetapathExpression;
 
 import java.util.List;
 
-public abstract class AbstractKeyConstraint<KEY extends IKeyField> extends AbstractConstraint implements IKeyConstraint {
-  private final List<KEY> keyFields;
+public abstract class AbstractKeyConstraint extends AbstractConstraint implements IKeyConstraint {
+  private final List<DefaultKeyField> keyFields;
 
-  public AbstractKeyConstraint(String id, MetapathExpression target, List<KEY> keyFields, MarkupMultiline remarks) {
+  public AbstractKeyConstraint(String id, MetapathExpression target, List<DefaultKeyField> keyFields, MarkupMultiline remarks) {
     super(id, target, remarks);
     if (keyFields.isEmpty()) {
       throw new IllegalArgumentException("an empty list of key fields is not allowed");
@@ -43,7 +43,7 @@ public abstract class AbstractKeyConstraint<KEY extends IKeyField> extends Abstr
   }
 
   @Override
-  public List<KEY> getKeyFields() {
+  public List<DefaultKeyField> getKeyFields() {
     return keyFields;
   }
 }

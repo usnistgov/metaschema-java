@@ -80,7 +80,7 @@ public interface IAssemblyDefinition extends IFlaggedDefinition, IModelContainer
     return getRootName();
   }
 
-  List<? extends IIndexConstraint> getIndexContraints();
+  List<? extends IIndexConstraint> getIndexConstraints();
 
   List<? extends IUniqueConstraint> getUniqueConstraints();
 
