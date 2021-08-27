@@ -28,11 +28,9 @@ package gov.nist.secauto.metaschema.binding.io.json;
 
 import com.fasterxml.jackson.core.JsonParser;
 
-import java.util.Objects;
+import gov.nist.secauto.metaschema.binding.io.context.AbstractParsingContext;
 
-public class DefaultJsonParsingContext implements JsonParsingContext {
-  private final JsonParser parser;
-  private final JsonProblemHandler problemHandler;
+public class DefaultJsonParsingContext extends AbstractParsingContext<JsonParser, JsonProblemHandler> implements JsonParsingContext {
 
   public DefaultJsonParsingContext(JsonParser parser) {
     this(parser, new DefaultJsonProblemHandler());
@@ -40,19 +38,6 @@ public class DefaultJsonParsingContext implements JsonParsingContext {
 
   public DefaultJsonParsingContext(JsonParser parser,
       JsonProblemHandler problemHandler) {
-    Objects.requireNonNull(parser, "parser");
-    Objects.requireNonNull(problemHandler, "problemHandler");
-    this.parser = parser;
-    this.problemHandler = problemHandler;
-  }
-
-  @Override
-  public JsonProblemHandler getProblemHandler() {
-    return problemHandler;
-  }
-
-  @Override
-  public JsonParser getReader() {
-    return parser;
+    super(parser, problemHandler, false);
   }
 }

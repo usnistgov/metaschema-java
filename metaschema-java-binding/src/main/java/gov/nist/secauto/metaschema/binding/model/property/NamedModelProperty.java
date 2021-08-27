@@ -27,13 +27,13 @@
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
-import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 
 import java.io.IOException;
 
@@ -46,8 +46,8 @@ import javax.xml.stream.events.XMLEvent;
  * This marker interface TBD.
  */
 public interface NamedModelProperty
-    extends NamedProperty, IModelInstance, INamedInstance {
-  DataTypeHandler getBindingSupplier();
+    extends NamedProperty, INamedModelInstance {
+  DataTypeHandler getDataTypeHandler();
 
   /**
    * Reads an individual XML item from the XML stream.
@@ -92,4 +92,13 @@ public interface NamedModelProperty
   // Collection<? extends WritableItem> getItemsToWrite(Collection<? extends Object> items);
 
   // void writeItem(Object instance, JsonWritingContext context);
+
+  /**
+   * Perform validation of the property's value instance.
+   * 
+   * @param instance
+   *          the instance on which the property is located
+   * @param context the parsing context
+   */
+  void validateItem(Object instance, ParsingContext<?,?> context);
 }

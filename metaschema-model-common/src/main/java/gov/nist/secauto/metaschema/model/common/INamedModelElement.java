@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+
 import javax.xml.namespace.QName;
 
 public interface INamedModelElement extends IModelElement {
@@ -93,4 +96,6 @@ public interface INamedModelElement extends IModelElement {
    * @return the XML namespace or {@code null} if no namespace is defined
    */
   String getXmlNamespace();
+
+  IInstanceSet evaluateMetapathInstances(MetapathExpression target);
 }

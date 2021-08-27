@@ -75,7 +75,7 @@ public class AssemblyJavaClassGenerator
 
     AnnotationUtils.applyIndexConstraints(annotation, getDefinition().getIndexConstraints());
     AnnotationUtils.applyUniqueConstraints(annotation, getDefinition().getUniqueConstraints());
-    AnnotationUtils.applyHasCardinalityConstraints(annotation, getDefinition().getHasCardinalityConstraints());
+    AnnotationUtils.applyHasCardinalityConstraints(getDefinition(),annotation, getDefinition().getHasCardinalityConstraints());
 
   }
 

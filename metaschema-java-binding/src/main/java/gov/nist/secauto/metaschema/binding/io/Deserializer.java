@@ -40,6 +40,7 @@ import java.net.URL;
  *          the Java type into which data can be read
  */
 public interface Deserializer<CLASS> {
+  boolean isValidating();
   // Format supportedFromat();
   //
   /**

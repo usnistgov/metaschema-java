@@ -30,6 +30,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
@@ -121,7 +122,23 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
   }
 
   @Override
+  protected Object readInternal(Object parentInstance, JsonParsingContext context)
+      throws IOException, BindingException {
+    
+    context.getPathBuilder().pushInstance(this);
+    Object value = super.readInternal(parentInstance, context);
+    context.getPathBuilder().popInstance();
+    return value;
+  }
+
+  @Override
+  public Object read(XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+    throw new UnsupportedOperationException("use read(Object, StartElement, XmlParsingContext) instead");
+  }
+
+  @Override
   public boolean read(Object parentInstance, StartElement parent, XmlParsingContext context) throws IOException {
+    context.getPathBuilder().pushInstance(this);
     // when reading an attribute:
     // - "parent" will contain the attributes to read
     // - the event reader "peek" will be on the end element or the next start element
@@ -133,9 +150,15 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
         Object value = getJavaTypeAdapter().parse(attribute.getValue());
         // apply the value to the parentObject
         setValue(parentInstance, value);
+
+        // validate the flag value
+        if (context.isValidating()) {
+          validateValue(value, context);
+        }
         handled = true;
       }
     }
+    context.getPathBuilder().popInstance();
     return handled;
   }
 
@@ -145,7 +168,7 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
   }
 
   @Override
-  public boolean readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
     JavaTypeAdapter<?> adapter = getJavaTypeAdapter();
 
@@ -155,13 +178,9 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
     }
 
     Object value = adapter.parse(context.getReader());
-
-    boolean retval = false;
     if (value != null) {
       collector.add(value);
-      retval = true;
     }
-    return retval;
   }
 
   // TODO: implement collector?
@@ -314,5 +333,11 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
       checkModelConstraints();
       return constraints.getExpectConstraints();
     }
+  }
+
+  @Override
+  public void validateValue(Object value, ParsingContext<?, ?> context) {
+    // TODO Auto-generated method stub
+    
   }
 }

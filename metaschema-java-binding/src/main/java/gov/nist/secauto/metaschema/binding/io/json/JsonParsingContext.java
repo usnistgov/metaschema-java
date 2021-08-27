@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.binding.io.json;
 
 import com.fasterxml.jackson.core.JsonParser;
 
-import gov.nist.secauto.metaschema.binding.io.ParsingContext;
+import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 
 public interface JsonParsingContext extends ParsingContext<JsonParser, JsonProblemHandler> {
 

@@ -243,6 +243,7 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
     } else {
       handled = readNormal(collector, parentInstance, context);
     }
+
     return handled;
   }
 
@@ -291,7 +292,7 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
     // now parse each property until the end object is reached
     while (!jsonParser.hasTokenId(JsonToken.END_OBJECT.id())) {
       String propertyName = jsonParser.getCurrentName();
-      JsonUtil.assertAndAdvance(jsonParser, JsonToken.FIELD_NAME);
+//      JsonUtil.assertAndAdvance(jsonParser, JsonToken.FIELD_NAME);
 
       NamedProperty namedProperty = properties.get(propertyName);
 
@@ -306,32 +307,18 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
         }
 
         // Now parse
-        PropertyCollector propertyCollector = namedProperty.newPropertyCollector();
-        Object value = namedProperty.readValue(propertyCollector, parentInstance, context);
+        Object value = namedProperty.read(context);
         if (value != null) {
-          namedProperty.setValue(instance, propertyCollector.getValue());
+          namedProperty.setValue(instance, value);
           handled = true;
         }
       }
 
       if (namedProperty == null && !parsedValueKey) {
         // this may be a value key value, an unrecognized flag, or the field value
-        FieldValueProperty fieldValue = getFieldValue();
-        if (jsonValueKey != null) {
-          // treat this as the value key
-          jsonValueKey.readValueFromString(propertyName);
-          parsedValueKey = true;
-        } else {
-          String valueKeyName = fieldValue.getJsonValueKeyName();
-          if (propertyName.equals(valueKeyName)) {
-            // treat this as the field value
-            parsedValueKey = true;
-          }
-        }
+        parsedValueKey = getFieldValue().read(instance, context);
 
         if (parsedValueKey) {
-          Object value = fieldValue.getJavaTypeAdapter().parse(context.getReader());
-          fieldValue.setValue(instance, value);
           handled = true;
         } else {
           if (context.getProblemHandler().canHandleUnknownProperty(this, propertyName, context)) {
@@ -352,10 +339,11 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
     // set undefined properties
     for (Map.Entry<String, ? extends NamedProperty> entry : properties.entrySet()) {
       if (!handledProperties.contains(entry.getKey())) {
-        // use the default value of the collector
         NamedProperty property = entry.getValue();
+        // use the default value of the collector
         property.setValue(instance, property.newPropertyCollector().getValue());
       }
+
     }
 
     if (jsonKey != null) {
@@ -544,7 +532,13 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
     } else {
       fieldValue.readValue(collector, parentInstance, context);
     }
-    return collector.getValue();
+
+    List<? extends Object> instance = collector.getValue();
+    if (context.isValidating()) {
+      validate(instance);
+    }
+
+    return instance;
   }
 
   @Override

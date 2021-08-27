@@ -60,13 +60,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public abstract class AbstractNamedModelProperty
-    extends AbstractNamedProperty<AssemblyClassBinding>
+public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<AssemblyClassBinding>
     implements NamedModelProperty {
   // private static final Logger logger = LogManager.getLogger(AbstractNamedModelProperty.class);
 
   private ModelPropertyInfo propertyInfo;
-  private DataTypeHandler bindingSupplier;
+  private DataTypeHandler dataTypeHandler;
 
   protected AbstractNamedModelProperty(AssemblyClassBinding parentClassBinding, Field field) {
     super(field, parentClassBinding);
@@ -79,6 +78,48 @@ public abstract class AbstractNamedModelProperty
     return getPropertyInfo().getItemType();
   }
 
+  protected ModelPropertyInfo newPropertyInfo() {
+    // create the property info
+    Type type = getField().getGenericType();
+
+    ModelPropertyInfo retval;
+    if (type instanceof ParameterizedType) {
+      if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
+        if (JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())) {
+          retval = new MapPropertyInfo(this);
+        } else {
+          retval = new ListPropertyInfo(this);
+        }
+      } else {
+        throw new RuntimeException(String.format(
+            "The field '%s' on class '%s' has a data parmeterized type of '%s',"
+                + " but the occurance is not multi-valued.",
+            getField().getName(), getParentClassBinding().getBoundClass().getName(), getField().getType().getName()));
+      }
+    } else {
+      if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
+        switch (getJsonGroupAsBehavior()) {
+        case KEYED:
+          throw new RuntimeException(
+              String.format("The field '%s' on class '%s' has data type of '%s'," + " but should have a type of '%s'.",
+                  getField().getName(), getParentClassBinding().getBoundClass().getName(),
+                  getField().getType().getName(), Map.class.getName()));
+        case LIST:
+        case SINGLETON_OR_LIST:
+          throw new RuntimeException(
+              String.format("The field '%s' on class '%s' has data type of '%s'," + " but should have a type of '%s'.",
+                  getField().getName(), getParentClassBinding().getBoundClass().getName(),
+                  getField().getType().getName(), List.class.getName()));
+        default:
+          // this should not occur
+          throw new RuntimeException(new IllegalStateException());
+        }
+      }
+      retval = new SingletonPropertyInfo(this);
+    }
+    return retval;
+  }
+
   /**
    * Gets information about the bound property.
    * 
@@ -86,122 +127,131 @@ public abstract class AbstractNamedModelProperty
    */
   protected synchronized ModelPropertyInfo getPropertyInfo() {
     if (propertyInfo == null) {
-      // create the property info
-      Type type = getField().getGenericType();
-
-      if (type instanceof ParameterizedType) {
-        if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-          if (JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())) {
-            this.propertyInfo = new MapPropertyInfo(this);
-          } else {
-            this.propertyInfo = new ListPropertyInfo(this);
-          }
-        } else {
-          throw new RuntimeException(
-              String.format(
-                  "The field '%s' on class '%s' has a data parmeterized type of '%s',"
-                      + " but the occurance is not multi-valued.",
-                  getField().getName(),
-                  getParentClassBinding().getBoundClass().getName(),
-                  getField().getType().getName()));
-        }
-      } else {
-        if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-          switch (getJsonGroupAsBehavior()) {
-          case KEYED:
-            throw new RuntimeException(
-                String.format(
-                    "The field '%s' on class '%s' has data type of '%s',"
-                        + " but should have a type of '%s'.",
-                    getField().getName(),
-                    getParentClassBinding().getBoundClass().getName(),
-                    getField().getType().getName(),
-                    Map.class.getName()));
-          case LIST:
-          case SINGLETON_OR_LIST:
-            throw new RuntimeException(
-                String.format(
-                    "The field '%s' on class '%s' has data type of '%s',"
-                        + " but should have a type of '%s'.",
-                    getField().getName(),
-                    getParentClassBinding().getBoundClass().getName(),
-                    getField().getType().getName(),
-                    List.class.getName()));
-          default:
-            // this should not occur
-            throw new RuntimeException(new IllegalStateException());
-          }
-        }
-        this.propertyInfo = new SingletonPropertyInfo(this);
-      }
+      propertyInfo = newPropertyInfo();
       assert this.propertyInfo != null;
     }
     return propertyInfo;
   }
 
-  @Override
-  public synchronized DataTypeHandler getBindingSupplier() {
-    if (bindingSupplier == null) {
-      // get the binding supplier
-      JavaTypeAdapter<?> adapter = getJavaTypeAdapter();
-      if (adapter == null) {
-        ClassBinding classBinding
-            = getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
-        if (classBinding != null) {
-          this.bindingSupplier = new ClassDataTypeHandler(classBinding);
-        } else {
-          throw new RuntimeException(
-              String.format("Unable to parse type '%s', which is not a known bound class or data type",
-                  getPropertyInfo().getItemType()));
-        }
+  protected DataTypeHandler newDataTypeHandler() {
+    DataTypeHandler retval;
+    // get the binding supplier
+    JavaTypeAdapter<?> adapter = getJavaTypeAdapter();
+    if (adapter == null) {
+      ClassBinding classBinding
+          = getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
+      if (classBinding != null) {
+        retval = new ClassDataTypeHandler(classBinding, this);
       } else {
-        this.bindingSupplier = new JavaTypeAdapterDataTypeHandler(adapter);
+        throw new RuntimeException(
+            String.format("Unable to parse type '%s', which is not a known bound class or data type",
+                getPropertyInfo().getItemType()));
       }
+    } else {
+      retval = new JavaTypeAdapterDataTypeHandler(adapter, this);
     }
-    return bindingSupplier;
+    return retval;
   }
 
   @Override
-  public boolean read(Object parentInstance, StartElement start, XmlParsingContext context)
-      throws IOException, XMLStreamException, BindingException {
+  public synchronized DataTypeHandler getDataTypeHandler() {
+    if (dataTypeHandler == null) {
+      dataTypeHandler = newDataTypeHandler();
+    }
+    return dataTypeHandler;
+  }
+
+  @Override
+  protected Object readInternal(Object parentInstance, JsonParsingContext context)
+      throws IOException, BindingException {
+    
+    context.getPathBuilder().pushInstance(this);
+    Object value = super.readInternal(parentInstance, context);
+    context.getPathBuilder().popInstance();
+    return value;
+  }
+
+  public boolean isNextProperty(XmlParsingContext context) throws IOException, XMLStreamException {
     XMLEventReader2 eventReader = context.getReader();
-    boolean handled = false;
 
     XmlEventUtil.skipWhitespace(eventReader);
 
-    StartElement currentStart = start;
+    boolean handled = false;
     QName groupQName = getXmlGroupAsQName();
-    boolean parse = true; // always attempt to parse, if possible
     if (groupQName != null) {
       // we are to parse the grouping element, if the next token matches
       XMLEvent event = eventReader.peek();
       if (event.isStartElement() && groupQName.equals(event.asStartElement().getName())) {
-        XMLEvent groupEvent = XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.START_ELEMENT, groupQName);
-        currentStart = groupEvent.asStartElement();
         handled = true;
-      } else {
-        // no match, no need to parse anything
-        parse = false;
       }
     }
 
-    if (parse) {
-      PropertyCollector collector = newPropertyCollector();
-      // There are zero or more named values based on cardinality
-      handled = getPropertyInfo().readValue(collector, parentInstance, currentStart, context);
-
-      setValue(parentInstance, collector.getValue());
-
-      // consume extra whitespace between elements
-      XmlEventUtil.skipWhitespace(eventReader);
-
-      if (groupQName != null) {
-        // consume the end of the group
-        XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.END_ELEMENT, groupQName);
+    if (!handled) {
+      XMLEvent event = eventReader.peek();
+      QName xmlQName = getXmlQName();
+      if (xmlQName != null && event.isStartElement() && xmlQName.equals(event.asStartElement().getName())) {
+        handled = true;
       }
     }
-
     return handled;
+  }
+
+  @Override
+  public Object read(XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+    Object retval = null;
+    if (isNextProperty(context)) {
+      retval = readInternal(null, null, context);
+    }
+    return retval;
+  }
+
+  @Override
+  public boolean read(Object parentInstance, StartElement start, XmlParsingContext context) throws IOException, XMLStreamException, BindingException {
+    boolean handled = isNextProperty(context);
+    if (handled) {
+      Object value = readInternal(parentInstance, start, context);
+      setValue(parentInstance, value);
+    }
+    return handled;
+  }
+
+  protected Object readInternal(Object parentInstance, StartElement start, XmlParsingContext context)
+      throws IOException, XMLStreamException, BindingException {
+    context.getPathBuilder().pushInstance(this);
+
+    XMLEventReader2 eventReader = context.getReader();
+
+    XmlEventUtil.skipWhitespace(eventReader);
+
+    StartElement currentStart = start;
+
+    QName groupQName = getXmlGroupAsQName();
+    if (groupQName != null) {
+      // we are to parse the grouping element, if the next token matches
+      XMLEvent groupEvent = XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.START_ELEMENT, groupQName);
+      currentStart = groupEvent.asStartElement();
+    }
+
+    PropertyCollector collector = newPropertyCollector();
+    // There are zero or more named values based on cardinality
+    getPropertyInfo().readValue(collector, parentInstance, currentStart, context);
+
+    Object value = collector.getValue();
+
+    if (context.isValidating()) {
+      validateValue(value, context);
+    }
+
+    // consume extra whitespace between elements
+    XmlEventUtil.skipWhitespace(eventReader);
+
+    if (groupQName != null) {
+      // consume the end of the group
+      XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.END_ELEMENT, groupQName);
+    }
+
+    context.getPathBuilder().popInstance();
+    return value;
   }
 
   @Override
@@ -212,15 +262,15 @@ public abstract class AbstractNamedModelProperty
   @Override
   public boolean readItem(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
       throws BindingException, IOException {
-    DataTypeHandler supplier = getBindingSupplier();
+    DataTypeHandler supplier = getDataTypeHandler();
     return supplier.get(collector, parentInstance, context);
   }
 
   @Override
-  public boolean readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
     ModelPropertyInfo info = getPropertyInfo();
-    return info.readValue(collector, parentInstance, context);
+    info.readValue(collector, parentInstance, context);
   }
 
   @Override

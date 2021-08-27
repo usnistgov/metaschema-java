@@ -71,10 +71,6 @@ argument : exprsingle ;
 // Error in the spec. EQName also includes acceptable keywords.
 eqname : LocalName
  | KW_AND
- | KW_AS
- | KW_CHILD
- | KW_DESCENDANT
- | KW_DESCENDANT_OR_SELF
  | KW_DIV
  | KW_EMPTY_SEQUENCE
  | KW_EQ
@@ -88,7 +84,6 @@ eqname : LocalName
  | KW_MOD
  | KW_NE
  | KW_OR
- | KW_SELF
  | KW_UNION
  ;
 
@@ -135,10 +130,6 @@ STAR : '*' ;
 // KEYWORDS
 
 KW_AND : 'and' ;
-KW_AS : 'as' ;
-KW_CHILD : 'child' ;
-KW_DESCENDANT : 'descendant' ;
-KW_DESCENDANT_OR_SELF : 'descendant-or-self' ;
 KW_DIV : 'div' ;
 KW_EMPTY_SEQUENCE : 'empty-sequence' ;
 KW_EQ : 'eq' ;
@@ -152,8 +143,6 @@ KW_LT : 'lt' ;
 KW_MOD : 'mod' ;
 KW_NE : 'ne' ;
 KW_OR : 'or' ;
-KW_SELF : 'self' ;
-KW_TO : 'to' ;
 KW_UNION : 'union' ;
 
 // A.2.1. TEMINAL SYMBOLS

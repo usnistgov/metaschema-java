@@ -42,8 +42,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
-    extends AbstractProperty<CLASS_BINDING>
+public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding> extends AbstractProperty<CLASS_BINDING>
     implements NamedProperty, INamedInstance {
   private static final Logger logger = LogManager.getLogger(AbstractNamedProperty.class);
 
@@ -56,8 +55,7 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
     return getJavaPropertyName();
   }
 
-  @Override
-  public boolean read(Object parentInstance, JsonParsingContext context) throws IOException, BindingException {
+  public boolean isNextProperty(JsonParsingContext context) throws IOException {
     JsonParser parser = context.getReader();
 
     // the parser's current token should be the JSON field name
@@ -67,15 +65,43 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
     if (logger.isTraceEnabled()) {
       logger.trace("reading property {}", propertyName);
     }
-    boolean handled = false;
-    if (getJsonName().equals(propertyName)) {
-      // advance past the property name
-      parser.nextFieldName();
-      // parse the value
-      PropertyCollector collector = newPropertyCollector();
-      handled = readValue(collector, parentInstance, context);
-      setValue(parentInstance, collector.getValue());
+
+    return getJsonName().equals(propertyName);
+  }
+
+  @Override
+  public Object read(JsonParsingContext context) throws IOException, BindingException {
+    Object retval = null;
+    if (isNextProperty(context)) {
+      retval = readInternal(null, context);
+    }
+    return retval;
+  }
+
+  @Override
+  public boolean read(Object parentInstance, JsonParsingContext context) throws IOException, BindingException {
+    boolean handled = isNextProperty(context);
+    if (handled) {
+      Object value = readInternal(parentInstance, context);
+      setValue(parentInstance, value);
     }
     return handled;
+  }
+
+  protected Object readInternal(Object parentInstance, JsonParsingContext context) throws IOException, BindingException {
+    JsonParser parser = context.getReader();
+    // advance past the property name
+    parser.nextFieldName();
+    // parse the value
+    PropertyCollector collector = newPropertyCollector();
+    readValue(collector, parentInstance, context);
+
+    Object retval = collector.getValue();
+
+    // validate the flag value
+    if (context.isValidating()) {
+      validateValue(retval, context);
+    }
+    return retval;
   }
 }

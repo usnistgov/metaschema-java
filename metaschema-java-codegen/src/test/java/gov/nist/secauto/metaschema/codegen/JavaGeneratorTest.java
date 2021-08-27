@@ -27,11 +27,6 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
-import gov.nist.secauto.metaschema.metapath.Metapath;
-import gov.nist.secauto.metaschema.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.metapath.ast.ASTPrinter;
-import gov.nist.secauto.metaschema.metapath.evaluate.DefaultMetaschemaContext;
-import gov.nist.secauto.metaschema.metapath.evaluate.IInstanceSet;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
@@ -46,6 +41,11 @@ import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.Metapath;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.ASTPrinter;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.DefaultMetaschemaContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
 import gov.nist.secauto.metaschema.model.common.util.ConstraintValidatingModelWalker;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;

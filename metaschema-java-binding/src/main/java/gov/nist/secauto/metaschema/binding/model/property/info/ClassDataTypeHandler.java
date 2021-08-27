@@ -32,6 +32,7 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 
 import java.io.IOException;
@@ -43,11 +44,19 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 public class ClassDataTypeHandler implements DataTypeHandler {
+  private final NamedModelProperty property;
   private final ClassBinding classBinding;
 
-  public ClassDataTypeHandler(ClassBinding classBinding) {
+  public ClassDataTypeHandler(ClassBinding classBinding, NamedModelProperty property) {
     Objects.requireNonNull(classBinding, "classBinding");
+    Objects.requireNonNull(property, "property");
     this.classBinding = classBinding;
+    this.property = property;
+  }
+
+  @Override
+  public NamedModelProperty getProperty() {
+    return property;
   }
 
   @Override

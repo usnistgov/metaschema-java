@@ -40,7 +40,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.constraint.KeyField
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
@@ -51,12 +50,24 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IKeyField;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
+import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class AnnotationUtils {
+  private static final Logger logger = LogManager.getLogger(AnnotationUtils.class);
+
   public static Object getDefaultValue(Class<?> annotation, String member) {
     Method method;
     try {
@@ -97,10 +108,10 @@ public class AnnotationUtils {
       if (!Boolean.valueOf(isAllowedOther).equals(getDefaultValue(AllowedValues.class, "allowOthers"))) {
         constraintAnnotation.addMember("allowOthers", "$L", isAllowedOther);
       }
-      
+
       for (IAllowedValue value : constraint.getAllowedValues().values()) {
         AnnotationSpec.Builder valueAnnotation = AnnotationSpec.builder(AllowedValue.class);
-        
+
         valueAnnotation.addMember("value", "$S", value.getValue());
         valueAnnotation.addMember("description", "$S", value.getDescription().toMarkdown());
 
@@ -115,7 +126,7 @@ public class AnnotationUtils {
     for (IIndexHasKeyConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(IndexHasKey.class);
       buildConstraint(IndexHasKey.class, constraintAnnotation, constraint);
-      
+
       constraintAnnotation.addMember("indexName", "$S", constraint.getIndexName());
 
       buildKeyFields(constraintAnnotation, constraint.getKeyFields());
@@ -127,7 +138,7 @@ public class AnnotationUtils {
   private static void buildKeyFields(Builder constraintAnnotation, List<? extends IKeyField> keyFields) {
     for (IKeyField key : keyFields) {
       AnnotationSpec.Builder keyAnnotation = AnnotationSpec.builder(KeyField.class);
-      
+
       MetapathExpression target = key.getTarget();
       String path = target.getPath();
       if (!path.equals(getDefaultValue(KeyField.class, "target"))) {
@@ -138,7 +149,7 @@ public class AnnotationUtils {
       if (pattern != null) {
         keyAnnotation.addMember("pattern", "$S", pattern.pattern());
       }
-      
+
       MarkupMultiline remarks = key.getRemarks();
       if (remarks != null) {
         keyAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
@@ -176,7 +187,7 @@ public class AnnotationUtils {
 
       MetapathExpression test = constraint.getTest();
       constraintAnnotation.addMember("test", "$S", test.getPath());
-      
+
       annotation.addMember("expect", "$L", constraintAnnotation.build());
     }
   }
@@ -209,19 +220,68 @@ public class AnnotationUtils {
     }
   }
 
-  public static void applyHasCardinalityConstraints(AnnotationSpec.Builder annotation,
+  public static void applyHasCardinalityConstraints(IAssemblyDefinition definition, AnnotationSpec.Builder annotation,
       List<? extends ICardinalityConstraint> constraints) {
     for (ICardinalityConstraint constraint : constraints) {
+      Integer minOccurs = constraint.getMinOccurs();
+      Integer maxOccurs = constraint.getMinOccurs();
+
+      IInstanceSet instanceSet = definition.evaluateMetapathInstances(constraint.getTarget());
+      Collection<? extends IInstance> instances = instanceSet.getInstances();
+      if (instances.size() == 1) {
+        IInstance instance = instances.iterator().next();
+        if (instance instanceof IModelInstance) {
+          IModelInstance modelInstance = (IModelInstance) instance;
+          if (minOccurs != null) {
+            if (minOccurs == modelInstance.getMinOccurs()) {
+              logger.warn(String.format(
+                  "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that is redundant with a"
+                      + " targeted instance named '%s' that requires min-occurs=%d",
+                  definition.getName(), minOccurs, constraint.getTarget().getPath(),
+                  modelInstance instanceof INamedInstance ? ((INamedInstance) modelInstance).getName() : "no name",
+                  modelInstance.getMinOccurs()));
+            } else if (minOccurs < modelInstance.getMinOccurs()) {
+              logger.warn(String.format(
+                  "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that conflicts with a"
+                      + " targeted instance named '%s' that requires min-occurs=%d",
+                  definition.getName(), minOccurs, constraint.getTarget().getPath(),
+                  modelInstance instanceof INamedInstance ? ((INamedInstance) modelInstance).getName() : "no name",
+                  modelInstance.getMinOccurs()));
+            }
+          }
+
+          if (maxOccurs != null) {
+            if (maxOccurs == modelInstance.getMaxOccurs()) {
+              logger.warn(String.format(
+                  "Definition '%s' has max-occurs=%d cardinality constraint targeting '%s' that is redundant with a"
+                      + " targeted instance named '%s' that requires max-occurs=%d",
+                  definition.getName(), maxOccurs, constraint.getTarget().getPath(),
+                  modelInstance instanceof INamedInstance ? ((INamedInstance) modelInstance).getName() : "no name",
+                  modelInstance.getMaxOccurs()));
+            } else if (maxOccurs < modelInstance.getMaxOccurs()) {
+              logger.warn(String.format(
+                  "Definition '%s' has max-occurs=%d cardinality constraint targeting '%s' that conflicts with a"
+                      + " targeted instance named '%s' that requires max-occurs=%d",
+                  definition.getName(), maxOccurs, constraint.getTarget().getPath(),
+                  modelInstance instanceof INamedInstance ? ((INamedInstance) modelInstance).getName() : "no name",
+                  modelInstance.getMaxOccurs()));
+            }
+          }
+        } else {
+          logger.warn(String.format(
+              "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that is not a model instance",
+              definition.getName(), minOccurs, constraint.getTarget().getPath()));
+        }
+      }
+
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(HasCardinality.class);
 
       buildConstraint(HasCardinality.class, constraintAnnotation, constraint);
 
-      Integer minOccurs = constraint.getMinOccurs();
       if (minOccurs != null && !minOccurs.equals(getDefaultValue(HasCardinality.class, "minOccurs"))) {
         constraintAnnotation.addMember("minOccurs", "$L", minOccurs);
       }
 
-      Integer maxOccurs = constraint.getMinOccurs();
       if (maxOccurs != null && !maxOccurs.equals(getDefaultValue(HasCardinality.class, "maxOccurs"))) {
         constraintAnnotation.addMember("maxOccurs", "$L", maxOccurs);
       }

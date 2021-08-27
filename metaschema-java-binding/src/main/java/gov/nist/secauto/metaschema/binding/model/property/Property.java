@@ -27,12 +27,14 @@
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -127,8 +129,8 @@ public interface Property {
 
   PropertyCollector newPropertyCollector();
 
-  // TODO: replace this with just "read"
-  boolean readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  // TODO: make this a protected method?
+  void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException;
 
   /**
@@ -149,7 +151,18 @@ public interface Property {
   boolean read(Object parentInstance, JsonParsingContext context) throws IOException, BindingException;
 
   /**
-   * Read XML data associated with this property and apply it to the provided parent object on which
+   * Read JSON data associated with this property and return it.
+   * @param context the JSON parsing context
+   * @return the instance value
+   * @throws IOException
+   *           if there was an error when reading JSON data
+   * @throws BindingException
+   *           if there was an error related to this properties Java class binding
+   */
+  Object read(JsonParsingContext context) throws IOException, BindingException;
+
+  /**
+   * Read the XML data associated with this property and apply it to the provided parent object on which
    * this property exists.
    * 
    * @param parentInstance
@@ -169,7 +182,20 @@ public interface Property {
    */
   boolean read(Object parentInstance, StartElement parent, XmlParsingContext context)
       throws IOException, XMLStreamException, BindingException;
-  //
+
+  /**
+   * Read the XML data associated with this property and return it.
+   * @param context the XML parsing context
+   * @return the instance value
+   * @throws IOException
+   *           if there was an error when reading XML data
+   * @throws XMLStreamException
+   *           if there was an error generating an {@link XMLEvent} from the XML
+   * @throws BindingException
+   *           if there was an error related to this properties Java class binding
+   */
+  Object read(XmlParsingContext context) throws IOException, BindingException, XMLStreamException;
+
   // /**
   // * Get a supplier that can continually parse the underlying stream loading multiple values.
   // *
@@ -194,4 +220,11 @@ public interface Property {
       throws XMLStreamException, IOException;
 
   void write(Object parentInstance, JsonWritingContext context) throws IOException;
+
+  /**
+   * Validate the value(s) for this property
+   * @param value the properties value instance
+   * @param context the parsing context
+   */
+  void validateValue(Object value, ParsingContext<?,?> context);
 }

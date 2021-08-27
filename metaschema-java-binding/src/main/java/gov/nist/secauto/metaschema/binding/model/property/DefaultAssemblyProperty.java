@@ -26,32 +26,16 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
-import org.codehaus.stax2.XMLEventReader2;
-import org.codehaus.stax2.XMLStreamWriter2;
-
-import java.io.IOException;
 import java.lang.reflect.Field;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
-
-public class DefaultAssemblyProperty extends AbstractNamedModelProperty implements AssemblyProperty {
+public class DefaultAssemblyProperty extends AbstractAssemblyProperty {
 
   public static DefaultAssemblyProperty createInstance(AssemblyClassBinding parentClassBinding, Field field) {
     DefaultAssemblyProperty retval = new DefaultAssemblyProperty(parentClassBinding, field);
@@ -71,6 +55,12 @@ public class DefaultAssemblyProperty extends AbstractNamedModelProperty implemen
 
   protected Assembly getAssemblyAnnotation() {
     return assembly;
+  }
+
+  @Override
+  public AssemblyClassBinding getDefinition() {
+    DataTypeHandler handler = getDataTypeHandler();
+    return (AssemblyClassBinding) handler.getClassBinding();
   }
 
   @Override
@@ -111,78 +101,5 @@ public class DefaultAssemblyProperty extends AbstractNamedModelProperty implemen
   @Override
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
     return getAssemblyAnnotation().inXml();
-  }
-
-  @Override
-  protected JavaTypeAdapter<?> getJavaTypeAdapter() {
-    // an assembly property is always associated with a bound class, so there will never be a class
-    // binding
-    return null;
-  }
-
-  @Override
-  public boolean readItem(PropertyCollector collector, Object parentInstance, StartElement start,
-      XmlParsingContext context) throws BindingException, XMLStreamException, IOException {
-    XMLEventReader2 eventReader = context.getReader();
-
-    // consume extra whitespace between elements
-    XmlEventUtil.skipWhitespace(eventReader);
-
-    boolean handled = false;
-    XMLEvent event = eventReader.peek();
-    if (event.isStartElement() && getXmlQName().equals(event.asStartElement().getName())) {
-      // Consume the start element
-      event = eventReader.nextEvent();
-      StartElement propertyStartElement = event.asStartElement();
-
-      // consume the value
-      handled = getBindingSupplier().get(collector, parentInstance, propertyStartElement, context);
-
-      // consume the end element
-      XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.END_ELEMENT, propertyStartElement.getName());
-      handled = true;
-    }
-    return handled;
-  }
-
-  @Override
-  public boolean writeItem(Object item, QName parentName, XmlWritingContext context)
-      throws XMLStreamException, IOException {
-    XMLStreamWriter2 writer = context.getWriter();
-
-    QName currentParentName = getXmlQName();
-
-    // write the start element
-    writer.writeStartElement(currentParentName.getNamespaceURI(), currentParentName.getLocalPart());
-
-    // write the value
-    getBindingSupplier().accept(item, currentParentName, context);
-
-    // write the end element
-    writer.writeEndElement();
-
-    return true;
-  }
-
-  @Override
-  public AssemblyClassBinding getContainingDefinition() {
-    return getParentClassBinding();
-  }
-
-  @Override
-  public String toCoordinates() {
-    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(), getName(),
-        getParentClassBinding().getBoundClass().getName(), getField().getName());
-  }
-
-  @Override
-  public MarkupMultiline getRemarks() {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public AssemblyClassBinding getDefinition() {
-    DataTypeHandler handler = getBindingSupplier();
-    return (AssemblyClassBinding) handler.getClassBinding();
   }
 }

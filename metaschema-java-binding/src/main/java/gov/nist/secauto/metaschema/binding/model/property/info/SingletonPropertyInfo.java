@@ -54,7 +54,7 @@ public class SingletonPropertyInfo
   }
 
   @Override
-  public boolean readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
     NamedModelProperty property = getProperty();
 
@@ -66,13 +66,12 @@ public class SingletonPropertyInfo
       JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     }
 
-    boolean handled = property.readItem(collector, parentInstance, context);
+    property.readItem(collector, parentInstance, context);
 
     if (isObject) {
       // read the object's END_OBJECT
       JsonUtil.assertAndAdvance(context.getReader(), JsonToken.END_OBJECT);
     }
-    return handled;
   }
 
   @Override
@@ -102,7 +101,7 @@ public class SingletonPropertyInfo
   @Override
   public void writeValue(Object parentInstance, JsonWritingContext context) throws IOException {
     NamedModelProperty property = getProperty();
-    getProperty().getBindingSupplier().writeItems(Collections.singleton(property.getValue(parentInstance)), true,
+    getProperty().getDataTypeHandler().writeItems(Collections.singleton(property.getValue(parentInstance)), true,
         context);
   }
 

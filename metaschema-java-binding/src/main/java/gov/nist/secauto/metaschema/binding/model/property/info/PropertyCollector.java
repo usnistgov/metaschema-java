@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.model.property.info;
 
+import gov.nist.secauto.metaschema.binding.model.property.Property;
+
 import java.util.Collection;
 
 /**

@@ -58,6 +58,11 @@ public abstract class AbstractDeserializer<CLASS>
   }
 
   @Override
+  public boolean isValidating() {
+    return getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_VALIDATE, false);
+  }
+
+  @Override
   public CLASS deserialize(InputStream in) throws BindingException {
     return deserialize(new InputStreamReader(in));
   }

@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
@@ -162,10 +163,25 @@ public class DefaultFieldProperty extends AbstractNamedModelProperty implements 
   }
 
   @Override
+  public boolean isNextProperty(XmlParsingContext context) throws IOException, XMLStreamException {
+    boolean retval = super.isNextProperty(context);
+    if (!retval) {
+      XMLEventReader2 eventReader = context.getReader();
+      XMLEvent event = eventReader.peek();
+      if (event.isStartElement()) {
+        QName qname = event.asStartElement().getName();
+        JavaTypeAdapter<?> adapter = getJavaTypeAdapter();
+        retval = !isInXmlWrapped() && adapter.isUnrappedValueAllowedInXml() && adapter.canHandleQName(qname);
+      }
+    }
+    return retval;
+  }
+
+  @Override
   public boolean readItem(PropertyCollector collector, Object parentInstance, StartElement start,
       XmlParsingContext context) throws BindingException, XMLStreamException, IOException {
     // figure out how to parse the item
-    XmlBindingSupplier supplier = getBindingSupplier();
+    XmlBindingSupplier supplier = getDataTypeHandler();
 
     // figure out if we need to parse the wrapper or not
     JavaTypeAdapter<?> adapter = getJavaTypeAdapter();
@@ -211,7 +227,7 @@ public class DefaultFieldProperty extends AbstractNamedModelProperty implements 
   public boolean writeItem(Object item, QName parentName, XmlWritingContext context)
       throws XMLStreamException, IOException {
     // figure out how to parse the item
-    DataTypeHandler handler = getBindingSupplier();
+    DataTypeHandler handler = getDataTypeHandler();
 
     // figure out if we need to parse the wrapper or not
     boolean writeWrapper = isInXmlWrapped() || !handler.isUnrappedValueAllowedInXml();
@@ -255,7 +271,7 @@ public class DefaultFieldProperty extends AbstractNamedModelProperty implements 
   public IFieldDefinition getDefinition() {
     synchronized (this) {
       if (definition == null) {
-        DataTypeHandler handler = getBindingSupplier();
+        DataTypeHandler handler = getDataTypeHandler();
         ClassBinding classBinding = handler.getClassBinding();
         if (classBinding == null) {
           definition = new ScalarFieldDefinition();
@@ -362,5 +378,17 @@ public class DefaultFieldProperty extends AbstractNamedModelProperty implements 
       checkModelConstraints();
       return constraints.getExpectConstraints();
     }
+  }
+
+  @Override
+  public void validateValue(Object instance, ParsingContext<?,?> context) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void validateItem(Object value, ParsingContext<?,?> context) {
+    // TODO Auto-generated method stub
+    
   }
 }

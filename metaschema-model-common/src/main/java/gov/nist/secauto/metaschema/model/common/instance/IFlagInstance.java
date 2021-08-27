@@ -28,6 +28,11 @@ package gov.nist.secauto.metaschema.model.common.instance;
 
 import gov.nist.secauto.metaschema.model.common.Flag;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.DefaultMetaschemaContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+
+import java.util.Collections;
 
 import javax.xml.namespace.QName;
 
@@ -62,4 +67,9 @@ public interface IFlagInstance extends INamedInstance, Flag {
   // * @return {@code true} if the flag is used as a JSON "value key", or {@code false} otherwise
   // */
   // boolean isJsonValueKey();
+  
+  @Override
+  default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {
+    return metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(IInstanceSet.newInstanceSet(Collections.singleton(this))));
+  }
 }

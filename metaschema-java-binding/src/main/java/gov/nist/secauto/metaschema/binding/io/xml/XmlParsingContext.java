@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.io.xml;
 
-import gov.nist.secauto.metaschema.binding.io.ParsingContext;
+import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 
 import org.codehaus.stax2.XMLEventReader2;
 

@@ -322,6 +322,7 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
     return constraints.getHasCardinalityConstraints();
   }
 
+  // TODO: this is unused, remove it
   @Override
   public Object readRoot(XmlParsingContext context) throws XMLStreamException, BindingException, IOException {
 
@@ -344,8 +345,6 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
     readInternal(null, instance, rootStart, context);
 
     XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.END_ELEMENT, rootQName);
-
-    XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.END_DOCUMENT);
 
     callAfterDeserialize(instance, null);
 
@@ -474,7 +473,7 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
     }
 
     Set<String> handledProperties = new HashSet<>();
-    while (!jsonParser.hasTokenId(JsonToken.END_OBJECT.id())) {
+    while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
       String propertyName = jsonParser.getCurrentName();
       NamedProperty property = properties.get(propertyName);
 
@@ -488,6 +487,7 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
       } else {
         logger.warn("Unrecognized property named '{}' at '{}'", propertyName,
             JsonUtil.toString(jsonParser.getCurrentLocation()));
+        JsonUtil.assertAndAdvance(jsonParser, JsonToken.FIELD_NAME);
         JsonUtil.skipNextValue(jsonParser);
       }
     }
@@ -501,6 +501,10 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
       }
     }
 
+    if (context.isValidating()) {
+      validate(instance);
+    }
+    
     if (jsonKey != null) {
       // read the END_OBJECT for the JSON key value
       JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
@@ -527,7 +531,6 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
     writeItem(instance, rootQName, context);
 
     writer.writeEndElement();
-
   }
 
   @Override

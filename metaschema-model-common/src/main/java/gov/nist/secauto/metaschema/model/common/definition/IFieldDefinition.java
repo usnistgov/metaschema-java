@@ -28,6 +28,9 @@ package gov.nist.secauto.metaschema.model.common.definition;
 
 import gov.nist.secauto.metaschema.model.common.Field;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.DefaultMetaschemaContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
 
 public interface IFieldDefinition extends IValuedDefinition, IFlaggedDefinition, Field {
   /**
@@ -77,4 +80,9 @@ public interface IFieldDefinition extends IValuedDefinition, IFlaggedDefinition,
    * @return {@code true} if the field is eligible for collapsing, or {@code false} otherwise
    */
   boolean isCollapsible();
+
+  @Override
+  default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {
+    return metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(IInstanceSet.newInstanceSet(this)));
+  }
 }

@@ -91,6 +91,8 @@ class DefaultFlagPropertyTest {
 
         allowing(jsonParsingContext).getReader();
         will(returnValue(jsonParser));
+        allowing(jsonParsingContext).isValidating();
+        will(returnValue(false));
       }
     });
 
@@ -128,6 +130,8 @@ class DefaultFlagPropertyTest {
 
         allowing(xmlParsingContext).getReader();
         will(returnValue(eventReader));
+        allowing(xmlParsingContext).isValidating();
+        will(returnValue(false));
       }
     });
 

@@ -102,6 +102,4 @@ public abstract class AbstractProperty<CLASS_BINDING extends ClassBinding> imple
     }
     return retval;
   }
-  
-  
 }

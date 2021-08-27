@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.io.xml;
 
-import gov.nist.secauto.metaschema.binding.io.ProblemHandler;
+import gov.nist.secauto.metaschema.binding.io.context.ProblemHandler;
 
 import javax.xml.namespace.QName;
 

@@ -308,6 +308,10 @@ public abstract class AbstractClassBinding implements ClassBinding {
 
     callAfterDeserialize(instance, parentInstance);
 
+    if (context.isValidating()) {
+      validate(instance);
+    }
+
     collector.add(instance);
     return true;
   }
@@ -319,11 +323,34 @@ public abstract class AbstractClassBinding implements ClassBinding {
     }
     readBody(instance, start, context);
 
+    if (context.isValidating()) {
+      validate(instance);
+    }
     // TODO: should I check for the END_ELEMENT here?
   }
 
   protected abstract void readBody(Object instance, StartElement start, XmlParsingContext context)
       throws IOException, XMLStreamException, BindingException;
+
+  @Override
+  public boolean validate(Object instance) {
+    boolean retval = true;
+    
+    // validate the constraints on this bound class
+    // TODO: complete
+
+//    // validate flags
+//    for (FlagProperty flag : getFlagInstances().values()) {
+//      Object value = flag.getValue(instance);
+//      if (flag.isRequired() && value == null) {
+//        retval = false;
+//      }
+//    }
+//    
+//    // validate model/field value
+//    // TODO: complete
+    return retval;
+  }
 
   @Override
   public void writeItem(Object instance, QName parentName, XmlWritingContext context)

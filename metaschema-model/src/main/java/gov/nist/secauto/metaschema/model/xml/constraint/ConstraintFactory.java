@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.xml.constraint;
 
-import gov.nist.secauto.metaschema.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValue;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultCardinalityConstraint;
@@ -38,6 +37,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstra
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.xml.MarkupStringConverter;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.AllowedValuesType;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.EnumDocument;

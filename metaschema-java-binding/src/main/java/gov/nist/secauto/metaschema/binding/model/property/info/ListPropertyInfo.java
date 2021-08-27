@@ -78,7 +78,33 @@ public class ListPropertyInfo
   }
 
   @Override
-  public boolean readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start,
+      XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+    XMLEventReader2 eventReader = context.getReader();
+
+    // TODO: is this needed?
+    // consume extra whitespace between elements
+    XmlEventUtil.skipWhitespace(eventReader);
+
+    QName expectedFieldItemQName = getProperty().getXmlQName();
+
+    boolean handled = false;
+    XMLEvent event;
+    while ((event = eventReader.peek()).isStartElement()
+        && expectedFieldItemQName.equals(event.asStartElement().getName())) {
+      if (getProperty().readItem(collector, parentInstance, start, context)) {
+        handled = true;
+      }
+
+      // consume extra whitespace between elements
+      XmlEventUtil.skipWhitespace(eventReader);
+    }
+
+    return handled;
+  }
+
+  @Override
+  public void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
     JsonParser parser = context.getReader();
 
@@ -125,36 +151,8 @@ public class ListPropertyInfo
         JsonUtil.assertAndAdvance(context.getReader(), JsonToken.END_OBJECT);
       }
     }
-
-    // empty arrays are ok
-    return true;
   }
 
-  @Override
-  public boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start,
-      XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
-    XMLEventReader2 eventReader = context.getReader();
-
-    // TODO: is this needed?
-    // consume extra whitespace between elements
-    XmlEventUtil.skipWhitespace(eventReader);
-
-    QName expectedFieldItemQName = getProperty().getXmlQName();
-
-    boolean handled = false;
-    XMLEvent event;
-    while ((event = eventReader.peek()).isStartElement()
-        && expectedFieldItemQName.equals(event.asStartElement().getName())) {
-      if (getProperty().readItem(collector, parentInstance, start, context)) {
-        handled = true;
-      }
-
-      // consume extra whitespace between elements
-      XmlEventUtil.skipWhitespace(eventReader);
-    }
-
-    return handled;
-  }
 
   @Override
   public boolean writeValue(Object parentInstance, QName parentName, XmlWritingContext context)
@@ -188,7 +186,7 @@ public class ListPropertyInfo
       writer.writeStartArray();
     } // only other option is a singleton value, write item
 
-    getProperty().getBindingSupplier().writeItems(items, true, context);
+    getProperty().getDataTypeHandler().writeItems(items, true, context);
 
     if (writeArray) {
       // write the end array

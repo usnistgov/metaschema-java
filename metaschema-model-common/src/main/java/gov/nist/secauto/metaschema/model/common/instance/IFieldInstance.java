@@ -28,12 +28,17 @@ package gov.nist.secauto.metaschema.model.common.instance;
 
 import gov.nist.secauto.metaschema.model.common.Field;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.DefaultMetaschemaContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+
+import java.util.Collections;
 
 import javax.xml.namespace.QName;
 
-public interface IFieldInstance extends INamedInstance, IModelInstance, Field {
+public interface IFieldInstance extends INamedModelInstance, Field {
   /**
-   *  Get the XML qualified name to use in XML.
+   * Get the XML qualified name to use in XML.
    * 
    * @return the XML qualified name, or {@code null} if the instance is not wrapped by an XML an XML
    *         element or attribute
@@ -72,4 +77,10 @@ public interface IFieldInstance extends INamedInstance, IModelInstance, Field {
    * @return {@code true} if an XML wrapper is required, or {@code false} otherwise
    */
   boolean isInXmlWrapped();
+
+  @Override
+  default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {
+    return metapath.evaluateMetaschemaInstance(
+        new DefaultMetaschemaContext(IInstanceSet.newInstanceSet(Collections.singleton(this))));
+  }
 }

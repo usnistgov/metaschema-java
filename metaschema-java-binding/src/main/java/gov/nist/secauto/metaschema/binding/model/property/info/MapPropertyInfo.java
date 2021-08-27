@@ -94,7 +94,7 @@ public class MapPropertyInfo
   }
 
   @Override
-  public boolean readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
     JsonParser jsonParser = context.getReader();
     JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
@@ -107,18 +107,13 @@ public class MapPropertyInfo
     // }
 
     NamedModelProperty property = getProperty();
-    boolean handled = false;
     // process all map items
     while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
-      if (property.readItem(collector, parentInstance, context)) {
-        handled = true;
-      }
+      property.readItem(collector, parentInstance, context);
     }
 
     // advance to next token
     JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
-
-    return handled;
   }
 
   @Override
@@ -165,7 +160,7 @@ public class MapPropertyInfo
     private final FlagProperty jsonKey;
 
     protected MapPropertyCollector(NamedModelProperty property) {
-      ClassBinding classBinding = property.getBindingSupplier().getClassBinding();
+      ClassBinding classBinding = property.getDataTypeHandler().getClassBinding();
       this.jsonKey = classBinding != null ? classBinding.getJsonKeyFlagInstance() : null;
       if (this.jsonKey == null) {
         throw new IllegalStateException("No JSON key found");
@@ -213,7 +208,7 @@ public class MapPropertyInfo
 
     writer.writeStartObject();
 
-    getProperty().getBindingSupplier().writeItems(items.values(), false, context);
+    getProperty().getDataTypeHandler().writeItems(items.values(), false, context);
 
     writer.writeEndObject();
   }

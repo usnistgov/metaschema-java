@@ -32,6 +32,7 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 
 import java.io.IOException;
@@ -45,10 +46,18 @@ import javax.xml.stream.events.StartElement;
 // TODO: implement can handle QName for XML parsing
 public class JavaTypeAdapterDataTypeHandler implements DataTypeHandler {
   private final JavaTypeAdapter<?> adapter;
+  private final NamedModelProperty property;
 
-  public JavaTypeAdapterDataTypeHandler(JavaTypeAdapter<?> adapter) {
+  public JavaTypeAdapterDataTypeHandler(JavaTypeAdapter<?> adapter, NamedModelProperty property) {
     Objects.requireNonNull(adapter, "adapter");
+    Objects.requireNonNull(property, "property");
     this.adapter = adapter;
+    this.property = property;
+  }
+
+  @Override
+  public NamedModelProperty getProperty() {
+    return property;
   }
 
   @Override
@@ -76,6 +85,9 @@ public class JavaTypeAdapterDataTypeHandler implements DataTypeHandler {
       collector.add(value);
       retval = true;
     }
+    if (context.isValidating()) {
+      getProperty().validateItem(value, context);
+    }
     return retval;
   }
 
@@ -87,6 +99,9 @@ public class JavaTypeAdapterDataTypeHandler implements DataTypeHandler {
     if (value != null) {
       collector.add(value);
       retval = true;
+    }
+    if (context.isValidating()) {
+      getProperty().validateItem(value, context);
     }
     return retval;
   }

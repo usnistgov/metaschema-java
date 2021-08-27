@@ -31,6 +31,9 @@ import gov.nist.secauto.metaschema.model.common.IModelContainer;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.DefaultMetaschemaContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
 
 import java.util.List;
 
@@ -85,5 +88,10 @@ public interface IAssemblyDefinition extends IFlaggedDefinition, IModelContainer
   List<? extends IUniqueConstraint> getUniqueConstraints();
 
   List<? extends ICardinalityConstraint> getHasCardinalityConstraints();
+  
 
+  @Override
+  default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {
+    return metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(IInstanceSet.newInstanceSet(this)));
+  }
 }

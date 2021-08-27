@@ -28,9 +28,14 @@ package gov.nist.secauto.metaschema.model.common.instance;
 
 import gov.nist.secauto.metaschema.model.common.Assembly;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.DefaultMetaschemaContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+
+import java.util.Collections;
 
 public interface IAssemblyInstance
-    extends INamedInstance, IModelInstance, Assembly {
+    extends INamedModelInstance, Assembly {
 
   @Override
   default String getJsonName() {
@@ -46,4 +51,9 @@ public interface IAssemblyInstance
 
   @Override
   IAssemblyDefinition getDefinition();
+  
+  @Override
+  default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {
+    return metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(IInstanceSet.newInstanceSet(Collections.singleton(this))));
+  }
 }

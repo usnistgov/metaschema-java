@@ -63,16 +63,15 @@ public interface ModelPropertyInfo {
    * on the property's value type as reported by {@link #getProperty()}.
    * 
    * @param collector used to hold parsed values
-   * @param parentInstance the object the data is parsed into
    * @param context
    *          the JSON parsing context
-   * @return the property's value based on the type
+   * @param parentInstance the instance the property is on
    * @throws IOException
    *           if there was an error when reading JSON data
    * @throws BindingException
    *           if there was an error related to this properties Java class binding
    */
-  boolean readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException;
 
   boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start, XmlParsingContext context)

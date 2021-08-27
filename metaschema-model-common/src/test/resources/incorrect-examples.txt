@@ -1,5 +1,8 @@
 # 'ancestor-or-self::*';
 # 'ancestor::*';
+'descendant-or-self::*';
+'descendant::*';
+'descending';
 # 'following-sibling::*';
 # 'following::*';
 # 'parent::*';
