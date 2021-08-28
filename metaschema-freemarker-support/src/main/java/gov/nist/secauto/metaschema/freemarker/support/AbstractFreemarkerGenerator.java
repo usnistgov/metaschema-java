@@ -101,14 +101,14 @@ public abstract class AbstractFreemarkerGenerator implements FreemarkerGenerator
     Set<IAssemblyDefinition> rootAssemblies = new LinkedHashSet<>();
     for (IDefinition definition : definitions) {
       if (definition instanceof MetaschemaDefinition) {
-        Metaschema metaschema = ((MetaschemaDefinition)definition).getContainingMetaschema();
+        Metaschema metaschema = ((MetaschemaDefinition) definition).getContainingMetaschema();
         if (!metaschemas.contains(metaschema)) {
           metaschemas.add(metaschema);
         }
       }
-    
+
       if (definition instanceof IAssemblyDefinition) {
-        IAssemblyDefinition assemblyDefinition = (IAssemblyDefinition)definition;
+        IAssemblyDefinition assemblyDefinition = (IAssemblyDefinition) definition;
         if (assemblyDefinition.isRoot()) {
           rootAssemblies.add(assemblyDefinition);
         }

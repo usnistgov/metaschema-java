@@ -107,7 +107,8 @@ public class FlagPropertyGenerator
     annotation.addMember("typeAdapter", "$T.class",
         valueDataType.getJavaTypeAdapter().getClass());
 
-    AnnotationUtils.applyAllowedValuesConstraints(annotation, getInstance().getDefinition().getAllowedValuesContraints());
+    AnnotationUtils.applyAllowedValuesConstraints(annotation,
+        getInstance().getDefinition().getAllowedValuesContraints());
     AnnotationUtils.applyIndexHasKeyConstraints(annotation, getInstance().getDefinition().getIndexHasKeyConstraints());
     AnnotationUtils.applyMatchesConstraints(annotation, getInstance().getDefinition().getMatchesConstraints());
     AnnotationUtils.applyExpectConstraints(annotation, getInstance().getDefinition().getExpectConstraints());
@@ -121,8 +122,8 @@ public class FlagPropertyGenerator
     }
 
     if (parent instanceof IFieldDefinition) {
-      IFieldDefinition parentField = (IFieldDefinition)parent;
-      
+      IFieldDefinition parentField = (IFieldDefinition) parent;
+
       if (parentField.hasJsonValueKeyFlagInstance() && instance.equals(parentField.getJsonValueKeyFlagInstance())) {
         builder.addAnnotation(JsonFieldValueKeyFlag.class);
       }

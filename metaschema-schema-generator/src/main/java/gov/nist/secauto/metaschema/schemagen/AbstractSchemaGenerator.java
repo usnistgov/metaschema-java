@@ -51,5 +51,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public abstract class AbstractSchemaGenerator extends AbstractFreemarkerGenerator implements SchemaGenerator {
+public abstract class AbstractSchemaGenerator
+    extends AbstractFreemarkerGenerator
+    implements SchemaGenerator {
 }

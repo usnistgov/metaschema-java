@@ -28,5 +28,7 @@ package gov.nist.secauto.metaschema.docsgen;
 
 import gov.nist.secauto.metaschema.freemarker.support.AbstractFreemarkerGenerator;
 
-public abstract class AbstractDocumentationGenerator extends AbstractFreemarkerGenerator implements DocumentationGenerator {
+public abstract class AbstractDocumentationGenerator
+    extends AbstractFreemarkerGenerator
+    implements DocumentationGenerator {
 }

@@ -91,8 +91,6 @@ public interface ClassBinding extends IFlaggedDefinition {
    * After returning the current {@link JsonToken} of the {@link JsonParser} is expected to be a
    * {@link JsonToken#END_OBJECT} representing the end of the object for this class.
    * 
-   * @param collector
-   *          used to gather Java instances
    * @param parentInstance
    *          the Java instance for the object containing this object
    * @param context
@@ -118,8 +116,6 @@ public interface ClassBinding extends IFlaggedDefinition {
    * next event after the {@link XMLStreamConstants#END_ELEMENT} for the XML
    * {@link XMLStreamConstants#START_ELEMENT} element associated with the Java class.
    * 
-   * @param collector
-   *          used to gather Java instances
    * @param parentInstance
    *          the Java instance for the object containing this object
    * @param start

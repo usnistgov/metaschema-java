@@ -52,8 +52,6 @@ public interface NamedModelProperty
   /**
    * Reads an individual XML item from the XML stream.
    * 
-   * @param collector
-   *          used to hold parsed values
    * @param parentInstance
    *          the object the data is parsed into
    * @param start
@@ -74,8 +72,6 @@ public interface NamedModelProperty
   /**
    * Reads a set of JSON items from the JSON stream.
    * 
-   * @param collector
-   *          used to hold parsed values
    * @param parentInstance
    *          the object the data is parsed into
    * @param context

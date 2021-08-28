@@ -50,7 +50,8 @@ import java.util.Set;
  * @author davidwal
  *
  */
-public class FieldValuePropertyGenerator extends AbstractPropertyGenerator<FieldJavaClassGenerator> {
+public class FieldValuePropertyGenerator
+    extends AbstractPropertyGenerator<FieldJavaClassGenerator> {
   private static final Logger logger = LogManager.getLogger(FieldValuePropertyGenerator.class);
 
   public static DataTypes getValueDataType(FieldDefinition definition) {

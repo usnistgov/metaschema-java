@@ -85,9 +85,9 @@ class JavaGeneratorTest {
     ConstraintValidatingModelWalker walker = new ConstraintValidatingModelWalker();
     List<IAssemblyDefinition> rootDefinitions = new LinkedList<>();
     for (IDefinition definition : UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema)) {
-      
+
       if (definition instanceof IAssemblyDefinition) {
-        IAssemblyDefinition assembly = (IAssemblyDefinition)definition;
+        IAssemblyDefinition assembly = (IAssemblyDefinition) definition;
         if (assembly.isRoot()) {
           rootDefinitions.add(assembly);
           walker.walk(assembly);
@@ -148,7 +148,6 @@ class JavaGeneratorTest {
     }
   }
 
-
   private void printAssembly(IAssemblyDefinition assembly, String padding) {
     System.out.println(String.format("%sAssembly Definition: %s", padding, assembly.getName()));
 
@@ -170,7 +169,7 @@ class JavaGeneratorTest {
       if (instance instanceof IFieldInstance) {
         printField(((IFieldInstance) instance).getDefinition(), padding + "  ");
       } else if (instance instanceof IAssemblyInstance) {
-//        printAssembly(((IAssemblyInstance) instance).getDefinition(), padding + "  ");
+        // printAssembly(((IAssemblyInstance) instance).getDefinition(), padding + " ");
       }
     }
   }
@@ -179,7 +178,8 @@ class JavaGeneratorTest {
     for (IAllowedValuesConstraint constraint : constraints) {
       System.out.println(String.format("%s  %s: %s", padding, constraint.getId(), constraint.getTarget().getPath()));
       for (IAllowedValue value : constraint.getAllowedValues().values()) {
-        System.out.println(String.format("%s    %s: %s", padding, value.getValue(), value.getDescription().toMarkdown()));
+        System.out
+            .println(String.format("%s    %s: %s", padding, value.getValue(), value.getDescription().toMarkdown()));
       }
     }
   }

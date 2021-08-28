@@ -75,7 +75,8 @@ public class AssemblyJavaClassGenerator
 
     AnnotationUtils.applyIndexConstraints(annotation, getDefinition().getIndexConstraints());
     AnnotationUtils.applyUniqueConstraints(annotation, getDefinition().getUniqueConstraints());
-    AnnotationUtils.applyHasCardinalityConstraints(getDefinition(),annotation, getDefinition().getHasCardinalityConstraints());
+    AnnotationUtils.applyHasCardinalityConstraints(getDefinition(), annotation,
+        getDefinition().getHasCardinalityConstraints());
 
   }
 
@@ -110,8 +111,8 @@ public class AssemblyJavaClassGenerator
   }
 
   /**
-   * Creates a new {@link PropertyGenerator} for the provided {@link AssemblyModelInstance} and registers it
-   * with this class generator.
+   * Creates a new {@link PropertyGenerator} for the provided {@link AssemblyModelInstance} and
+   * registers it with this class generator.
    * 
    * @param instance
    *          the model instance to generate the property for

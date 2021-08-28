@@ -75,7 +75,7 @@ public class DefaultPathBuilder implements PathBuilder {
     InstanceHandler<?> currentHandler = instanceStack.peek();
     IPathInstance pathInstance = currentHandler.newPathInstance();
     pathStack.push(pathInstance);
-//    logger.info(getPath(PathBuilder.PathType.METAPATH));
+    // logger.info(getPath(PathBuilder.PathType.METAPATH));
   }
 
   @Override
@@ -83,7 +83,7 @@ public class DefaultPathBuilder implements PathBuilder {
     InstanceHandler<?> currentHandler = instanceStack.peek();
     IPathInstance pathInstance = currentHandler.newPathInstance(position);
     pathStack.push(pathInstance);
-//    logger.info(getPath(PathBuilder.PathType.METAPATH));
+    // logger.info(getPath(PathBuilder.PathType.METAPATH));
   }
 
   @Override
@@ -91,7 +91,7 @@ public class DefaultPathBuilder implements PathBuilder {
     InstanceHandler<?> currentHandler = instanceStack.peek();
     IPathInstance pathInstance = currentHandler.newPathInstance(key);
     pathStack.push(pathInstance);
-//    logger.info(getPath(PathBuilder.PathType.METAPATH));
+    // logger.info(getPath(PathBuilder.PathType.METAPATH));
   }
 
   @Override

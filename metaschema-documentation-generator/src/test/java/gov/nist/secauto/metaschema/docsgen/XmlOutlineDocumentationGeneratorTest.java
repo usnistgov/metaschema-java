@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.docsgen;
 
 import gov.nist.secauto.metaschema.model.Metaschema;
@@ -58,7 +59,8 @@ class XmlOutlineDocumentationGeneratorTest {
 
     List<Metaschema> metaschemas = new LinkedList<>();
     Metaschema metaschema
-        = loader.loadXmlMetaschema(new URL("https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
+        = loader.loadXmlMetaschema(new URL(
+            "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
     metaschemas.add(metaschema);
 
     Collection<? extends IDefinition> definitions
