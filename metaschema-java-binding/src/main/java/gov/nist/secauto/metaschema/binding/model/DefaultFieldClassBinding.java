@@ -50,7 +50,6 @@ import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
 import gov.nist.secauto.metaschema.binding.model.property.Property;
 import gov.nist.secauto.metaschema.binding.model.property.info.ListPropertyCollector;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
@@ -64,7 +63,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -235,19 +236,19 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
   }
 
   @Override
-  public boolean readItem(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public List<Object> readItem(Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
-    boolean handled;
+    List<Object> retval;
     if (isCollapsible()) {
-      handled = readCollapsed(collector, parentInstance, context);
+      retval = readCollapsed(parentInstance, context);
     } else {
-      handled = readNormal(collector, parentInstance, context);
+      retval = Collections.singletonList(readNormal(parentInstance, context));
     }
 
-    return handled;
+    return retval;
   }
 
-  private boolean readNormal(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  private Object readNormal(Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
     Predicate<FlagProperty> flagFilter = null;
 
@@ -357,12 +358,10 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
     // JsonUtil.consumeAndAssert(jsonParser, JsonToken.END_OBJECT);
 
     callAfterDeserialize(instance, parentInstance);
-    collector.add(instance);
-
-    return true;
+    return instance;
   }
 
-  private boolean readCollapsed(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  private List<Object> readCollapsed(Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
 
     Predicate<FlagProperty> flagFilter = null;
@@ -480,6 +479,7 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
 
     // now we need to clone one item per value
     // TODO: handle the case where there are no values
+    List<Object> retval;
     if (values == null) {
       Object item = newInstance();
 
@@ -494,8 +494,9 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
 
       callAfterDeserialize(item, parentInstance);
 
-      collector.add(item);
+      retval = Collections.singletonList(item);
     } else {
+      List<Object> items = new ArrayList<>(values.size());
       for (Object value : values) {
         Object item = newInstance();
 
@@ -512,10 +513,11 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
 
         callAfterDeserialize(item, parentInstance);
 
-        collector.add(item);
+        items.add(item);
       }
+      retval = items;
     }
-    return true;
+    return retval;
   }
 
   private List<? extends Object> handleCollapsedValues(Object parentInstance, JsonParsingContext context)
@@ -527,10 +529,16 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
     ListPropertyCollector collector = new ListPropertyCollector();
     if (jsonParser.hasToken(JsonToken.START_ARRAY)) {
       while (!jsonParser.hasToken(JsonToken.END_ARRAY)) {
-        fieldValue.readValue(collector, parentInstance, context);
+        Object value = fieldValue.readValue(parentInstance, context);
+        if (value != null) {
+          collector.add(value);
+        }
       }
     } else {
-      fieldValue.readValue(collector, parentInstance, context);
+      Object value = fieldValue.readValue(parentInstance, context);
+      if (value != null) {
+        collector.add(value);
+      }
     }
 
     List<? extends Object> instance = collector.getValue();

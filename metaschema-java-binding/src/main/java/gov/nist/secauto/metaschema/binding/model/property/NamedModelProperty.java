@@ -32,10 +32,10 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -66,7 +66,7 @@ public interface NamedModelProperty
    * @throws IOException
    *           if an error occurred reading the underlying XML file
    */
-  boolean readItem(PropertyCollector collector, Object parentInstance, StartElement start, XmlParsingContext context)
+  Object readItem(Object parentInstance, StartElement start, XmlParsingContext context)
       throws BindingException, XMLStreamException, IOException;
 
   /**
@@ -76,13 +76,13 @@ public interface NamedModelProperty
    * @param parentInstance the object the data is parsed into
    * @param context
    *          the JSON/YAML parsing context
-   * @return the item read, or {@code null} if no item was read
+   * @return the items read, or {@code null} if no item was read
    * @throws BindingException
    *           if a Java class binding error occurred
    * @throws IOException
    *           if an error occurred reading the underlying XML file
    */
-  boolean readItem(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  List<Object> readItem(Object parentInstance, JsonParsingContext context)
       throws BindingException, IOException;
 
   boolean writeItem(Object item, QName parentName, XmlWritingContext context) throws XMLStreamException, IOException;

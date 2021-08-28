@@ -26,25 +26,38 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
+import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
 public interface PathBuilder {
 
-  void pushItem(Object instance);
+  void pushInstance(FlagProperty instance);
 
-  void pushItem(Object instance, int position);
+  void pushInstance(NamedModelProperty instance);
 
-  void popItem();
+  InstanceHandler<?> popInstance();
 
-  void pushInstance(IFlagInstance instance);
+  void pushItem();
 
-  void pushInstance(INamedModelInstance instance);
+  void pushItem(String key);
 
-  INamedInstance popInstance();
+  void pushItem(int position);
 
-  String getXPath();
+  IPathInstance popItem();
 
+  String getPath(PathBuilder.PathType pathType);
+
+  public enum PathType {
+    METAPATH(new MetapathFormatter());
+
+    private final IPathFormatter formatter;
+
+    PathType(IPathFormatter formatter) {
+      this.formatter = formatter;
+    }
+
+    public IPathFormatter getFormatter() {
+      return formatter;
+    }
+  }
 }

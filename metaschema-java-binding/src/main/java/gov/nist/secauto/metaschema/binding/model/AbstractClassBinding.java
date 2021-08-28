@@ -298,7 +298,7 @@ public abstract class AbstractClassBinding implements ClassBinding {
   }
 
   @Override
-  public boolean readItem(PropertyCollector collector, Object parentInstance, StartElement start,
+  public Object readItem(Object parentInstance, StartElement start,
       XmlParsingContext context) throws BindingException, IOException, XMLStreamException {
     Object instance = newInstance();
 
@@ -312,8 +312,7 @@ public abstract class AbstractClassBinding implements ClassBinding {
       validate(instance);
     }
 
-    collector.add(instance);
-    return true;
+    return instance;
   }
 
   protected void readInternal(@SuppressWarnings("unused") Object parentInstance, Object instance, StartElement start,

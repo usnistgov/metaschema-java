@@ -25,27 +25,14 @@
  */
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
-public class SingletonPathInstance implements IPathInstance {
-  private final IInstance instance;
+class FieldPositionalPathInstance extends ModelPositionalPathInstance {
 
-  public SingletonPathInstance(IInstance instance) {
-    this.instance = instance;
+  public FieldPositionalPathInstance(InstanceHandler<? extends NamedModelProperty> handler,
+      int position) {
+    super(handler, position);
   }
 
-  @Override
-  public IInstance getInstance() {
-    return instance;
-  }
 
-  @Override
-  public boolean isPositionRelevant() {
-    return false;
-  }
-
-  @Override
-  public int getPosition() {
-    return -1;
-  }
 }

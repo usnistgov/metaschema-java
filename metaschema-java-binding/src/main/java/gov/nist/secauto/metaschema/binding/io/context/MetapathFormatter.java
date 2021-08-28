@@ -26,10 +26,54 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import java.util.Deque;
+import java.util.Iterator;
 
-public interface IPathInstance {
-  IInstance getInstance();
+public class MetapathFormatter implements IPathFormatter {
 
-  String format(IPathFormatter formatter);
+  @Override
+  public String apply(Deque<IPathInstance> path) {
+    StringBuilder builder = new StringBuilder();
+    boolean first = true;
+
+    Iterator<IPathInstance> iter = path.descendingIterator();
+    while (iter.hasNext()) {
+      IPathInstance pathNode = iter.next();
+      if (!first) {
+        builder.append('/');
+      } else {
+        first = false;
+      }
+      builder.append(pathNode.format(this));
+    }
+    return builder.toString();
+  }
+
+  @Override
+  public String getPathSegment(ModelPositionalPathInstance pathInstance) {
+    StringBuilder builder = new StringBuilder(getPathSegment((ModelPathInstance)pathInstance));
+    builder.append('[');
+    builder.append(pathInstance.getPosition() + 1);
+    builder.append(']');
+    return builder.toString();
+  }
+
+  @Override
+  public String getPathSegment(FlagPathInstance pathInstance) {
+    return "@" + pathInstance.getInstance().getEffectiveName();
+  }
+
+  @Override
+  public String getPathSegment(ModelPathInstance pathInstance) {
+    return pathInstance.getInstance().getEffectiveName();
+  }
+
+  @Override
+  public String getPathSegment(ModelKeyedPathInstance pathInstance) {
+    StringBuilder builder = new StringBuilder(getPathSegment((ModelPathInstance)pathInstance));
+    builder.append('[');
+    builder.append(pathInstance.getKey());
+    builder.append(']');
+    return builder.toString();
+  }
 }

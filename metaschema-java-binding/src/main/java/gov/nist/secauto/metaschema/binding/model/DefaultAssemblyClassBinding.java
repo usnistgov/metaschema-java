@@ -431,9 +431,9 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
   }
 
   @Override
-  public boolean readItem(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public List<Object> readItem(Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
-
+ 
     Object instance = newInstance();
 
     callBeforeDeserialize(instance, parentInstance);
@@ -442,8 +442,7 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
 
     callAfterDeserialize(instance, parentInstance);
 
-    collector.add(instance);
-    return true;
+    return Collections.singletonList(instance);
   }
 
   protected void readInternal(@SuppressWarnings("unused") Object parentInstance, Object instance,

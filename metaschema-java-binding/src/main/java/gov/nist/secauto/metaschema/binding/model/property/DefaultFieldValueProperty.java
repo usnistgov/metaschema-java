@@ -142,13 +142,7 @@ public class DefaultFieldValueProperty extends AbstractProperty<FieldClassBindin
 
   protected Object readInternal(JsonParsingContext context) throws IOException, BindingException {
     // parse the value
-    Object retval = getJavaTypeAdapter().parse(context.getReader());
-
-//    // validate the flag value
-//    if (context.isValidating()) {
-//      validateValue(retval, context);
-//    }
-    return retval;
+    return getJavaTypeAdapter().parse(context.getReader());
   }
 
   @Override
@@ -180,11 +174,8 @@ public class DefaultFieldValueProperty extends AbstractProperty<FieldClassBindin
   }
 
   @Override
-  public void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context) throws IOException, BindingException {
-    Object value = readInternal(context);
-    if (value != null) {
-      collector.add(value);
-    }
+  public Object readValue(Object parentInstance, JsonParsingContext context) throws IOException, BindingException {
+    return readInternal(context);
   }
 
   @Override

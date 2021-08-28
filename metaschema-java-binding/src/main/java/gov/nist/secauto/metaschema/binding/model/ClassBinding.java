@@ -37,13 +37,14 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
+
 import org.codehaus.stax2.XMLStreamReader2;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -96,14 +97,14 @@ public interface ClassBinding extends IFlaggedDefinition {
    *          the Java instance for the object containing this object
    * @param context
    *          the parsing context
-   * @return {@code true} if data was parsed, {@code false} otherwise
+   * @return the instance or {@code null} if no data was parsed
    * @throws IOException
    *           if an error occurred while reading the parsed content
    * @throws BindingException
    *           if an error occurred parsing content into java instances
    */
   // TODO: check if a boolean return value is needed
-  boolean readItem(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  List<Object> readItem(Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException;
 
   /**
@@ -125,7 +126,7 @@ public interface ClassBinding extends IFlaggedDefinition {
    *          the containing start element
    * @param context
    *          the parsing context
-   * @return {@code true} if data was parsed, {@code false} otherwise
+   * @return the instance or {@code null} if no data was parsed
    * @throws IOException
    *           if an error occurred while reading the parsed content
    * @throws BindingException
@@ -133,7 +134,7 @@ public interface ClassBinding extends IFlaggedDefinition {
    * @throws XMLStreamException
    *           if an error occurred while parsing the content as XML
    */
-  boolean readItem(PropertyCollector collector, Object parentInstance, StartElement start, XmlParsingContext context)
+  Object readItem(Object parentInstance, StartElement start, XmlParsingContext context)
       throws BindingException, IOException, XMLStreamException;
 
   boolean validate(Object instance);

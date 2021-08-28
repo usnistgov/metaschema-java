@@ -26,10 +26,33 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
+import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 
-public interface IPathInstance {
-  IInstance getInstance();
+class AssemblyInstanceHandler implements InstanceHandler<AssemblyProperty> {
+  private final AssemblyProperty instance;
 
-  String format(IPathFormatter formatter);
+  public AssemblyInstanceHandler(AssemblyProperty instance) {
+    this.instance = instance;
+  }
+
+  @Override
+  public AssemblyProperty getInstance() {
+    return instance;
+  }
+
+  @Override
+  public ModelPathInstance newPathInstance() {
+    return new ModelPathInstance(this);
+  }
+
+  @Override
+  public ModelPositionalPathInstance newPathInstance(int position) {
+    return new ModelPositionalPathInstance(this, position);
+  }
+
+  @Override
+  public IPathInstance newPathInstance(String key) {
+    return new ModelKeyedPathInstance(this, key);
+  }
 }

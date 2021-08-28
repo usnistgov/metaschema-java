@@ -25,29 +25,22 @@
  */
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 
-public class PositionPathInstance implements IPathInstance {
-  private final IInstance instance;
-  private final int position;
+class FlagPathInstance implements IPathInstance {
+  private final FlagInstanceHandler handler;
 
-  public PositionPathInstance(IInstance instance, int position) {
-    this.instance = instance;
-    this.position = position;
+  public FlagPathInstance(FlagInstanceHandler handler) {
+    this.handler = handler;
   }
 
   @Override
-  public IInstance getInstance() {
-    return instance;
+  public FlagProperty getInstance() {
+    return handler.getInstance();
   }
 
   @Override
-  public boolean isPositionRelevant() {
-    return true;
-  }
-
-  @Override
-  public int getPosition() {
-    return position;
+  public String format(IPathFormatter formatter) {
+    return formatter.getPathSegment(this);
   }
 }

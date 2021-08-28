@@ -60,14 +60,14 @@ public abstract class AbstractAssemblyProperty extends AbstractNamedModelPropert
   }
 
   @Override
-  public boolean readItem(PropertyCollector collector, Object parentInstance, StartElement start,
+  public Object readItem(Object parentInstance, StartElement start,
       XmlParsingContext context) throws BindingException, XMLStreamException, IOException {
     XMLEventReader2 eventReader = context.getReader();
 
     // consume extra whitespace between elements
     XmlEventUtil.skipWhitespace(eventReader);
 
-    boolean handled = false;
+    Object retval = null;
     XMLEvent event = eventReader.peek();
     if (event.isStartElement() && getXmlQName().equals(event.asStartElement().getName())) {
       // Consume the start element
@@ -75,13 +75,12 @@ public abstract class AbstractAssemblyProperty extends AbstractNamedModelPropert
       StartElement propertyStartElement = event.asStartElement();
 
       // consume the value
-      handled = getDataTypeHandler().get(collector, parentInstance, propertyStartElement, context);
+      retval = getDataTypeHandler().get(parentInstance, propertyStartElement, context);
 
       // consume the end element
       XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.END_ELEMENT, propertyStartElement.getName());
-      handled = true;
     }
-    return handled;
+    return retval;
   }
 
   @Override

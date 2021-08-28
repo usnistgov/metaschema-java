@@ -23,13 +23,34 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 
-public interface IPathInstance {
-  IInstance getInstance();
+class FlagInstanceHandler implements InstanceHandler<FlagProperty> {
+  private final FlagProperty instance;
+  
+  public FlagInstanceHandler(FlagProperty instance) {
+    this.instance = instance;
+  }
 
-  String format(IPathFormatter formatter);
+  @Override
+  public FlagProperty getInstance() {
+    return instance;
+  }
+
+  @Override
+  public IPathInstance newPathInstance() {
+    return new FlagPathInstance(this);
+  }
+
+  @Override
+  public IPathInstance newPathInstance(int position) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public IPathInstance newPathInstance(String key) {
+    throw new UnsupportedOperationException();
+  }
 }

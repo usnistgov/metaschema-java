@@ -40,8 +40,6 @@ import gov.nist.secauto.metaschema.binding.io.Feature;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.RootAssemblyProperty;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
-import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -144,11 +142,8 @@ public class DefaultJsonDeserializer<CLASS>
       }
     } else {
       try {
-        SingletonPropertyCollector collector = new SingletonPropertyCollector();
-        classBinding.readItem(collector, null, parsingContext);
-        
         @SuppressWarnings("unchecked")
-        CLASS value = (CLASS)collector.getValue();
+        CLASS value = (CLASS)classBinding.readItem(null, parsingContext);
         retval = value;
       } catch (IOException ex) {
         throw new BindingException(ex);

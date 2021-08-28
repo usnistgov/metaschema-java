@@ -38,7 +38,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.XmlBindingSupplier;
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
@@ -178,7 +177,7 @@ public class DefaultFieldProperty extends AbstractNamedModelProperty implements 
   }
 
   @Override
-  public boolean readItem(PropertyCollector collector, Object parentInstance, StartElement start,
+  public Object readItem(Object parentInstance, StartElement start,
       XmlParsingContext context) throws BindingException, XMLStreamException, IOException {
     // figure out how to parse the item
     XmlBindingSupplier supplier = getDataTypeHandler();
@@ -192,7 +191,7 @@ public class DefaultFieldProperty extends AbstractNamedModelProperty implements 
 
     XMLEventReader2 eventReader = context.getReader();
 
-    boolean handled = false;
+    Object retval = null;
     StartElement currentStart = start;
     boolean parse = true; // determines if parsing happened
     if (parseWrapper) {
@@ -212,7 +211,7 @@ public class DefaultFieldProperty extends AbstractNamedModelProperty implements 
 
     if (parse) {
       // consume the value
-      handled = supplier.get(collector, parentInstance, currentStart, context);
+      retval = supplier.get(parentInstance, currentStart, context);
 
       if (parseWrapper) {
         // consume the end element
@@ -220,7 +219,7 @@ public class DefaultFieldProperty extends AbstractNamedModelProperty implements 
       }
     }
 
-    return handled;
+    return retval;
   }
 
   @Override

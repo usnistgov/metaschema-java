@@ -33,7 +33,6 @@ import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
 import org.apache.logging.log4j.LogManager;
@@ -88,20 +87,26 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding> 
     return handled;
   }
 
-  protected Object readInternal(Object parentInstance, JsonParsingContext context) throws IOException, BindingException {
-    JsonParser parser = context.getReader();
-    // advance past the property name
-    parser.nextFieldName();
-    // parse the value
-    PropertyCollector collector = newPropertyCollector();
-    readValue(collector, parentInstance, context);
-
-    Object retval = collector.getValue();
-
-    // validate the flag value
-    if (context.isValidating()) {
-      validateValue(retval, context);
-    }
-    return retval;
-  }
+  
+  protected abstract Object readInternal(Object parentInstance, JsonParsingContext context) throws IOException, BindingException;
+  //
+//  protected Object readInternal(Object parentInstance, JsonParsingContext context)
+//      throws IOException, BindingException {
+//    JsonParser parser = context.getReader();
+//    // advance past the property name
+//    parser.nextFieldName();
+//    // parse the value
+//    PropertyCollector collector = newPropertyCollector();
+//    ModelPropertyInfo info = getPropertyInfo();
+//    info.readValue(collector, parentInstance, context);
+//    readValue(collector, parentInstance, context);
+//
+//    Object retval = collector.getValue();
+//
+//    // validate the flag value
+//    if (context.isValidating()) {
+//      validateValue(retval, context);
+//    }
+//    return retval;
+//  }
 }

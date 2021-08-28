@@ -31,6 +31,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
@@ -51,9 +52,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class ListPropertyInfo
-    extends AbstractModelPropertyInfo<ParameterizedType>
-    implements ModelPropertyInfo {
+public class ListPropertyInfo extends AbstractModelPropertyInfo<ParameterizedType> implements ModelPropertyInfo {
 
   public ListPropertyInfo(NamedModelProperty property) {
     super(property);
@@ -90,11 +89,25 @@ public class ListPropertyInfo
 
     boolean handled = false;
     XMLEvent event;
+
+    PathBuilder pathBuilder = context.getPathBuilder();
+    int position = 0;
     while ((event = eventReader.peek()).isStartElement()
         && expectedFieldItemQName.equals(event.asStartElement().getName())) {
-      if (getProperty().readItem(collector, parentInstance, start, context)) {
+      pathBuilder.pushItem(position++);
+
+      Object value = getProperty().readItem(parentInstance, start, context);
+      if (value != null) {
+        collector.add(value);
+
+
+        if (context.isValidating()) {
+          getProperty().validateValue(value, context);
+        }
+
         handled = true;
       }
+      pathBuilder.popItem();
 
       // consume extra whitespace between elements
       XmlEventUtil.skipWhitespace(eventReader);
@@ -115,9 +128,13 @@ public class ListPropertyInfo
       parseArray = false;
     }
 
+    PathBuilder pathBuilder = context.getPathBuilder();
+
     if (parseArray) {
       // advance past the array
       JsonUtil.assertAndAdvance(parser, JsonToken.START_ARRAY);
+
+      int position = 0;
 
       // parse items
       while (!JsonToken.END_ARRAY.equals(parser.currentToken())) {
@@ -127,7 +144,22 @@ public class ListPropertyInfo
           // read the object's START_OBJECT
           JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
         }
-        getProperty().readItem(collector, parentInstance, context);
+
+        pathBuilder.pushItem(position++);
+
+        List<Object> values = getProperty().readItem(parentInstance, context);
+        collector.addAll(values);
+
+        for (Object value : values) {
+          // use the same position, since this refers to the same JSON node for multiple values due to
+          // collapse
+
+          if (context.isValidating()) {
+            getProperty().validateItem(value, context);
+          }
+        }
+
+        pathBuilder.popItem();
 
         if (isObject) {
           // read the object's END_OBJECT
@@ -144,7 +176,18 @@ public class ListPropertyInfo
         // read the object's START_OBJECT
         JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
       }
-      getProperty().readItem(collector, parentInstance, context);
+      
+      pathBuilder.pushItem();
+
+      List<Object> values = getProperty().readItem(parentInstance, context);
+      collector.addAll(values);
+
+      for (Object value : values) {
+        if (context.isValidating()) {
+          getProperty().validateItem(value, context);
+        }
+      }
+      pathBuilder.popItem();
 
       if (isObject) {
         // read the object's END_OBJECT
@@ -152,7 +195,6 @@ public class ListPropertyInfo
       }
     }
   }
-
 
   @Override
   public boolean writeValue(Object parentInstance, QName parentName, XmlWritingContext context)

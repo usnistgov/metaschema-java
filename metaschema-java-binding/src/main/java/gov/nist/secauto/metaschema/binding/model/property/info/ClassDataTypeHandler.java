@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import javax.xml.namespace.QName;
@@ -77,15 +78,15 @@ public class ClassDataTypeHandler implements DataTypeHandler {
   }
 
   @Override
-  public boolean get(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public List<Object> get(Object parentInstance, JsonParsingContext context)
       throws BindingException, IOException {
-    return classBinding.readItem(collector, parentInstance, context);
+    return classBinding.readItem(parentInstance, context);
   }
 
   @Override
-  public boolean get(PropertyCollector collector, Object parentInstance, StartElement start, XmlParsingContext context)
+  public Object get(Object parentInstance, StartElement start, XmlParsingContext context)
       throws BindingException, IOException, XMLStreamException {
-    return classBinding.readItem(collector, parentInstance, start, context);
+    return classBinding.readItem(parentInstance, start, context);
   }
 
   @Override

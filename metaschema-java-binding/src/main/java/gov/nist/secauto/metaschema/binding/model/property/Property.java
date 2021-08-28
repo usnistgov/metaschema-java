@@ -129,10 +129,6 @@ public interface Property {
 
   PropertyCollector newPropertyCollector();
 
-  // TODO: make this a protected method?
-  void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
-      throws IOException, BindingException;
-
   /**
    * Read JSON data associated with this property and apply it to the provided parent object on which
    * this property exists.

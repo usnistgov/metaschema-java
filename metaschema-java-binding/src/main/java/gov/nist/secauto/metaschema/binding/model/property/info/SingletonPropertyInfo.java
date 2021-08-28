@@ -30,6 +30,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
@@ -40,6 +41,7 @@ import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -65,8 +67,19 @@ public class SingletonPropertyInfo
       // read the object's START_OBJECT
       JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     }
+    PathBuilder pathBuilder = context.getPathBuilder();
+    pathBuilder.pushItem();
 
-    property.readItem(collector, parentInstance, context);
+    List<Object> values = property.readItem(parentInstance, context);
+    collector.addAll(values);
+
+    for (Object value : values) {
+
+      if (context.isValidating()) {
+        getProperty().validateItem(value, context);
+      }
+    }
+    pathBuilder.popItem();
 
     if (isObject) {
       // read the object's END_OBJECT
@@ -78,7 +91,22 @@ public class SingletonPropertyInfo
   public boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start,
       XmlParsingContext context)
       throws IOException, BindingException, XMLStreamException {
-    return getProperty().readItem(collector, parentInstance, start, context);
+
+    PathBuilder pathBuilder = context.getPathBuilder();
+    pathBuilder.pushItem();
+
+    boolean handled = true;
+    Object value = getProperty().readItem(parentInstance, start, context);
+    if (value != null) {
+      collector.add(value);
+      handled = true;
+      
+      if (context.isValidating()) {
+        getProperty().validateItem(value, context);
+      }
+    }
+    pathBuilder.popItem();
+    return handled;
   }
 
   @Override

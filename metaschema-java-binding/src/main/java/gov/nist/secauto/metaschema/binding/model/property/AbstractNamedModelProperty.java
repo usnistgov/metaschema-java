@@ -26,7 +26,10 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
+import com.fasterxml.jackson.core.JsonParser;
+
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
@@ -161,16 +164,6 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
     return dataTypeHandler;
   }
 
-  @Override
-  protected Object readInternal(Object parentInstance, JsonParsingContext context)
-      throws IOException, BindingException {
-    
-    context.getPathBuilder().pushInstance(this);
-    Object value = super.readInternal(parentInstance, context);
-    context.getPathBuilder().popInstance();
-    return value;
-  }
-
   public boolean isNextProperty(XmlParsingContext context) throws IOException, XMLStreamException {
     XMLEventReader2 eventReader = context.getReader();
 
@@ -206,7 +199,8 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
   }
 
   @Override
-  public boolean read(Object parentInstance, StartElement start, XmlParsingContext context) throws IOException, XMLStreamException, BindingException {
+  public boolean read(Object parentInstance, StartElement start, XmlParsingContext context)
+      throws IOException, XMLStreamException, BindingException {
     boolean handled = isNextProperty(context);
     if (handled) {
       Object value = readInternal(parentInstance, start, context);
@@ -217,13 +211,14 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
 
   protected Object readInternal(Object parentInstance, StartElement start, XmlParsingContext context)
       throws IOException, XMLStreamException, BindingException {
-    context.getPathBuilder().pushInstance(this);
-
     XMLEventReader2 eventReader = context.getReader();
 
     XmlEventUtil.skipWhitespace(eventReader);
 
     StartElement currentStart = start;
+
+    PathBuilder pathBuilder = context.getPathBuilder();
+    pathBuilder.pushInstance(this);
 
     QName groupQName = getXmlGroupAsQName();
     if (groupQName != null) {
@@ -250,7 +245,7 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
       XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.END_ELEMENT, groupQName);
     }
 
-    context.getPathBuilder().popInstance();
+    pathBuilder.popInstance();
     return value;
   }
 
@@ -260,17 +255,32 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
   }
 
   @Override
-  public boolean readItem(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
-      throws BindingException, IOException {
+  public List<Object> readItem(Object parentInstance, JsonParsingContext context) throws BindingException, IOException {
     DataTypeHandler supplier = getDataTypeHandler();
-    return supplier.get(collector, parentInstance, context);
+    return supplier.get(parentInstance, context);
   }
 
   @Override
-  public void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  protected Object readInternal(Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
+    PathBuilder pathBuilder = context.getPathBuilder();
+    pathBuilder.pushInstance(this);
+
+    JsonParser parser = context.getReader();
+    // advance past the property name
+    parser.nextFieldName();
+    // parse the value
+    PropertyCollector collector = newPropertyCollector();
     ModelPropertyInfo info = getPropertyInfo();
     info.readValue(collector, parentInstance, context);
+    Object retval = collector.getValue();
+
+    // validate the flag value
+    if (context.isValidating()) {
+      validateValue(retval, context);
+    }
+    pathBuilder.popInstance();
+    return retval;
   }
 
   @Override

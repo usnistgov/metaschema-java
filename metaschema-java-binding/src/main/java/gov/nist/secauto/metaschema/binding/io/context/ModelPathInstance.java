@@ -23,13 +23,25 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
-public interface IPathInstance {
-  IInstance getInstance();
+public class ModelPathInstance implements IPathInstance {
+  private final InstanceHandler<? extends NamedModelProperty> handler;
 
-  String format(IPathFormatter formatter);
+  public ModelPathInstance(InstanceHandler<? extends NamedModelProperty> handler) {
+    this.handler = handler;
+  }
+
+  @Override
+  public NamedModelProperty getInstance() {
+    return handler.getInstance();
+  }
+
+  @Override
+  public String format(IPathFormatter formatter) {
+    return formatter.getPathSegment(this);
+  }
+
 }

@@ -26,10 +26,14 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
 
-public interface IPathInstance {
-  IInstance getInstance();
+public interface InstanceHandler<INSTANCE extends NamedProperty> {
+  INSTANCE getInstance();
 
-  String format(IPathFormatter formatter);
+  IPathInstance newPathInstance();
+
+  IPathInstance newPathInstance(int position);
+  
+  IPathInstance newPathInstance(String key);
 }

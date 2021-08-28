@@ -31,6 +31,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
@@ -47,6 +48,7 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -54,20 +56,15 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class MapPropertyInfo
-    extends AbstractModelPropertyInfo<ParameterizedType>
-    implements ModelPropertyInfo {
+public class MapPropertyInfo extends AbstractModelPropertyInfo<ParameterizedType> implements ModelPropertyInfo {
 
   public MapPropertyInfo(NamedModelProperty property) {
     super(property);
     if (!Map.class.isAssignableFrom(property.getRawType())) {
-      throw new RuntimeException(
-          String.format(
-              "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
-              property.getField().getName(),
-              property.getParentClassBinding().getBoundClass().getName(),
-              property.getField().getType().getName(),
-              Map.class.getName()));
+      throw new RuntimeException(String.format(
+          "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
+          property.getField().getName(), property.getParentClassBinding().getBoundClass().getName(),
+          property.getField().getType().getName(), Map.class.getName()));
     }
   }
 
@@ -106,10 +103,23 @@ public class MapPropertyInfo
     // String.format("Unable to parse type '%s', which is not a known bound class", getItemType()));
     // }
 
+    PathBuilder pathBuilder = context.getPathBuilder();
     NamedModelProperty property = getProperty();
     // process all map items
     while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
-      property.readItem(collector, parentInstance, context);
+      pathBuilder.pushItem(jsonParser.currentToken().asString());
+
+      List<Object> values = property.readItem(parentInstance, context);
+      collector.addAll(values);
+
+      for (Object value : values) {
+
+        if (context.isValidating()) {
+          getProperty().validateItem(value, context);
+        }
+
+      }
+      pathBuilder.popItem();
     }
 
     // advance to next token
@@ -118,21 +128,32 @@ public class MapPropertyInfo
 
   @Override
   public boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start,
-      XmlParsingContext context)
-      throws IOException, BindingException, XMLStreamException {
+      XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
     QName qname = getProperty().getXmlQName();
     XMLEventReader2 eventReader = context.getReader();
 
     // consume extra whitespace between elements
     XmlEventUtil.skipWhitespace(eventReader);
 
+    PathBuilder pathBuilder = context.getPathBuilder();
     boolean handled = false;
     XMLEvent event;
+    int position = 0;
     while ((event = eventReader.peek()).isStartElement() && qname.equals(event.asStartElement().getName())) {
+      pathBuilder.pushItem(position++);
+
       // Consume the start element
-      if (getProperty().readItem(collector, parentInstance, start, context)) {
+      Object value = getProperty().readItem(parentInstance, start, context);
+      if (value != null) {
+        collector.add(value);
         handled = true;
+
+        if (context.isValidating()) {
+          getProperty().validateItem(value, context);
+        }
       }
+
+      pathBuilder.popItem();
 
       // consume extra whitespace between elements
       XmlEventUtil.skipWhitespace(eventReader);
@@ -153,8 +174,7 @@ public class MapPropertyInfo
     return true;
   }
 
-  public static class MapPropertyCollector
-      implements PropertyCollector {
+  public static class MapPropertyCollector implements PropertyCollector {
 
     private final Map<String, Object> map = new LinkedHashMap<>();
     private final FlagProperty jsonKey;

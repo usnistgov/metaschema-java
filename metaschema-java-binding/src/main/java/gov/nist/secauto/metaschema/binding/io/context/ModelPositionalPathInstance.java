@@ -26,10 +26,23 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
-public interface IPathInstance {
-  IInstance getInstance();
+public class ModelPositionalPathInstance extends ModelPathInstance {
+  private final int position;
 
-  String format(IPathFormatter formatter);
+  public ModelPositionalPathInstance(InstanceHandler<? extends NamedModelProperty> handler,
+      int position) {
+    super(handler);
+    this.position = position;
+  }
+
+  public int getPosition() {
+    return position;
+  }
+
+  public String format(IPathFormatter formatter) {
+    return formatter.getPathSegment(this);
+  }
+
 }

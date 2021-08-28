@@ -26,10 +26,16 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import java.util.Deque;
+import java.util.function.Function;
 
-public interface IPathInstance {
-  IInstance getInstance();
+public interface IPathFormatter extends Function<Deque<IPathInstance>, String> {
 
-  String format(IPathFormatter formatter);
+  String getPathSegment(FlagPathInstance instance);
+
+  String getPathSegment(ModelPathInstance instance);
+
+  String getPathSegment(ModelKeyedPathInstance instance);
+
+  String getPathSegment(ModelPositionalPathInstance instance);
 }

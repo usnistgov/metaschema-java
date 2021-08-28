@@ -36,8 +36,6 @@ import gov.nist.secauto.metaschema.binding.io.Feature;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.RootAssemblyProperty;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
-import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 
 import org.apache.logging.log4j.LogManager;
@@ -139,15 +137,13 @@ public class DefaultXmlDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
       XmlEventUtil.consumeAndAssert(reader, XMLEvent.END_DOCUMENT);
 
     } else {
-      PropertyCollector collector = new SingletonPropertyCollector();
       try {
-        classBinding.readItem(collector, null, null, parsingContext);
+        @SuppressWarnings("unchecked")
+        CLASS value = (CLASS)classBinding.readItem(null, null, parsingContext);
+        retval = value;
       } catch (IOException | XMLStreamException ex) {
         throw new BindingException(ex);
       }
-      @SuppressWarnings("unchecked")
-      CLASS value = (CLASS)collector.getValue();
-      retval = value;
     }
 
     if (reader.hasNext()) {

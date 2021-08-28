@@ -40,12 +40,14 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.model.BoundClass.FlaggedField;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
+import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.binding.model.property.RootAssemblyProperty;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -69,6 +71,7 @@ class AssemblyClassBindingTest {
   @RegisterExtension
   JUnit5Mockery context = new JUnit5Mockery();
 
+  private PathBuilder pathBuilder = context.mock(PathBuilder.class);
   private BindingContext bindingContext = context.mock(BindingContext.class);
   private JsonParsingContext jsonParsingContext = context.mock(JsonParsingContext.class);
   private XmlParsingContext xmlParsingContext = context.mock(XmlParsingContext.class);
@@ -132,6 +135,17 @@ class AssemblyClassBindingTest {
         will(returnValue(parser));
         allowing(xmlParsingContext).isValidating();
         will(returnValue(false));
+        allowing(xmlParsingContext).getPathBuilder();
+        will(returnValue(pathBuilder));
+        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
+        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
+        ignoring(pathBuilder).popInstance();
+        ignoring(pathBuilder).pushItem();
+        ignoring(pathBuilder).pushItem(with(any(String.class)));
+        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
+        ignoring(pathBuilder).popItem();
+        ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
+        will(returnValue("xpath"));
       }
     });
     return parser;
@@ -147,6 +161,18 @@ class AssemblyClassBindingTest {
         will(returnValue(jsonParser));
         allowing(jsonParsingContext).isValidating();
         will(returnValue(false));
+        allowing(jsonParsingContext).getPathBuilder();
+        will(returnValue(pathBuilder));
+        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
+        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
+        ignoring(pathBuilder).popInstance();
+        ignoring(pathBuilder).pushItem();
+        ignoring(pathBuilder).pushItem(with(any(String.class)));
+        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
+        ignoring(pathBuilder).popItem();
+        ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
+        will(returnValue("xpath"));
+
       }
     });
     return jsonParser;
