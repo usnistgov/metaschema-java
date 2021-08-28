@@ -26,13 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.instances;
 
-import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
-import gov.nist.secauto.metaschema.model.definitions.JsonValueKeyTypeEnum;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 
 public abstract class AbstractFlagInstance<DEF extends FlagDefinition>
-    extends AbstractDefinedInfoElementInstance<ObjectDefinition, DEF>
+    extends AbstractDefinedInfoElementInstance<MetaschemaFlaggedDefinition, DEF>
     implements FlagInstance<DEF> {
 
   /**
@@ -41,28 +39,29 @@ public abstract class AbstractFlagInstance<DEF extends FlagDefinition>
    * @param parent
    *          the parent definition, which must be a definition type that can contain flags.
    */
-  public AbstractFlagInstance(ObjectDefinition parent) {
+  public AbstractFlagInstance(MetaschemaFlaggedDefinition parent) {
     super(parent);
   }
 
-  @Override
-  public boolean isJsonKeyFlag() {
-    return this.equals(getContainingDefinition().getJsonKeyFlagInstance());
-  }
+  // @Override
+  // public boolean isJsonKey() {
+  // return this.equals(getContainingDefinition().getJsonKeyFlagInstance());
+  // }
 
-  @Override
-  public boolean isJsonValueKeyFlag() {
-    boolean retval;
-    ObjectDefinition parent = getContainingDefinition();
-    if (parent instanceof FieldDefinition) {
-      FieldDefinition parentField = (FieldDefinition) parent;
-      retval = parentField.hasJsonValueKey() && JsonValueKeyTypeEnum.FLAG.equals(parentField.getJsonValueKeyType())
-          && this.equals(parentField.getJsonValueKeyFlagInstance());
-    } else {
-      retval = false;
-    }
-    return retval;
-  }
+  // @Override
+  // public boolean isJsonValueKey() {
+  // boolean retval;
+  // MetaschemaFlaggedDefinition parent = getContainingDefinition();
+  // if (parent instanceof FieldDefinition) {
+  // FieldDefinition parentField = (FieldDefinition) parent;
+  // retval = parentField.hasJsonValueKey() &&
+  // JsonValueKeyTypeEnum.FLAG.equals(parentField.getJsonValueKeyType())
+  // && this.equals(parentField.getJsonValueKeyFlagInstance());
+  // } else {
+  // retval = false;
+  // }
+  // return retval;
+  // }
   //
   // @Override
   // public FlagDefinition getDefinition() {

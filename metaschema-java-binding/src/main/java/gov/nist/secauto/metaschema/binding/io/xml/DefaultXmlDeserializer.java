@@ -34,9 +34,8 @@ import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.Configuration;
 import gov.nist.secauto.metaschema.binding.io.Feature;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
-import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
+import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
+import gov.nist.secauto.metaschema.binding.model.property.RootAssemblyProperty;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 
 import org.apache.logging.log4j.LogManager;
@@ -47,7 +46,6 @@ import org.codehaus.stax2.XMLInputFactory2;
 import java.io.IOException;
 import java.io.Reader;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.EventFilter;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
@@ -110,52 +108,48 @@ public class DefaultXmlDeserializer<CLASS>
 
   protected CLASS parseXmlInternal(XMLEventReader2 reader) throws XMLStreamException, BindingException {
 
-    // we may be at the START_DOCUMENT
-    if (reader.peek().isStartDocument()) {
-      reader.nextEvent();
-    }
-
     AssemblyClassBinding classBinding = getClassBinding();
-    Class<?> clazz = getClassBinding().getBoundClass();
 
-    QName rootQName = classBinding.getXmlRootQName();
+    DefaultXmlParsingContext parsingContext = new DefaultXmlParsingContext(reader);
+    parsingContext.setValidating(isValidating());
 
-    XmlParsingContext parsingContext = new DefaultXmlParsingContext(reader);
-    CLASS retval = null;
-    if (getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT, false)) {
-      if (rootQName == null) {
-        throw new BindingException(String.format(
-            "Root parsing is enabled (DESERIALIZE_ROOT), but class '%s'"
-                + " does not have a configured root name using the '%s' annotation.",
-            clazz.getName(), MetaschemaAssembly.class.getName()));
+    @SuppressWarnings("unchecked")
+    CLASS retval;
+    if (classBinding.isRoot() && getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT, false)) {
+      // we may be at the START_DOCUMENT
+      if (reader.peek().isStartDocument()) {
+        XmlEventUtil.consumeAndAssert(reader, XMLEvent.START_DOCUMENT);
       }
+
+      // // Get start element
+      // XmlEvent startEvent = XmlEventUtil.consumeAndAssert(reader, XMLEvent.START_ELEMENT);
+
+      // reader.nextEvent();
+      AssemblyProperty property = new RootAssemblyProperty(classBinding);
       try {
         @SuppressWarnings("unchecked")
-        CLASS result = (CLASS) classBinding.readRoot(parsingContext);
-        retval = result;
+        CLASS value = (CLASS) property.read(parsingContext);
+        retval = value;
       } catch (IOException | XMLStreamException ex) {
         throw new BindingException(ex);
       }
+
+      // XmlEventUtil.consumeAndAssert(reader, XMLEvent.END_ELEMENT);
+      XmlEventUtil.consumeAndAssert(reader, XMLEvent.END_DOCUMENT);
+
     } else {
-      PropertyCollector collector = new SingletonPropertyCollector();
       try {
-        classBinding.readItem(collector, null, null, parsingContext);
+        @SuppressWarnings("unchecked")
+        CLASS value = (CLASS) classBinding.readItem(null, null, parsingContext);
+        retval = value;
       } catch (IOException | XMLStreamException ex) {
         throw new BindingException(ex);
       }
-      @SuppressWarnings("unchecked")
-      CLASS result = (CLASS) collector.getValue();
-      retval = result;
     }
 
     if (reader.hasNext()) {
       if (logger.isDebugEnabled()) {
         logger.debug("After Parse: {}", XmlEventUtil.toString(reader.peek()));
-      }
-
-      if (getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT, false)) {
-        XmlEventUtil.consumeAndAssert(reader, XMLEvent.END_ELEMENT);
-        XmlEventUtil.consumeAndAssert(reader, XMLEvent.END_DOCUMENT);
       }
     }
     return retval;

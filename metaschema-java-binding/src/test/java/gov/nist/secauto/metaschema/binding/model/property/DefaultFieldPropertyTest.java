@@ -39,14 +39,15 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
-import gov.nist.secauto.metaschema.binding.model.annotations.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-import gov.nist.secauto.metaschema.binding.model.annotations.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
+import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.jmock.Expectations;
@@ -73,6 +74,7 @@ class DefaultFieldPropertyTest {
   private BindingContext bindingContext = context.mock(BindingContext.class);
   private JsonParsingContext jsonParsingContext = context.mock(JsonParsingContext.class);
   private XmlParsingContext xmlParsingContext = context.mock(XmlParsingContext.class);
+  private PathBuilder pathBuilder = context.mock(PathBuilder.class);
 
   @Test
   void testJsonRead()
@@ -94,6 +96,19 @@ class DefaultFieldPropertyTest {
 
         allowing(jsonParsingContext).getReader();
         will(returnValue(jsonParser));
+        allowing(jsonParsingContext).isValidating();
+        will(returnValue(false));
+        allowing(jsonParsingContext).getPathBuilder();
+        will(returnValue(pathBuilder));
+        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
+        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
+        ignoring(pathBuilder).popInstance();
+        ignoring(pathBuilder).pushItem();
+        ignoring(pathBuilder).pushItem(with(any(String.class)));
+        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
+        ignoring(pathBuilder).popItem();
+        ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
+        will(returnValue("xpath"));
       }
     });
 
@@ -123,12 +138,9 @@ class DefaultFieldPropertyTest {
   }
 
   @Test
-  void testXmlRead()
-      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, XMLStreamException,
-      BindingException {
-    String xml = "<test xmlns='http://example.com/ns'>" +
-        "  <field1>field1value</field1>" +
-        "</test>";
+  void testXmlRead() throws JsonParseException, IOException, NoSuchFieldException, SecurityException,
+      XMLStreamException, BindingException {
+    String xml = "<test xmlns='http://example.com/ns'>" + "  <field1>field1value</field1>" + "</test>";
     XMLInputFactory factory = WstxInputFactory.newInstance();
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
     Class<?> theClass = TestField.class;
@@ -145,6 +157,19 @@ class DefaultFieldPropertyTest {
 
         allowing(xmlParsingContext).getReader();
         will(returnValue(eventReader));
+        allowing(xmlParsingContext).isValidating();
+        will(returnValue(false));
+        allowing(xmlParsingContext).getPathBuilder();
+        will(returnValue(pathBuilder));
+        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
+        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
+        ignoring(pathBuilder).popInstance();
+        ignoring(pathBuilder).pushItem();
+        ignoring(pathBuilder).pushItem(with(any(String.class)));
+        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
+        ignoring(pathBuilder).popItem();
+        ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
+        will(returnValue("xpath"));
       }
     });
 
@@ -171,14 +196,10 @@ class DefaultFieldPropertyTest {
   }
 
   @Test
-  void testXmlReadNoFieldValue()
-      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, XMLStreamException,
-      BindingException {
-    String xml = "<test xmlns='http://example.com/ns'>\n" +
-        "  <fields2>\n" +
-        "    <field2>field2value</field2>\n" +
-        "  </fields2>\n" +
-        "</test>";
+  void testXmlReadNoFieldValue() throws JsonParseException, IOException, NoSuchFieldException, SecurityException,
+      XMLStreamException, BindingException {
+    String xml = "<test xmlns='http://example.com/ns'>\n" + "  <fields2>\n" + "    <field2>field2value</field2>\n"
+        + "  </fields2>\n" + "</test>";
     XMLInputFactory factory = WstxInputFactory.newInstance();
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
     Class<?> theClass = TestField.class;
@@ -195,6 +216,19 @@ class DefaultFieldPropertyTest {
 
         allowing(xmlParsingContext).getReader();
         will(returnValue(eventReader));
+        allowing(xmlParsingContext).isValidating();
+        will(returnValue(false));
+        allowing(xmlParsingContext).getPathBuilder();
+        will(returnValue(pathBuilder));
+        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
+        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
+        ignoring(pathBuilder).popInstance();
+        ignoring(pathBuilder).pushItem();
+        ignoring(pathBuilder).pushItem(with(any(String.class)));
+        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
+        ignoring(pathBuilder).popItem();
+        ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
+        will(returnValue("xpath"));
       }
     });
 
@@ -222,14 +256,8 @@ class DefaultFieldPropertyTest {
 
   @Test
   void testJsonReadMissingFieldValue()
-      throws JsonParseException, IOException, NoSuchFieldException, SecurityException,
-      BindingException {
-    String json = "{ \"test\":\n" +
-        "  { \"fields2\": [\n" +
-        "    \"field2value\"\n" +
-        "    ]\n" +
-        "  }\n" +
-        "}\n";
+      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, BindingException {
+    String json = "{ \"test\":\n" + "  { \"fields2\": [\n" + "    \"field2value\"\n" + "    ]\n" + "  }\n" + "}\n";
     JsonFactory factory = new JsonFactory();
     JsonParser jsonParser = factory.createParser(json);
     Class<?> theClass = TestField.class;
@@ -246,6 +274,19 @@ class DefaultFieldPropertyTest {
 
         allowing(jsonParsingContext).getReader();
         will(returnValue(jsonParser));
+        allowing(jsonParsingContext).isValidating();
+        will(returnValue(false));
+        allowing(jsonParsingContext).getPathBuilder();
+        will(returnValue(pathBuilder));
+        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
+        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
+        ignoring(pathBuilder).popInstance();
+        ignoring(pathBuilder).pushItem();
+        ignoring(pathBuilder).pushItem(with(any(String.class)));
+        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
+        ignoring(pathBuilder).popItem();
+        ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
+        will(returnValue("xpath"));
       }
     });
 
@@ -277,17 +318,11 @@ class DefaultFieldPropertyTest {
 
   @MetaschemaAssembly
   public static class TestField {
-    @Field(
-        typeAdapter = StringAdapter.class)
+    @Field(typeAdapter = StringAdapter.class, inJson = JsonGroupAsBehavior.NONE, inXml = XmlGroupAsBehavior.UNGROUPED)
     private String field1;
 
-    @Field(
-        name = "field2",
-        groupName = "fields2",
-        maxOccurs = -1,
-        inXml = XmlGroupAsBehavior.GROUPED,
-        inJson = JsonGroupAsBehavior.LIST,
-        typeAdapter = StringAdapter.class)
+    @Field(useName = "field2", groupName = "fields2", maxOccurs = -1, inXml = XmlGroupAsBehavior.GROUPED,
+        inJson = JsonGroupAsBehavior.LIST, typeAdapter = StringAdapter.class)
     private List<String> _field2;
 
     public TestField() {

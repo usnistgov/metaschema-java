@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.MarkupLine;
-import gov.nist.itl.metaschema.model.m4.xml.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.MarkupLineType;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.MarkupMultilineType;
 
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlTokenSource;
@@ -47,7 +47,7 @@ public class MarkupStringConverter {
    *          the content to convert
    * @return the equivalent formatted text as a MarkupLine
    */
-  public static gov.nist.secauto.metaschema.datatypes.markup.MarkupLine toMarkupString(MarkupLine content) {
+  public static gov.nist.secauto.metaschema.datatypes.markup.MarkupLine toMarkupString(MarkupLineType content) {
     String html = processHTML(content);
     return gov.nist.secauto.metaschema.datatypes.markup.MarkupLine.fromHtml(html);
   }
@@ -60,7 +60,7 @@ public class MarkupStringConverter {
    * @return the equivalent formatted text as a MarkupLine
    */
   public static gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline
-      toMarkupString(MarkupMultiline content) {
+      toMarkupString(MarkupMultilineType content) {
     String html = processHTML(content);
     return gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline.fromHtml(html);
   }

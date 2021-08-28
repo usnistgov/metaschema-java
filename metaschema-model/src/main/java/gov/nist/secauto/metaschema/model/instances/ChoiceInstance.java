@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.instances;
 
-import gov.nist.secauto.metaschema.model.ModelType;
-import gov.nist.secauto.metaschema.model.definitions.ModelContainer;
+import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
 
-public interface ChoiceInstance extends ModelInstance, ModelContainer {
+public interface ChoiceInstance extends AssemblyModelInstance, IChoiceInstance {
   /**
    * Provides the Metaschema model type of "CHOICE".
    * 

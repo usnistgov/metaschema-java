@@ -26,19 +26,31 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.GlobalAssemblyDefinition;
-import gov.nist.itl.metaschema.model.m4.xml.ScopeType;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.Metaschema;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
+import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.definitions.GlobalInfoElementDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.instances.FlagInstance;
+import gov.nist.secauto.metaschema.model.xml.constraint.AssemblyConstraintSupport;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalAssemblyDefinitionType;
+
+import java.util.List;
 
 public class XmlGlobalAssemblyDefinition
     extends AbstractXmlAssemblyDefinition<XmlGlobalAssemblyDefinition, XmlAssemblyInstance>
     implements GlobalInfoElementDefinition {
-  private final GlobalAssemblyDefinition xmlAssembly;
+  private final GlobalAssemblyDefinitionType xmlAssembly;
+  private IAssemblyConstraintSupport constraints;
 
   /**
    * Constructs a new Metaschema Assembly definition from an XML representation bound to Java objects.
@@ -48,7 +60,7 @@ public class XmlGlobalAssemblyDefinition
    * @param metaschema
    *          the containing Metaschema
    */
-  public XmlGlobalAssemblyDefinition(GlobalAssemblyDefinition xmlAssembly, XmlMetaschema metaschema) {
+  public XmlGlobalAssemblyDefinition(GlobalAssemblyDefinitionType xmlAssembly, XmlMetaschema metaschema) {
     super(metaschema);
     this.xmlAssembly = xmlAssembly;
   }
@@ -59,13 +71,85 @@ public class XmlGlobalAssemblyDefinition
    * @return the underlying XML data
    */
   @Override
-  protected GlobalAssemblyDefinition getXmlAssembly() {
+  protected GlobalAssemblyDefinitionType getXmlAssembly() {
     return xmlAssembly;
+  }
+
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+   * first accessed.
+   */
+  protected synchronized void checkModelConstraints() {
+    if (constraints == null) {
+      if (getXmlAssembly().isSetConstraint()) {
+        constraints = new AssemblyConstraintSupport(getXmlAssembly().getConstraint());
+      } else {
+        constraints = IAssemblyConstraintSupport.NULL_CONSTRAINT;
+      }
+    }
+  }
+
+  @Override
+  public List<? extends IConstraint> getConstraints() {
+    checkModelConstraints();
+    return constraints.getConstraints();
+  }
+
+  @Override
+  public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+    checkModelConstraints();
+    return constraints.getAllowedValuesContraints();
+  }
+
+  @Override
+  public List<? extends IMatchesConstraint> getMatchesConstraints() {
+    checkModelConstraints();
+    return constraints.getMatchesConstraints();
+  }
+
+  @Override
+  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+    checkModelConstraints();
+    return constraints.getIndexHasKeyConstraints();
+  }
+
+  @Override
+  public List<? extends IExpectConstraint> getExpectConstraints() {
+    checkModelConstraints();
+    return constraints.getExpectConstraints();
+  }
+
+  @Override
+  public List<? extends IIndexConstraint> getIndexConstraints() {
+    checkModelConstraints();
+    return constraints.getIndexContraints();
+  }
+
+  @Override
+  public List<? extends IUniqueConstraint> getUniqueConstraints() {
+    checkModelConstraints();
+    return constraints.getUniqueConstraints();
+  }
+
+  @Override
+  public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
+    checkModelConstraints();
+    return constraints.getHasCardinalityConstraints();
   }
 
   @Override
   public String getName() {
     return getXmlAssembly().getName();
+  }
+
+  @Override
+  public String getUseName() {
+    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName() : getName();
+  }
+
+  @Override
+  public String getXmlNamespace() {
+    return getContainingMetaschema().getXmlNamespace().toString();
   }
 
   @Override
@@ -104,25 +188,11 @@ public class XmlGlobalAssemblyDefinition
 
   @Override
   public ModuleScopeEnum getModuleScope() {
-    ModuleScopeEnum retval = Metaschema.DEFAULT_MODEL_SCOPE;
+    ModuleScopeEnum retval = MetaschemaDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
     if (getXmlAssembly().isSetScope()) {
-      switch (getXmlAssembly().getScope().intValue()) {
-      case ScopeType.INT_GLOBAL:
-        retval = ModuleScopeEnum.INHERITED;
-        break;
-      case ScopeType.INT_LOCAL:
-        retval = ModuleScopeEnum.LOCAL;
-        break;
-      default:
-        throw new UnsupportedOperationException(getXmlAssembly().getScope().toString());
-      }
+      retval = getXmlAssembly().getScope();
     }
     return retval;
-  }
-
-  @Override
-  public String getUseName() {
-    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName() : getName();
   }
 
   @Override

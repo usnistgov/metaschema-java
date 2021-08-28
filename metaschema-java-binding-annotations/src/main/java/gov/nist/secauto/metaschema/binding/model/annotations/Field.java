@@ -29,27 +29,36 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValues;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+@Documented
 @Retention(RUNTIME)
 @Target({ FIELD })
 public @interface Field {
   /**
-   * Name of the XML Schema element.
+   * The model name to use for singleton values. This name will be used for associated XML elements.
    * <p>
    * If the value is "##default", then element name is derived from the JavaBean property name.
    * 
    * @return the name
    */
-  String name() default "##default";
+  String useName() default "##default";
 
   /**
    */
   /**
-   * XML target namespace of the XML Schema element.
+   * The namespace to use for associated XML elements.
    * <p>
    * If the value is "##default", then element name is derived from the namespace provided in the
    * package-info.
@@ -60,11 +69,11 @@ public @interface Field {
 
   /**
    * If the data type allows it, determines if the field's value must be wrapped with an element
-   * having the specified {@link #name()} and {@link #namespace()}.
+   * having the specified {@link #useName()} and {@link #namespace()}.
    * 
    * @return {@code true} if the field must be wrapped, or {@code false} otherwise
    */
-  boolean inXmlWrapped() default true;
+  boolean inXmlWrapped() default Defaults.DEFAULT_FIELD_IN_XML_WRAPPED;
 
   /**
    * The Metaschema data type adapter for the field's value.
@@ -74,9 +83,9 @@ public @interface Field {
   Class<? extends JavaTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
 
   /**
-   * The name of the JSON property that contains the field's value. If this value is provided, the the
+   * The name of the JSON property that contains the field's value. If this value is provided, the
    * name will be used as the property name. Use of this annotation is mutually exclusive with the
-   * {@link JsonFieldValueKey} annotation.
+   * {@link JsonFieldValueKeyFlag} annotation.
    * 
    * @return the name
    */
@@ -104,14 +113,14 @@ public @interface Field {
    * 
    * @return a non-negative number
    */
-  int minOccurs() default 0;
+  int minOccurs() default Defaults.DEFAULT_GROUP_AS_MIN_OCCURS;
 
   /**
    * A number that indicates the maximum occurrence of the element.
    * 
    * @return a positive number or {@code -1} to indicate "unbounded"
    */
-  int maxOccurs() default 1;
+  int maxOccurs() default Defaults.DEFAULT_GROUP_AS_MAX_OCCURS;
 
   /**
    * Describes how to handle collections in JSON/YAML.
@@ -125,5 +134,33 @@ public @interface Field {
    * 
    * @return the XML collection strategy
    */
-  XmlGroupAsBehavior inXml() default XmlGroupAsBehavior.NONE;
+  XmlGroupAsBehavior inXml() default XmlGroupAsBehavior.UNGROUPED;
+
+  /**
+   * Get the allowed value constraints for this field.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  AllowedValues[] allowedValues() default {};
+
+  /**
+   * Get the matches constraints for this field.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  Matches[] matches() default {};
+
+  /**
+   * Get the index-has-key constraints for this field.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  IndexHasKey[] indexHasKey() default {};
+
+  /**
+   * Get the expect constraints for this field.
+   * 
+   * @return the expected constraints or an empty array if no expected constraints are defined
+   */
+  Expect[] expect() default {};
 }

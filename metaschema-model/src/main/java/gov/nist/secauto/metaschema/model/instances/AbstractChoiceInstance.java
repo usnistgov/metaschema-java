@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.instances;
 
+import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 
 public abstract class AbstractChoiceInstance
@@ -42,15 +44,17 @@ public abstract class AbstractChoiceInstance
     super(parent);
   }
 
-  @Override
-  public FieldInstance<?> getFieldInstanceByName(String name) {
-    return getFieldInstances().get(name);
-  }
-
-  @Override
-  public AssemblyInstance<?> getAssemblyInstanceByName(String name) {
-    return getAssemblyInstances().get(name);
-  }
+  /*
+   * @Override public abstract Map<String, ? extends FieldInstance<?>> getFieldInstances();
+   * 
+   * @Override public FieldInstance<?> getFieldInstanceByName(String name) { return
+   * getFieldInstances().get(name); }
+   * 
+   * @Override public abstract Map<String, ? extends AssemblyInstance<?>> getAssemblyInstances();
+   * 
+   * @Override public AssemblyInstance<?> getAssemblyInstanceByName(String name) { return
+   * getAssemblyInstances().get(name); }
+   */
 
   @Override
   public int getMinOccurs() {
@@ -68,12 +72,17 @@ public abstract class AbstractChoiceInstance
   }
 
   @Override
-  public JsonGroupAsBehavior getJsonGroupAsBehavior() {
+  public String getGroupAsXmlNamespace() {
     return null;
   }
 
   @Override
+  public JsonGroupAsBehavior getJsonGroupAsBehavior() {
+    return JsonGroupAsBehavior.NONE;
+  }
+
+  @Override
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    return null;
+    return XmlGroupAsBehavior.UNGROUPED;
   }
 }

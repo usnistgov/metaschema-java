@@ -41,8 +41,6 @@ import org.codehaus.stax2.XMLStreamWriter2;
 import org.codehaus.stax2.ri.evt.MergedNsContext;
 import org.codehaus.stax2.ri.evt.NamespaceEventImpl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
@@ -64,6 +62,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     this.document = document;
   }
 
+  @Override
   public Document getDocument() {
     return document;
   }

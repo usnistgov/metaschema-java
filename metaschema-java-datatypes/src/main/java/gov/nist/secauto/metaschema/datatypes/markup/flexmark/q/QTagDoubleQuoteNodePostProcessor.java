@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.datatypes.markup.flexmark.q;
 
-import com.vladsch.flexmark.ext.escaped.character.internal.EscapedCharacterNodePostProcessor;
 import com.vladsch.flexmark.ext.typographic.TypographicQuotes;
 import com.vladsch.flexmark.parser.block.NodePostProcessor;
 import com.vladsch.flexmark.parser.block.NodePostProcessorFactory;

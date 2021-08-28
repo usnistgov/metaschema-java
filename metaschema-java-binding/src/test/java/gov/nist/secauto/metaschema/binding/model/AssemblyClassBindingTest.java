@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.binding.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -37,12 +36,18 @@ import com.ctc.wstx.stax.WstxInputFactory;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.model.BoundClass.FlaggedField;
+import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
+import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+import gov.nist.secauto.metaschema.binding.model.property.RootAssemblyProperty;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -60,11 +65,13 @@ import java.util.List;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.XMLEvent;
 
 class AssemblyClassBindingTest {
   @RegisterExtension
   JUnit5Mockery context = new JUnit5Mockery();
 
+  private PathBuilder pathBuilder = context.mock(PathBuilder.class);
   private BindingContext bindingContext = context.mock(BindingContext.class);
   private JsonParsingContext jsonParsingContext = context.mock(JsonParsingContext.class);
   private XmlParsingContext xmlParsingContext = context.mock(XmlParsingContext.class);
@@ -126,6 +133,19 @@ class AssemblyClassBindingTest {
       {
         allowing(xmlParsingContext).getReader();
         will(returnValue(parser));
+        allowing(xmlParsingContext).isValidating();
+        will(returnValue(false));
+        allowing(xmlParsingContext).getPathBuilder();
+        will(returnValue(pathBuilder));
+        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
+        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
+        ignoring(pathBuilder).popInstance();
+        ignoring(pathBuilder).pushItem();
+        ignoring(pathBuilder).pushItem(with(any(String.class)));
+        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
+        ignoring(pathBuilder).popItem();
+        ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
+        will(returnValue("xpath"));
       }
     });
     return parser;
@@ -139,6 +159,20 @@ class AssemblyClassBindingTest {
       {
         allowing(jsonParsingContext).getReader();
         will(returnValue(jsonParser));
+        allowing(jsonParsingContext).isValidating();
+        will(returnValue(false));
+        allowing(jsonParsingContext).getPathBuilder();
+        will(returnValue(pathBuilder));
+        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
+        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
+        ignoring(pathBuilder).popInstance();
+        ignoring(pathBuilder).pushItem();
+        ignoring(pathBuilder).pushItem(with(any(String.class)));
+        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
+        ignoring(pathBuilder).popItem();
+        ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
+        will(returnValue("xpath"));
+
       }
     });
     return jsonParser;
@@ -150,11 +184,14 @@ class AssemblyClassBindingTest {
         = new File(getClass().getClassLoader().getResource("test-content/bound-class-simple.json").getFile());
     JsonParser jsonParser = newJsonParser(new FileReader(testContent));
 
+    assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
+    assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
+
     AssemblyClassBinding classBinding = getAssemblyClassBinding();
+    AssemblyProperty root = new RootAssemblyProperty(classBinding);
+    BoundClass obj = (BoundClass) root.read(jsonParsingContext);
 
-    BoundClass obj = (BoundClass) classBinding.readRoot(jsonParsingContext);
-
-    assertFalse(jsonParser.hasCurrentToken());
+    assertEquals(JsonToken.END_OBJECT, jsonParser.currentToken());
     assertSimple(obj);
   }
 
@@ -170,7 +207,7 @@ class AssemblyClassBindingTest {
 
     BoundClass obj = (BoundClass) classBinding.readRoot(xmlParsingContext);
 
-    assertFalse(reader.hasNext());
+    assertEquals(XMLEvent.END_DOCUMENT, reader.peek().getEventType());
     assertSimple(obj);
   }
 
@@ -197,11 +234,14 @@ class AssemblyClassBindingTest {
         = new File(getClass().getClassLoader().getResource("test-content/bound-class-complex.json").getFile());
     JsonParser jsonParser = newJsonParser(new FileReader(testContent));
 
+    assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
+    assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
+
     AssemblyClassBinding classBinding = getAssemblyClassBinding();
+    AssemblyProperty root = new RootAssemblyProperty(classBinding);
+    BoundClass obj = (BoundClass) root.read(jsonParsingContext);
 
-    BoundClass obj = (BoundClass) classBinding.readRoot(jsonParsingContext);
-
-    assertFalse(jsonParser.hasCurrentToken());
+    assertEquals(JsonToken.END_OBJECT, jsonParser.currentToken());
     assertComplex(obj);
   }
 
@@ -215,7 +255,7 @@ class AssemblyClassBindingTest {
 
     BoundClass obj = (BoundClass) classBinding.readRoot(xmlParsingContext);
 
-    assertFalse(reader.hasNext());
+    assertEquals(XMLEvent.END_DOCUMENT, reader.peek().getEventType());
     assertComplex(obj);
   }
 

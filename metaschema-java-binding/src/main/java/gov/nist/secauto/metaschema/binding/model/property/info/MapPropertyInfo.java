@@ -31,6 +31,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
@@ -38,7 +39,7 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.binding.model.property.ModelProperty;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -47,6 +48,7 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -58,16 +60,13 @@ public class MapPropertyInfo
     extends AbstractModelPropertyInfo<ParameterizedType>
     implements ModelPropertyInfo {
 
-  public MapPropertyInfo(ModelProperty property) {
+  public MapPropertyInfo(NamedModelProperty property) {
     super(property);
     if (!Map.class.isAssignableFrom(property.getRawType())) {
-      throw new RuntimeException(
-          String.format(
-              "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
-              property.getField().getName(),
-              property.getParentClassBinding().getBoundClass().getName(),
-              property.getField().getType().getName(),
-              Map.class.getName()));
+      throw new RuntimeException(String.format(
+          "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
+          property.getField().getName(), property.getParentClassBinding().getBoundClass().getName(),
+          property.getField().getType().getName(), Map.class.getName()));
     }
   }
 
@@ -94,7 +93,7 @@ public class MapPropertyInfo
   }
 
   @Override
-  public boolean readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
     JsonParser jsonParser = context.getReader();
     JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
@@ -106,38 +105,62 @@ public class MapPropertyInfo
     // String.format("Unable to parse type '%s', which is not a known bound class", getItemType()));
     // }
 
-    ModelProperty property = getProperty();
-    boolean handled = false;
+    PathBuilder pathBuilder = context.getPathBuilder();
+    NamedModelProperty property = getProperty();
     // process all map items
     while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
-      if (property.readItem(collector, parentInstance, context)) {
-        handled = true;
+      if (JsonToken.FIELD_NAME.equals(jsonParser.currentToken())) {
+        String name = jsonParser.currentName();
+        pathBuilder.pushItem(name);
+      } else {
+        pathBuilder.pushItem();
       }
+
+      List<Object> values = property.readItem(parentInstance, context);
+      collector.addAll(values);
+
+      for (Object value : values) {
+
+        if (context.isValidating()) {
+          getProperty().validateItem(value, context);
+        }
+
+      }
+      pathBuilder.popItem();
     }
 
     // advance to next token
     JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
-
-    return handled;
   }
 
   @Override
   public boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start,
-      XmlParsingContext context)
-      throws IOException, BindingException, XMLStreamException {
+      XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
     QName qname = getProperty().getXmlQName();
     XMLEventReader2 eventReader = context.getReader();
 
     // consume extra whitespace between elements
     XmlEventUtil.skipWhitespace(eventReader);
 
+    PathBuilder pathBuilder = context.getPathBuilder();
     boolean handled = false;
     XMLEvent event;
+    int position = 0;
     while ((event = eventReader.peek()).isStartElement() && qname.equals(event.asStartElement().getName())) {
+      pathBuilder.pushItem(position++);
+
       // Consume the start element
-      if (getProperty().readItem(collector, parentInstance, start, context)) {
+      Object value = getProperty().readItem(parentInstance, start, context);
+      if (value != null) {
+        collector.add(value);
         handled = true;
+
+        if (context.isValidating()) {
+          getProperty().validateItem(value, context);
+        }
       }
+
+      pathBuilder.popItem();
 
       // consume extra whitespace between elements
       XmlEventUtil.skipWhitespace(eventReader);
@@ -149,7 +172,7 @@ public class MapPropertyInfo
   @Override
   public boolean writeValue(Object parentInstance, QName parentName, XmlWritingContext context)
       throws XMLStreamException, IOException {
-    ModelProperty property = getProperty();
+    NamedModelProperty property = getProperty();
     @SuppressWarnings("unchecked")
     Map<String, ? extends Object> items = (Map<String, ? extends Object>) property.getValue(parentInstance);
     for (Object item : items.values()) {
@@ -158,15 +181,14 @@ public class MapPropertyInfo
     return true;
   }
 
-  public static class MapPropertyCollector
-      implements PropertyCollector {
+  public static class MapPropertyCollector implements PropertyCollector {
 
     private final Map<String, Object> map = new LinkedHashMap<>();
     private final FlagProperty jsonKey;
 
-    protected MapPropertyCollector(ModelProperty property) {
-      ClassBinding classBinding = property.getBindingSupplier().getClassBinding();
-      this.jsonKey = classBinding != null ? classBinding.getJsonKey() : null;
+    protected MapPropertyCollector(NamedModelProperty property) {
+      ClassBinding classBinding = property.getDataTypeHandler().getClassBinding();
+      this.jsonKey = classBinding != null ? classBinding.getJsonKeyFlagInstance() : null;
       if (this.jsonKey == null) {
         throw new IllegalStateException("No JSON key found");
       }
@@ -177,7 +199,7 @@ public class MapPropertyInfo
     }
 
     @Override
-    public void add(Object item) throws IOException {
+    public void add(Object item) {
       assert item != null;
 
       // lookup the key
@@ -186,7 +208,7 @@ public class MapPropertyInfo
     }
 
     @Override
-    public void addAll(Collection<?> items) throws IllegalStateException, IOException {
+    public void addAll(Collection<?> items) {
       for (Object item : items) {
         add(item);
       }
@@ -200,7 +222,7 @@ public class MapPropertyInfo
 
   @Override
   public void writeValue(Object parentInstance, JsonWritingContext context) throws IOException {
-    ModelProperty property = getProperty();
+    NamedModelProperty property = getProperty();
     @SuppressWarnings("unchecked")
     Map<String, ? extends Object> items = (Map<String, ? extends Object>) property.getValue(parentInstance);
 
@@ -213,14 +235,14 @@ public class MapPropertyInfo
 
     writer.writeStartObject();
 
-    getProperty().getBindingSupplier().writeItems(items.values(), false, context);
+    getProperty().getDataTypeHandler().writeItems(items.values(), false, context);
 
     writer.writeEndObject();
   }
 
   @Override
   public boolean isValueSet(Object parentInstance) throws IOException {
-    ModelProperty property = getProperty();
+    NamedModelProperty property = getProperty();
     @SuppressWarnings("unchecked")
     Map<String, ? extends Object> items = (Map<String, ? extends Object>) property.getValue(parentInstance);
     return items != null && !items.isEmpty();

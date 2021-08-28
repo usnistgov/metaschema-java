@@ -121,7 +121,7 @@ public class MarkupMultilineAdapter
   }
 
   @Override
-  public String getDefaultJsonFieldName() {
+  public String getDefaultJsonValueKey() {
     return "PROSE";
   }
 

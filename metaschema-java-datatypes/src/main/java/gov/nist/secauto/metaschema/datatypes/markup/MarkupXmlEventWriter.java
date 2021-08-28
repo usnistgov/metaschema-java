@@ -41,7 +41,6 @@ import java.util.Objects;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;

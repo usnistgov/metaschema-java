@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.instances;
 
-import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 
-public abstract class AbstractDefinedInfoElementInstance<PARENT extends ObjectDefinition, DEF extends InfoElementDefinition>
+public abstract class AbstractDefinedInfoElementInstance<PARENT extends MetaschemaFlaggedDefinition, DEF extends MetaschemaDefinition>
     extends AbstractInfoElementInstance<PARENT>
-    implements DefinedInfoElementInstance<PARENT, DEF> {
+    implements DefinedInfoElementInstance<DEF> {
 
   /**
    * Construct a new instance.

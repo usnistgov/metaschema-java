@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>18</version>
+		<version>19</version>
 	</parent>
 	<groupId>gov.nist.secauto.metaschema</groupId>
 	<artifactId>metaschema-framework</artifactId>
-	<version>0.4.0</version>
+	<version>0.4.1-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
 	<name>Metaschema Framework Parent</name>
 	<description>A common build root for all NIST projects related to the Metaschema framework.</description>
-	<url>https://github.com/usnistgov/metaschema-java</url>
+	<url>${site.url}</url>
 
 	<issueManagement>
-		<system>GitHub Issues</system>
 		<url>https://github.com/usnistgov/metaschema-java/issues</url>
+		<system>GitHub Issues</system>
 	</issueManagement>
 
-  <scm>
-    <url>https://github.com/usnistgov/metaschema-java/tree/main</url>
-    <connection>scm:git:git@github.com/usnistgov/metaschema-java.git</connection>
-    <developerConnection>scm:git:git@github.com:usnistgov/metaschema-java.git</developerConnection>
-    <tag>v0.4.0</tag>
-  </scm>
+	<scm>
+		<url>https://github.com/usnistgov/metaschema-java/tree/main</url>
+		<connection>scm:git:git@github.com/usnistgov/metaschema-java.git</connection>
+		<developerConnection>scm:git:git@github.com:usnistgov/metaschema-java.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -38,8 +40,8 @@
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 		<site>
-			<id>pages-site</id>
-			<url>https://pages.nist.gov/metaschema-java</url>
+			<id>nist-pages</id>
+			<url>${site.url}</url>
 		</site>
 	</distributionManagement>
 
@@ -90,11 +92,21 @@
 	</mailingLists>
 
 	<properties>
-	   <!-- site configuration -->
-    <site.url>https://pages.nist.gov/metaschema-java</site.url>
-    <scm.url>https://github.com/usnistgov/metaschema-java</scm.url>
-    <issueManagement.url>https://github.com/usnistgov/metaschema-java/issues</issueManagement.url>
-	
+		<!-- site configuration -->
+		<site.url>https://pages.nist.gov/metaschema-java/</site.url>
+		<scm.url>https://github.com/usnistgov/metaschema-java</scm.url>
+		<issueManagement.url>https://github.com/usnistgov/metaschema-java/issues</issueManagement.url>
+		<!-- ================================================================================ -->
+		<!-- Web dependencies version -->
+		<!-- ================================================================================ -->
+		<anchorJsVesrion>3.2.2</anchorJsVesrion>
+		<bootstrapVersion>4.4.1</bootstrapVersion>
+		<bootswatchVersion>4.4.1</bootswatchVersion>
+		<highlightJsVersion>9.15.7</highlightJsVersion>
+		<highlightJsTheme>github</highlightJsTheme>
+		<jqueryVersion>3.4.1</jqueryVersion>
+		<fontawesomeVersion>5.12.1</fontawesomeVersion>
+		<popperVersion>1.16.0</popperVersion>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.release>11</maven.compiler.release>
@@ -103,21 +115,22 @@
 		<project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+		<dependency.antlr4.version>4.9.2</dependency.antlr4.version>
 		<dependency.commons-lang3.version>3.11</dependency.commons-lang3.version>
 		<dependency.flexmark.version>0.62.2</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.30</dependency.freemarker.version>
 		<dependency.jackson.version>2.12.1</dependency.jackson.version>
 		<dependency.jaxb.version>3.0.0</dependency.jaxb.version>
-		<dependency.junit5.version>5.7.0</dependency.junit5.version>
-		<dependency.junit5-platform-launcher.version>1.7.0</dependency.junit5-platform-launcher.version>
+		<dependency.junit5.version>5.7.2</dependency.junit5.version>
+		<dependency.junit5-platform-launcher.version>1.7.2</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.14.0</dependency.log4j2.version>
 		<dependency.moxy.version>3.0.0</dependency.moxy.version>
 		<dependency.woodstox.version>6.2.3</dependency.woodstox.version>
-		<dependency.xmlbeans.version>3.1.0</dependency.xmlbeans.version>
-		<dependency.antlr4.version>4.9.1</dependency.antlr4.version>
+		<dependency.xmlbeans.version>5.0.1</dependency.xmlbeans.version>
 		<!-- <dependency.xmlbeans.version>4.0.0</dependency.xmlbeans.version> -->
 		<plugin.license.version>4.0.rc1</plugin.license.version>
 		<plugin.antlr4test.version>1.17</plugin.antlr4test.version>
+		<plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
 	</properties>
 
 	<dependencyManagement>
@@ -125,6 +138,11 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>metaschema-model</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>metaschema-model-common</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -140,6 +158,11 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>metaschema-java-binding-annotations</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>metaschema-freemarker-support</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -357,23 +380,35 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>xmlbeans-maven-plugin</artifactId>
-					<version>2.3.3</version>
+					<groupId>org.apache.xmlbeans</groupId>
+					<artifactId>xmlbeans</artifactId>
+					<version>${dependency.xmlbeans.version}</version>
 					<configuration>
-						<noUpa>false</noUpa>
-						<javaSource>1.5</javaSource>
+<!-- 						<sourceOnly>true</sourceOnly> -->
+<!-- 						<noUpa>false</noUpa> -->
+						<!-- <javaSource>1.5</javaSource> -->
 						<!-- <javaSource combine.self="override"></javaSource> -->
-						<noJavac>true</noJavac>
+<!-- 						<noJavac>true</noJavac> -->
 					</configuration>
-					<dependencies>
-						<dependency>
-							<groupId>org.apache.xmlbeans</groupId>
-							<artifactId>xmlbeans</artifactId>
-							<version>${dependency.xmlbeans.version}</version>
-						</dependency>
-					</dependencies>
 				</plugin>
+				<!-- <plugin> -->
+				<!-- <groupId>org.codehaus.mojo</groupId> -->
+				<!-- <artifactId>xmlbeans-maven-plugin</artifactId> -->
+				<!-- <version>2.3.3</version> -->
+				<!-- <configuration> -->
+				<!-- <noUpa>false</noUpa> -->
+				<!-- <javaSource>1.5</javaSource> -->
+				<!-- <javaSource combine.self="override"></javaSource> -->
+				<!-- <noJavac>true</noJavac> -->
+				<!-- </configuration> -->
+				<!-- <dependencies> -->
+				<!-- <dependency> -->
+				<!-- <groupId>org.apache.xmlbeans</groupId> -->
+				<!-- <artifactId>xmlbeans</artifactId> -->
+				<!-- <version>${dependency.xmlbeans.version}</version> -->
+				<!-- </dependency> -->
+				<!-- </dependencies> -->
+				<!-- </plugin> -->
 				<plugin>
 					<groupId>com.mycila</groupId>
 					<artifactId>license-maven-plugin</artifactId>
@@ -421,6 +456,44 @@
 					<artifactId>antlr4test-maven-plugin</artifactId>
 					<version>${plugin.antlr4test.version}</version>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<configuration>
+						<topSiteURL>${site.url}</topSiteURL>
+					</configuration>
+				</plugin>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.xmlbeans
+										</groupId>
+										<artifactId>
+											xmlbeans
+										</artifactId>
+										<versionRange>
+											[5.0.1,)
+										</versionRange>
+										<goals>
+											<goal>compile</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -431,107 +504,114 @@
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>attach-descriptor</id>
+						<goals>
+							<goal>attach-descriptor</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
-  <profiles>
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-enforcer-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>enforce-java</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>enforce</goal>
-                </goals>
-                <configuration>
-                  <fail>true</fail>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>reporting</id>
-      <reporting>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jxr-plugin</artifactId>
-            <version>${version.plugin.jxr}</version>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-project-info-reports-plugin</artifactId>
-            <version>${version.plugin.maven-project-info-reports}</version>
-            <reportSets>
-              <reportSet>
-                <id>default</id>
-                <reports>
-                  <report>index</report>
-                  <report>dependency-info</report>
-                  <report>team</report>
-                  <report>mailing-lists</report>
-                  <report>scm</report>
-                </reports>
-              </reportSet>
-              <!-- <reportSet> -->
-              <!-- <id>developer</id> -->
-              <!-- <reports> -->
-              <!-- <report>dependencies</report> -->
-              <!-- <report>dependency-convergence</report> -->
-              <!-- <report>dependency-management</report> -->
-              <!-- <report>ci-management</report> -->
-              <!-- <report>issue-management</report> -->
-              <!-- <report>licenses</report> -->
-              <!-- </reports> -->
-              <!-- </reportSet> -->
-            </reportSets>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-pmd-plugin</artifactId>
-            <version>${version.plugin.pmd}</version>
-          </plugin>
-        </plugins>
-      </reporting>
-    </profile>
-    <profile>
-      <id>gpg</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <version>${version.plugin.gpg}</version>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-                <configuration>
-                  <skip>false</skip>
-                  <gpgArguments>
-                    <arg>--pinentry-mode</arg>
-                    <arg>loopback</arg>
-                  </gpgArguments>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-enforcer-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>enforce-java</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>enforce</goal>
+								</goals>
+								<configuration>
+									<fail>true</fail>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>reporting</id>
+			<reporting>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-project-info-reports-plugin</artifactId>
+						<reportSets>
+							<reportSet>
+								<reports>
+									<report>summary</report>
+									<report>licenses</report>
+									<report>modules</report>
+									<report>team</report>
+									<report>mailing-lists</report>
+									<report>scm</report>
+									<report>issue-management</report>
+									<report>dependencies</report>
+									<report>dependency-info</report>
+									<report>dependency-convergence</report>
+									<report>dependency-management</report>
+									<report>plugins</report>
+								</reports>
+							</reportSet>
+						</reportSets>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jxr-plugin</artifactId>
+						<version>${version.plugin.jxr}</version>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-pmd-plugin</artifactId>
+						<version>${version.plugin.pmd}</version>
+					</plugin>
+				</plugins>
+			</reporting>
+		</profile>
+		<profile>
+			<id>gpg</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>${version.plugin.gpg}</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+								<configuration>
+									<skip>false</skip>
+									<gpgArguments>
+										<arg>--pinentry-mode</arg>
+										<arg>loopback</arg>
+									</gpgArguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<modules>
 		<module>metaschema-model</module>
@@ -541,7 +621,8 @@
 		<module>metaschema-maven-plugin</module>
 		<module>metaschema-java-binding</module>
 		<module>metaschema-schema-generator</module>
-		<module>metaschema-metapath</module>
 		<module>metaschema-documentation-generator</module>
+		<module>metaschema-freemarker-support</module>
+		<module>metaschema-model-common</module>
 	</modules>
 </project>

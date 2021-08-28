@@ -29,33 +29,37 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
+
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
  * Identifies that the target is a bound property that references an assembly.
  * <p>
- * For XML serialization, the {@link #name()} identifies the name of the element to use and the
+ * For XML serialization, the {@link #useName()} identifies the name of the element to use and the
  * {@link #namespace()} identifies the namespace of this element.
  * <p>
- * For JSON and YAML serialization, the {@link #name()} identifies the field name to use.
+ * For JSON and YAML serialization, the {@link #useName()} identifies the field name to use.
  */
+@Documented
 @Retention(RUNTIME)
 @Target({ FIELD })
 public @interface Assembly {
   /**
-   * Name of the XML Schema element.
+   * The model name to use for singleton values. This name will be used for associated XML elements.
    * <p>
    * If the value is "##default", then element name is derived from the JavaBean property name.
    * 
    * @return the name
    */
-  String name() default "##default";
+  String useName() default "##default";
 
   /**
-   */
-  /**
-   * XML target namespace of the XML Schema element.
+   * The namespace to use for associated XML elements.
    * <p>
    * If the value is "##default", then element name is derived from the namespace provided in the
    * package-info.
@@ -86,14 +90,14 @@ public @interface Assembly {
    * 
    * @return a non-negative number
    */
-  int minOccurs() default 0;
+  int minOccurs() default Defaults.DEFAULT_GROUP_AS_MIN_OCCURS;
 
   /**
    * A number that indicates the maximum occurrence of the element.
    * 
    * @return a positive number or {@code -1} to indicate "unbounded"
    */
-  int maxOccurs() default 1;
+  int maxOccurs() default Defaults.DEFAULT_GROUP_AS_MAX_OCCURS;
 
   /**
    * Describes how to handle collections in JSON/YAML.
@@ -107,5 +111,5 @@ public @interface Assembly {
    * 
    * @return the XML collection strategy
    */
-  XmlGroupAsBehavior inXml() default XmlGroupAsBehavior.NONE;
+  XmlGroupAsBehavior inXml() default XmlGroupAsBehavior.UNGROUPED;
 }

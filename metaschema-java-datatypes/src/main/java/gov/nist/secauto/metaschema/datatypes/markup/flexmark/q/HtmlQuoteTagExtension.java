@@ -46,12 +46,12 @@ public class HtmlQuoteTagExtension
   }
 
   @Override
-  public void extend(@NotNull HtmlRenderer.Builder rendererBuilder, @NotNull String rendererType) {
-    rendererBuilder.nodeRendererFactory(new QTagNodeRenderer.Factory());
+  public void parserOptions(MutableDataHolder options) {
   }
 
   @Override
-  public void parserOptions(MutableDataHolder options) {
+  public void extend(@NotNull HtmlRenderer.Builder rendererBuilder, @NotNull String rendererType) {
+    rendererBuilder.nodeRendererFactory(new QTagNodeRenderer.Factory());
   }
 
   @Override

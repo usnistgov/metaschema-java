@@ -26,10 +26,8 @@
 
 package gov.nist.secauto.metaschema.datatypes.markup.flexmark.q;
 
-import com.vladsch.flexmark.ext.typographic.TypographicQuotes;
 import com.vladsch.flexmark.ext.typographic.internal.TypographicOptions;
 import com.vladsch.flexmark.parser.core.delimiter.Delimiter;
-import com.vladsch.flexmark.util.sequence.BasedSequence;
 
 public class DoubleQuoteDelimiterProcessor
     extends com.vladsch.flexmark.ext.typographic.internal.DoubleQuoteDelimiterProcessor {

@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding.model.property.info;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,7 +50,7 @@ public class ListPropertyCollector
   }
 
   @Override
-  public void addAll(Collection<? extends Object> items) throws IllegalStateException, IOException {
+  public void addAll(Collection<? extends Object> items) {
     collection.addAll(items);
   }
 }

@@ -39,14 +39,28 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
+import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
+import gov.nist.secauto.metaschema.binding.model.constraint.AssemblyConstraintSupport;
+import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultAssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultFieldProperty;
+import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.binding.model.property.ModelProperty;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
+import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
+import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,6 +72,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -90,13 +105,13 @@ public class DefaultAssemblyClassBinding
    */
   public static DefaultAssemblyClassBinding createInstance(Class<?> clazz, BindingContext bindingContext) {
     DefaultAssemblyClassBinding retval = new DefaultAssemblyClassBinding(clazz, bindingContext);
-    retval.initialize();
     return retval;
   }
 
   private MetaschemaAssembly metaschemaAssembly;
-  private List<ModelProperty> modelProperties;
+  private Map<String, NamedModelProperty> modelInstances;
   private final QName xmlRootQName;
+  private IAssemblyConstraintSupport constraints;
 
   /**
    * Construct a new {@link ClassBinding} for a Java bean annotated with the {@link Assembly}
@@ -128,74 +143,192 @@ public class DefaultAssemblyClassBinding
     }
   }
 
-  @Override
-  protected boolean initializeField(java.lang.reflect.Field field) {
-    boolean handled = false;
-
-    Assembly assemblyAnnotation = field.getAnnotation(Assembly.class);
-    if (assemblyAnnotation != null) {
-      DefaultAssemblyProperty property;
-      property = DefaultAssemblyProperty.createInstance(this, field);
-      modelProperties.add(property);
-      handled = true;
-    } else {
-      Field fieldAnnotation = field.getAnnotation(Field.class);
-      if (fieldAnnotation != null) {
-        DefaultFieldProperty property;
-        property = DefaultFieldProperty.createInstance(this, field);
-        modelProperties.add(property);
-        handled = true;
-      }
-    }
-    return handled;
-  }
-
-  @Override
-  protected void initialize() {
-    this.modelProperties = new LinkedList<>();
-
-    super.initialize();
-
-    this.modelProperties
-        = modelProperties.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(this.modelProperties);
-  }
-
   /**
    * Get the {@link MetaschemaAssembly} annotation associated with this class. This annotation
    * provides information used by this class binding to control binding behavior.
    * 
    * @return the annotation
    */
-  protected MetaschemaAssembly getMetaschemaAssemblyAnnotation() {
+  public MetaschemaAssembly getMetaschemaAssemblyAnnotation() {
     return metaschemaAssembly;
   }
 
   @Override
-  public String getJsonRootName() {
-    QName qname = getXmlRootQName();
+  public boolean isRoot() {
+    // Overriding this is more efficient, since the root name is derived from the XML QName
+    return getRootXmlQName() != null;
+  }
+
+  @Override
+  public String getRootName() {
+    QName qname = getRootXmlQName();
     return qname != null ? qname.getLocalPart() : null;
   }
 
   @Override
-  public QName getXmlRootQName() {
+  public QName getRootXmlQName() {
+    // Overriding this is more efficient, since it is already built
     return xmlRootQName;
   }
 
-  @Override
-  public List<ModelProperty> getModelProperties() {
-    return modelProperties;
+  /**
+   * Collect all fields that are part of the model for this class.
+   * 
+   * @param clazz
+   *          the class
+   * @return an immutable collection of field and assembly instances
+   */
+  protected Collection<java.lang.reflect.Field> getModelInstanceFields(Class<?> clazz) {
+    java.lang.reflect.Field[] fields = clazz.getDeclaredFields();
+
+    List<java.lang.reflect.Field> retval = new LinkedList<>();
+
+    Class<?> superClass = clazz.getSuperclass();
+    if (superClass != null) {
+      // get instances from superclass
+      retval.addAll(getModelInstanceFields(superClass));
+    }
+
+    for (java.lang.reflect.Field field : fields) {
+      if (!field.isAnnotationPresent(Assembly.class) && !field.isAnnotationPresent(Field.class)) {
+        // skip fields that aren't a field or assembly instance
+        continue;
+      }
+
+      if (field.isAnnotationPresent(Ignore.class)) {
+        // skip this field, since it is ignored
+        continue;
+      }
+      retval.add(field);
+    }
+    return Collections.unmodifiableCollection(retval);
+  }
+
+  /**
+   * Initialize the flag instances for this class.
+   */
+  protected synchronized void initalizeModelInstances() {
+    if (this.modelInstances == null) {
+      Map<String, NamedModelProperty> modelInstances = new LinkedHashMap<>();
+      for (java.lang.reflect.Field field : getModelInstanceFields(getBoundClass())) {
+
+        Assembly assemblyAnnotation = field.getAnnotation(Assembly.class);
+        if (assemblyAnnotation != null) {
+          DefaultAssemblyProperty instance = DefaultAssemblyProperty.createInstance(this, field);
+          modelInstances.put(instance.getEffectiveName(), instance);
+        } else {
+          Field fieldAnnotation = field.getAnnotation(Field.class);
+          if (fieldAnnotation != null) {
+            DefaultFieldProperty instance = DefaultFieldProperty.createInstance(this, field);
+            modelInstances.put(instance.getEffectiveName(), instance);
+          }
+        }
+      }
+      this.modelInstances
+          = modelInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(modelInstances);
+    }
   }
 
   @Override
-  public Map<String, ? extends NamedProperty> getProperties(Predicate<FlagProperty> flagFilter) {
-    return Stream.concat(super.getProperties(flagFilter).values().stream(), getModelProperties().stream())
-        .collect(Collectors.toMap(NamedProperty::getJsonPropertyName, Function.identity()));
+  public Collection<? extends NamedModelProperty> getModelInstances() {
+    return getNamedModelInstances().values();
   }
 
+  @Override
+  public Map<String, ? extends NamedModelProperty> getNamedModelInstances() {
+    initalizeModelInstances();
+    return modelInstances;
+  }
+
+  @Override
+  public Map<String, ? extends NamedProperty> getNamedInstances(Predicate<FlagProperty> flagFilter) {
+    return Stream.concat(super.getNamedInstances(flagFilter).values().stream(), getModelInstances().stream())
+        .collect(Collectors.toMap(NamedProperty::getJsonName, Function.identity()));
+  }
+
+  @Override
+  public Map<String, ? extends FieldProperty> getFieldInstances() {
+    return Collections.unmodifiableMap(
+        getNamedModelInstances().values().stream().filter(x -> x instanceof FieldProperty).map(x -> (FieldProperty) x)
+            .collect(Collectors.toMap(FieldProperty::getEffectiveName, Function.identity())));
+  }
+
+  @Override
+  public Map<String, ? extends AssemblyProperty> getAssemblyInstances() {
+    return Collections.unmodifiableMap(getNamedModelInstances().values().stream()
+        .filter(x -> x instanceof AssemblyProperty).map(x -> (AssemblyProperty) x)
+        .collect(Collectors.toMap(AssemblyProperty::getEffectiveName, Function.identity())));
+  }
+
+  @Override
+  public List<? extends IChoiceInstance> getChoiceInstances() {
+    // choices are not exposed by this API
+    return Collections.emptyList();
+  }
+
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+   * first accessed.
+   */
+  protected synchronized void checkModelConstraints() {
+    if (constraints == null) {
+      constraints = new AssemblyConstraintSupport(this);
+    }
+  }
+
+  @Override
+  public List<? extends IConstraint> getConstraints() {
+    checkModelConstraints();
+    return constraints.getConstraints();
+  }
+
+  @Override
+  public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+    checkModelConstraints();
+    return constraints.getAllowedValuesContraints();
+  }
+
+  @Override
+  public List<? extends IMatchesConstraint> getMatchesConstraints() {
+    checkModelConstraints();
+    return constraints.getMatchesConstraints();
+  }
+
+  @Override
+  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+    checkModelConstraints();
+    return constraints.getIndexHasKeyConstraints();
+  }
+
+  @Override
+  public List<? extends IExpectConstraint> getExpectConstraints() {
+    checkModelConstraints();
+    return constraints.getExpectConstraints();
+  }
+
+  @Override
+  public List<? extends IIndexConstraint> getIndexConstraints() {
+    checkModelConstraints();
+    return constraints.getIndexContraints();
+  }
+
+  @Override
+  public List<? extends IUniqueConstraint> getUniqueConstraints() {
+    checkModelConstraints();
+    return constraints.getUniqueConstraints();
+  }
+
+  @Override
+  public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
+    checkModelConstraints();
+    return constraints.getHasCardinalityConstraints();
+  }
+
+  // TODO: this is unused, remove it
   @Override
   public Object readRoot(XmlParsingContext context) throws XMLStreamException, BindingException, IOException {
 
-    QName rootQName = getXmlRootQName();
+    QName rootQName = getRootXmlQName();
     XMLEventReader2 eventReader = context.getReader();
 
     if (eventReader.peek().isStartDocument()) {
@@ -215,8 +348,6 @@ public class DefaultAssemblyClassBinding
 
     XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.END_ELEMENT, rootQName);
 
-    XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.END_DOCUMENT);
-
     callAfterDeserialize(instance, null);
 
     return instance;
@@ -233,7 +364,7 @@ public class DefaultAssemblyClassBinding
       ignoreRootFields = new HashSet<>(Arrays.asList(ignoreFieldsArray));
     }
 
-    String rootFieldName = getJsonRootName();
+    String rootFieldName = getRootJsonName();
     JsonToken token;
     JsonParser parser = context.getReader();
 
@@ -286,15 +417,15 @@ public class DefaultAssemblyClassBinding
   @Override
   protected void readBody(Object instance, StartElement start, XmlParsingContext context)
       throws IOException, XMLStreamException, BindingException {
-    Set<ModelProperty> unhandledProperties = new HashSet<>();
-    for (ModelProperty modelProperty : getModelProperties()) {
+    Set<NamedModelProperty> unhandledProperties = new HashSet<>();
+    for (NamedModelProperty modelProperty : getModelInstances()) {
       if (!modelProperty.read(instance, start, context)) {
         unhandledProperties.add(modelProperty);
       }
     }
 
     // process all properties that did not get a value
-    for (ModelProperty property : unhandledProperties) {
+    for (NamedModelProperty property : unhandledProperties) {
       // use the default value of the collector
       property.setValue(instance, property.newPropertyCollector().getValue());
 
@@ -302,7 +433,7 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public boolean readItem(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public List<Object> readItem(Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
 
     Object instance = newInstance();
@@ -313,8 +444,7 @@ public class DefaultAssemblyClassBinding
 
     callAfterDeserialize(instance, parentInstance);
 
-    collector.add(instance);
-    return true;
+    return Collections.singletonList(instance);
   }
 
   protected void readInternal(@SuppressWarnings("unused") Object parentInstance, Object instance,
@@ -323,10 +453,10 @@ public class DefaultAssemblyClassBinding
 
     JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME);
 
-    FlagProperty jsonKey = getJsonKey();
+    FlagProperty jsonKey = getJsonKeyFlagInstance();
     Map<String, ? extends NamedProperty> properties;
     if (jsonKey != null) {
-      properties = getProperties((flag) -> {
+      properties = getNamedInstances((flag) -> {
         return !jsonKey.equals(flag);
       });
 
@@ -340,11 +470,11 @@ public class DefaultAssemblyClassBinding
       // next the value will be a start object
       JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
     } else {
-      properties = getProperties(null);
+      properties = getNamedInstances(null);
     }
 
     Set<String> handledProperties = new HashSet<>();
-    while (!jsonParser.hasTokenId(JsonToken.END_OBJECT.id())) {
+    while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
       String propertyName = jsonParser.getCurrentName();
       NamedProperty property = properties.get(propertyName);
 
@@ -358,6 +488,7 @@ public class DefaultAssemblyClassBinding
       } else {
         logger.warn("Unrecognized property named '{}' at '{}'", propertyName,
             JsonUtil.toString(jsonParser.getCurrentLocation()));
+        JsonUtil.assertAndAdvance(jsonParser, JsonToken.FIELD_NAME);
         JsonUtil.skipNextValue(jsonParser);
       }
     }
@@ -369,6 +500,10 @@ public class DefaultAssemblyClassBinding
         NamedProperty property = entry.getValue();
         property.setValue(instance, property.newPropertyCollector().getValue());
       }
+    }
+
+    if (context.isValidating()) {
+      validate(instance);
     }
 
     if (jsonKey != null) {
@@ -384,7 +519,7 @@ public class DefaultAssemblyClassBinding
 
     writer.writeStartDocument("UTF-8", "1.0");
 
-    QName rootQName = getXmlRootQName();
+    QName rootQName = getRootXmlQName();
 
     NamespaceContext nsContext = writer.getNamespaceContext();
     String prefix = nsContext.getPrefix(rootQName.getNamespaceURI());
@@ -397,7 +532,6 @@ public class DefaultAssemblyClassBinding
     writeItem(instance, rootQName, context);
 
     writer.writeEndElement();
-
   }
 
   @Override
@@ -408,7 +542,7 @@ public class DefaultAssemblyClassBinding
     // first read the initial START_OBJECT
     writer.writeStartObject();
 
-    writer.writeFieldName(getJsonRootName());
+    writer.writeFieldName(getRootJsonName());
 
     writeInternal(instance, true, context);
 
@@ -438,10 +572,10 @@ public class DefaultAssemblyClassBinding
       writer.writeStartObject();
     }
 
-    FlagProperty jsonKey = getJsonKey();
+    FlagProperty jsonKey = getJsonKeyFlagInstance();
     Map<String, ? extends NamedProperty> properties;
     if (jsonKey != null) {
-      properties = getProperties((flag) -> {
+      properties = getNamedInstances((flag) -> {
         return !jsonKey.equals(flag);
       });
 
@@ -455,7 +589,7 @@ public class DefaultAssemblyClassBinding
       // next the value will be a start object
       writer.writeStartObject();
     } else {
-      properties = getProperties(null);
+      properties = getNamedInstances(null);
     }
 
     for (NamedProperty property : properties.values()) {
@@ -475,7 +609,7 @@ public class DefaultAssemblyClassBinding
   @Override
   protected void writeBody(Object instance, QName parentName, XmlWritingContext context)
       throws XMLStreamException, IOException {
-    for (ModelProperty modelProperty : getModelProperties()) {
+    for (NamedModelProperty modelProperty : getModelInstances()) {
       modelProperty.write(instance, parentName, context);
     }
   }
@@ -487,4 +621,5 @@ public class DefaultAssemblyClassBinding
       writeInternal(item, writeObjectWrapper, context);
     }
   }
+
 }

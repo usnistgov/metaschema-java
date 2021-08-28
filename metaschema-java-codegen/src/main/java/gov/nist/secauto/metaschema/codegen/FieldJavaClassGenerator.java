@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.AnnotationSpec.Builder;
 import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
@@ -36,7 +37,7 @@ import gov.nist.secauto.metaschema.codegen.property.FlagPropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.PropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 import gov.nist.secauto.metaschema.model.instances.FlagInstance;
 
 import org.apache.logging.log4j.LogManager;
@@ -64,14 +65,11 @@ public class FieldJavaClassGenerator
   public FieldJavaClassGenerator(FieldDefinition definition, TypeResolver typeResolver) {
     super(definition, typeResolver);
     this.fieldValueInstance = newFieldValueInstance();
+    this.hasJsonValueKeyFlag = definition.hasJsonValueKeyFlagInstance();
   }
 
   @Override
   public FlagPropertyGenerator newFlagPropertyGenerator(FlagInstance<?> instance) {
-    // check for a JSON "value key"
-    if (instance.isJsonValueKeyFlag()) {
-      hasJsonValueKeyFlag = true;
-    }
     return super.newFlagPropertyGenerator(instance);
   }
 
@@ -82,30 +80,26 @@ public class FieldJavaClassGenerator
   }
 
   @Override
-  protected Set<ObjectDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
-    Set<ObjectDefinition> retval = new HashSet<>();
+  protected Set<MetaschemaFlaggedDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
+    Set<MetaschemaFlaggedDefinition> retval = new HashSet<>();
     retval.addAll(super.buildClass(builder));
 
-    if (getFieldValueInstance() == null) {
-      // this is an "empty" field, which will be treated as an assembly
-      builder.addAnnotation(MetaschemaAssembly.class);
-    } else {
-      AnnotationSpec.Builder metaschemaField = AnnotationSpec.builder(MetaschemaField.class);
-      boolean isCollapsible = false;
-      if (getDefinition().isCollapsible()) {
-        if (getDefinition().hasJsonKey()) {
-          logger.warn(
-              "A field binding cannot implement a json-key and be collapsible."
-                  + " Ignoring the collapsible for class '{}'.",
-              getTypeResolver().getClassName(getDefinition()).canonicalName());
-        } else {
-          isCollapsible = true;
-        }
+    AnnotationSpec.Builder metaschemaField = AnnotationSpec.builder(MetaschemaField.class);
+    boolean isCollapsible = false;
+    if (getDefinition().isCollapsible()) {
+      if (getDefinition().hasJsonKey()) {
+        logger.warn(
+            "A field binding cannot implement a json-key and be collapsible."
+                + " Ignoring the collapsible for class '{}'.",
+            getTypeResolver().getClassName(getDefinition()).canonicalName());
+      } else {
+        isCollapsible = true;
       }
-      metaschemaField.addMember("isCollapsible", "$L", isCollapsible);
-
-      builder.addAnnotation(metaschemaField.build());
     }
+    metaschemaField.addMember("isCollapsible", "$L", isCollapsible);
+    applyConstraints(metaschemaField);
+
+    builder.addAnnotation(metaschemaField.build());
     return retval;
   }
 

@@ -40,32 +40,40 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
+import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
+import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
+import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultFieldValueProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FieldValueProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
 import gov.nist.secauto.metaschema.binding.model.property.Property;
 import gov.nist.secauto.metaschema.binding.model.property.info.ListPropertyCollector;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
+import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -92,13 +100,13 @@ public class DefaultFieldClassBinding
           String.format("Class '%s' is missing the '%' annotation.", clazz.getName(), MetaschemaField.class.getName()));
     }
     DefaultFieldClassBinding retval = new DefaultFieldClassBinding(clazz, bindingContext);
-    retval.initialize();
     return retval;
   }
 
   private final MetaschemaField metaschemaField;
   private FieldValueProperty fieldValue;
-  private FlagProperty jsonValueKey;
+  private FlagProperty jsonValueKeyFlagInstance;
+  private IValueConstraintSupport constraints;
 
   /**
    * Construct a new {@link ClassBinding} for a Java bean annotated with the {@link Field} annotation.
@@ -113,61 +121,108 @@ public class DefaultFieldClassBinding
     this.metaschemaField = clazz.getAnnotation(MetaschemaField.class);
   }
 
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    if (fieldValue == null) {
-      throw new IllegalArgumentException(String.format("Class '%s' is missing the '%' annotation on one of its fields.",
-          getBoundClass().getName(), FieldValue.class.getName()));
-    }
-  }
-
-  @Override
-  protected boolean initializeField(java.lang.reflect.Field field) {
-    boolean handled = false;
-    FieldValue fieldValueAnnotation = field.getAnnotation(FieldValue.class);
-    if (fieldValueAnnotation != null) {
-      this.fieldValue = new DefaultFieldValueProperty(this, field);
-      handled = true;
-    }
-    return handled;
-  }
-
-  @Override
-  protected void initializeFlag(FlagProperty flag) {
-    if (flag.isJsonValueKey()) {
-      this.jsonValueKey = flag;
-    }
-  }
-
-  protected MetaschemaField getMetaschemaFieldAnnotation() {
+  public MetaschemaField getMetaschemaFieldAnnotation() {
     return metaschemaField;
+  }
+
+  /**
+   * Collect all fields that are part of the model for this class.
+   * 
+   * @param clazz
+   *          the class
+   * @return the field value instances if found or {@code null} otherwise
+   */
+  protected java.lang.reflect.Field getFieldValueField(Class<?> clazz) {
+    java.lang.reflect.Field[] fields = clazz.getDeclaredFields();
+
+    java.lang.reflect.Field retval = null;
+
+    Class<?> superClass = clazz.getSuperclass();
+    if (superClass != null) {
+      // get instances from superclass
+      retval = getFieldValueField(superClass);
+    }
+
+    if (retval == null) {
+      for (java.lang.reflect.Field field : fields) {
+        if (!field.isAnnotationPresent(FieldValue.class)) {
+          // skip fields that aren't a field or assembly instance
+          continue;
+        }
+
+        if (field.isAnnotationPresent(Ignore.class)) {
+          // skip this field, since it is ignored
+          continue;
+        }
+        retval = field;
+      }
+    }
+    return retval;
+  }
+
+  /**
+   * Initialize the flag instances for this class.
+   */
+  protected synchronized void initalizeFieldValueInstance() {
+    if (this.fieldValue == null) {
+      java.lang.reflect.Field field = getFieldValueField(getBoundClass());
+      if (field == null) {
+        throw new IllegalArgumentException(
+            String.format("Class '%s' is missing the '%' annotation on one of its fields.", getBoundClass().getName(),
+                FieldValue.class.getName()));
+      }
+
+      FieldValue fieldValueAnnotation = field.getAnnotation(FieldValue.class);
+      if (fieldValueAnnotation != null) {
+        this.fieldValue = new DefaultFieldValueProperty(this, field);
+      }
+    }
   }
 
   @Override
   public FieldValueProperty getFieldValue() {
+    initalizeFieldValueInstance();
     return fieldValue;
   }
 
   @Override
-  public FlagProperty getJsonValueKeyFlag() {
-    return jsonValueKey;
+  protected void initializeFlagInstance(FlagProperty instance) {
+    super.initializeFlagInstance(instance);
+
+    java.lang.reflect.Field field = instance.getField();
+    if (field.isAnnotationPresent(JsonFieldValueKeyFlag.class)) {
+      this.jsonValueKeyFlagInstance = instance;
+    }
   }
 
   @Override
-  public Map<String, ? extends NamedProperty> getProperties(Predicate<FlagProperty> flagFilter) {
-    FieldValueProperty fieldValue = getFieldValue();
-    String valuePropertyName = fieldValue.getJsonPropertyName();
-    Map<String, ? extends NamedProperty> retval;
-    if (valuePropertyName != null) {
-      retval = Stream.concat(super.getProperties(flagFilter).values().stream(), Stream.of(fieldValue))
-          .collect(Collectors.toMap(Property::getJsonPropertyName, Function.identity()));
-    } else {
-      retval = super.getProperties(flagFilter);
-    }
-    return retval;
+  public FlagProperty getJsonValueKeyFlagInstance() {
+    initalizeFlagInstances();
+    return jsonValueKeyFlagInstance;
   }
+
+  @Override
+  public String getJsonValueKeyName() {
+    return getFieldValue().getJsonValueKeyName();
+  }
+
+  // @Override
+  // public Map<String, ? extends NamedProperty> getNamedInstances(Predicate<FlagProperty> flagFilter)
+  // {
+  //// FieldValueProperty fieldValue = getFieldValue();
+  //// String valuePropertyName = fieldValue.getJsonName();
+  // Map<String, ? extends NamedProperty> retval;
+  // if (valuePropertyName != null) {
+  //// retval = Stream.concat(super.getNamedInstances(flagFilter).values().stream(),
+  // Stream.of(fieldValue))
+  //// .collect(Collectors.toMap(NamedProperty::getJsonName, FunctionCall.identity()));
+  // retval = super.getNamedInstances(flagFilter).values().stream()
+  // .collect(Collectors.toMap(NamedProperty::getJsonName, FunctionCall.identity()));
+  // } else {
+  // retval = super.getNamedInstances(flagFilter);
+  // }
+  // return retval;
+  // }
 
   @Override
   public boolean isCollapsible() {
@@ -183,29 +238,30 @@ public class DefaultFieldClassBinding
   }
 
   @Override
-  public boolean readItem(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public List<Object> readItem(Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
-    boolean handled;
+    List<Object> retval;
     if (isCollapsible()) {
-      handled = readCollapsed(collector, parentInstance, context);
+      retval = readCollapsed(parentInstance, context);
     } else {
-      handled = readNormal(collector, parentInstance, context);
+      retval = Collections.singletonList(readNormal(parentInstance, context));
     }
-    return handled;
+
+    return retval;
   }
 
-  private boolean readNormal(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  private Object readNormal(Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
     Predicate<FlagProperty> flagFilter = null;
 
-    FlagProperty jsonKey = getJsonKey();
+    FlagProperty jsonKey = getJsonKeyFlagInstance();
     if (jsonKey != null) {
       flagFilter = (flag) -> {
         return !jsonKey.equals(flag);
       };
     }
 
-    FlagProperty jsonValueKey = getJsonValueKeyFlag();
+    FlagProperty jsonValueKey = getJsonValueKeyFlagInstance();
     if (jsonValueKey != null) {
       if (flagFilter == null) {
         flagFilter = (flag) -> {
@@ -218,7 +274,7 @@ public class DefaultFieldClassBinding
       }
     }
 
-    Map<String, ? extends NamedProperty> properties = getProperties(flagFilter);
+    Map<String, ? extends NamedProperty> properties = getNamedInstances(flagFilter);
 
     Object instance = newInstance();
 
@@ -234,34 +290,43 @@ public class DefaultFieldClassBinding
       JsonUtil.consumeAndAssert(jsonParser, JsonToken.START_OBJECT);
     }
 
-    boolean parsedValue = false;
+    boolean parsedValueKey = false;
     Set<String> handledProperties = new HashSet<>();
     // now parse each property until the end object is reached
     while (!jsonParser.hasTokenId(JsonToken.END_OBJECT.id())) {
       String propertyName = jsonParser.getCurrentName();
-      NamedProperty property = properties.get(propertyName);
+      // JsonUtil.assertAndAdvance(jsonParser, JsonToken.FIELD_NAME);
+
+      NamedProperty namedProperty = properties.get(propertyName);
 
       boolean handled = false;
-      if (property != null) {
-        if (property instanceof FieldValueProperty && !parsedValue) {
-          parsedValue = true;
+      if (namedProperty != null) {
+        // this is a recognized flag
+
+        if (jsonValueKey != null && namedProperty.equals(jsonValueKey)) {
+          throw new IOException(
+              String.format("JSON value key configured, but found standard flag for the value key '%s'",
+                  namedProperty.toCoordinates()));
         }
 
-        PropertyCollector propertyCollector = property.newPropertyCollector();
-        Object value = property.readValue(propertyCollector, parentInstance, context);
+        // Now parse
+        Object value = namedProperty.read(context);
         if (value != null) {
-          property.setValue(instance, propertyCollector.getValue());
+          namedProperty.setValue(instance, value);
           handled = true;
         }
-      } else if (jsonValueKey != null && !parsedValue) {
-        String key = jsonParser.nextFieldName();
-        jsonValueKey.setValue(instance, jsonValueKey.readValueFromString(key));
+      }
 
-        PropertyCollector propertyCollector = fieldValue.newPropertyCollector();
-        Object value = fieldValue.readValue(propertyCollector, parentInstance, context);
-        if (value != null) {
-          fieldValue.setValue(instance, propertyCollector.getValue());
+      if (namedProperty == null && !parsedValueKey) {
+        // this may be a value key value, an unrecognized flag, or the field value
+        parsedValueKey = getFieldValue().read(instance, context);
+
+        if (parsedValueKey) {
           handled = true;
+        } else {
+          if (context.getProblemHandler().canHandleUnknownProperty(this, propertyName, context)) {
+            handled = context.getProblemHandler().handleUnknownProperty(this, propertyName, context);
+          }
         }
       }
 
@@ -277,10 +342,11 @@ public class DefaultFieldClassBinding
     // set undefined properties
     for (Map.Entry<String, ? extends NamedProperty> entry : properties.entrySet()) {
       if (!handledProperties.contains(entry.getKey())) {
-        // use the default value of the collector
         NamedProperty property = entry.getValue();
+        // use the default value of the collector
         property.setValue(instance, property.newPropertyCollector().getValue());
       }
+
     }
 
     if (jsonKey != null) {
@@ -294,24 +360,22 @@ public class DefaultFieldClassBinding
     // JsonUtil.consumeAndAssert(jsonParser, JsonToken.END_OBJECT);
 
     callAfterDeserialize(instance, parentInstance);
-    collector.add(instance);
-
-    return true;
+    return instance;
   }
 
-  private boolean readCollapsed(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  private List<Object> readCollapsed(Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
 
     Predicate<FlagProperty> flagFilter = null;
 
-    FlagProperty jsonKey = getJsonKey();
+    FlagProperty jsonKey = getJsonKeyFlagInstance();
     if (jsonKey != null) {
       flagFilter = (flag) -> {
         return !jsonKey.equals(flag);
       };
     }
 
-    FlagProperty jsonValueKey = getJsonValueKeyFlag();
+    FlagProperty jsonValueKey = getJsonValueKeyFlagInstance();
     if (jsonValueKey != null) {
       if (flagFilter == null) {
         flagFilter = (flag) -> {
@@ -324,9 +388,9 @@ public class DefaultFieldClassBinding
       }
     }
 
-    Map<String, ? extends NamedProperty> properties = getProperties(flagFilter);
+    Map<String, ? extends NamedProperty> properties = getNamedInstances(flagFilter);
 
-    Map<NamedProperty, Supplier<? extends Object>> parsedProperties = new HashMap<>();
+    Map<Property, Supplier<? extends Object>> parsedProperties = new HashMap<>();
     JsonParser jsonParser = context.getReader();
 
     // JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
@@ -355,24 +419,36 @@ public class DefaultFieldClassBinding
 
       boolean handled = false;
       if (property != null) {
-        if (property instanceof FieldValueProperty && values == null) {
+        // this is a recognized flag
+
+        if (jsonValueKey != null && property.equals(jsonValueKey)) {
+          throw new IOException(String.format(
+              "JSON value key configured, but found standard flag for the value key '%s'", property.toCoordinates()));
+        }
+
+        // Now parse
+        Supplier<? extends Object> supplier = ((FlagProperty) property).readValueAndSupply(context);
+        parsedProperties.put(property, supplier);
+        handled = true;
+      } else {
+        // this may be a value key value, an unrecognized flag, or the field value
+        FieldValueProperty fieldValue = getFieldValue();
+        if (jsonValueKey != null) {
+          // treat this as the value key
+          String key = jsonParser.nextFieldName();
+          Supplier<? extends Object> supplier = jsonValueKey.readValueAndSupply(key);
+          parsedProperties.put(jsonValueKey, supplier);
+
           values = handleCollapsedValues(parentInstance, context);
           handled = true;
-        } else if (property instanceof FlagProperty) {
-          Supplier<? extends Object> supplier = ((FlagProperty) property).readValueAndSupply(context);
-          parsedProperties.put(property, supplier);
-          handled = true;
         } else {
-          throw new BindingException(String.format("non-flag property found '%s' at '%s'", propertyName,
-              JsonUtil.toString(jsonParser.getCurrentLocation())));
+          String valueKeyName = fieldValue.getJsonValueKeyName();
+          if (propertyName.equals(valueKeyName)) {
+            // treat this as the field value
+            values = handleCollapsedValues(parentInstance, context);
+            handled = true;
+          }
         }
-      } else if (jsonValueKey != null && values == null) {
-        String key = jsonParser.nextFieldName();
-        Supplier<? extends Object> supplier = jsonValueKey.readValueAndSupply(key);
-        parsedProperties.put(jsonValueKey, supplier);
-
-        values = handleCollapsedValues(parentInstance, context);
-        handled = true;
       }
 
       if (handled) {
@@ -405,13 +481,14 @@ public class DefaultFieldClassBinding
 
     // now we need to clone one item per value
     // TODO: handle the case where there are no values
+    List<Object> retval;
     if (values == null) {
       Object item = newInstance();
 
       callBeforeDeserialize(item, parentInstance);
 
-      for (Map.Entry<NamedProperty, Supplier<? extends Object>> entry : parsedProperties.entrySet()) {
-        NamedProperty property = entry.getKey();
+      for (Map.Entry<Property, Supplier<? extends Object>> entry : parsedProperties.entrySet()) {
+        Property property = entry.getKey();
         Supplier<? extends Object> supplier = entry.getValue();
 
         property.setValue(item, supplier.get());
@@ -419,8 +496,9 @@ public class DefaultFieldClassBinding
 
       callAfterDeserialize(item, parentInstance);
 
-      collector.add(item);
+      retval = Collections.singletonList(item);
     } else {
+      List<Object> items = new ArrayList<>(values.size());
       for (Object value : values) {
         Object item = newInstance();
 
@@ -428,8 +506,8 @@ public class DefaultFieldClassBinding
 
         fieldValue.setValue(item, value);
 
-        for (Map.Entry<NamedProperty, Supplier<? extends Object>> entry : parsedProperties.entrySet()) {
-          NamedProperty property = entry.getKey();
+        for (Map.Entry<Property, Supplier<? extends Object>> entry : parsedProperties.entrySet()) {
+          Property property = entry.getKey();
           Supplier<? extends Object> supplier = entry.getValue();
 
           property.setValue(item, supplier.get());
@@ -437,10 +515,11 @@ public class DefaultFieldClassBinding
 
         callAfterDeserialize(item, parentInstance);
 
-        collector.add(item);
+        items.add(item);
       }
+      retval = items;
     }
-    return true;
+    return retval;
   }
 
   private List<? extends Object> handleCollapsedValues(Object parentInstance, JsonParsingContext context)
@@ -452,12 +531,24 @@ public class DefaultFieldClassBinding
     ListPropertyCollector collector = new ListPropertyCollector();
     if (jsonParser.hasToken(JsonToken.START_ARRAY)) {
       while (!jsonParser.hasToken(JsonToken.END_ARRAY)) {
-        fieldValue.readValue(collector, parentInstance, context);
+        Object value = fieldValue.readValue(parentInstance, context);
+        if (value != null) {
+          collector.add(value);
+        }
       }
     } else {
-      fieldValue.readValue(collector, parentInstance, context);
+      Object value = fieldValue.readValue(parentInstance, context);
+      if (value != null) {
+        collector.add(value);
+      }
     }
-    return collector.getValue();
+
+    List<? extends Object> instance = collector.getValue();
+    if (context.isValidating()) {
+      validate(instance);
+    }
+
+    return instance;
   }
 
   @Override
@@ -492,14 +583,14 @@ public class DefaultFieldClassBinding
 
     Predicate<FlagProperty> flagFilter = null;
 
-    FlagProperty jsonKey = getJsonKey();
+    FlagProperty jsonKey = getJsonKeyFlagInstance();
     if (jsonKey != null) {
       flagFilter = (flag) -> {
         return !jsonKey.equals(flag);
       };
     }
 
-    FlagProperty jsonValueKey = getJsonValueKeyFlag();
+    FlagProperty jsonValueKey = getJsonValueKeyFlagInstance();
     if (jsonValueKey != null) {
       if (flagFilter == null) {
         flagFilter = (flag) -> {
@@ -512,7 +603,7 @@ public class DefaultFieldClassBinding
       }
     }
 
-    Map<String, ? extends NamedProperty> properties = getProperties(flagFilter);
+    Map<String, ? extends NamedProperty> properties = getNamedInstances(flagFilter);
 
     JsonGenerator writer = context.getWriter();
 
@@ -543,7 +634,7 @@ public class DefaultFieldClassBinding
         if (jsonValueKey != null) {
           valueKeyName = jsonValueKey.getValueAsString(jsonValueKey.getValue(item));
         } else {
-          valueKeyName = getFieldValue().getJsonPropertyName();
+          valueKeyName = getFieldValue().getJsonValueKeyName();
         }
         writer.writeFieldName(valueKeyName);
         getFieldValue().writeValue(fieldValue, context);
@@ -559,4 +650,48 @@ public class DefaultFieldClassBinding
     }
   }
 
+  @Override
+  public DataTypes getDatatype() {
+    return DataTypes.getDataTypeForAdapter(getFieldValue().getJavaTypeAdapter());
+  }
+
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+   * first accessed.
+   */
+  protected synchronized void checkModelConstraints() {
+    if (constraints == null) {
+      constraints = new ValueConstraintSupport(this);
+    }
+  }
+
+  @Override
+  public List<? extends IConstraint> getConstraints() {
+    checkModelConstraints();
+    return constraints.getConstraints();
+  }
+
+  @Override
+  public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+    checkModelConstraints();
+    return constraints.getAllowedValuesContraints();
+  }
+
+  @Override
+  public List<? extends IMatchesConstraint> getMatchesConstraints() {
+    checkModelConstraints();
+    return constraints.getMatchesConstraints();
+  }
+
+  @Override
+  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+    checkModelConstraints();
+    return constraints.getIndexHasKeyConstraints();
+  }
+
+  @Override
+  public List<? extends IExpectConstraint> getExpectConstraints() {
+    checkModelConstraints();
+    return constraints.getExpectConstraints();
+  }
 }

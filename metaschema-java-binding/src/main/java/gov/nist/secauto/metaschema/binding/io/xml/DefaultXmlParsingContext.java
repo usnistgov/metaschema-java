@@ -26,34 +26,22 @@
 
 package gov.nist.secauto.metaschema.binding.io.xml;
 
+import gov.nist.secauto.metaschema.binding.io.context.AbstractParsingContext;
+
 import org.codehaus.stax2.XMLEventReader2;
 
 import java.util.Objects;
 
-public class DefaultXmlParsingContext implements XmlParsingContext {
-  private final XMLEventReader2 eventReader;
-  private final XmlProblemHandler xmlProblemHandler;
+public class DefaultXmlParsingContext
+    extends AbstractParsingContext<XMLEventReader2, XmlProblemHandler>
+    implements XmlParsingContext {
 
   public DefaultXmlParsingContext(XMLEventReader2 eventReader) {
     this(eventReader, new DefaultXmlProblemHandler());
   }
 
   public DefaultXmlParsingContext(XMLEventReader2 eventReader,
-      XmlProblemHandler xmlProblemHandler) {
-    Objects.requireNonNull(eventReader, "eventReader");
-    Objects.requireNonNull(xmlProblemHandler, "xmlProblemHandler");
-    this.eventReader = eventReader;
-    this.xmlProblemHandler = xmlProblemHandler;
+      XmlProblemHandler problemHandler) {
+    super(eventReader, problemHandler, false);
   }
-
-  @Override
-  public XmlProblemHandler getProblemHandler() {
-    return xmlProblemHandler;
-  }
-
-  @Override
-  public XMLEventReader2 getReader() {
-    return eventReader;
-  }
-
 }

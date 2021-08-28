@@ -29,6 +29,12 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValues;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
+
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -36,10 +42,10 @@ import java.lang.annotation.Target;
  * This marker annotation indicates that a class represents a Metaschema definition (i.e., assembly,
  * field, flag).
  */
+@Documented
 @Retention(RUNTIME)
 @Target(TYPE)
 public @interface MetaschemaField {
-
   /**
    * Defines if the annotated class representing a Metaschema Field is collapsible, meaning fields
    * with the same set of flag/values can be combined together, with an array of values containing the
@@ -50,6 +56,33 @@ public @interface MetaschemaField {
    * 
    * @return {@code true} if the field is collapsible, or {@code false} otherwise
    */
-  boolean isCollapsible() default true;
+  boolean isCollapsible() default false;
 
+  /**
+   * Get the allowed value constraints for this field.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  AllowedValues[] allowedValues() default {};
+
+  /**
+   * Get the matches constraints for this field.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  Matches[] matches() default {};
+
+  /**
+   * Get the index-has-key constraints for this field.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  IndexHasKey[] indexHasKey() default {};
+
+  /**
+   * Get the expect constraints for this field.
+   * 
+   * @return the expected constraints or an empty array if no expected constraints are defined
+   */
+  Expect[] expect() default {};
 }

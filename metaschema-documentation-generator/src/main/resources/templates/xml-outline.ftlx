@@ -1,0 +1,16 @@
+<#macro assemblyDefinition def>
+  <div class="model-container">
+    <details class="OM-entry" open="open">
+      <summary>
+        <span class="sq"><span class="nobr">&lt;<a class="OM-name" href="../xml-reference/#/assessment-plan">assessment-plan</a></span> <span class="nobr" id="/assessment-plan/@uuid"><a class="OM-name" href="../xml-reference/#/assessment-plan/@uuid">uuid</a>="<span class="OM-datatype"><a href="/reference/datatypes/#uuid">uuid</a></span>"</span>&gt;<span class="show-closed"> … <span class="nobr">&lt;/assessment-plan&gt;</span></span></span><span class="sq cardinality"> <span class="OM-cardinality">[1]</span></span>
+      </summary>
+    </details>
+  </div>
+</#macro>
+<div xmlns="http://www.w3.org/1999/xhtml" class="xml-outline">
+<#list definitions as def>
+  <#if def.modelType == "ASSEMBLY" && def.root>
+  <@assemblyDefinition def=def />
+  </#if>
+</#list>
+</div>

@@ -30,7 +30,7 @@ import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 
 import java.util.Set;
 
@@ -40,6 +40,6 @@ public interface PropertyGenerator {
 
   MarkupLine getDescription();
 
-  Set<ObjectDefinition> build(TypeSpec.Builder builder, TypeResolver typeResolver);
+  Set<MetaschemaFlaggedDefinition> build(TypeSpec.Builder builder, TypeResolver typeResolver);
 
 }

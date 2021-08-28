@@ -4,24 +4,26 @@
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
 		<artifactId>metaschema-framework</artifactId>
-		<version>0.4.0</version>
+		<version>0.4.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>metaschema-java-binding</artifactId>
 
 	<name>Metaschema XML, JSON, and YAML Data Binding</name>
 	<description>A Metaschema binding-based parser for Java objects supporting serialization of conformant XML, JSON, and YAML data.</description>
-	<url>https://pages.nist.gov/metaschema</url>
 
-	<scm>
-		<url>https://github.com/usnistgov/metaschema-java/tree/main/metaschema-java-binding</url>
-	  <tag>v0.4.0</tag>
-  </scm>
+  <url>${site.url}${project.artifactId}/</url>
+  <distributionManagement>
+    <site>
+      <id>nist-pages</id>
+      <url>${site.url}${project.artifactId}/</url>
+    </site>
+  </distributionManagement>
 
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>metaschema-java-datatypes</artifactId>
+			<artifactId>metaschema-model-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>

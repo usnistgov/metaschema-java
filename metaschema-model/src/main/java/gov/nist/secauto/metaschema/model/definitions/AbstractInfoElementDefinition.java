@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.definitions;
 
 import gov.nist.secauto.metaschema.model.Metaschema;
 
-public abstract class AbstractInfoElementDefinition implements InfoElementDefinition {
+public abstract class AbstractInfoElementDefinition implements MetaschemaDefinition {
   private final Metaschema metaschema;
 
   /**

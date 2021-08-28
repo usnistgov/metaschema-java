@@ -1,28 +1,36 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
 		<artifactId>metaschema-framework</artifactId>
-		<version>0.4.0</version>
+		<version>0.4.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>metaschema-schema-generator</artifactId>
 
 	<name>Metaschema XML and JSON Schema Generator</name>
-	<url>https://pages.nist.gov/metaschema</url>
 
-	<scm>
-		<url>https://github.com/usnistgov/metaschema-java/tree/main/metaschema-schema-generator</url>
-	  <tag>v0.4.0</tag>
-  </scm>
+  <url>${site.url}${project.artifactId}/</url>
+  <distributionManagement>
+    <site>
+      <id>nist-pages</id>
+      <url>${site.url}${project.artifactId}/</url>
+    </site>
+  </distributionManagement>
 
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>metaschema-model</artifactId>
 		</dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>metaschema-freemarker-support</artifactId>
+    </dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>

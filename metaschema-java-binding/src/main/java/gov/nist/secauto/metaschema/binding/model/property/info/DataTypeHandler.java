@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.binding.model.property.info;
 
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ import java.util.Collection;
 
 // TODO: get rid of functional interfaces
 public interface DataTypeHandler extends JsonBindingSupplier, XmlBindingSupplier, XmlBindingConsumer {
+  NamedModelProperty getProperty();
 
   /**
    * 

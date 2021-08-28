@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.codegen.binding.config;
 
 import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 
 public interface BindingConfiguration {
 
@@ -47,5 +47,5 @@ public interface BindingConfiguration {
    *          the definition to generate the Java class name for
    * @return a Java class name
    */
-  String getClassName(ObjectDefinition definition);
+  String getClassName(MetaschemaFlaggedDefinition definition);
 }

@@ -26,20 +26,30 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.GlobalFlagDefinition;
-import gov.nist.itl.metaschema.model.m4.xml.ScopeType;
+import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.definitions.AbstractFlagDefinition;
-import gov.nist.secauto.metaschema.model.definitions.DataType;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.definitions.AbstractInfoElementDefinition;
+import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.GlobalInfoElementDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.model.xml.constraint.ValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalFlagDefinitionType;
+
+import java.util.List;
 
 public class XmlGlobalFlagDefinition
-    extends AbstractFlagDefinition
-    implements GlobalInfoElementDefinition {
-  private final GlobalFlagDefinition xmlFlag;
+    extends AbstractInfoElementDefinition
+    implements FlagDefinition, GlobalInfoElementDefinition {
+  private final GlobalFlagDefinitionType xmlFlag;
+  private IValueConstraintSupport constraints;
 
   /**
    * Constructs a new Metaschema flag definition from an XML representation bound to Java objects.
@@ -49,7 +59,7 @@ public class XmlGlobalFlagDefinition
    * @param metaschema
    *          the containing Metaschema
    */
-  public XmlGlobalFlagDefinition(GlobalFlagDefinition xmlFlag, XmlMetaschema metaschema) {
+  public XmlGlobalFlagDefinition(GlobalFlagDefinitionType xmlFlag, XmlMetaschema metaschema) {
     super(metaschema);
     this.xmlFlag = xmlFlag;
   }
@@ -59,26 +69,66 @@ public class XmlGlobalFlagDefinition
    * 
    * @return the underlying XML data
    */
-  protected GlobalFlagDefinition getXmlFlag() {
+  protected GlobalFlagDefinitionType getXmlFlag() {
     return xmlFlag;
+  }
+
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+   * first accessed.
+   */
+  protected synchronized void checkModelConstraints() {
+    if (constraints == null) {
+      if (getXmlFlag().isSetConstraint()) {
+        constraints = new ValueConstraintSupport(getXmlFlag().getConstraint());
+      } else {
+        constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+      }
+    }
+  }
+
+  @Override
+  public List<? extends IConstraint> getConstraints() {
+    checkModelConstraints();
+    return constraints.getConstraints();
+  }
+
+  @Override
+  public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+    checkModelConstraints();
+    return constraints.getAllowedValuesContraints();
+  }
+
+  @Override
+  public List<? extends IMatchesConstraint> getMatchesConstraints() {
+    checkModelConstraints();
+    return constraints.getMatchesConstraints();
+  }
+
+  @Override
+  public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+    checkModelConstraints();
+    return constraints.getIndexHasKeyConstraints();
+  }
+
+  @Override
+  public List<? extends IExpectConstraint> getExpectConstraints() {
+    checkModelConstraints();
+    return constraints.getExpectConstraints();
   }
 
   @Override
   public ModuleScopeEnum getModuleScope() {
-    ModuleScopeEnum retval = Metaschema.DEFAULT_MODEL_SCOPE;
+    ModuleScopeEnum retval = MetaschemaDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
     if (getXmlFlag().isSetScope()) {
-      switch (getXmlFlag().getScope().intValue()) {
-      case ScopeType.INT_GLOBAL:
-        retval = ModuleScopeEnum.INHERITED;
-        break;
-      case ScopeType.INT_LOCAL:
-        retval = ModuleScopeEnum.LOCAL;
-        break;
-      default:
-        throw new UnsupportedOperationException(getXmlFlag().getScope().toString());
-      }
+      retval = getXmlFlag().getScope();
     }
     return retval;
+  }
+
+  @Override
+  public String getName() {
+    return getXmlFlag().getName();
   }
 
   @Override
@@ -88,6 +138,12 @@ public class XmlGlobalFlagDefinition
       retval = getName();
     }
     return retval;
+  }
+
+  @Override
+  public String getXmlNamespace() {
+    return null;
+    // return getContainingMetaschema().getXmlNamespace().toString();
   }
 
   @Override
@@ -101,18 +157,13 @@ public class XmlGlobalFlagDefinition
   }
 
   @Override
-  public String getName() {
-    return getXmlFlag().getName();
-  }
-
-  @Override
-  public DataType getDatatype() {
-    DataType retval;
+  public DataTypes getDatatype() {
+    DataTypes retval;
     if (getXmlFlag().isSetAsType()) {
-      retval = DataType.lookup(getXmlFlag().getAsType());
+      retval = getXmlFlag().getAsType();
     } else {
       // the default
-      retval = Metaschema.DEFAULT_DATA_TYPE;
+      retval = DataTypes.DEFAULT_DATA_TYPE;
     }
     return retval;
   }

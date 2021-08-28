@@ -32,10 +32,13 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import javax.xml.namespace.QName;
@@ -45,10 +48,18 @@ import javax.xml.stream.events.StartElement;
 // TODO: implement can handle QName for XML parsing
 public class JavaTypeAdapterDataTypeHandler implements DataTypeHandler {
   private final JavaTypeAdapter<?> adapter;
+  private final NamedModelProperty property;
 
-  public JavaTypeAdapterDataTypeHandler(JavaTypeAdapter<?> adapter) {
+  public JavaTypeAdapterDataTypeHandler(JavaTypeAdapter<?> adapter, NamedModelProperty property) {
     Objects.requireNonNull(adapter, "adapter");
+    Objects.requireNonNull(property, "property");
     this.adapter = adapter;
+    this.property = property;
+  }
+
+  @Override
+  public NamedModelProperty getProperty() {
+    return property;
   }
 
   @Override
@@ -68,27 +79,16 @@ public class JavaTypeAdapterDataTypeHandler implements DataTypeHandler {
   }
 
   @Override
-  public boolean get(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public List<Object> get(Object parentInstance, JsonParsingContext context)
       throws BindingException, IOException {
     Object value = adapter.parse(context.getReader());
-    boolean retval = false;
-    if (value != null) {
-      collector.add(value);
-      retval = true;
-    }
-    return retval;
+    return value != null ? Collections.singletonList(value) : Collections.emptyList();
   }
 
   @Override
-  public boolean get(PropertyCollector collector, Object parentInstance, StartElement start, XmlParsingContext context)
+  public Object get(Object parentInstance, StartElement start, XmlParsingContext context)
       throws BindingException, IOException, XMLStreamException {
-    Object value = adapter.parse(context.getReader());
-    boolean retval = false;
-    if (value != null) {
-      collector.add(value);
-      retval = true;
-    }
-    return retval;
+    return adapter.parse(context.getReader());
   }
 
   @Override

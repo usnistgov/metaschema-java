@@ -26,21 +26,22 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.AssemblyDocument;
-import gov.nist.itl.metaschema.model.m4.xml.ChoiceDocument;
-import gov.nist.itl.metaschema.model.m4.xml.FieldDocument;
-import gov.nist.itl.metaschema.model.m4.xml.FlagDocument;
-import gov.nist.itl.metaschema.model.m4.xml.LocalAssemblyDefinition;
-import gov.nist.itl.metaschema.model.m4.xml.LocalFieldDefinition;
-import gov.nist.itl.metaschema.model.m4.xml.LocalFlagDefinition;
 import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.definitions.AbstractAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.definitions.AbstractInfoElementDefinition;
+import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.instances.AssemblyInstance;
+import gov.nist.secauto.metaschema.model.instances.AssemblyModelInstance;
 import gov.nist.secauto.metaschema.model.instances.ChoiceInstance;
 import gov.nist.secauto.metaschema.model.instances.FieldInstance;
 import gov.nist.secauto.metaschema.model.instances.FlagInstance;
-import gov.nist.secauto.metaschema.model.instances.ModelInstance;
 import gov.nist.secauto.metaschema.model.instances.ObjectModelInstance;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.AssemblyDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.ChoiceDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.FieldDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.FlagDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFieldDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFlagDefinitionType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -55,12 +56,13 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractXmlAssemblyDefinition<DEF extends AbstractXmlAssemblyDefinition<DEF,
     INSTANCE>, INSTANCE extends AssemblyInstance<DEF>>
-    extends AbstractAssemblyDefinition {
+    extends AbstractInfoElementDefinition
+    implements AssemblyDefinition {
   private Map<String, FlagInstance<?>> flagInstances;
   private Map<String, ObjectModelInstance<?>> namedModelInstances;
   private Map<String, FieldInstance<?>> fieldInstances;
   private Map<String, AssemblyInstance<?>> assemblyInstances;
-  private List<ModelInstance> modelInstances;
+  private List<AssemblyModelInstance> modelInstances;
 
   /**
    * Constructs a new Metaschema assembly definition from an XML representation bound to Java objects.
@@ -87,18 +89,18 @@ public abstract class AbstractXmlAssemblyDefinition<DEF extends AbstractXmlAssem
     // handle flags
     {
       XmlCursor cursor = getXmlAssembly().newCursor();
-      cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
-          + "$this/m:flag|$this/m:define-flag");
+      cursor.selectPath(
+          "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" + "$this/m:flag|$this/m:define-flag");
 
       Map<String, FlagInstance<?>> flagInstances = new LinkedHashMap<>();
       while (cursor.toNextSelection()) {
         XmlObject obj = cursor.getObject();
         if (obj instanceof FlagDocument.Flag) {
           FlagInstance<?> flagInstance = new XmlFlagInstance((FlagDocument.Flag) obj, this);
-          flagInstances.put(flagInstance.getUseName(), flagInstance);
-        } else if (obj instanceof LocalFlagDefinition) {
-          FlagInstance<?> flagInstance = new XmlLocalFlagDefinition((LocalFlagDefinition) obj, this);
-          flagInstances.put(flagInstance.getUseName(), flagInstance);
+          flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
+        } else if (obj instanceof LocalFlagDefinitionType) {
+          FlagInstance<?> flagInstance = new XmlLocalFlagDefinition((LocalFlagDefinitionType) obj, this);
+          flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
         }
       }
 
@@ -115,19 +117,19 @@ public abstract class AbstractXmlAssemblyDefinition<DEF extends AbstractXmlAssem
 
       Map<String, FieldInstance<?>> fieldInstances = new LinkedHashMap<>();
       List<AssemblyInstance<?>> assemblyInstances = new LinkedList<>();
-      List<ModelInstance> modelInstances = new ArrayList<>(cursor.getSelectionCount());
+      List<AssemblyModelInstance> modelInstances = new ArrayList<>(cursor.getSelectionCount());
       List<ObjectModelInstance<?>> namedModelInstances = new LinkedList<>();
 
       while (cursor.toNextSelection()) {
         XmlObject obj = cursor.getObject();
         if (obj instanceof FieldDocument.Field) {
           XmlFieldInstance field = new XmlFieldInstance((FieldDocument.Field) obj, this);
-          fieldInstances.put(field.getUseName(), field);
+          fieldInstances.put(field.getEffectiveName(), field);
           modelInstances.add(field);
           namedModelInstances.add(field);
-        } else if (obj instanceof LocalFieldDefinition) {
-          XmlLocalFieldDefinition field = new XmlLocalFieldDefinition((LocalFieldDefinition) obj, this);
-          fieldInstances.put(field.getUseName(), field);
+        } else if (obj instanceof LocalFieldDefinitionType) {
+          XmlLocalFieldDefinition field = new XmlLocalFieldDefinition((LocalFieldDefinitionType) obj, this);
+          fieldInstances.put(field.getEffectiveName(), field);
           modelInstances.add(field);
           namedModelInstances.add(field);
         } else if (obj instanceof AssemblyDocument.Assembly) {
@@ -135,8 +137,8 @@ public abstract class AbstractXmlAssemblyDefinition<DEF extends AbstractXmlAssem
           assemblyInstances.add(assembly);
           modelInstances.add(assembly);
           namedModelInstances.add(assembly);
-        } else if (obj instanceof LocalAssemblyDefinition) {
-          XmlLocalAssemblyDefinition assembly = new XmlLocalAssemblyDefinition((LocalAssemblyDefinition) obj, this);
+        } else if (obj instanceof LocalAssemblyDefinitionType) {
+          XmlLocalAssemblyDefinition assembly = new XmlLocalAssemblyDefinition((LocalAssemblyDefinitionType) obj, this);
           assemblyInstances.add(assembly);
           modelInstances.add(assembly);
           namedModelInstances.add(assembly);
@@ -154,8 +156,9 @@ public abstract class AbstractXmlAssemblyDefinition<DEF extends AbstractXmlAssem
       if (assemblyInstances.isEmpty()) {
         this.assemblyInstances = Collections.emptyMap();
       } else {
+        // TODO: build this in one pass
         this.assemblyInstances = Collections.unmodifiableMap(
-            assemblyInstances.stream().collect(Collectors.toMap(AssemblyInstance::getUseName, v -> v)));
+            assemblyInstances.stream().collect(Collectors.toMap(AssemblyInstance::getEffectiveName, v -> v)));
       }
 
       this.modelInstances
@@ -164,20 +167,26 @@ public abstract class AbstractXmlAssemblyDefinition<DEF extends AbstractXmlAssem
       if (namedModelInstances.isEmpty()) {
         this.namedModelInstances = Collections.emptyMap();
       } else {
+        // TODO: build this in one pass
         this.namedModelInstances = Collections.unmodifiableMap(
-            namedModelInstances.stream().collect(Collectors.toMap(ObjectModelInstance::getUseName, v -> v)));
+            namedModelInstances.stream().collect(Collectors.toMap(ObjectModelInstance::getEffectiveName, v -> v)));
       }
     }
   }
 
   @Override
-  public Map<String, FlagInstance<?>> getFlagInstances() {
+  public Map<String, ? extends FlagInstance<?>> getFlagInstances() {
     synchronized (this) {
       if (flagInstances == null) {
         generateModel();
       }
     }
     return flagInstances;
+  }
+
+  @Override
+  public FlagInstance<?> getFlagInstanceByName(String name) {
+    return getFlagInstances().get(name);
   }
 
   @Override
@@ -191,7 +200,7 @@ public abstract class AbstractXmlAssemblyDefinition<DEF extends AbstractXmlAssem
   }
 
   @Override
-  public Map<String, FieldInstance<?>> getFieldInstances() {
+  public Map<String, ? extends FieldInstance<?>> getFieldInstances() {
     synchronized (this) {
       if (fieldInstances == null) {
         generateModel();
@@ -201,7 +210,7 @@ public abstract class AbstractXmlAssemblyDefinition<DEF extends AbstractXmlAssem
   }
 
   @Override
-  public Map<String, AssemblyInstance<?>> getAssemblyInstances() {
+  public Map<String, ? extends AssemblyInstance<?>> getAssemblyInstances() {
     synchronized (this) {
       if (assemblyInstances == null) {
         generateModel();
@@ -211,7 +220,7 @@ public abstract class AbstractXmlAssemblyDefinition<DEF extends AbstractXmlAssem
   }
 
   @Override
-  public List<ModelInstance> getModelInstances() {
+  public List<AssemblyModelInstance> getModelInstances() {
     synchronized (this) {
       if (modelInstances == null) {
         generateModel();
@@ -228,8 +237,7 @@ public abstract class AbstractXmlAssemblyDefinition<DEF extends AbstractXmlAssem
       }
     }
     // this shouldn't get called all that often, so this is better than allocating memory
-    return modelInstances.stream().filter(obj -> obj instanceof ChoiceInstance)
-        .map(obj -> (ChoiceInstance) obj)
+    return modelInstances.stream().filter(obj -> obj instanceof ChoiceInstance).map(obj -> (ChoiceInstance) obj)
         .collect(Collectors.toList());
   }
 }

@@ -30,33 +30,35 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
-import gov.nist.secauto.metaschema.binding.model.annotations.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.binding.model.annotations.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
+import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 import java.util.List;
 import java.util.Map;
 
 @MetaschemaAssembly(rootName = "root")
 public class BoundClass {
-  @Flag(name = "id", typeAdapter = StringAdapter.class)
+  @Flag(useName = "id", typeAdapter = StringAdapter.class)
   private String id;
 
   /**
    * An optional simple field.
    */
-  @Field(name = "single-simple",
+  @Field(useName = "single-simple",
       typeAdapter = StringAdapter.class,
-      valueName = "value")
+      valueName = "value",
+      inJson = JsonGroupAsBehavior.NONE,
+      inXml = XmlGroupAsBehavior.UNGROUPED)
   private String singleSimpleField;
 
   /**
    * An optional simple field.
    */
-  @Field(name = "grouped-list-simple-item",
+  @Field(useName = "grouped-list-simple-item",
       typeAdapter = StringAdapter.class,
       valueName = "value",
       minOccurs = 0,
@@ -69,13 +71,15 @@ public class BoundClass {
   /**
    * An optional field with a flag.
    */
-  @Field(name = "single-flagged")
+  @Field(useName = "single-flagged",
+      inJson = JsonGroupAsBehavior.NONE,
+      inXml = XmlGroupAsBehavior.UNGROUPED)
   private BoundClass.FlaggedField singleFlaggedField;
 
   /**
    * A list of fields with a flag, that is grouped in XML.
    */
-  @Field(name = "grouped-list-item",
+  @Field(useName = "grouped-list-item",
       minOccurs = 0,
       maxOccurs = -1,
       groupName = "grouped-list-items",
@@ -86,7 +90,7 @@ public class BoundClass {
   /**
    * A list of fields with a flag, which may be a singleton in JSON.
    */
-  @Field(name = "ungrouped-list-item",
+  @Field(useName = "ungrouped-list-item",
       minOccurs = 0,
       maxOccurs = -1,
       groupName = "ungrouped-list-items",
@@ -97,7 +101,7 @@ public class BoundClass {
   /**
    * A map of fields with an id key and name.
    */
-  @Field(name = "mapped-item",
+  @Field(useName = "mapped-item",
       minOccurs = 0,
       maxOccurs = -1,
       groupName = "mapped-items",
@@ -105,7 +109,9 @@ public class BoundClass {
       inXml = XmlGroupAsBehavior.UNGROUPED)
   private Map<String, BoundClass.KeyedField> mappedField;
 
-  @Assembly(name = "single-flagged-assembly")
+  @Assembly(useName = "single-flagged-assembly",
+      inJson = JsonGroupAsBehavior.NONE,
+      inXml = XmlGroupAsBehavior.UNGROUPED)
   private FlaggedAssemblyClass singleFlaggedAssembly;
 
   public BoundClass() {
@@ -180,7 +186,7 @@ public class BoundClass {
    */
   @MetaschemaField(isCollapsible = false)
   public static class FlaggedField {
-    @Flag(name = "id", typeAdapter = StringAdapter.class)
+    @Flag(useName = "id", typeAdapter = StringAdapter.class)
     private String _id;
 
     @FieldValue(name = "STRXVALUE", typeAdapter = StringAdapter.class)
@@ -212,10 +218,10 @@ public class BoundClass {
   @MetaschemaField(isCollapsible = true)
   public static class KeyedField {
     @JsonKey
-    @Flag(name = "id", typeAdapter = StringAdapter.class)
+    @Flag(useName = "id", typeAdapter = StringAdapter.class)
     private String _id;
 
-    @Flag(name = "name", typeAdapter = StringAdapter.class)
+    @Flag(useName = "name", typeAdapter = StringAdapter.class)
     private String _name;
 
     @FieldValue(name = "VALUE", typeAdapter = StringAdapter.class)

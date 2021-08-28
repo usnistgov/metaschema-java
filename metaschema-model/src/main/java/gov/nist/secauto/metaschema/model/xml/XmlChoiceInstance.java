@@ -26,19 +26,19 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.AssemblyDocument;
-import gov.nist.itl.metaschema.model.m4.xml.ChoiceDocument;
-import gov.nist.itl.metaschema.model.m4.xml.FieldDocument;
-import gov.nist.itl.metaschema.model.m4.xml.LocalAssemblyDefinition;
-import gov.nist.itl.metaschema.model.m4.xml.LocalFieldDefinition;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractChoiceInstance;
 import gov.nist.secauto.metaschema.model.instances.AssemblyInstance;
+import gov.nist.secauto.metaschema.model.instances.AssemblyModelInstance;
 import gov.nist.secauto.metaschema.model.instances.ChoiceInstance;
 import gov.nist.secauto.metaschema.model.instances.FieldInstance;
-import gov.nist.secauto.metaschema.model.instances.ModelInstance;
 import gov.nist.secauto.metaschema.model.instances.ObjectModelInstance;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.AssemblyDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.ChoiceDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.FieldDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFieldDefinitionType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -57,7 +57,7 @@ public class XmlChoiceInstance
   private final Map<String, FieldInstance<?>> fieldInstances;
   private final Map<String, AssemblyInstance<?>> assemblyInstances;
   private final Map<String, ObjectModelInstance<?>> namedModelInstances;
-  private final List<ModelInstance> modelInstances;
+  private final List<AssemblyModelInstance> modelInstances;
 
   /**
    * Constructs a mutually exclusive choice between two possible objects.
@@ -78,20 +78,20 @@ public class XmlChoiceInstance
 
     Map<String, FieldInstance<?>> fieldInstances = new LinkedHashMap<>();
     List<AssemblyInstance<?>> assemblyInstances = new LinkedList<>();
-    List<ModelInstance> modelInstances = new ArrayList<>(cursor.getSelectionCount());
+    List<AssemblyModelInstance> modelInstances = new ArrayList<>(cursor.getSelectionCount());
     List<ObjectModelInstance<?>> namedModelInstances = new LinkedList<>();
 
     while (cursor.toNextSelection()) {
       XmlObject obj = cursor.getObject();
       if (obj instanceof FieldDocument.Field) {
         XmlFieldInstance field = new XmlFieldInstance((FieldDocument.Field) obj, this.getContainingDefinition());
-        fieldInstances.put(field.getUseName(), field);
+        fieldInstances.put(field.getEffectiveName(), field);
         modelInstances.add(field);
         namedModelInstances.add(field);
-      } else if (obj instanceof LocalFieldDefinition) {
+      } else if (obj instanceof LocalFieldDefinitionType) {
         XmlLocalFieldDefinition field
-            = new XmlLocalFieldDefinition((LocalFieldDefinition) obj, this.getContainingDefinition());
-        fieldInstances.put(field.getUseName(), field);
+            = new XmlLocalFieldDefinition((LocalFieldDefinitionType) obj, this.getContainingDefinition());
+        fieldInstances.put(field.getEffectiveName(), field);
         modelInstances.add(field);
         namedModelInstances.add(field);
       } else if (obj instanceof AssemblyDocument.Assembly) {
@@ -100,9 +100,9 @@ public class XmlChoiceInstance
         assemblyInstances.add(assembly);
         modelInstances.add(assembly);
         namedModelInstances.add(assembly);
-      } else if (obj instanceof LocalAssemblyDefinition) {
+      } else if (obj instanceof LocalAssemblyDefinitionType) {
         XmlLocalAssemblyDefinition assembly
-            = new XmlLocalAssemblyDefinition((LocalAssemblyDefinition) obj, this.getContainingDefinition());
+            = new XmlLocalAssemblyDefinition((LocalAssemblyDefinitionType) obj, this.getContainingDefinition());
         assemblyInstances.add(assembly);
         modelInstances.add(assembly);
         namedModelInstances.add(assembly);
@@ -120,8 +120,9 @@ public class XmlChoiceInstance
     if (assemblyInstances.isEmpty()) {
       this.assemblyInstances = Collections.emptyMap();
     } else {
+      // TODO: build this in one pass
       this.assemblyInstances = Collections.unmodifiableMap(
-          assemblyInstances.stream().collect(Collectors.toMap(AssemblyInstance::getUseName, v -> v)));
+          assemblyInstances.stream().collect(Collectors.toMap(AssemblyInstance::getEffectiveName, v -> v)));
     }
 
     this.modelInstances
@@ -130,9 +131,16 @@ public class XmlChoiceInstance
     if (namedModelInstances.isEmpty()) {
       this.namedModelInstances = Collections.emptyMap();
     } else {
+      // TODO: build this in one pass
       this.namedModelInstances = Collections.unmodifiableMap(
-          namedModelInstances.stream().collect(Collectors.toMap(ObjectModelInstance::getUseName, v -> v)));
+          namedModelInstances.stream().collect(Collectors.toMap(ObjectModelInstance::getEffectiveName, v -> v)));
     }
+  }
+
+  @Override
+  public String getGroupAsName() {
+    // a choice does not have a name
+    return null;
   }
 
   /**
@@ -168,7 +176,7 @@ public class XmlChoiceInstance
   }
 
   @Override
-  public List<ModelInstance> getModelInstances() {
+  public List<AssemblyModelInstance> getModelInstances() {
     return modelInstances;
   }
 

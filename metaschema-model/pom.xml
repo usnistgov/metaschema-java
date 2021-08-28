@@ -1,26 +1,30 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
 		<artifactId>metaschema-framework</artifactId>
-		<version>0.4.0</version>
+		<version>0.4.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>metaschema-model</artifactId>
 
 	<name>Metaschema Model</name>
-	<url>https://pages.nist.gov/metaschema</url>
 
-	<scm>
-		<url>https://github.com/usnistgov/metaschema-java/tree/main/metaschema-model</url>
-	  <tag>v0.4.0</tag>
-  </scm>
+	<url>${site.url}${project.artifactId}/</url>
+	<distributionManagement>
+		<site>
+			<id>nist-pages</id>
+			<url>${site.url}${project.artifactId}/</url>
+		</site>
+	</distributionManagement>
 
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>metaschema-java-datatypes</artifactId>
+			<artifactId>metaschema-model-common</artifactId>
 		</dependency>
 
 		<dependency>
@@ -43,6 +47,13 @@
 		</dependency>
 	</dependencies>
 	<build>
+		<resources>
+			<resource>
+				<directory>${project.build.directory}/generated-resources/xmlbeans</directory>
+			</resource>
+		</resources>
+<!-- 		<sourceDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceDirectory> -->
+<!--     <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory> -->
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -88,21 +99,21 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>xmlbeans-maven-plugin</artifactId>
+				<groupId>org.apache.xmlbeans</groupId>
+				<artifactId>xmlbeans</artifactId>
 				<executions>
 					<execution>
 						<id>metaschema-M4</id>
 						<goals>
-							<goal>xmlbeans</goal>
+							<goal>compile</goal>
 						</goals>
 						<configuration>
-							<schemaDirectory>${project.build.directory}/schema/xsd</schemaDirectory>
-							<sourceGenerationDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceGenerationDirectory>
-							<xmlConfigs>
-								<xmlConfig implementation="java.io.File">${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</xmlConfig>
-							</xmlConfigs>
-							<staleFile>${project.build.directory}/generated-sources/xmlbeans-M4/.staleFlag</staleFile>
+							<sourceDir>${project.build.directory}/schema/xsd</sourceDir>
+							<javaTargetDir>${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
+							<xmlConfigs>${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</xmlConfigs>
+							<classTargetDir>${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
+							<name>metaschema</name>
+							<repackage>gov.nist.secauto.metaschema.model.xmlbeans.metadata</repackage>
 						</configuration>
 					</execution>
 				</executions>
@@ -124,6 +135,19 @@
 					</sourceDirectories>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<forkCount>1C</forkCount>
+					<reuseForks>true</reuseForks>
+					<argLine>-Xmx1024m</argLine>
+					<excludedEnvironmentVariables>
+						<excludedEnvironmentVariable>JAVA_TOOL_OPTIONS</excludedEnvironmentVariable>
+					</excludedEnvironmentVariables>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>

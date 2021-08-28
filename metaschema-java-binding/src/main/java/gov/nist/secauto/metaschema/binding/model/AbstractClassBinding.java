@@ -32,19 +32,24 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
 import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
+import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultFlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
-import gov.nist.secauto.metaschema.binding.model.property.Property;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -63,7 +68,7 @@ public abstract class AbstractClassBinding implements ClassBinding {
   private final Class<?> clazz;
   private final List<Method> beforeDeserializeMethods;
   private final List<Method> afterDeserializeMethods;
-  private Map<String, FlagProperty> flagProperties;
+  private Map<String, FlagProperty> flagInstances;
   private FlagProperty jsonKeyFlag;
 
   /**
@@ -83,74 +88,6 @@ public abstract class AbstractClassBinding implements ClassBinding {
     this.afterDeserializeMethods = ClassIntrospector.getMatchingMethods(clazz, "afterDeserialize", Object.class);
   }
 
-  /**
-   * Initialize the content model of the class.
-   */
-  protected void initialize() {
-
-    Map<String, FlagProperty> flags = new LinkedHashMap<>();
-    for (Field field : clazz.getDeclaredFields()) {
-
-      boolean handled = false;
-
-      Ignore ignore = field.getAnnotation(Ignore.class);
-      if (ignore != null) {
-        handled = true;
-      }
-
-      if (!handled) {
-        Flag flag = field.getAnnotation(Flag.class);
-        if (flag != null) {
-          FlagProperty binding = new DefaultFlagProperty(this, field, bindingContext);
-          flags.put(binding.getJavaPropertyName(), binding);
-          handled = true;
-        }
-      }
-
-      if (!handled) {
-        handled = initializeField(field);
-      }
-
-      if (!handled) {
-        throw new IllegalArgumentException(
-            String.format("Class '%s' has unbound field '%s'", getBoundClass().getName(), field.getName()));
-      }
-    }
-    this.flagProperties = flags.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flags);
-
-    FlagProperty jsonKey = null;
-    for (FlagProperty flag : getFlagProperties().values()) {
-
-      if (flag.isJsonKey()) {
-        jsonKey = flag;
-      }
-
-      initializeFlag(flag);
-    }
-    this.jsonKeyFlag = jsonKey;
-  }
-
-  /**
-   * Used to delegate flag processing to subclasses.
-   * 
-   * @param flag
-   *          the flag to process
-   */
-  protected void initializeFlag(FlagProperty flag) {
-    // do nothing
-  }
-
-  /**
-   * Used to delegate field processing to subclasses. Subclasses should not call this method.
-   * 
-   * @param field
-   *          the Java class field to process
-   * @return {@code true} if the field was handled, or {@code false} otherwise
-   */
-  protected boolean initializeField(Field field) {
-    return false;
-  }
-
   @Override
   public Class<?> getBoundClass() {
     return clazz;
@@ -162,30 +99,129 @@ public abstract class AbstractClassBinding implements ClassBinding {
   }
 
   @Override
-  public Map<String, FlagProperty> getFlagProperties() {
-    return flagProperties;
+  public String getName() {
+    // there is not a provided name, but we need to have one. This will always be provided on the
+    // instance side as a use name
+    return getBoundClass().getName();
   }
 
   @Override
-  public FlagProperty getJsonKey() {
+  public String getUseName() {
+    // a use name is never provided
+    return null;
+  }
+
+  @Override
+  public String getXmlNamespace() {
+    // a namespace is never provided. This will always be defined on the instance side
+    return null;
+  }
+
+  @Override
+  public String toCoordinates() {
+    return String.format("%s ClassBinding(%s): %s", getModelType().name().toLowerCase(), getName(),
+        getBoundClass().getName());
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    return null;
+  }
+
+  /**
+   * Collect all fields that are flag instances on this class.
+   * 
+   * @param clazz
+   *          the class
+   * @return an immutable collection of flag instances
+   */
+  protected Collection<Field> getFlagInstanceFields(Class<?> clazz) {
+    Field[] fields = clazz.getDeclaredFields();
+
+    List<Field> retval = new LinkedList<>();
+
+    Class<?> superClass = clazz.getSuperclass();
+    if (superClass != null) {
+      // get flags from superclass
+      retval.addAll(getFlagInstanceFields(superClass));
+    }
+
+    for (Field field : fields) {
+      if (!field.isAnnotationPresent(Flag.class)) {
+        // skip non-flag fields
+        continue;
+      }
+
+      if (field.isAnnotationPresent(Ignore.class)) {
+        // skip this field, since it is ignored
+        continue;
+      }
+
+      retval.add(field);
+    }
+    return Collections.unmodifiableCollection(retval);
+  }
+
+  /**
+   * Initialize the flag instances for this class.
+   */
+  protected synchronized void initalizeFlagInstances() {
+    if (this.flagInstances == null) {
+      Map<String, FlagProperty> flags = new LinkedHashMap<>();
+      for (Field field : getFlagInstanceFields(clazz)) {
+
+        Flag flag = field.getAnnotation(Flag.class);
+        if (flag != null) {
+          FlagProperty flagBinding = new DefaultFlagProperty(this, field, bindingContext);
+          initializeFlagInstance(flagBinding);
+          flags.put(flagBinding.getEffectiveName(), flagBinding);
+        }
+      }
+      this.flagInstances = flags.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flags);
+    }
+  }
+
+  /**
+   * Used to delegate flag instance initialization to subclasses.
+   * 
+   * @param instance
+   *          the flag instance to process
+   */
+  protected void initializeFlagInstance(FlagProperty instance) {
+    Field field = instance.getField();
+    if (field.isAnnotationPresent(JsonKey.class)) {
+      this.jsonKeyFlag = instance;
+    }
+  }
+
+  @Override
+  public synchronized Map<String, FlagProperty> getFlagInstances() {
+    // check that the flag instances are lazy loaded
+    initalizeFlagInstances();
+    return flagInstances;
+  }
+
+  @Override
+  public boolean hasJsonKey() {
+    return getJsonKeyFlagInstance() != null;
+  }
+
+  @Override
+  public FlagProperty getJsonKeyFlagInstance() {
+    initalizeFlagInstances();
     return jsonKeyFlag;
   }
 
   @Override
-  public Map<String, ? extends NamedProperty> getProperties(Predicate<FlagProperty> filter) {
+  public Map<String, ? extends NamedProperty> getNamedInstances(Predicate<FlagProperty> filter) {
     Map<String, ? extends NamedProperty> retval;
     if (filter == null) {
-      retval = getFlagProperties();
+      retval = getFlagInstances();
     } else {
-      retval = getFlagProperties().values().stream().filter(filter)
-          .collect(Collectors.toMap(NamedProperty::getJsonPropertyName, Function.identity()));
+      retval = getFlagInstances().values().stream().filter(filter)
+          .collect(Collectors.toMap(IFlagInstance::getJsonName, Function.identity()));
     }
     return retval;
-  }
-
-  @Override
-  public Map<String, ? extends Property> getProperties() {
-    return getFlagProperties();
   }
 
   /**
@@ -262,7 +298,7 @@ public abstract class AbstractClassBinding implements ClassBinding {
   }
 
   @Override
-  public boolean readItem(PropertyCollector collector, Object parentInstance, StartElement start,
+  public Object readItem(Object parentInstance, StartElement start,
       XmlParsingContext context) throws BindingException, IOException, XMLStreamException {
     Object instance = newInstance();
 
@@ -272,22 +308,48 @@ public abstract class AbstractClassBinding implements ClassBinding {
 
     callAfterDeserialize(instance, parentInstance);
 
-    collector.add(instance);
-    return true;
+    if (context.isValidating()) {
+      validate(instance);
+    }
+
+    return instance;
   }
 
   protected void readInternal(@SuppressWarnings("unused") Object parentInstance, Object instance, StartElement start,
       XmlParsingContext context) throws IOException, XMLStreamException, BindingException {
-    for (FlagProperty flag : getFlagProperties().values()) {
+    for (FlagProperty flag : getFlagInstances().values()) {
       flag.read(instance, start, context);
     }
     readBody(instance, start, context);
 
+    if (context.isValidating()) {
+      validate(instance);
+    }
     // TODO: should I check for the END_ELEMENT here?
   }
 
   protected abstract void readBody(Object instance, StartElement start, XmlParsingContext context)
       throws IOException, XMLStreamException, BindingException;
+
+  @Override
+  public boolean validate(Object instance) {
+    boolean retval = true;
+
+    // validate the constraints on this bound class
+    // TODO: complete
+
+    // // validate flags
+    // for (FlagProperty flag : getFlagInstances().values()) {
+    // Object value = flag.getValue(instance);
+    // if (flag.isRequired() && value == null) {
+    // retval = false;
+    // }
+    // }
+    //
+    // // validate model/field value
+    // // TODO: complete
+    return retval;
+  }
 
   @Override
   public void writeItem(Object instance, QName parentName, XmlWritingContext context)
@@ -298,7 +360,7 @@ public abstract class AbstractClassBinding implements ClassBinding {
   protected void writeInternal(Object instance, QName parentName, XmlWritingContext context)
       throws IOException, XMLStreamException {
     // write flags
-    for (FlagProperty flag : getFlagProperties().values()) {
+    for (FlagProperty flag : getFlagInstances().values()) {
       flag.write(instance, parentName, context);
     }
     writeBody(instance, parentName, context);

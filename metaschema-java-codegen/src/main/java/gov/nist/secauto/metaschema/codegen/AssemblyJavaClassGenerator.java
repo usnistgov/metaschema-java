@@ -32,12 +32,14 @@ import com.squareup.javapoet.TypeSpec;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.codegen.property.ModelInstancePropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.PropertyGenerator;
+import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
+import gov.nist.secauto.metaschema.model.common.IModelContainer;
+import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ModelContainer;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.instances.AssemblyModelInstance;
 import gov.nist.secauto.metaschema.model.instances.ChoiceInstance;
-import gov.nist.secauto.metaschema.model.instances.ModelInstance;
 import gov.nist.secauto.metaschema.model.instances.ObjectModelInstance;
 
 import java.io.IOException;
@@ -68,8 +70,19 @@ public class AssemblyJavaClassGenerator
   }
 
   @Override
-  protected Set<ObjectDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
-    Set<ObjectDefinition> retval = new HashSet<>();
+  protected void applyConstraints(AnnotationSpec.Builder annotation) {
+    super.applyConstraints(annotation);
+
+    AnnotationUtils.applyIndexConstraints(annotation, getDefinition().getIndexConstraints());
+    AnnotationUtils.applyUniqueConstraints(annotation, getDefinition().getUniqueConstraints());
+    AnnotationUtils.applyHasCardinalityConstraints(getDefinition(), annotation,
+        getDefinition().getHasCardinalityConstraints());
+
+  }
+
+  @Override
+  protected Set<MetaschemaFlaggedDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
+    Set<MetaschemaFlaggedDefinition> retval = new HashSet<>();
     retval.addAll(super.buildClass(builder));
 
     AnnotationSpec.Builder metaschemaAssembly = AnnotationSpec.builder(MetaschemaAssembly.class);
@@ -77,15 +90,16 @@ public class AssemblyJavaClassGenerator
     if (definition.isRoot()) {
       metaschemaAssembly.addMember("rootName", "$S", definition.getRootName());
     }
+    applyConstraints(metaschemaAssembly);
 
     builder.addAnnotation(metaschemaAssembly.build());
 
     return retval;
   }
 
-  private void processModel(ModelContainer model) {
+  private void processModel(IModelContainer model) {
     // create model instances for the model
-    for (ModelInstance instance : model.getModelInstances()) {
+    for (IModelInstance instance : model.getModelInstances()) {
       if (instance instanceof ChoiceInstance) {
         processModel((ChoiceInstance) instance);
         continue;
@@ -97,8 +111,8 @@ public class AssemblyJavaClassGenerator
   }
 
   /**
-   * Creates a new {@link PropertyGenerator} for the provided {@link ModelInstance} and registers it
-   * with this class generator.
+   * Creates a new {@link PropertyGenerator} for the provided {@link AssemblyModelInstance} and
+   * registers it with this class generator.
    * 
    * @param instance
    *          the model instance to generate the property for

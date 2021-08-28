@@ -361,6 +361,7 @@ public class MetaschemaMojo
 
       // generate Java sources based on provided metaschema sources
       final MetaschemaLoader loader = new MetaschemaLoader();
+      loader.allowEntityResolution();
       final Set<Metaschema> metaschemaCollection = new HashSet<>();
       for (File source : getSources().collect(Collectors.toList())) {
         getLog().info("Using metaschema source: " + source.getPath());

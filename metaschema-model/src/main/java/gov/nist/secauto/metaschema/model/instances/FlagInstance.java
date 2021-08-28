@@ -26,33 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.instances;
 
-import gov.nist.secauto.metaschema.model.Flag;
+import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 
-public interface FlagInstance<DEF extends FlagDefinition>
-    extends DefinedInfoElementInstance<ObjectDefinition, DEF>, Flag {
-
-  /**
-   * Determines if a flag value is required to be provided.
-   * 
-   * @return {@code true} if a value is required, or {@code false} otherwise
-   */
-  boolean isRequired();
-
-  /**
-   * Determines if this flag is used as the property name for the property that holds the data based
-   * on this flag's containing definition.
-   * 
-   * @return {@code true} if this flag is used as a JSON key, or {@code false} otherwise
-   */
-  boolean isJsonKeyFlag();
-
-  /**
-   * Determines if this flag is used as a JSON "value key". A "value key" is a flag who's value is
-   * used as the property name for the containing objects value.
-   * 
-   * @return {@code true} if the flag is used as a JSON "value key", or {@code false} otherwise
-   */
-  boolean isJsonValueKeyFlag();
+public interface FlagInstance<DEFINITION extends FlagDefinition>
+    extends DefinedInfoElementInstance<DEFINITION>, IFlagInstance {
 }

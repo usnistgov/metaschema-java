@@ -26,8 +26,11 @@
 
 package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
+import static java.time.temporal.ChronoField.NANO_OF_SECOND;
+
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 
 public class DateFormats {
   private DateFormats() {
@@ -57,21 +60,21 @@ public class DateFormats {
     dateTimeWithOptionalTZ = new DateTimeFormatterBuilder()
         .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
         .optionalStart()
-        .appendPattern(".SSS")
+        .appendFraction(NANO_OF_SECOND, 0, 9, true)
         .appendPattern("XXX")
         .optionalEnd()
         .toFormatter();
     dateTimeWithTZ = new DateTimeFormatterBuilder()
         .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
         .optionalStart()
-        .appendPattern(".SSS")
+        .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
         .optionalEnd()
         .appendPattern("XXX")
         .toFormatter();
     dateTimeWithoutTZ = new DateTimeFormatterBuilder()
         .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
         .optionalStart()
-        .appendPattern(".SSS")
+        .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
         .optionalEnd()
         .toFormatter();
   }

@@ -26,19 +26,7 @@
 
 package gov.nist.secauto.metaschema.model;
 
-public interface NamedInfoElement extends InfoElement {
-  /**
-   * Get the name of the information element.
-   * 
-   * @return the name
-   */
-  String getName();
+import gov.nist.secauto.metaschema.model.common.INamedModelElement;
 
-  /**
-   * Retrieves the "use" name of the information element, which is the model name to use for the
-   * element where it is referenced.
-   * 
-   * @return the "use" name
-   */
-  String getUseName();
+public interface NamedInfoElement extends INamedModelElement, InfoElement {
 }

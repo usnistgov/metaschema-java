@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
 		<artifactId>metaschema-framework</artifactId>
-		<version>0.4.0</version>
+		<version>0.4.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>metaschema-maven-plugin</artifactId>
@@ -12,12 +12,14 @@
 	<packaging>maven-plugin</packaging>
 
 	<name>Metaschema Maven Plugin</name>
-	<url>https://pages.nist.gov/metaschema</url>
 
-	<scm>
-		<url>https://github.com/usnistgov/metaschema-java/tree/main/metaschema-maven-plugin</url>
-	  <tag>v0.4.0</tag>
-  </scm>
+  <url>${site.url}${project.artifactId}/</url>
+  <distributionManagement>
+    <site>
+      <id>nist-pages</id>
+      <url>${site.url}${project.artifactId}/</url>
+    </site>
+  </distributionManagement>
 
 	<properties>
 		<mojo.maven.version>3.0.5</mojo.maven.version>

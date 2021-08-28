@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.binding.io.json;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
@@ -37,9 +38,8 @@ import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.Configuration;
 import gov.nist.secauto.metaschema.binding.io.Feature;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
-import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
+import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
+import gov.nist.secauto.metaschema.binding.model.property.RootAssemblyProperty;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -108,8 +108,6 @@ public class DefaultJsonDeserializer<CLASS>
   public CLASS deserialize(Reader reader) throws BindingException {
     JsonParser parser = newJsonParser(reader);
 
-    Class<?> clazz = getClassBinding().getBoundClass();
-
     // JsonToken token;
     // try {
     // token = parser.nextToken();
@@ -121,33 +119,37 @@ public class DefaultJsonDeserializer<CLASS>
     // token.toString()));
     // }
 
+    DefaultJsonParsingContext parsingContext = new DefaultJsonParsingContext(parser);
+    parsingContext.setValidating(isValidating());
+
     AssemblyClassBinding classBinding = getClassBinding();
-    String rootFieldName = classBinding.getJsonRootName();
-    if (getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT, false) && rootFieldName == null
-        && logger.isDebugEnabled()) {
-      logger.debug(String.format(
-          "Root parsing is enabled (DESERIALIZE_ROOT),"
-              + " but class '%s' does not have a configured root name using the '%s' annotation.",
-          clazz.getName(), MetaschemaAssembly.class.getName()));
-    }
+    CLASS retval;
+    if (classBinding.isRoot() && getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT, false)) {
+      AssemblyProperty property = new RootAssemblyProperty(classBinding);
+      try {
+        // first read the initial START_OBJECT
+        JsonUtil.consumeAndAssert(parser, JsonToken.START_OBJECT);
+        JsonUtil.consumeAndAssert(parser, JsonToken.FIELD_NAME);
 
-    JsonParsingContext parsingContext = new DefaultJsonParsingContext(parser);
+        @SuppressWarnings("unchecked")
+        CLASS value = (CLASS) property.read(parsingContext);
+        retval = value;
 
-    Object result;
-    try {
-      if (rootFieldName != null) {
-        result = classBinding.readRoot(parsingContext);
-      } else {
-        PropertyCollector collector = new SingletonPropertyCollector();
-        classBinding.readItem(collector, null, parsingContext);
-        result = collector.getValue();
+        // first read the initial START_OBJECT
+        JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
+      } catch (IOException ex) {
+        throw new BindingException(ex);
       }
-    } catch (IOException ex) {
-      throw new BindingException(ex);
+    } else {
+      try {
+        @SuppressWarnings("unchecked")
+        CLASS value = (CLASS) classBinding.readItem(null, parsingContext);
+        retval = value;
+      } catch (IOException ex) {
+        throw new BindingException(ex);
+      }
     }
 
-    @SuppressWarnings("unchecked")
-    CLASS retval = (CLASS) result;
     return retval;
   }
 

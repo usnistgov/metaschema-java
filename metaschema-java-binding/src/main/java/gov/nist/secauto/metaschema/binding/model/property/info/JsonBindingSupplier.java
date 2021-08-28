@@ -30,9 +30,10 @@ import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 
 import java.io.IOException;
+import java.util.List;
 
 @FunctionalInterface
 public interface JsonBindingSupplier {
-  boolean get(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  List<Object> get(Object parentInstance, JsonParsingContext context)
       throws BindingException, IOException;
 }

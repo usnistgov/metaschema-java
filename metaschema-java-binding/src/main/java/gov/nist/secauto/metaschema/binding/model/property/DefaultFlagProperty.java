@@ -27,9 +27,12 @@
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
+import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
@@ -37,16 +40,27 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
-import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKey;
-import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
+import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
+import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
@@ -61,6 +75,8 @@ public class DefaultFlagProperty
 
   private final Flag flag;
   private final JavaTypeAdapter<?> javaTypeAdapter;
+  private InternalFlagDefinition definition;
+  private IValueConstraintSupport constraints;
 
   public DefaultFlagProperty(ClassBinding parentClassBinding, Field field, BindingContext bindingContext) {
     super(field, parentClassBinding);
@@ -68,18 +84,23 @@ public class DefaultFlagProperty
     this.javaTypeAdapter = bindingContext.getJavaTypeAdapterInstance(this.flag.typeAdapter());
   }
 
-  protected Flag getFlagAnnotation() {
+  public Flag getFlagAnnotation() {
     return flag;
   }
 
-  @Override
-  public boolean isJsonKey() {
-    return getField().isAnnotationPresent(JsonKey.class);
-  }
+  // @Override
+  // public boolean isJsonKey() {
+  // return getField().isAnnotationPresent(JsonKey.class);
+  // }
+
+  // @Override
+  // public boolean isJsonValueKey() {
+  // return getField().isAnnotationPresent(JsonFieldValueKeyFlag.class);
+  // }
 
   @Override
-  public boolean isJsonValueKey() {
-    return getField().isAnnotationPresent(JsonFieldValueKey.class);
+  public boolean isRequired() {
+    return getFlagAnnotation().required();
   }
 
   public JavaTypeAdapter<?> getJavaTypeAdapter() {
@@ -87,17 +108,35 @@ public class DefaultFlagProperty
   }
 
   @Override
-  protected String getXmlLocalName() {
-    return ModelUtil.resolveLocalName(getFlagAnnotation().name(), getJavaPropertyName());
+  public String getUseName() {
+    return ModelUtil.resolveLocalName(getFlagAnnotation().useName(), getJavaPropertyName());
   }
 
   @Override
-  protected String getXmlNamespace() {
+  public String getXmlNamespace() {
     return ModelUtil.resolveNamespace(getFlagAnnotation().namespace(), getParentClassBinding(), true);
+  }
+
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+   * first accessed.
+   */
+  protected synchronized void checkModelConstraints() {
+    if (constraints == null) {
+      constraints = new ValueConstraintSupport(this);
+    }
+  }
+
+  @Override
+  public Object read(XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+    throw new UnsupportedOperationException("use read(Object, StartElement, XmlParsingContext) instead");
   }
 
   @Override
   public boolean read(Object parentInstance, StartElement parent, XmlParsingContext context) throws IOException {
+    PathBuilder pathBuilder = context.getPathBuilder();
+    pathBuilder.pushInstance(this);
+
     // when reading an attribute:
     // - "parent" will contain the attributes to read
     // - the event reader "peek" will be on the end element or the next start element
@@ -109,9 +148,18 @@ public class DefaultFlagProperty
         Object value = getJavaTypeAdapter().parse(attribute.getValue());
         // apply the value to the parentObject
         setValue(parentInstance, value);
+
+        pathBuilder.pushItem();
+
+        // validate the flag value
+        if (context.isValidating()) {
+          validateValue(value, context);
+        }
+        pathBuilder.popItem();
         handled = true;
       }
     }
+    pathBuilder.popInstance();
     return handled;
   }
 
@@ -121,22 +169,26 @@ public class DefaultFlagProperty
   }
 
   @Override
-  public boolean readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
-      throws IOException, BindingException {
-    JavaTypeAdapter<?> adapter = getJavaTypeAdapter();
+  protected Object readInternal(Object parentInstance, JsonParsingContext context) throws IOException {
 
-    if (adapter == null) {
-      throw new BindingException(
-          String.format("Unable to parse type '%s', which is not a known bound class or data type", getItemType()));
+    PathBuilder pathBuilder = context.getPathBuilder();
+    pathBuilder.pushInstance(this);
+
+    JsonParser parser = context.getReader();
+    // advance past the property name
+    parser.nextFieldName();
+    // parse the value
+    Object retval = readValueAndSupply(context).get();
+
+    pathBuilder.pushItem();
+
+    // validate the flag value
+    if (context.isValidating()) {
+      validateValue(retval, context);
     }
 
-    Object value = adapter.parse(context.getReader());
-
-    boolean retval = false;
-    if (value != null) {
-      collector.add(value);
-      retval = true;
-    }
+    pathBuilder.popItem();
+    pathBuilder.popInstance();
     return retval;
   }
 
@@ -187,7 +239,7 @@ public class DefaultFlagProperty
     Object value = getValue(instance);
     if (value != null) {
       // write the field name
-      writer.writeFieldName(getJsonPropertyName());
+      writer.writeFieldName(getJsonName());
 
       // write the value
       writeValue(value, context);
@@ -202,5 +254,105 @@ public class DefaultFlagProperty
   @Override
   public void writeValue(Object value, JsonWritingContext context) throws IOException {
     getJavaTypeAdapter().writeJsonValue(value, context.getWriter());
+  }
+
+  @Override
+  public ClassBinding getContainingDefinition() {
+    return getParentClassBinding();
+  }
+
+  @Override
+  public String toCoordinates() {
+    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(), getName(),
+        getParentClassBinding().getBoundClass().getName(), getField().getName());
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public IFlagDefinition getDefinition() {
+    synchronized (this) {
+      if (definition == null) {
+        definition = new InternalFlagDefinition();
+      }
+    }
+    return definition;
+  }
+
+  private class InternalFlagDefinition implements IFlagDefinition {
+    @Override
+    public DataTypes getDatatype() {
+      return DataTypes.getDataTypeForAdapter(getJavaTypeAdapter());
+    }
+
+    @Override
+    public String getName() {
+      return DefaultFlagProperty.this.getName();
+    }
+
+    @Override
+    public String getUseName() {
+      return null;
+    }
+
+    @Override
+    public String getXmlNamespace() {
+      return DefaultFlagProperty.this.getXmlNamespace();
+    }
+
+    @Override
+    public MarkupMultiline getRemarks() {
+      return DefaultFlagProperty.this.getRemarks();
+    }
+
+    @Override
+    public String toCoordinates() {
+      return DefaultFlagProperty.this.toCoordinates();
+    }
+
+    @Override
+    public List<? extends IConstraint> getConstraints() {
+      checkModelConstraints();
+      return constraints.getConstraints();
+    }
+
+    @Override
+    public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+      checkModelConstraints();
+      return constraints.getAllowedValuesContraints();
+    }
+
+    @Override
+    public List<? extends IMatchesConstraint> getMatchesConstraints() {
+      checkModelConstraints();
+      return constraints.getMatchesConstraints();
+    }
+
+    @Override
+    public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+      checkModelConstraints();
+      return constraints.getIndexHasKeyConstraints();
+    }
+
+    @Override
+    public List<? extends IExpectConstraint> getExpectConstraints() {
+      checkModelConstraints();
+      return constraints.getExpectConstraints();
+    }
+  }
+
+  @Override
+  public void validateValue(Object value, ParsingContext<?, ?> context) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public IInstanceSet evaluateMetapathInstances(MetapathExpression target) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

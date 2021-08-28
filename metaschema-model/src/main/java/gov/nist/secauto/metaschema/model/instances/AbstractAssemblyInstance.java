@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model.instances;
 
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 
-public abstract class AbstractAssemblyInstance<DEF extends AssemblyDefinition>
-    extends AbstractObjectModelInstance<DEF>
-    implements AssemblyInstance<DEF> {
+public abstract class AbstractAssemblyInstance<DEFINITION extends AssemblyDefinition>
+    extends AbstractDefinedInfoElementInstance<AssemblyDefinition, DEFINITION>
+    implements AssemblyInstance<DEFINITION> {
 
   /**
    * Create a new assembly instance.
@@ -41,9 +41,21 @@ public abstract class AbstractAssemblyInstance<DEF extends AssemblyDefinition>
   public AbstractAssemblyInstance(AssemblyDefinition parent) {
     super(parent);
   }
+  //
+  // @Override
+  // public boolean isSimple() {
+  // return getDefinition().getFlagInstances().isEmpty() &&
+  // getDefinition().getModelInstances().isEmpty();
+  // }
 
   @Override
-  public boolean isSimple() {
-    return getDefinition().getFlagInstances().isEmpty() && getDefinition().getModelInstances().isEmpty();
+  public String getXmlNamespace() {
+    return getContainingMetaschema().getXmlNamespace().toString();
   }
+
+  @Override
+  public String getGroupAsXmlNamespace() {
+    return getContainingMetaschema().getXmlNamespace().toString();
+  }
+
 }

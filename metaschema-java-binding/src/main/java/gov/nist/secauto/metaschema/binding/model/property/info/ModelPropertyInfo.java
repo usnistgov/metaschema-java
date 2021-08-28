@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.property.ModelProperty;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
 import java.io.IOException;
 
@@ -45,7 +45,7 @@ public interface ModelPropertyInfo {
    * 
    * @return the property
    */
-  ModelProperty getProperty();
+  NamedModelProperty getProperty();
 
   /**
    * Get the type of the bound object.
@@ -63,16 +63,17 @@ public interface ModelPropertyInfo {
    * on the property's value type as reported by {@link #getProperty()}.
    * 
    * @param collector
-   * @param parentInstance
+   *          used to hold parsed values
    * @param context
    *          the JSON parsing context
-   * @return the property's value based on the type
+   * @param parentInstance
+   *          the instance the property is on
    * @throws IOException
    *           if there was an error when reading JSON data
    * @throws BindingException
    *           if there was an error related to this properties Java class binding
    */
-  boolean readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException;
 
   boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start, XmlParsingContext context)

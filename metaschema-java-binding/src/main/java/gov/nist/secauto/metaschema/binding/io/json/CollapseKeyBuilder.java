@@ -50,7 +50,7 @@ public class CollapseKeyBuilder {
 
   public CollapseKeyBuilder(FieldClassBinding classBinding) {
     this.classBinding = classBinding;
-    this.flagProperties = new ArrayList<>(classBinding.getFlagProperties().values());
+    this.flagProperties = new ArrayList<>(classBinding.getFlagInstances().values());
     this.keyToValuesMap = new LinkedHashMap<>();
   }
 
@@ -62,13 +62,13 @@ public class CollapseKeyBuilder {
     return flagProperties;
   }
 
-  public void addAll(Collection<? extends Object> instances) throws IOException {
+  public void addAll(Collection<? extends Object> instances) {
     for (Object instance : instances) {
       add(instance);
     }
   }
 
-  public void add(Object instance) throws IOException {
+  public void add(Object instance) {
     int size = getFlagProperties().size();
     Object[] flagValues = new Object[size];
     int index = 0;
@@ -89,8 +89,8 @@ public class CollapseKeyBuilder {
 
   public void write(boolean writeObjectWrapper, JsonWritingContext context) throws IOException {
     FieldClassBinding classBinding = getClassBinding();
-    FlagProperty jsonKey = classBinding.getJsonKey();
-    FlagProperty jsonValueKey = classBinding.getJsonValueKeyFlag();
+    FlagProperty jsonKey = classBinding.getJsonKeyFlagInstance();
+    FlagProperty jsonValueKey = classBinding.getJsonValueKeyFlagInstance();
     FieldValueProperty fieldValue = classBinding.getFieldValue();
     ArrayList<FlagProperty> flagProperties = getFlagProperties();
 
@@ -104,9 +104,9 @@ public class CollapseKeyBuilder {
       flagIndex = new ArrayList<>(flagProperties.size());
       int index = 0;
       for (FlagProperty flag : flagProperties) {
-        if (jsonKey != null && flag.isJsonKey()) {
+        if (jsonKey != null && jsonKey.equals(flag)) {
           jsonKeyIndex = index++;
-        } else if (flag.isJsonValueKey()) {
+        } else if (jsonValueKey != null && jsonValueKey.equals(flag)) {
           jsonValueKeyIndex = index++;
         } else {
           // regular properties
@@ -140,7 +140,7 @@ public class CollapseKeyBuilder {
         Object flagValue = flagValues[index];
 
         if (flagValue != null) {
-          writer.writeFieldName(flag.getJsonPropertyName());
+          writer.writeFieldName(flag.getJsonName());
           flag.writeValue(flagValue, context);
         }
       }
@@ -152,7 +152,7 @@ public class CollapseKeyBuilder {
         if (jsonValueKey != null && jsonValueKeyIndex != null) {
           valueKeyName = jsonValueKey.getValueAsString(flagValues[jsonValueKeyIndex]);
         } else {
-          valueKeyName = fieldValue.getJsonPropertyName();
+          valueKeyName = fieldValue.getJsonValueKeyName();
         }
         writer.writeFieldName(valueKeyName);
         if (fieldValues.size() > 1) {

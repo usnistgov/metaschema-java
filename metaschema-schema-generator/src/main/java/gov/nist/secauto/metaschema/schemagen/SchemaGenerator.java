@@ -26,22 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import freemarker.core.ParseException;
-import freemarker.template.MalformedTemplateNameException;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateNotFoundException;
+import gov.nist.secauto.metaschema.freemarker.support.FreemarkerGenerator;
 
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
-
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Collection;
-
-public interface SchemaGenerator {
-  void generateFromMetaschemas(Collection<? extends Metaschema> metaschemas, Writer out)
-      throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException;
-
-  void generateFromDefinitions(Collection<? extends InfoElementDefinition> definitions, Writer out)
-      throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException;
+public interface SchemaGenerator extends FreemarkerGenerator {
 }

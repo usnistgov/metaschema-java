@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
 
 public abstract class AbstractFieldInstance<DEF extends FieldDefinition>
-    extends AbstractObjectModelInstance<DEF>
+    extends AbstractDefinedInfoElementInstance<AssemblyDefinition, DEF>
     implements FieldInstance<DEF> {
 
   /**

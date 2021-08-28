@@ -26,21 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.definitions;
 
-import gov.nist.secauto.metaschema.model.Assembly;
+import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 
-public interface AssemblyDefinition extends Assembly, ObjectDefinition, ModelContainer {
-
-  /**
-   * Check if the assembly is a top-level root assembly.
-   * 
-   * @return {@code true} if the assembly is a top-level root, or {@code false} otherwise
-   */
-  boolean isRoot();
-
-  /**
-   * Get the root name if this assembly is a top-level root.
-   * 
-   * @return the root name if this assembly is a top-level root, or {@code null} otherwise
-   */
-  String getRootName();
+public interface AssemblyDefinition extends MetaschemaFlaggedDefinition, IAssemblyDefinition {
 }

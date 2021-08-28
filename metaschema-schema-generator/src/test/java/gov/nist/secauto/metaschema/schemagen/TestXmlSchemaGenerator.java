@@ -26,16 +26,11 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import freemarker.core.ParseException;
-import freemarker.template.MalformedTemplateNameException;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateNotFoundException;
-
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
-import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
-import gov.nist.secauto.metaschema.model.util.UsedDefinitionModelWalker;
+import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;
 
 import org.apache.commons.io.output.TeeOutputStream;
 import org.junit.jupiter.api.Disabled;
@@ -48,6 +43,11 @@ import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
+import freemarker.core.ParseException;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateNotFoundException;
 
 public class TestXmlSchemaGenerator {
   @Disabled
@@ -81,8 +81,8 @@ public class TestXmlSchemaGenerator {
         = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_poam_metaschema.xml"));
     metaschemas.add(metaschema);
 
-    Collection<? extends InfoElementDefinition> definitions
-        = UsedDefinitionModelWalker.collectUsedDefinitions(metaschemas);
+    Collection<? extends IDefinition> definitions
+        = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschemas);
 
     try (FileOutputStream fos = new FileOutputStream("schema.out.xsd")) {
       TeeOutputStream out = new TeeOutputStream(System.out, fos);

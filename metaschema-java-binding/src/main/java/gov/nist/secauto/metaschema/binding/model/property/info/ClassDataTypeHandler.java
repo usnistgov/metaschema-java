@@ -32,10 +32,12 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import javax.xml.namespace.QName;
@@ -43,11 +45,19 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 public class ClassDataTypeHandler implements DataTypeHandler {
+  private final NamedModelProperty property;
   private final ClassBinding classBinding;
 
-  public ClassDataTypeHandler(ClassBinding classBinding) {
+  public ClassDataTypeHandler(ClassBinding classBinding, NamedModelProperty property) {
     Objects.requireNonNull(classBinding, "classBinding");
+    Objects.requireNonNull(property, "property");
     this.classBinding = classBinding;
+    this.property = property;
+  }
+
+  @Override
+  public NamedModelProperty getProperty() {
+    return property;
   }
 
   @Override
@@ -68,15 +78,15 @@ public class ClassDataTypeHandler implements DataTypeHandler {
   }
 
   @Override
-  public boolean get(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public List<Object> get(Object parentInstance, JsonParsingContext context)
       throws BindingException, IOException {
-    return classBinding.readItem(collector, parentInstance, context);
+    return classBinding.readItem(parentInstance, context);
   }
 
   @Override
-  public boolean get(PropertyCollector collector, Object parentInstance, StartElement start, XmlParsingContext context)
+  public Object get(Object parentInstance, StartElement start, XmlParsingContext context)
       throws BindingException, IOException, XMLStreamException {
-    return classBinding.readItem(collector, parentInstance, start, context);
+    return classBinding.readItem(parentInstance, start, context);
   }
 
   @Override

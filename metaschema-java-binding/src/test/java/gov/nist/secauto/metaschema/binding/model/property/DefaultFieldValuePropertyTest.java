@@ -88,11 +88,13 @@ class DefaultFieldValuePropertyTest {
         will(returnValue(theClass));
         allowing(classBinding).getBindingContext();
         will(returnValue(bindingContext));
-        allowing(classBinding).getJsonValueKeyFlag();
+        allowing(classBinding).getJsonValueKeyFlagInstance();
         will(returnValue(null));
 
         allowing(jsonParsingContext).getReader();
         will(returnValue(jsonParser));
+        allowing(jsonParsingContext).isValidating();
+        will(returnValue(false));
       }
     });
 
@@ -113,7 +115,8 @@ class DefaultFieldValuePropertyTest {
 
   @Test
   void testXmlRead()
-      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, XMLStreamException {
+      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, XMLStreamException,
+      BindingException {
     String xml = "<field xmlns='http://example.com/ns'>theValue</field>";
     XMLInputFactory factory = WstxInputFactory.newInstance();
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
@@ -133,6 +136,8 @@ class DefaultFieldValuePropertyTest {
 
         allowing(xmlParsingContext).getReader();
         will(returnValue(eventReader));
+        allowing(xmlParsingContext).isValidating();
+        will(returnValue(false));
       }
     });
 
@@ -187,13 +192,15 @@ class DefaultFieldValuePropertyTest {
         will(returnValue(theClass));
         allowing(classBinding).getBoundClass();
         will(returnValue(theClass));
-        allowing(classBinding).getJsonValueKeyFlag();
+        allowing(classBinding).getJsonValueKeyFlagInstance();
         will(returnValue(null));
         allowing(classBinding).getBindingContext();
         will(returnValue(bindingContext));
 
         allowing(jsonParsingContext).getReader();
         will(returnValue(jsonParser));
+        allowing(jsonParsingContext).isValidating();
+        will(returnValue(false));
       }
     });
 
@@ -214,7 +221,8 @@ class DefaultFieldValuePropertyTest {
 
   @Test
   void testXmlDefaultNameRead()
-      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, XMLStreamException {
+      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, XMLStreamException,
+      BindingException {
     String xml = "<field xmlns='http://example.com/ns'>theValue</field>";
     XMLInputFactory factory = WstxInputFactory.newInstance();
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
@@ -234,6 +242,8 @@ class DefaultFieldValuePropertyTest {
 
         allowing(xmlParsingContext).getReader();
         will(returnValue(eventReader));
+        allowing(xmlParsingContext).isValidating();
+        will(returnValue(false));
       }
     });
 

@@ -29,11 +29,17 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValues;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+@Documented
 @Retention(RUNTIME)
 @Target({ FIELD })
 public @interface FieldValue {
@@ -49,18 +55,17 @@ public @interface FieldValue {
    * name will be used as the property name. Otherwise, the property name will default to a value
    * defined by the data type.
    * <p>
-   * Use of this annotation is mutually exclusive with the {@link JsonFieldValueKey} annotation.
+   * Use of this annotation is mutually exclusive with the {@link JsonFieldValueKeyFlag} annotation.
    * 
    * @return the name
    */
   String name() default "##none";
-
-  /**
-   * If the data type allows it, determines if the field's value must be wrapped with an element
-   * having the specified {@link #name()}.
-   * 
-   * @return {@code true} if the field must be wrapped, or {@code false} otherwise
-   */
-  boolean inXmlWrapped() default true;
-
+  //
+  // /**
+  // * If the data type allows it, determines if the field's value must be wrapped with an element
+  // * having the specified {@link #name()}.
+  // *
+  // * @return {@code true} if the field must be wrapped, or {@code false} otherwise
+  // */
+  // boolean inXmlWrapped() default Defaults.DEFAULT_FIELD_IN_XML_WRAPPED;
 }

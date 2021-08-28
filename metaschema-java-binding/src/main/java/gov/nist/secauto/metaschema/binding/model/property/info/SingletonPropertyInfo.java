@@ -30,16 +30,18 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.property.ModelProperty;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -49,14 +51,14 @@ public class SingletonPropertyInfo
     extends AbstractModelPropertyInfo<Type>
     implements ModelPropertyInfo {
 
-  public SingletonPropertyInfo(ModelProperty property) {
+  public SingletonPropertyInfo(NamedModelProperty property) {
     super(property);
   }
 
   @Override
-  public boolean readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
-    ModelProperty property = getProperty();
+    NamedModelProperty property = getProperty();
 
     JsonParser parser = context.getReader();
 
@@ -65,21 +67,46 @@ public class SingletonPropertyInfo
       // read the object's START_OBJECT
       JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     }
+    PathBuilder pathBuilder = context.getPathBuilder();
+    pathBuilder.pushItem();
 
-    boolean handled = property.readItem(collector, parentInstance, context);
+    List<Object> values = property.readItem(parentInstance, context);
+    collector.addAll(values);
+
+    for (Object value : values) {
+
+      if (context.isValidating()) {
+        getProperty().validateItem(value, context);
+      }
+    }
+    pathBuilder.popItem();
 
     if (isObject) {
       // read the object's END_OBJECT
       JsonUtil.assertAndAdvance(context.getReader(), JsonToken.END_OBJECT);
     }
-    return handled;
   }
 
   @Override
   public boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start,
       XmlParsingContext context)
       throws IOException, BindingException, XMLStreamException {
-    return getProperty().readItem(collector, parentInstance, start, context);
+
+    PathBuilder pathBuilder = context.getPathBuilder();
+    pathBuilder.pushItem();
+
+    boolean handled = true;
+    Object value = getProperty().readItem(parentInstance, start, context);
+    if (value != null) {
+      collector.add(value);
+      handled = true;
+
+      if (context.isValidating()) {
+        getProperty().validateItem(value, context);
+      }
+    }
+    pathBuilder.popItem();
+    return handled;
   }
 
   @Override
@@ -95,14 +122,14 @@ public class SingletonPropertyInfo
   @Override
   public boolean writeValue(Object parentInstance, QName parentName, XmlWritingContext context)
       throws XMLStreamException, IOException {
-    ModelProperty property = getProperty();
+    NamedModelProperty property = getProperty();
     return property.writeItem(property.getValue(parentInstance), parentName, context);
   }
 
   @Override
   public void writeValue(Object parentInstance, JsonWritingContext context) throws IOException {
-    ModelProperty property = getProperty();
-    getProperty().getBindingSupplier().writeItems(Collections.singleton(property.getValue(parentInstance)), true,
+    NamedModelProperty property = getProperty();
+    getProperty().getDataTypeHandler().writeItems(Collections.singleton(property.getValue(parentInstance)), true,
         context);
   }
 

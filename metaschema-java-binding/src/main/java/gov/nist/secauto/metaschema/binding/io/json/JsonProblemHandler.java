@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.binding.io.json;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.ProblemHandler;
+import gov.nist.secauto.metaschema.binding.io.context.ProblemHandler;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.Property;
@@ -43,7 +43,7 @@ public interface JsonProblemHandler extends ProblemHandler {
   boolean canHandleUnknownProperty(ClassBinding classBinding, String propertyName, JsonParsingContext parsingContext)
       throws BindingException, IOException;
 
-  Map<Property, JsonBindingSupplier> handleUnknownProperty(ClassBinding classBinding, String propertyName,
+  boolean handleUnknownProperty(ClassBinding classBinding, String propertyName,
       JsonParsingContext parsingContext) throws BindingException, IOException;
 
   /**

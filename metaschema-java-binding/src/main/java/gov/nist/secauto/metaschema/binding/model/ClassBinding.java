@@ -37,14 +37,14 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
-import gov.nist.secauto.metaschema.binding.model.property.Property;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
+import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
 
 import org.codehaus.stax2.XMLStreamReader2;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -54,7 +54,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public interface ClassBinding {
+public interface ClassBinding extends IFlaggedDefinition {
   BindingContext getBindingContext();
 
   /**
@@ -64,26 +64,13 @@ public interface ClassBinding {
    */
   Class<?> getBoundClass();
 
-  /**
-   * Get the JSON key flag, if there is one.
-   * 
-   * @return the JSON key flag, or {@code null} if there isn't one
-   */
-  FlagProperty getJsonKey();
+  // Provides a compatible return value
+  @Override
+  Map<String, ? extends FlagProperty> getFlagInstances();
 
-  /**
-   * Get the class's flag properties.
-   * 
-   * @return a mapping of field name to property
-   */
-  Map<String, FlagProperty> getFlagProperties();
-
-  /**
-   * Get the class's properties.
-   * 
-   * @return a mapping of field name to property
-   */
-  Map<String, ? extends Property> getProperties();
+  // Provides a compatible return value
+  @Override
+  FlagProperty getJsonKeyFlagInstance();
 
   /**
    * Get the class's properties that match the filter.
@@ -92,7 +79,7 @@ public interface ClassBinding {
    *          a filter to apply or {@code null} if no filtering is needed
    * @return a collection of properties
    */
-  Map<String, ? extends NamedProperty> getProperties(Predicate<FlagProperty> flagFilter);
+  Map<String, ? extends NamedProperty> getNamedInstances(Predicate<FlagProperty> flagFilter);
 
   /**
    * Reads a JSON/YAML object storing the associated data in a Java class instance and adds the
@@ -104,18 +91,18 @@ public interface ClassBinding {
    * After returning the current {@link JsonToken} of the {@link JsonParser} is expected to be a
    * {@link JsonToken#END_OBJECT} representing the end of the object for this class.
    * 
-   * @param collector
-   *          used to gather Java instances
    * @param parentInstance
    *          the Java instance for the object containing this object
    * @param context
    *          the parsing context
-   * @return {@code true} if data was parsed, {@code false} otherwise
+   * @return the instance or {@code null} if no data was parsed
    * @throws IOException
+   *           if an error occurred while reading the parsed content
    * @throws BindingException
+   *           if an error occurred parsing content into java instances
    */
   // TODO: check if a boolean return value is needed
-  boolean readItem(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  List<Object> readItem(Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException;
 
   /**
@@ -129,21 +116,24 @@ public interface ClassBinding {
    * next event after the {@link XMLStreamConstants#END_ELEMENT} for the XML
    * {@link XMLStreamConstants#START_ELEMENT} element associated with the Java class.
    * 
-   * @param collector
-   *          used to gather Java instances
    * @param parentInstance
    *          the Java instance for the object containing this object
    * @param start
    *          the containing start element
    * @param context
    *          the parsing context
-   * @return {@code true} if data was parsed, {@code false} otherwise
+   * @return the instance or {@code null} if no data was parsed
    * @throws IOException
+   *           if an error occurred while reading the parsed content
    * @throws BindingException
+   *           if an error occurred parsing content into java instances
    * @throws XMLStreamException
+   *           if an error occurred while parsing the content as XML
    */
-  boolean readItem(PropertyCollector collector, Object parentInstance, StartElement start, XmlParsingContext context)
+  Object readItem(Object parentInstance, StartElement start, XmlParsingContext context)
       throws BindingException, IOException, XMLStreamException;
+
+  boolean validate(Object instance);
 
   void writeItem(Object item, QName parentName, XmlWritingContext context) throws IOException, XMLStreamException;
 

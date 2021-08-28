@@ -36,9 +36,7 @@ import gov.nist.secauto.metaschema.codegen.JavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.ClassUtils;
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
-import gov.nist.secauto.metaschema.model.instances.FlagInstance;
-import gov.nist.secauto.metaschema.model.instances.ModelInstance;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 
 import java.util.Collections;
 import java.util.Set;
@@ -132,8 +130,6 @@ public abstract class AbstractPropertyGenerator<CLASS_GENERATOR extends JavaClas
    * group-as name, else this will be the use name.
    * 
    * @return the name
-   * @see FlagInstance#getUseName()
-   * @see ModelInstance#getGroupAsName()
    */
   protected abstract String getInstanceName();
 
@@ -147,11 +143,11 @@ public abstract class AbstractPropertyGenerator<CLASS_GENERATOR extends JavaClas
   // }
 
   @Override
-  public Set<ObjectDefinition> build(TypeSpec.Builder builder, TypeResolver typeResolver) {
+  public Set<MetaschemaFlaggedDefinition> build(TypeSpec.Builder builder, TypeResolver typeResolver) {
     FieldSpec.Builder field = FieldSpec.builder(getJavaType(), getJavaFieldName())
         .addModifiers(Modifier.PRIVATE);
 
-    final Set<ObjectDefinition> retval = buildField(field);
+    final Set<MetaschemaFlaggedDefinition> retval = buildField(field);
 
     FieldSpec valueField = field.build();
     builder.addField(valueField);
@@ -175,7 +171,7 @@ public abstract class AbstractPropertyGenerator<CLASS_GENERATOR extends JavaClas
     return retval;
   }
 
-  protected Set<ObjectDefinition> buildField(FieldSpec.Builder builder) {
+  protected Set<MetaschemaFlaggedDefinition> buildField(FieldSpec.Builder builder) {
     MarkupLine description = getDescription();
     if (description != null) {
       builder.addJavadoc("$S", description.toHtml());

@@ -36,6 +36,6 @@ import javax.xml.stream.events.StartElement;
 
 @FunctionalInterface
 public interface XmlBindingSupplier {
-  boolean get(PropertyCollector collector, Object parentInstance, StartElement start, XmlParsingContext context)
+  Object get(Object parentInstance, StartElement start, XmlParsingContext context)
       throws BindingException, IOException, XMLStreamException;
 }

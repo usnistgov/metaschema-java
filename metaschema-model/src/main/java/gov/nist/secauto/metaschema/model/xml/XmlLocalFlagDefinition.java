@@ -26,22 +26,33 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.LocalFlagDefinition;
+import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.definitions.AbstractFlagDefinition;
-import gov.nist.secauto.metaschema.model.definitions.DataType;
+import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.definitions.AbstractInfoElementDefinition;
+import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.LocalInfoElementDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.model.definitions.ObjectDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFlagInstance;
 import gov.nist.secauto.metaschema.model.xml.XmlLocalFlagDefinition.InternalFlagDefinition;
+import gov.nist.secauto.metaschema.model.xml.constraint.ValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFlagDefinitionType;
+
+import java.util.List;
 
 public class XmlLocalFlagDefinition
     extends AbstractFlagInstance<InternalFlagDefinition> {
-  private final LocalFlagDefinition xmlFlag;
+  private final LocalFlagDefinitionType xmlFlag;
   private final InternalFlagDefinition flagDefinition;
+  private IValueConstraintSupport constraints;
 
   /**
    * Constructs a new Metaschema flag definition from an XML representation bound to Java objects.
@@ -51,10 +62,24 @@ public class XmlLocalFlagDefinition
    * @param parent
    *          the parent definition, which must be a definition type that can contain flags.
    */
-  public XmlLocalFlagDefinition(LocalFlagDefinition xmlFlag, ObjectDefinition parent) {
+  public XmlLocalFlagDefinition(LocalFlagDefinitionType xmlFlag, MetaschemaFlaggedDefinition parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
     this.flagDefinition = new InternalFlagDefinition();
+  }
+
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+   * first accessed.
+   */
+  protected synchronized void checkModelConstraints() {
+    if (constraints == null) {
+      if (getXmlFlag().isSetConstraint()) {
+        constraints = new ValueConstraintSupport(getXmlFlag().getConstraint());
+      } else {
+        constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+      }
+    }
   }
 
   /**
@@ -62,7 +87,7 @@ public class XmlLocalFlagDefinition
    * 
    * @return the XML model
    */
-  protected LocalFlagDefinition getXmlFlag() {
+  protected LocalFlagDefinitionType getXmlFlag() {
     return xmlFlag;
   }
 
@@ -77,13 +102,18 @@ public class XmlLocalFlagDefinition
   }
 
   @Override
-  public boolean isRequired() {
-    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : Metaschema.DEFAULT_REQUIRED;
+  public String getUseName() {
+    return getDefinition().getUseName();
   }
 
   @Override
-  public String getUseName() {
-    return getDefinition().getUseName();
+  public String getXmlNamespace() {
+    return null;
+  }
+
+  @Override
+  public boolean isRequired() {
+    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : Defaults.DEFAULT_FLAG_REQUIRED;
   }
 
   @Override
@@ -92,8 +122,8 @@ public class XmlLocalFlagDefinition
   }
 
   public class InternalFlagDefinition
-      extends AbstractFlagDefinition
-      implements LocalInfoElementDefinition<XmlLocalFlagDefinition> {
+      extends AbstractInfoElementDefinition
+      implements FlagDefinition, LocalInfoElementDefinition<XmlLocalFlagDefinition> {
 
     /**
      * Create the corresponding definition for the local flag instance.
@@ -103,8 +133,18 @@ public class XmlLocalFlagDefinition
     }
 
     @Override
+    public String getName() {
+      return XmlLocalFlagDefinition.this.getName();
+    }
+
+    @Override
     public String getUseName() {
       return getName();
+    }
+
+    @Override
+    public String getXmlNamespace() {
+      return XmlLocalFlagDefinition.this.getXmlNamespace();
     }
 
     @Override
@@ -123,18 +163,13 @@ public class XmlLocalFlagDefinition
     }
 
     @Override
-    public String getName() {
-      return getXmlFlag().getName();
-    }
-
-    @Override
-    public DataType getDatatype() {
-      DataType retval;
+    public DataTypes getDatatype() {
+      DataTypes retval;
       if (getXmlFlag().isSetAsType()) {
-        retval = DataType.lookup(getXmlFlag().getAsType());
+        retval = getXmlFlag().getAsType();
       } else {
         // the default
-        retval = Metaschema.DEFAULT_DATA_TYPE;
+        retval = DataTypes.DEFAULT_DATA_TYPE;
       }
       return retval;
     }
@@ -142,6 +177,36 @@ public class XmlLocalFlagDefinition
     @Override
     public XmlLocalFlagDefinition getDefiningInstance() {
       return XmlLocalFlagDefinition.this;
+    }
+
+    @Override
+    public List<? extends IConstraint> getConstraints() {
+      checkModelConstraints();
+      return constraints.getConstraints();
+    }
+
+    @Override
+    public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+      checkModelConstraints();
+      return constraints.getAllowedValuesContraints();
+    }
+
+    @Override
+    public List<? extends IMatchesConstraint> getMatchesConstraints() {
+      checkModelConstraints();
+      return constraints.getMatchesConstraints();
+    }
+
+    @Override
+    public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+      checkModelConstraints();
+      return constraints.getIndexHasKeyConstraints();
+    }
+
+    @Override
+    public List<? extends IExpectConstraint> getExpectConstraints() {
+      checkModelConstraints();
+      return constraints.getExpectConstraints();
     }
 
     @Override

@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
 import gov.nist.secauto.metaschema.model.Metaschema;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.definitions.InfoElementDefinition;
+import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -103,21 +103,22 @@ public class JavaGenerator {
     Objects.requireNonNull(bindingConfiguration, "bindingConfiguration");
     logger.info("Generating Java classes in: {}", targetDirectory.getPath());
 
-    Map<Metaschema, List<GeneratedClass>> retval = new HashMap<>();
     Map<URI, String> xmlNamespaceToPackageNameMap = new HashMap<>();
     Map<URI, Set<Metaschema>> xmlNamespaceToMetaschemaMap = new HashMap<>();
 
     TypeResolver typeResolver = new DefaultTypeResolver(bindingConfiguration);
 
-    Map<Metaschema, List<? extends InfoElementDefinition>> metaschemaToInformationElementsMap
+    Map<Metaschema, List<? extends MetaschemaDefinition>> metaschemaToInformationElementsMap
         = buildMetaschemaMap(metaschemas);
-    for (Map.Entry<Metaschema, List<? extends InfoElementDefinition>> entry : metaschemaToInformationElementsMap
+
+    Map<Metaschema, List<GeneratedClass>> retval = new HashMap<>();
+    for (Map.Entry<Metaschema, List<? extends MetaschemaDefinition>> entry : metaschemaToInformationElementsMap
         .entrySet()) {
       Metaschema metaschema = entry.getKey();
       List<GeneratedClass> generatedClasses = null;
       Set<String> classNames = new HashSet<>();
 
-      for (InfoElementDefinition definition : entry.getValue()) {
+      for (MetaschemaDefinition definition : entry.getValue()) {
         JavaClassGenerator classGenerator = null;
         if (definition instanceof AssemblyDefinition) {
           classGenerator = new AssemblyJavaClassGenerator((AssemblyDefinition) definition, typeResolver);
@@ -196,15 +197,22 @@ public class JavaGenerator {
       }
 
       for (Metaschema metaschema : xmlNamespaceToMetaschemaMap.get(namespace)) {
-        retval.get(metaschema).add(new GeneratedClass(packageInfo, ClassName.get(packageName, "package-info"), false));
+        GeneratedClass packageInfoClass
+            = new GeneratedClass(packageInfo, ClassName.get(packageName, "package-info"), false);
+        List<GeneratedClass> generatedClasses = retval.get(metaschema);
+        if (generatedClasses == null) {
+          generatedClasses = Collections.singletonList(packageInfoClass);
+        } else {
+          generatedClasses.add(packageInfoClass);
+        }
       }
     }
     return Collections.unmodifiableMap(retval);
   }
 
-  private static Map<Metaschema, List<? extends InfoElementDefinition>>
+  private static Map<Metaschema, List<? extends MetaschemaDefinition>>
       buildMetaschemaMap(Collection<? extends Metaschema> metaschemas) {
-    Map<Metaschema, List<? extends InfoElementDefinition>> retval = new HashMap<>();
+    Map<Metaschema, List<? extends MetaschemaDefinition>> retval = new HashMap<>();
 
     for (Metaschema metaschema : metaschemas) {
       processMetaschema(metaschema, retval);
@@ -213,13 +221,13 @@ public class JavaGenerator {
   }
 
   private static void processMetaschema(Metaschema metaschema,
-      Map<Metaschema, List<? extends InfoElementDefinition>> map) {
+      Map<Metaschema, List<? extends MetaschemaDefinition>> map) {
     for (Metaschema importedMetaschema : metaschema.getImportedMetaschema().values()) {
       processMetaschema(importedMetaschema, map);
     }
 
     if (!map.containsKey(metaschema)) {
-      List<? extends InfoElementDefinition> definitions = metaschema.getAssemblyAndFieldDefinitions();
+      List<? extends MetaschemaDefinition> definitions = metaschema.getAssemblyAndFieldDefinitions();
       map.put(metaschema, definitions);
     }
   }

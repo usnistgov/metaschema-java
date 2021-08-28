@@ -29,6 +29,16 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValues;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.HasCardinality;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Index;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IsUnique;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Require;
+
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -36,6 +46,7 @@ import java.lang.annotation.Target;
  * This marker annotation indicates that a class represents a Metaschema definition (i.e., assembly,
  * field, flag).
  */
+@Documented
 @Retention(RUNTIME)
 @Target(TYPE)
 public @interface MetaschemaAssembly {
@@ -64,4 +75,40 @@ public @interface MetaschemaAssembly {
    * @return an array of JSON field names
    */
   public String[] ignoreRootJsonProperties() default {};
+
+  /**
+   * Get the allowed value constraints for this assembly.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  AllowedValues[] allowedValues() default {};
+
+  /**
+   * Get the matches constraints for this assembly.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  Matches[] matches() default {};
+
+  /**
+   * Get the index-has-key constraints for this assembly.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  IndexHasKey[] indexHasKey() default {};
+
+  /**
+   * Get the expect constraints for this assembly.
+   * 
+   * @return the expected constraints or an empty array if no expected constraints are defined
+   */
+  Expect[] expect() default {};
+
+  Index[] index() default {};
+
+  IsUnique[] isUnique() default {};
+
+  HasCardinality[] hasCardinality() default {};
+
+  Require[] require() default {};
 }

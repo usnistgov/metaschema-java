@@ -28,26 +28,12 @@ package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
+import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
 import java.io.IOException;
 import java.util.function.Supplier;
 
-public interface FlagProperty extends NamedProperty {
-  /**
-   * Indicates if this property is to be used as a JSON key.
-   * 
-   * @return {@code true} if this property is to be used as a JSON key, or {@code false} otherwise
-   */
-  boolean isJsonKey();
-
-  /**
-   * Indicates if this property is to be used as a Metaschema field's value JSON/YAML property/field
-   * name.
-   * 
-   * @return {@code true} if this property is to be used a JSON/YAML property/field name, or
-   *         {@code false} otherwise
-   */
-  boolean isJsonValueKey();
+public interface FlagProperty extends NamedProperty, IFlagInstance {
 
   Object readValueFromString(String value) throws IOException;
 

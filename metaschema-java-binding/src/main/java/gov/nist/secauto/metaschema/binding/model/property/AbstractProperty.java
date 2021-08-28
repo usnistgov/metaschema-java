@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -74,13 +73,13 @@ public abstract class AbstractProperty<CLASS_BINDING extends ClassBinding> imple
   }
 
   @Override
-  public void setValue(Object obj, Object value) throws IOException {
+  public void setValue(Object obj, Object value) {
     boolean accessable = field.canAccess(obj);
     field.setAccessible(true);
     try {
       field.set(obj, value);
     } catch (IllegalArgumentException | IllegalAccessException ex) {
-      throw new IOException(String.format("Unable to set the value of field '%s' in class '%s'.", field.getName(),
+      throw new RuntimeException(String.format("Unable to set the value of field '%s' in class '%s'.", field.getName(),
           field.getDeclaringClass().getName()), ex);
     } finally {
       field.setAccessible(accessable);
@@ -88,7 +87,7 @@ public abstract class AbstractProperty<CLASS_BINDING extends ClassBinding> imple
   }
 
   @Override
-  public Object getValue(Object obj) throws IOException {
+  public Object getValue(Object obj) {
     boolean accessable = field.canAccess(obj);
     field.setAccessible(true);
     Object retval;
@@ -96,7 +95,7 @@ public abstract class AbstractProperty<CLASS_BINDING extends ClassBinding> imple
       Object result = field.get(obj);
       retval = result;
     } catch (IllegalArgumentException | IllegalAccessException ex) {
-      throw new IOException(String.format("Unable to get the value of field '%s' in class '%s'.", field.getName(),
+      throw new RuntimeException(String.format("Unable to get the value of field '%s' in class '%s'.", field.getName(),
           field.getDeclaringClass().getName()));
     } finally {
       field.setAccessible(accessable);

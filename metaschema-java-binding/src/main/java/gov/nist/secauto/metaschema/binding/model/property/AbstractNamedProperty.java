@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,44 +41,21 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-import javax.xml.namespace.QName;
-
 public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
     extends AbstractProperty<CLASS_BINDING>
-    implements NamedProperty {
+    implements NamedProperty, INamedInstance {
   private static final Logger logger = LogManager.getLogger(AbstractNamedProperty.class);
-
-  private QName xmlQName;
 
   public AbstractNamedProperty(Field field, CLASS_BINDING parentClassBinding) {
     super(field, parentClassBinding);
   }
 
   @Override
-  public String getJsonPropertyName() {
-    return getXmlQName().getLocalPart();
+  public String getName() {
+    return getJavaPropertyName();
   }
 
-  protected abstract String getXmlLocalName();
-
-  protected abstract String getXmlNamespace();
-
-  @Override
-  public synchronized QName getXmlQName() {
-    if (xmlQName == null) {
-      String localName = getXmlLocalName();
-      String namespace = getXmlNamespace();
-      if (namespace != null) {
-        xmlQName = new QName(namespace, localName);
-      } else {
-        xmlQName = new QName(localName);
-      }
-    }
-    return xmlQName;
-  }
-
-  @Override
-  public boolean read(Object parentInstance, JsonParsingContext context) throws IOException, BindingException {
+  public boolean isNextProperty(JsonParsingContext context) throws IOException {
     JsonParser parser = context.getReader();
 
     // the parser's current token should be the JSON field name
@@ -88,15 +65,49 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
     if (logger.isTraceEnabled()) {
       logger.trace("reading property {}", propertyName);
     }
-    boolean handled = false;
-    if (getJsonPropertyName().equals(propertyName)) {
-      // advance past the property name
-      parser.nextFieldName();
-      // parse the value
-      PropertyCollector collector = newPropertyCollector();
-      handled = readValue(collector, parentInstance, context);
-      setValue(parentInstance, collector.getValue());
+
+    return getJsonName().equals(propertyName);
+  }
+
+  @Override
+  public Object read(JsonParsingContext context) throws IOException, BindingException {
+    Object retval = null;
+    if (isNextProperty(context)) {
+      retval = readInternal(null, context);
+    }
+    return retval;
+  }
+
+  @Override
+  public boolean read(Object parentInstance, JsonParsingContext context) throws IOException, BindingException {
+    boolean handled = isNextProperty(context);
+    if (handled) {
+      Object value = readInternal(parentInstance, context);
+      setValue(parentInstance, value);
     }
     return handled;
   }
+
+  protected abstract Object readInternal(Object parentInstance, JsonParsingContext context)
+      throws IOException, BindingException;
+  //
+  // protected Object readInternal(Object parentInstance, JsonParsingContext context)
+  // throws IOException, BindingException {
+  // JsonParser parser = context.getReader();
+  // // advance past the property name
+  // parser.nextFieldName();
+  // // parse the value
+  // PropertyCollector collector = newPropertyCollector();
+  // ModelPropertyInfo info = getPropertyInfo();
+  // info.readValue(collector, parentInstance, context);
+  // readValue(collector, parentInstance, context);
+  //
+  // Object retval = collector.getValue();
+  //
+  // // validate the flag value
+  // if (context.isValidating()) {
+  // validateValue(retval, context);
+  // }
+  // return retval;
+  // }
 }

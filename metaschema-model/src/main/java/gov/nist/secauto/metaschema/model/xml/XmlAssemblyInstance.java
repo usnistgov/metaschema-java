@@ -26,13 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.itl.metaschema.model.m4.xml.AssemblyDocument;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.Metaschema;
+import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractAssemblyInstance;
-import gov.nist.secauto.metaschema.model.instances.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.instances.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.xmlbeans.xml.AssemblyDocument;
 
 import java.math.BigInteger;
 
@@ -88,7 +88,7 @@ public class XmlAssemblyInstance
 
   @Override
   public int getMinOccurs() {
-    int retval = Metaschema.DEFAULT_GROUP_AS_MIN_OCCURS;
+    int retval = Defaults.DEFAULT_GROUP_AS_MIN_OCCURS;
     if (getXmlAssembly().isSetMinOccurs()) {
       retval = getXmlAssembly().getMinOccurs().intValueExact();
     }
@@ -97,7 +97,7 @@ public class XmlAssemblyInstance
 
   @Override
   public int getMaxOccurs() {
-    int retval = Metaschema.DEFAULT_GROUP_AS_MAX_OCCURS;
+    int retval = Defaults.DEFAULT_GROUP_AS_MAX_OCCURS;
     if (getXmlAssembly().isSetMaxOccurs()) {
       Object value = getXmlAssembly().getMaxOccurs();
       if (value instanceof String) {
@@ -112,18 +112,18 @@ public class XmlAssemblyInstance
 
   @Override
   public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    JsonGroupAsBehavior retval = JsonGroupAsBehavior.SINGLETON_OR_LIST;
+    JsonGroupAsBehavior retval = Defaults.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
     if (getXmlAssembly().isSetGroupAs() && getXmlAssembly().getGroupAs().isSetInJson()) {
-      retval = JsonGroupAsBehavior.lookup(getXmlAssembly().getGroupAs().getInJson());
+      retval = getXmlAssembly().getGroupAs().getInJson();
     }
     return retval;
   }
 
   @Override
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    XmlGroupAsBehavior retval = XmlGroupAsBehavior.UNGROUPED;
+    XmlGroupAsBehavior retval = Defaults.DEFAULT_XML_GROUP_AS_BEHAVIOR;
     if (getXmlAssembly().isSetGroupAs() && getXmlAssembly().getGroupAs().isSetInXml()) {
-      retval = XmlGroupAsBehavior.lookup(getXmlAssembly().getGroupAs().getInXml());
+      retval = getXmlAssembly().getGroupAs().getInXml();
     }
     return retval;
   }

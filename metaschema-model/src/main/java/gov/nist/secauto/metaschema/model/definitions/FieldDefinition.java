@@ -26,71 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.definitions;
 
-import gov.nist.secauto.metaschema.model.Field;
-import gov.nist.secauto.metaschema.model.instances.FlagInstance;
+import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 
-public interface FieldDefinition extends Field, ObjectDefinition, ValuedObject {
-  /**
-   * Determines if the field uses a flag value or a static value for the field's value property name
-   * in JSON, also known as the "value key".
-   * 
-   * @return {@code true} if the field uses a "value key", or {@code false} otherwise
-   */
-  boolean hasJsonValueKey();
-
-  /**
-   * Identifies the "value key" strategy to use in JSON for this field.
-   * <p>
-   * Depending on the value the following behavior will occur:
-   * <ol>
-   * <li>{@link JsonValueKeyTypeEnum#NONE} - The value property name will be based on the name
-   * specified by the field's data type. Calling {@link #getJsonValueKeyName()} will return this
-   * name.</li>
-   * <li>{@link JsonValueKeyTypeEnum#STATIC_LABEL} - The value property name will be based on a static
-   * label. Calling {@link #getJsonValueKeyName()} will return this name.</li>
-   * <li>{@link JsonValueKeyTypeEnum#FLAG} - The value property name will be based on the value of a
-   * configured flag. Calling {@link #getJsonValueKeyFlagInstance()} will return this flag.</li>
-   * </ol>
-   * 
-   * @return the value key strategy
-   * @see #getJsonValueKeyName()
-   * @see #getJsonValueKeyFlagInstance()
-   */
-  JsonValueKeyTypeEnum getJsonValueKeyType();
-
-  /**
-   * Retrieves the key to use as the field name for this field's value in JSON.
-   * 
-   * @return a string or a FlagInstance value
-   * @see #getJsonValueKeyType()
-   */
-  Object getJsonValueKey();
-
-  /**
-   * Retrieves the flag instance who's value will be used as the "value key".
-   * 
-   * @return the configured flag instance, or {@code null} if a flag is not configured as the "value
-   *         key"
-   * @see #getJsonValueKeyType()
-   */
-  FlagInstance<?> getJsonValueKeyFlagInstance();
-
-  /**
-   * Retrieves the configured static label to use as the value key, or the type specific name if a
-   * label is not configured.
-   * 
-   * @return the value key label
-   * @see #getJsonValueKeyType()
-   */
-  String getJsonValueKeyName();
-
-  /**
-   * Determines if the field is collapsible. If a field is collapsible, then in JSON the values for
-   * all fields that have the same flag values can be represented as a single object with a "value"
-   * property that contains an array of values. This packing of values can make the resulting JSON
-   * more concise.
-   * 
-   * @return {@code true} if the field is collapsible, or {@code false} otherwise
-   */
-  boolean isCollapsible();
+public interface FieldDefinition extends MetaschemaFlaggedDefinition, IFieldDefinition {
 }
