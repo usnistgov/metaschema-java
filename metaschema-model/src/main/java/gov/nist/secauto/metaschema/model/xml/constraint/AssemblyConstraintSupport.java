@@ -99,7 +99,8 @@ public class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
         constraints.add(constraint);
         uniqueConstraints.add(constraint);
       } else if (obj instanceof HasCardinalityConstraintType) {
-        DefaultCardinalityConstraint constraint = ConstraintFactory.newCardinalityConstraint((HasCardinalityConstraintType) obj);
+        DefaultCardinalityConstraint constraint
+            = ConstraintFactory.newCardinalityConstraint((HasCardinalityConstraintType) obj);
         constraints.add(constraint);
         cardinalityConstraints.add(constraint);
       } else if (obj instanceof ScopedMatchesConstraintType) {

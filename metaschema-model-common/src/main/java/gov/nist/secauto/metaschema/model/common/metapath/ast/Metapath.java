@@ -28,7 +28,9 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import java.util.List;
 
-public class Metapath extends AbstractNAryExpression<IExpression> implements IExpression {
+public class Metapath
+    extends AbstractNAryExpression<IExpression>
+    implements IExpression {
 
   public Metapath(List<IExpression> children) {
     super(children);

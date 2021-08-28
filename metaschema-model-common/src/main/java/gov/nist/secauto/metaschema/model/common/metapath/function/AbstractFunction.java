@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
@@ -33,7 +34,7 @@ import java.util.List;
 public class AbstractFunction implements Function {
   private final String name;
   private final List<Arguments> argumentPrototypes = new LinkedList<>();
-  
+
   public AbstractFunction(String name) {
     this.name = name;
   }
@@ -41,7 +42,7 @@ public class AbstractFunction implements Function {
   protected void addArgumentPrototype(List<Argument> arguments) {
     argumentPrototypes.add(new Arguments(arguments));
   }
-  
+
   @Override
   public String getName() {
     return name;

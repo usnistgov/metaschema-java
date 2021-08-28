@@ -48,7 +48,8 @@ import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFlagDefinitionType;
 
 import java.util.List;
 
-public class XmlLocalFlagDefinition extends AbstractFlagInstance<InternalFlagDefinition> {
+public class XmlLocalFlagDefinition
+    extends AbstractFlagInstance<InternalFlagDefinition> {
   private final LocalFlagDefinitionType xmlFlag;
   private final InternalFlagDefinition flagDefinition;
   private IValueConstraintSupport constraints;
@@ -120,7 +121,8 @@ public class XmlLocalFlagDefinition extends AbstractFlagInstance<InternalFlagDef
     return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
   }
 
-  public class InternalFlagDefinition extends AbstractInfoElementDefinition
+  public class InternalFlagDefinition
+      extends AbstractInfoElementDefinition
       implements FlagDefinition, LocalInfoElementDefinition<XmlLocalFlagDefinition> {
 
     /**

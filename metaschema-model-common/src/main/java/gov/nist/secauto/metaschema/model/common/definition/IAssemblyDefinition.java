@@ -88,7 +88,6 @@ public interface IAssemblyDefinition extends IFlaggedDefinition, IModelContainer
   List<? extends IUniqueConstraint> getUniqueConstraints();
 
   List<? extends ICardinalityConstraint> getHasCardinalityConstraints();
-  
 
   @Override
   default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {

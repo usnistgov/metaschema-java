@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import java.util.List;
 
-public abstract class AbstractStepExprNode<CHILD extends IExpression> extends AbstractNAryExpression<CHILD> {
+public abstract class AbstractStepExprNode<CHILD extends IExpression>
+    extends AbstractNAryExpression<CHILD> {
 
   public AbstractStepExprNode(List<CHILD> chidren) {
     super(chidren);

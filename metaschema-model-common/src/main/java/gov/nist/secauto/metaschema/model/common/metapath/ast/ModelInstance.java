@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class ModelInstance extends AbstractNamedInstanceExpression {
+public class ModelInstance
+    extends AbstractNamedInstanceExpression {
 
   public ModelInstance(IExpression node) {
     super(node);

@@ -23,22 +23,25 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
 
 public interface ICardinalityConstraint extends IConstraint {
   /**
-   * Retrieve the required minimum occurrence of the target instance. If specified, this value must be less than or equal to the value of
-   * {@link IModelInstance#getMaxOccurs()} and greater than {@link IModelInstance#getMinOccurs()}.
+   * Retrieve the required minimum occurrence of the target instance. If specified, this value must be
+   * less than or equal to the value of {@link IModelInstance#getMaxOccurs()} and greater than
+   * {@link IModelInstance#getMinOccurs()}.
    * 
    * @return a non-negative integer or {@code null} if not defined
    */
   Integer getMinOccurs();
 
   /**
-   * Retrieve the required maximum occurrence of the target instance. If specified, this value must be less than the value of
-   * {@link IModelInstance#getMaxOccurs()} and greater than or equal to {@link IModelInstance#getMinOccurs()}.
+   * Retrieve the required maximum occurrence of the target instance. If specified, this value must be
+   * less than the value of {@link IModelInstance#getMaxOccurs()} and greater than or equal to
+   * {@link IModelInstance#getMinOccurs()}.
    * 
    * @return a non-negative integer or {@code null} if not defined
    */

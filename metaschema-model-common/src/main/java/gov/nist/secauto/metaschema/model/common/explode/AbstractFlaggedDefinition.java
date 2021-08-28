@@ -40,7 +40,8 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractFlaggedDefinition<DELEGATE extends IFlaggedDefinition>
-    extends AbstractDefinition<DELEGATE> implements IFlaggedDefinition {
+    extends AbstractDefinition<DELEGATE>
+    implements IFlaggedDefinition {
 
   private Map<String, FlagInstance> flagInstances;
 

@@ -115,7 +115,8 @@ class DefaultFieldValuePropertyTest {
 
   @Test
   void testXmlRead()
-      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, XMLStreamException, BindingException {
+      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, XMLStreamException,
+      BindingException {
     String xml = "<field xmlns='http://example.com/ns'>theValue</field>";
     XMLInputFactory factory = WstxInputFactory.newInstance();
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
@@ -220,7 +221,8 @@ class DefaultFieldValuePropertyTest {
 
   @Test
   void testXmlDefaultNameRead()
-      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, XMLStreamException, BindingException {
+      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, XMLStreamException,
+      BindingException {
     String xml = "<field xmlns='http://example.com/ns'>theValue</field>";
     XMLInputFactory factory = WstxInputFactory.newInstance();
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));

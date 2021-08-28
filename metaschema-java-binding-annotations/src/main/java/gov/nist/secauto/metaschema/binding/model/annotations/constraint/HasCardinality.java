@@ -62,8 +62,8 @@ public @interface HasCardinality {
   String target() default ".";
 
   /**
-   * The minimum occurrence of the target. This value cannot be less than or equal to the corresponding value
-   * defined on the target. The value must be greater than {@code 0}.
+   * The minimum occurrence of the target. This value cannot be less than or equal to the
+   * corresponding value defined on the target. The value must be greater than {@code 0}.
    * 
    * @return a non-negative integer or {@code -1} if not defined
    */

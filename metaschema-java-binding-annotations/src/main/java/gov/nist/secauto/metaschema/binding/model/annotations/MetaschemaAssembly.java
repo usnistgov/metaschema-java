@@ -105,10 +105,10 @@ public @interface MetaschemaAssembly {
   Expect[] expect() default {};
 
   Index[] index() default {};
-  
+
   IsUnique[] isUnique() default {};
-  
+
   HasCardinality[] hasCardinality() default {};
-  
+
   Require[] require() default {};
 }

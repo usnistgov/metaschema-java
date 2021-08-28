@@ -124,20 +124,24 @@ public class DefaultMetaschemaContext implements IMetaschemaContext {
     return retval;
   }
 
-  protected Collection<? extends IInstance> searchExpression(MetaschemaInstanceEvaluationVisitor visitor, IExpression expr,
+  protected Collection<? extends IInstance> searchExpression(MetaschemaInstanceEvaluationVisitor visitor,
+      IExpression expr,
       Collection<? extends IInstance> instances) {
     Set<IInstance> retval = new LinkedHashSet<>();
     for (IInstance instance : instances) {
       // get all instances
       Collection<IInstance> modelInstances = new LinkedList<>();
       if (instance instanceof IAssemblyInstance) {
-        Collection<? extends IInstance> resultingInstances = ((IAssemblyInstance) instance).getDefinition().getModelInstances();
+        Collection<? extends IInstance> resultingInstances
+            = ((IAssemblyInstance) instance).getDefinition().getModelInstances();
         modelInstances.addAll(resultingInstances);
       }
 
       if (modelInstances != null && !modelInstances.isEmpty()) {
         // add the matching instances to the result
-        retval.addAll(visitor.visit(expr, this.newInstanceMetaschemaContext(IInstanceSet.newInstanceSet(modelInstances))).getInstances());
+        retval
+            .addAll(visitor.visit(expr, this.newInstanceMetaschemaContext(IInstanceSet.newInstanceSet(modelInstances)))
+                .getInstances());
 
         // recurse
         retval.addAll(searchExpression(visitor, expr, modelInstances));

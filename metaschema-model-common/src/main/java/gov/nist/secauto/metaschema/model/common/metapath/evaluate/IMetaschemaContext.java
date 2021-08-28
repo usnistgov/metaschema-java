@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.evaluate;
 
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
@@ -42,6 +43,7 @@ public interface IMetaschemaContext extends IContext {
 
   IInstanceSet getChildModelInstance(Predicate<IInstance> filter);
 
-  IInstanceSet search(MetaschemaInstanceEvaluationVisitor visitor, IExpression right, IMetaschemaContext newInstanceMetaschemaContext);
+  IInstanceSet search(MetaschemaInstanceEvaluationVisitor visitor, IExpression right,
+      IMetaschemaContext newInstanceMetaschemaContext);
 
 }

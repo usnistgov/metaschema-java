@@ -26,7 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class Name extends AbstractLiteralExpression<String> implements INameExpression {
+public class Name
+    extends AbstractLiteralExpression<String>
+    implements INameExpression {
   public Name(String value) {
     super(value);
   }

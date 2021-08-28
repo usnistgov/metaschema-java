@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.binding.io.context;
 
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
-public class ModelPositionalPathInstance extends ModelPathInstance {
+public class ModelPositionalPathInstance
+    extends ModelPathInstance {
   private final int position;
 
   public ModelPositionalPathInstance(InstanceHandler<? extends NamedModelProperty> handler,

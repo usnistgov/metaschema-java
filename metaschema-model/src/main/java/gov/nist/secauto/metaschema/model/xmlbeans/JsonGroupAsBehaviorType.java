@@ -77,7 +77,8 @@ public class JsonGroupAsBehaviorType {
       retval = JsonGroupAsBehavior.KEYED;
       break;
     default:
-      throw new UnsupportedOperationException(value);    }
+      throw new UnsupportedOperationException(value);
+    }
     return retval;
   }
 }

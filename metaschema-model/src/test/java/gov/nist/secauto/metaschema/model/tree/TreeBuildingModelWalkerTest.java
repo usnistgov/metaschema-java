@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.tree;
 
 import gov.nist.secauto.metaschema.model.Metaschema;
@@ -51,10 +52,10 @@ class TreeBuildingModelWalkerTest {
     Metaschema metaschema = loader.loadXmlMetaschema(new URL(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
 
-    Collection<? extends Node<?,?>> roots
+    Collection<? extends Node<?, ?>> roots
         = TreeBuildingModelWalker.buildTrees(Collections.singleton(metaschema));
 
-    for (Node<?,?> node : roots) {
+    for (Node<?, ?> node : roots) {
       MetaschemaDefinition definition = node.getDefinition();
       logger.info(String.format("%s: %s %s", definition.getContainingMetaschema().getShortName(),
           definition.getModelType().name(), definition.getName()));

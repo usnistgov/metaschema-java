@@ -117,7 +117,7 @@ public @interface Flag {
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
   IndexHasKey[] indexHasKey() default {};
-  
+
   /**
    * Get the expect constraints for this flag.
    * 

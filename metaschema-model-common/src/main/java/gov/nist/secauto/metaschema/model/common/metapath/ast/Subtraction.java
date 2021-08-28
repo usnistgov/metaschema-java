@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class Subtraction extends AbstractArithmeticExpr {
+public class Subtraction
+    extends AbstractArithmeticExpr {
 
   public Subtraction(IExpression left, IExpression right) {
     super(left, right);

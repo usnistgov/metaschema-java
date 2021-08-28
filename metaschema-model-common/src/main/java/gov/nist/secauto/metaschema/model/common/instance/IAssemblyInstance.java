@@ -47,13 +47,13 @@ public interface IAssemblyInstance
     }
     return retval;
   }
-  
 
   @Override
   IAssemblyDefinition getDefinition();
-  
+
   @Override
   default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {
-    return metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(IInstanceSet.newInstanceSet(Collections.singleton(this))));
+    return metapath.evaluateMetaschemaInstance(
+        new DefaultMetaschemaContext(IInstanceSet.newInstanceSet(Collections.singleton(this))));
   }
 }

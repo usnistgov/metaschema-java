@@ -29,7 +29,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 import java.util.Collections;
 import java.util.List;
 
-public class ContextItem extends AbstractPathExpression {
+public class ContextItem
+    extends AbstractPathExpression {
 
   @Override
   public List<? extends IExpression> getChildren() {

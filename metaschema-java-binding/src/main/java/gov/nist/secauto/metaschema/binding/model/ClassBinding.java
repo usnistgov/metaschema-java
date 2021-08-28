@@ -138,7 +138,7 @@ public interface ClassBinding extends IFlaggedDefinition {
       throws BindingException, IOException, XMLStreamException;
 
   boolean validate(Object instance);
-  
+
   void writeItem(Object item, QName parentName, XmlWritingContext context) throws IOException, XMLStreamException;
 
   default void writeItem(Object item, boolean writeObjectWrapper, JsonWritingContext context) throws IOException {

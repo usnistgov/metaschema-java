@@ -34,6 +34,6 @@ public interface InstanceHandler<INSTANCE extends NamedProperty> {
   IPathInstance newPathInstance();
 
   IPathInstance newPathInstance(int position);
-  
+
   IPathInstance newPathInstance(String key);
 }

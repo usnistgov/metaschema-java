@@ -30,7 +30,8 @@ import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
-public class AssemblyInstance extends AbstractNamedInstance<IAssemblyInstance, AssemblyDefinition, AssemblyDefinition>
+public class AssemblyInstance
+    extends AbstractNamedInstance<IAssemblyInstance, AssemblyDefinition, AssemblyDefinition>
     implements IAssemblyInstance, NamedModelInstance {
 
   public AssemblyInstance(IAssemblyInstance proxy, AssemblyDefinition definition,

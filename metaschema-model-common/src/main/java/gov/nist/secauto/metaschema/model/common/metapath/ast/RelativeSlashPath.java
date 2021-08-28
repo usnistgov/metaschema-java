@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
@@ -30,7 +31,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IMetaschemaCon
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.INodeSet;
 
-public class RelativeSlashPath extends AbstractRelativePathExpression {
+public class RelativeSlashPath
+    extends AbstractRelativePathExpression {
 
   public RelativeSlashPath(IExpression left, IExpression right) {
     super(left, right);

@@ -64,7 +64,7 @@ class MetapathTest {
       try {
         Metapath.parseMetapathString(line);
       } catch (ParseCancellationException ex) {
-//        ex.printStackTrace();
+        // ex.printStackTrace();
       }
     }
   }

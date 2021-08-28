@@ -51,7 +51,8 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-public class DefaultXmlDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
+public class DefaultXmlDeserializer<CLASS>
+    extends AbstractDeserializer<CLASS> {
   private static final Logger logger = LogManager.getLogger(DefaultXmlDeserializer.class);
 
   private XMLInputFactory2 xmlInputFactory;
@@ -120,10 +121,10 @@ public class DefaultXmlDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
         XmlEventUtil.consumeAndAssert(reader, XMLEvent.START_DOCUMENT);
       }
 
-//      // Get start element
-//      XmlEvent startEvent = XmlEventUtil.consumeAndAssert(reader, XMLEvent.START_ELEMENT);
+      // // Get start element
+      // XmlEvent startEvent = XmlEventUtil.consumeAndAssert(reader, XMLEvent.START_ELEMENT);
 
-//      reader.nextEvent();
+      // reader.nextEvent();
       AssemblyProperty property = new RootAssemblyProperty(classBinding);
       try {
         @SuppressWarnings("unchecked")
@@ -139,7 +140,7 @@ public class DefaultXmlDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
     } else {
       try {
         @SuppressWarnings("unchecked")
-        CLASS value = (CLASS)classBinding.readItem(null, null, parsingContext);
+        CLASS value = (CLASS) classBinding.readItem(null, null, parsingContext);
         retval = value;
       } catch (IOException | XMLStreamException ex) {
         throw new BindingException(ex);

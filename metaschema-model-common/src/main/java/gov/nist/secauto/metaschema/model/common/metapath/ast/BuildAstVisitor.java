@@ -72,7 +72,8 @@ import src.main.antlr4.metapath10Parser.UnionexprContext;
 import src.main.antlr4.metapath10Parser.ValuecompContext;
 import src.main.antlr4.metapath10Parser.WildcardContext;
 
-public class BuildAstVisitor extends metapath10BaseVisitor<IExpression> {
+public class BuildAstVisitor
+    extends metapath10BaseVisitor<IExpression> {
 
   /**
    * Parse the provided context as a simple trinary phrase, which will be one of the following.
@@ -532,7 +533,7 @@ public class BuildAstVisitor extends metapath10BaseVisitor<IExpression> {
     if (numChildren > 1) {
       List<IExpression> predicates = parsePredicates(context, 1);
       if (!predicates.isEmpty()) {
-        retval = new Step(retval, predicates); 
+        retval = new Step(retval, predicates);
       }
     }
     return retval;
@@ -568,7 +569,7 @@ public class BuildAstVisitor extends metapath10BaseVisitor<IExpression> {
     ParseTree predicateTree = context.getChild(1);
     List<IExpression> predicates = parsePredicates(predicateTree, 0);
     if (!predicates.isEmpty()) {
-      retval = new Step(retval, predicates); 
+      retval = new Step(retval, predicates);
     }
     return retval;
   }

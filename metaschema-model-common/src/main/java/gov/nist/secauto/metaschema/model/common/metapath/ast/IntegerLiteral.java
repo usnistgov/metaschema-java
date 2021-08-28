@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import java.math.BigInteger;
 
-public class IntegerLiteral extends AbstractLiteralExpression<BigInteger> {
+public class IntegerLiteral
+    extends AbstractLiteralExpression<BigInteger> {
 
   public IntegerLiteral(BigInteger value) {
     super(value);

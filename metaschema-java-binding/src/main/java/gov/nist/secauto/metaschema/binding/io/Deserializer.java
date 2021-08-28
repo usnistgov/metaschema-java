@@ -41,6 +41,7 @@ import java.net.URL;
  */
 public interface Deserializer<CLASS> {
   boolean isValidating();
+
   // Format supportedFromat();
   //
   /**

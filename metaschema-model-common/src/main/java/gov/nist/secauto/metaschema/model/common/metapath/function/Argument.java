@@ -23,43 +23,44 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 
 public class Argument {
-    private ArgumentType type;
+  private ArgumentType type;
 
-    public Argument() {
-      type = ArgumentType.ITEM;
-    }
+  public Argument() {
+    type = ArgumentType.ITEM;
+  }
 
-    public Argument item() {
-      type = ArgumentType.ITEM;
-      return this;
-    }
+  public Argument item() {
+    type = ArgumentType.ITEM;
+    return this;
+  }
 
-    public Argument bool() {
-      type = ArgumentType.BOOLEAN;
-      return this;
-    }
+  public Argument bool() {
+    type = ArgumentType.BOOLEAN;
+    return this;
+  }
 
-    public boolean isSupported(IExpression iExpression) {
-      boolean retval;
-      switch (type) {
-      case ITEM:
-      case BOOLEAN:
-      case STRING:
-        retval = true;
-        break;
-      default:
-        retval = false;
-      }
-      return retval;
+  public boolean isSupported(IExpression iExpression) {
+    boolean retval;
+    switch (type) {
+    case ITEM:
+    case BOOLEAN:
+    case STRING:
+      retval = true;
+      break;
+    default:
+      retval = false;
     }
+    return retval;
+  }
 
-    public Argument string() {
-      type = ArgumentType.STRING;
-      return this;
-    }
+  public Argument string() {
+    type = ArgumentType.STRING;
+    return this;
+  }
 }

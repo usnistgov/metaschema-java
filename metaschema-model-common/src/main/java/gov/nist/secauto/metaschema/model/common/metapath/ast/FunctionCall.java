@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-
 import gov.nist.secauto.metaschema.model.common.metapath.function.Function;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionService;
 
@@ -41,9 +40,9 @@ public class FunctionCall implements IExpression {
     Objects.requireNonNull(name);
     Objects.requireNonNull(arguments);
     this.function = FunctionService.getInstance().getFunction(name, arguments);
-//    if (this.function == null) {
-//      throw new UnsupportedOperationException(String.format("unsupported function '%s'",name));
-//    }
+    // if (this.function == null) {
+    // throw new UnsupportedOperationException(String.format("unsupported function '%s'",name));
+    // }
     this.arguments = arguments;
   }
 

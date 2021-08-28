@@ -26,7 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public abstract class AbstractArithmeticExpr extends AbstractBinaryExpr implements IArithmeticExpression {
+public abstract class AbstractArithmeticExpr
+    extends AbstractBinaryExpr
+    implements IArithmeticExpression {
 
   public AbstractArithmeticExpr(IExpression left, IExpression right) {
     super(left, right);

@@ -48,6 +48,7 @@ public @interface Expect {
    * @return the identifier if provided or an empty string otherwise
    */
   String id() default "";
+
   /**
    * An optional metapath that points to the target flag or field value that the constraint applies
    * to. If omitted the target will be ".", which means the target is the value of the {@link Flag},
@@ -65,7 +66,7 @@ public @interface Expect {
    * @return a metapath expression
    */
   String test();
-  
+
   /**
    * Any remarks about the constraint, encoded as an escaped Markdown string.
    * 

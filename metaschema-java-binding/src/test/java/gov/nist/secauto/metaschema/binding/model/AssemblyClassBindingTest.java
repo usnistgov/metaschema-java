@@ -184,14 +184,14 @@ class AssemblyClassBindingTest {
         = new File(getClass().getClassLoader().getResource("test-content/bound-class-simple.json").getFile());
     JsonParser jsonParser = newJsonParser(new FileReader(testContent));
 
-    assertEquals(JsonToken.START_OBJECT,jsonParser.nextToken());
-    assertEquals(JsonToken.FIELD_NAME,jsonParser.nextToken());
-    
+    assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
+    assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
+
     AssemblyClassBinding classBinding = getAssemblyClassBinding();
     AssemblyProperty root = new RootAssemblyProperty(classBinding);
     BoundClass obj = (BoundClass) root.read(jsonParsingContext);
 
-    assertEquals(JsonToken.END_OBJECT,jsonParser.currentToken());
+    assertEquals(JsonToken.END_OBJECT, jsonParser.currentToken());
     assertSimple(obj);
   }
 
@@ -234,14 +234,14 @@ class AssemblyClassBindingTest {
         = new File(getClass().getClassLoader().getResource("test-content/bound-class-complex.json").getFile());
     JsonParser jsonParser = newJsonParser(new FileReader(testContent));
 
-    assertEquals(JsonToken.START_OBJECT,jsonParser.nextToken());
-    assertEquals(JsonToken.FIELD_NAME,jsonParser.nextToken());
-    
+    assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
+    assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
+
     AssemblyClassBinding classBinding = getAssemblyClassBinding();
     AssemblyProperty root = new RootAssemblyProperty(classBinding);
     BoundClass obj = (BoundClass) root.read(jsonParsingContext);
 
-    assertEquals(JsonToken.END_OBJECT,jsonParser.currentToken());
+    assertEquals(JsonToken.END_OBJECT, jsonParser.currentToken());
     assertComplex(obj);
   }
 

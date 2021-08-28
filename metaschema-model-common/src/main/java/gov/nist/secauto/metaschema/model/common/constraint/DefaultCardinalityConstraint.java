@@ -29,7 +29,9 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
-public class DefaultCardinalityConstraint extends AbstractConstraint implements ICardinalityConstraint {
+public class DefaultCardinalityConstraint
+    extends AbstractConstraint
+    implements ICardinalityConstraint {
   private final Integer minOccurs;
   private final Integer maxOccurs;
 

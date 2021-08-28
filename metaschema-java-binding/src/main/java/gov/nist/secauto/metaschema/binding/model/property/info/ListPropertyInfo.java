@@ -52,7 +52,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class ListPropertyInfo extends AbstractModelPropertyInfo<ParameterizedType> implements ModelPropertyInfo {
+public class ListPropertyInfo
+    extends AbstractModelPropertyInfo<ParameterizedType>
+    implements ModelPropertyInfo {
 
   public ListPropertyInfo(NamedModelProperty property) {
     super(property);
@@ -99,7 +101,6 @@ public class ListPropertyInfo extends AbstractModelPropertyInfo<ParameterizedTyp
       Object value = getProperty().readItem(parentInstance, start, context);
       if (value != null) {
         collector.add(value);
-
 
         if (context.isValidating()) {
           getProperty().validateValue(value, context);
@@ -176,7 +177,7 @@ public class ListPropertyInfo extends AbstractModelPropertyInfo<ParameterizedTyp
         // read the object's START_OBJECT
         JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
       }
-      
+
       pathBuilder.pushItem();
 
       List<Object> values = getProperty().readItem(parentInstance, context);

@@ -29,7 +29,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 import java.util.Collections;
 import java.util.List;
 
-public class Flag extends AbstractNamedInstanceExpression {
+public class Flag
+    extends AbstractNamedInstanceExpression {
   public Flag(IExpression node) {
     super(node);
   }

@@ -63,7 +63,7 @@ public class InXmlWrappedType {
       retval = Boolean.FALSE;
       break;
     default:
-      throw new UnsupportedOperationException(String.format("Unsupported InXML type '%s'",value));
+      throw new UnsupportedOperationException(String.format("Unsupported InXML type '%s'", value));
     }
     return retval;
   }

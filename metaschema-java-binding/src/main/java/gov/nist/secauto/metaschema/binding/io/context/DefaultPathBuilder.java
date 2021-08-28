@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.io.context;
 
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
@@ -38,14 +39,14 @@ import java.util.LinkedList;
 
 public class DefaultPathBuilder implements PathBuilder {
   private static final Logger logger = LogManager.getLogger(DefaultPathBuilder.class);
-  
+
   private final LinkedList<InstanceHandler<?>> instanceStack = new LinkedList<>();
   private final LinkedList<IPathInstance> pathStack = new LinkedList<>();
 
-//  public void pushInstance(INamedInstance instance) {
-//    instanceStack.push(instance);
-//  }
-  
+  // public void pushInstance(INamedInstance instance) {
+  // instanceStack.push(instance);
+  // }
+
   @Override
   public void pushInstance(FlagProperty instance) {
     InstanceHandler<FlagProperty> handler = new FlagInstanceHandler(instance);
@@ -56,10 +57,10 @@ public class DefaultPathBuilder implements PathBuilder {
   public void pushInstance(NamedModelProperty instance) {
     InstanceHandler<?> handler;
     if (instance instanceof FieldProperty) {
-      handler = new FieldInstanceHandler((FieldProperty)instance);
+      handler = new FieldInstanceHandler((FieldProperty) instance);
     } else {
       // assembly
-      handler = new AssemblyInstanceHandler((AssemblyProperty)instance);
+      handler = new AssemblyInstanceHandler((AssemblyProperty) instance);
     }
     instanceStack.push(handler);
   }
@@ -74,7 +75,7 @@ public class DefaultPathBuilder implements PathBuilder {
     InstanceHandler<?> currentHandler = instanceStack.peek();
     IPathInstance pathInstance = currentHandler.newPathInstance();
     pathStack.push(pathInstance);
-    logger.info(getPath(PathBuilder.PathType.METAPATH));
+//    logger.info(getPath(PathBuilder.PathType.METAPATH));
   }
 
   @Override
@@ -82,7 +83,7 @@ public class DefaultPathBuilder implements PathBuilder {
     InstanceHandler<?> currentHandler = instanceStack.peek();
     IPathInstance pathInstance = currentHandler.newPathInstance(position);
     pathStack.push(pathInstance);
-    logger.info(getPath(PathBuilder.PathType.METAPATH));
+//    logger.info(getPath(PathBuilder.PathType.METAPATH));
   }
 
   @Override
@@ -90,7 +91,7 @@ public class DefaultPathBuilder implements PathBuilder {
     InstanceHandler<?> currentHandler = instanceStack.peek();
     IPathInstance pathInstance = currentHandler.newPathInstance(key);
     pathStack.push(pathInstance);
-    logger.info(getPath(PathBuilder.PathType.METAPATH));
+//    logger.info(getPath(PathBuilder.PathType.METAPATH));
   }
 
   @Override

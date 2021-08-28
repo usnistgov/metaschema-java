@@ -132,7 +132,7 @@ public class DefaultJsonDeserializer<CLASS>
         JsonUtil.consumeAndAssert(parser, JsonToken.FIELD_NAME);
 
         @SuppressWarnings("unchecked")
-        CLASS value = (CLASS)property.read(parsingContext);
+        CLASS value = (CLASS) property.read(parsingContext);
         retval = value;
 
         // first read the initial START_OBJECT
@@ -143,7 +143,7 @@ public class DefaultJsonDeserializer<CLASS>
     } else {
       try {
         @SuppressWarnings("unchecked")
-        CLASS value = (CLASS)classBinding.readItem(null, parsingContext);
+        CLASS value = (CLASS) classBinding.readItem(null, parsingContext);
         retval = value;
       } catch (IOException ex) {
         throw new BindingException(ex);

@@ -50,6 +50,7 @@ import gov.nist.secauto.metaschema.model.common.util.ConstraintValidatingModelWa
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -62,6 +63,7 @@ class JavaGeneratorTest {
   // File generationDir;
   File generationDir = new File("target/generated-sources/metaschema");
 
+  @Disabled
   @Test
   void test() throws IOException, MetaschemaException {
     // Metaschema metaschema = new MetaschemaLoader().loadXmlMetaschema(new URL(

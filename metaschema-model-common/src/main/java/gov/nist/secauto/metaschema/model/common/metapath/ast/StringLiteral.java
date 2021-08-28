@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class StringLiteral extends AbstractLiteralExpression<String> {
+public class StringLiteral
+    extends AbstractLiteralExpression<String> {
   public StringLiteral(String value) {
     super(value);
   }

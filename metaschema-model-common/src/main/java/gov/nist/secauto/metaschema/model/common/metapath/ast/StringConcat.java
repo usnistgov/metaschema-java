@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import java.util.List;
 
-public class StringConcat extends AbstractNAryExpression<IExpression> {
+public class StringConcat
+    extends AbstractNAryExpression<IExpression> {
 
   public StringConcat(List<IExpression> chidren) {
     super(chidren);

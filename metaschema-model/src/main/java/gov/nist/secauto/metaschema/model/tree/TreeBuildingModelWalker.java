@@ -53,7 +53,8 @@ import java.util.function.Function;
  * 
  * The associated data represents the definition that is the current root node.
  */
-public class TreeBuildingModelWalker extends ModelWalker<TreeBuildingModelWalker.WalkerData> {
+public class TreeBuildingModelWalker
+    extends ModelWalker<TreeBuildingModelWalker.WalkerData> {
   private static final Logger logger = LogManager.getLogger(TreeBuildingModelWalker.class);
 
   private static final Function<MetaschemaDefinition, Boolean> FILTER = (def) -> {

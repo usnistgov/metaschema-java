@@ -45,7 +45,8 @@ import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalFlagDefinitionType;
 
 import java.util.List;
 
-public class XmlGlobalFlagDefinition extends AbstractInfoElementDefinition
+public class XmlGlobalFlagDefinition
+    extends AbstractInfoElementDefinition
     implements FlagDefinition, GlobalInfoElementDefinition {
   private final GlobalFlagDefinitionType xmlFlag;
   private IValueConstraintSupport constraints;

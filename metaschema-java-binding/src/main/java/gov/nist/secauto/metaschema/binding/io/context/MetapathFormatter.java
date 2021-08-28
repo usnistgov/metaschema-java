@@ -51,7 +51,7 @@ public class MetapathFormatter implements IPathFormatter {
 
   @Override
   public String getPathSegment(ModelPositionalPathInstance pathInstance) {
-    StringBuilder builder = new StringBuilder(getPathSegment((ModelPathInstance)pathInstance));
+    StringBuilder builder = new StringBuilder(getPathSegment((ModelPathInstance) pathInstance));
     builder.append('[');
     builder.append(pathInstance.getPosition() + 1);
     builder.append(']');
@@ -70,7 +70,7 @@ public class MetapathFormatter implements IPathFormatter {
 
   @Override
   public String getPathSegment(ModelKeyedPathInstance pathInstance) {
-    StringBuilder builder = new StringBuilder(getPathSegment((ModelPathInstance)pathInstance));
+    StringBuilder builder = new StringBuilder(getPathSegment((ModelPathInstance) pathInstance));
     builder.append('[');
     builder.append(pathInstance.getKey());
     builder.append(']');

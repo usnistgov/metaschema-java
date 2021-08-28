@@ -43,7 +43,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ProxiedAssemblyDefinition extends AbstractFlaggedDefinition<IAssemblyDefinition>
+public class ProxiedAssemblyDefinition
+    extends AbstractFlaggedDefinition<IAssemblyDefinition>
     implements AssemblyDefinition {
   private Map<String, NamedModelInstance> namedModelInstances;
   private Map<String, FieldInstance> fieldInstances;

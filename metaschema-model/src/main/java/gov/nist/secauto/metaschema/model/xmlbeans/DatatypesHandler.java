@@ -67,7 +67,7 @@ public class DatatypesHandler {
     for (Map.Entry<DataTypes, String> entry : dataTypeToNameMap.entrySet()) {
       DataTypes dataType = entry.getKey();
       String name = entry.getValue();
-      
+
       nameToDataTypeMap.put(name, dataType);
     }
   }

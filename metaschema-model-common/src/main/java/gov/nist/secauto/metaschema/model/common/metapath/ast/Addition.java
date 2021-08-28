@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class Addition extends AbstractArithmeticExpr {
+public class Addition
+    extends AbstractArithmeticExpr {
 
   public Addition(IExpression left, IExpression right) {
     super(left, right);

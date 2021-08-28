@@ -46,10 +46,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-public class MetaschemaInstanceEvaluationVisitor extends AbstractExpressionVisitor<IInstanceSet, IMetaschemaContext> {
+public class MetaschemaInstanceEvaluationVisitor
+    extends AbstractExpressionVisitor<IInstanceSet, IMetaschemaContext> {
   private boolean allowedRoot = false;
   private boolean filterUsingPredicates = false;
-
 
   protected boolean isallowedRoot() {
     return allowedRoot;
@@ -102,7 +102,7 @@ public class MetaschemaInstanceEvaluationVisitor extends AbstractExpressionVisit
   public IInstanceSet visitRelativeSlashPath(RelativeSlashPath expr, IMetaschemaContext context) {
     IExpression left = expr.getLeft();
     IInstanceSet leftResult = left.accept(this, context);
-    
+
     IExpression right = expr.getRight();
     return right.accept(this, context.newInstanceMetaschemaContext(leftResult));
   }
@@ -110,7 +110,7 @@ public class MetaschemaInstanceEvaluationVisitor extends AbstractExpressionVisit
   @Override
   public IInstanceSet visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr, IMetaschemaContext context) {
     IInstanceSet leftResult = expr.getLeft().accept(this, context);
-    
+
     return context.search(this, expr.getRight(), context.newInstanceMetaschemaContext(leftResult));
   }
 
@@ -129,7 +129,6 @@ public class MetaschemaInstanceEvaluationVisitor extends AbstractExpressionVisit
     return context.getChildModelInstance(expr.getInstanceMatcher());
   }
 
-
   private IInstanceSet filter(IInstanceSet result, List<IExpression> predicates) {
     IInstanceSet retval = result;
     if (!predicates.isEmpty()) {
@@ -144,7 +143,7 @@ public class MetaschemaInstanceEvaluationVisitor extends AbstractExpressionVisit
     IInstanceSet retval = expr.getStep().accept(this, context);
 
     if (isFilterUsingPredicates()) {
-      retval = filter(retval,expr.getPredicates());
+      retval = filter(retval, expr.getPredicates());
     }
     return retval;
   }
@@ -166,8 +165,7 @@ public class MetaschemaInstanceEvaluationVisitor extends AbstractExpressionVisit
         IInstanceSet instanceSet = expression.accept(this, context);
         result.addAll(instanceSet.getInstances());
       }
-      
-      
+
       if (result.isEmpty()) {
         retval = IInstanceSet.EMPTY_INSTANCE_SET;
       } else {

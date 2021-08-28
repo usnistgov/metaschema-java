@@ -67,7 +67,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class DefaultFieldProperty extends AbstractNamedModelProperty implements FieldProperty {
+public class DefaultFieldProperty
+    extends AbstractNamedModelProperty
+    implements FieldProperty {
 
   public static DefaultFieldProperty createInstance(AssemblyClassBinding parentClassBinding,
       java.lang.reflect.Field field) {
@@ -380,14 +382,14 @@ public class DefaultFieldProperty extends AbstractNamedModelProperty implements 
   }
 
   @Override
-  public void validateValue(Object instance, ParsingContext<?,?> context) {
+  public void validateValue(Object instance, ParsingContext<?, ?> context) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
-  public void validateItem(Object value, ParsingContext<?,?> context) {
+  public void validateItem(Object value, ParsingContext<?, ?> context) {
     // TODO Auto-generated method stub
-    
+
   }
 }

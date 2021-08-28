@@ -46,7 +46,7 @@ public class CSTPrinter {
   }
 
   public void print(ParseTree tree, List<String> ruleNames) {
-    explore((RuleContext)tree.getPayload(), 0);
+    explore((RuleContext) tree.getPayload(), 0);
   }
 
   private void explore(RuleContext ctx, int indentation) {

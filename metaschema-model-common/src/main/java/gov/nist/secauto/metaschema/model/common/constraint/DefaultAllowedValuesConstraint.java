@@ -31,7 +31,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import java.util.Map;
 
-public class DefaultAllowedValuesConstraint extends AbstractConstraint implements IAllowedValuesConstraint {
+public class DefaultAllowedValuesConstraint
+    extends AbstractConstraint
+    implements IAllowedValuesConstraint {
   private final boolean allowedOther;
   private final Map<String, DefaultAllowedValue> allowedValues;
 

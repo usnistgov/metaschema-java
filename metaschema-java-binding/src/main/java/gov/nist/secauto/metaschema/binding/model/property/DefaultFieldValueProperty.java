@@ -52,7 +52,9 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
-public class DefaultFieldValueProperty extends AbstractProperty<FieldClassBinding> implements FieldValueProperty {
+public class DefaultFieldValueProperty
+    extends AbstractProperty<FieldClassBinding>
+    implements FieldValueProperty {
   private static final Logger logger = LogManager.getLogger(DefaultFieldValueProperty.class);
 
   private final FieldValue fieldValue;
@@ -105,7 +107,7 @@ public class DefaultFieldValueProperty extends AbstractProperty<FieldClassBindin
     }
     return retval;
   }
-  
+
   public boolean isNextProperty(JsonParsingContext context) throws IOException {
     JsonParser parser = context.getReader();
 
@@ -134,7 +136,7 @@ public class DefaultFieldValueProperty extends AbstractProperty<FieldClassBindin
       JsonParser parser = context.getReader();
       // advance past the property name
       parser.nextFieldName();
-      
+
       retval = readInternal(context);
     }
     return retval;

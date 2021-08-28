@@ -46,9 +46,9 @@ public interface IFieldDefinition extends IValuedDefinition, IFlaggedDefinition,
     return retval;
   }
 
-
   /**
    * Check if a JSON value key flag is configured.
+   * 
    * @return {@code true} if a JSON value key flag is configured, or {@code false} otherwise
    */
   default boolean hasJsonValueKeyFlagInstance() {

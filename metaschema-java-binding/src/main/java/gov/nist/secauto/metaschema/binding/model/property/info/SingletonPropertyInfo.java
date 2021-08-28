@@ -100,7 +100,7 @@ public class SingletonPropertyInfo
     if (value != null) {
       collector.add(value);
       handled = true;
-      
+
       if (context.isValidating()) {
         getProperty().validateItem(value, context);
       }

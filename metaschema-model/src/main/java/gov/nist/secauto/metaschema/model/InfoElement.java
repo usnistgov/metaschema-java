@@ -33,7 +33,6 @@ import gov.nist.secauto.metaschema.model.common.IModelElement;
  */
 public interface InfoElement extends IModelElement {
 
-
   /**
    * Retrieves the Metaschema instance that contains for the information element's declaration.
    * 

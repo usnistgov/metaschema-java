@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
@@ -31,7 +32,7 @@ import java.util.List;
 
 public class Arguments {
   private final List<Argument> arguments;
-  
+
   public Arguments(List<Argument> arguments) {
     this.arguments = arguments;
   }
@@ -39,7 +40,7 @@ public class Arguments {
   public boolean isSupported(List<IExpression> args) {
     boolean retval = false;
     if (args.size() == arguments.size()) {
-      for (int i=0;i < arguments.size();i++) {
+      for (int i = 0; i < arguments.size(); i++) {
         if (!arguments.get(i).isSupported(args.get(i))) {
           break;
         }

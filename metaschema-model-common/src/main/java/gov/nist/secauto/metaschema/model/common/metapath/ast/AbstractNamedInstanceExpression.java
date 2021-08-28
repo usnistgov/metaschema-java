@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
@@ -32,7 +33,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
-public abstract class AbstractNamedInstanceExpression extends AbstractPathExpression {
+public abstract class AbstractNamedInstanceExpression
+    extends AbstractPathExpression {
   private static final WildcardMatcher WILDCARD = new WildcardMatcher();
 
   private final IExpression node;
@@ -91,7 +93,7 @@ public abstract class AbstractNamedInstanceExpression extends AbstractPathExpres
   private static class WildcardMatcher implements Predicate<IInstance> {
 
     @Override
-    public  boolean test(IInstance instance) {
+    public boolean test(IInstance instance) {
       boolean retval = false;
       if (instance instanceof INamedInstance) {
         retval = true;

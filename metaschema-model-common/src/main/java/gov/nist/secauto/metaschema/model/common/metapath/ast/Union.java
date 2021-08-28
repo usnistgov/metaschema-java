@@ -28,7 +28,9 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import java.util.List;
 
-public class Union extends AbstractNAryExpression<IExpression> implements IExpression {
+public class Union
+    extends AbstractNAryExpression<IExpression>
+    implements IExpression {
 
   public Union(List<IExpression> children) {
     super(children);

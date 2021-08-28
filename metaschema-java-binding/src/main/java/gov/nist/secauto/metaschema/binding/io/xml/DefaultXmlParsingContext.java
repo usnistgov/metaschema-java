@@ -32,7 +32,9 @@ import org.codehaus.stax2.XMLEventReader2;
 
 import java.util.Objects;
 
-public class DefaultXmlParsingContext extends AbstractParsingContext<XMLEventReader2, XmlProblemHandler> implements XmlParsingContext {
+public class DefaultXmlParsingContext
+    extends AbstractParsingContext<XMLEventReader2, XmlProblemHandler>
+    implements XmlParsingContext {
 
   public DefaultXmlParsingContext(XMLEventReader2 eventReader) {
     this(eventReader, new DefaultXmlProblemHandler());

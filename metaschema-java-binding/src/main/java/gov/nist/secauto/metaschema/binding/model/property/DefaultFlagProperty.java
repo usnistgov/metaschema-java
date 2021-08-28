@@ -68,7 +68,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
-public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> implements FlagProperty {
+public class DefaultFlagProperty
+    extends AbstractNamedProperty<ClassBinding>
+    implements FlagProperty {
   // private static final Logger logger = LogManager.getLogger(DefaultFlagProperty.class);
 
   private final Flag flag;
@@ -148,7 +150,7 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
         setValue(parentInstance, value);
 
         pathBuilder.pushItem();
-        
+
         // validate the flag value
         if (context.isValidating()) {
           validateValue(value, context);

@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.constraint;
 
 import java.util.Collections;
@@ -62,6 +63,6 @@ public interface IValueConstraintSupport extends IConstraintSupport {
   List<? extends IMatchesConstraint> getMatchesConstraints();
 
   List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints();
-  
+
   List<? extends IExpectConstraint> getExpectConstraints();
 }

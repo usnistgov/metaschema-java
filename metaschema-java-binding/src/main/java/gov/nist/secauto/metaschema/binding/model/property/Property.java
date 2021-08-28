@@ -148,7 +148,9 @@ public interface Property {
 
   /**
    * Read JSON data associated with this property and return it.
-   * @param context the JSON parsing context
+   * 
+   * @param context
+   *          the JSON parsing context
    * @return the instance value
    * @throws IOException
    *           if there was an error when reading JSON data
@@ -158,8 +160,8 @@ public interface Property {
   Object read(JsonParsingContext context) throws IOException, BindingException;
 
   /**
-   * Read the XML data associated with this property and apply it to the provided parent object on which
-   * this property exists.
+   * Read the XML data associated with this property and apply it to the provided parent object on
+   * which this property exists.
    * 
    * @param parentInstance
    *          an instance of the class on which this property exists
@@ -181,7 +183,9 @@ public interface Property {
 
   /**
    * Read the XML data associated with this property and return it.
-   * @param context the XML parsing context
+   * 
+   * @param context
+   *          the XML parsing context
    * @return the instance value
    * @throws IOException
    *           if there was an error when reading XML data
@@ -219,8 +223,11 @@ public interface Property {
 
   /**
    * Validate the value(s) for this property
-   * @param value the properties value instance
-   * @param context the parsing context
+   * 
+   * @param value
+   *          the properties value instance
+   * @param context
+   *          the parsing context
    */
-  void validateValue(Object value, ParsingContext<?,?> context);
+  void validateValue(Object value, ParsingContext<?, ?> context);
 }

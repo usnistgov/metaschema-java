@@ -50,12 +50,12 @@ public class MetapathExpressionHandler {
       builder.append("Error parsing metapath '");
       builder.append(value);
       builder.append("'");
-      
+
       XmlCursor cursor = obj.newCursor();
       cursor.toParent();
       XmlBookmark bookmark = cursor.getBookmark(XmlLineNumber.class);
       if (bookmark != null) {
-        XmlLineNumber lineNumber = (XmlLineNumber)bookmark;
+        XmlLineNumber lineNumber = (XmlLineNumber) bookmark;
         builder.append(" at location ");
         builder.append(lineNumber.getLine());
         builder.append(':');

@@ -62,10 +62,12 @@ public interface ModelPropertyInfo {
    * located just after the property/field name has been parsed. This method will return a value based
    * on the property's value type as reported by {@link #getProperty()}.
    * 
-   * @param collector used to hold parsed values
+   * @param collector
+   *          used to hold parsed values
    * @param context
    *          the JSON parsing context
-   * @param parentInstance the instance the property is on
+   * @param parentInstance
+   *          the instance the property is on
    * @throws IOException
    *           if there was an error when reading JSON data
    * @throws BindingException

@@ -29,7 +29,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 import java.util.Collections;
 import java.util.List;
 
-public class RootSlashOnlyPath extends AbstractRootPathExpression {
+public class RootSlashOnlyPath
+    extends AbstractRootPathExpression {
 
   public RootSlashOnlyPath() {
     super(null);

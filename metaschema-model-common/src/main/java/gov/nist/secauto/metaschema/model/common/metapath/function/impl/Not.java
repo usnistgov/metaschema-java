@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.function.impl;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.AbstractFunction;
@@ -30,7 +31,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.Argument;
 
 import java.util.List;
 
-public class Not extends AbstractFunction {
+public class Not
+    extends AbstractFunction {
 
   public Not() {
     super("not");

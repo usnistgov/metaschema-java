@@ -36,7 +36,9 @@ import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 
 import java.util.List;
 
-public class FlagDefinition extends AbstractDefinition<IFlagDefinition> implements IFlagDefinition {
+public class FlagDefinition
+    extends AbstractDefinition<IFlagDefinition>
+    implements IFlagDefinition {
 
   public FlagDefinition(IFlagDefinition delegate) {
     super(delegate);

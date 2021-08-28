@@ -26,7 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class Comparison extends AbstractBinaryExpr implements IBooleanLogicExpression {
+public class Comparison
+    extends AbstractBinaryExpr
+    implements IBooleanLogicExpression {
   public enum Operator {
     EQ,
     NE,

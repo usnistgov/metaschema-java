@@ -120,14 +120,16 @@ public class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
     this.expectConstraints
         = expectConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(expectConstraints);
 
-    List<DefaultCardinalityConstraint> cardinalityConstraints = new ArrayList<>(classAnnotation.hasCardinality().length);
+    List<DefaultCardinalityConstraint> cardinalityConstraints
+        = new ArrayList<>(classAnnotation.hasCardinality().length);
     for (HasCardinality annotation : classAnnotation.hasCardinality()) {
       DefaultCardinalityConstraint constraint = ConstraintFactory.newCardinalityConstraint(annotation);
       cardinalityConstraints.add(constraint);
       constraints.add(constraint);
     }
     this.cardinalityConstraints
-        = cardinalityConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(cardinalityConstraints);
+        = cardinalityConstraints.isEmpty() ? Collections.emptyList()
+            : Collections.unmodifiableList(cardinalityConstraints);
 
     this.constraints = constraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(constraints);
   }

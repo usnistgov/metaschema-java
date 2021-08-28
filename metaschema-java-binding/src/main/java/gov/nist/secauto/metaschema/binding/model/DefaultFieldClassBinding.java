@@ -79,7 +79,9 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
-public class DefaultFieldClassBinding extends AbstractClassBinding implements FieldClassBinding {
+public class DefaultFieldClassBinding
+    extends AbstractClassBinding
+    implements FieldClassBinding {
   private static final Logger logger = LogManager.getLogger(DefaultFieldClassBinding.class);
 
   /**
@@ -293,7 +295,7 @@ public class DefaultFieldClassBinding extends AbstractClassBinding implements Fi
     // now parse each property until the end object is reached
     while (!jsonParser.hasTokenId(JsonToken.END_OBJECT.id())) {
       String propertyName = jsonParser.getCurrentName();
-//      JsonUtil.assertAndAdvance(jsonParser, JsonToken.FIELD_NAME);
+      // JsonUtil.assertAndAdvance(jsonParser, JsonToken.FIELD_NAME);
 
       NamedProperty namedProperty = properties.get(propertyName);
 

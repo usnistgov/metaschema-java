@@ -30,7 +30,9 @@ import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.binding.io.context.AbstractParsingContext;
 
-public class DefaultJsonParsingContext extends AbstractParsingContext<JsonParser, JsonProblemHandler> implements JsonParsingContext {
+public class DefaultJsonParsingContext
+    extends AbstractParsingContext<JsonParser, JsonProblemHandler>
+    implements JsonParsingContext {
 
   public DefaultJsonParsingContext(JsonParser parser) {
     this(parser, new DefaultJsonProblemHandler());

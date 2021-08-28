@@ -91,7 +91,7 @@ public enum DataTypes {
     for (DataTypes dataType : DataTypes.values()) {
       JavaTypeAdapter<?> adapter = dataType.getJavaTypeAdapter();
       @SuppressWarnings("unchecked")
-      Class<? extends JavaTypeAdapter<?>> adapterClass = (Class<? extends JavaTypeAdapter<?>>)adapter.getClass();
+      Class<? extends JavaTypeAdapter<?>> adapterClass = (Class<? extends JavaTypeAdapter<?>>) adapter.getClass();
       DataTypes previous = adapterToDataTypeMap.put(adapterClass, dataType);
       if (previous != null) {
         throw new RuntimeException(
@@ -103,7 +103,7 @@ public enum DataTypes {
 
   public static DataTypes getDataTypeForAdapter(JavaTypeAdapter<?> adapter) {
     @SuppressWarnings("unchecked")
-    Class<? extends JavaTypeAdapter<?>> adapterClass = (Class<? extends JavaTypeAdapter<?>>)adapter.getClass();
+    Class<? extends JavaTypeAdapter<?>> adapterClass = (Class<? extends JavaTypeAdapter<?>>) adapter.getClass();
     return getDataTypeForAdapter(adapterClass);
   }
 
@@ -117,7 +117,8 @@ public enum DataTypes {
     try {
       this.javaTypeAdapter = adapterClass.getDeclaredConstructor().newInstance();
     } catch (NoSuchMethodException ex) {
-      throw new RuntimeException(String.format("Adapter class '%s' does not have a required no-arg constructor", adapterClass.getName()),ex);
+      throw new RuntimeException(
+          String.format("Adapter class '%s' does not have a required no-arg constructor", adapterClass.getName()), ex);
     } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
         | SecurityException ex) {
       throw new RuntimeException(ex);

@@ -29,9 +29,9 @@ package gov.nist.secauto.metaschema.model.instances;
 import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 
-public abstract class AbstractDefinedInfoElementInstance<PARENT extends MetaschemaFlaggedDefinition,
-      DEF extends MetaschemaDefinition>
-    extends AbstractInfoElementInstance<PARENT> implements DefinedInfoElementInstance<DEF> {
+public abstract class AbstractDefinedInfoElementInstance<PARENT extends MetaschemaFlaggedDefinition, DEF extends MetaschemaDefinition>
+    extends AbstractInfoElementInstance<PARENT>
+    implements DefinedInfoElementInstance<DEF> {
 
   /**
    * Construct a new instance.

@@ -31,7 +31,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import java.util.List;
 
-public class DefaultIndexHasKeyConstraint extends AbstractKeyConstraint implements IIndexHasKeyConstraint {
+public class DefaultIndexHasKeyConstraint
+    extends AbstractKeyConstraint
+    implements IIndexHasKeyConstraint {
   private final String indexName;
 
   public DefaultIndexHasKeyConstraint(String id, MetapathExpression target, String indexName,

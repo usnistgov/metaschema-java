@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.model.common.explode;
 
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
-public class FlagInstance extends AbstractNamedInstance<IFlagInstance, FlagDefinition, AbstractFlaggedDefinition<?>>
+public class FlagInstance
+    extends AbstractNamedInstance<IFlagInstance, FlagDefinition, AbstractFlaggedDefinition<?>>
     implements IFlagInstance {
 
   public FlagInstance(IFlagInstance proxy, FlagDefinition definition,

@@ -39,16 +39,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaInst
 import org.antlr.v4.runtime.tree.ParseTree;
 
 public class MetapathExpression {
-  public static final MetapathExpression CONTEXT_NODE = new MetapathExpression(".",new ContextItem());
+  public static final MetapathExpression CONTEXT_NODE = new MetapathExpression(".", new ContextItem());
 
   private final String path;
   private final IExpression node;
 
   public MetapathExpression(ParseTree tree) {
-    this(tree.getText(),(IExpression) new BuildAstVisitor().visit(tree));
+    this(tree.getText(), (IExpression) new BuildAstVisitor().visit(tree));
   }
 
-  public MetapathExpression(String path,IExpression expr) {
+  public MetapathExpression(String path, IExpression expr) {
     this.path = path;
     this.node = expr;
   }
@@ -81,7 +81,7 @@ public class MetapathExpression {
     }
     // TODO: implement
     throw new UnsupportedOperationException();
-//    return ((INodeExpression)node).evaluateNodeSet(context);
+    // return ((INodeExpression)node).evaluateNodeSet(context);
   }
 
   public boolean evaluate(INodeContext context) {

@@ -56,7 +56,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class XmlGlobalFieldDefinition extends AbstractInfoElementDefinition
+public class XmlGlobalFieldDefinition
+    extends AbstractInfoElementDefinition
     implements FieldDefinition, GlobalInfoElementDefinition {
   private final GlobalFieldDefinitionType xmlField;
   private final Map<String, FlagInstance<?>> flagInstances;

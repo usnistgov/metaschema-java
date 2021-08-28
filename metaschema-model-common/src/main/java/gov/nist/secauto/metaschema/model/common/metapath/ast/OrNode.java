@@ -28,7 +28,9 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import java.util.List;
 
-public class OrNode extends AbstractNAryExpression<IExpression> implements IBooleanLogicExpression {
+public class OrNode
+    extends AbstractNAryExpression<IExpression>
+    implements IBooleanLogicExpression {
 
   public OrNode(List<IExpression> chidren) {
     super(chidren);

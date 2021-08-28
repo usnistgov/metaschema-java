@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class IntegerDivision extends AbstractArithmeticExpr {
+public class IntegerDivision
+    extends AbstractArithmeticExpr {
 
   public IntegerDivision(IExpression left, IExpression right) {
     super(left, right);

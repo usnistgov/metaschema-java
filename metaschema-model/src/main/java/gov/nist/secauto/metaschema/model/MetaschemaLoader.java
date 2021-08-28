@@ -207,7 +207,7 @@ public class MetaschemaLoader {
           SAXParserFactory factory = SAXParserFactory.newInstance();
 
           try {
-//            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            // factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false);
             factory.setFeature("http://xml.org/sax/features/external-general-entities", true);
             factory.setFeature("http://xml.org/sax/features/external-parameter-entities", true);
@@ -220,27 +220,27 @@ public class MetaschemaLoader {
               public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
                 return null;
               }
-              
+
             });
             options.setLoadUseXMLReader(reader);
           } catch (SAXException | ParserConfigurationException ex) {
             throw new MetaschemaException(ex);
           }
-//          options.setLoadEntityBytesLimit(204800);
-//          options.setLoadUseDefaultResolver();
+          // options.setLoadEntityBytesLimit(204800);
+          // options.setLoadUseDefaultResolver();
           options.setEntityResolver(new EntityResolver() {
 
-              @Override
-              public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-                // It's very odd that the system id looks like this. Need to investigate. 
-                if (systemId.startsWith("file://file://")) {
-                  systemId = systemId.substring(14);
-                }
-                URI resolvedSystemId = resource.resolve(systemId);
-                return new InputSource(resolvedSystemId.toString());
+            @Override
+            public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+              // It's very odd that the system id looks like this. Need to investigate.
+              if (systemId.startsWith("file://file://")) {
+                systemId = systemId.substring(14);
               }
-              
-            });
+              URI resolvedSystemId = resource.resolve(systemId);
+              return new InputSource(resolvedSystemId.toString());
+            }
+
+          });
           options.setLoadDTDGrammar(true);
         }
         options.setBaseURI(resource);

@@ -37,7 +37,9 @@ import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 import javax.xml.namespace.QName;
 
-public class RootAssemblyProperty extends AbstractAssemblyProperty implements AssemblyProperty {
+public class RootAssemblyProperty
+    extends AbstractAssemblyProperty
+    implements AssemblyProperty {
 
   public RootAssemblyProperty(AssemblyClassBinding rootAssemblyDefinition) {
     super(rootAssemblyDefinition, null);
@@ -52,10 +54,12 @@ public class RootAssemblyProperty extends AbstractAssemblyProperty implements As
   protected DataTypeHandler newDataTypeHandler() {
     return new ClassDataTypeHandler(getDefinition(), this);
   }
+
   @Override
   protected ModelPropertyInfo newPropertyInfo() {
     return new SingletonPropertyInfo(this);
   }
+
   @Override
   public String getName() {
     return getDefinition().getRootName();

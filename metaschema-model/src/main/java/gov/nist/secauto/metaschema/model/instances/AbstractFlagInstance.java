@@ -43,24 +43,25 @@ public abstract class AbstractFlagInstance<DEF extends FlagDefinition>
     super(parent);
   }
 
-//  @Override
-//  public boolean isJsonKey() {
-//    return this.equals(getContainingDefinition().getJsonKeyFlagInstance());
-//  }
+  // @Override
+  // public boolean isJsonKey() {
+  // return this.equals(getContainingDefinition().getJsonKeyFlagInstance());
+  // }
 
-//  @Override
-//  public boolean isJsonValueKey() {
-//    boolean retval;
-//    MetaschemaFlaggedDefinition parent = getContainingDefinition();
-//    if (parent instanceof FieldDefinition) {
-//      FieldDefinition parentField = (FieldDefinition) parent;
-//      retval = parentField.hasJsonValueKey() && JsonValueKeyTypeEnum.FLAG.equals(parentField.getJsonValueKeyType())
-//          && this.equals(parentField.getJsonValueKeyFlagInstance());
-//    } else {
-//      retval = false;
-//    }
-//    return retval;
-//  }
+  // @Override
+  // public boolean isJsonValueKey() {
+  // boolean retval;
+  // MetaschemaFlaggedDefinition parent = getContainingDefinition();
+  // if (parent instanceof FieldDefinition) {
+  // FieldDefinition parentField = (FieldDefinition) parent;
+  // retval = parentField.hasJsonValueKey() &&
+  // JsonValueKeyTypeEnum.FLAG.equals(parentField.getJsonValueKeyType())
+  // && this.equals(parentField.getJsonValueKeyFlagInstance());
+  // } else {
+  // retval = false;
+  // }
+  // return retval;
+  // }
   //
   // @Override
   // public FlagDefinition getDefinition() {

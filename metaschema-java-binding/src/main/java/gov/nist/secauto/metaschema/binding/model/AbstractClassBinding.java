@@ -169,7 +169,7 @@ public abstract class AbstractClassBinding implements ClassBinding {
     if (this.flagInstances == null) {
       Map<String, FlagProperty> flags = new LinkedHashMap<>();
       for (Field field : getFlagInstanceFields(clazz)) {
-  
+
         Flag flag = field.getAnnotation(Flag.class);
         if (flag != null) {
           FlagProperty flagBinding = new DefaultFlagProperty(this, field, bindingContext);
@@ -334,20 +334,20 @@ public abstract class AbstractClassBinding implements ClassBinding {
   @Override
   public boolean validate(Object instance) {
     boolean retval = true;
-    
+
     // validate the constraints on this bound class
     // TODO: complete
 
-//    // validate flags
-//    for (FlagProperty flag : getFlagInstances().values()) {
-//      Object value = flag.getValue(instance);
-//      if (flag.isRequired() && value == null) {
-//        retval = false;
-//      }
-//    }
-//    
-//    // validate model/field value
-//    // TODO: complete
+    // // validate flags
+    // for (FlagProperty flag : getFlagInstances().values()) {
+    // Object value = flag.getValue(instance);
+    // if (flag.isRequired() && value == null) {
+    // retval = false;
+    // }
+    // }
+    //
+    // // validate model/field value
+    // // TODO: complete
     return retval;
   }
 

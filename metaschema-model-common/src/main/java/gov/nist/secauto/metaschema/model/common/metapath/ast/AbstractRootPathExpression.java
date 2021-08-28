@@ -29,7 +29,9 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractRootPathExpression extends AbstractPathExpression implements IRootPathExpression {
+public abstract class AbstractRootPathExpression
+    extends AbstractPathExpression
+    implements IRootPathExpression {
   private final IExpression node;
 
   public AbstractRootPathExpression(IExpression node) {

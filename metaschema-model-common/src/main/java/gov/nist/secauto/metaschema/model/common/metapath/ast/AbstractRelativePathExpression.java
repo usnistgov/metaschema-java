@@ -28,7 +28,9 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import java.util.List;
 
-public abstract class AbstractRelativePathExpression extends AbstractPathExpression implements IRelativePathExpression {
+public abstract class AbstractRelativePathExpression
+    extends AbstractPathExpression
+    implements IRelativePathExpression {
   private final IExpression left;
   private final IExpression right;
 
@@ -44,8 +46,9 @@ public abstract class AbstractRelativePathExpression extends AbstractPathExpress
   public IExpression getRight() {
     return right;
   }
+
   @Override
   public List<? extends IExpression> getChildren() {
-    return List.of(left,right);
+    return List.of(left, right);
   }
 }

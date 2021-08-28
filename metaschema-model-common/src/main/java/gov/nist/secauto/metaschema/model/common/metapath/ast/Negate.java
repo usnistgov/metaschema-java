@@ -26,7 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class Negate extends AbstractUnaryExpr implements IBooleanLogicExpression {
+public class Negate
+    extends AbstractUnaryExpr
+    implements IBooleanLogicExpression {
 
   public Negate(IExpression expr) {
     super(expr);

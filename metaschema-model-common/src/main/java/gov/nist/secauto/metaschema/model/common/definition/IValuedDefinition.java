@@ -65,7 +65,6 @@ public interface IValuedDefinition extends IDefinition {
    * @return the list of key reference constraints
    */
   List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints();
-  
 
   /**
    * Retrieve the list of expect constraints that apply to this definition's value.

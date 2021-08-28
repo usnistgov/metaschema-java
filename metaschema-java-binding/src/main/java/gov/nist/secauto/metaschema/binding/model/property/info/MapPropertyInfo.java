@@ -56,7 +56,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class MapPropertyInfo extends AbstractModelPropertyInfo<ParameterizedType> implements ModelPropertyInfo {
+public class MapPropertyInfo
+    extends AbstractModelPropertyInfo<ParameterizedType>
+    implements ModelPropertyInfo {
 
   public MapPropertyInfo(NamedModelProperty property) {
     super(property);
@@ -107,7 +109,12 @@ public class MapPropertyInfo extends AbstractModelPropertyInfo<ParameterizedType
     NamedModelProperty property = getProperty();
     // process all map items
     while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
-      pathBuilder.pushItem(jsonParser.currentToken().asString());
+      if (JsonToken.FIELD_NAME.equals(jsonParser.currentToken())) {
+        String name = jsonParser.currentName();
+        pathBuilder.pushItem(name);
+      } else {
+        pathBuilder.pushItem();
+      }
 
       List<Object> values = property.readItem(parentInstance, context);
       collector.addAll(values);

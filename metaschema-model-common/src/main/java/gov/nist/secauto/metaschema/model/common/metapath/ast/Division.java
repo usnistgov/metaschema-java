@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class Division extends AbstractArithmeticExpr {
+public class Division
+    extends AbstractArithmeticExpr {
 
   public Division(IExpression left, IExpression right) {
     super(left, right);

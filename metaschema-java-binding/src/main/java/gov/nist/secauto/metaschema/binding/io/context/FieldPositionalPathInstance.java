@@ -23,16 +23,17 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.io.context;
 
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
-class FieldPositionalPathInstance extends ModelPositionalPathInstance {
+class FieldPositionalPathInstance
+    extends ModelPositionalPathInstance {
 
   public FieldPositionalPathInstance(InstanceHandler<? extends NamedModelProperty> handler,
       int position) {
     super(handler, position);
   }
-
 
 }

@@ -31,7 +31,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Step extends AbstractPathExpression {
+public class Step
+    extends AbstractPathExpression {
   private final IExpression step;
   private final List<IExpression> predicates;
 

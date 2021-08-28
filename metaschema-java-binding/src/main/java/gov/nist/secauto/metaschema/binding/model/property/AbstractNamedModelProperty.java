@@ -63,7 +63,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<AssemblyClassBinding>
+public abstract class AbstractNamedModelProperty
+    extends AbstractNamedProperty<AssemblyClassBinding>
     implements NamedModelProperty {
   // private static final Logger logger = LogManager.getLogger(AbstractNamedModelProperty.class);
 

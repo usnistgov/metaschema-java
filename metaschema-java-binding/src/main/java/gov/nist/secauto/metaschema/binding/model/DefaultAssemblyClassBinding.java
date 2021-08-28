@@ -89,7 +89,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class DefaultAssemblyClassBinding extends AbstractClassBinding implements AssemblyClassBinding {
+public class DefaultAssemblyClassBinding
+    extends AbstractClassBinding
+    implements AssemblyClassBinding {
   private static final Logger logger = LogManager.getLogger(DefaultAssemblyClassBinding.class);
 
   /**
@@ -433,7 +435,7 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
   @Override
   public List<Object> readItem(Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
- 
+
     Object instance = newInstance();
 
     callBeforeDeserialize(instance, parentInstance);
@@ -503,7 +505,7 @@ public class DefaultAssemblyClassBinding extends AbstractClassBinding implements
     if (context.isValidating()) {
       validate(instance);
     }
-    
+
     if (jsonKey != null) {
       // read the END_OBJECT for the JSON key value
       JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);

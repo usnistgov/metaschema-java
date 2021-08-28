@@ -54,7 +54,7 @@ public interface AssemblyClassBinding extends ClassBinding, IAssemblyDefinition 
   // align the return value with the extended marker interface
   @Override
   Map<String, ? extends FieldProperty> getFieldInstances();
-  
+
   // align the return value with the extended marker interface
   @Override
   Map<String, ? extends AssemblyProperty> getAssemblyInstances();

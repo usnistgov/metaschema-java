@@ -35,7 +35,8 @@ import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 import java.lang.reflect.Field;
 
-public class DefaultAssemblyProperty extends AbstractAssemblyProperty {
+public class DefaultAssemblyProperty
+    extends AbstractAssemblyProperty {
 
   public static DefaultAssemblyProperty createInstance(AssemblyClassBinding parentClassBinding, Field field) {
     DefaultAssemblyProperty retval = new DefaultAssemblyProperty(parentClassBinding, field);

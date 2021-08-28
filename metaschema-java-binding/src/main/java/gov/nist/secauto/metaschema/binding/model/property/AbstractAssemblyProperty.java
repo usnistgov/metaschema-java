@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
@@ -46,7 +47,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public abstract class AbstractAssemblyProperty extends AbstractNamedModelProperty implements AssemblyProperty {
+public abstract class AbstractAssemblyProperty
+    extends AbstractNamedModelProperty
+    implements AssemblyProperty {
 
   public AbstractAssemblyProperty(AssemblyClassBinding parentClassBinding, Field field) {
     super(parentClassBinding, field);
@@ -119,15 +122,15 @@ public abstract class AbstractAssemblyProperty extends AbstractNamedModelPropert
   }
 
   @Override
-  public void validateValue(Object instance, ParsingContext<?,?> context) {
+  public void validateValue(Object instance, ParsingContext<?, ?> context) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
-  public void validateItem(Object value, ParsingContext<?,?> context) {
+  public void validateItem(Object value, ParsingContext<?, ?> context) {
     // TODO Auto-generated method stub
-    
+
   }
 
 }

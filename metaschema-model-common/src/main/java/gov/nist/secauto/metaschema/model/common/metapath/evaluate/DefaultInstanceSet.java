@@ -43,5 +43,4 @@ public class DefaultInstanceSet implements IInstanceSet {
     return Collections.unmodifiableList(instances);
   }
 
-
 }

@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class Multiplication extends AbstractArithmeticExpr {
+public class Multiplication
+    extends AbstractArithmeticExpr {
 
   public Multiplication(IExpression left, IExpression right) {
     super(left, right);

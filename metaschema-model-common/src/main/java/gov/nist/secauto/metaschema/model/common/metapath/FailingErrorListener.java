@@ -31,7 +31,8 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
-public class FailingErrorListener extends BaseErrorListener {
+public class FailingErrorListener
+    extends BaseErrorListener {
   private boolean syntaxError = false;
 
   public boolean isSyntaxError() {

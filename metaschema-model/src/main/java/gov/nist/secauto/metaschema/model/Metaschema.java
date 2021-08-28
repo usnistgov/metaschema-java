@@ -104,10 +104,9 @@ public interface Metaschema {
   Collection<InfoElement> getInfoElementByMetaPath(String path);
 
   /**
-   * Retrieves the assembly definition with a matching name fro@Override
-  m either: 1) the top-level assembly
-   * definitions from this Metaschema, or 2) global assembly definitions from each imported Metaschema
-   * in reverse order of import.
+   * Retrieves the assembly definition with a matching name fro@Override m either: 1) the top-level
+   * assembly definitions from this Metaschema, or 2) global assembly definitions from each imported
+   * Metaschema in reverse order of import.
    * 
    * @param name
    *          the name of the assembly to find

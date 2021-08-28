@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import java.math.BigDecimal;
 
-public class DecimalLiteral extends AbstractLiteralExpression<BigDecimal> {
+public class DecimalLiteral
+    extends AbstractLiteralExpression<BigDecimal> {
 
   public DecimalLiteral(BigDecimal value) {
     super(value);

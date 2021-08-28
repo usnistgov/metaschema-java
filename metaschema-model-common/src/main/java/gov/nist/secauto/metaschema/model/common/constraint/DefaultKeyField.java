@@ -31,7 +31,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import java.util.regex.Pattern;
 
-public class DefaultKeyField extends AbstractKeyField {
+public class DefaultKeyField
+    extends AbstractKeyField {
 
   private final Pattern pattern;
   private final MetapathExpression target;

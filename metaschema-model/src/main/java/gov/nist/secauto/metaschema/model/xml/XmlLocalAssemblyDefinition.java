@@ -55,7 +55,8 @@ import java.util.List;
 /**
  * Represents a Metaschema assembly definition declared locally as an instance.
  */
-public class XmlLocalAssemblyDefinition extends AbstractAssemblyInstance<InternalAssemblyDefinition> {
+public class XmlLocalAssemblyDefinition
+    extends AbstractAssemblyInstance<InternalAssemblyDefinition> {
   private final LocalAssemblyDefinitionType xmlAssembly;
   private final InternalAssemblyDefinition assemblyDefinition;
   private IAssemblyConstraintSupport constraints;

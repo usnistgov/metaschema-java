@@ -23,16 +23,18 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.function.impl;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.AbstractFunctionLibrary;
 
-public class DefaultFunctionLibrary extends AbstractFunctionLibrary {
+public class DefaultFunctionLibrary
+    extends AbstractFunctionLibrary {
 
   public DefaultFunctionLibrary() {
     registerFunction(new Exists());
     registerFunction(new Not());
     registerFunction(new StartsWith());
   }
-  
+
 }

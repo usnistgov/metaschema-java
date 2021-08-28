@@ -38,6 +38,7 @@ public interface IDefinition extends INamedModelElement {
 
   /**
    * Retrieve the list of constraints associated with this definition.
+   * 
    * @return the list of constraints
    */
   List<? extends IConstraint> getConstraints();

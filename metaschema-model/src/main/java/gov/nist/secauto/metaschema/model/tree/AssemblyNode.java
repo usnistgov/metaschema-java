@@ -29,6 +29,6 @@ package gov.nist.secauto.metaschema.model.tree;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 import gov.nist.secauto.metaschema.model.instances.AssemblyInstance;
 
-public interface AssemblyNode extends Node<AssemblyDefinition, AssemblyInstance<?>>  {
+public interface AssemblyNode extends Node<AssemblyDefinition, AssemblyInstance<?>> {
 
 }

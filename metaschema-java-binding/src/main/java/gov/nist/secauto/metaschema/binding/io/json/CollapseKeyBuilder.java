@@ -106,7 +106,7 @@ public class CollapseKeyBuilder {
       for (FlagProperty flag : flagProperties) {
         if (jsonKey != null && jsonKey.equals(flag)) {
           jsonKeyIndex = index++;
-        } else if (jsonValueKey!= null && jsonValueKey.equals(flag)) {
+        } else if (jsonValueKey != null && jsonValueKey.equals(flag)) {
           jsonValueKeyIndex = index++;
         } else {
           // regular properties

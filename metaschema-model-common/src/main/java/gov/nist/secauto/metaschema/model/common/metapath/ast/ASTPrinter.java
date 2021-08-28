@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class ASTPrinter extends AbstractExpressionVisitor<String, Void> {
+public class ASTPrinter
+    extends AbstractExpressionVisitor<String, Void> {
   private int indentation = 0;
   private int lastIndentation = 0;
   private String indentationPadding = "";

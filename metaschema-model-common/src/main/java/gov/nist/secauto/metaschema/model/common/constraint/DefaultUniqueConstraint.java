@@ -24,7 +24,6 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-
 package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
@@ -32,7 +31,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import java.util.List;
 
-public class DefaultUniqueConstraint extends AbstractKeyConstraint implements IUniqueConstraint {
+public class DefaultUniqueConstraint
+    extends AbstractKeyConstraint
+    implements IUniqueConstraint {
 
   public DefaultUniqueConstraint(String id, MetapathExpression target, List<DefaultKeyField> keyFields,
       MarkupMultiline remarks) {

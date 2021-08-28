@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class RootDoubleSlashPath extends AbstractRootPathExpression {
+public class RootDoubleSlashPath
+    extends AbstractRootPathExpression {
 
   public RootDoubleSlashPath(IExpression node) {
     super(node);

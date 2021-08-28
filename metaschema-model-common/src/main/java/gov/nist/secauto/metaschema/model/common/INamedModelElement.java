@@ -60,8 +60,8 @@ public interface INamedModelElement extends IModelElement {
   /**
    * Get the name to use based on the provided names. This method will return the use name provided by
    * {@link #getUseName()} if the call is not {@code null}, and fall back to the name provided by
-   * {@link #getName()} otherwise. This is the model name to use for the
-   * for an instance where the instance is referenced.
+   * {@link #getName()} otherwise. This is the model name to use for the for an instance where the
+   * instance is referenced.
    * 
    * @return the use name if available, or the name if not
    * 

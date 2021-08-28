@@ -29,7 +29,8 @@ package gov.nist.secauto.metaschema.model.instances;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 
 public abstract class AbstractAssemblyInstance<DEFINITION extends AssemblyDefinition>
-    extends AbstractDefinedInfoElementInstance<AssemblyDefinition, DEFINITION> implements AssemblyInstance<DEFINITION> {
+    extends AbstractDefinedInfoElementInstance<AssemblyDefinition, DEFINITION>
+    implements AssemblyInstance<DEFINITION> {
 
   /**
    * Create a new assembly instance.

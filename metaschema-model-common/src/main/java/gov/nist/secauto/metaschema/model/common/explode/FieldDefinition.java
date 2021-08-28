@@ -30,7 +30,9 @@ import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
-public class FieldDefinition extends AbstractFlaggedDefinition<IFieldDefinition> implements IFieldDefinition {
+public class FieldDefinition
+    extends AbstractFlaggedDefinition<IFieldDefinition>
+    implements IFieldDefinition {
 
   public FieldDefinition(IFieldDefinition delegate) {
     super(delegate);

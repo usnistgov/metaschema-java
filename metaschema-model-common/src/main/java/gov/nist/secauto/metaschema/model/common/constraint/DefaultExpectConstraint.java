@@ -31,7 +31,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import java.util.Objects;
 
-public class DefaultExpectConstraint extends AbstractConstraint implements IExpectConstraint {
+public class DefaultExpectConstraint
+    extends AbstractConstraint
+    implements IExpectConstraint {
   private final MetapathExpression test;
 
   public DefaultExpectConstraint(String id, MetapathExpression target, MetapathExpression test,

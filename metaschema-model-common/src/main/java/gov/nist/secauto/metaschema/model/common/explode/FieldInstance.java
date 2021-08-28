@@ -30,7 +30,8 @@ import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
-public class FieldInstance extends AbstractNamedInstance<IFieldInstance, FieldDefinition, AssemblyDefinition>
+public class FieldInstance
+    extends AbstractNamedInstance<IFieldInstance, FieldDefinition, AssemblyDefinition>
     implements IFieldInstance, NamedModelInstance {
 
   public FieldInstance(IFieldInstance proxy, FieldDefinition definition, AssemblyDefinition containingDefinition) {

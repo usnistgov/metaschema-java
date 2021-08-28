@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -41,9 +42,11 @@ class MetaschemaLoaderTest {
   @Test
   void test() throws MetaschemaException, IOException {
     MetaschemaLoader loader = new MetaschemaLoader();
-    Metaschema metachema = loader.loadMetaschema(URI.create("https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
+    Metaschema metachema = loader.loadMetaschema(URI.create(
+        "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
 
-    Metaschema metadataMetaschema = metachema.getImportedMetaschemaByShortName("oscal-catalog").getImportedMetaschemaByShortName("oscal-metadata");
+    Metaschema metadataMetaschema = metachema.getImportedMetaschemaByShortName("oscal-catalog")
+        .getImportedMetaschemaByShortName("oscal-metadata");
     IFlagDefinition flag = metadataMetaschema.getFlagDefinitionByName("location-type");
     List<? extends IConstraint> constraints = flag.getConstraints();
     assertFalse(constraints.isEmpty());

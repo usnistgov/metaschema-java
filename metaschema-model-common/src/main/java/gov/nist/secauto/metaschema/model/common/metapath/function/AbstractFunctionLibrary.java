@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
@@ -33,10 +34,9 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class AbstractFunctionLibrary implements FunctionLibrary {
-  
+
   private final HashMap<String, Set<Function>> library = new HashMap<>();
 
-  
   protected HashMap<String, Set<Function>> getLibrary() {
     return library;
   }
@@ -44,7 +44,7 @@ public abstract class AbstractFunctionLibrary implements FunctionLibrary {
   public synchronized void registerFunction(Function function) {
     String name = function.getName();
 
-    Set<Function> functions =  getLibrary().get(name);
+    Set<Function> functions = getLibrary().get(name);
     if (functions == null) {
       functions = new HashSet<>();
       library.put(name, functions);
@@ -54,7 +54,7 @@ public abstract class AbstractFunctionLibrary implements FunctionLibrary {
 
   @Override
   public synchronized boolean hasFunction(String name, List<IExpression> args) {
-    Set<Function> functions =  getLibrary().get(name);
+    Set<Function> functions = getLibrary().get(name);
     boolean retval;
     if (functions == null) {
       retval = false;
@@ -66,7 +66,7 @@ public abstract class AbstractFunctionLibrary implements FunctionLibrary {
 
   @Override
   public Function getFunction(String name, List<IExpression> args) {
-    Set<Function> functions =  getLibrary().get(name);
+    Set<Function> functions = getLibrary().get(name);
     Function retval;
     if (functions == null) {
       retval = null;
@@ -75,5 +75,5 @@ public abstract class AbstractFunctionLibrary implements FunctionLibrary {
     }
     return retval;
   }
-  
+
 }

@@ -55,7 +55,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class AbstractXmlAssemblyDefinition<DEF extends AbstractXmlAssemblyDefinition<DEF,
-    INSTANCE>, INSTANCE extends AssemblyInstance<DEF>> extends AbstractInfoElementDefinition
+    INSTANCE>, INSTANCE extends AssemblyInstance<DEF>>
+    extends AbstractInfoElementDefinition
     implements AssemblyDefinition {
   private Map<String, FlagInstance<?>> flagInstances;
   private Map<String, ObjectModelInstance<?>> namedModelInstances;

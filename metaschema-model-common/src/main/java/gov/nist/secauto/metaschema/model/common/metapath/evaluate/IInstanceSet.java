@@ -46,7 +46,6 @@ public interface IInstanceSet {
 
   Collection<? extends IInstance> getInstances();
 
-
   public static IInstanceSet newInstanceSet(IAssemblyDefinition definition) {
     return new IInstanceSet() {
 
@@ -117,10 +116,10 @@ public interface IInstanceSet {
           @Override
           public IAssemblyDefinition getDefinition() {
             return definition;
-          }          
+          }
         });
       }
-      
+
     };
   }
 
@@ -199,10 +198,10 @@ public interface IInstanceSet {
           @Override
           public boolean isInXmlWrapped() {
             return true;
-          }          
+          }
         });
       }
-      
+
     };
   }
 
@@ -251,13 +250,12 @@ public interface IInstanceSet {
           @Override
           public boolean isRequired() {
             return false;
-          }          
+          }
         });
       }
-      
+
     };
   }
-
 
   public static IInstanceSet newInstanceSet(Collection<? extends IInstance> instances) {
     IInstanceSet retval;

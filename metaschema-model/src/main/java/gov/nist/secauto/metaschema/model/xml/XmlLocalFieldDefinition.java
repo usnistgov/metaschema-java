@@ -61,7 +61,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class XmlLocalFieldDefinition extends AbstractFieldInstance<InternalFieldDefinition> {
+public class XmlLocalFieldDefinition
+    extends AbstractFieldInstance<InternalFieldDefinition> {
   private final LocalFieldDefinitionType xmlField;
   private final InternalFieldDefinition fieldDefinition;
   private IValueConstraintSupport constraints;
@@ -196,7 +197,8 @@ public class XmlLocalFieldDefinition extends AbstractFieldInstance<InternalField
     return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
   }
 
-  public class InternalFieldDefinition extends AbstractInfoElementDefinition
+  public class InternalFieldDefinition
+      extends AbstractInfoElementDefinition
       implements FieldDefinition, LocalInfoElementDefinition<XmlLocalFieldDefinition> {
     private final Map<String, FlagInstance<?>> flagInstances;
 

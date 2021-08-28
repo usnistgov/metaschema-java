@@ -58,7 +58,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-public class ConstraintValidatingModelWalker extends ConstraintVisitingModelWalker<ConstraintValidatingModelWalker> {
+public class ConstraintValidatingModelWalker
+    extends ConstraintVisitingModelWalker<ConstraintValidatingModelWalker> {
   private static final Logger logger = LogManager.getLogger(ConstraintValidatingModelWalker.class);
 
   private final Set<IAssemblyDefinition> seenAssemblies = new HashSet<>();
@@ -144,17 +145,20 @@ public class ConstraintValidatingModelWalker extends ConstraintVisitingModelWalk
     }
   }
 
-  protected IInstanceSet validateConstraintTarget(IDefinition definition, IConstraint constraint, IInstanceSet instanceSet,
+  protected IInstanceSet validateConstraintTarget(IDefinition definition, IConstraint constraint,
+      IInstanceSet instanceSet,
       ConstraintValidatingModelWalker data) {
     MetapathExpression metapath = constraint.getTarget();
     try {
       IInstanceSet result = metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(instanceSet));
       if (result.getInstances().isEmpty()) {
-        logger.error(String.format("Path '%s' did not match in %s definition '%s'", metapath.getPath(), definition.getModelType().name().toLowerCase(),definition.getName()));
+        logger.error(String.format("Path '%s' did not match in %s definition '%s'", metapath.getPath(),
+            definition.getModelType().name().toLowerCase(), definition.getName()));
       }
       return result;
     } catch (RuntimeException ex) {
-      logger.error(String.format("Path '%s' failed to evaluate in %s definition '%s'", metapath.getPath(), definition.getModelType().name().toLowerCase(),definition.getName()), ex);
+      logger.error(String.format("Path '%s' failed to evaluate in %s definition '%s'", metapath.getPath(),
+          definition.getModelType().name().toLowerCase(), definition.getName()), ex);
       return IInstanceSet.EMPTY_INSTANCE_SET;
     }
   }

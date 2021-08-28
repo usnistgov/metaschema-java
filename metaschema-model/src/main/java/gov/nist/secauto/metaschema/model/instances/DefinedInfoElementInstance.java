@@ -32,7 +32,8 @@ import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 /**
  * Represents an information element instance that has an associated definition.
  *
- * @param <DEFINITION> the type of the element's definition
+ * @param <DEFINITION>
+ *          the type of the element's definition
  */
 public interface DefinedInfoElementInstance<DEFINITION extends MetaschemaDefinition>
     extends MetaschemaInstance, INamedInstance {

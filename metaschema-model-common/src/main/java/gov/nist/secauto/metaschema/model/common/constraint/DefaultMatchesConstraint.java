@@ -32,7 +32,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import java.util.regex.Pattern;
 
-public class DefaultMatchesConstraint extends AbstractConstraint implements IMatchesConstraint {
+public class DefaultMatchesConstraint
+    extends AbstractConstraint
+    implements IMatchesConstraint {
   private final Pattern pattern;
   private final DataTypes dataType;
 

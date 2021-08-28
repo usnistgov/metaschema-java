@@ -28,7 +28,9 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import java.util.List;
 
-public class And extends AbstractNAryExpression<IExpression> implements IBooleanLogicExpression {
+public class And
+    extends AbstractNAryExpression<IExpression>
+    implements IBooleanLogicExpression {
 
   public And(List<IExpression> chidren) {
     super(chidren);
