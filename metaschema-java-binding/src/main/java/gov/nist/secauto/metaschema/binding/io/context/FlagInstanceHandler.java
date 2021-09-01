@@ -41,17 +41,12 @@ class FlagInstanceHandler implements InstanceHandler<FlagProperty> {
   }
 
   @Override
-  public IPathInstance newPathInstance() {
-    return new FlagPathInstance(this);
+  public IPathSegment newPathInstance() {
+    return new FlagPathSegment(getInstance());
   }
 
   @Override
-  public IPathInstance newPathInstance(int position) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public IPathInstance newPathInstance(String key) {
-    throw new UnsupportedOperationException();
+  public IPathSegment newPathInstance(int position) {
+    return newPathInstance();
   }
 }

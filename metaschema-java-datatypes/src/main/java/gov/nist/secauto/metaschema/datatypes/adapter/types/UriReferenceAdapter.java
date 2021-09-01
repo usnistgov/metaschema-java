@@ -27,11 +27,12 @@
 package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.metapath.IAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.metapath.UntypedAtomicItem;
 
 import java.net.URI;
 
-public class UriReferenceAdapter
-    extends AbstractJavaTypeAdapter<URI> {
+public class UriReferenceAdapter extends AbstractJavaTypeAdapter<URI> {
   public UriReferenceAdapter() {
     super(URI.class);
   }
@@ -47,4 +48,13 @@ public class UriReferenceAdapter
     return obj;
   }
 
+  @Override
+  public boolean isAtomic() {
+    return true;
+  }
+
+  @Override
+  public IAtomicItem newAtomicItem(Object value) {
+    return new UntypedAtomicItem(this, value);
+  }
 }

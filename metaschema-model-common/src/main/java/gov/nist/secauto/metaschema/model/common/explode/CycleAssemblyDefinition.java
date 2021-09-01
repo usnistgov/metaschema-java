@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.model.common.explode;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
@@ -41,8 +40,7 @@ import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 
 import java.util.Collection;
 import java.util.List;
@@ -105,7 +103,7 @@ public class CycleAssemblyDefinition implements AssemblyDefinition {
   }
 
   @Override
-  public Map<String, ? extends IModelInstance> getNamedModelInstances() {
+  public Map<String, ? extends INamedModelInstance> getNamedModelInstances() {
     return getCycle().getNamedModelInstances();
   }
 

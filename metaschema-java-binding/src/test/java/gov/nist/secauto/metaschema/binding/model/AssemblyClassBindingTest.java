@@ -140,8 +140,6 @@ class AssemblyClassBindingTest {
         ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
         ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
         ignoring(pathBuilder).popInstance();
-        ignoring(pathBuilder).pushItem();
-        ignoring(pathBuilder).pushItem(with(any(String.class)));
         ignoring(pathBuilder).pushItem(with(any(Integer.class)));
         ignoring(pathBuilder).popItem();
         ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
@@ -166,8 +164,6 @@ class AssemblyClassBindingTest {
         ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
         ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
         ignoring(pathBuilder).popInstance();
-        ignoring(pathBuilder).pushItem();
-        ignoring(pathBuilder).pushItem(with(any(String.class)));
         ignoring(pathBuilder).pushItem(with(any(Integer.class)));
         ignoring(pathBuilder).popItem();
         ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));

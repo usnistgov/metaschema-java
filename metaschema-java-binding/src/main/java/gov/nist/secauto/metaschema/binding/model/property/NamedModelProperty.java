@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -45,9 +46,26 @@ import javax.xml.stream.events.XMLEvent;
 /**
  * This marker interface TBD.
  */
-public interface NamedModelProperty
-    extends NamedProperty, INamedModelInstance {
+public interface NamedModelProperty extends NamedProperty, INamedModelInstance {
   DataTypeHandler getDataTypeHandler();
+
+  /**
+   * Retrieve a stream of item values associated with this property.
+   * 
+   * @param parentInstance
+   *          the parent instance on which this property exists
+   * @return a stream of items associated with this property, or an empty stream if none exist
+   */
+  Stream<?> getItemsFromParentInstance(Object parentInstance);
+
+  /**
+   * Retrieve a stream of item values associated with this property.
+   * 
+   * @param value
+   *          the property's value
+   * @return a stream of items associated with this property, or an empty stream if none exist
+   */
+  Stream<?> getItemsFromValue(Object value);
 
   /**
    * Reads an individual XML item from the XML stream.
@@ -82,8 +100,7 @@ public interface NamedModelProperty
    * @throws IOException
    *           if an error occurred reading the underlying XML file
    */
-  List<Object> readItem(Object parentInstance, JsonParsingContext context)
-      throws BindingException, IOException;
+  List<Object> readItem(Object parentInstance, JsonParsingContext context) throws BindingException, IOException;
 
   boolean writeItem(Object item, QName parentName, XmlWritingContext context) throws XMLStreamException, IOException;
 

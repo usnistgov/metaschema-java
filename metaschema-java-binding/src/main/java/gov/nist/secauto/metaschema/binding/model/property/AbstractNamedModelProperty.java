@@ -57,6 +57,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -122,6 +123,16 @@ public abstract class AbstractNamedModelProperty
       retval = new SingletonPropertyInfo(this);
     }
     return retval;
+  }
+
+  @Override
+  public Stream<?> getItemsFromParentInstance(Object parentInstance) {
+    return getPropertyInfo().getItemsFromParentInstance(parentInstance);
+  }
+
+  @Override
+  public Stream<?> getItemsFromValue(Object value) {
+    return getPropertyInfo().getItemsFromValue(value);
   }
 
   /**

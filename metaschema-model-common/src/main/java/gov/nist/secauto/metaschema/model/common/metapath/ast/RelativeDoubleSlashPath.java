@@ -26,17 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.INodeSet;
-
 public class RelativeDoubleSlashPath
     extends AbstractRelativePathExpression {
 
   public RelativeDoubleSlashPath(IExpression left, IExpression right) {
     super(left, right);
-    // TODO Auto-generated constructor stub
   }
 
   @Override

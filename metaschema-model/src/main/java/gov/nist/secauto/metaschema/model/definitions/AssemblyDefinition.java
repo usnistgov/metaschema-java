@@ -27,6 +27,11 @@
 package gov.nist.secauto.metaschema.model.definitions;
 
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.instances.ObjectModelInstance;
+
+import java.util.Map;
 
 public interface AssemblyDefinition extends MetaschemaFlaggedDefinition, IAssemblyDefinition {
+  @Override
+  Map<String, ? extends ObjectModelInstance<?>> getNamedModelInstances();
 }

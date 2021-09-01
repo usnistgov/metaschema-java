@@ -26,39 +26,10 @@
 
 package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import gov.nist.secauto.metaschema.datatypes.adapter.AbstractIntegerAdapter;
 
-import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
-
-import java.io.IOException;
-import java.math.BigInteger;
-
-public class NegativeIntegerAdapter
-    extends AbstractJavaTypeAdapter<BigInteger> {
+public class NegativeIntegerAdapter extends AbstractIntegerAdapter {
 
   public NegativeIntegerAdapter() {
-    super(BigInteger.class);
   }
-
-  @Override
-  public BigInteger parse(String value) {
-    return new BigInteger(value);
-  }
-
-  @Override
-  public void writeJsonValue(Object value, JsonGenerator generator)
-      throws IOException {
-    try {
-      generator.writeNumber(((BigInteger) value));
-    } catch (ClassCastException ex) {
-      throw new IOException(ex);
-    }
-  }
-
-  @Override
-  public BigInteger copy(BigInteger obj) {
-    // a BigInteger is immutable
-    return obj;
-  }
-
 }

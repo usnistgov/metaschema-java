@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 
 import java.util.Collection;
 import java.util.List;
@@ -65,11 +66,23 @@ public interface IModelContainer {
   }
 
   /**
+   * Get the model instance contained within the model with the associated use name.
+   * 
+   * @param name
+   *          the use name of the model instance
+   * @return the matching model instance, or {@code null} if no match was found
+   * @see INamedModelInstance#getUseName()
+   */
+  default INamedModelInstance getModelInstanceByName(String name) {
+    return getNamedModelInstances().get(name);
+  }
+
+  /**
    * Get all named model instances within the container.
    * 
    * @return an ordered mapping of use name to model instance
    */
-  Map<String, ? extends IModelInstance> getNamedModelInstances();
+  Map<String, ? extends INamedModelInstance> getNamedModelInstances();
 
   /**
    * Get all field instances within the container.

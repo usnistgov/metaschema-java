@@ -43,8 +43,12 @@ public abstract class AbstractNamedInstanceExpression
     this.node = node;
   }
 
-  protected IExpression getNode() {
+  public IExpression getNode() {
     return node;
+  }
+
+  public boolean isName() {
+    return getNode() instanceof Name;
   }
 
   public Predicate<IInstance> getInstanceMatcher() {

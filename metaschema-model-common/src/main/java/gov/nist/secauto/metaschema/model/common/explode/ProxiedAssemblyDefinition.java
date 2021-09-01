@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.explode;
 
-import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;

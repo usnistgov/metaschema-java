@@ -46,6 +46,7 @@ import org.codehaus.stax2.XMLEventReader2;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -76,6 +77,17 @@ public class ListPropertyInfo
   @Override
   public ListPropertyCollector newPropertyCollector() {
     return new ListPropertyCollector();
+  }
+
+  @Override
+  public Stream<?> getItemsFromParentInstance(Object parentInstance) {
+    Object value = getProperty().getValue(parentInstance);
+    return getItemsFromValue(value);
+  }
+
+  @Override
+  public Stream<?> getItemsFromValue(Object value) {
+    return value == null ? Stream.empty() : ((List<?>)value).stream();
   }
 
   @Override
@@ -178,7 +190,7 @@ public class ListPropertyInfo
         JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
       }
 
-      pathBuilder.pushItem();
+      pathBuilder.pushItem(1);
 
       List<Object> values = getProperty().readItem(parentInstance, context);
       collector.addAll(values);

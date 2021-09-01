@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
+import gov.nist.secauto.metaschema.binding.model.constraint.ConstraintValidator;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
@@ -122,15 +122,15 @@ public abstract class AbstractAssemblyProperty
   }
 
   @Override
-  public void validateValue(Object instance, ParsingContext<?, ?> context) {
-    // TODO Auto-generated method stub
-
+  public void validateValue(Object value, ParsingContext<?, ?> context) {
+    ConstraintValidator valdiator = new ConstraintValidator(context);
+    valdiator.validateValue(this, value);
   }
 
   @Override
   public void validateItem(Object value, ParsingContext<?, ?> context) {
-    // TODO Auto-generated method stub
-
+    ConstraintValidator valdiator = new ConstraintValidator(context);
+    valdiator.validateItem(this, value);
   }
 
 }

@@ -36,6 +36,10 @@ public abstract class AbstractUnaryExpr implements IExpression {
     this.expr = expr;
   }
 
+  public IExpression getChild() {
+    return expr;
+  }
+  
   @Override
   public List<? extends IExpression> getChildren() {
     return List.of(expr);

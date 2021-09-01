@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.datatypes.adapter.types;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.metapath.IAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.metapath.IDecimalItem;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -61,4 +63,13 @@ public class DecimalAdapter
     return obj;
   }
 
+  @Override
+  public boolean isAtomic() {
+    return true;
+  }
+
+  @Override
+  public IAtomicItem newAtomicItem(Object value) {
+    return IDecimalItem.valueOf(toValue(value));
+  }
 }

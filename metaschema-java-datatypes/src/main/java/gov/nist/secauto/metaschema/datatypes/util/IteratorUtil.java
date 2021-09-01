@@ -26,12 +26,15 @@
 
 package gov.nist.secauto.metaschema.datatypes.util;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 public class IteratorUtil {
@@ -79,5 +82,23 @@ public class IteratorUtil {
   public static <T> List<T> toList(Iterator<T> iterator) {
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false)
         .collect(Collectors.toList());
+  }
+  
+  public static <T> Iterable<T> descendingIterable(List<T> list) {
+    return toIterable(descendingIterator(list));
+  }
+
+  public static <T> Iterator<T> descendingIterator(List<T> list) {
+    Iterator<T> retval;
+    if (list instanceof LinkedList) {
+      retval = ((LinkedList<T>)list).descendingIterator();
+    } else if (list instanceof ArrayList) {
+      retval = IntStream.range(0, list.size())
+          .map(i-> list.size() - 1 - i)
+          .mapToObj(list::get).iterator();
+    } else {
+      throw new UnsupportedOperationException();
+    }
+    return retval;
   }
 }

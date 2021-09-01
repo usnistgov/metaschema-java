@@ -27,6 +27,8 @@
 package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.metapath.IAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.metapath.StringItem;
 
 import java.net.URI;
 
@@ -45,5 +47,15 @@ public class UriAdapter
   public URI copy(URI obj) {
     // a URI is immutable
     return obj;
+  }
+
+  @Override
+  public boolean isAtomic() {
+    return true;
+  }
+
+  @Override
+  public IAtomicItem newAtomicItem(Object value) {
+    return new StringItem(asString(value));
   }
 }

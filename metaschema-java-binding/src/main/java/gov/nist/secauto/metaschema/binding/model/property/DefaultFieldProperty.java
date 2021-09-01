@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
+import gov.nist.secauto.metaschema.binding.model.constraint.ConstraintValidator;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.XmlBindingSupplier;
@@ -382,14 +383,14 @@ public class DefaultFieldProperty
   }
 
   @Override
-  public void validateValue(Object instance, ParsingContext<?, ?> context) {
-    // TODO Auto-generated method stub
-
+  public void validateValue(Object value, ParsingContext<?, ?> context) {
+    ConstraintValidator valdiator = new ConstraintValidator(context);
+    valdiator.validateValue(this, value);
   }
 
   @Override
   public void validateItem(Object value, ParsingContext<?, ?> context) {
-    // TODO Auto-generated method stub
-
+    ConstraintValidator valdiator = new ConstraintValidator(context);
+    valdiator.validateItem(this, value);
   }
 }

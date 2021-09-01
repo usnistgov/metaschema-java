@@ -29,6 +29,9 @@ package gov.nist.secauto.metaschema.datatypes.adapter;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 
+import gov.nist.secauto.metaschema.datatypes.metapath.IAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.metapath.IStringItem;
+
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.codehaus.stax2.evt.XMLEventFactory2;
@@ -50,6 +53,8 @@ public interface JavaTypeAdapter<TYPE> {
    * @return the Java class
    */
   Class<TYPE> getJavaClass();
+
+  TYPE toValue(Object value);
 
   /**
    * Gets the value as a string suitable for writing as text. This is intended for data types that
@@ -268,4 +273,30 @@ public interface JavaTypeAdapter<TYPE> {
    * @return {@code true} if allowed, or {@code false} otherwise.
    */
   boolean isUnrappedValueAllowedInXml();
+
+  /**
+   * Determines if the data type is an atomic, scalar value. Complex structures such as Markup are not
+   * considered atomic.
+   * 
+   * @return {@code true} if the data type is an atomic scalar value, or {@code false} otherwise
+   */
+  boolean isAtomic();
+
+  /**
+   * Retrieves the item type of the provided value. The value is expected to be an atomic, scalar value if {@link #isAtomic()} is {@code true}. Complex structures such as Markup are not
+   * considered atomic.
+   * 
+   * @param value the instance value
+   * @return the item type if the data type is an atomic scalar value, or {@code null} otherwise
+   */
+  IAtomicItem newAtomicItem(Object value);
+  
+  /**
+   * Retrieves the provided value as a string item type. The value is expected to be an atomic, scalar value if {@link #isAtomic()} is {@code true}. Complex structures such as Markup are not
+   * considered atomic.
+   * 
+   * @param value the instance value
+   * @return the string item type if the data type is an atomic scalar value, or {@code null} otherwise
+   */
+  IStringItem newStringItem(Object value);
 }

@@ -66,6 +66,7 @@ public class DefaultFieldValueProperty
     this.javaTypeAdapter = fieldClassBinding.getBindingContext().getJavaTypeAdapterInstance(fieldValue.typeAdapter());
   }
 
+
   protected FieldValue getFieldValueAnnotation() {
     return fieldValue;
   }
@@ -221,5 +222,10 @@ public class DefaultFieldValueProperty
   public void validateValue(Object value, ParsingContext<?, ?> context) {
     // TODO Auto-generated method stub
 
+  }
+
+  @Override
+  public FieldClassBinding getContainingDefinition() {
+    return getParentClassBinding();
   }
 }

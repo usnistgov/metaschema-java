@@ -26,10 +26,27 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class StringLiteral
     extends AbstractLiteralExpression<String> {
+  private static final Pattern pattern = Pattern.compile("^'(.*)'$|^\"(.*)\"$");
+
   public StringLiteral(String value) {
-    super(value);
+    super(removeQuotes(value));
+  }
+
+  private static String removeQuotes(String value) {
+    Matcher matcher = pattern.matcher(value);
+    if (matcher.matches()) {
+      if (matcher.group(1) != null) {
+        value = matcher.group(1);
+      } else if (matcher.group(2) != null) {
+        value = matcher.group(2);
+      }
+    }
+    return value;
   }
 
   @Override

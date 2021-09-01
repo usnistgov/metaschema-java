@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
 import gov.nist.secauto.metaschema.datatypes.IPv4;
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractDatatypeJavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.metapath.IAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.metapath.UntypedAtomicItem;
 
 public class Ipv4AddressAdapter
     extends AbstractDatatypeJavaTypeAdapter<IPv4> {
@@ -41,4 +43,13 @@ public class Ipv4AddressAdapter
     return new IPv4(value);
   }
 
+  @Override
+  public boolean isAtomic() {
+    return true;
+  }
+
+  @Override
+  public IAtomicItem newAtomicItem(Object value) {
+    return new UntypedAtomicItem(this, value);
+  }
 }

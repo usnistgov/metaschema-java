@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.datatypes.adapter;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 
+import gov.nist.secauto.metaschema.datatypes.metapath.IStringItem;
+import gov.nist.secauto.metaschema.datatypes.metapath.StringItem;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -64,6 +66,12 @@ public abstract class AbstractJavaTypeAdapter<TYPE> implements JavaTypeAdapter<T
    */
   protected AbstractJavaTypeAdapter(Class<TYPE> clazz) {
     this.clazz = clazz;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public TYPE toValue(Object value) {
+    return (TYPE)value;
   }
 
   @Override
@@ -132,6 +140,11 @@ public abstract class AbstractJavaTypeAdapter<TYPE> implements JavaTypeAdapter<T
   @Override
   public String asString(Object value) {
     return value.toString();
+  }
+
+  @Override
+  public IStringItem newStringItem(Object value) {
+    return new StringItem(asString(value));
   }
 
   @Override

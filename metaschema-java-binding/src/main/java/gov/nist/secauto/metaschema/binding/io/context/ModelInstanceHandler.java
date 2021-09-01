@@ -26,22 +26,28 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
+import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
-class FlagPathInstance implements IPathInstance {
-  private final FlagInstanceHandler handler;
+class ModelInstanceHandler implements InstanceHandler<AssemblyProperty> {
+  private final NamedModelProperty instance;
 
-  public FlagPathInstance(FlagInstanceHandler handler) {
-    this.handler = handler;
+  public ModelInstanceHandler(NamedModelProperty instance) {
+    this.instance = instance;
   }
 
   @Override
-  public FlagProperty getInstance() {
-    return handler.getInstance();
+  public NamedModelProperty getInstance() {
+    return instance;
   }
 
   @Override
-  public String format(IPathFormatter formatter) {
-    return formatter.getPathSegment(this);
+  public ModelPositionalPathSegment newPathInstance() {
+    return newPathInstance(0);
+  }
+
+  @Override
+  public ModelPositionalPathSegment newPathInstance(int position) {
+    return new ModelPositionalPathSegment(this.getInstance(), position);
   }
 }

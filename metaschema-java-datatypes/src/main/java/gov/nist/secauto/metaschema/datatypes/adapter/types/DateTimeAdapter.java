@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
 import gov.nist.secauto.metaschema.datatypes.DateTime;
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractDatatypeJavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.metapath.IAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.metapath.UntypedAtomicItem;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -65,4 +67,13 @@ public class DateTimeAdapter
     return retval;
   }
 
+  @Override
+  public boolean isAtomic() {
+    return true;
+  }
+
+  @Override
+  public IAtomicItem newAtomicItem(Object value) {
+    return new UntypedAtomicItem(this, value);
+  }
 }

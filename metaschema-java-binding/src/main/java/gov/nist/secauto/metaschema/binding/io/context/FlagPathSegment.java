@@ -26,10 +26,28 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
+import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 
-public interface IPathInstance {
-  IInstance getInstance();
+public class FlagPathSegment implements IPathSegment {
+  private final FlagProperty instance;
 
-  String format(IPathFormatter formatter);
+  public FlagPathSegment(FlagProperty instance) {
+    this.instance = instance;
+  }
+
+  @Override
+  public FlagProperty getInstance() {
+    return instance;
+  }
+
+  @Override
+  public IDefinition getDefinition() {
+    return getInstance().getDefinition();
+  }
+
+  @Override
+  public String format(IPathFormatter formatter) {
+    return formatter.formatPathSegment(this);
+  }
 }

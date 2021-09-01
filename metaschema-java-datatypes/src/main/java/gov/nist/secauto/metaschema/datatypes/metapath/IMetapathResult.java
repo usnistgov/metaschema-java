@@ -24,23 +24,8 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.io.context;
+package gov.nist.secauto.metaschema.datatypes.metapath;
 
-import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-
-public class ModelKeyedPathInstance
-    extends ModelPathInstance
-    implements IPathInstance {
-  private final String key;
-
-  public ModelKeyedPathInstance(InstanceHandler<? extends NamedModelProperty> handler,
-      String key) {
-    super(handler);
-    this.key = key;
-  }
-
-  public String getKey() {
-    return key;
-  }
-
+public interface IMetapathResult {
+  ISequence toSequence();
 }

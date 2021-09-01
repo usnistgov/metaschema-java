@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import java.util.Objects;
+
 public class Comparison
     extends AbstractBinaryExpr
     implements IBooleanLogicExpression {
@@ -38,11 +40,16 @@ public class Comparison
     GE;
   }
 
-  private Operator operator;
+  private final Operator operator;
 
   public Comparison(IExpression left, Operator operator, IExpression right) {
     super(left, right);
+    Objects.requireNonNull(operator, "operator");
     this.operator = operator;
+  }
+
+  public Operator getOperator() {
+    return operator;
   }
 
   @Override

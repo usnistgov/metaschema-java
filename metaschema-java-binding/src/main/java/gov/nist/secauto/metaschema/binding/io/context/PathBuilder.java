@@ -37,18 +37,14 @@ public interface PathBuilder {
 
   InstanceHandler<?> popInstance();
 
-  void pushItem();
-
-  void pushItem(String key);
-
   void pushItem(int position);
 
-  IPathInstance popItem();
+  IPathSegment popItem();
 
   String getPath(PathBuilder.PathType pathType);
 
   public enum PathType {
-    METAPATH(new MetapathFormatter());
+    METAPATH(MetapathFormatter.instance());
 
     private final IPathFormatter formatter;
 

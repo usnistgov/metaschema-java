@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.instances;
 
 import gov.nist.secauto.metaschema.model.NamedInfoElement;
+import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 
 /**
@@ -36,5 +37,5 @@ import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition
  *          the type of definition that this is an instance of
  */
 public interface ObjectModelInstance<DEFINITION extends MetaschemaFlaggedDefinition>
-    extends AssemblyModelInstance, DefinedInfoElementInstance<DEFINITION>, NamedInfoElement {
+    extends AssemblyModelInstance, DefinedInfoElementInstance<DEFINITION>, NamedInfoElement, INamedModelInstance {
 }

@@ -42,17 +42,28 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
-public class SingletonPropertyInfo
-    extends AbstractModelPropertyInfo<Type>
-    implements ModelPropertyInfo {
+public class SingletonPropertyInfo extends AbstractModelPropertyInfo<Type> implements ModelPropertyInfo {
 
   public SingletonPropertyInfo(NamedModelProperty property) {
     super(property);
+  }
+
+  @Override
+  public Stream<?> getItemsFromParentInstance(Object parentInstance) {
+    Object value = getProperty().getValue(parentInstance);
+    return getItemsFromValue(value);
+  }
+
+  @Override
+  public Stream<?> getItemsFromValue(Object value) {
+    return value == null ? Stream.empty() : Stream.of(value);
   }
 
   @Override
@@ -68,7 +79,7 @@ public class SingletonPropertyInfo
       JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     }
     PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushItem();
+    pathBuilder.pushItem(0);
 
     List<Object> values = property.readItem(parentInstance, context);
     collector.addAll(values);
@@ -89,11 +100,10 @@ public class SingletonPropertyInfo
 
   @Override
   public boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start,
-      XmlParsingContext context)
-      throws IOException, BindingException, XMLStreamException {
+      XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
 
     PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushItem();
+    pathBuilder.pushItem(0);
 
     boolean handled = true;
     Object value = getProperty().readItem(parentInstance, start, context);

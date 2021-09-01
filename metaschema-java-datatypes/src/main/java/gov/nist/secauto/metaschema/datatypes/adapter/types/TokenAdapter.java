@@ -26,23 +26,12 @@
 
 package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
-import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.AbstractStringJavaTypeAdapter;
 
 public class TokenAdapter
-    extends AbstractJavaTypeAdapter<String> {
+    extends AbstractStringJavaTypeAdapter {
 
   public TokenAdapter() {
-    super(String.class);
-  }
-
-  @Override
-  public String parse(String value) {
-    return value;
-  }
-
-  @Override
-  public String copy(String obj) {
-    // a Java string is immutable
-    return obj;
+    super();
   }
 }

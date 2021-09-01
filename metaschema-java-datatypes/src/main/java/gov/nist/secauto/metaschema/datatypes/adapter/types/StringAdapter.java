@@ -26,22 +26,9 @@
 
 package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
-import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.AbstractStringJavaTypeAdapter;
 
-public class StringAdapter
-    extends AbstractJavaTypeAdapter<String> {
+public class StringAdapter extends AbstractStringJavaTypeAdapter {
   public StringAdapter() {
-    super(String.class);
-  }
-
-  @Override
-  public String parse(String value) {
-    return value;
-  }
-
-  @Override
-  public String copy(String obj) {
-    // a String is immutable
-    return obj;
   }
 }

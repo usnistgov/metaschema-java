@@ -32,8 +32,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.ContextItem;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.INodeSet;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaInstanceEvaluationVisitor;
 
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -74,17 +72,17 @@ public class MetapathExpression {
     return new MetaschemaInstanceEvaluationVisitor().visit(node, context);
   }
 
-  public INodeSet evaluateNodeSet(INodeContext context) {
-    IExpression node = getASTNode();
-    if (!node.isNodeExpression()) {
-      throw new UnsupportedOperationException(String.format("The expression '%s' is not a node expression", getPath()));
-    }
-    // TODO: implement
-    throw new UnsupportedOperationException();
-    // return ((INodeExpression)node).evaluateNodeSet(context);
-  }
-
-  public boolean evaluate(INodeContext context) {
-    return getASTNode().evaluate(context);
-  }
+//  public INodeSet evaluateNodeSet(INodeContext context) {
+//    IExpression node = getASTNode();
+//    if (!node.isNodeExpression()) {
+//      throw new UnsupportedOperationException(String.format("The expression '%s' is not a node expression", getPath()));
+//    }
+//    // TODO: implement
+//    throw new UnsupportedOperationException();
+//    // return ((INodeExpression)node).evaluateNodeSet(context);
+//  }
+//
+//  public boolean evaluate(INodeContext context) {
+//    return getASTNode().evaluate(context);
+//  }
 }

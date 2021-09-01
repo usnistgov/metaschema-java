@@ -26,8 +26,10 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
+import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 
 public interface AssemblyProperty extends NamedModelProperty, IAssemblyInstance {
-
+  @Override
+  AssemblyClassBinding getDefinition();
 }

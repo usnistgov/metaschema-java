@@ -24,8 +24,15 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.metapath;
+package gov.nist.secauto.metaschema.binding.io.context;
 
-public interface IPathResult {
+import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
+import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 
+public interface IPathSegment {
+  NamedProperty getInstance();
+
+  String format(IPathFormatter formatter);
+
+  IDefinition getDefinition();
 }

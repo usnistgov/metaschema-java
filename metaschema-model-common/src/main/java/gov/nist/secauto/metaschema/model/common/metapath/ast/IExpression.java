@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.INodeContext;
-
 import java.util.List;
 
 public interface IExpression {
@@ -48,8 +46,4 @@ public interface IExpression {
   }
 
   <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
-
-  default boolean evaluate(INodeContext context) {
-    throw new UnsupportedOperationException();
-  }
 }

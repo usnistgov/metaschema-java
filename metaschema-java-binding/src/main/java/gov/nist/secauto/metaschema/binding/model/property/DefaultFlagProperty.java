@@ -40,6 +40,7 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.model.constraint.ConstraintValidator;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
@@ -53,6 +54,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.explode.FlagDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
 
@@ -68,9 +70,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
-public class DefaultFlagProperty
-    extends AbstractNamedProperty<ClassBinding>
-    implements FlagProperty {
+public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> implements FlagProperty {
   // private static final Logger logger = LogManager.getLogger(DefaultFlagProperty.class);
 
   private final Flag flag;
@@ -149,7 +149,7 @@ public class DefaultFlagProperty
         // apply the value to the parentObject
         setValue(parentInstance, value);
 
-        pathBuilder.pushItem();
+        pathBuilder.pushItem(0);
 
         // validate the flag value
         if (context.isValidating()) {
@@ -180,7 +180,7 @@ public class DefaultFlagProperty
     // parse the value
     Object retval = readValueAndSupply(context).get();
 
-    pathBuilder.pushItem();
+    pathBuilder.pushItem(0);
 
     // validate the flag value
     if (context.isValidating()) {
@@ -346,8 +346,8 @@ public class DefaultFlagProperty
 
   @Override
   public void validateValue(Object value, ParsingContext<?, ?> context) {
-    // TODO Auto-generated method stub
-
+    ConstraintValidator valdiator = new ConstraintValidator(context);
+    valdiator.validateValue(this, value);
   }
 
   @Override

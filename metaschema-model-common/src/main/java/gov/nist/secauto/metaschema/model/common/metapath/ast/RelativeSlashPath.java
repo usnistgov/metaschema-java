@@ -26,11 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.INodeSet;
-
 public class RelativeSlashPath
     extends AbstractRelativePathExpression {
 

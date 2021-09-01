@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.metapath.IAtomicItem;
 
 import java.io.IOException;
 
@@ -56,6 +57,16 @@ public class NullJavaTypeAdapter
 
   @Override
   public Void parse(String value) throws IOException {
+    throw new UnsupportedOperationException("Not a valid type");
+  }
+
+  @Override
+  public boolean isAtomic() {
+    throw new UnsupportedOperationException("Not a valid type");
+  }
+
+  @Override
+  public IAtomicItem newAtomicItem(Object value) {
     throw new UnsupportedOperationException("Not a valid type");
   }
 }

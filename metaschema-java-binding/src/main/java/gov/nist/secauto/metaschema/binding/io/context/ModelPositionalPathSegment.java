@@ -27,13 +27,34 @@
 package gov.nist.secauto.metaschema.binding.io.context;
 
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
+import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 
-class FieldPositionalPathInstance
-    extends ModelPositionalPathInstance {
+public class ModelPositionalPathSegment implements IPathSegment {
+  private final NamedModelProperty instance;
+  private final int position;
 
-  public FieldPositionalPathInstance(InstanceHandler<? extends NamedModelProperty> handler,
-      int position) {
-    super(handler, position);
+  public ModelPositionalPathSegment(NamedModelProperty instance, int position) {
+    this.instance = instance;
+    this.position = position;
+  }
+
+  @Override
+  public NamedProperty getInstance() {
+    return instance;
+  }
+
+  public int getPosition() {
+    return position;
+  }
+
+  public String format(IPathFormatter formatter) {
+    return formatter.formatPathSegment(this);
+  }
+
+  @Override
+  public IDefinition getDefinition() {
+    return getInstance().getDefinition();
   }
 
 }

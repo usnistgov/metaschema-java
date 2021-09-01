@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
 import java.io.IOException;
+import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -85,4 +86,8 @@ public interface ModelPropertyInfo {
   void writeValue(Object parentInstance, JsonWritingContext context) throws IOException;
 
   boolean isValueSet(Object parentInstance) throws IOException;
+
+  Stream<? extends Object> getItemsFromParentInstance(Object value);
+
+  Stream<?> getItemsFromValue(Object value);
 }

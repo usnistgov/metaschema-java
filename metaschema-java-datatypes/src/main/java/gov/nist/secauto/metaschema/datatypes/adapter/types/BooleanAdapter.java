@@ -30,6 +30,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
+import gov.nist.secauto.metaschema.datatypes.metapath.IAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.metapath.IBooleanItem;
 
 import java.io.IOException;
 
@@ -66,4 +68,16 @@ public class BooleanAdapter
   public Boolean copy(Boolean obj) {
     return Boolean.valueOf(obj.booleanValue());
   }
+
+  @Override
+  public boolean isAtomic() {
+    return true;
+  }
+
+  @Override
+  public IAtomicItem newAtomicItem(Object value) {
+    return IBooleanItem.valueOf(toValue(value));
+  }
+  
+  
 }

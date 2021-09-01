@@ -68,6 +68,11 @@ public interface ClassBinding extends IFlaggedDefinition {
   @Override
   Map<String, ? extends FlagProperty> getFlagInstances();
 
+  @Override
+  default FlagProperty getFlagInstanceByName(String name) {
+    return getFlagInstances().get(name);
+  }
+
   // Provides a compatible return value
   @Override
   FlagProperty getJsonKeyFlagInstance();

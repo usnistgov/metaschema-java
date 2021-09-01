@@ -26,9 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.explode;
 
-import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 
-public interface NamedModelInstance extends IModelInstance, INamedInstance {
+public interface NamedModelInstance extends INamedModelInstance {
 
 }

@@ -31,14 +31,22 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class AbstractBinaryExpr implements IExpression {
-  private IExpression left;
-  private IExpression right;
+  private final IExpression left;
+  private final IExpression right;
 
   public AbstractBinaryExpr(IExpression left, IExpression right) {
     Objects.requireNonNull(left);
     Objects.requireNonNull(right);
     this.left = left;
     this.right = right;
+  }
+
+  public IExpression getLeft() {
+    return left;
+  }
+
+  public IExpression getRight() {
+    return right;
   }
 
   @Override

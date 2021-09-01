@@ -29,11 +29,9 @@ package gov.nist.secauto.metaschema.binding.io.context;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
 
 public interface InstanceHandler<INSTANCE extends NamedProperty> {
-  INSTANCE getInstance();
+  NamedProperty getInstance();
 
-  IPathInstance newPathInstance();
+  IPathSegment newPathInstance();
 
-  IPathInstance newPathInstance(int position);
-
-  IPathInstance newPathInstance(String key);
+  IPathSegment newPathInstance(int position);
 }

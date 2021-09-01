@@ -28,12 +28,20 @@ package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
+import gov.nist.secauto.metaschema.binding.io.context.RelativeContextNodeContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.metapath.INodeContext;
+import gov.nist.secauto.metaschema.binding.metapath.MetaschemaPathEvaluationVisitor;
+import gov.nist.secauto.metaschema.binding.metapath.RootNodeContext;
+import gov.nist.secauto.metaschema.binding.metapath.type.INodeItem;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
+import gov.nist.secauto.metaschema.datatypes.metapath.IMetapathResult;
+import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -62,7 +70,7 @@ import javax.xml.stream.events.XMLEvent;
  * <li>A string-based key representing the field name of a JSON/YAML object
  * </ul>
  */
-public interface Property {
+public interface Property extends IInstance {
   /**
    * Get the {@link ClassBinding} for the Java class within which this property exists.
    * 
@@ -230,4 +238,15 @@ public interface Property {
    *          the parsing context
    */
   void validateValue(Object value, ParsingContext<?, ?> context);
+  
+
+  default void evaluateMetapath(MetapathExpression metapath, Object value) {
+//    MetaschemaPathEvaluationVisitor visitor = new MetaschemaPathEvaluationVisitor();
+//    INodeContext context = INodeItem.newRelativeNodeItem(value, getContainingDefinition().)
+//        
+//        INodeItem.newRootNodeItem(value, loader.getBindingContext()),
+//        loader.getBindingContext());
+//    IMetapathResult result = visitor.visit(metapath.getASTNode(), context);
+  }
+
 }

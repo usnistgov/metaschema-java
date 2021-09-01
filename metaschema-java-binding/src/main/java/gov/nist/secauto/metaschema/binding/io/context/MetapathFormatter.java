@@ -26,19 +26,27 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import java.util.Deque;
-import java.util.Iterator;
+import gov.nist.secauto.metaschema.datatypes.util.IteratorUtil;
+
+import java.util.List;
 
 public class MetapathFormatter implements IPathFormatter {
+  private static final MetapathFormatter instance = new MetapathFormatter();
+  
+  public static MetapathFormatter instance() {
+    return instance;
+  }
+
+  private MetapathFormatter() {
+    // disable
+  }
 
   @Override
-  public String apply(Deque<IPathInstance> path) {
+  public String format(List<IPathSegment> path) {
     StringBuilder builder = new StringBuilder();
     boolean first = true;
 
-    Iterator<IPathInstance> iter = path.descendingIterator();
-    while (iter.hasNext()) {
-      IPathInstance pathNode = iter.next();
+    for (IPathSegment pathNode : IteratorUtil.descendingIterable(path)) {
       if (!first) {
         builder.append('/');
       } else {
@@ -50,30 +58,26 @@ public class MetapathFormatter implements IPathFormatter {
   }
 
   @Override
-  public String getPathSegment(ModelPositionalPathInstance pathInstance) {
-    StringBuilder builder = new StringBuilder(getPathSegment((ModelPathInstance) pathInstance));
+  public String formatPathSegment(ModelPositionalPathSegment segment) {
+    StringBuilder builder = new StringBuilder(segment.getInstance().getEffectiveName());
     builder.append('[');
-    builder.append(pathInstance.getPosition() + 1);
+    builder.append(segment.getPosition() + 1);
     builder.append(']');
     return builder.toString();
   }
 
   @Override
-  public String getPathSegment(FlagPathInstance pathInstance) {
-    return "@" + pathInstance.getInstance().getEffectiveName();
+  public String formatPathSegment(FlagPathSegment segment) {
+    return "@" + segment.getInstance().getEffectiveName();
   }
 
   @Override
-  public String getPathSegment(ModelPathInstance pathInstance) {
-    return pathInstance.getInstance().getEffectiveName();
+  public String formatPathSegment(RelativePathSegment segment) {
+    return ".";
   }
 
   @Override
-  public String getPathSegment(ModelKeyedPathInstance pathInstance) {
-    StringBuilder builder = new StringBuilder(getPathSegment((ModelPathInstance) pathInstance));
-    builder.append('[');
-    builder.append(pathInstance.getKey());
-    builder.append(']');
-    return builder.toString();
+  public String formatPathSegment(RootPathSegment segment) {
+    return "/"+segment.getDefinition().getRootName();
   }
 }

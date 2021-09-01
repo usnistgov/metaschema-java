@@ -50,6 +50,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -59,6 +60,17 @@ import javax.xml.stream.events.XMLEvent;
 public class MapPropertyInfo
     extends AbstractModelPropertyInfo<ParameterizedType>
     implements ModelPropertyInfo {
+
+  @Override
+  public Stream<?> getItemsFromParentInstance(Object parentInstance) {
+    Object value = getProperty().getValue(parentInstance);
+    return getItemsFromValue(value);
+  }
+
+  @Override
+  public Stream<?> getItemsFromValue(Object value) {
+    return value == null ? Stream.empty() : ((Map<?, ?>)value).values().stream();
+  }
 
   public MapPropertyInfo(NamedModelProperty property) {
     super(property);
@@ -108,13 +120,9 @@ public class MapPropertyInfo
     PathBuilder pathBuilder = context.getPathBuilder();
     NamedModelProperty property = getProperty();
     // process all map items
+    int index = 0;
     while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
-      if (JsonToken.FIELD_NAME.equals(jsonParser.currentToken())) {
-        String name = jsonParser.currentName();
-        pathBuilder.pushItem(name);
-      } else {
-        pathBuilder.pushItem();
-      }
+      pathBuilder.pushItem(index++);
 
       List<Object> values = property.readItem(parentInstance, context);
       collector.addAll(values);
