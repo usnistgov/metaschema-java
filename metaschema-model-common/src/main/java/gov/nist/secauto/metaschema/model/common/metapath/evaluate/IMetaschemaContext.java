@@ -28,8 +28,6 @@ package gov.nist.secauto.metaschema.model.common.metapath.evaluate;
 
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.RelativeDoubleSlashPath;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.RootDoubleSlashPath;
 
 import java.util.function.Predicate;
 

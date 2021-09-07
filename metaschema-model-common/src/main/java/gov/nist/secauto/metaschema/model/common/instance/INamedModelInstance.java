@@ -26,6 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.instance;
 
-public interface INamedModelInstance extends INamedInstance, IModelInstance {
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.ModelPositionalPathSegment;
 
+public interface INamedModelInstance extends INamedInstance, IModelInstance {
+  @Override
+  default ModelPositionalPathSegment newPathSegment(int position) {
+    return new ModelPositionalPathSegment(this, position);
+  }
 }

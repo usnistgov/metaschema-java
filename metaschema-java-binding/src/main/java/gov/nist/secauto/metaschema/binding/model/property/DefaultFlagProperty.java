@@ -37,10 +37,12 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.metapath.type.INodeItem;
+import gov.nist.secauto.metaschema.binding.metapath.type.TerminalNodeItem;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.model.FlagDefinition;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
-import gov.nist.secauto.metaschema.binding.model.constraint.ConstraintValidator;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
@@ -53,10 +55,8 @@ import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.explode.FlagDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.FlagPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.IPathSegment;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 
@@ -172,7 +172,7 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
   protected Object readInternal(Object parentInstance, JsonParsingContext context) throws IOException {
 
     PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushInstance(this);
+    pathBuilder.pushInstance(this); 
 
     JsonParser parser = context.getReader();
     // advance past the property name
@@ -273,7 +273,7 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
   }
 
   @Override
-  public IFlagDefinition getDefinition() {
+  public FlagDefinition getDefinition() {
     synchronized (this) {
       if (definition == null) {
         definition = new InternalFlagDefinition();
@@ -282,7 +282,7 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
     return definition;
   }
 
-  private class InternalFlagDefinition implements IFlagDefinition {
+  private class InternalFlagDefinition implements FlagDefinition {
     @Override
     public DataTypes getDatatype() {
       return DataTypes.getDataTypeForAdapter(getJavaTypeAdapter());
@@ -342,17 +342,20 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
       checkModelConstraints();
       return constraints.getExpectConstraints();
     }
+
+    @Override
+    public BindingContext getBindingContext() {
+      return getParentClassBinding().getBindingContext();
+    }
   }
 
   @Override
   public void validateValue(Object value, ParsingContext<?, ?> context) {
-    ConstraintValidator valdiator = new ConstraintValidator(context);
-    valdiator.validateValue(this, value);
+    context.getConstraintValidator().validateValue(this, context.getPathBuilder().getPathSegments(), value, context);
   }
 
   @Override
-  public IInstanceSet evaluateMetapathInstances(MetapathExpression target) {
-    // TODO Auto-generated method stub
-    return null;
+  public INodeItem newNodeItem(Object value, List<IPathSegment> precedingPath) {
+    return new TerminalNodeItem(value, new FlagPathSegment(this), precedingPath);
   }
 }

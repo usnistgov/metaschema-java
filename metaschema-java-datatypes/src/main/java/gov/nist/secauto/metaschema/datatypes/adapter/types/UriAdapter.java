@@ -27,8 +27,9 @@
 package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.metapath.IAtomicItem;
-import gov.nist.secauto.metaschema.datatypes.metapath.StringItem;
+import gov.nist.secauto.metaschema.datatypes.metaschema.DataTypeException;
+import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.metaschema.StringItem;
 
 import java.net.URI;
 
@@ -39,8 +40,12 @@ public class UriAdapter
   }
 
   @Override
-  public URI parse(String value) {
-    return URI.create(value);
+  public URI parse(String value) throws DataTypeException {
+    try {
+      return URI.create(value);
+    } catch (IllegalArgumentException ex) {
+      throw new DataTypeException(ex);
+    }
   }
 
   @Override

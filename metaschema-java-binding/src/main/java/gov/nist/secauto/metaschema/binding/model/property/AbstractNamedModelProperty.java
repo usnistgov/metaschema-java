@@ -34,6 +34,8 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.metapath.type.INodeItem;
+import gov.nist.secauto.metaschema.binding.metapath.type.TerminalNodeItem;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.info.ClassDataTypeHandler;
@@ -47,6 +49,8 @@ import gov.nist.secauto.metaschema.binding.model.property.info.SingletonProperty
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.IPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.ModelPositionalPathSegment;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -57,6 +61,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
@@ -64,8 +69,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public abstract class AbstractNamedModelProperty
-    extends AbstractNamedProperty<AssemblyClassBinding>
+public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<AssemblyClassBinding>
     implements NamedModelProperty {
   // private static final Logger logger = LogManager.getLogger(AbstractNamedModelProperty.class);
 
@@ -126,6 +130,21 @@ public abstract class AbstractNamedModelProperty
   }
 
   @Override
+  public Stream<INodeItem> newNodeItems(Object value, List<IPathSegment> precedingPath) {
+    AtomicInteger index = new AtomicInteger();
+    return getItemsFromValue(value).map(item -> {
+      // build a positional index of the values
+      final Integer position = index.incrementAndGet();
+      return new TerminalNodeItem(item, new ModelPositionalPathSegment(this, position), precedingPath);
+    });
+  }
+
+  @Override
+  public INodeItem newNodeItem(Object item, List<IPathSegment> precedingPath) {
+    return new TerminalNodeItem(item, new ModelPositionalPathSegment(this, 1), precedingPath);
+  }
+
+  @Override
   public Stream<?> getItemsFromParentInstance(Object parentInstance) {
     return getPropertyInfo().getItemsFromParentInstance(parentInstance);
   }
@@ -176,7 +195,7 @@ public abstract class AbstractNamedModelProperty
     return dataTypeHandler;
   }
 
-  public boolean isNextProperty(XmlParsingContext context) throws IOException, XMLStreamException {
+  public boolean isNextProperty(XmlParsingContext context) throws XMLStreamException {
     XMLEventReader2 eventReader = context.getReader();
 
     XmlEventUtil.skipWhitespace(eventReader);

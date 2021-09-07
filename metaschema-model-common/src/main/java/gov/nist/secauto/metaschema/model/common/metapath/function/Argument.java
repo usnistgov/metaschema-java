@@ -45,7 +45,7 @@ public class Argument {
     return this;
   }
 
-  public boolean isSupported(IExpression iExpression) {
+  public boolean isSupported(IExpression expression) {
     boolean retval;
     switch (type) {
     case ITEM:

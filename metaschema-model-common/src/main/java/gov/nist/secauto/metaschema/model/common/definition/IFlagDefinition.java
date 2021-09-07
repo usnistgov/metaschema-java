@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
 
 import javax.xml.namespace.QName;
 
-public interface IFlagDefinition extends IValuedDefinition, Flag {
+public interface IFlagDefinition extends INamedDefinition, IValuedDefinition, Flag {
   @Override
   default QName getXmlQName() {
     return QName.valueOf(getEffectiveName());

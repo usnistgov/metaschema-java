@@ -41,17 +41,12 @@ import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.RootAssemblyProperty;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
 public class DefaultJsonDeserializer<CLASS>
     extends AbstractDeserializer<CLASS> {
-  private static final Logger logger = LogManager.getLogger(DefaultJsonDeserializer.class);
-
   private JsonFactory jsonFactory;
 
   public DefaultJsonDeserializer(BindingContext bindingContext, AssemblyClassBinding classBinding,
@@ -119,8 +114,7 @@ public class DefaultJsonDeserializer<CLASS>
     // token.toString()));
     // }
 
-    DefaultJsonParsingContext parsingContext = new DefaultJsonParsingContext(parser);
-    parsingContext.setValidating(isValidating());
+    DefaultJsonParsingContext parsingContext = new DefaultJsonParsingContext(parser, new DefaultJsonProblemHandler(), isValidating());
 
     AssemblyClassBinding classBinding = getClassBinding();
     CLASS retval;
@@ -150,6 +144,7 @@ public class DefaultJsonDeserializer<CLASS>
       }
     }
 
+    parsingContext.getConstraintValidator().finalizeValidation(parsingContext);
     return retval;
   }
 

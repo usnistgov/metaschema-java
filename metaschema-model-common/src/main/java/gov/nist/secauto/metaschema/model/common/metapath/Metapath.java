@@ -33,8 +33,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.util.Arrays;
-
 import src.main.antlr4.metapath10Lexer;
 import src.main.antlr4.metapath10Parser;
 

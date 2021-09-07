@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 

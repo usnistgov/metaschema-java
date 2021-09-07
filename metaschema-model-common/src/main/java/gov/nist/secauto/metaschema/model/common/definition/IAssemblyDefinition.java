@@ -39,7 +39,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-public interface IAssemblyDefinition extends IFlaggedDefinition, IModelContainer, Assembly {
+public interface IAssemblyDefinition extends INamedDefinition, IFlaggedDefinition, IModelContainer, Assembly {
 
   /**
    * Check if the assembly is a top-level root assembly.

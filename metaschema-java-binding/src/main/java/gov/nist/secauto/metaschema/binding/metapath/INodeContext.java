@@ -24,37 +24,42 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.io.context;
+package gov.nist.secauto.metaschema.binding.metapath;
 
-import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.binding.metapath.type.INodeItem;
+import gov.nist.secauto.metaschema.datatypes.metaschema.IMetapathResult;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
 
-public class ModelPositionalPathSegment implements IPathSegment {
-  private final NamedModelProperty instance;
-  private final int position;
+import java.util.stream.Stream;
 
-  public ModelPositionalPathSegment(NamedModelProperty instance, int position) {
-    this.instance = instance;
-    this.position = position;
+public interface INodeContext {
+  
+
+//  BindingContext getBindingContext();
+//
+//  INodeItem getContextNode();
+//
+//  INodeContext getParentNodeContext();
+
+  INodeItem getNodeItem();
+
+  Stream<INodeItem> getChildFlags(Flag flag);
+
+  Stream<INodeItem> getChildModelInstances(ModelInstance modelInstance);
+
+//  INodeContext newChildContext(INodeItem node);
+//
+//  boolean isRootNode();
+
+  default IMetapathResult evaluateMetapath(MetapathExpression metapath) {
+    MetaschemaPathEvaluationVisitor visitor = new MetaschemaPathEvaluationVisitor();
+    // logger.info(String.format("Evaluating path '%s' as AST '%s'", metapath.getPath(),
+    // metapath.toString()));
+    return visitor.visit(metapath.getASTNode(), this);
+
   }
-
-  @Override
-  public NamedProperty getInstance() {
-    return instance;
-  }
-
-  public int getPosition() {
-    return position;
-  }
-
-  public String format(IPathFormatter formatter) {
-    return formatter.formatPathSegment(this);
-  }
-
-  @Override
-  public IDefinition getDefinition() {
-    return getInstance().getDefinition();
-  }
-
+//
+//  Object toPath(MetapathFormatter formatter);
 }

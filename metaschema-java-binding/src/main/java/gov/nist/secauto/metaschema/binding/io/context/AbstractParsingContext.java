@@ -26,27 +26,19 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
+import gov.nist.secauto.metaschema.binding.model.constraint.ConstraintValidator;
+import gov.nist.secauto.metaschema.binding.model.constraint.NoOpConstraintValidator;
+import gov.nist.secauto.metaschema.binding.model.constraint.ValidatingConstraintValidator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 
 public class AbstractParsingContext<READER, PROBLEM_HANDLER extends ProblemHandler>
     implements ParsingContext<READER, PROBLEM_HANDLER> {
-  private static final Logger logger = LogManager.getLogger(AbstractParsingContext.class);
   private final READER parser;
   private final PROBLEM_HANDLER problemHandler;
-  private boolean validating;
+  private final boolean validating;
   private final PathBuilder pathBuilder;
+  private final ConstraintValidator validator;
 
   public AbstractParsingContext(READER parser, PROBLEM_HANDLER problemHandler, boolean validating) {
     Objects.requireNonNull(parser, "parser");
@@ -55,15 +47,16 @@ public class AbstractParsingContext<READER, PROBLEM_HANDLER extends ProblemHandl
     this.problemHandler = problemHandler;
     this.validating = validating;
     this.pathBuilder = new DefaultPathBuilder();
+    if (validating) {
+      this.validator = new ValidatingConstraintValidator();
+    } else {
+      this.validator = new NoOpConstraintValidator();
+    }
   }
 
   @Override
   public boolean isValidating() {
     return validating;
-  }
-
-  public void setValidating(boolean validating) {
-    this.validating = validating;
   }
 
   @Override
@@ -79,5 +72,10 @@ public class AbstractParsingContext<READER, PROBLEM_HANDLER extends ProblemHandl
   @Override
   public PathBuilder getPathBuilder() {
     return pathBuilder;
+  }
+
+  @Override
+  public ConstraintValidator getConstraintValidator() {
+    return validator;
   }
 }

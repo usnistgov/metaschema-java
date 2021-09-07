@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
 import gov.nist.secauto.metaschema.datatypes.Base64;
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractDatatypeJavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.metapath.IAtomicItem;
-import gov.nist.secauto.metaschema.datatypes.metapath.UntypedAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.metaschema.UntypedAtomicItem;
 
 public class Base64Adapter
     extends AbstractDatatypeJavaTypeAdapter<Base64> {

@@ -54,7 +54,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public interface ClassBinding extends IFlaggedDefinition {
+public interface ClassBinding extends IFlaggedDefinition, BoundDefinition {
+  @Override
   BindingContext getBindingContext();
 
   /**

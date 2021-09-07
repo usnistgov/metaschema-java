@@ -32,8 +32,11 @@ import com.fasterxml.jackson.core.JsonToken;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
+import gov.nist.secauto.metaschema.binding.metapath.type.INodeItem;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.datatypes.metaschema.IMetapathResult;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,8 +44,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
-    extends AbstractProperty<CLASS_BINDING>
+public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding> extends AbstractProperty<CLASS_BINDING>
     implements NamedProperty, INamedInstance {
   private static final Logger logger = LogManager.getLogger(AbstractNamedProperty.class);
 
@@ -90,6 +92,12 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
 
   protected abstract Object readInternal(Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException;
+
+  @Override
+  public IMetapathResult evaluateMetapath(MetapathExpression metapath, INodeItem item) {
+    return item.evaluateMetapath(metapath);
+  }
+
   //
   // protected Object readInternal(Object parentInstance, JsonParsingContext context)
   // throws IOException, BindingException {

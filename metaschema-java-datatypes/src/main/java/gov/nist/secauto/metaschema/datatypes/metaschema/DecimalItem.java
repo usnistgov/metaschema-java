@@ -24,19 +24,76 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.io.context;
+package gov.nist.secauto.metaschema.datatypes.metaschema;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Objects;
 
-public interface IPathFormatter {
-  
-  String format(List<IPathSegment> path);
+class DecimalItem extends AbstractNumericItem implements IDecimalItem {
+  private final BigDecimal value;
 
-  String formatPathSegment(FlagPathSegment instance);
+  public DecimalItem(BigDecimal value) {
+    Objects.requireNonNull(value, "value");
+    this.value = value;
+  }
 
-  String formatPathSegment(ModelPositionalPathSegment instance);
+  protected BigDecimal getValue() {
+    return value;
+  }
 
-  String formatPathSegment(RelativePathSegment relativePathSegment);
+  @Override
+  public boolean toEffectiveBoolean() {
+    return !BigDecimal.ZERO.equals(getValue());
+  }
 
-  String formatPathSegment(RootPathSegment rootPathSegment);
+  @Override
+  public IStringItem toStringItem() {
+    return new StringItem(toString());
+  }
+
+  @Override
+  public String toString() {
+    return value.toString();
+  }
+
+  @Override
+  public String asString() {
+    return value.toString();
+  }
+
+  @Override
+  public BigDecimal asDecimal() {
+    return getValue();
+  }
+
+  @Override
+  public BigInteger asInteger() {
+    return getValue().toBigInteger();
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + value.hashCode();
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    } else if (obj == null) {
+      return false;
+    } else if (getClass() != obj.getClass()) {
+      return false;
+    }
+    DecimalItem other = (DecimalItem) obj;
+    if (!value.equals(other.value)) {
+      return false;
+    }
+    return true;
+  }
+
 }

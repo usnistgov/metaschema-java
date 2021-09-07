@@ -27,10 +27,10 @@
 package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.metapath.IAtomicItem;
-import gov.nist.secauto.metaschema.datatypes.metapath.UntypedAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.metaschema.DataTypeException;
+import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.metaschema.UntypedAtomicItem;
 
-import java.io.IOException;
 import java.util.UUID;
 
 public class UuidAdapter
@@ -41,11 +41,11 @@ public class UuidAdapter
   }
 
   @Override
-  public UUID parse(String value) throws IOException {
+  public UUID parse(String value) throws DataTypeException {
     try {
       return UUID.fromString(value);
     } catch (IllegalArgumentException ex) {
-      throw new IOException(ex);
+      throw new DataTypeException(ex);
     }
   }
 

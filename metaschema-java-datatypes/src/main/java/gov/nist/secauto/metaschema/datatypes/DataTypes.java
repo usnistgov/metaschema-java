@@ -49,7 +49,7 @@ import gov.nist.secauto.metaschema.datatypes.adapter.types.TokenAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.UriAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.UriReferenceAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.UuidAdapter;
-import gov.nist.secauto.metaschema.datatypes.metapath.IAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -146,10 +146,12 @@ public enum DataTypes {
   }
 
   /**
-   * Retrieves the item type of the provided value. The value is expected to be an atomic, scalar value if {@link #isAtomic()} is {@code true}. Complex structures such as Markup are not
+   * Retrieves the item type of the provided value. The value is expected to be an atomic, scalar
+   * value if {@link #isAtomic()} is {@code true}. Complex structures such as Markup are not
    * considered atomic.
    * 
-   * @param value the instance value
+   * @param value
+   *          the instance value
    * @return the item type if the data type is an atomic scalar value, or {@code null} otherwise
    */
   public IAtomicItem getAtomicItem(Object value) {

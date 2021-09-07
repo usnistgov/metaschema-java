@@ -24,63 +24,10 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.datatypes.metapath;
+package gov.nist.secauto.metaschema.datatypes.metaschema;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
-
-public interface ISequence extends IMetapathResult {
-  public static final ISequence EMPTY = new ISequence() {
-
-    @Override
-    public List<? extends IItem> asList() {
-      return Collections.emptyList();
-    }
-
-    @Override
-    public boolean isEmpty() {
-      return true;
-    }
-
-    @Override
-    public ISequence toSequence() {
-      return this;
-    }
-
-    @Override
-    public Stream<? extends IItem> asStream() {
-      return Stream.empty();
-    }
-  };
-
-  public static ISequence of(IItem item) {
-    return new SingletonSequence(item);
-  }
-
-  public static ISequence of(List<? extends IItem> items) {
-    ISequence retval;
-    if (items.isEmpty()) {
-      retval = EMPTY;
-    } else {
-      retval = new ListSequence(items);
-    }
-    return retval;
-  }
-
-  public static ISequence of(Stream<? extends IItem> items) {
-    return new StreamSequence(items);
-  }
-
-  List<? extends IItem> asList();
-
-  Stream<? extends IItem> asStream();
-
-  boolean isEmpty();
-
-  @Override
-  default ISequence toSequence() {
-    return this;
-  }
-
+public interface IMetapathResult {
+  ISequence toSequence();
+  //
+  // boolean asBoolean();
 }

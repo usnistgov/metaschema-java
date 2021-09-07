@@ -58,8 +58,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-public class ConstraintValidatingModelWalker
-    extends ConstraintVisitingModelWalker<ConstraintValidatingModelWalker> {
+public class ConstraintValidatingModelWalker extends ConstraintVisitingModelWalker<ConstraintValidatingModelWalker> {
   private static final Logger logger = LogManager.getLogger(ConstraintValidatingModelWalker.class);
 
   private final Set<IAssemblyDefinition> seenAssemblies = new HashSet<>();
@@ -137,32 +136,6 @@ public class ConstraintValidatingModelWalker
     return true;
   }
 
-  private void logAllowedValuesConstraint(IAllowedValuesConstraint constraint, ConstraintValidatingModelWalker data) {
-    logger.debug(String.format("%s  allowed-values(%s:%s): %s", getPadding(), constraint.getId(),
-        constraint.isAllowedOther(), constraint.getTarget().getPath()));
-    for (IAllowedValue value : constraint.getAllowedValues().values()) {
-      logger.trace(String.format("%s    %s: %s", getPadding(), value.getValue(), value.getDescription().toMarkdown()));
-    }
-  }
-
-  protected IInstanceSet validateConstraintTarget(IDefinition definition, IConstraint constraint,
-      IInstanceSet instanceSet,
-      ConstraintValidatingModelWalker data) {
-    MetapathExpression metapath = constraint.getTarget();
-    try {
-      IInstanceSet result = metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(instanceSet));
-      if (result.getInstances().isEmpty()) {
-        logger.error(String.format("Path '%s' did not match in %s definition '%s'", metapath.getPath(),
-            definition.getModelType().name().toLowerCase(), definition.getName()));
-      }
-      return result;
-    } catch (RuntimeException ex) {
-      logger.error(String.format("Path '%s' failed to evaluate in %s definition '%s'", metapath.getPath(),
-          definition.getModelType().name().toLowerCase(), definition.getName()), ex);
-      return IInstanceSet.EMPTY_INSTANCE_SET;
-    }
-  }
-
   @Override
   protected void visit(IFlagDefinition def, IAllowedValuesConstraint constraint, ConstraintValidatingModelWalker data) {
     logAllowedValuesConstraint(constraint, data);
@@ -179,37 +152,6 @@ public class ConstraintValidatingModelWalker
     IInstanceSet result
         = validateConstraintTarget((IDefinition) def, constraint, IInstanceSet.newInstanceSet(def), data);
     validateExpectTest((IDefinition) def, constraint, result);
-  }
-
-  private void validateExpectTest(IDefinition definition, IExpectConstraint constraint, IInstanceSet instanceSet) {
-    MetapathExpression test = constraint.getTest();
-    try {
-      IInstanceSet result = test.evaluateMetaschemaInstance(new DefaultMetaschemaContext(instanceSet));
-      if (result.getInstances().isEmpty()) {
-        logger.error(String.format("Expect test path '%s' did not match in %s definition '%s'", test.getPath(),
-            definition.getModelType().name().toLowerCase(), definition.getName()));
-      }
-    } catch (RuntimeException ex) {
-      logger.error(String.format("Expect test path '%s' failed to evaluate in %s definition '%s'", test.getPath(),
-          definition.getModelType().name().toLowerCase(), definition.getName()), ex);
-    }
-  }
-
-  private void validateKeys(IDefinition definition, IKeyConstraint constraint, IInstanceSet targets) {
-    for (IKeyField keyField : constraint.getKeyFields()) {
-      MetapathExpression keyTarget = keyField.getTarget();
-      try {
-        IInstanceSet result = keyTarget.evaluateMetaschemaInstance(new DefaultMetaschemaContext(targets));
-        if (result.getInstances().isEmpty()) {
-          logger.error(String.format("KeyField path '%s' did not match in %s definition '%s'", keyTarget.getPath(),
-              definition.getModelType().name().toLowerCase(), definition.getName()));
-        }
-      } catch (RuntimeException ex) {
-        logger.error(String.format("KeyField path '%s' failed to evaluate in %s definition '%s'", keyTarget.getPath(),
-            definition.getModelType().name().toLowerCase(), definition.getName()), ex);
-      }
-    }
-
   }
 
   @Override
@@ -291,4 +233,61 @@ public class ConstraintValidatingModelWalker
       ConstraintValidatingModelWalker data) {
     validateConstraintTarget((IDefinition) def, constraint, IInstanceSet.newInstanceSet(def), data);
   }
+
+  private void logAllowedValuesConstraint(IAllowedValuesConstraint constraint, ConstraintValidatingModelWalker data) {
+    logger.debug(String.format("%s  allowed-values(%s:%s): %s", getPadding(), constraint.getId(),
+        constraint.isAllowedOther(), constraint.getTarget().getPath()));
+    for (IAllowedValue value : constraint.getAllowedValues().values()) {
+      logger.trace(String.format("%s    %s: %s", getPadding(), value.getValue(), value.getDescription().toMarkdown()));
+    }
+  }
+
+  protected IInstanceSet validateConstraintTarget(IDefinition definition, IConstraint constraint,
+      IInstanceSet instanceSet, ConstraintValidatingModelWalker data) {
+    MetapathExpression metapath = constraint.getTarget();
+    try {
+      IInstanceSet result = metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(instanceSet));
+      if (result.getInstances().isEmpty()) {
+        logger.error(String.format("Path '%s' did not match in %s definition '%s'", metapath.getPath(),
+            definition.getModelType().name().toLowerCase(), definition.getName()));
+      }
+      return result;
+    } catch (RuntimeException ex) {
+      logger.error(String.format("Path '%s' failed to evaluate in %s definition '%s'", metapath.getPath(),
+          definition.getModelType().name().toLowerCase(), definition.getName()), ex);
+      return IInstanceSet.EMPTY_INSTANCE_SET;
+    }
+  }
+
+  private void validateExpectTest(IDefinition definition, IExpectConstraint constraint, IInstanceSet instanceSet) {
+    MetapathExpression test = constraint.getTest();
+    try {
+      IInstanceSet result = test.evaluateMetaschemaInstance(new DefaultMetaschemaContext(instanceSet));
+      if (result.getInstances().isEmpty()) {
+        logger.error(String.format("Expect test path '%s' did not match in %s definition '%s'", test.getPath(),
+            definition.getModelType().name().toLowerCase(), definition.getName()));
+      }
+    } catch (RuntimeException ex) {
+      logger.error(String.format("Expect test path '%s' failed to evaluate in %s definition '%s'", test.getPath(),
+          definition.getModelType().name().toLowerCase(), definition.getName()), ex);
+    }
+  }
+
+  private void validateKeys(IDefinition definition, IKeyConstraint constraint, IInstanceSet targets) {
+    for (IKeyField keyField : constraint.getKeyFields()) {
+      MetapathExpression keyTarget = keyField.getTarget();
+      try {
+        IInstanceSet result = keyTarget.evaluateMetaschemaInstance(new DefaultMetaschemaContext(targets));
+        if (result.getInstances().isEmpty()) {
+          logger.error(String.format("KeyField path '%s' did not match in %s definition '%s'", keyTarget.getPath(),
+              definition.getModelType().name().toLowerCase(), definition.getName()));
+        }
+      } catch (RuntimeException ex) {
+        logger.error(String.format("KeyField path '%s' failed to evaluate in %s definition '%s'", keyTarget.getPath(),
+            definition.getModelType().name().toLowerCase(), definition.getName()), ex);
+      }
+    }
+
+  }
+
 }

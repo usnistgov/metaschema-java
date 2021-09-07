@@ -24,30 +24,42 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.io.context;
+package gov.nist.secauto.metaschema.model.common.metapath.evaluate.context;
 
-import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 
-public class FlagPathSegment implements IPathSegment {
-  private final FlagProperty instance;
+public class ModelPositionalPathSegment implements IPathSegment {
+  private final INamedModelInstance instance;
+  private final int position;
 
-  public FlagPathSegment(FlagProperty instance) {
+  public ModelPositionalPathSegment(INamedModelInstance instance, int position) {
     this.instance = instance;
+    this.position = position;
   }
 
   @Override
-  public FlagProperty getInstance() {
+  public INamedModelInstance getInstance() {
     return instance;
   }
 
-  @Override
-  public IDefinition getDefinition() {
-    return getInstance().getDefinition();
+  public int getPosition() {
+    return position;
   }
 
   @Override
   public String format(IPathFormatter formatter) {
     return formatter.formatPathSegment(this);
   }
+
+  @Override
+  public INamedDefinition getDefinition() {
+    return getInstance().getDefinition();
+  }
+
+  @Override
+  public String getName() {
+    return getInstance().getEffectiveName();
+  }
+
 }

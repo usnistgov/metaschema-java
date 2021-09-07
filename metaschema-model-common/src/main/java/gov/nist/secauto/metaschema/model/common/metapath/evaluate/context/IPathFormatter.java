@@ -24,29 +24,27 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.io.context;
+package gov.nist.secauto.metaschema.model.common.metapath.evaluate.context;
 
-import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
+import java.util.List;
 
-class FlagInstanceHandler implements InstanceHandler<FlagProperty> {
-  private final FlagProperty instance;
+public interface IPathFormatter {
+  public static final IPathFormatter METAPATH_PATH_FORMATER = MetapathFormatter.instance();
 
-  public FlagInstanceHandler(FlagProperty instance) {
-    this.instance = instance;
-  }
+  /**
+   * Format a path using the provided path segments.
+   * 
+   * @param path
+   *          A listing of path segments in ascending order
+   * @return a formatted path
+   */
+  String format(List<IPathSegment> path);
 
-  @Override
-  public FlagProperty getInstance() {
-    return instance;
-  }
+  String formatPathSegment(FlagPathSegment segment);
 
-  @Override
-  public IPathSegment newPathInstance() {
-    return new FlagPathSegment(getInstance());
-  }
+  String formatPathSegment(ModelPositionalPathSegment segment);
 
-  @Override
-  public IPathSegment newPathInstance(int position) {
-    return newPathInstance();
-  }
+  String formatPathSegment(AssemblyDefinitionPathSegment segment);
+
+  String formatPathSegment(RootPathSegment rootPathSegment);
 }

@@ -24,9 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.io.context;
-
-import gov.nist.secauto.metaschema.datatypes.util.IteratorUtil;
+package gov.nist.secauto.metaschema.model.common.metapath.evaluate.context;
 
 import java.util.List;
 
@@ -44,24 +42,28 @@ public class MetapathFormatter implements IPathFormatter {
   @Override
   public String format(List<IPathSegment> path) {
     StringBuilder builder = new StringBuilder();
-    boolean first = true;
-
-    for (IPathSegment pathNode : IteratorUtil.descendingIterable(path)) {
-      if (!first) {
-        builder.append('/');
-      } else {
-        first = false;
-      }
+    
+    if (path.size() == 0 || !(path.iterator().next() instanceof IRootPathSegment)) {
+      builder.append('.');
+    }
+    
+    for (IPathSegment pathNode : path) {
+      builder.append('/');
       builder.append(pathNode.format(this));
     }
     return builder.toString();
   }
 
   @Override
+  public String formatPathSegment(AssemblyDefinitionPathSegment segment) {
+    return segment.getDefinition().getEffectiveName();
+  }
+
+  @Override
   public String formatPathSegment(ModelPositionalPathSegment segment) {
     StringBuilder builder = new StringBuilder(segment.getInstance().getEffectiveName());
     builder.append('[');
-    builder.append(segment.getPosition() + 1);
+    builder.append(segment.getPosition());
     builder.append(']');
     return builder.toString();
   }
@@ -72,12 +74,7 @@ public class MetapathFormatter implements IPathFormatter {
   }
 
   @Override
-  public String formatPathSegment(RelativePathSegment segment) {
-    return ".";
-  }
-
-  @Override
   public String formatPathSegment(RootPathSegment segment) {
-    return "/"+segment.getDefinition().getRootName();
+    return segment.getDefinition().getRootName();
   }
 }

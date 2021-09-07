@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
+import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
@@ -33,10 +34,10 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
+import gov.nist.secauto.metaschema.binding.model.FieldDefinition;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
-import gov.nist.secauto.metaschema.binding.model.constraint.ConstraintValidator;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.XmlBindingSupplier;
@@ -50,7 +51,6 @@ import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
@@ -80,7 +80,7 @@ public class DefaultFieldProperty
 
   private final Field field;
   private final JavaTypeAdapter<?> javaTypeAdapter;
-  private IFieldDefinition definition;
+  private FieldDefinition definition;
   private IValueConstraintSupport constraints;
 
   public DefaultFieldProperty(AssemblyClassBinding parentClassBinding, java.lang.reflect.Field field) {
@@ -165,7 +165,7 @@ public class DefaultFieldProperty
   }
 
   @Override
-  public boolean isNextProperty(XmlParsingContext context) throws IOException, XMLStreamException {
+  public boolean isNextProperty(XmlParsingContext context) throws XMLStreamException {
     boolean retval = super.isNextProperty(context);
     if (!retval) {
       XMLEventReader2 eventReader = context.getReader();
@@ -270,7 +270,7 @@ public class DefaultFieldProperty
   }
 
   @Override
-  public IFieldDefinition getDefinition() {
+  public FieldDefinition getDefinition() {
     synchronized (this) {
       if (definition == null) {
         DataTypeHandler handler = getDataTypeHandler();
@@ -285,7 +285,7 @@ public class DefaultFieldProperty
     return definition;
   }
 
-  private class ScalarFieldDefinition implements IFieldDefinition {
+  private class ScalarFieldDefinition implements FieldDefinition {
     @Override
     public DataTypes getDatatype() {
       return DataTypes.getDataTypeForAdapter(getJavaTypeAdapter());
@@ -380,17 +380,20 @@ public class DefaultFieldProperty
       checkModelConstraints();
       return constraints.getExpectConstraints();
     }
+
+    @Override
+    public BindingContext getBindingContext() {
+      return getContainingDefinition().getBindingContext();
+    }
   }
 
   @Override
   public void validateValue(Object value, ParsingContext<?, ?> context) {
-    ConstraintValidator valdiator = new ConstraintValidator(context);
-    valdiator.validateValue(this, value);
+    context.getConstraintValidator().validateValue(this, value, context);
   }
 
   @Override
   public void validateItem(Object value, ParsingContext<?, ?> context) {
-    ConstraintValidator valdiator = new ConstraintValidator(context);
-    valdiator.validateItem(this, value);
+    context.getConstraintValidator().validateItem(this, context.getPathBuilder().getPathSegments(), value, context);
   }
 }

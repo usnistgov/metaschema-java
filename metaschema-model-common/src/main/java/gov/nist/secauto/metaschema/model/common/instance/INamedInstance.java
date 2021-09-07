@@ -27,7 +27,8 @@
 package gov.nist.secauto.metaschema.model.common.instance;
 
 import gov.nist.secauto.metaschema.model.common.INamedModelElement;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.IPathSegment;
 
 /**
  * This marker interface indicates that the instance has a flag, field, or assembly name associated
@@ -40,5 +41,14 @@ public interface INamedInstance extends IInstance, INamedModelElement {
    * 
    * @return the corresponding definition
    */
-  IDefinition getDefinition();
+  INamedDefinition getDefinition();
+
+  /**
+   * Generate a new path segment for this instance.
+   * 
+   * @param position
+   *          the relative position of this instance to it's other siblings of the same instance type.
+   * @return the path segment
+   */
+  IPathSegment newPathSegment(int position);
 }

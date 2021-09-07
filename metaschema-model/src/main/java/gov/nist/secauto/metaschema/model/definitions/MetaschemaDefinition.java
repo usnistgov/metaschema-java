@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model.definitions;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.InfoElement;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 
-public interface MetaschemaDefinition extends InfoElement, IDefinition {
+public interface MetaschemaDefinition extends InfoElement, INamedDefinition {
   public static final ModuleScopeEnum DEFAULT_DEFINITION_MODEL_SCOPE = ModuleScopeEnum.INHERITED;
 
   /**

@@ -94,7 +94,7 @@ public class IteratorUtil {
       retval = ((LinkedList<T>)list).descendingIterator();
     } else if (list instanceof ArrayList) {
       retval = IntStream.range(0, list.size())
-          .map(i-> list.size() - 1 - i)
+          .map(i -> list.size() - 1 - i)
           .mapToObj(list::get).iterator();
     } else {
       throw new UnsupportedOperationException();

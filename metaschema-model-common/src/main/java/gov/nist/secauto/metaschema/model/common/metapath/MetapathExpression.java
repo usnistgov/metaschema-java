@@ -71,18 +71,4 @@ public class MetapathExpression {
     }
     return new MetaschemaInstanceEvaluationVisitor().visit(node, context);
   }
-
-//  public INodeSet evaluateNodeSet(INodeContext context) {
-//    IExpression node = getASTNode();
-//    if (!node.isNodeExpression()) {
-//      throw new UnsupportedOperationException(String.format("The expression '%s' is not a node expression", getPath()));
-//    }
-//    // TODO: implement
-//    throw new UnsupportedOperationException();
-//    // return ((INodeExpression)node).evaluateNodeSet(context);
-//  }
-//
-//  public boolean evaluate(INodeContext context) {
-//    return getASTNode().evaluate(context);
-//  }
 }

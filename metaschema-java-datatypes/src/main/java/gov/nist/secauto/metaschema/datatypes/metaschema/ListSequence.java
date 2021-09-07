@@ -24,14 +24,42 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.io.context;
+package gov.nist.secauto.metaschema.datatypes.metaschema;
 
-import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
 
-public interface InstanceHandler<INSTANCE extends NamedProperty> {
-  NamedProperty getInstance();
+public class ListSequence implements ISequence {
+  private final List<? extends IItem> items;
 
-  IPathSegment newPathInstance();
+  public ListSequence(Collection<? extends IItem> items) {
+    this(new ArrayList<>(items), false);
+  }
 
-  IPathSegment newPathInstance(int position);
+  public ListSequence(List<? extends IItem> items, boolean copy) {
+    this.items = copy ? new ArrayList<>(items) : items;
+  }
+
+  @Override
+  public List<? extends IItem> asList() {
+    return Collections.unmodifiableList(items);
+  }
+
+  @Override
+  public Stream<? extends IItem> asStream() {
+    return items.stream();
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return items.isEmpty();
+  }
+
+  @Override
+  public String toString() {
+    return asList().toString();
+  }
 }

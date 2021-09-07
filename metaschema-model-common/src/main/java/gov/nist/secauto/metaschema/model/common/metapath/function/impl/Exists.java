@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.model.common.metapath.function.impl;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.AbstractFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.function.Argument;
-import gov.nist.secauto.metaschema.model.common.metapath.function.Arguments;
 
 import java.util.List;
 

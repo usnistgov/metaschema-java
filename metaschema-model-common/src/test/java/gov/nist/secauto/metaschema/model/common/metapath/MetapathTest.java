@@ -29,8 +29,6 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 import com.adelean.inject.resources.junit.jupiter.GivenTextResource;
 import com.adelean.inject.resources.junit.jupiter.TestWithResources;
 
-import gov.nist.secauto.metaschema.model.common.metapath.Metapath;
-
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.Test;
 

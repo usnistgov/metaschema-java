@@ -115,7 +115,7 @@ public class ListPropertyInfo
         collector.add(value);
 
         if (context.isValidating()) {
-          getProperty().validateValue(value, context);
+          getProperty().validateItem(value, context);
         }
 
         handled = true;

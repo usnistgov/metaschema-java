@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.DefaultMetaschemaContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.FlagPathSegment;
 
 import java.util.Collections;
 
@@ -67,6 +68,11 @@ public interface IFlagInstance extends INamedInstance, Flag {
   // * @return {@code true} if the flag is used as a JSON "value key", or {@code false} otherwise
   // */
   // boolean isJsonValueKey();
+
+  @Override
+  default FlagPathSegment newPathSegment(int position) {
+    return new FlagPathSegment(this);
+  }
 
   @Override
   default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {

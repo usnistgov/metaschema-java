@@ -29,27 +29,30 @@ package gov.nist.secauto.metaschema.datatypes.adapter.types;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.metapath.IAtomicItem;
-import gov.nist.secauto.metaschema.datatypes.metapath.IDecimalItem;
+import gov.nist.secauto.metaschema.datatypes.metaschema.DataTypeException;
+import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.metaschema.IDecimalItem;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 
-public class DecimalAdapter
-    extends AbstractJavaTypeAdapter<BigDecimal> {
+public class DecimalAdapter extends AbstractJavaTypeAdapter<BigDecimal> {
 
   public DecimalAdapter() {
     super(BigDecimal.class);
   }
 
   @Override
-  public BigDecimal parse(String value) {
-    return new BigDecimal(value);
+  public BigDecimal parse(String value) throws DataTypeException {
+    try {
+      return new BigDecimal(value);
+    } catch (NumberFormatException ex) {
+      throw new DataTypeException(ex);
+    }
   }
 
   @Override
-  public void writeJsonValue(Object value, JsonGenerator generator)
-      throws IOException {
+  public void writeJsonValue(Object value, JsonGenerator generator) throws IOException {
     try {
       generator.writeNumber((BigDecimal) value);
     } catch (ClassCastException ex) {

@@ -24,15 +24,47 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.io.context;
+package gov.nist.secauto.metaschema.model.common.metapath.evaluate.context;
 
-import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
+import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
-public interface IPathSegment {
-  NamedProperty getInstance();
+public class RootPathSegment implements IRootPathSegment {
+  private final IPathSegment segment;
 
-  String format(IPathFormatter formatter);
+  public RootPathSegment(IPathSegment segment) {
+    IDefinition rootDefinition = segment.getDefinition();
+    if (!(rootDefinition instanceof IAssemblyDefinition)) {
+      throw new UnsupportedOperationException(
+          "The provided segment segment is not an assembly. Only assemblies can be roots.");
+    } else if (!((IAssemblyDefinition)rootDefinition).isRoot()) {
+      throw new UnsupportedOperationException("The provided assembly is not a segment.");
+    }
+    this.segment = segment;
+  }
 
-  IDefinition getDefinition();
+  public IPathSegment getSegment() {
+    return segment;
+  }
+
+  @Override
+  public INamedInstance getInstance() {
+    return segment.getInstance();
+  }
+
+  @Override
+  public IAssemblyDefinition getDefinition() {
+    return (IAssemblyDefinition)segment.getDefinition();
+  }
+
+  @Override
+  public String format(IPathFormatter formatter) {
+    return formatter.formatPathSegment(this);
+  }
+
+  @Override
+  public String getName() {
+    return getDefinition().getRootName();
+  }
 }

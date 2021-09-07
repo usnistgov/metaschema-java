@@ -31,8 +31,10 @@ import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.metapath.type.INodeItem;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.IPathSegment;
 
 import java.io.IOException;
 import java.util.List;
@@ -48,6 +50,19 @@ import javax.xml.stream.events.XMLEvent;
  */
 public interface NamedModelProperty extends NamedProperty, INamedModelInstance {
   DataTypeHandler getDataTypeHandler();
+
+  /**
+   * Create new node items for the specific instances of this property. The value of {@code value} is
+   * may be many values based on the cardinality of the property. The {@code precedingPath} argument
+   * must not include the current node, as this will result in duplication of this node in the path.
+   * 
+   * @param value
+   *          the instance
+   * @param precedingPath
+   *          any preceding path segments to register or an empty list
+   * @return the new node item
+   */
+  Stream<INodeItem> newNodeItems(Object value, List<IPathSegment> precedingPath);
 
   /**
    * Retrieve a stream of item values associated with this property.

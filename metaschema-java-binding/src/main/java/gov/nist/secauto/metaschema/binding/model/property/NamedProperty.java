@@ -26,10 +26,34 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
+import gov.nist.secauto.metaschema.binding.metapath.type.INodeItem;
+import gov.nist.secauto.metaschema.binding.model.BoundDefinition;
+import gov.nist.secauto.metaschema.datatypes.metaschema.IMetapathResult;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.IPathSegment;
 
-public interface NamedProperty
-    extends Property, INamedInstance {
+import java.util.List;
+
+public interface NamedProperty extends Property, INamedInstance {
+
+  @Override
+  BoundDefinition getDefinition();
+
+  IMetapathResult evaluateMetapath(MetapathExpression metapath, INodeItem item);
+
+  /**
+   * Create a new node item for a specific instance of this property. The value of {@code value} is
+   * expected to be a singleton instance. The {@code precedingPath} argument must not include the
+   * current node, as this will result in duplication of this node in the path.
+   * 
+   * @param value
+   *          the instance
+   * @param precedingPath
+   *          any preceding path segments to register or an empty list
+   * @return the new node item
+   */
+  INodeItem newNodeItem(Object value, List<IPathSegment> precedingPath);
 
   // void writeValue(Object parentInstance, JsonParsingContext context);
 }

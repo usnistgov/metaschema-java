@@ -24,30 +24,8 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.io.context;
+package gov.nist.secauto.metaschema.datatypes.metaschema;
 
-import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
-import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+public abstract class AbstractItem implements IItem {
 
-class ModelInstanceHandler implements InstanceHandler<AssemblyProperty> {
-  private final NamedModelProperty instance;
-
-  public ModelInstanceHandler(NamedModelProperty instance) {
-    this.instance = instance;
-  }
-
-  @Override
-  public NamedModelProperty getInstance() {
-    return instance;
-  }
-
-  @Override
-  public ModelPositionalPathSegment newPathInstance() {
-    return newPathInstance(0);
-  }
-
-  @Override
-  public ModelPositionalPathSegment newPathInstance(int position) {
-    return new ModelPositionalPathSegment(this.getInstance(), position);
-  }
 }

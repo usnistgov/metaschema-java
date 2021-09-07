@@ -51,8 +51,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-public class DefaultXmlDeserializer<CLASS>
-    extends AbstractDeserializer<CLASS> {
+public class DefaultXmlDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
   private static final Logger logger = LogManager.getLogger(DefaultXmlDeserializer.class);
 
   private XMLInputFactory2 xmlInputFactory;
@@ -110,10 +109,8 @@ public class DefaultXmlDeserializer<CLASS>
 
     AssemblyClassBinding classBinding = getClassBinding();
 
-    DefaultXmlParsingContext parsingContext = new DefaultXmlParsingContext(reader);
-    parsingContext.setValidating(isValidating());
+    DefaultXmlParsingContext parsingContext = new DefaultXmlParsingContext(reader, new DefaultXmlProblemHandler(), isValidating());
 
-    @SuppressWarnings("unchecked")
     CLASS retval;
     if (classBinding.isRoot() && getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT, false)) {
       // we may be at the START_DOCUMENT
@@ -152,6 +149,7 @@ public class DefaultXmlDeserializer<CLASS>
         logger.debug("After Parse: {}", XmlEventUtil.toString(reader.peek()));
       }
     }
+    parsingContext.getConstraintValidator().finalizeValidation(parsingContext);
     return retval;
   }
 }

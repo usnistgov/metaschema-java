@@ -98,7 +98,7 @@ public class DefaultFieldValueProperty
     return true;
   }
 
-  protected Object readInternal(XmlParsingContext context) throws IOException, BindingException {
+  protected Object readInternal(XmlParsingContext context) throws IOException {
     // parse the value
     Object retval = getJavaTypeAdapter().parse(context.getReader());
 
@@ -143,7 +143,7 @@ public class DefaultFieldValueProperty
     return retval;
   }
 
-  protected Object readInternal(JsonParsingContext context) throws IOException, BindingException {
+  protected Object readInternal(JsonParsingContext context) throws IOException {
     // parse the value
     return getJavaTypeAdapter().parse(context.getReader());
   }

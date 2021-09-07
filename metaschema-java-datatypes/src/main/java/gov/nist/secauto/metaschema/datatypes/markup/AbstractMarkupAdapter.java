@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.datatypes.markup;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractDatatypeJavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.metapath.IAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
 
 public abstract class AbstractMarkupAdapter<TYPE extends AbstractMarkupString<TYPE>>
     extends AbstractDatatypeJavaTypeAdapter<TYPE> {

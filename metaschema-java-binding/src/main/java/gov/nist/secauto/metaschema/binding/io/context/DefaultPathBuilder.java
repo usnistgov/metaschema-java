@@ -26,70 +26,68 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-import gov.nist.secauto.metaschema.binding.model.property.RootAssemblyProperty;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.IPathFormatter;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.IPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.RootPathSegment;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Used to track paths during parsing.
+ */
 public class DefaultPathBuilder implements PathBuilder {
-  private static final Logger logger = LogManager.getLogger(DefaultPathBuilder.class);
-
-  private final LinkedList<InstanceHandler<?>> instanceStack = new LinkedList<>();
+  private final LinkedList<INamedInstance> instanceStack = new LinkedList<>();
   private final LinkedList<IPathSegment> pathStack = new LinkedList<>();
-
-  // public void pushInstance(INamedInstance instance) {
-  // instanceStack.push(instance);
-  // }
 
   @Override
   public void pushInstance(FlagProperty instance) {
-    InstanceHandler<FlagProperty> handler = new FlagInstanceHandler(instance);
-    instanceStack.push(handler);
+    instanceStack.push(instance);
   }
 
   @Override
   public void pushInstance(NamedModelProperty instance) {
-    InstanceHandler<?> handler;
-    if (instance instanceof RootAssemblyProperty) {
-      handler = new RootAssemblyInstanceHandler((RootAssemblyProperty) instance);
-    } else {
-      handler = new ModelInstanceHandler(instance);
-    }
-    instanceStack.push(handler);
+    instanceStack.push(instance);
   }
 
   @Override
-  public InstanceHandler<?> popInstance() {
+  public INamedInstance popInstance() {
     return instanceStack.pop();
   }
 
   @Override
-  public void pushItem(int position) {
-    InstanceHandler<?> currentHandler = instanceStack.peek();
-    IPathSegment pathInstance = currentHandler.newPathInstance(position);
-    pathStack.push(pathInstance);
-//    logger.info(getPath(PathBuilder.PathType.METAPATH));
+  public synchronized void pushItem(int position) {
+    INamedInstance currentInstance = instanceStack.peek();
+    IPathSegment pathInstance = currentInstance.newPathSegment(position);
+    if (pathStack.isEmpty()) {
+      pathInstance = new RootPathSegment(pathInstance);
+    }
+    pathStack.addLast(pathInstance);
   }
 
   @Override
-  public IPathSegment popItem() {
-    return pathStack.pop();
-  }
-
-  protected List<IPathSegment> getPath() {
-    return pathStack;
+  public synchronized IPathSegment popItem() {
+    return pathStack.removeLast();
   }
 
   @Override
-  public String getPath(PathBuilder.PathType pathType) {
-    return pathType.getFormatter().format(getPath());
+  public synchronized List<IPathSegment> getPathSegments() {
+    return new ArrayList<>(pathStack);
+  }
 
+  @Override
+  public String getPath(IPathFormatter formatter) {
+    return formatter.format(getPathSegments());
+  }
+
+  @Override
+  public synchronized List<IPathSegment> getLeadingPathSegments() {
+    return pathStack.isEmpty() ? Collections.emptyList() : new ArrayList<>(pathStack.subList(0, pathStack.size() - 1));
   }
 
 }

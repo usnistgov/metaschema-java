@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.datatypes.adapter;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 
-import gov.nist.secauto.metaschema.datatypes.metapath.IStringItem;
-import gov.nist.secauto.metaschema.datatypes.metapath.StringItem;
+import gov.nist.secauto.metaschema.datatypes.metaschema.IStringItem;
+import gov.nist.secauto.metaschema.datatypes.metaschema.StringItem;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;

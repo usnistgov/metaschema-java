@@ -48,6 +48,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.IPathFormatter;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.jmock.Expectations;
@@ -105,7 +106,7 @@ class DefaultFieldPropertyTest {
         ignoring(pathBuilder).popInstance();
         ignoring(pathBuilder).pushItem(with(any(Integer.class)));
         ignoring(pathBuilder).popItem();
-        ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
+        ignoring(pathBuilder).getPath(with(any(IPathFormatter.class)));
         will(returnValue("xpath"));
       }
     });
@@ -164,7 +165,7 @@ class DefaultFieldPropertyTest {
         ignoring(pathBuilder).popInstance();
         ignoring(pathBuilder).pushItem(with(any(Integer.class)));
         ignoring(pathBuilder).popItem();
-        ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
+        ignoring(pathBuilder).getPath(with(any(IPathFormatter.class)));
         will(returnValue("xpath"));
       }
     });
@@ -221,7 +222,7 @@ class DefaultFieldPropertyTest {
         ignoring(pathBuilder).popInstance();
         ignoring(pathBuilder).pushItem(with(any(Integer.class)));
         ignoring(pathBuilder).popItem();
-        ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
+        ignoring(pathBuilder).getPath(with(any(IPathFormatter.class)));
         will(returnValue("xpath"));
       }
     });
@@ -277,7 +278,7 @@ class DefaultFieldPropertyTest {
         ignoring(pathBuilder).popInstance();
         ignoring(pathBuilder).pushItem(with(any(Integer.class)));
         ignoring(pathBuilder).popItem();
-        ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
+        ignoring(pathBuilder).getPath(with(any(IPathFormatter.class)));
         will(returnValue("xpath"));
       }
     });

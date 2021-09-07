@@ -29,9 +29,8 @@ package gov.nist.secauto.metaschema.binding.model;
 import gov.nist.secauto.metaschema.binding.model.property.FieldValueProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.Property;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 
-public interface FieldClassBinding extends ClassBinding, IFieldDefinition {
+public interface FieldClassBinding extends ClassBinding, FieldDefinition {
   /**
    * Get the {@link Property} that represents the Metaschema Field's value.
    * 
