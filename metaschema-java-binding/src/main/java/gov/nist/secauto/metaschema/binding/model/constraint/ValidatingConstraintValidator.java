@@ -276,10 +276,15 @@ public class ValidatingConstraintValidator implements ConstraintValidator {
   protected void validateExpect(IExpectConstraint constraint, @SuppressWarnings("unused") INodeItem node, ISequence targets) {
     targets.asStream().map(item -> (INodeItem) item).forEachOrdered(item -> {
       MetapathExpression metapath = constraint.getTest();
-      IMetapathResult result = item.evaluateMetapath(metapath);
-      if (!Functions.fnBoolean(result).toBoolean()) {
-        logger.error(String.format("Expect constraint '%s' did not match the data at path '%s'", metapath.getPath(),
-            item.toPath(MetapathFormatter.instance())));
+      try {
+        IMetapathResult result = item.evaluateMetapath(metapath);
+        if (!Functions.fnBoolean(result).toBoolean()) {
+          logger.error(String.format("Expect constraint '%s' did not match the data at path '%s'", metapath.getPath(),
+              item.toPath(MetapathFormatter.instance())));
+        }
+      } catch (Exception ex) {
+        logger.error(String.format("Unable to evaluate expect constraint '%s' at path '%s'", metapath.getPath(),
+            item.toPath(MetapathFormatter.instance())), ex);
       }
     });
   }

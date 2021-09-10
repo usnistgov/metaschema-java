@@ -38,7 +38,9 @@ public class YamlFactoryFactory {
 
   public static YAMLFactory newYamlFactoryInstance() {
     YAMLFactory retval = new YAMLFactory();
-    retval.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
+//    retval.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
+    retval.enable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
+    retval.enable(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS);
     return retval;
   }
 

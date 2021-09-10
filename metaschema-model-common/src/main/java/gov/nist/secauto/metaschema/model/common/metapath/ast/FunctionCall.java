@@ -46,7 +46,7 @@ public class FunctionCall implements IExpression {
     this.arguments = arguments;
   }
 
-  protected Function getFunction() {
+  public Function getFunction() {
     return function;
   }
 

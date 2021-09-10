@@ -579,7 +579,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
   @Override
   public IMetapathResult visitFunctionCall(FunctionCall expr, INodeContext context) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException(expr.getFunction().getName());
   }
 
   @Override
