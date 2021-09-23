@@ -32,11 +32,11 @@ import com.fasterxml.jackson.core.JsonToken;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
-import gov.nist.secauto.metaschema.binding.metapath.type.INodeItem;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IMetapathResult;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IMetapathResult;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

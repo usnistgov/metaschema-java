@@ -37,8 +37,7 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.metapath.type.INodeItem;
-import gov.nist.secauto.metaschema.binding.metapath.type.TerminalNodeItem;
+import gov.nist.secauto.metaschema.binding.metapath.type.NodeItemFactory;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.FlagDefinition;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
@@ -55,8 +54,10 @@ import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.FlagPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.IPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 
@@ -64,6 +65,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -149,7 +151,7 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
         // apply the value to the parentObject
         setValue(parentInstance, value);
 
-        pathBuilder.pushItem(0);
+        pathBuilder.pushItem(newPathSegment((IModelPositionalPathSegment) pathBuilder.getContextPathSegment()));
 
         // validate the flag value
         if (context.isValidating()) {
@@ -172,7 +174,7 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
   protected Object readInternal(Object parentInstance, JsonParsingContext context) throws IOException {
 
     PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushInstance(this); 
+    pathBuilder.pushInstance(this);
 
     JsonParser parser = context.getReader();
     // advance past the property name
@@ -180,7 +182,7 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
     // parse the value
     Object retval = readValueAndSupply(context).get();
 
-    pathBuilder.pushItem(0);
+    pathBuilder.pushItem(newPathSegment((IModelPositionalPathSegment) pathBuilder.getContextPathSegment()));
 
     // validate the flag value
     if (context.isValidating()) {
@@ -351,11 +353,30 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
 
   @Override
   public void validateValue(Object value, ParsingContext<?, ?> context) {
-    context.getConstraintValidator().validateValue(this, context.getPathBuilder().getPathSegments(), value, context);
+    context.getConstraintValidator().validateItem(this, context.getPathBuilder().getContextPathSegment(), value,
+        context);
   }
 
   @Override
-  public INodeItem newNodeItem(Object value, List<IPathSegment> precedingPath) {
-    return new TerminalNodeItem(value, new FlagPathSegment(this), precedingPath);
+  public Stream<IFlagNodeItem> getNodeItemFromParentInstance(IModelNodeItem parentItem) {
+    return getNodeItemFromValue(parentItem, getValue(parentItem.getValue()));
+  }
+
+  @Override
+  public Stream<IFlagNodeItem> getNodeItemFromValue(IModelNodeItem parentItem, Object value) {
+    Stream<IFlagNodeItem> retval;
+    if (value == null) {
+      retval = Stream.empty();
+    } else {
+      IFlagPathSegment segment = newPathSegment(parentItem.getPathSegment());
+      retval = Stream.of(newNodeItem(segment, value, parentItem));
+    }
+    return retval;
+  }
+
+  @Override
+  public IFlagNodeItem newNodeItem(IFlagPathSegment pathSegment, Object value, IModelNodeItem parent) {
+    // TODO: migrate implementation here?
+    return NodeItemFactory.newNodeItem(pathSegment, value, parent);
   }
 }

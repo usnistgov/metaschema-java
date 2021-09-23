@@ -26,9 +26,6 @@
 
 package gov.nist.secauto.metaschema.datatypes.adapter;
 
-import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
-import gov.nist.secauto.metaschema.datatypes.metaschema.StringItem;
-
 public abstract class AbstractStringJavaTypeAdapter extends AbstractJavaTypeAdapter<String> {
 
   protected AbstractStringJavaTypeAdapter() {
@@ -44,16 +41,6 @@ public abstract class AbstractStringJavaTypeAdapter extends AbstractJavaTypeAdap
   public String copy(String obj) {
     // a Java string is immutable
     return obj;
-  }
-
-  @Override
-  public boolean isAtomic() {
-    return true;
-  }
-
-  @Override
-  public IAtomicItem newAtomicItem(Object value) {
-    return new StringItem(asString(value));
   }
 
 }

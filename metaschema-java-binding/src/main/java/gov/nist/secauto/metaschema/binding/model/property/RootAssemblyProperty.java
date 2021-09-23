@@ -43,6 +43,9 @@ public class RootAssemblyProperty
 
   public RootAssemblyProperty(AssemblyClassBinding rootAssemblyDefinition) {
     super(rootAssemblyDefinition, null);
+    if (!rootAssemblyDefinition.isRoot()) {
+      throw new IllegalArgumentException();
+    }
   }
 
   @Override

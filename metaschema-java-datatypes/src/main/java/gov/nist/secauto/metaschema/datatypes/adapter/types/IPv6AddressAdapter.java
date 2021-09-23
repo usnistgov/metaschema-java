@@ -26,30 +26,47 @@
 
 package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
-import gov.nist.secauto.metaschema.datatypes.IPv6;
-import gov.nist.secauto.metaschema.datatypes.adapter.AbstractDatatypeJavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
-import gov.nist.secauto.metaschema.datatypes.metaschema.UntypedAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
+
+import inet.ipaddr.AddressStringException;
+import inet.ipaddr.IPAddressString;
+import inet.ipaddr.IPAddressStringParameters;
+import inet.ipaddr.IncompatibleAddressException;
+import inet.ipaddr.ipv6.IPv6Address;
 
 public class IPv6AddressAdapter
-    extends AbstractDatatypeJavaTypeAdapter<IPv6> {
+    extends AbstractJavaTypeAdapter<IPv6Address> {
+  private static final IPAddressStringParameters IPv6;
+
+  static {
+    IPv6 = new IPAddressStringParameters.Builder()
+        .allowIPv4(false)
+        .allowEmpty(false)
+        .allowSingleSegment(false)
+        .allowWildcardedSeparator(false)
+        .getIPv6AddressParametersBuilder()
+        .allowBinary(false)
+        .allowLeadingZeros(false)
+        .allowPrefixesBeyondAddressSize(false)
+        .getParentBuilder().toParams();
+  }
 
   public IPv6AddressAdapter() {
-    super(IPv6.class);
+    super(IPv6Address.class);
   }
 
   @Override
-  public IPv6 parse(String value) {
-    return new IPv6(value);
+  public IPv6Address parse(String value) throws IllegalArgumentException {
+    try {
+      return (IPv6Address)new IPAddressString(value, IPv6).toAddress();
+    } catch (AddressStringException | IncompatibleAddressException ex) {
+      throw new IllegalArgumentException(ex);
+    }
   }
 
   @Override
-  public boolean isAtomic() {
-    return true;
-  }
-
-  @Override
-  public IAtomicItem newAtomicItem(Object value) {
-    return new UntypedAtomicItem(this, value);
+  public IPv6Address copy(IPv6Address obj) {
+    // value is immutable
+    return obj;
   }
 }

@@ -31,7 +31,9 @@ import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.DefaultMetaschemaContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.FlagPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.FormatterFactory;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
 
 import java.util.Collections;
 
@@ -69,9 +71,15 @@ public interface IFlagInstance extends INamedInstance, Flag {
   // */
   // boolean isJsonValueKey();
 
-  @Override
-  default FlagPathSegment newPathSegment(int position) {
-    return new FlagPathSegment(this);
+  /**
+   * Generate a new path segment for this instance.
+   * 
+   * @param parentSegment
+   *          the path segment at the end of the current path
+   * @return the path segment
+   */
+  default IFlagPathSegment newPathSegment(IModelPositionalPathSegment parentSegment) {
+    return FormatterFactory.instance().newFlagPathSegment(parentSegment, this);
   }
 
   @Override

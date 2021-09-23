@@ -38,7 +38,7 @@ import gov.nist.secauto.metaschema.datatypes.adapter.types.EmailAddressAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.HostnameAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.IPv6AddressAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.IntegerAdapter;
-import gov.nist.secauto.metaschema.datatypes.adapter.types.Ipv4AddressAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.IPv4AddressAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.MarkupLineAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.MarkupMultilineAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.NcNameAdapter;
@@ -49,7 +49,6 @@ import gov.nist.secauto.metaschema.datatypes.adapter.types.TokenAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.UriAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.UriReferenceAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.UuidAdapter;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -73,7 +72,7 @@ public enum DataTypes {
   BASE64(Base64Adapter.class),
   EMAIL_ADDRESS(EmailAddressAdapter.class),
   HOSTNAME(HostnameAdapter.class),
-  IP_V4_ADDRESS(Ipv4AddressAdapter.class),
+  IP_V4_ADDRESS(IPv4AddressAdapter.class),
   IP_V6_ADDRESS(IPv6AddressAdapter.class),
   URI(UriAdapter.class),
   URI_REFERENCE(UriReferenceAdapter.class),
@@ -135,27 +134,5 @@ public enum DataTypes {
     return javaTypeAdapter;
   }
 
-  /**
-   * Determines if the data type is an atomic, scalar value. Complex structures such as Markup are not
-   * considered atomic.
-   * 
-   * @return {@code true} if the data type is an atomic scalar value, or {@code false} otherwise
-   */
-  public boolean isAtomic() {
-    return javaTypeAdapter.isAtomic();
-  }
-
-  /**
-   * Retrieves the item type of the provided value. The value is expected to be an atomic, scalar
-   * value if {@link #isAtomic()} is {@code true}. Complex structures such as Markup are not
-   * considered atomic.
-   * 
-   * @param value
-   *          the instance value
-   * @return the item type if the data type is an atomic scalar value, or {@code null} otherwise
-   */
-  public IAtomicItem getAtomicItem(Object value) {
-    return javaTypeAdapter.newAtomicItem(value);
-  }
 
 }

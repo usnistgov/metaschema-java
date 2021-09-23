@@ -29,30 +29,37 @@ import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.IPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IFieldPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 
 import java.util.List;
 
 public class NoOpConstraintValidator implements ConstraintValidator {
+
+
+  @Override
+  public void validateItem(AssemblyProperty property, IAssemblyPathSegment pathSegment, Object item,
+      ParsingContext<?, ?> context) {
+  }
+
+  @Override
+  public void validateItem(FieldProperty property, IFieldPathSegment pathSegment, Object item,
+      ParsingContext<?, ?> context) {
+  }
+
+  @Override
+  public void validateItem(FlagProperty property, IFlagPathSegment pathSegment, Object item,
+      ParsingContext<?, ?> context) {
+  }
 
   @Override
   public void validateValue(AssemblyProperty property, Object value, ParsingContext<?,?> context) {
   }
 
   @Override
-  public void validateItem(AssemblyProperty property, List<IPathSegment> pathSegments, Object item, ParsingContext<?,?> context) {
-  }
-
-  @Override
   public void validateValue(FieldProperty property, Object value, ParsingContext<?,?> context) {
-  }
-
-  @Override
-  public void validateItem(FieldProperty property, List<IPathSegment> pathSegments, Object item, ParsingContext<?,?> context) {
-  }
-
-  @Override
-  public void validateValue(FlagProperty property, List<IPathSegment> pathSegments, Object value, ParsingContext<?,?> context) {
   }
 
   @Override

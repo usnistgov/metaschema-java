@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.Metapath;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ASTPrinter;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.DefaultMetaschemaContext;
@@ -87,7 +87,7 @@ class JavaGeneratorTest {
     }
     // AssemblyDefinition definition = metaschema.getAssemblyDefinitionByName("system-component");
     //
-    MetapathExpression exp = Metapath.parseMetapathString("*/*/@name");
+    MetapathExpression exp = MetapathFactory.parseMetapathString("*/*/@name");
     // MetapathExpression exp = Metapath.parseMetapathString("//test/@flag = 1+1+1");
     // MetapathExpression exp = Metapath.parseMetapathString("//test[@flag='value']/@flag = 0.1");
     System.out.println(new ASTPrinter().visit(exp.getASTNode()));

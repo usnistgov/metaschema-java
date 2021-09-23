@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,7 +46,7 @@ import java.util.Map;
 public class ProxiedAssemblyDefinition
     extends AbstractFlaggedDefinition<IAssemblyDefinition>
     implements AssemblyDefinition {
-  private Map<String, NamedModelInstance> namedModelInstances;
+  private Map<String, INamedModelInstance> namedModelInstances;
   private Map<String, FieldInstance> fieldInstances;
   private Map<String, AssemblyInstance> assemblyInstances;
   private List<IModelInstance> modelInstances;
@@ -56,7 +57,7 @@ public class ProxiedAssemblyDefinition
 
   @Override
   public void initializeModel(AssemblyDefinitionResolver resolver) {
-    Map<String, NamedModelInstance> namedModelInstances = new LinkedHashMap<>();
+    Map<String, INamedModelInstance> namedModelInstances = new LinkedHashMap<>();
     Map<String, FieldInstance> fieldInstances = new LinkedHashMap<>();
     Map<String, AssemblyInstance> assemblyInstances = new LinkedHashMap<>();
     List<IModelInstance> modelInstances = new ArrayList<>(getDelegate().getModelInstances().size());
@@ -104,7 +105,7 @@ public class ProxiedAssemblyDefinition
   }
 
   @Override
-  public Map<String, NamedModelInstance> getNamedModelInstances() {
+  public Map<String, INamedModelInstance> getNamedModelInstances() {
     return namedModelInstances;
   }
 

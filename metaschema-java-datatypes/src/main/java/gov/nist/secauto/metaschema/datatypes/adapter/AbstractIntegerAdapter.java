@@ -28,10 +28,6 @@ package gov.nist.secauto.metaschema.datatypes.adapter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import gov.nist.secauto.metaschema.datatypes.metaschema.DataTypeException;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IIntegerItem;
-
 import java.io.IOException;
 import java.math.BigInteger;
 
@@ -42,12 +38,8 @@ public class AbstractIntegerAdapter extends AbstractJavaTypeAdapter<BigInteger> 
   }
 
   @Override
-  public BigInteger parse(String value) throws DataTypeException {
-    try {
-      return new BigInteger(value);
-    } catch (NumberFormatException ex) {
-      throw new DataTypeException(ex);
-    }
+  public BigInteger parse(String value) throws NumberFormatException {
+    return new BigInteger(value);
   }
 
   @Override
@@ -63,15 +55,5 @@ public class AbstractIntegerAdapter extends AbstractJavaTypeAdapter<BigInteger> 
   public BigInteger copy(BigInteger obj) {
     // a BigInteger is immutable
     return obj;
-  }
-
-  @Override
-  public boolean isAtomic() {
-    return true;
-  }
-
-  @Override
-  public IAtomicItem newAtomicItem(Object value) {
-    return IIntegerItem.valueOf(toValue(value));
   }
 }

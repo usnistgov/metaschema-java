@@ -30,21 +30,21 @@ import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.IPathSegment;
-
-import java.util.List;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IFieldPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
 
 public interface ConstraintValidator {
 
+  void validateItem(AssemblyProperty property, IAssemblyPathSegment pathSegment, Object item, ParsingContext<?,?> context);
+
+  void validateItem(FieldProperty property, IFieldPathSegment pathSegment, Object item, ParsingContext<?,?> context);
+
+  void validateItem(FlagProperty property, IFlagPathSegment pathSegment, Object item, ParsingContext<?,?> context);
+
   void validateValue(AssemblyProperty property, Object value, ParsingContext<?,?> context);
 
-  void validateItem(AssemblyProperty property, List<IPathSegment> pathSegments, Object item, ParsingContext<?,?> context);
-
   void validateValue(FieldProperty property, Object value, ParsingContext<?,?> context);
-
-  void validateItem(FieldProperty property, List<IPathSegment> pathSegments, Object item, ParsingContext<?,?> context);
-
-  void validateValue(FlagProperty property, List<IPathSegment> pathSegments, Object value, ParsingContext<?,?> context);
 
   void finalizeValidation(ParsingContext<?,?> context);
 }

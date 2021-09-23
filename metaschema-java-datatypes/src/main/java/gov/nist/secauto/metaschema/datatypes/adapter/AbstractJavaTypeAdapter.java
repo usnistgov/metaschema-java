@@ -29,8 +29,6 @@ package gov.nist.secauto.metaschema.datatypes.adapter;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 
-import gov.nist.secauto.metaschema.datatypes.metaschema.IStringItem;
-import gov.nist.secauto.metaschema.datatypes.metaschema.StringItem;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -142,10 +140,6 @@ public abstract class AbstractJavaTypeAdapter<TYPE> implements JavaTypeAdapter<T
     return value.toString();
   }
 
-  @Override
-  public IStringItem newStringItem(Object value) {
-    return new StringItem(asString(value));
-  }
 
   @Override
   public void writeXml(Object value, StartElement parent, XMLEventFactory2 eventFactory, XMLEventWriter eventWriter)

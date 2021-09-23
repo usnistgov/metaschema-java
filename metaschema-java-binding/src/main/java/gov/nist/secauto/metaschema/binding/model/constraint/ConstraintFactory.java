@@ -49,7 +49,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexHasKeyCon
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultKeyField;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultUniqueConstraint;
-import gov.nist.secauto.metaschema.model.common.metapath.Metapath;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import java.util.ArrayList;
@@ -118,7 +118,7 @@ public class ConstraintFactory {
     if (metapath == null || metapath.isBlank()) {
       retval = null;
     } else {
-      retval = Metapath.parseMetapathString(metapath);
+      retval = MetapathFactory.parseMetapathString(metapath);
     }
     return retval;
   }
@@ -180,7 +180,7 @@ public class ConstraintFactory {
   }
 
   static DefaultCardinalityConstraint newCardinalityConstraint(HasCardinality constraint) {
-    return new DefaultCardinalityConstraint(toId(constraint.id()), Metapath.parseMetapathString(constraint.target()),
+    return new DefaultCardinalityConstraint(toId(constraint.id()), MetapathFactory.parseMetapathString(constraint.target()),
         toCardinality(constraint.minOccurs()),
         toCardinality(constraint.maxOccurs()),
         toRemarks(constraint.remarks()));

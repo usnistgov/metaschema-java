@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -78,7 +79,8 @@ public class SingletonPropertyInfo extends AbstractModelPropertyInfo<Type> imple
       JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     }
     PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushItem(0);
+    pathBuilder.pushItem(
+        getProperty().newPathSegment((IAssemblyPathSegment) pathBuilder.getContextPathSegment(), 1));
 
     List<Object> values = property.readItem(parentInstance, context);
     collector.addAll(values);
@@ -102,7 +104,8 @@ public class SingletonPropertyInfo extends AbstractModelPropertyInfo<Type> imple
       XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
 
     PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushItem(0);
+    pathBuilder.pushItem(
+        getProperty().newPathSegment((IAssemblyPathSegment) pathBuilder.getContextPathSegment(), 1));
 
     boolean handled = true;
     Object value = getProperty().readItem(parentInstance, start, context);

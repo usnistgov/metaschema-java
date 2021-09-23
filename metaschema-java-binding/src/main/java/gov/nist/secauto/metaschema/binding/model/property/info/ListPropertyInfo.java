@@ -40,6 +40,7 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 
 import org.codehaus.stax2.XMLEventReader2;
 
@@ -53,9 +54,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class ListPropertyInfo
-    extends AbstractModelPropertyInfo<ParameterizedType>
-    implements ModelPropertyInfo {
+public class ListPropertyInfo extends AbstractModelPropertyInfo<ParameterizedType> implements ModelPropertyInfo {
 
   public ListPropertyInfo(NamedModelProperty property) {
     super(property);
@@ -87,7 +86,7 @@ public class ListPropertyInfo
 
   @Override
   public Stream<?> getItemsFromValue(Object value) {
-    return value == null ? Stream.empty() : ((List<?>)value).stream();
+    return value == null ? Stream.empty() : ((List<?>) value).stream();
   }
 
   @Override
@@ -108,7 +107,8 @@ public class ListPropertyInfo
     int position = 0;
     while ((event = eventReader.peek()).isStartElement()
         && expectedFieldItemQName.equals(event.asStartElement().getName())) {
-      pathBuilder.pushItem(position++);
+      pathBuilder.pushItem(
+          getProperty().newPathSegment((IAssemblyPathSegment) pathBuilder.getContextPathSegment(), ++position));
 
       Object value = getProperty().readItem(parentInstance, start, context);
       if (value != null) {
@@ -158,7 +158,8 @@ public class ListPropertyInfo
           JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
         }
 
-        pathBuilder.pushItem(position++);
+        pathBuilder.pushItem(
+            getProperty().newPathSegment((IAssemblyPathSegment) pathBuilder.getContextPathSegment(), ++position));
 
         List<Object> values = getProperty().readItem(parentInstance, context);
         collector.addAll(values);
@@ -190,7 +191,8 @@ public class ListPropertyInfo
         JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
       }
 
-      pathBuilder.pushItem(1);
+      pathBuilder.pushItem(
+          getProperty().newPathSegment((IAssemblyPathSegment) pathBuilder.getContextPathSegment(), 1));
 
       List<Object> values = getProperty().readItem(parentInstance, context);
       collector.addAll(values);

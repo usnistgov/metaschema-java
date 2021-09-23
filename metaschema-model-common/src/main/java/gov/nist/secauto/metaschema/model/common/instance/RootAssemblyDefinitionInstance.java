@@ -27,7 +27,11 @@
 package gov.nist.secauto.metaschema.model.common.instance;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.format.FormatterFactory;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IRootAssemblyPathSegment;
 
 public class RootAssemblyDefinitionInstance implements IAssemblyInstance {
   private final IAssemblyDefinition rootAssemblyDefinition;
@@ -107,5 +111,4 @@ public class RootAssemblyDefinitionInstance implements IAssemblyInstance {
   public IAssemblyDefinition getDefinition() {
     return getProxy();
   }
-
 }

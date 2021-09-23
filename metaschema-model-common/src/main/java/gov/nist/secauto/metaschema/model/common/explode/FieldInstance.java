@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 public class FieldInstance
     extends AbstractNamedInstance<IFieldInstance, FieldDefinition, AssemblyDefinition>
-    implements IFieldInstance, NamedModelInstance {
+    implements IFieldInstance {
 
   public FieldInstance(IFieldInstance proxy, FieldDefinition definition, AssemblyDefinition containingDefinition) {
     super(proxy, definition, containingDefinition);

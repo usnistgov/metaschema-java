@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.xmlbeans;
 
-import gov.nist.secauto.metaschema.model.common.metapath.Metapath;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import org.antlr.v4.runtime.misc.ParseCancellationException;
@@ -44,7 +44,7 @@ public class MetapathExpressionHandler {
   public static MetapathExpression decodeMetaschemaPathType(SimpleValue obj) {
     String value = obj.getStringValue();
     try {
-      return Metapath.parseMetapathString(value);
+      return MetapathFactory.parseMetapathString(value);
     } catch (ParseCancellationException ex) {
       StringBuilder builder = new StringBuilder();
       builder.append("Error parsing metapath '");

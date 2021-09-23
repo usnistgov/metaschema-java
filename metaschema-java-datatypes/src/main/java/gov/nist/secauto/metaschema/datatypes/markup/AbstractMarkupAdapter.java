@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.datatypes.markup;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractDatatypeJavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
 
 public abstract class AbstractMarkupAdapter<TYPE extends AbstractMarkupString<TYPE>>
     extends AbstractDatatypeJavaTypeAdapter<TYPE> {
@@ -52,16 +51,4 @@ public abstract class AbstractMarkupAdapter<TYPE extends AbstractMarkupString<TY
   protected AbstractMarkupAdapter(Class<TYPE> clazz) {
     super(clazz);
   }
-  
-
-  @Override
-  public boolean isAtomic() {
-    return true;
-  }
-
-  @Override
-  public IAtomicItem newAtomicItem(Object value) {
-    throw new UnsupportedOperationException();
-  }
-  
 }

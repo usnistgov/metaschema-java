@@ -29,9 +29,8 @@ package gov.nist.secauto.metaschema.binding.io.context;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.IPathFormatter;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.IPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.RootPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,18 +60,19 @@ public class DefaultPathBuilder implements PathBuilder {
   }
 
   @Override
-  public synchronized void pushItem(int position) {
-    INamedInstance currentInstance = instanceStack.peek();
-    IPathSegment pathInstance = currentInstance.newPathSegment(position);
-    if (pathStack.isEmpty()) {
-      pathInstance = new RootPathSegment(pathInstance);
-    }
-    pathStack.addLast(pathInstance);
+  public synchronized void pushItem(IPathSegment segment) {
+    pathStack.addLast(segment);
   }
 
   @Override
   public synchronized IPathSegment popItem() {
     return pathStack.removeLast();
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public <SEGMENT extends IPathSegment> SEGMENT getContextPathSegment() {
+    return (SEGMENT)pathStack.peekLast();
   }
 
   @Override
@@ -82,7 +82,7 @@ public class DefaultPathBuilder implements PathBuilder {
 
   @Override
   public String getPath(IPathFormatter formatter) {
-    return formatter.format(getPathSegments());
+    return formatter.format(pathStack.peekLast());
   }
 
   @Override

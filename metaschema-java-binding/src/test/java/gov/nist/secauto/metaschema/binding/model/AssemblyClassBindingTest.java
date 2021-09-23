@@ -40,6 +40,7 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.context.DefaultPathBuilder;
 import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
@@ -49,7 +50,8 @@ import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.binding.model.property.RootAssemblyProperty;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.IPathFormatter;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.jmock.Expectations;
@@ -72,7 +74,6 @@ class AssemblyClassBindingTest {
   @RegisterExtension
   JUnit5Mockery context = new JUnit5Mockery();
 
-  private PathBuilder pathBuilder = context.mock(PathBuilder.class);
   private BindingContext bindingContext = context.mock(BindingContext.class);
   private JsonParsingContext jsonParsingContext = context.mock(JsonParsingContext.class);
   private XmlParsingContext xmlParsingContext = context.mock(XmlParsingContext.class);
@@ -130,6 +131,7 @@ class AssemblyClassBindingTest {
     XMLInputFactory factory = WstxInputFactory.newInstance();
     XMLEventReader2 parser = (XMLEventReader2) factory.createXMLEventReader(reader);
 
+    PathBuilder pathBuilder = new DefaultPathBuilder();
     context.checking(new Expectations() {
       {
         allowing(xmlParsingContext).getReader();
@@ -138,13 +140,6 @@ class AssemblyClassBindingTest {
         will(returnValue(false));
         allowing(xmlParsingContext).getPathBuilder();
         will(returnValue(pathBuilder));
-        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
-        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
-        ignoring(pathBuilder).popInstance();
-        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
-        ignoring(pathBuilder).popItem();
-        ignoring(pathBuilder).getPath(with(any(IPathFormatter.class)));
-        will(returnValue("xpath"));
       }
     });
     return parser;
@@ -154,6 +149,7 @@ class AssemblyClassBindingTest {
     JsonFactory factory = new JsonFactory();
     JsonParser jsonParser = factory.createParser(reader);
 
+    PathBuilder pathBuilder = new DefaultPathBuilder();
     context.checking(new Expectations() {
       {
         allowing(jsonParsingContext).getReader();
@@ -162,14 +158,6 @@ class AssemblyClassBindingTest {
         will(returnValue(false));
         allowing(jsonParsingContext).getPathBuilder();
         will(returnValue(pathBuilder));
-        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
-        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
-        ignoring(pathBuilder).popInstance();
-        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
-        ignoring(pathBuilder).popItem();
-        ignoring(pathBuilder).getPath(with(any(IPathFormatter.class)));
-        will(returnValue("xpath"));
-
       }
     });
     return jsonParser;

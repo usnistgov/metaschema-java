@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.metaschema.DataTypeException;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.DataTypeException;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
 
 /**
  * Used to mark a Java type that has no configured adapter.
@@ -56,16 +56,6 @@ public class NullJavaTypeAdapter
 
   @Override
   public Void parse(String value) throws DataTypeException {
-    throw new UnsupportedOperationException("Not a valid type");
-  }
-
-  @Override
-  public boolean isAtomic() {
-    throw new UnsupportedOperationException("Not a valid type");
-  }
-
-  @Override
-  public IAtomicItem newAtomicItem(Object value) {
     throw new UnsupportedOperationException("Not a valid type");
   }
 }

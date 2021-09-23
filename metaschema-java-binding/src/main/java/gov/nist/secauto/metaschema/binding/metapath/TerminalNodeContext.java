@@ -26,34 +26,42 @@
 
 package gov.nist.secauto.metaschema.binding.metapath;
 
-import gov.nist.secauto.metaschema.binding.metapath.type.INodeItem;
-import gov.nist.secauto.metaschema.binding.metapath.type.TerminalNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Name;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IMetapathResult;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import java.util.stream.Stream;
 
+// TODO: remove
 public class TerminalNodeContext implements INodeContext {
-  private final TerminalNodeItem nodeItem;
 
-  public TerminalNodeContext(TerminalNodeItem nodeItem) {
+  private final IAssemblyNodeItem nodeItem;
+
+  public TerminalNodeContext(IAssemblyNodeItem nodeItem) {
     this.nodeItem = nodeItem;
   }
 
   @Override
-  public INodeItem getNodeItem() {
+  public IAssemblyNodeItem getNodeItem() {
     return nodeItem;
   }
 
   @Override
-  public Stream<INodeItem> getChildFlags(Flag expr) {
+  public Stream<IFlagNodeItem> getChildFlags(Flag expr) {
     return Stream.empty();
   }
 
   @Override
-  public Stream<INodeItem> getChildModelInstances(ModelInstance modelInstance) {
-    Stream<INodeItem> retval;
+  public Stream<IModelNodeItem> getChildModelInstances(ModelInstance modelInstance) {
+    Stream<IModelNodeItem> retval;
 
     if (modelInstance.isName()) {
       String name = ((Name) modelInstance.getNode()).getValue();
@@ -66,5 +74,11 @@ public class TerminalNodeContext implements INodeContext {
       retval = Stream.of(nodeItem);
     }
     return retval;
+  }
+
+  @Override
+  public Stream<? extends INodeItem> getChildInstances(ExpressionVisitor<IMetapathResult, INodeContext> visitor,
+      IExpression expr, boolean recurse) {
+    return Stream.empty();
   }
 }

@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
@@ -11,13 +13,13 @@
 
 	<name>Metaschema Datatype Support</name>
 
-  <url>${site.url}${project.artifactId}/</url>
-  <distributionManagement>
-    <site>
-      <id>nist-pages</id>
-      <url>${site.url}${project.artifactId}/</url>
-    </site>
-  </distributionManagement>
+	<url>${site.url}${project.artifactId}/</url>
+	<distributionManagement>
+		<site>
+			<id>nist-pages</id>
+			<url>${site.url}${project.artifactId}/</url>
+		</site>
+	</distributionManagement>
 
 	<dependencies>
 		<dependency>
@@ -56,13 +58,19 @@
 			<groupId>com.vladsch.flexmark</groupId>
 			<artifactId>flexmark-ext-typographic</artifactId>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.vladsch.flexmark</groupId> -->
-<!-- 			<artifactId>flexmark-formatter</artifactId> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.vladsch.flexmark</groupId> -->
+		<!-- <artifactId>flexmark-formatter</artifactId> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>com.vladsch.flexmark</groupId>
 			<artifactId>flexmark-html2md-converter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.seancfoley</groupId>
+			<artifactId>ipaddress</artifactId>
+			<version>5.3.3</version>
 		</dependency>
 
 		<dependency>

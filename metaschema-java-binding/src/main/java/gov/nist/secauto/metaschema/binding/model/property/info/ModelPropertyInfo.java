@@ -89,5 +89,5 @@ public interface ModelPropertyInfo {
 
   Stream<? extends Object> getItemsFromParentInstance(Object value);
 
-  Stream<?> getItemsFromValue(Object value);
+  Stream<? extends Object> getItemsFromValue(Object value);
 }

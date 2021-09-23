@@ -29,9 +29,6 @@ package gov.nist.secauto.metaschema.datatypes.adapter.types;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.metaschema.DataTypeException;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IDecimalItem;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -43,12 +40,8 @@ public class DecimalAdapter extends AbstractJavaTypeAdapter<BigDecimal> {
   }
 
   @Override
-  public BigDecimal parse(String value) throws DataTypeException {
-    try {
-      return new BigDecimal(value);
-    } catch (NumberFormatException ex) {
-      throw new DataTypeException(ex);
-    }
+  public BigDecimal parse(String value) throws IllegalArgumentException {
+    return new BigDecimal(value);
   }
 
   @Override
@@ -64,15 +57,5 @@ public class DecimalAdapter extends AbstractJavaTypeAdapter<BigDecimal> {
   public BigDecimal copy(BigDecimal obj) {
     // a BigDecimal is immutable
     return obj;
-  }
-
-  @Override
-  public boolean isAtomic() {
-    return true;
-  }
-
-  @Override
-  public IAtomicItem newAtomicItem(Object value) {
-    return IDecimalItem.valueOf(toValue(value));
   }
 }

@@ -41,6 +41,7 @@ import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 
 import org.codehaus.stax2.XMLEventReader2;
 
@@ -122,7 +123,8 @@ public class MapPropertyInfo
     // process all map items
     int index = 0;
     while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
-      pathBuilder.pushItem(index++);
+      pathBuilder.pushItem(
+          getProperty().newPathSegment((IAssemblyPathSegment) pathBuilder.getContextPathSegment(), ++index));
 
       List<Object> values = property.readItem(parentInstance, context);
       collector.addAll(values);
@@ -155,7 +157,8 @@ public class MapPropertyInfo
     XMLEvent event;
     int position = 0;
     while ((event = eventReader.peek()).isStartElement() && qname.equals(event.asStartElement().getName())) {
-      pathBuilder.pushItem(position++);
+      pathBuilder.pushItem(
+          getProperty().newPathSegment((IAssemblyPathSegment) pathBuilder.getContextPathSegment(), ++position));
 
       // Consume the start element
       Object value = getProperty().readItem(parentInstance, start, context);

@@ -26,23 +26,10 @@
 
 package gov.nist.secauto.metaschema.binding.metapath;
 
-import gov.nist.secauto.metaschema.binding.metapath.type.INodeItem;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IBooleanItem;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IDecimalItem;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IIntegerItem;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IItem;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IMetapathResult;
-import gov.nist.secauto.metaschema.datatypes.metaschema.INumericItem;
-import gov.nist.secauto.metaschema.datatypes.metaschema.ISequence;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IStringItem;
-import gov.nist.secauto.metaschema.datatypes.metaschema.InvalidTypeException;
-import gov.nist.secauto.metaschema.datatypes.metaschema.ListSequence;
-import gov.nist.secauto.metaschema.datatypes.metaschema.SingletonSequence;
-import gov.nist.secauto.metaschema.datatypes.metaschema.StringItem;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.AbstractExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Addition;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.And;
@@ -74,6 +61,23 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.StringLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Wildcard;
+import gov.nist.secauto.metaschema.model.common.metapath.function.Functions;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IMetapathResult;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.InvalidTypeException;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ListSequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.SingletonSequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IStringItem;
 
 import java.math.BigInteger;
 import java.util.Collection;
@@ -83,7 +87,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<IMetapathResult, INodeContext> {
@@ -97,7 +100,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
     boolean retval = true;
     for (IExpression child : expr.getChildren()) {
       IMetapathResult result = child.accept(this, context);
-      IBooleanItem booleanResult = Functions.fnBoolean(result.toSequence());
+      IBooleanItem booleanResult = Functions.fnBoolean(result.asSequence());
       if (IBooleanItem.FALSE.equals(booleanResult)) {
         retval = false;
         break;
@@ -111,7 +114,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
     boolean retval = false;
     for (IExpression child : expr.getChildren()) {
       IMetapathResult result = child.accept(this, context);
-      IBooleanItem booleanResult = Functions.fnBoolean(result.toSequence());
+      IBooleanItem booleanResult = Functions.fnBoolean(result.asSequence());
       if (IBooleanItem.TRUE.equals(booleanResult)) {
         retval = true;
         break;
@@ -122,24 +125,21 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
 
   @Override
   public IMetapathResult visitComparison(Comparison expr, INodeContext context) {
-    IItem leftItem = Functions.getFirstItem(expr.getLeft().accept(this, context).toSequence(), false);
+    IItem leftItem = Functions.getFirstItem(expr.getLeft().accept(this, context).asSequence(), false);
     if (leftItem == null) {
       return ISequence.EMPTY;
     }
-    IItem rightItem = Functions.getFirstItem(expr.getRight().accept(this, context).toSequence(), false);
+    IItem rightItem = Functions.getFirstItem(expr.getRight().accept(this, context).asSequence(), false);
     if (rightItem == null) {
       return ISequence.EMPTY;
     }
 
-    IAtomicItem left = Functions.fnDataItem(leftItem);
-    IAtomicItem right = Functions.fnDataItem(rightItem);
+    IAnyAtomicItem left = Functions.fnDataItem(leftItem);
+    IAnyAtomicItem right = Functions.fnDataItem(rightItem);
 
     Comparison.Operator operator = expr.getOperator();
     IBooleanItem retval;
     if (left instanceof IStringItem || right instanceof IStringItem) {
-      left = left.toStringItem();
-      right = right.toStringItem();
-
       switch (operator) {
       case EQ:
         retval
@@ -260,12 +260,12 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
     IExpression right = expr.getRight();
 
     List<INodeItem> result = new LinkedList<INodeItem>();
-    leftResult.toSequence().asStream().forEachOrdered(item -> {
+    leftResult.asSequence().asStream().forEachOrdered(item -> {
       INodeItem node = (INodeItem) item;
 
       // evaluate the right path in the context of the left
       IMetapathResult otherResult = right.accept(this, node);
-      otherResult.toSequence().asStream().map(x -> (INodeItem) x).forEachOrdered(otherItem -> {
+      otherResult.asSequence().asStream().map(x -> (INodeItem) x).forEachOrdered(otherItem -> {
         result.add(otherItem);
       });
     });
@@ -278,7 +278,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
 
     // evaluate the predicates for this step
     AtomicInteger index = new AtomicInteger();
-    Stream<? extends IItem> stream = retval.toSequence().asStream().map(item -> {
+    Stream<? extends IItem> stream = retval.asSequence().asStream().map(item -> {
       // build a positional index of the items
       return Map.entry(BigInteger.valueOf(index.incrementAndGet()), item);
     }).filter(entry -> {
@@ -328,7 +328,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
     IExpression left = expr.getLeft();
     IMetapathResult leftResult = left.accept(this, context);
 
-    Stream<INodeItem> result = leftResult.toSequence().asStream().map(x -> (INodeItem) x).flatMap(item -> {
+    Stream<INodeItem> result = leftResult.asSequence().asStream().map(x -> (INodeItem) x).flatMap(item -> {
       // evaluate the right path in the context of the left
       return search(expr.getRight(), item);
     });
@@ -340,8 +340,8 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
     return ISequence.of(search(expr.getNode(), context));
   }
 
-  private Stream<INodeItem> search(IExpression expr, INodeContext context) {
-    Stream<INodeItem> retval;
+  private Stream<? extends INodeItem> search(IExpression expr, INodeContext context) {
+    Stream<? extends INodeItem> retval;
     if (expr instanceof Flag) {
       // check instances as a flag
       retval = searchFlags((Flag) expr, context);
@@ -350,26 +350,38 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
       retval = searchModelInstances((ModelInstance) expr, context);
     } else {
       // recurse tree
-      retval = searchExpression(expr, context);
+      retval = context.getChildInstances(this, expr, true);
     }
     return retval;
   }
 
-  // TODO: fix this, not in document order
-  private Stream<INodeItem> searchModelInstances(ModelInstance expr, INodeContext context) {
+  /**
+   * Recursively searches the node graph for {@link IModelNodeItem} instances that match the provided
+   * {@link ModelInstance} expression. The resulting nodes are returned in document order.
+   * 
+   * @param expr
+   *          the search expression
+   * @param context
+   *          the current node context
+   * @return a stream of matching model node items
+   */
+  private Stream<? extends IModelNodeItem> searchModelInstances(ModelInstance expr, INodeContext context) {
 
-    Stream<INodeItem> retval = context.getChildModelInstances(expr);
+    // check if the current node context matches the expression
+    Stream<? extends IModelNodeItem> retval = context.getChildModelInstances(expr);
 
+    // next iterate over the child model instances, if they are an assembly
     final INodeItem contextItem = context.getNodeItem();
-
     IDefinition definition = contextItem.getPathSegment().getDefinition();
     if (definition instanceof AssemblyClassBinding) {
       AssemblyClassBinding assembly = (AssemblyClassBinding) definition;
       Collection<? extends NamedModelProperty> instances = assembly.getNamedModelInstances().values();
 
-      Stream<INodeItem> childModelInstances = instances.stream().flatMap(property -> {
-        return contextItem.newChildNodeItems(property, property.getItemsFromParentInstance(contextItem.getValue()));
+      Stream<? extends IModelNodeItem> childModelInstances = instances.stream().flatMap(property -> {
+        // get the node items for the children, using their associated values
+        return property.getNodeItemsFromParentInstance((IAssemblyNodeItem) contextItem);
       }).flatMap(item -> {
+        // apply the search criteria to these node items
         return searchModelInstances(expr, item);
       }).sequential();
 
@@ -379,69 +391,38 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
   }
 
   /**
-   * Recursively search the model of each ancestor instance for matching flags.
+   * Recursively searches the node graph for {@link IFlagNodeItem} instances that match the provided
+   * {@link Flag} expression. The resulting nodes are returned in document order.
    * 
    * @param expr
-   *          the flag expresion to search using
+   *          the search expression
    * @param context
    *          the current node context
-   * @return a stream of matching flags
+   * @return a stream of matching flag node items
    */
-  private Stream<INodeItem> searchFlags(Flag expr, INodeContext context) {
+  private Stream<IFlagNodeItem> searchFlags(Flag expr, INodeContext context) {
 
-    Stream<INodeItem> retval = context.getChildFlags(expr);
-    List<INodeItem> flags = retval.collect(Collectors.toList());
-    retval = flags.stream();
+    // check if any flags on the the current node context matches the expression
+    Stream<IFlagNodeItem> retval = context.getChildFlags(expr);
+    // List<IFlagNodeItem> flags = retval.collect(Collectors.toList());
+    // retval = flags.stream();
 
+    // next iterate over the child model instances, if they are an assembly
     final INodeItem contextItem = context.getNodeItem();
-
     IDefinition definition = contextItem.getPathSegment().getDefinition();
     if (definition instanceof AssemblyClassBinding) {
       AssemblyClassBinding assembly = (AssemblyClassBinding) definition;
       Collection<? extends NamedModelProperty> instances = assembly.getNamedModelInstances().values();
 
-      Stream<INodeItem> childFlags = instances.stream().flatMap(property -> {
-        return contextItem.newChildNodeItems(property, property.getItemsFromParentInstance(contextItem.getValue()));
+      Stream<IFlagNodeItem> childFlags = instances.stream().flatMap(property -> {
+        // get the node items for the children, using their associated values
+        return property.getNodeItemsFromParentInstance((IAssemblyNodeItem) contextItem);
       }).flatMap(item -> {
+        // apply the search criteria to these node items
         return searchFlags(expr, item);
-      }).sequential();
+      });
 
       retval = Stream.concat(retval, childFlags).sequential();
-    }
-    return retval;
-  }
-
-  /**
-   * Recursively search the model of each ancestor instance for nodes matching the expression.
-   * 
-   * @param expr
-   *          the flag expresion to search using
-   * @param context
-   *          the current node context
-   * @return a stream of matching flags
-   */
-  // TODO: fix this, not in document order
-  private Stream<INodeItem> searchExpression(IExpression expr, INodeContext context) {
-
-    @SuppressWarnings("unchecked")
-    Stream<INodeItem> retval = (Stream<INodeItem>) expr.accept(this, context).toSequence().asStream();
-    List<INodeItem> flags = retval.collect(Collectors.toList());
-    retval = flags.stream();
-
-    final INodeItem contextItem = context.getNodeItem();
-
-    IDefinition definition = contextItem.getPathSegment().getDefinition();
-    if (definition instanceof AssemblyClassBinding) {
-      AssemblyClassBinding assembly = (AssemblyClassBinding) definition;
-      Collection<? extends NamedModelProperty> instances = assembly.getNamedModelInstances().values();
-
-      Stream<INodeItem> children = instances.stream().flatMap(property -> {
-        return contextItem.newChildNodeItems(property, property.getItemsFromParentInstance(contextItem.getValue()));
-      }).flatMap(item -> {
-        return searchExpression(expr, item);
-      }).sequential();
-
-      retval = Stream.concat(retval, children);
     }
     return retval;
   }
@@ -564,16 +545,16 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
     StringBuilder builder = new StringBuilder();
     for (IExpression child : expr.getChildren()) {
       IMetapathResult result = child.accept(this, context);
-      result.toSequence().asStream().forEachOrdered(item -> {
-        builder.append(item.toStringItem().toString());
+      Functions.fnData(result.asSequence()).asStream().forEachOrdered(item -> {
+        builder.append(((IAnyAtomicItem) item).asString());
       });
     }
-    return new StringItem(builder.toString());
+    return IStringItem.valueOf(builder.toString());
   }
 
   @Override
   public IStringItem visitStringLiteral(StringLiteral expr, INodeContext context) {
-    return new StringItem(expr.getValue());
+    return IStringItem.valueOf(expr.getValue());
   }
 
   @Override
@@ -587,7 +568,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
     List<IItem> items = new LinkedList<>();
     for (IExpression childExpr : expr.getChildren()) {
       IMetapathResult result = childExpr.accept(this, context);
-      result.toSequence().asStream().forEachOrdered(item -> {
+      result.asSequence().asStream().forEachOrdered(item -> {
         items.add(item);
       });
     }
@@ -615,7 +596,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
     Set<IItem> items = new LinkedHashSet<>();
     for (IExpression childExpr : expr.getChildren()) {
       IMetapathResult result = childExpr.accept(this, context);
-      result.toSequence().asStream().forEachOrdered(item -> {
+      result.asSequence().asStream().forEachOrdered(item -> {
         if (!items.contains(item)) {
           items.add(item);
         }

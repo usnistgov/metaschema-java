@@ -34,8 +34,6 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.metapath.type.INodeItem;
-import gov.nist.secauto.metaschema.binding.metapath.type.TerminalNodeItem;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.info.ClassDataTypeHandler;
@@ -49,8 +47,6 @@ import gov.nist.secauto.metaschema.binding.model.property.info.SingletonProperty
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.IPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.ModelPositionalPathSegment;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -61,8 +57,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -128,31 +122,27 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
     }
     return retval;
   }
+  //
+  // @Override
+  // public Stream<INodeItem> newNodeItems(Object value, List<IPathSegment> precedingPath) {
+  // AtomicInteger index = new AtomicInteger();
+  // return getItemsFromValue(value).map(item -> {
+  // // build a positional index of the values
+  // final Integer position = index.incrementAndGet();
+  // return new TerminalNodeItem(item, new this.newPathSegment(position), precedingPath);
+  // });
+  // }
 
-  @Override
-  public Stream<INodeItem> newNodeItems(Object value, List<IPathSegment> precedingPath) {
-    AtomicInteger index = new AtomicInteger();
-    return getItemsFromValue(value).map(item -> {
-      // build a positional index of the values
-      final Integer position = index.incrementAndGet();
-      return new TerminalNodeItem(item, new ModelPositionalPathSegment(this, position), precedingPath);
-    });
-  }
+  // @Override
+  // public INodeItem newNodeItem(Object item, List<IPathSegment> precedingPath) {
+  // return new TerminalNodeItem(item, this.newPathSegment(1), precedingPath);
+  // }
 
-  @Override
-  public INodeItem newNodeItem(Object item, List<IPathSegment> precedingPath) {
-    return new TerminalNodeItem(item, new ModelPositionalPathSegment(this, 1), precedingPath);
-  }
+//  @Override
+//  public Stream<? extends INodeItem> getNodeItemsFromParentInstance(IAssemblyNodeItem parentItem, Object parentValue) {
+//    return newNodeItems(parentItem, getPropertyInfo().getItemsFromParentInstance(parentValue));
+//  }
 
-  @Override
-  public Stream<?> getItemsFromParentInstance(Object parentInstance) {
-    return getPropertyInfo().getItemsFromParentInstance(parentInstance);
-  }
-
-  @Override
-  public Stream<?> getItemsFromValue(Object value) {
-    return getPropertyInfo().getItemsFromValue(value);
-  }
 
   /**
    * Gets information about the bound property.

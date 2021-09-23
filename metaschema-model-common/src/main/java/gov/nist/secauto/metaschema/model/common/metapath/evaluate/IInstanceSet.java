@@ -36,6 +36,10 @@ import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.metapath.format.FormatterFactory;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IFieldPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -117,6 +121,7 @@ public interface IInstanceSet {
           public IAssemblyDefinition getDefinition() {
             return definition;
           }
+
         });
       }
 

@@ -27,42 +27,23 @@
 package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.metaschema.DataTypeException;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
-import gov.nist.secauto.metaschema.datatypes.metaschema.UntypedAtomicItem;
 
 import java.util.UUID;
 
-public class UuidAdapter
-    extends AbstractJavaTypeAdapter<UUID> {
+public class UuidAdapter extends AbstractJavaTypeAdapter<UUID> {
 
   public UuidAdapter() {
     super(UUID.class);
   }
 
   @Override
-  public UUID parse(String value) throws DataTypeException {
-    try {
-      return UUID.fromString(value);
-    } catch (IllegalArgumentException ex) {
-      throw new DataTypeException(ex);
-    }
+  public UUID parse(String value) throws IllegalArgumentException {
+    return UUID.fromString(value);
   }
 
   @Override
   public UUID copy(UUID obj) {
     // a UUID is immutable
     return obj;
-  }
-  
-
-  @Override
-  public boolean isAtomic() {
-    return true;
-  }
-
-  @Override
-  public IAtomicItem newAtomicItem(Object value) {
-    return new UntypedAtomicItem(this, value);
   }
 }

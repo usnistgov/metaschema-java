@@ -27,9 +27,6 @@
 package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.metaschema.DataTypeException;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
-import gov.nist.secauto.metaschema.datatypes.metaschema.UntypedAtomicItem;
 
 import java.net.URI;
 
@@ -39,27 +36,13 @@ public class UriReferenceAdapter extends AbstractJavaTypeAdapter<URI> {
   }
 
   @Override
-  public URI parse(String value) throws DataTypeException {
-    try {
-      return URI.create(value);
-    } catch (IllegalArgumentException ex) {
-      throw new DataTypeException(ex);
-    }
+  public URI parse(String value) throws IllegalArgumentException {
+    return URI.create(value);
   }
 
   @Override
   public URI copy(URI obj) {
     // a URI is immutable
     return obj;
-  }
-
-  @Override
-  public boolean isAtomic() {
-    return true;
-  }
-
-  @Override
-  public IAtomicItem newAtomicItem(Object value) {
-    return new UntypedAtomicItem(this, value);
   }
 }

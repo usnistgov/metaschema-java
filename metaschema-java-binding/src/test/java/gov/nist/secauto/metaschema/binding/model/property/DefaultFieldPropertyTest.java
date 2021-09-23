@@ -39,6 +39,7 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.context.DefaultPathBuilder;
 import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
@@ -48,7 +49,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.context.IPathFormatter;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.jmock.Expectations;
@@ -75,7 +75,6 @@ class DefaultFieldPropertyTest {
   private BindingContext bindingContext = context.mock(BindingContext.class);
   private JsonParsingContext jsonParsingContext = context.mock(JsonParsingContext.class);
   private XmlParsingContext xmlParsingContext = context.mock(XmlParsingContext.class);
-  private PathBuilder pathBuilder = context.mock(PathBuilder.class);
 
   @Test
   void testJsonRead()
@@ -85,6 +84,7 @@ class DefaultFieldPropertyTest {
     JsonParser jsonParser = factory.createParser(json);
     Class<?> theClass = TestField.class;
 
+    PathBuilder pathBuilder = new DefaultPathBuilder();
     context.checking(new Expectations() {
       {
         allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
@@ -101,13 +101,6 @@ class DefaultFieldPropertyTest {
         will(returnValue(false));
         allowing(jsonParsingContext).getPathBuilder();
         will(returnValue(pathBuilder));
-        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
-        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
-        ignoring(pathBuilder).popInstance();
-        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
-        ignoring(pathBuilder).popItem();
-        ignoring(pathBuilder).getPath(with(any(IPathFormatter.class)));
-        will(returnValue("xpath"));
       }
     });
 
@@ -144,6 +137,7 @@ class DefaultFieldPropertyTest {
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
     Class<?> theClass = TestField.class;
 
+    PathBuilder pathBuilder = new DefaultPathBuilder();
     context.checking(new Expectations() {
       {
         allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
@@ -160,13 +154,6 @@ class DefaultFieldPropertyTest {
         will(returnValue(false));
         allowing(xmlParsingContext).getPathBuilder();
         will(returnValue(pathBuilder));
-        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
-        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
-        ignoring(pathBuilder).popInstance();
-        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
-        ignoring(pathBuilder).popItem();
-        ignoring(pathBuilder).getPath(with(any(IPathFormatter.class)));
-        will(returnValue("xpath"));
       }
     });
 
@@ -201,6 +188,7 @@ class DefaultFieldPropertyTest {
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
     Class<?> theClass = TestField.class;
 
+    PathBuilder pathBuilder = new DefaultPathBuilder();
     context.checking(new Expectations() {
       {
         allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
@@ -217,13 +205,6 @@ class DefaultFieldPropertyTest {
         will(returnValue(false));
         allowing(xmlParsingContext).getPathBuilder();
         will(returnValue(pathBuilder));
-        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
-        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
-        ignoring(pathBuilder).popInstance();
-        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
-        ignoring(pathBuilder).popItem();
-        ignoring(pathBuilder).getPath(with(any(IPathFormatter.class)));
-        will(returnValue("xpath"));
       }
     });
 
@@ -257,6 +238,7 @@ class DefaultFieldPropertyTest {
     JsonParser jsonParser = factory.createParser(json);
     Class<?> theClass = TestField.class;
 
+    PathBuilder pathBuilder = new DefaultPathBuilder();
     context.checking(new Expectations() {
       {
         allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
@@ -273,13 +255,6 @@ class DefaultFieldPropertyTest {
         will(returnValue(false));
         allowing(jsonParsingContext).getPathBuilder();
         will(returnValue(pathBuilder));
-        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
-        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
-        ignoring(pathBuilder).popInstance();
-        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
-        ignoring(pathBuilder).popItem();
-        ignoring(pathBuilder).getPath(with(any(IPathFormatter.class)));
-        will(returnValue("xpath"));
       }
     });
 

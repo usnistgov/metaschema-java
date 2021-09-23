@@ -27,9 +27,6 @@
 package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.metaschema.DataTypeException;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
-import gov.nist.secauto.metaschema.datatypes.metaschema.UntypedAtomicItem;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
@@ -41,11 +38,11 @@ public class DateWithTZAdapter extends AbstractJavaTypeAdapter<ZonedDateTime> {
   }
 
   @Override
-  public ZonedDateTime parse(String value) throws DataTypeException {
+  public ZonedDateTime parse(String value) throws IllegalArgumentException {
     try {
       return ZonedDateTime.from(DateFormats.dateWithOptionalTZ.parse(value));
     } catch (DateTimeParseException ex) {
-      throw new DataTypeException(ex);
+      throw new IllegalArgumentException(ex);
     }
   }
 
@@ -57,15 +54,5 @@ public class DateWithTZAdapter extends AbstractJavaTypeAdapter<ZonedDateTime> {
   @Override
   public ZonedDateTime copy(ZonedDateTime obj) {
     return ZonedDateTime.from(obj);
-  }
-
-  @Override
-  public boolean isAtomic() {
-    return true;
-  }
-
-  @Override
-  public IAtomicItem newAtomicItem(Object value) {
-    return new UntypedAtomicItem(this, value);
   }
 }

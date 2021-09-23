@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.binding.metapath;
 
-import gov.nist.secauto.metaschema.binding.metapath.type.INodeItem;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 public interface NodeContextStack {
   void push(Object item, NamedModelProperty property);

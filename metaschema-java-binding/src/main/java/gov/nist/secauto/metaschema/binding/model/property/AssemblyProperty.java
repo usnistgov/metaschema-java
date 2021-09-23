@@ -28,8 +28,34 @@ package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+
+import java.util.stream.Stream;
 
 public interface AssemblyProperty extends NamedModelProperty, IAssemblyInstance {
   @Override
   AssemblyClassBinding getDefinition();
+
+  /**
+   * Create a new node item for a specific instance of this property. The value of {@code value} is
+   * expected to be a singleton instance. The {@code precedingPath} argument must not include the
+   * current node, as this will result in duplication of this node in the path.
+   * 
+   * @param parent
+   *          the parent item the value exists on
+   * @param value
+   *          the instance
+   * @param position
+   *          the relative position of this node with other siblings of the same property
+   * @return the new node item
+   */
+  default IAssemblyNodeItem newNodeItem(IAssemblyNodeItem parent, Object value, int position) {
+    IAssemblyPathSegment segment = newPathSegment(parent.getPathSegment(), position);
+    return newNodeItem(segment, value, parent);
+  }
+
+  IAssemblyNodeItem newNodeItem(IAssemblyPathSegment pathSegment, Object value, IAssemblyNodeItem parent);
+
+  Stream<IAssemblyNodeItem> getNodeItemsForValue(IAssemblyPathSegment contextPathSegment, Object value);
 }

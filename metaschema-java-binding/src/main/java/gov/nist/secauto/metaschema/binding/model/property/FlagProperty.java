@@ -30,14 +30,58 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.model.FlagDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import java.io.IOException;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public interface FlagProperty extends NamedProperty, IFlagInstance {
 
   @Override
   FlagDefinition getDefinition();
+
+  /**
+   * Retrieve the flag item for this property, who's value is retrieved from the parent node item.
+   * 
+   * @param parentItem
+   *          the parent node item on which this flag property may exist
+   * @return a stream containing the flag item or an empty stream if the property doesn't exist
+   */
+  Stream<IFlagNodeItem> getNodeItemFromParentInstance(IModelNodeItem parentItem);
+
+  /**
+   * Retrieve the flag item for the provided property value as a stream.
+   * 
+   * @param parentItem
+   *          the parent node item on which this property's value exists
+   * @param value
+   *          the property's value
+   * @return a stream containing the flag item
+   */
+  Stream<IFlagNodeItem> getNodeItemFromValue(IModelNodeItem parentItem, Object value);
+
+  /**
+   * Create a new node item for a specific instance of this property. The value of {@code value} is
+   * expected to be a singleton instance. The {@code precedingPath} argument must not include the
+   * current node, as this will result in duplication of this node in the path.
+   * 
+   * @param parent
+   *          the parent item the value exists on
+   * @param value
+   *          the instance
+   * @return the new node item
+   */
+  default IFlagNodeItem newNodeItem(IModelNodeItem parent, Object value) {
+    IFlagPathSegment segment = newPathSegment(parent.getPathSegment());
+    return newNodeItem(segment, value, parent);
+  }
+
+  IFlagNodeItem newNodeItem(IFlagPathSegment pathSegment, Object itemValue, IModelNodeItem parent);
 
   Object readValueFromString(String value) throws IOException;
 

@@ -26,29 +26,39 @@
 
 package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
-import gov.nist.secauto.metaschema.datatypes.Base64;
-import gov.nist.secauto.metaschema.datatypes.adapter.AbstractDatatypeJavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.metaschema.IAtomicItem;
-import gov.nist.secauto.metaschema.datatypes.metaschema.UntypedAtomicItem;
+import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
+
+import java.nio.ByteBuffer;
+import java.util.Base64;
 
 public class Base64Adapter
-    extends AbstractDatatypeJavaTypeAdapter<Base64> {
+    extends AbstractJavaTypeAdapter<ByteBuffer> {
   public Base64Adapter() {
-    super(Base64.class);
+    super(ByteBuffer.class);
   }
 
   @Override
-  public Base64 parse(String value) {
-    return new Base64(value);
+  public ByteBuffer parse(String value) {
+    Base64.Decoder decoder = Base64.getDecoder();
+    byte[] result = decoder.decode(value);
+    return ByteBuffer.wrap(result);
   }
 
   @Override
-  public boolean isAtomic() {
-    return true;
+  public ByteBuffer copy(ByteBuffer obj) {
+    final ByteBuffer clone = (obj.isDirect()) ?
+        ByteBuffer.allocateDirect(obj.capacity()) :
+        ByteBuffer.allocate(obj.capacity());
+    final ByteBuffer readOnlyCopy = obj.asReadOnlyBuffer();
+    readOnlyCopy.flip();
+    clone.put(readOnlyCopy);
+    return clone;
   }
 
+
   @Override
-  public IAtomicItem newAtomicItem(Object value) {
-    return new UntypedAtomicItem(this, value);
+  public String asString(Object value) {
+    Base64.Encoder encoder =Base64.getEncoder();
+    return encoder.encodeToString(((ByteBuffer)value).array());
   }
 }

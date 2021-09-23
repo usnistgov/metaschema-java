@@ -48,7 +48,7 @@ class MetapathTest {
         continue;
       }
       System.out.println(line);
-      Metapath.parseMetapathString(line);
+      MetapathFactory.parseMetapathString(line);
     }
   }
 
@@ -60,7 +60,7 @@ class MetapathTest {
       }
       System.out.println(line);
       try {
-        Metapath.parseMetapathString(line);
+        MetapathFactory.parseMetapathString(line);
       } catch (ParseCancellationException ex) {
         // ex.printStackTrace();
       }

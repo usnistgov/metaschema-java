@@ -29,10 +29,13 @@ package gov.nist.secauto.metaschema.model.common.explode;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.metapath.format.FormatterFactory;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 
 public class AssemblyInstance
     extends AbstractNamedInstance<IAssemblyInstance, AssemblyDefinition, AssemblyDefinition>
-    implements IAssemblyInstance, NamedModelInstance {
+    implements IAssemblyInstance {
 
   public AssemblyInstance(IAssemblyInstance proxy, AssemblyDefinition definition,
       AssemblyDefinition containingDefinition) {
