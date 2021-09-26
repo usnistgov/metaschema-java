@@ -28,39 +28,42 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 
-public class Argument {
-  private ArgumentType type;
+class ArgumentImpl implements IArgument {
+  private final String name;
+  private final ISequenceType sequenceType;
 
-  public Argument() {
-    type = ArgumentType.ITEM;
+  protected ArgumentImpl(String name, ISequenceType sequenceType) {
+    this.name = name;
+    this.sequenceType = sequenceType;
   }
 
-  public Argument item() {
-    type = ArgumentType.ITEM;
-    return this;
+  @Override
+  public String getName() {
+    return name;
   }
 
-  public Argument bool() {
-    type = ArgumentType.BOOLEAN;
-    return this;
+  @Override
+  public ISequenceType getSequenceType() {
+    return sequenceType;
   }
 
-  public boolean isSupported(IExpression expression) {
-    boolean retval;
-    switch (type) {
-    case ITEM:
-    case BOOLEAN:
-    case STRING:
-      retval = true;
-      break;
-    default:
-      retval = false;
-    }
-    return retval;
+  public boolean isSupported(IExpression<?> expression) {
+    // Class<? extends IItem> itemType = expression.getItemType();
+    // TODO: implement this test
+    return true;
   }
 
-  public Argument string() {
-    type = ArgumentType.STRING;
-    return this;
+  @Override
+  public String toSignature() {
+    StringBuilder builder = new StringBuilder();
+
+    // name
+    builder.append(getName());
+
+    builder.append(" as ");
+
+    builder.append(getSequenceType().toSignature());
+
+    return builder.toString();
   }
 }

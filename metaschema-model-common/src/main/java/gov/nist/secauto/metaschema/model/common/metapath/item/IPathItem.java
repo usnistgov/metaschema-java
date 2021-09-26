@@ -30,30 +30,28 @@ import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 
-import java.util.List;
-import java.util.stream.Stream;
-
 public interface IPathItem extends IItem {
-//  /**
-//   * Contains the paths of all nodes (including this one). This path may be incomplete if the
-//   * traversal started at a branch of the node tree, or may extend past the {@link #getNodePath()} if
-//   * the preceding path was provided.
-//   * 
-//   * @return a list of path segments
-//   */
-//  List<IPathSegment> getPath();
+  // /**
+  // * Contains the paths of all nodes (including this one). This path may be incomplete if the
+  // * traversal started at a branch of the node tree, or may extend past the {@link #getNodePath()}
+  // if
+  // * the preceding path was provided.
+  // *
+  // * @return a list of path segments
+  // */
+  // List<IPathSegment> getPath();
 
   IPathSegment getPathSegment();
 
-//  Stream<IPathSegment> getPathStream();
+  // Stream<IPathSegment> getPathStream();
 
-//  /**
-//   * Contains the values of all preceding nodes and this node. This path may be incomplete if the
-//   * traversal started at a branch of the node tree.
-//   * 
-//   * @return a list of nodes
-//   */
-//  List<? extends IPathItem> getNodePath();
+  // /**
+  // * Contains the values of all preceding nodes and this node. This path may be incomplete if the
+  // * traversal started at a branch of the node tree.
+  // *
+  // * @return a list of nodes
+  // */
+  // List<? extends IPathItem> getNodePath();
 
   default String toPath(IPathFormatter formatter) {
     return formatter.format(getPathSegment());

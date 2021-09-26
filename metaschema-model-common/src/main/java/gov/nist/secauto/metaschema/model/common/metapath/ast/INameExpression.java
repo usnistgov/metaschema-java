@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public interface INameExpression extends IExpression {
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
+
+public interface INameExpression<RESULT_TYPE extends IItem> extends IExpression<RESULT_TYPE> {
 
 }

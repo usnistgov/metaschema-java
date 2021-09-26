@@ -24,40 +24,54 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.ast;
+package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 
-import java.util.List;
+import java.util.Objects;
 
-public class Union
-    extends AbstractNAryExpression<IItem>
-    implements IExpression<IItem> {
+class SequenceTypeImpl implements ISequenceType {
+  private final Class<? extends IItem> type;
+  private final Occurrence occurrence;
 
-  public Union(List<IExpression<?>> children) {
-    super(children);
+  public SequenceTypeImpl(Class<? extends IItem> type, Occurrence occurrence) {
+    Objects.requireNonNull(type, "type");
+    Objects.requireNonNull(occurrence, "occurrence");
+    this.type = type;
+    this.occurrence = occurrence;
   }
 
   @Override
-  public boolean isNodeExpression() {
-    boolean retval = true;
-    for (IExpression<?> expr : getChildren()) {
-      if (!expr.isNodeExpression()) {
-        retval = false;
-        break;
-      }
-    }
-    return retval;
+  public boolean isEmpty() {
+    return false;
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitUnion(this, context);
+  public Class<? extends IItem> getType() {
+    return type;
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitUnion(this, context);
+  public Occurrence getOccurrence() {
+    return occurrence;
   }
+
+  @Override
+  public String toString() {
+    return toSignature();
+  }
+
+  @Override
+  public String toSignature() {
+    StringBuilder builder = new StringBuilder();
+
+    // name
+    builder.append(getType().getName());
+
+    // occurrence
+    builder.append(getOccurrence().getIndicator());
+
+    return builder.toString();
+  }
+
 }

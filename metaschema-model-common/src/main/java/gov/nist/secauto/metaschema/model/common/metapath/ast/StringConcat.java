@@ -26,18 +26,26 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IStringItem;
+
 import java.util.List;
 
 public class StringConcat
-    extends AbstractNAryExpression<IExpression> {
+    extends AbstractNAryExpression<IStringItem> {
 
-  public StringConcat(List<IExpression> chidren) {
+  public StringConcat(List<IExpression<?>> chidren) {
     super(chidren);
   }
 
   @Override
   public boolean isNodeExpression() {
     return false;
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends IStringItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitStringConcat(this, context);
   }
 
   @Override

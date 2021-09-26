@@ -26,11 +26,19 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class RelativeDoubleSlashPath
-    extends AbstractRelativePathExpression {
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
-  public RelativeDoubleSlashPath(IExpression left, IExpression right) {
+public class RelativeDoubleSlashPath
+    extends AbstractRelativePathExpression<INodeItem> {
+
+  public RelativeDoubleSlashPath(IExpression<?> left, IExpression<?> right) {
     super(left, right);
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends INodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitRelativeDoubleSlashPath(this, context);
   }
 
   @Override

@@ -30,23 +30,25 @@ import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.format.FormatterFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 
 public interface INodeItem extends IPathItem, INodeContext {
 
   /**
    * Retrieve the parent node item if it exists.
+   * 
    * @return the parent node item, or {@code null} if this node item has no known parent
    */
   INodeItem getParent();
-  
+
   /**
-   * Determine if the node is a root node
+   * Determine if the node is a root node.
+   * 
    * @return {@code true} if the node is a root node, or {@code false} otherwise
    */
   boolean isRootNode();
 
   Object getValue();
-
 
   // TODO: rename to asAtomicItem
   @Override
@@ -56,5 +58,5 @@ public interface INodeItem extends IPathItem, INodeContext {
     return toPath(FormatterFactory.METAPATH_FORMATTER);
   }
 
-  IMetapathResult evaluateMetapath(MetapathExpression metapath);
+  <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> evaluateMetapath(MetapathExpression metapath);
 }

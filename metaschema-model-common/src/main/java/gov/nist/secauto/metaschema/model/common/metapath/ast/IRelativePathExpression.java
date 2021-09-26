@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public interface IRelativePathExpression extends IPathExpression {
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+
+public interface IRelativePathExpression<RESULT_TYPE extends INodeItem> extends IPathExpression<RESULT_TYPE> {
 
 }

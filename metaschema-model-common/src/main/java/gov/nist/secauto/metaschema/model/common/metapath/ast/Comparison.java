@@ -26,11 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IBooleanItem;
+
 import java.util.Objects;
 
-public class Comparison
-    extends AbstractBinaryExpr
-    implements IBooleanLogicExpression {
+public class Comparison extends AbstractBinaryExpr<IBooleanItem> implements IBooleanLogicExpression {
   public enum Operator {
     EQ,
     NE,
@@ -42,7 +43,7 @@ public class Comparison
 
   private final Operator operator;
 
-  public Comparison(IExpression left, Operator operator, IExpression right) {
+  public Comparison(IExpression<?> left, Operator operator, IExpression<?> right) {
     super(left, right);
     Objects.requireNonNull(operator, "operator");
     this.operator = operator;
@@ -55,6 +56,12 @@ public class Comparison
   @Override
   public String toASTString() {
     return String.format("%s[operator=%s]", getClass().getName(), operator);
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends IBooleanItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
+      CONTEXT context) {
+    return visitor.visitComparison(this, context);
   }
 
   @Override

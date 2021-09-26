@@ -26,27 +26,29 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.function.Function;
-import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionService;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionService;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 
 import java.util.List;
 import java.util.Objects;
 
-public class FunctionCall implements IExpression {
-  private final Function function;
-  private final List<IExpression> arguments;
+public class FunctionCall implements IExpression<IItem> {
+  private final IFunction function;
+  private final List<IExpression<?>> arguments;
 
-  public FunctionCall(String name, List<IExpression> arguments) {
+  public FunctionCall(String name, List<IExpression<?>> arguments) {
     Objects.requireNonNull(name);
     Objects.requireNonNull(arguments);
-    this.function = FunctionService.getInstance().getFunction(name, arguments);
+    this.function = IFunctionService.getInstance().getFunction(name, arguments);
     // if (this.function == null) {
     // throw new UnsupportedOperationException(String.format("unsupported function '%s'",name));
     // }
     this.arguments = arguments;
   }
 
-  public Function getFunction() {
+  public IFunction getFunction() {
     return function;
   }
 
@@ -56,7 +58,7 @@ public class FunctionCall implements IExpression {
   }
 
   @Override
-  public List<? extends IExpression> getChildren() {
+  public List<? extends IExpression<?>> getChildren() {
     return arguments;
   }
 
@@ -64,6 +66,11 @@ public class FunctionCall implements IExpression {
   public boolean isNodeExpression() {
     // TODO: implement this based on what the function returns
     return true;
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends IItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitFunctionCall(this, context);
   }
 
   @Override

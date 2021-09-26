@@ -23,23 +23,26 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.metapath.type;
 
 import gov.nist.secauto.metaschema.binding.metapath.MetaschemaPathEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.AbstractNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IMetapathResult;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 
-public abstract class AbstractBindingNodeItem<SEGMENT extends IPathSegment, PARENT extends IModelNodeItem> extends AbstractNodeItem<SEGMENT, PARENT> {
+public abstract class AbstractBindingNodeItem<SEGMENT extends IPathSegment, PARENT extends IModelNodeItem>
+    extends AbstractNodeItem<SEGMENT, PARENT> {
 
   public AbstractBindingNodeItem(Object value, SEGMENT segment, PARENT parent) {
     super(value, segment, parent);
   }
 
   @Override
-  public IMetapathResult evaluateMetapath(MetapathExpression metapath) {
+  public <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> evaluateMetapath(MetapathExpression metapath) {
     return new MetaschemaPathEvaluationVisitor().visit(metapath.getASTNode(), this);
   }
 

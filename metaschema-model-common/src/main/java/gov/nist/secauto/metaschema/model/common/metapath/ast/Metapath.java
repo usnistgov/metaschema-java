@@ -26,26 +26,34 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
+
 import java.util.List;
 
 public class Metapath
-    extends AbstractNAryExpression<IExpression>
-    implements IExpression {
+    extends AbstractNAryExpression<IItem>
+    implements IExpression<IItem> {
 
-  public Metapath(List<IExpression> children) {
+  public Metapath(List<IExpression<?>> children) {
     super(children);
   }
 
   @Override
   public boolean isNodeExpression() {
     boolean retval = true;
-    for (IExpression expr : getChildren()) {
+    for (IExpression<?> expr : getChildren()) {
       if (!expr.isNodeExpression()) {
         retval = false;
         break;
       }
     }
     return retval;
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends IItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitMetapath(this, context);
   }
 
   @Override

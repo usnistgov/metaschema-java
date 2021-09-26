@@ -26,22 +26,24 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
+
 import java.util.List;
 
-public abstract class AbstractUnaryExpr implements IExpression {
-  private IExpression expr;
+public abstract class AbstractUnaryExpr<RESULT_TYPE extends IItem> implements IExpression<RESULT_TYPE> {
+  private IExpression<?> expr;
 
-  public AbstractUnaryExpr(IExpression expr) {
+  public AbstractUnaryExpr(IExpression<?> expr) {
     // Objects.requireNonNull(expr);
     this.expr = expr;
   }
 
-  public IExpression getChild() {
+  public IExpression<?> getChild() {
     return expr;
   }
   
   @Override
-  public List<? extends IExpression> getChildren() {
+  public List<? extends IExpression<?>> getChildren() {
     return List.of(expr);
   }
 }

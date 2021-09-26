@@ -35,18 +35,19 @@ import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 import java.util.Objects;
 
-public abstract class AbstractNodeItem<SEGMENT extends IPathSegment, PARENT extends IModelNodeItem> extends AbstractPathItem<SEGMENT> implements INodeItem {
+public abstract class AbstractNodeItem<SEGMENT extends IPathSegment, PARENT extends IModelNodeItem>
+    extends AbstractPathItem<SEGMENT> implements INodeItem {
   /**
    * The current node.
    */
   private final Object value;
-  
+
   private final PARENT parent;
 
-//  /**
-//   * Used to cache this object as a string.
-//   */
-//  private IStringItem stringItem;
+  // /**
+  // * Used to cache this object as a string.
+  // */
+  // private IStringItem stringItem;
 
   /**
    * Used to cache this object as an atomic item.
@@ -55,7 +56,7 @@ public abstract class AbstractNodeItem<SEGMENT extends IPathSegment, PARENT exte
 
   public AbstractNodeItem(Object value, SEGMENT segment, PARENT parent) {
     super(segment);
-    Objects.requireNonNull(value,"value");
+    Objects.requireNonNull(value, "value");
     this.value = value;
     this.parent = parent;
   }
@@ -79,10 +80,11 @@ public abstract class AbstractNodeItem<SEGMENT extends IPathSegment, PARENT exte
     if (atomicItem == null) {
       IDefinition definition = getPathSegment().getDefinition();
       if (definition instanceof IValuedDefinition) {
-        DataTypes type = ((IValuedDefinition)definition).getDatatype();
+        DataTypes type = ((IValuedDefinition) definition).getDatatype();
         atomicItem = TypeFactory.instance().getTypeForDataType(type).newItem(getValue());
       } else {
-        throw new MetapathDynamicException("FOTY0012", String.format("the node type '%s' does not have a typed value", this.getClass().getName()));
+        throw new MetapathDynamicException("FOTY0012",
+            String.format("the node type '%s' does not have a typed value", this.getClass().getName()));
       }
     }
   }
@@ -92,94 +94,29 @@ public abstract class AbstractNodeItem<SEGMENT extends IPathSegment, PARENT exte
     initAtomicItem();
     return atomicItem;
   }
-//
-//  protected synchronized void initStringItem() {
-//    if (stringItem == null && value != null) {
-//      IDefinition definition = getDefinition();
-//      if (definition instanceof IValuedDefinition) {
-//        String string = ((IValuedDefinition) definition).getDatatype().getJavaTypeAdapter().asString(value);
-//        stringItem = IStringItem.valueOf(string);
-//      } else {
-//        throw new UnsupportedOperationException();
-//      }
-//      stringItem = IStringItem.valueOf(asString());
-//    }
-//  }
-//
-//  @Override
-//  public IStringItem toStringItem() {
-//    initStringItem();
-//    return stringItem;
-//  }
-
-//  @Override
-//  public INodeItem newChildNodeItem(IFlagInstance instance, Object item) {
-//    return new IntermediateNodeItem(item, FormatterFactory.instance().newFlagPathSegment(instance), this);
-//  }
-//
-//  @Override
-//  public Stream<INodeItem> newChildNodeItems(INamedModelInstance instance, Stream<?> items) {
-//    AtomicInteger index = new AtomicInteger();
-//    return items.map(x -> {
-//      return new IntermediateNodeItem(x, instance.newPathSegment(index.incrementAndGet()), this);
-//    });
-//  }
+  //
+  // protected synchronized void initStringItem() {
+  // if (stringItem == null && value != null) {
+  // IDefinition definition = getDefinition();
+  // if (definition instanceof IValuedDefinition) {
+  // String string = ((IValuedDefinition)
+  // definition).getDatatype().getJavaTypeAdapter().asString(value);
+  // stringItem = IStringItem.valueOf(string);
+  // } else {
+  // throw new UnsupportedOperationException();
+  // }
+  // stringItem = IStringItem.valueOf(asString());
+  // }
+  // }
+  //
+  // @Override
+  // public IStringItem toStringItem() {
+  // initStringItem();
+  // return stringItem;
+  // }
 
   @Override
   public String toString() {
     return super.toString() + " " + getValue();
   }
-//
-//  @Override
-//  public Stream<INodeItem> getChildFlags(Flag flag) {
-//    Stream<INodeItem> retval = Stream.empty();
-//
-//    Object value = getValue();
-//    IDefinition definition = getPathSegment().getDefinition();
-//    if (definition instanceof ClassBinding) {
-//      ClassBinding classBinding = (ClassBinding) definition;
-//      if (flag.isName()) {
-//        String name = ((Name) flag.getNode()).getValue();
-//        FlagProperty instance = classBinding.getFlagInstanceByName(name);
-//        if (instance != null) {
-//          retval = Stream.of(newChildNodeItem(instance, instance.getValue(value)));
-//        }
-//      } else {
-//        Predicate<IInstance> instanceMatcher = flag.getInstanceMatcher();
-//        for (FlagProperty instance : classBinding.getFlagInstances().values()) {
-//          if (instanceMatcher.test(instance)) {
-//            retval = Stream.concat(retval, Stream.of(newChildNodeItem(instance, instance.getValue(value))));
-//          }
-//        }
-//      }
-//    }
-//    return retval;
-//  }
-//
-//  @Override
-//  public Stream<INodeItem> getChildModelInstances(ModelInstance modelInstance) {
-//
-//    Stream<INodeItem> retval = Stream.empty();
-//    IDefinition definition = getPathSegment().getDefinition();
-//    if (definition instanceof AssemblyClassBinding) {
-//      AssemblyClassBinding classBinding = (AssemblyClassBinding) definition;
-//
-//      Object value = getValue();
-//      if (modelInstance.isName()) {
-//        String name = ((Name) modelInstance.getNode()).getValue();
-//        NamedModelProperty instance = classBinding.getModelInstanceByName(name);
-//        if (instance != null) {
-//          retval = newChildNodeItems(instance, instance.getItemsFromParentInstance(value));
-//        }
-//      } else {
-//        Predicate<IInstance> instanceMatcher = modelInstance.getInstanceMatcher();
-//        for (NamedModelProperty instance : classBinding.getModelInstances()) {
-//          if (instanceMatcher.test(instance)) {
-//            retval = Stream.concat(retval, newChildNodeItems(instance, instance.getItemsFromParentInstance(value)));
-//          }
-//        }
-//      }
-//    }
-//    return retval;
-//  }
 }

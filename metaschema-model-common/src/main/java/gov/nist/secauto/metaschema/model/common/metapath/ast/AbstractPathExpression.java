@@ -26,7 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public abstract class AbstractPathExpression implements IPathExpression {
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+
+public abstract class AbstractPathExpression<RESULT_TYPE extends INodeItem> implements IPathExpression<RESULT_TYPE> {
 
   @Override
   public boolean isNodeExpression() {

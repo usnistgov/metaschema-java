@@ -26,19 +26,18 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.ExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IMetapathResult;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import java.util.stream.Stream;
 
 public interface INodeContext {
-  
+
   INodeItem getNodeItem();
 
   /**
@@ -51,11 +50,12 @@ public interface INodeContext {
    *          if the search should recurse over the child model instances
    * @return a stream of matching flag node items
    */
-  Stream<? extends INodeItem> getChildInstances(ExpressionVisitor<IMetapathResult, INodeContext> visitor, IExpression expr, boolean recurse);
+  Stream<? extends INodeItem> getChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor, IExpression<?> expr,
+      boolean recurse);
 
   /**
-   * Searches the child flags for {@link IFlagNodeItem} instances that match the provided
-   * {@link Flag} expression. The resulting nodes are returned in document order.
+   * Searches the child flags for {@link IFlagNodeItem} instances that match the provided {@link Flag}
+   * expression. The resulting nodes are returned in document order.
    * 
    * @param flag
    *          the search expression
@@ -73,12 +73,11 @@ public interface INodeContext {
    */
   Stream<? extends IModelNodeItem> getChildModelInstances(ModelInstance modelInstance);
 
-
-//  default IMetapathResult evaluateMetapath(MetapathExpression metapath) {
-//    MetaschemaPathEvaluationVisitor visitor = new MetaschemaPathEvaluationVisitor();
-//    // logger.info(String.format("Evaluating path '%s' as AST '%s'", metapath.getPath(),
-//    // metapath.toString()));
-//    return visitor.visit(metapath.getASTNode(), this);
-//
-//  }
+  // default IMetapathResult evaluateMetapath(MetapathExpression metapath) {
+  // MetaschemaPathEvaluationVisitor visitor = new MetaschemaPathEvaluationVisitor();
+  // // logger.info(String.format("Evaluating path '%s' as AST '%s'", metapath.getPath(),
+  // // metapath.toString()));
+  // return visitor.visit(metapath.getASTNode(), this);
+  //
+  // }
 }

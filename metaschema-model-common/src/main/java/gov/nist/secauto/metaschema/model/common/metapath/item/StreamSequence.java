@@ -33,22 +33,14 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class StreamSequence implements ISequence {
-  private Stream<? extends IItem> stream;
-  private List<? extends IItem> list;
+public class StreamSequence<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> {
+  private Stream<ITEM_TYPE> stream;
+  private List<ITEM_TYPE> list;
 
   
-  public StreamSequence(Stream<? extends IItem> stream) {
+  public StreamSequence(Stream<ITEM_TYPE> stream) {
     Objects.requireNonNull(stream, "stream");
     this.stream = stream;
-  }
-
-  @Override
-  public synchronized List<? extends IItem> asList() {
-    if (list == null) {
-      list = asStream().collect(Collectors.toList());
-    }
-    return list;
   }
 
   @Override
@@ -57,8 +49,16 @@ public class StreamSequence implements ISequence {
   }
 
   @Override
-  public synchronized Stream<? extends IItem> asStream() {
-    Stream<? extends IItem> retval;
+  public synchronized List<ITEM_TYPE> asList() {
+    if (list == null) {
+      list = asStream().collect(Collectors.toList());
+    }
+    return list;
+  }
+
+  @Override
+  public synchronized Stream<ITEM_TYPE> asStream() {
+    Stream<ITEM_TYPE> retval;
     if (list == null) {
       if (stream == null) {
         throw new UnsupportedOperationException("stream is already consumed");

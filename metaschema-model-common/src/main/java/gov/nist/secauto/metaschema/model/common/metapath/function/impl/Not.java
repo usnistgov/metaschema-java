@@ -26,17 +26,37 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function.impl;
 
-import gov.nist.secauto.metaschema.model.common.metapath.function.AbstractFunction;
-import gov.nist.secauto.metaschema.model.common.metapath.function.Argument;
+import gov.nist.secauto.metaschema.model.common.metapath.function.Functions;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionHandler;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 
 import java.util.List;
 
-public class Not
-    extends AbstractFunction {
+public class Not implements IFunctionHandler {
+  static final IFunction SIGNATURE = IFunction.newBuilder()
+      .name("not")
+      .argument(IArgument.newBuilder()
+          .name("arg")
+          .type(IItem.class)
+          .zeroOrMore()
+          .build())
+      .returnType(IBooleanItem.class)
+      .returnOne()
+      .functionHandler(new Not())
+      .build();
 
   public Not() {
-    super("not");
-    addArgumentPrototype(List.of(new Argument().bool()));
   }
+
+  @Override
+  public ISequence<IBooleanItem> execute(List<ISequence<?>> arguments) {
+    ISequence<?> items = arguments.iterator().next();
+    return ISequence.of(Functions.fnExists(items));
+  }
+
 
 }

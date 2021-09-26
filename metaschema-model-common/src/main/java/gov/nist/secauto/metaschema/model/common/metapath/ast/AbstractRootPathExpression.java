@@ -26,24 +26,26 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractRootPathExpression
-    extends AbstractPathExpression
-    implements IRootPathExpression {
-  private final IExpression node;
+public abstract class AbstractRootPathExpression<RESULT_TYPE extends INodeItem>
+    extends AbstractPathExpression<RESULT_TYPE>
+    implements IRootPathExpression<RESULT_TYPE> {
+  private final IExpression<?> node;
 
-  public AbstractRootPathExpression(IExpression node) {
+  public AbstractRootPathExpression(IExpression<?> node) {
     this.node = node;
   }
 
-  public IExpression getNode() {
+  public IExpression<?> getNode() {
     return node;
   }
 
   @Override
-  public List<? extends IExpression> getChildren() {
+  public List<? extends IExpression<?>> getChildren() {
     return node != null ? List.of(node) : Collections.emptyList();
   }
 }

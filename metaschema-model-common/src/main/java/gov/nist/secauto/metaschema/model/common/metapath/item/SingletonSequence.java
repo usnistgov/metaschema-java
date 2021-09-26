@@ -31,24 +31,24 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class SingletonSequence implements ISequence {
-  private final IItem item;
+public class SingletonSequence<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> {
+  private final ITEM_TYPE item;
 
-  public SingletonSequence(IItem item) {
+  public SingletonSequence(ITEM_TYPE item) {
     this.item = item;
   }
 
-  protected IItem getItem() {
+  protected ITEM_TYPE getItem() {
     return item;
   }
 
   @Override
-  public List<? extends IItem> asList() {
+  public List<ITEM_TYPE> asList() {
     return List.of(item);
   }
 
   @Override
-  public Stream<? extends IItem> asStream() {
+  public Stream<ITEM_TYPE> asStream() {
     return Stream.of(item);
   }
 

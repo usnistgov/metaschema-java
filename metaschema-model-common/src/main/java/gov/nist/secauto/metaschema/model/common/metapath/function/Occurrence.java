@@ -23,15 +23,42 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
+import java.util.Objects;
 
-import java.util.List;
+public enum Occurrence {
+  /**
+   * The occurrence indicator {@code "?"}.
+   */
+  ZERO_OR_ONE("?",true),
+  /**
+   * No occurrence indicator.
+   */
+  ONE("",false),
+  /**
+   * The occurrence indicator {@code "*"}.
+   */
+  ZERO_OR_MORE("*",true),
+  /**
+   * The occurrence indicator {@code "+"}.
+   */
+  ONE_OR_MORE("+",false);
 
-public interface FunctionLibrary {
-  boolean hasFunction(String name, List<IExpression> args);
+  private final String indicator;
+  private final boolean optional;
 
-  Function getFunction(String name, List<IExpression> args);
+  Occurrence(String indicator, boolean optional) {
+    Objects.requireNonNull(indicator, "indicator");
+    this.indicator = indicator;
+    this.optional = optional;
+  }
+
+  public String getIndicator() {
+    return indicator;
+  }
+
+  public boolean isOptional() {
+    return optional;
+  }
 }

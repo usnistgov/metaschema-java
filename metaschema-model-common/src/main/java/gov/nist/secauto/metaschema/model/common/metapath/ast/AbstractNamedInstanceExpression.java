@@ -28,22 +28,23 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
-public abstract class AbstractNamedInstanceExpression
-    extends AbstractPathExpression {
+public abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeItem>
+    extends AbstractPathExpression<RESULT_TYPE> {
   private static final WildcardMatcher WILDCARD = new WildcardMatcher();
 
-  private final IExpression node;
+  private final IExpression<?> node;
 
-  public AbstractNamedInstanceExpression(IExpression node) {
+  public AbstractNamedInstanceExpression(IExpression<?> node) {
     this.node = node;
   }
 
-  public IExpression getNode() {
+  public IExpression<?> getNode() {
     return node;
   }
 
@@ -52,7 +53,7 @@ public abstract class AbstractNamedInstanceExpression
   }
 
   public Predicate<IInstance> getInstanceMatcher() {
-    IExpression node = getNode();
+    IExpression<?> node = getNode();
 
     Predicate<IInstance> retval;
     if (node instanceof Name) {
@@ -66,7 +67,7 @@ public abstract class AbstractNamedInstanceExpression
   }
 
   @Override
-  public List<? extends IExpression> getChildren() {
+  public List<? extends IExpression<?>> getChildren() {
     return node != null ? List.of(node) : Collections.emptyList();
   }
 

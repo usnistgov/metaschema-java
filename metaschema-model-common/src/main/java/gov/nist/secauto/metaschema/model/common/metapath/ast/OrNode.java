@@ -26,14 +26,22 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IBooleanItem;
+
 import java.util.List;
 
 public class OrNode
-    extends AbstractNAryExpression<IExpression>
+    extends AbstractNAryExpression<IBooleanItem>
     implements IBooleanLogicExpression {
 
-  public OrNode(List<IExpression> chidren) {
+  public OrNode(List<IExpression<?>> chidren) {
     super(chidren);
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends IBooleanItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitOr(this, context);
   }
 
   @Override

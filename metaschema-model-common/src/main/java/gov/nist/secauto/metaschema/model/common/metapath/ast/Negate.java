@@ -26,12 +26,20 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class Negate
-    extends AbstractUnaryExpr
-    implements IBooleanLogicExpression {
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
 
-  public Negate(IExpression expr) {
+public class Negate
+    extends AbstractUnaryExpr<INumericItem>
+    implements IArithmeticExpression<INumericItem> {
+
+  public Negate(IExpression<?> expr) {
     super(expr);
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends INumericItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitNegate(this, context);
   }
 
   @Override

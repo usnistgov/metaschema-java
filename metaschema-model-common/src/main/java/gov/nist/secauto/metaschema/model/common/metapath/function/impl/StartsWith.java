@@ -26,17 +26,38 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function.impl;
 
-import gov.nist.secauto.metaschema.model.common.metapath.function.AbstractFunction;
-import gov.nist.secauto.metaschema.model.common.metapath.function.Argument;
+import gov.nist.secauto.metaschema.model.common.metapath.function.Functions;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionHandler;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IStringItem;
 
 import java.util.List;
 
-public class StartsWith
-    extends AbstractFunction {
+public class StartsWith implements IFunctionHandler {
+  static final IFunction SIGNATURE = IFunction.newBuilder()
+      .name("starts-with")
+      .argument(IArgument.newBuilder()
+          .name("arg1")
+          .type(IStringItem.class)
+          .zeroOrOne()
+          .build())
+      .argument(IArgument.newBuilder()
+          .name("arg2")
+          .type(IStringItem.class)
+          .zeroOrOne()
+          .build())
+      .returnType(IBooleanItem.class)
+      .returnOne()
+      .functionHandler(new Not())
+      .build();
 
-  public StartsWith() {
-    super("starts-with");
-    addArgumentPrototype(List.of(new Argument(), new Argument().string()));
+  @Override
+  public ISequence<IBooleanItem> execute(List<ISequence<?>> arguments) {
+    ISequence<?> arg1 = arguments.iterator().next();
+    ISequence<?> arg2 = arguments.iterator().next();
+    return ISequence.of(Functions.fnStartsWith(arg1, arg2));
   }
-
 }

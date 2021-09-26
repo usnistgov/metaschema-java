@@ -37,8 +37,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.Name;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IMetapathResult;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -51,7 +52,7 @@ public abstract class AbstractModelNodeItem<SEGMENT extends IModelPositionalPath
   }
 
   @Override
-  public IMetapathResult evaluateMetapath(MetapathExpression metapath) {
+  public <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> evaluateMetapath(MetapathExpression metapath) {
     return new MetaschemaPathEvaluationVisitor().visit(metapath.getASTNode(), this);
   }
 

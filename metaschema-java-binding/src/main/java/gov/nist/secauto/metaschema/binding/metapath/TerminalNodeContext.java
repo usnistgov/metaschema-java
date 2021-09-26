@@ -27,14 +27,13 @@
 package gov.nist.secauto.metaschema.binding.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.ExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Name;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IMetapathResult;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
@@ -77,8 +76,8 @@ public class TerminalNodeContext implements INodeContext {
   }
 
   @Override
-  public Stream<? extends INodeItem> getChildInstances(ExpressionVisitor<IMetapathResult, INodeContext> visitor,
-      IExpression expr, boolean recurse) {
+  public Stream<? extends INodeItem> getChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor,
+      IExpression<?> expr, boolean recurse) {
     return Stream.empty();
   }
 }

@@ -40,13 +40,13 @@ public class MetapathExpression {
   public static final MetapathExpression CONTEXT_NODE = new MetapathExpression(".", new ContextItem());
 
   private final String path;
-  private final IExpression node;
+  private final IExpression<?> node;
 
   public MetapathExpression(ParseTree tree) {
-    this(tree.getText(), (IExpression) new BuildAstVisitor().visit(tree));
+    this(tree.getText(), new BuildAstVisitor().visit(tree));
   }
 
-  public MetapathExpression(String path, IExpression expr) {
+  public MetapathExpression(String path, IExpression<?> expr) {
     this.path = path;
     this.node = expr;
   }
@@ -55,7 +55,7 @@ public class MetapathExpression {
     return path;
   }
 
-  public IExpression getASTNode() {
+  public IExpression<?> getASTNode() {
     return node;
   }
 
@@ -65,7 +65,7 @@ public class MetapathExpression {
   }
 
   public IInstanceSet evaluateMetaschemaInstance(IMetaschemaContext context) {
-    IExpression node = getASTNode();
+    IExpression<?> node = getASTNode();
     if (!node.isNodeExpression()) {
       throw new UnsupportedOperationException(String.format("The expression '%s' is not a node expression", getPath()));
     }

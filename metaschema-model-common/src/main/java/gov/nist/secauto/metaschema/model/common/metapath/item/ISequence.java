@@ -39,75 +39,55 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-public interface ISequence extends IMetapathResult {
-  public static final ISequence EMPTY = new ISequence() {
+public interface ISequence<ITEM_TYPE extends IItem> {
+  @SuppressWarnings("rawtypes")
+  public static final ISequence EMPTY = new EmptyList<>();
 
-    @Override
-    public List<? extends IItem> asList() {
-      return Collections.emptyList();
-    }
-
-    @Override
-    public boolean isEmpty() {
-      return true;
-    }
-
-    @Override
-    public ISequence asSequence() {
-      return this;
-    }
-
-    @Override
-    public Stream<? extends IItem> asStream() {
-      return Stream.empty();
-    }
-  };
-
-  public static ISequence of(IItem item) {
-    return new SingletonSequence(item);
+  @SuppressWarnings("unchecked")
+  public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> empty() {
+    return (ISequence<ITEM_TYPE>)EMPTY;
   }
 
-  public static ISequence of(List<? extends IItem> items) {
-    ISequence retval;
+  public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of(ITEM_TYPE item) {
+    return new SingletonSequence<ITEM_TYPE>(item);
+  }
+
+  public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of(List<ITEM_TYPE> items) {
+    ISequence<ITEM_TYPE> retval;
     if (items.isEmpty()) {
-      retval = EMPTY;
+      retval = empty();
     } else {
-      retval = new ListSequence(items);
+      retval = new ListSequence<>(items);
     }
     return retval;
   }
 
-  public static ISequence of(Stream<? extends IItem> items) {
-    return new StreamSequence(items);
+  public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of(Stream<ITEM_TYPE> items) {
+    return new StreamSequence<ITEM_TYPE>(items);
   }
 
-  List<? extends IItem> asList();
+  List<ITEM_TYPE> asList();
 
-  Stream<? extends IItem> asStream();
+  Stream<ITEM_TYPE> asStream();
 
   boolean isEmpty();
 
-  @Override
-  default ISequence asSequence() {
-    return this;
-  }
+  public static <ITEM_TYPE extends IItem> Collector<ITEM_TYPE, ?, ISequence<ITEM_TYPE>> toSequence() {
 
-  public static Collector<IItem, ?, ISequence> toSequence() {
-
-    return new Collector<IItem, List<IItem>, ISequence>() {
+    return new Collector<ITEM_TYPE, List<ITEM_TYPE>, ISequence<ITEM_TYPE>>() {
 
       @Override
-      public Supplier<List<IItem>> supplier() {
+      public Supplier<List<ITEM_TYPE>> supplier() {
         return ArrayList::new;
       }
 
       @Override
-      public BiConsumer<List<IItem>, IItem> accumulator() {
+      public BiConsumer<List<ITEM_TYPE>, ITEM_TYPE> accumulator() {
         return (list, value) -> list.add(value);
       }
 
       @Override
-      public BinaryOperator<List<IItem>> combiner() {
+      public BinaryOperator<List<ITEM_TYPE>> combiner() {
         return (list1, list2) -> {
           list1.addAll(list2);
           return list1;
@@ -115,15 +95,15 @@ public interface ISequence extends IMetapathResult {
       }
 
       @Override
-      public Function<List<IItem>, ISequence> finisher() {
+      public Function<List<ITEM_TYPE>, ISequence<ITEM_TYPE>> finisher() {
         return list -> {
-          ISequence retval;
+          ISequence<ITEM_TYPE> retval;
           if (list.isEmpty()) {
-            retval = ISequence.EMPTY;
+            retval = ISequence.empty();
           } else if (list.size() == 1) {
-            retval = new SingletonSequence(list.iterator().next());
+            retval = new SingletonSequence<ITEM_TYPE>(list.iterator().next());
           } else {
-            retval = new ListSequence(list, false);
+            retval = new ListSequence<ITEM_TYPE>(list, false);
           }
           return retval;
         };

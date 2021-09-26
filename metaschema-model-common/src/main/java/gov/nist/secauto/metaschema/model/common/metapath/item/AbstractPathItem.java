@@ -49,16 +49,16 @@ public abstract class AbstractPathItem<SEGMENT extends IPathSegment> implements 
     return getPathSegment().getDefinition();
   }
 
-//  @Override
-//  public IItemType getItemType() {
-//    return getPathSegment().getDefinition().getItemType();
-//  }
+  // @Override
+  // public IItemType getItemType() {
+  // return getPathSegment().getDefinition().getItemType();
+  // }
 
-//  @Override
-//  public String asString() {
-//    IStringItem result = toStringItem();
-//    return result == null ? null : toStringItem().asString();
-//  }
+  // @Override
+  // public String asString() {
+  // IStringItem result = toStringItem();
+  // return result == null ? null : toStringItem().asString();
+  // }
 
   @Override
   public String toString() {

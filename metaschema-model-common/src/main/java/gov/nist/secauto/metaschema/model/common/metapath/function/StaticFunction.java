@@ -23,41 +23,14 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
-package gov.nist.secauto.metaschema.model.common.metapath.ast;
-
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
+package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import java.util.List;
 
-public class Union
-    extends AbstractNAryExpression<IItem>
-    implements IExpression<IItem> {
+public class StaticFunction extends AbstractFunction {
 
-  public Union(List<IExpression<?>> children) {
-    super(children);
+  protected StaticFunction(String name, List<IArgument> arguments, boolean unboundedArity, ISequenceType result, IFunctionHandler handler) {
+    super(name, arguments, unboundedArity, result, handler);
   }
 
-  @Override
-  public boolean isNodeExpression() {
-    boolean retval = true;
-    for (IExpression<?> expr : getChildren()) {
-      if (!expr.isNodeExpression()) {
-        retval = false;
-        break;
-      }
-    }
-    return retval;
-  }
-
-  @Override
-  public <CONTEXT> ISequence<? extends IItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitUnion(this, context);
-  }
-
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitUnion(this, context);
-  }
 }

@@ -26,11 +26,19 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class RootSlashPath
-    extends AbstractRootPathExpression {
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
-  public RootSlashPath(IExpression node) {
+public class RootSlashPath
+    extends AbstractRootPathExpression<INodeItem> {
+
+  public RootSlashPath(IExpression<?> node) {
     super(node);
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends INodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitRootSlashPath(this, context);
   }
 
   @Override

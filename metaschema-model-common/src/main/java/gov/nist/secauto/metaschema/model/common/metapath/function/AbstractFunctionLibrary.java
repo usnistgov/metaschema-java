@@ -33,18 +33,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractFunctionLibrary implements FunctionLibrary {
+public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
 
-  private final HashMap<String, Set<Function>> library = new HashMap<>();
+  private final HashMap<String, Set<IFunction>> library = new HashMap<>();
 
-  protected HashMap<String, Set<Function>> getLibrary() {
+  protected HashMap<String, Set<IFunction>> getLibrary() {
     return library;
   }
 
-  public synchronized void registerFunction(Function function) {
+  public synchronized void registerFunction(IFunction function) {
     String name = function.getName();
 
-    Set<Function> functions = getLibrary().get(name);
+    Set<IFunction> functions = getLibrary().get(name);
     if (functions == null) {
       functions = new HashSet<>();
       library.put(name, functions);
@@ -53,25 +53,25 @@ public abstract class AbstractFunctionLibrary implements FunctionLibrary {
   }
 
   @Override
-  public synchronized boolean hasFunction(String name, List<IExpression> args) {
-    Set<Function> functions = getLibrary().get(name);
+  public synchronized boolean hasFunction(String name, List<IExpression<?>> args) {
+    Set<IFunction> functions = getLibrary().get(name);
     boolean retval;
     if (functions == null) {
       retval = false;
     } else {
-      retval = functions.stream().anyMatch(x -> x.isArgumentsSupported(args));
+      retval = functions.stream().anyMatch(x -> x.isSupported(args));
     }
     return retval;
   }
 
   @Override
-  public Function getFunction(String name, List<IExpression> args) {
-    Set<Function> functions = getLibrary().get(name);
-    Function retval;
+  public IFunction getFunction(String name, List<IExpression<?>> args) {
+    Set<IFunction> functions = getLibrary().get(name);
+    IFunction retval;
     if (functions == null) {
       retval = null;
     } else {
-      retval = functions.stream().filter(x -> x.isArgumentsSupported(args)).findFirst().orElse(null);
+      retval = functions.stream().filter(x -> x.isSupported(args)).findFirst().orElse(null);
     }
     return retval;
   }

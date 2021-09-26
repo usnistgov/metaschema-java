@@ -26,34 +26,42 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
+
 import java.util.List;
 
-public class ParenthesizedExpression implements IExpression {
-  private IExpression expr;
+public class ParenthesizedExpression implements IExpression<IItem> {
+  private IExpression<?> expr;
 
-  public ParenthesizedExpression(IExpression expr) {
+  public ParenthesizedExpression(IExpression<?> expr) {
     this.expr = expr;
   }
 
-  public IExpression getNode() {
+  public IExpression<?> getNode() {
     return expr;
   }
 
   @Override
-  public List<? extends IExpression> getChildren() {
+  public List<? extends IExpression<?>> getChildren() {
     return List.of(expr);
   }
 
   @Override
   public boolean isNodeExpression() {
     boolean retval = true;
-    for (IExpression expr : getChildren()) {
+    for (IExpression<?> expr : getChildren()) {
       if (!expr.isNodeExpression()) {
         retval = false;
         break;
       }
     }
     return retval;
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends IItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitParenthesizedExpression(this, context);
   }
 
   @Override

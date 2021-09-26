@@ -27,20 +27,26 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class AbstractFunction implements Function {
+public abstract class AbstractFunction implements IFunction {
   private final String name;
-  private final List<Arguments> argumentPrototypes = new LinkedList<>();
+  private final List<IArgument> arguments;
+  private final boolean unboundedArity;
+  private final ISequenceType result;
+  private final IFunctionHandler handler;
 
-  public AbstractFunction(String name) {
+  protected AbstractFunction(String name, List<IArgument> arguments, boolean unboundedArity, ISequenceType result,
+      IFunctionHandler handler) {
     this.name = name;
-  }
-
-  protected void addArgumentPrototype(List<Argument> arguments) {
-    argumentPrototypes.add(new Arguments(arguments));
+    this.arguments = arguments;
+    this.unboundedArity = unboundedArity;
+    this.result = result;
+    this.handler = handler;
   }
 
   @Override
@@ -49,19 +55,115 @@ public class AbstractFunction implements Function {
   }
 
   @Override
-  public boolean isArgumentsSupported(List<IExpression> arguments) {
-    boolean retval = false;
-    if (arguments.isEmpty() && argumentPrototypes.isEmpty()) {
+  public boolean isArityUnbounded() {
+    return unboundedArity;
+  }
+
+  @Override
+  public int arity() {
+    return arguments.size();
+  }
+
+  @Override
+  public List<IArgument> getArguments() {
+    return arguments;
+  }
+
+  @Override
+  public ISequenceType getResult() {
+    return result;
+  }
+
+  @Override
+  public boolean isSupported(List<IExpression<?>> expressionArguments) {
+    boolean retval;
+    if (expressionArguments.isEmpty() && getArguments().isEmpty()) {
+      // no arguments
       retval = true;
+      // } else if (arity() == 1 && expressionArguments.isEmpty()) {
+      // // the context item will be the argument
+      // // TODO: check the context item for type compatibility
+      // retval = true;
     } else {
-      for (Arguments argumentPrototype : argumentPrototypes) {
-        if (argumentPrototype.isSupported(arguments)) {
-          retval = true;
-          break;
+      retval = true;
+      // check that argument requirements are satisfied
+      Iterator<IArgument> argumentIterator = getArguments().iterator();
+      Iterator<IExpression<?>> expressionIterator = expressionArguments.iterator();
+
+      IArgument argument = null;
+      while (argumentIterator.hasNext()) {
+        argument = argumentIterator.next();
+        IExpression<?> expression = expressionIterator.hasNext() ? expressionIterator.next() : null;
+
+        if (expression != null) {
+          // is the expression supported by the argument?
+          retval = argument.isSupported(expression);
+          if (!retval) {
+            break;
+          }
+        } else {
+          // there are no more expression arguments. Make sure that the remaining arguments are optional
+          if (!argument.getSequenceType().getOccurrence().isOptional()) {
+            retval = false;
+            break;
+          }
+        }
+      }
+
+      if (retval && expressionIterator.hasNext()) {
+        if (isArityUnbounded()) {
+          // check remaining expressions against the last argument
+          while (expressionIterator.hasNext()) {
+            IExpression<?> expression = expressionIterator.next();
+            retval = argument.isSupported(expression);
+            if (!retval) {
+              break;
+            }
+          }
+        } else {
+          // there are extra expressions, which do not match the arguments
+          retval = false;
         }
       }
     }
     return retval;
   }
 
+  @Override
+  public ISequence<?> execute(List<ISequence<?>> arguments) {
+    return handler.execute(arguments);
+  }
+
+  @Override
+  public String toString() {
+    return toSignature();
+  }
+
+  @Override
+  public String toSignature() {
+    StringBuilder builder = new StringBuilder();
+
+    // name
+    builder.append(getName());
+
+    // arguments
+    builder.append("(");
+
+    List<IArgument> arguments = getArguments();
+    if (arguments.isEmpty()) {
+      builder.append("()");
+    } else {
+      builder.append(arguments.stream().map(argument -> argument.toSignature()).collect(Collectors.joining(",")));
+
+      if (isArityUnbounded()) {
+        builder.append(", ...");
+      }
+    }
+    builder.append(") as ");
+
+    // return type
+    builder.append(getResult().toSignature());
+
+    return builder.toString();
+  }
 }

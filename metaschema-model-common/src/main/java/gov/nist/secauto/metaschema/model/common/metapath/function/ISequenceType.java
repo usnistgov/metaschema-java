@@ -26,27 +26,56 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 
-import java.util.List;
-
-public class Arguments {
-  private final List<Argument> arguments;
-
-  public Arguments(List<Argument> arguments) {
-    this.arguments = arguments;
-  }
-
-  public boolean isSupported(List<IExpression> args) {
-    boolean retval = false;
-    if (args.size() == arguments.size()) {
-      for (int i = 0; i < arguments.size(); i++) {
-        if (!arguments.get(i).isSupported(args.get(i))) {
-          break;
-        }
-      }
-      retval = true;
+public interface ISequenceType {
+  public static final ISequenceType EMPTY = new ISequenceType() {
+    @Override
+    public boolean isEmpty() {
+      return true;
     }
-    return retval;
-  }
+
+    @Override
+    public Class<? extends IItem> getType() {
+      return null;
+    }
+
+    @Override
+    public Occurrence getOccurrence() {
+      return null;
+    }
+
+    @Override
+    public String toSignature() {
+      return "()";
+    }
+  };
+
+  /**
+   * Determine if the sequence is empty (if it holds any data) or not.
+   * 
+   * @return {@code true} if the sequence is empty or {@code false} otherwise
+   */
+  boolean isEmpty();
+
+  /**
+   * Get the type of the sequence.
+   * 
+   * @return the type of the sequence or {@code null} if the sequence is empty
+   */
+  Class<? extends IItem> getType();
+
+  /**
+   * Get the occurrence of the sequence.
+   * 
+   * @return the occurrence of the sequence or {@code null} if the sequence is empty
+   */
+  Occurrence getOccurrence();
+
+  /**
+   * Get the signature of the function as a string.
+   * 
+   * @return the signature
+   */
+  String toSignature();
 }

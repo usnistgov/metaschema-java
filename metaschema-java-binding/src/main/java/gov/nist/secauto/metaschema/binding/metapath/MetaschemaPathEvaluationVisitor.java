@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.AbstractExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.AbstractExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Addition;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.And;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Comparison;
@@ -46,7 +46,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.Metapath;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Mod;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Multiplication;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Name;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Negate;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.OrNode;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ParenthesizedExpression;
@@ -60,17 +59,13 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.StringConcat;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.StringLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Wildcard;
 import gov.nist.secauto.metaschema.model.common.metapath.function.Functions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IMetapathResult;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.InvalidTypeException;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ListSequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.SingletonSequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IDecimalItem;
@@ -81,57 +76,56 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IStringItem;
 
 import java.math.BigInteger;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<IMetapathResult, INodeContext> {
+public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluationVisitor<INodeContext> {
 
-  public IMetapathResult visit(IExpression expr, INodeContext context) {
-    return expr.accept(this, context);
+  
+  public <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> visit(IExpression<?> expr, INodeContext context) {
+    @SuppressWarnings("unchecked")
+    ISequence<ITEM_TYPE> retval = (ISequence<ITEM_TYPE>)expr.accept(this, context);
+    return retval;
   }
 
   @Override
-  public IBooleanItem visitAnd(And expr, INodeContext context) {
+  public ISequence<? extends IBooleanItem> visitAnd(And expr, INodeContext context) {
     boolean retval = true;
-    for (IExpression child : expr.getChildren()) {
-      IMetapathResult result = child.accept(this, context);
-      IBooleanItem booleanResult = Functions.fnBoolean(result.asSequence());
-      if (IBooleanItem.FALSE.equals(booleanResult)) {
+    for (IExpression<?> child : expr.getChildren()) {
+      ISequence<?> result = child.accept(this, context);
+      if (!Functions.fnBooleanAsPrimative(result)) {
         retval = false;
         break;
       }
     }
-    return IBooleanItem.valueOf(retval);
+    return ISequence.of(IBooleanItem.valueOf(retval));
   }
 
   @Override
-  public IBooleanItem visitOr(OrNode expr, INodeContext context) {
+  public ISequence<? extends IBooleanItem> visitOr(OrNode expr, INodeContext context) {
     boolean retval = false;
-    for (IExpression child : expr.getChildren()) {
-      IMetapathResult result = child.accept(this, context);
-      IBooleanItem booleanResult = Functions.fnBoolean(result.asSequence());
-      if (IBooleanItem.TRUE.equals(booleanResult)) {
+    for (IExpression<?> child : expr.getChildren()) {
+      ISequence<?> result = child.accept(this, context);
+      if (Functions.fnBooleanAsPrimative(result)) {
         retval = true;
         break;
       }
     }
-    return IBooleanItem.valueOf(retval);
+    return ISequence.of(IBooleanItem.valueOf(retval));
   }
 
   @Override
-  public IMetapathResult visitComparison(Comparison expr, INodeContext context) {
-    IItem leftItem = Functions.getFirstItem(expr.getLeft().accept(this, context).asSequence(), false);
+  public ISequence<? extends IBooleanItem> visitComparison(Comparison expr, INodeContext context) {
+    IItem leftItem = Functions.getFirstItem(expr.getLeft().accept(this, context), false);
     if (leftItem == null) {
-      return ISequence.EMPTY;
+      return ISequence.empty();
     }
-    IItem rightItem = Functions.getFirstItem(expr.getRight().accept(this, context).asSequence(), false);
+    IItem rightItem = Functions.getFirstItem(expr.getRight().accept(this, context), false);
     if (rightItem == null) {
-      return ISequence.EMPTY;
+      return ISequence.empty();
     }
 
     IAnyAtomicItem left = Functions.fnDataItem(leftItem);
@@ -235,37 +229,41 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
   }
 
   @Override
-  public ISequence visitRootSlashOnlyPath(RootSlashOnlyPath expr, INodeContext context) {
-    return ISequence.EMPTY;
+  public ISequence<? extends INodeItem> visitRootSlashOnlyPath(RootSlashOnlyPath expr, INodeContext context) {
+    return ISequence.empty();
   }
 
   @Override
-  public IMetapathResult visitRootSlashPath(RootSlashPath expr, INodeContext context) {
+  public ISequence<? extends INodeItem> visitRootSlashPath(RootSlashPath expr, INodeContext context) {
     if (context.getNodeItem().isRootNode()) {
-      return expr.getNode().accept(this, context);
+      @SuppressWarnings("unchecked")
+      ISequence<? extends INodeItem> retval = (ISequence<? extends INodeItem>) expr.getNode().accept(this, context);
+      return retval;
     } else {
       throw new UnsupportedOperationException("root searching is not supported");
     }
   }
 
   @Override
-  public IMetapathResult visitContextItem(ContextItem expr, INodeContext context) {
-    return context.getNodeItem();
+  public ISequence<? extends INodeItem> visitContextItem(ContextItem expr, INodeContext context) {
+    return ISequence.of(context.getNodeItem());
   }
 
   @Override
-  public IMetapathResult visitRelativeSlashPath(RelativeSlashPath expr, INodeContext context) {
-    IExpression left = expr.getLeft();
-    IMetapathResult leftResult = left.accept(this, context);
-    IExpression right = expr.getRight();
+  public ISequence<? extends INodeItem> visitRelativeSlashPath(RelativeSlashPath expr, INodeContext context) {
+    IExpression<?> left = expr.getLeft();
+    @SuppressWarnings("unchecked")
+    ISequence<? extends INodeItem> leftResult = (ISequence<? extends INodeItem>)left.accept(this, context);
+    IExpression<?> right = expr.getRight();
 
     List<INodeItem> result = new LinkedList<INodeItem>();
-    leftResult.asSequence().asStream().forEachOrdered(item -> {
+    leftResult.asStream().forEachOrdered(item -> {
       INodeItem node = (INodeItem) item;
 
       // evaluate the right path in the context of the left
-      IMetapathResult otherResult = right.accept(this, node);
-      otherResult.asSequence().asStream().map(x -> (INodeItem) x).forEachOrdered(otherItem -> {
+      @SuppressWarnings("unchecked")
+      ISequence<? extends INodeItem> otherResult = (ISequence<? extends INodeItem>)right.accept(this, node);
+      otherResult.asStream().forEachOrdered(otherItem -> {
         result.add(otherItem);
       });
     });
@@ -273,12 +271,13 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
   }
 
   @Override
-  public ISequence visitStep(Step expr, INodeContext context) {
-    IMetapathResult retval = expr.getStep().accept(this, context);
+  public ISequence<? extends INodeItem> visitStep(Step expr, INodeContext context) {
+    @SuppressWarnings("unchecked")
+    ISequence<? extends INodeItem> retval = (ISequence<? extends INodeItem>)expr.getStep().accept(this, context);
 
     // evaluate the predicates for this step
     AtomicInteger index = new AtomicInteger();
-    Stream<? extends IItem> stream = retval.asSequence().asStream().map(item -> {
+    Stream<? extends INodeItem> stream = retval.asStream().map(item -> {
       // build a positional index of the items
       return Map.entry(BigInteger.valueOf(index.incrementAndGet()), item);
     }).filter(entry -> {
@@ -292,7 +291,6 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
 
       // return false if any predicate evaluates to false
       boolean result = !expr.getPredicates().stream().map(predicateExpr -> {
-        IMetapathResult predicateResult = predicateExpr.accept(this, childContext);
         boolean bool;
         if (predicateExpr instanceof IntegerLiteral) {
           // reduce the result to the matching item
@@ -304,6 +302,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
           // it is a match if the position matches
           bool = position.equals(predicateIndex);
         } else {
+          ISequence<?> predicateResult = predicateExpr.accept(this, childContext);
           bool = Functions.fnBoolean(predicateResult).toBoolean();
         }
         return bool;
@@ -314,21 +313,22 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
   }
 
   @Override
-  public ISequence visitFlag(Flag expr, INodeContext context) {
+  public ISequence<? extends IFlagNodeItem> visitFlag(Flag expr, INodeContext context) {
     return ISequence.of(context.getChildFlags(expr));
   }
 
   @Override
-  public ISequence visitModelInstance(ModelInstance expr, INodeContext context) {
+  public ISequence<? extends IModelNodeItem> visitModelInstance(ModelInstance expr, INodeContext context) {
     return ISequence.of(context.getChildModelInstances(expr));
   }
 
   @Override
-  public ISequence visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr, INodeContext context) {
-    IExpression left = expr.getLeft();
-    IMetapathResult leftResult = left.accept(this, context);
+  public ISequence<? extends INodeItem> visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr, INodeContext context) {
+    IExpression<?> left = expr.getLeft();
+    @SuppressWarnings("unchecked")
+    ISequence<? extends INodeItem> leftResult = (ISequence<? extends INodeItem>)left.accept(this, context);
 
-    Stream<INodeItem> result = leftResult.asSequence().asStream().map(x -> (INodeItem) x).flatMap(item -> {
+    Stream<? extends INodeItem> result = leftResult.asStream().flatMap(item -> {
       // evaluate the right path in the context of the left
       return search(expr.getRight(), item);
     });
@@ -336,11 +336,11 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
   }
 
   @Override
-  public ISequence visitRootDoubleSlashPath(RootDoubleSlashPath expr, INodeContext context) {
+  public ISequence<? extends INodeItem> visitRootDoubleSlashPath(RootDoubleSlashPath expr, INodeContext context) {
     return ISequence.of(search(expr.getNode(), context));
   }
 
-  private Stream<? extends INodeItem> search(IExpression expr, INodeContext context) {
+  private Stream<? extends INodeItem> search(IExpression<?> expr, INodeContext context) {
     Stream<? extends INodeItem> retval;
     if (expr instanceof Flag) {
       // check instances as a flag
@@ -428,190 +428,150 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionVisitor<I
   }
 
   @Override
-  public IStringItem visitName(Name expr, INodeContext context) {
-    // this should never be reached
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public IMetapathResult visitWildcard(Wildcard expr, INodeContext context) {
-    // this should never be reached
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public IMetapathResult visitNegate(Negate expr, INodeContext context) {
+  public ISequence<? extends INumericItem> visitNegate(Negate expr, INodeContext context) {
     INumericItem item = Functions.toNumeric(expr.getChild().accept(this, context), true);
     if (item == null) {
-      return ISequence.EMPTY;
+      return ISequence.empty();
     }
     return resultOrEmptySequence(Functions.opNumericUnaryMinus(item));
   }
 
   @Override
-  public IMetapathResult visitAddition(Addition expr, INodeContext context) {
+  public ISequence<? extends INumericItem> visitAddition(Addition expr, INodeContext context) {
     INumericItem left = Functions.toNumeric(expr.getLeft().accept(this, context), true);
     if (left == null) {
-      return ISequence.EMPTY;
+      return ISequence.empty();
     }
     INumericItem right = Functions.toNumeric(expr.getRight().accept(this, context), true);
     if (right == null) {
-      return ISequence.EMPTY;
+      return ISequence.empty();
     }
     return resultOrEmptySequence(Functions.opNumericAdd(left, right));
   }
 
   @Override
-  public IMetapathResult visitSubtraction(Subtraction expr, INodeContext context) {
+  public ISequence<? extends INumericItem> visitSubtraction(Subtraction expr, INodeContext context) {
     INumericItem left = Functions.toNumeric(expr.getLeft().accept(this, context), true);
     if (left == null) {
-      return ISequence.EMPTY;
+      return ISequence.empty();
     }
     INumericItem right = Functions.toNumeric(expr.getRight().accept(this, context), true);
     if (right == null) {
-      return ISequence.EMPTY;
+      return ISequence.empty();
     }
     return resultOrEmptySequence(Functions.opNumericSubtract(left, right));
   }
 
   @Override
-  public IMetapathResult visitMultiplication(Multiplication expr, INodeContext context) {
+  public ISequence<? extends INumericItem> visitMultiplication(Multiplication expr, INodeContext context) {
     INumericItem left = Functions.toNumeric(expr.getLeft().accept(this, context), true);
     if (left == null) {
-      return ISequence.EMPTY;
+      return ISequence.empty();
     }
     INumericItem right = Functions.toNumeric(expr.getRight().accept(this, context), true);
     if (right == null) {
-      return ISequence.EMPTY;
+      return ISequence.empty();
     }
     return resultOrEmptySequence(Functions.opNumericMultiply(left, right));
   }
 
   @Override
-  public IMetapathResult visitDivision(Division expr, INodeContext context) {
+  public ISequence<? extends INumericItem> visitDivision(Division expr, INodeContext context) {
     INumericItem left = Functions.toNumeric(expr.getLeft().accept(this, context), true);
     if (left == null) {
-      return ISequence.EMPTY;
+      return ISequence.empty();
     }
     INumericItem right = Functions.toNumeric(expr.getRight().accept(this, context), true);
     if (right == null) {
-      return ISequence.EMPTY;
+      return ISequence.empty();
     }
     return resultOrEmptySequence(Functions.opNumericDivide(left, right));
   }
 
   @Override
-  public IMetapathResult visitIntegerDivision(IntegerDivision expr, INodeContext context) {
+  public ISequence<? extends IIntegerItem> visitIntegerDivision(IntegerDivision expr, INodeContext context) {
     INumericItem left = Functions.toNumeric(expr.getLeft().accept(this, context), true);
     if (left == null) {
-      return ISequence.EMPTY;
+      return ISequence.empty();
     }
     INumericItem right = Functions.toNumeric(expr.getRight().accept(this, context), true);
     if (right == null) {
-      return ISequence.EMPTY;
+      return ISequence.empty();
     }
     return resultOrEmptySequence(Functions.opNumericIntegerDivide(left, right));
   }
 
-  private IMetapathResult resultOrEmptySequence(IItem item) {
-    return item == null ? ISequence.EMPTY : item;
+  private <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> resultOrEmptySequence(ITEM_TYPE item) {
+    return item == null ? ISequence.empty() : ISequence.of(item);
   }
 
   @Override
-  public IMetapathResult visitMod(Mod expr, INodeContext context) {
+  public ISequence<? extends INumericItem> visitMod(Mod expr, INodeContext context) {
     INumericItem left = Functions.toNumeric(expr.getLeft().accept(this, context), true);
     if (left == null) {
-      return ISequence.EMPTY;
+      return ISequence.empty();
     }
     INumericItem right = Functions.toNumeric(expr.getRight().accept(this, context), true);
     if (right == null) {
-      return ISequence.EMPTY;
+      return ISequence.empty();
     }
     return resultOrEmptySequence(Functions.opNumericMod(left, right));
   }
 
   @Override
-  public IIntegerItem visitIntegerLiteral(IntegerLiteral expr, INodeContext context) {
-    return IIntegerItem.valueOf(expr.getValue());
+  public ISequence<IIntegerItem> visitIntegerLiteral(IntegerLiteral expr, INodeContext context) {
+    return ISequence.of(IIntegerItem.valueOf(expr.getValue()));
   }
 
   @Override
-  public IDecimalItem visitDecimalLiteral(DecimalLiteral expr, INodeContext context) {
-    return IDecimalItem.valueOf(expr.getValue());
+  public ISequence<IDecimalItem> visitDecimalLiteral(DecimalLiteral expr, INodeContext context) {
+    return ISequence.of(IDecimalItem.valueOf(expr.getValue()));
   }
 
   @Override
-  public IStringItem visitStringConcat(StringConcat expr, INodeContext context) {
+  public ISequence<IStringItem> visitStringConcat(StringConcat expr, INodeContext context) {
     StringBuilder builder = new StringBuilder();
-    for (IExpression child : expr.getChildren()) {
-      IMetapathResult result = child.accept(this, context);
-      Functions.fnData(result.asSequence()).asStream().forEachOrdered(item -> {
+    for (IExpression<?> child : expr.getChildren()) {
+      ISequence<?> result = child.accept(this, context);
+      Functions.fnData(result).asStream().forEachOrdered(item -> {
+        // TODO: is this right to concat all sequence members?
         builder.append(((IAnyAtomicItem) item).asString());
       });
     }
-    return IStringItem.valueOf(builder.toString());
+    return ISequence.of(IStringItem.valueOf(builder.toString()));
   }
 
   @Override
-  public IStringItem visitStringLiteral(StringLiteral expr, INodeContext context) {
-    return IStringItem.valueOf(expr.getValue());
+  public ISequence<IStringItem> visitStringLiteral(StringLiteral expr, INodeContext context) {
+    return ISequence.of(IStringItem.valueOf(expr.getValue()));
   }
 
   @Override
-  public IMetapathResult visitFunctionCall(FunctionCall expr, INodeContext context) {
+  public ISequence<?> visitFunctionCall(FunctionCall expr, INodeContext context) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException(expr.getFunction().getName());
   }
 
   @Override
-  public IMetapathResult visitMetapath(Metapath expr, INodeContext context) {
-    List<IItem> items = new LinkedList<>();
-    for (IExpression childExpr : expr.getChildren()) {
-      IMetapathResult result = childExpr.accept(this, context);
-      result.asSequence().asStream().forEachOrdered(item -> {
-        items.add(item);
-      });
-    }
-
-    IMetapathResult retval;
-    if (items.isEmpty()) {
-      retval = ISequence.EMPTY;
-    } else if (items.size() == 1) {
-      retval = new SingletonSequence(items.iterator().next());
-    } else {
-      retval = new ListSequence(items);
-    }
-    return retval;
+  public ISequence<?> visitMetapath(Metapath expr, INodeContext context) {
+    return ISequence.of(expr.getChildren().stream().flatMap(child -> {
+      ISequence<?> result = child.accept(this, context);
+      return result.asStream();
+    }));
   }
 
   @Override
-  public IMetapathResult visitParenthesizedExpression(ParenthesizedExpression expr, INodeContext context) {
-    IExpression childExpr = expr.getNode();
-    IMetapathResult result = childExpr.accept(this, context);
-    return result;
+  public ISequence<?> visitParenthesizedExpression(ParenthesizedExpression expr, INodeContext context) {
+    IExpression<?> childExpr = expr.getNode();
+    return childExpr.accept(this, context);
   }
 
   @Override
-  public IMetapathResult visitUnion(Union expr, INodeContext context) {
-    Set<IItem> items = new LinkedHashSet<>();
-    for (IExpression childExpr : expr.getChildren()) {
-      IMetapathResult result = childExpr.accept(this, context);
-      result.asSequence().asStream().forEachOrdered(item -> {
-        if (!items.contains(item)) {
-          items.add(item);
-        }
-      });
-    }
-
-    IMetapathResult retval;
-    if (items.isEmpty()) {
-      retval = ISequence.EMPTY;
-    } else if (items.size() == 1) {
-      retval = items.iterator().next();
-    } else {
-      retval = new ListSequence(items);
-    }
-    return retval;
+  public ISequence<?> visitUnion(Union expr, INodeContext context) {
+    return ISequence.of(expr.getChildren().stream().flatMap(child -> {
+      ISequence<?> result = child.accept(this, context);
+      return result.asStream();
+    }).distinct());
   }
 
 }

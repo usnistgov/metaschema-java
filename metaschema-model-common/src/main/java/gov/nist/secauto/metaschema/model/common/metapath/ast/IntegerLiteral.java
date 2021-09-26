@@ -26,13 +26,21 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IIntegerItem;
+
 import java.math.BigInteger;
 
 public class IntegerLiteral
-    extends AbstractLiteralExpression<BigInteger> {
+    extends AbstractLiteralExpression<IIntegerItem,BigInteger> {
 
   public IntegerLiteral(BigInteger value) {
     super(value);
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends IIntegerItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitIntegerLiteral(this, context);
   }
 
   @Override

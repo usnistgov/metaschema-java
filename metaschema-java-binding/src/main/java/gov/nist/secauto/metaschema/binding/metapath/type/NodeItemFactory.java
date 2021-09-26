@@ -41,6 +41,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 
 public class NodeItemFactory {
+  
   public static IAssemblyNodeItem newNodeItem(IAssemblyPathSegment segment, Object value, IAssemblyNodeItem parent) {
     return new AssemblyNodeItemImpl(value, segment, parent);
   }

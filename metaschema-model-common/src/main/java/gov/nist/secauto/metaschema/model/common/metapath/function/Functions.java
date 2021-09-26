@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IMetapathResult;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.InvalidTypeException;
@@ -62,10 +61,10 @@ public class Functions {
    *          the sequence of items to atomize
    * @return the atomized result
    */
-  public static ISequence fnData(ISequence sequence) {
+  public static ISequence<IAnyAtomicItem> fnData(ISequence<?> sequence) {
     Stream<? extends IItem> stream = sequence.asStream();
     return ISequence.of(stream.flatMap(x -> {
-      return Stream.of((IItem)fnDataItem(x));
+      return Stream.of((IAnyAtomicItem) fnDataItem(x));
     }));
   }
 
@@ -76,31 +75,32 @@ public class Functions {
     } else if (item instanceof INodeItem) {
       retval = item.toAtomicItem();
     } else {
-      throw new MetapathDynamicException("err:FOTY0012", String.format("Unrecognized item '%s' during atomization", item.getClass().getName()));
+      throw new MetapathDynamicException("err:FOTY0012",
+          String.format("Unrecognized item '%s' during atomization", item.getClass().getName()));
     }
     return retval;
   }
 
   /**
-   * Based on {@link "https://www.w3.org/TR/xpath-functions-31/#func-boolean"}.
+   * Get the effective boolean value of the provided sequence.
+   * <p>
+   * Based on the XPath 3.1 <a href="https://www.w3.org/TR/xpath-functions-31/#func-boolean">fn:boolean</a> function.
+   * 
+   * @param sequence
+   *          the sequence to evaluate
+   * @return the effective boolean value of the sequence
    */
-  public static IBooleanItem fnBoolean(IMetapathResult result) {
-    return IBooleanItem.valueOf(fnBooleanInternal(result));
-  }
-
-  private static boolean fnBooleanInternal(IMetapathResult result) {
-    boolean retval;
-    if (result == null) {
-      retval = false;
-    } else if (result instanceof ISequence) {
-      retval = fnBoolean((ISequence) result);
+  public static IBooleanItem fnBoolean(ISequence<?> sequence) {
+    IBooleanItem retval;
+    if (sequence == null) {
+      retval = IBooleanItem.FALSE;
     } else {
-      retval = gov.nist.secauto.metaschema.model.common.metapath.function.Functions.fnBoolean((IItem) result);
+      retval = IBooleanItem.valueOf(fnBooleanAsPrimative(sequence));
     }
     return retval;
   }
 
-  private static boolean fnBoolean(ISequence sequence) {
+  public static boolean fnBooleanAsPrimative(ISequence<?> sequence) {
     boolean retval = false;
     if (!sequence.isEmpty()) {
       List<? extends IItem> items = sequence.asList();
@@ -108,13 +108,13 @@ public class Functions {
       if (first instanceof INodeItem) {
         retval = true;
       } else if (items.size() == 1) {
-        retval = fnBoolean(first);
+        retval = fnBooleanAsPrimative(first);
       }
     }
     return retval;
   }
 
-  public static boolean fnBoolean(IItem item) {
+  public static boolean fnBooleanAsPrimative(IItem item) {
     boolean retval = false;
     if (item instanceof IBooleanItem) {
       retval = ((IBooleanItem) item).toBoolean();
@@ -415,14 +415,8 @@ public class Functions {
    *           value
    * 
    */
-  public static INumericItem toNumeric(IMetapathResult result, boolean requireSingleton) {
-    IItem item;
-    if (result instanceof ISequence) {
-      item = getFirstItem((ISequence) result, requireSingleton);
-    } else {
-      item = (IItem) result;
-    }
-
+  public static INumericItem toNumeric(ISequence<?> result, boolean requireSingleton) {
+    IItem item = getFirstItem(result, requireSingleton);
     return toNumeric(item);
   }
 
@@ -440,7 +434,7 @@ public class Functions {
    * @throws InvalidTypeException
    *           if the sequence contains more than one item and requireSingleton is {@code true}
    */
-  public static IItem getFirstItem(ISequence sequence, boolean requireSingleton) throws InvalidTypeException {
+  public static IItem getFirstItem(ISequence<?> sequence, boolean requireSingleton) throws InvalidTypeException {
     IItem retval = null;
     if (!sequence.isEmpty()) {
       List<? extends IItem> items = sequence.asList();
@@ -535,7 +529,20 @@ public class Functions {
     return IBooleanItem.valueOf(!arg1.toBoolean() && arg2.toBoolean());
   }
 
-  public static IBooleanItem fnNot(IMetapathResult arg) {
-    return IBooleanItem.valueOf(!fnBooleanInternal(arg));
+  public static IBooleanItem fnNot(ISequence<?> arg) {
+    return IBooleanItem.valueOf(!fnBooleanAsPrimative(arg));
+  }
+
+  public static IBooleanItem fnNot(IItem arg) {
+    return IBooleanItem.valueOf(!fnBooleanAsPrimative(arg));
+  }
+
+  public static IBooleanItem fnExists(ISequence<?> items) {
+    return IBooleanItem.valueOf(!items.isEmpty());
+  }
+
+  public static IBooleanItem fnStartsWith(ISequence<?> arg1, ISequence<?> arg2) {
+    // implement
+    throw new UnsupportedOperationException();
   }
 }

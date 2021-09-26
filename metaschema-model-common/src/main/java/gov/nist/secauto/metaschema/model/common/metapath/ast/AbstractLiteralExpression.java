@@ -26,10 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
+
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractLiteralExpression<VALUE> implements ILiteralExpression {
+public abstract class AbstractLiteralExpression<RESULT_TYPE extends IAnyAtomicItem,VALUE> implements ILiteralExpression<RESULT_TYPE> {
   private final VALUE value;
 
   public AbstractLiteralExpression(VALUE value) {
@@ -46,7 +48,7 @@ public abstract class AbstractLiteralExpression<VALUE> implements ILiteralExpres
   }
 
   @Override
-  public List<? extends IExpression> getChildren() {
+  public List<? extends IExpression<?>> getChildren() {
     return Collections.emptyList();
   }
 

@@ -28,11 +28,42 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.ServiceLoader.Provider;
+import java.util.stream.Stream;
 
-public interface Function {
+public class IFunctionService {
+  private static IFunctionService functionService;
 
-  String getName();
+  public static synchronized IFunctionService getInstance() {
+    if (functionService == null) {
+      functionService = new IFunctionService();
+    }
+    return functionService;
+  }
 
-  boolean isArgumentsSupported(List<IExpression> arguments);
+  private final ServiceLoader<IFunctionLibrary> loader;
+
+  public IFunctionService() {
+    this.loader = ServiceLoader.load(IFunctionLibrary.class);
+  }
+
+  protected ServiceLoader<IFunctionLibrary> getLoader() {
+    return loader;
+  }
+
+  public IFunction getFunction(String name, IExpression<?>... args) {
+    return getFunction(name, Arrays.asList(args));
+  }
+
+  public IFunction getFunction(String name, List<IExpression<?>> args) {
+    Stream<Provider<IFunctionLibrary>> providerStream = getLoader().stream();
+    Stream<IFunctionLibrary> functionLibraryStream = providerStream.map(Provider<IFunctionLibrary>::get);
+    Optional<IFunctionLibrary> functionLibrary
+        = functionLibraryStream.filter(x -> x.hasFunction(name, args)).findFirst();
+    return functionLibrary.map(x -> x.getFunction(name, args)).orElse(null);
+  }
 }

@@ -26,17 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item.ext;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IMetapathResult;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.SingletonSequence;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IItemType;
-
-public interface IItem extends IMetapathResult {
+public interface IItem {
   
   IAnyAtomicItem toAtomicItem();
-  
-  @Override
-  default ISequence asSequence() {
-    return new SingletonSequence(this);
-  }
 }

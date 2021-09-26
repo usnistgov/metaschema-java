@@ -34,24 +34,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class ListSequence implements ISequence {
-  private final List<? extends IItem> items;
+public class ListSequence<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> {
+  private final List<ITEM_TYPE> items;
 
-  public ListSequence(Collection<? extends IItem> items) {
+  public ListSequence(Collection<ITEM_TYPE> items) {
     this(new ArrayList<>(items), false);
   }
 
-  public ListSequence(List<? extends IItem> items, boolean copy) {
+  public ListSequence(List<ITEM_TYPE> items, boolean copy) {
     this.items = copy ? new ArrayList<>(items) : items;
   }
 
   @Override
-  public List<? extends IItem> asList() {
+  public List<ITEM_TYPE> asList() {
     return Collections.unmodifiableList(items);
   }
 
   @Override
-  public Stream<? extends IItem> asStream() {
+  public Stream<ITEM_TYPE> asStream() {
     return items.stream();
   }
 

@@ -26,11 +26,19 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class ModelInstance
-    extends AbstractNamedInstanceExpression {
+import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
-  public ModelInstance(IExpression node) {
+public class ModelInstance
+    extends AbstractNamedInstanceExpression<IModelNodeItem> {
+
+  public ModelInstance(IExpression<?> node) {
     super(node);
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends IModelNodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitModelInstance(this, context);
   }
 
   @Override

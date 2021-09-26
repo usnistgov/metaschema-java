@@ -26,13 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
+
 import java.util.Collections;
 import java.util.List;
 
-public interface ILiteralExpression extends IExpression {
+public interface ILiteralExpression<RESULT_TYPE extends IAnyAtomicItem> extends IExpression<RESULT_TYPE> {
 
   @Override
-  default List<? extends IExpression> getChildren() {
+  default List<? extends IExpression<?>> getChildren() {
     // a literal never has children
     return Collections.emptyList();
   }

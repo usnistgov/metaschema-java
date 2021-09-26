@@ -26,15 +26,23 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+
 import java.util.Collections;
 import java.util.List;
 
 public class ContextItem
-    extends AbstractPathExpression {
+    extends AbstractPathExpression<INodeItem> {
 
   @Override
-  public List<? extends IExpression> getChildren() {
+  public List<? extends IExpression<?>> getChildren() {
     return Collections.emptyList();
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends INodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitContextItem(this, context);
   }
 
   @Override

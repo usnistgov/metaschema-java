@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item.ext;
 
-public abstract class AbstractUntypedAtomicItem<TYPE> extends AbstractAnyAtomicItem<TYPE> implements IUntypedAtomicItem {
+public abstract class AbstractUntypedAtomicItem<TYPE> extends AbstractAnyAtomicItem<TYPE>
+    implements IUntypedAtomicItem {
 
   public AbstractUntypedAtomicItem(TYPE value) {
     super(value);

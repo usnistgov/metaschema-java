@@ -28,13 +28,12 @@ package gov.nist.secauto.metaschema.model.common.metapath.function.impl;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.AbstractFunctionLibrary;
 
-public class DefaultFunctionLibrary
-    extends AbstractFunctionLibrary {
+public class DefaultFunctionLibrary extends AbstractFunctionLibrary {
 
   public DefaultFunctionLibrary() {
-    registerFunction(new Exists());
-    registerFunction(new Not());
-    registerFunction(new StartsWith());
+    registerFunction(Exists.SIGNATURE);
+    registerFunction(Not.SIGNATURE);
+    registerFunction(StartsWith.SIGNATURE);
   }
 
 }

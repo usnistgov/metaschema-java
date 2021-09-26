@@ -26,24 +26,33 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
+
 import java.util.List;
 
-public interface IExpression {
-  List<? extends IExpression> getChildren();
+public interface IExpression<RESULT_TYPE extends IItem> {
+  List<? extends IExpression<?>> getChildren();
 
   default int getChildCount() {
     return getChildren().size();
   }
 
-  default IExpression getChild(int index) {
+  default IExpression<?> getChild(int index) {
     return getChildren().get(index);
   }
+
+//  CLASS<? EXTENDS RESULT_TYPE> GETBASERESULTTYPE();
+//
+//  CLASS<? EXTENDS RESULT_TYPE> GETSTATICRESULTTYPE();
 
   boolean isNodeExpression();
 
   default String toASTString() {
     return String.format("%s[]", getClass().getName());
   }
+
+  <CONTEXT> ISequence<? extends RESULT_TYPE> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context);
 
   <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
 }

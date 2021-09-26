@@ -23,42 +23,12 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.ServiceLoader;
-import java.util.ServiceLoader.Provider;
 
-public class FunctionService {
-  private static FunctionService functionService;
-
-  public static synchronized FunctionService getInstance() {
-    if (functionService == null) {
-      functionService = new FunctionService();
-    }
-    return functionService;
-  }
-
-  private final ServiceLoader<FunctionLibrary> loader;
-
-  public FunctionService() {
-    this.loader = ServiceLoader.load(FunctionLibrary.class);
-  }
-
-  protected ServiceLoader<FunctionLibrary> getLoader() {
-    return loader;
-  }
-
-  public Function getFunction(String name, IExpression... args) {
-    return getFunction(name, Arrays.asList(args));
-  }
-
-  public Function getFunction(String name, List<IExpression> args) {
-    return getLoader().stream().map(Provider<FunctionLibrary>::get)
-        .filter(x -> x.hasFunction(name, args)).findFirst().map(x -> x.getFunction(name, args)).orElse(null);
-  }
+public interface IFunctionHandler {
+  ISequence<?> execute(List<ISequence<?>> arguments);
 }

@@ -44,12 +44,12 @@ public class ASTPrinter
     return indentationPadding;
   }
 
-  public String visit(IExpression expr) {
+  public String visit(IExpression<?> expr) {
     return expr.accept(this, null);
   }
 
   @Override
-  protected String visitChildren(IExpression expr, Void context) {
+  protected String visitChildren(IExpression<?> expr, Void context) {
     indentation++;
     String result = super.visitChildren(expr, context);
     indentation--;
@@ -74,7 +74,7 @@ public class ASTPrinter
     return super.defaultResult();
   }
 
-  protected String appendNode(IExpression expr, String childResult) {
+  protected String appendNode(IExpression<?> expr, String childResult) {
     StringBuilder buffer = new StringBuilder();
     buffer.append(getIndentation());
     buffer.append(expr.toASTString());

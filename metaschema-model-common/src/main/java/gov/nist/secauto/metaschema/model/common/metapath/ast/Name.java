@@ -26,9 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class Name
-    extends AbstractLiteralExpression<String>
-    implements INameExpression {
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IStringItem;
+
+public class Name extends AbstractLiteralExpression<IStringItem, String> implements INameExpression<IStringItem> {
   public Name(String value) {
     super(value);
   }
@@ -36,6 +37,11 @@ public class Name
   @Override
   public boolean isNodeExpression() {
     return true;
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends IStringItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+    throw new UnsupportedOperationException();
   }
 
   @Override

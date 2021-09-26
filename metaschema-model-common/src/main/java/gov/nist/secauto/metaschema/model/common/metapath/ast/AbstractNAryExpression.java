@@ -26,19 +26,21 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
+
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractNAryExpression<CHILD extends IExpression> implements IExpression {
-  private final List<CHILD> children;
+public abstract class AbstractNAryExpression<RESULT_TYPE extends IItem> implements IExpression<RESULT_TYPE> {
+  private final List<IExpression<?>> children;
 
-  public AbstractNAryExpression(List<CHILD> children) {
+  public AbstractNAryExpression(List<IExpression<?>> children) {
     Objects.requireNonNull(children);
     this.children = children;
   }
 
   @Override
-  public List<? extends IExpression> getChildren() {
+  public List<IExpression<?>> getChildren() {
     return children;
   }
 }

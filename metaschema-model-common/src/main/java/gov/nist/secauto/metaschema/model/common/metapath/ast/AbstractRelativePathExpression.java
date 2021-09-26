@@ -26,29 +26,31 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+
 import java.util.List;
 
-public abstract class AbstractRelativePathExpression
-    extends AbstractPathExpression
-    implements IRelativePathExpression {
-  private final IExpression left;
-  private final IExpression right;
+public abstract class AbstractRelativePathExpression<RESULT_TYPE extends INodeItem>
+    extends AbstractPathExpression<RESULT_TYPE>
+    implements IRelativePathExpression<RESULT_TYPE> {
+  private final IExpression<?> left;
+  private final IExpression<?> right;
 
-  public AbstractRelativePathExpression(IExpression left, IExpression right) {
+  public AbstractRelativePathExpression(IExpression<?> left, IExpression<?> right) {
     this.left = left;
     this.right = right;
   }
 
-  public IExpression getLeft() {
+  public IExpression<?> getLeft() {
     return left;
   }
 
-  public IExpression getRight() {
+  public IExpression<?> getRight() {
     return right;
   }
 
   @Override
-  public List<? extends IExpression> getChildren() {
+  public List<? extends IExpression<?>> getChildren() {
     return List.of(left, right);
   }
 }

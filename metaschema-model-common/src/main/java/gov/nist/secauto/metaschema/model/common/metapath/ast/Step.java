@@ -26,39 +26,47 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Step
-    extends AbstractPathExpression {
-  private final IExpression step;
-  private final List<IExpression> predicates;
+    extends AbstractPathExpression<INodeItem> {
+  private final IExpression<?> step;
+  private final List<IExpression<?>> predicates;
 
-  public Step(IExpression stepExpr, List<IExpression> predicates) {
+  public Step(IExpression<?> stepExpr, List<IExpression<?>> predicates) {
     this.step = stepExpr;
     this.predicates = predicates;
   }
 
-  public IExpression getStep() {
+  public IExpression<?> getStep() {
     return step;
   }
 
-  public List<IExpression> getPredicates() {
+  public List<IExpression<?>> getPredicates() {
     return predicates;
   }
 
   @Override
-  public List<? extends IExpression> getChildren() {
-    List<IExpression> retval;
+  public List<? extends IExpression<?>> getChildren() {
+    List<IExpression<?>> retval;
     if (predicates != null) {
-      Stream<? extends IExpression> predicateStream = predicates.stream();
+      Stream<? extends IExpression<?>> predicateStream = predicates.stream();
       retval = Stream.concat(Stream.of(step), predicateStream).collect(Collectors.toList());
     } else {
       retval = Collections.singletonList(step);
     }
     return retval;
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends INodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitStep(this, context);
   }
 
   @Override

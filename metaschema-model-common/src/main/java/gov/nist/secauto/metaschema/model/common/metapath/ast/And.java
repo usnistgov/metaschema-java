@@ -26,19 +26,26 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IBooleanItem;
+
 import java.util.List;
 
 public class And
-    extends AbstractNAryExpression<IExpression>
+    extends AbstractNAryExpression<IBooleanItem>
     implements IBooleanLogicExpression {
 
-  public And(List<IExpression> chidren) {
+  public And(List<IExpression<?>> chidren) {
     super(chidren);
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends IBooleanItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitAnd(this, context);
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitAnd(this, context);
   }
-
 }

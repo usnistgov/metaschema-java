@@ -23,6 +23,8 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
+
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
@@ -46,7 +48,7 @@ public class CastFunctions {
   public static IStringItem castToString(IAnyAtomicItem item) {
     IStringItem retval;
     if (item instanceof IStringItem) {
-      retval = (IStringItem)item;
+      retval = (IStringItem) item;
     } else {
       retval = item.newStringItem();
     }
@@ -71,7 +73,7 @@ public class CastFunctions {
   public static IBooleanItem castToBoolean(IAnyAtomicItem item) {
     IBooleanItem retval;
     if (item instanceof IBooleanItem) {
-      retval = (IBooleanItem)item;
+      retval = (IBooleanItem) item;
     } else if (item instanceof INumericItem) {
       retval = castToBoolean((INumericItem) item);
     } else if (item instanceof IStringItem) {
@@ -86,13 +88,13 @@ public class CastFunctions {
     IDecimalItem retval;
     if (item instanceof INumericItem) {
       if (item instanceof IDecimalItem) {
-        retval = (IDecimalItem)item;
+        retval = (IDecimalItem) item;
       } else {
         // must be an integer type
-        retval = IDecimalItem.valueOf(((IIntegerItem)item).asDecimal());
+        retval = IDecimalItem.valueOf(((IIntegerItem) item).asDecimal());
       }
     } else if (item instanceof IBooleanItem) {
-      boolean value = ((IBooleanItem)item).toBoolean();
+      boolean value = ((IBooleanItem) item).toBoolean();
       retval = IDecimalItem.valueOf(value ? 1.0 : 0.0);
     } else {
       try {
@@ -103,16 +105,16 @@ public class CastFunctions {
     }
     return retval;
   }
-  
+
   // TODO: duration
-  
+
   public static IDateTimeItem dateTime(IAnyAtomicItem item) {
     // TODO: bring up to spec
     IDateTimeItem retval;
     if (item instanceof IDateTimeItem) {
-      retval = (IDateTimeItem)item;
+      retval = (IDateTimeItem) item;
     } else if (item instanceof IDateItem) {
-      retval = IDateTimeItem.valueOf(((IDateItem)item).asZonedDateTime());
+      retval = IDateTimeItem.valueOf(((IDateItem) item).asZonedDateTime());
     } else if (item instanceof IStringItem || item instanceof IUntypedAtomicItem) {
       retval = IDateTimeItem.valueOf(item.asString());
     } else {
@@ -120,16 +122,16 @@ public class CastFunctions {
     }
     return retval;
   }
-  
+
   // TODO: time?
-  
+
   public static IDateItem date(IAnyAtomicItem item) {
     // TODO: bring up to spec
     IDateItem retval;
     if (item instanceof IDateItem) {
-      retval = (IDateItem)item;
+      retval = (IDateItem) item;
     } else if (item instanceof IDateTimeItem) {
-      retval = IDateItem.valueOf(((IDateTimeItem)item).asZonedDateTime());
+      retval = IDateItem.valueOf(((IDateTimeItem) item).asZonedDateTime());
     } else if (item instanceof IStringItem || item instanceof IUntypedAtomicItem) {
       retval = IDateItem.valueOf(item.asString());
     } else {
@@ -137,19 +139,19 @@ public class CastFunctions {
     }
     return retval;
   }
-  
-//  public static IBase64BinaryItem base64Binary(IAnyAtomicItem item) {
-//    
-//  }
-//  
-//  public static IAnyUriItem anyUri(IAnyAtomicItem item) {
-//    
-//  }
-//  
-//  public static ITokenItem token(IAnyAtomicItem item) {
-//    
-//  }
-  
+
+  // public static IBase64BinaryItem base64Binary(IAnyAtomicItem item) {
+  //
+  // }
+  //
+  // public static IAnyUriItem anyUri(IAnyAtomicItem item) {
+  //
+  // }
+  //
+  // public static ITokenItem token(IAnyAtomicItem item) {
+  //
+  // }
+
   public static INcNameItem ncName(IAnyAtomicItem item) {
     return INcNameItem.valueOf(item.asString());
   }
@@ -158,13 +160,13 @@ public class CastFunctions {
     IIntegerItem retval;
     if (item instanceof INumericItem) {
       if (item instanceof IIntegerItem) {
-        retval = (IIntegerItem)item;
+        retval = (IIntegerItem) item;
       } else {
         // must be a decimal type
-        retval = IIntegerItem.valueOf(((IDecimalItem)item).asInteger());
+        retval = IIntegerItem.valueOf(((IDecimalItem) item).asInteger());
       }
     } else if (item instanceof IBooleanItem) {
-      boolean value = ((IBooleanItem)item).toBoolean();
+      boolean value = ((IBooleanItem) item).toBoolean();
       retval = value ? IIntegerItem.ONE : IIntegerItem.ZERO;
     } else {
       try {
@@ -180,7 +182,7 @@ public class CastFunctions {
   public static INumericItem castToNumeric(IAnyAtomicItem item) throws InvalidValueForCastException {
     INumericItem retval;
     if (item instanceof INumericItem) {
-      retval = (INumericItem)item;
+      retval = (INumericItem) item;
     } else {
       try {
         retval = IDecimalItem.valueOf(item.asString());

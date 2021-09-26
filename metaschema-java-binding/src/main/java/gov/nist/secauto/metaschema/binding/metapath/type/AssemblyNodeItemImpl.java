@@ -27,30 +27,24 @@
 package gov.nist.secauto.metaschema.binding.metapath.type;
 
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.ExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Name;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IRootAssemblyPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IMetapathResult;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class AssemblyNodeItemImpl extends AbstractModelNodeItem<IAssemblyPathSegment> implements IAssemblyNodeItem {
@@ -91,21 +85,21 @@ class AssemblyNodeItemImpl extends AbstractModelNodeItem<IAssemblyPathSegment> i
   }
 
   @Override
-  public Stream<? extends INodeItem> getChildInstances(ExpressionVisitor<IMetapathResult, INodeContext> visitor,
-      IExpression expr, boolean recurse) {
+  public Stream<? extends INodeItem> getChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor,
+      IExpression<?> expr, boolean recurse) {
 
     // check the current node
     @SuppressWarnings("unchecked")
-    Stream<? extends INodeItem> retval
-        = (Stream<? extends INodeItem>) expr.accept(visitor, this).asSequence().asStream();
+    Stream<? extends INodeItem> retval = (Stream<? extends INodeItem>) expr.accept(visitor, this).asStream();
 
-//    {
-//      List<? extends INodeItem> list = retval.collect(Collectors.toList());
-//      for (INodeItem item : list) {
-//        System.out.println(String.format("assembly(current) item: %s = %s",item.getMetapath(),item.getValue()));
-//      }
-//      retval = list.stream();
-//    }
+    // {
+    // List<? extends INodeItem> list = retval.collect(Collectors.toList());
+    // for (INodeItem item : list) {
+    // System.out.println(String.format("assembly(current) item: %s =
+    // %s",item.getMetapath(),item.getValue()));
+    // }
+    // retval = list.stream();
+    // }
 
     IAssemblyDefinition definition = getPathSegment().getDefinition();
 
@@ -128,9 +122,9 @@ class AssemblyNodeItemImpl extends AbstractModelNodeItem<IAssemblyPathSegment> i
         NamedModelProperty property = (NamedModelProperty) modelInstance;
         Stream<? extends IModelNodeItem> instances = property.getNodeItemsFromParentInstance(this);
         return instances.flatMap(instance -> {
-  //        IMetapathResult result = expr.accept(visitor, instance);
-  //        Stream<? extends INodeItem> items = result.asSequence().asStream().map(item -> (INodeItem) item);
-  
+          // IMetapathResult result = expr.accept(visitor, instance);
+          // Stream<? extends INodeItem> items = result.asSequence().asStream().map(item -> (INodeItem) item);
+
           return instance.getChildInstances(visitor, expr, recurse);
         });
       });

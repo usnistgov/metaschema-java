@@ -125,7 +125,7 @@ public class DefaultMetaschemaContext implements IMetaschemaContext {
   }
 
   protected Collection<? extends IInstance> searchExpression(MetaschemaInstanceEvaluationVisitor visitor,
-      IExpression expr,
+      IExpression<?> expr,
       Collection<? extends IInstance> instances) {
     Set<IInstance> retval = new LinkedHashSet<>();
     for (IInstance instance : instances) {
@@ -151,7 +151,7 @@ public class DefaultMetaschemaContext implements IMetaschemaContext {
   }
 
   @Override
-  public IInstanceSet search(MetaschemaInstanceEvaluationVisitor visitor, IExpression expr,
+  public IInstanceSet search(MetaschemaInstanceEvaluationVisitor visitor, IExpression<?> expr,
       IMetaschemaContext context) {
     IInstanceSet retval;
     if (expr instanceof Flag) {

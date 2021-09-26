@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.MetapathDynamicExc
 
 public class InvalidValueForCastException extends MetapathDynamicException {
   /**
-   * the serial version UID,
+   * the serial version UID.
    */
   private static final long serialVersionUID = 1L;
 
