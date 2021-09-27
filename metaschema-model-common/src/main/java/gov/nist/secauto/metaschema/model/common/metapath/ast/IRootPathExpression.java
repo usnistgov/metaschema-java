@@ -28,6 +28,6 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-public interface IRootPathExpression<RESULT_TYPE extends INodeItem> extends IPathExpression<RESULT_TYPE> {
+public interface IRootPathExpression extends IPathExpression<INodeItem> {
 
 }

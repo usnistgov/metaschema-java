@@ -30,15 +30,17 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import java.util.List;
 
-public abstract class AbstractRelativePathExpression<RESULT_TYPE extends INodeItem>
-    extends AbstractPathExpression<RESULT_TYPE>
-    implements IRelativePathExpression<RESULT_TYPE> {
+public abstract class AbstractRelativePathExpression
+    extends AbstractPathExpression<INodeItem>
+    implements IRelativePathExpression {
   private final IExpression<?> left;
   private final IExpression<?> right;
+  private final Class<? extends INodeItem> staticResultType;
 
   public AbstractRelativePathExpression(IExpression<?> left, IExpression<?> right) {
     this.left = left;
     this.right = right;
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(INodeItem.class, List.of(left, right));
   }
 
   public IExpression<?> getLeft() {
@@ -52,5 +54,15 @@ public abstract class AbstractRelativePathExpression<RESULT_TYPE extends INodeIt
   @Override
   public List<? extends IExpression<?>> getChildren() {
     return List.of(left, right);
+  }
+
+  @Override
+  public Class<INodeItem> getBaseResultType() {
+    return INodeItem.class;
+  }
+
+  @Override
+  public Class<? extends INodeItem> getStaticResultType() {
+    return staticResultType;
   }
 }

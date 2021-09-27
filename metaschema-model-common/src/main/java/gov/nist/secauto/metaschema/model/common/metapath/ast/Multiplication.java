@@ -33,7 +33,12 @@ public class Multiplication
     extends AbstractArithmeticExpr<INumericItem> {
 
   public Multiplication(IExpression<?> left, IExpression<?> right) {
-    super(left, right);
+    super(left, right, INumericItem.class);
+  }
+
+  @Override
+  public Class<INumericItem> getBaseResultType() {
+    return INumericItem.class;
   }
 
   @Override

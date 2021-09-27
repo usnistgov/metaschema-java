@@ -32,8 +32,23 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import java.util.Collections;
 import java.util.List;
 
-public class ContextItem
-    extends AbstractPathExpression<INodeItem> {
+public class ContextItem extends AbstractPathExpression<INodeItem> {
+
+  private final Class<? extends INodeItem> staticResultType;
+
+  public ContextItem() {
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(INodeItem.class, Collections.emptyList());
+  }
+
+  @Override
+  public Class<INodeItem> getBaseResultType() {
+    return INodeItem.class;
+  }
+
+  @Override
+  public Class<? extends INodeItem> getStaticResultType() {
+    return staticResultType;
+  }
 
   @Override
   public List<? extends IExpression<?>> getChildren() {
@@ -41,7 +56,8 @@ public class ContextItem
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends INodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+  public <CONTEXT> ISequence<? extends INodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
+      CONTEXT context) {
     return visitor.visitContextItem(this, context);
   }
 

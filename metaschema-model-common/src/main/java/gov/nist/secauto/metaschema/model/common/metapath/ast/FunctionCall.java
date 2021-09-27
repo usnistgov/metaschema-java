@@ -27,8 +27,9 @@
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
-import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionService;
+import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionService;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 
 import java.util.List;
@@ -41,15 +42,26 @@ public class FunctionCall implements IExpression<IItem> {
   public FunctionCall(String name, List<IExpression<?>> arguments) {
     Objects.requireNonNull(name);
     Objects.requireNonNull(arguments);
-    this.function = IFunctionService.getInstance().getFunction(name, arguments);
-    // if (this.function == null) {
-    // throw new UnsupportedOperationException(String.format("unsupported function '%s'",name));
-    // }
+    this.function = FunctionService.getInstance().getFunction(name, arguments);
+    if (this.function == null) {
+      throw new IllegalArgumentException(
+          String.format("unable to find function with name '%s' having arity '%d'", name, arguments.size()));
+    }
     this.arguments = arguments;
   }
 
   public IFunction getFunction() {
     return function;
+  }
+
+  @Override
+  public Class<? extends IItem> getBaseResultType() {
+    return function.getResult().getType();
+  }
+
+  @Override
+  public Class<? extends IItem> getStaticResultType() {
+    return getBaseResultType();
   }
 
   @Override
@@ -60,12 +72,6 @@ public class FunctionCall implements IExpression<IItem> {
   @Override
   public List<? extends IExpression<?>> getChildren() {
     return arguments;
-  }
-
-  @Override
-  public boolean isNodeExpression() {
-    // TODO: implement this based on what the function returns
-    return true;
   }
 
   @Override

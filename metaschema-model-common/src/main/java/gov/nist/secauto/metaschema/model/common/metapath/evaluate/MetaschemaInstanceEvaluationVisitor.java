@@ -150,7 +150,7 @@ public class MetaschemaInstanceEvaluationVisitor
 
   @Override
   public IInstanceSet visitParenthesizedExpression(ParenthesizedExpression expr, IMetaschemaContext context) {
-    return expr.getNode().accept(this, context);
+    return expr.getChild().accept(this, context);
   }
 
   protected IInstanceSet buildUnion(List<? extends IExpression<?>> children, IMetaschemaContext context) {

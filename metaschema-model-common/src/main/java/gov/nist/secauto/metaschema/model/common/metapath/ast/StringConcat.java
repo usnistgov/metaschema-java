@@ -39,8 +39,13 @@ public class StringConcat
   }
 
   @Override
-  public boolean isNodeExpression() {
-    return false;
+  public Class<IStringItem> getBaseResultType() {
+    return IStringItem.class;
+  }
+
+  @Override
+  public Class<IStringItem> getStaticResultType() {
+    return getBaseResultType();
   }
 
   @Override

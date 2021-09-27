@@ -41,6 +41,11 @@ public class Flag
   }
 
   @Override
+  public Class<IFlagNodeItem> getBaseResultType() {
+    return IFlagNodeItem.class;
+  }
+
+  @Override
   public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitFlag(this, context);
   }

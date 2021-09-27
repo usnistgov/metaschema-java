@@ -29,10 +29,4 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IBooleanItem;
 
 public interface IBooleanLogicExpression extends IExpression<IBooleanItem> {
-
-  @Override
-  default boolean isNodeExpression() {
-    return false;
-  }
-
 }

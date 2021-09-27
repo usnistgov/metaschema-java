@@ -35,20 +35,33 @@ import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.stream.Stream;
 
-public class IFunctionService {
-  private static IFunctionService functionService;
+public class FunctionService {
+  private static FunctionService functionService;
 
-  public static synchronized IFunctionService getInstance() {
+  public static synchronized FunctionService getInstance() {
     if (functionService == null) {
-      functionService = new IFunctionService();
+      functionService = new FunctionService();
     }
     return functionService;
   }
 
   private final ServiceLoader<IFunctionLibrary> loader;
+  private LoadedFunctionsLibrary library; 
 
-  public IFunctionService() {
+  public FunctionService() {
     this.loader = ServiceLoader.load(IFunctionLibrary.class);
+    load();
+  }
+
+  public synchronized void load() {
+    ServiceLoader<IFunctionLibrary> loader = getLoader();
+    Stream<IFunctionLibrary> libraryStream = loader.stream().map(Provider<IFunctionLibrary>::get);
+    Stream<IFunction> functions = libraryStream.flatMap(library -> {
+      return library.getFunctionsAsStream();
+    });
+
+    library = new LoadedFunctionsLibrary();
+    functions.forEachOrdered(function -> library.registerFunction(function));
   }
 
   protected ServiceLoader<IFunctionLibrary> getLoader() {
@@ -59,11 +72,12 @@ public class IFunctionService {
     return getFunction(name, Arrays.asList(args));
   }
 
-  public IFunction getFunction(String name, List<IExpression<?>> args) {
-    Stream<Provider<IFunctionLibrary>> providerStream = getLoader().stream();
-    Stream<IFunctionLibrary> functionLibraryStream = providerStream.map(Provider<IFunctionLibrary>::get);
-    Optional<IFunctionLibrary> functionLibrary
-        = functionLibraryStream.filter(x -> x.hasFunction(name, args)).findFirst();
-    return functionLibrary.map(x -> x.getFunction(name, args)).orElse(null);
+  public synchronized IFunction getFunction(String name, List<IExpression<?>> args) {
+//    Stream<Provider<IFunctionLibrary>> providerStream = getLoader().stream();
+//    Stream<IFunctionLibrary> functionLibraryStream = providerStream.map(Provider<IFunctionLibrary>::get);
+//    Optional<IFunctionLibrary> functionLibrary
+//        = functionLibraryStream.filter(x -> x.hasFunction(name, args)).findFirst();
+//    return functionLibrary.map(x -> x.getFunction(name, args)).orElse(null);
+    return library.getFunction(name, args);
   }
 }

@@ -31,15 +31,20 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IDecimalItem;
 
 import java.math.BigDecimal;
 
-public class DecimalLiteral
-    extends AbstractLiteralExpression<IDecimalItem, BigDecimal> {
+public class DecimalLiteral extends AbstractLiteralExpression<IDecimalItem, BigDecimal> {
 
   public DecimalLiteral(BigDecimal value) {
     super(value);
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IDecimalItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+  public Class<IDecimalItem> getBaseResultType() {
+    return IDecimalItem.class;
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends IDecimalItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
+      CONTEXT context) {
     return visitor.visitDecimalLiteral(this, context);
   }
 

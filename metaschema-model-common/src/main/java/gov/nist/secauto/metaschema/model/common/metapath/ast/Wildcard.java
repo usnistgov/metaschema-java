@@ -40,8 +40,13 @@ public class Wildcard implements INameExpression<IStringItem> {
   }
 
   @Override
-  public boolean isNodeExpression() {
-    return true;
+  public Class<IStringItem> getBaseResultType() {
+    return IStringItem.class;
+  }
+
+  @Override
+  public Class<IStringItem> getStaticResultType() {
+    return getBaseResultType();
   }
 
   @Override

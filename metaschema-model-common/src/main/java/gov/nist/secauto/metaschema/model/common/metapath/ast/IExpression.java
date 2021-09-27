@@ -42,11 +42,9 @@ public interface IExpression<RESULT_TYPE extends IItem> {
     return getChildren().get(index);
   }
 
-//  CLASS<? EXTENDS RESULT_TYPE> GETBASERESULTTYPE();
-//
-//  CLASS<? EXTENDS RESULT_TYPE> GETSTATICRESULTTYPE();
+  Class<? extends RESULT_TYPE> getBaseResultType();
 
-  boolean isNodeExpression();
+  Class<? extends RESULT_TYPE> getStaticResultType();
 
   default String toASTString() {
     return String.format("%s[]", getClass().getName());

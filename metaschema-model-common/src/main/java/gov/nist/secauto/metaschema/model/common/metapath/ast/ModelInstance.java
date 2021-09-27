@@ -37,6 +37,11 @@ public class ModelInstance
   }
 
   @Override
+  public Class<IModelNodeItem> getBaseResultType() {
+    return IModelNodeItem.class;
+  }
+
+  @Override
   public <CONTEXT> ISequence<? extends IModelNodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
     return visitor.visitModelInstance(this, context);
   }

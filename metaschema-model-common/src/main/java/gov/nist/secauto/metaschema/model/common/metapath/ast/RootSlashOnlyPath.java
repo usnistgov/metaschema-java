@@ -33,7 +33,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class RootSlashOnlyPath
-    extends AbstractRootPathExpression<INodeItem> {
+    extends AbstractRootPathExpression {
 
   public RootSlashOnlyPath() {
     super(null);

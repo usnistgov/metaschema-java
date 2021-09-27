@@ -31,15 +31,20 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IIntegerItem;
 
 import java.math.BigInteger;
 
-public class IntegerLiteral
-    extends AbstractLiteralExpression<IIntegerItem,BigInteger> {
+public class IntegerLiteral extends AbstractLiteralExpression<IIntegerItem, BigInteger> {
 
   public IntegerLiteral(BigInteger value) {
     super(value);
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IIntegerItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+  public Class<IIntegerItem> getBaseResultType() {
+    return IIntegerItem.class;
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends IIntegerItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
+      CONTEXT context) {
     return visitor.visitIntegerLiteral(this, context);
   }
 

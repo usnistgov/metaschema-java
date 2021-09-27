@@ -32,12 +32,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IStringItem;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringLiteral
-    extends AbstractLiteralExpression<IStringItem,String> {
+public class StringLiteral extends AbstractLiteralExpression<IStringItem, String> {
   private static final Pattern pattern = Pattern.compile("^'(.*)'$|^\"(.*)\"$");
 
   public StringLiteral(String value) {
     super(removeQuotes(value));
+  }
+
+  @Override
+  public Class<IStringItem> getBaseResultType() {
+    return IStringItem.class;
   }
 
   private static String removeQuotes(String value) {
@@ -53,7 +57,8 @@ public class StringLiteral
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IStringItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+  public <CONTEXT> ISequence<? extends IStringItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
+      CONTEXT context) {
     return visitor.visitStringLiteral(this, context);
   }
 

@@ -28,35 +28,26 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
 
 import java.util.List;
 
-public class ParenthesizedExpression implements IExpression<IItem> {
-  private IExpression<?> expr;
+public class ParenthesizedExpression extends AbstractUnaryExpr<IItem> implements IExpression<IItem> {
+  private final Class<? extends IItem> staticResultType;
 
   public ParenthesizedExpression(IExpression<?> expr) {
-    this.expr = expr;
-  }
-
-  public IExpression<?> getNode() {
-    return expr;
+    super(expr);
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, List.of(expr));
   }
 
   @Override
-  public List<? extends IExpression<?>> getChildren() {
-    return List.of(expr);
+  public Class<IItem> getBaseResultType() {
+    return IItem.class;
   }
 
   @Override
-  public boolean isNodeExpression() {
-    boolean retval = true;
-    for (IExpression<?> expr : getChildren()) {
-      if (!expr.isNodeExpression()) {
-        retval = false;
-        break;
-      }
-    }
-    return retval;
+  public Class<? extends IItem> getStaticResultType() {
+    return staticResultType;
   }
 
   @Override

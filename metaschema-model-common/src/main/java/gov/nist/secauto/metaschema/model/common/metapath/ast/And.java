@@ -40,6 +40,16 @@ public class And
   }
 
   @Override
+  public Class<IBooleanItem> getBaseResultType() {
+    return IBooleanItem.class;
+  }
+
+  @Override
+  public Class<IBooleanItem> getStaticResultType() {
+    return getBaseResultType();
+  }
+
+  @Override
   public <CONTEXT> ISequence<? extends IBooleanItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
     return visitor.visitAnd(this, context);
   }

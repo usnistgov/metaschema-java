@@ -23,26 +23,8 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-package gov.nist.secauto.metaschema.model.common.metapath.ast;
-
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-
-public class RootDoubleSlashPath
-    extends AbstractRootPathExpression {
-
-  public RootDoubleSlashPath(IExpression<?> node) {
-    super(node);
-  }
-
-  @Override
-  public <CONTEXT> ISequence<? extends INodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitRootDoubleSlashPath(this, context);
-  }
-
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitRootDoubleSlashPath(this, context);
-  }
+public class LoadedFunctionsLibrary extends AbstractFunctionLibrary {
+  
 }

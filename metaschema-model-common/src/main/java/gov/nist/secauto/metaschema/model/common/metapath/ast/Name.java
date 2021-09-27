@@ -35,12 +35,13 @@ public class Name extends AbstractLiteralExpression<IStringItem, String> impleme
   }
 
   @Override
-  public boolean isNodeExpression() {
-    return true;
+  public Class<IStringItem> getBaseResultType() {
+    return IStringItem.class;
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IStringItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+  public <CONTEXT> ISequence<? extends IStringItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
+      CONTEXT context) {
     throw new UnsupportedOperationException();
   }
 

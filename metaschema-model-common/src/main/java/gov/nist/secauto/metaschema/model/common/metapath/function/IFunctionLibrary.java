@@ -29,8 +29,12 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public interface IFunctionLibrary {
+
+  Stream<IFunction> getFunctionsAsStream();
+
   boolean hasFunction(String name, List<IExpression<?>> args);
 
   IFunction getFunction(String name, List<IExpression<?>> args);

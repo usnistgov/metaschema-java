@@ -117,6 +117,6 @@ public abstract class AbstractNodeItem<SEGMENT extends IPathSegment, PARENT exte
 
   @Override
   public String toString() {
-    return super.toString() + " " + getValue();
+    return getMetapath() + " " + getValue();
   }
 }

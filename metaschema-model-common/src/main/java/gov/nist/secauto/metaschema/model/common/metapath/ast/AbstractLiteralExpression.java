@@ -43,6 +43,14 @@ public abstract class AbstractLiteralExpression<RESULT_TYPE extends IAnyAtomicIt
   }
 
   @Override
+  public abstract Class<RESULT_TYPE> getBaseResultType();
+
+  @Override
+  public Class<RESULT_TYPE> getStaticResultType() {
+    return getBaseResultType();
+  }
+
+  @Override
   public String toASTString() {
     return String.format("%s[value=%s]", getClass().getName(), getValue().toString());
   }

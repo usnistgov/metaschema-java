@@ -28,7 +28,11 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.MetapathDynamicException;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -125,6 +129,58 @@ public abstract class AbstractFunction implements IFunction {
           retval = false;
         }
       }
+    }
+    return retval;
+  }
+
+  @Override
+  public List<ISequence<?>> convertArguments(IFunction function, List<ISequence<?>> parameters) {
+    List<ISequence<?>> retval = new ArrayList<>(parameters.size());
+
+    Iterator<IArgument> argumentIterator = getArguments().iterator();
+    Iterator<ISequence<?>> parametersIterator = parameters.iterator();
+
+    IArgument argument = null;
+    while (parametersIterator.hasNext()) {
+      argument = argumentIterator.hasNext() ? argumentIterator.next() : function.isArityUnbounded() ? argument : null;
+      ISequence<?> parameter = parametersIterator.next();
+
+      // Occurrence occurrence = argument.getSequenceType().getOccurrence();
+      // switch (occurrence) {
+      // case ONE: {
+      // IItem item = Functions.getFirstItem(parameter, true);
+      //
+      // parameter = item == null ? ISequence.empty() : ISequence.of(item);
+      // break;
+      // }
+      // case ZERO_OR_ONE: {
+      // IItem item = Functions.getFirstItem(parameter, false);
+      //
+      // parameter = item == null ? ISequence.empty() : ISequence.of(item);
+      // break;
+      // }
+      // default:
+      // // do nothing
+      // }
+
+      Class<? extends IItem> argumentClass = argument.getSequenceType().getType();
+      if (argumentClass.isInstance(IAnyAtomicItem.class)) {
+        // atomize
+        parameter = Functions.fnData(parameter);
+      }
+
+      // TODO: https://www.w3.org/TR/xpath-31/#dt-function-conversion
+
+      // check resulting values
+      for (IItem item : parameter.asList()) {
+        Class<? extends IItem> itemClass = item.getClass();
+        if (!argumentClass.isAssignableFrom(itemClass)) {
+          throw new MetapathDynamicException("err:XPTY0004",
+              String.format("The type '%s' is not a subtype of '%s'", itemClass.getName(), argumentClass.getName()));
+        }
+      }
+      
+      retval.add(parameter);
     }
     return retval;
   }

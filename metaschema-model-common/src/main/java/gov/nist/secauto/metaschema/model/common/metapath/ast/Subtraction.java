@@ -29,15 +29,20 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
 
-public class Subtraction
-    extends AbstractArithmeticExpr<INumericItem> {
+public class Subtraction extends AbstractArithmeticExpr<INumericItem> {
 
   public Subtraction(IExpression<?> left, IExpression<?> right) {
-    super(left, right);
+    super(left, right, INumericItem.class);
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends INumericItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+  public Class<INumericItem> getBaseResultType() {
+    return INumericItem.class;
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends INumericItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
+      CONTEXT context) {
     return visitor.visitSubtraction(this, context);
   }
 

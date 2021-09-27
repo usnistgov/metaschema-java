@@ -31,17 +31,29 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractRootPathExpression<RESULT_TYPE extends INodeItem>
-    extends AbstractPathExpression<RESULT_TYPE>
-    implements IRootPathExpression<RESULT_TYPE> {
+public abstract class AbstractRootPathExpression
+    extends AbstractPathExpression<INodeItem>
+    implements IRootPathExpression {
   private final IExpression<?> node;
+  private final Class<? extends INodeItem> staticResultType;
 
   public AbstractRootPathExpression(IExpression<?> node) {
     this.node = node;
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(INodeItem.class, List.of(node));
   }
 
   public IExpression<?> getNode() {
     return node;
+  }
+
+  @Override
+  public Class<INodeItem> getBaseResultType() {
+    return INodeItem.class;
+  }
+
+  @Override
+  public Class<? extends INodeItem> getStaticResultType() {
+    return staticResultType;
   }
 
   @Override

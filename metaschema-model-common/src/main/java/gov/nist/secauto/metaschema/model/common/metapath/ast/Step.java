@@ -38,10 +38,12 @@ public class Step
     extends AbstractPathExpression<INodeItem> {
   private final IExpression<?> step;
   private final List<IExpression<?>> predicates;
+  private final Class<? extends INodeItem> staticResultType;
 
   public Step(IExpression<?> stepExpr, List<IExpression<?>> predicates) {
     this.step = stepExpr;
     this.predicates = predicates;
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(INodeItem.class, List.of(stepExpr));
   }
 
   public IExpression<?> getStep() {
@@ -62,6 +64,16 @@ public class Step
       retval = Collections.singletonList(step);
     }
     return retval;
+  }
+
+  @Override
+  public Class<INodeItem> getBaseResultType() {
+    return INodeItem.class;
+  }
+
+  @Override
+  public Class<? extends INodeItem> getStaticResultType() {
+    return staticResultType;
   }
 
   @Override

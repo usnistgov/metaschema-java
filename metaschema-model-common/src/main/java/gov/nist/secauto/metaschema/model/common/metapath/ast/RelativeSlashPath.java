@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
 public class RelativeSlashPath
-    extends AbstractRelativePathExpression<INodeItem> {
+    extends AbstractRelativePathExpression {
 
   public RelativeSlashPath(IExpression<?> left, IExpression<?> right) {
     super(left, right);

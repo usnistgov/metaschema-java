@@ -31,49 +31,74 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
 
-  private final HashMap<String, Set<IFunction>> library = new HashMap<>();
+  private final HashMap<String, NamedFunctionSet> library = new HashMap<>();
 
-  protected HashMap<String, Set<IFunction>> getLibrary() {
+  protected HashMap<String, NamedFunctionSet> getLibrary() {
     return library;
   }
 
-  public synchronized void registerFunction(IFunction function) {
+  public synchronized void registerFunction(IFunction function) throws IllegalArgumentException {
     String name = function.getName();
 
-    Set<IFunction> functions = getLibrary().get(name);
+    NamedFunctionSet functions = getLibrary().get(name);
     if (functions == null) {
-      functions = new HashSet<>();
+      functions = new NamedFunctionSet();
       library.put(name, functions);
     }
-    functions.add(function);
+    IFunction duplicate = functions.addFunction(function);
+    if (duplicate != null) {
+      throw new IllegalArgumentException(String.format("Duplicate functions with same arity: %s shadows %s",duplicate.toSignature(), function.toSignature()));
+    }
+  }
+
+  @Override
+  public Stream<IFunction> getFunctionsAsStream() {
+    return getLibrary().values().stream().flatMap(set -> {
+      return set.getFunctionsAsStream();
+    });
   }
 
   @Override
   public synchronized boolean hasFunction(String name, List<IExpression<?>> args) {
-    Set<IFunction> functions = getLibrary().get(name);
-    boolean retval;
-    if (functions == null) {
-      retval = false;
-    } else {
-      retval = functions.stream().anyMatch(x -> x.isSupported(args));
-    }
-    return retval;
+    return getFunction(name, args) != null;
   }
 
   @Override
-  public IFunction getFunction(String name, List<IExpression<?>> args) {
-    Set<IFunction> functions = getLibrary().get(name);
+  public synchronized IFunction getFunction(String name, List<IExpression<?>> args) {
+    NamedFunctionSet functions = getLibrary().get(name);
     IFunction retval;
     if (functions == null) {
       retval = null;
     } else {
-      retval = functions.stream().filter(x -> x.isSupported(args)).findFirst().orElse(null);
+      retval = functions.getFunctionWithArity(args.size());
     }
     return retval;
   }
 
+  private static class NamedFunctionSet {
+    private final Map<Integer, IFunction> arityToFunctionMap;
+
+    public NamedFunctionSet() {
+      this.arityToFunctionMap = new HashMap<>();
+    }
+
+    public Stream<IFunction> getFunctionsAsStream() {
+      return arityToFunctionMap.values().stream();
+    }
+
+    public IFunction getFunctionWithArity(int arity) {
+      return arityToFunctionMap.get(arity);
+    }
+
+    public IFunction addFunction(IFunction function) {
+      return arityToFunctionMap.put(function.arity(), function);
+    }
+  }
 }

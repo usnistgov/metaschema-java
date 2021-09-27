@@ -31,24 +31,23 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 
 import java.util.List;
 
-public class Union
-    extends AbstractNAryExpression<IItem>
-    implements IExpression<IItem> {
+public class Union extends AbstractNAryExpression<IItem> implements IExpression<IItem> {
+
+  private final Class<? extends IItem> staticResultType;
 
   public Union(List<IExpression<?>> children) {
     super(children);
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, children);
   }
 
   @Override
-  public boolean isNodeExpression() {
-    boolean retval = true;
-    for (IExpression<?> expr : getChildren()) {
-      if (!expr.isNodeExpression()) {
-        retval = false;
-        break;
-      }
-    }
-    return retval;
+  public Class<IItem> getBaseResultType() {
+    return IItem.class;
+  }
+
+  @Override
+  public Class<? extends IItem> getStaticResultType() {
+    return staticResultType;
   }
 
   @Override

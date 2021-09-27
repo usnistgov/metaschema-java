@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
 public class RootSlashPath
-    extends AbstractRootPathExpression<INodeItem> {
+    extends AbstractRootPathExpression {
 
   public RootSlashPath(IExpression<?> node) {
     super(node);

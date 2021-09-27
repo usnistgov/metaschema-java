@@ -81,6 +81,8 @@ public interface IFunction {
    */
   boolean isSupported(List<IExpression<?>> arguments);
 
+  List<ISequence<?>> convertArguments(IFunction function, List<ISequence<?>> arguments);
+
   ISequence<?> execute(List<ISequence<?>> arguments);
 
   /**

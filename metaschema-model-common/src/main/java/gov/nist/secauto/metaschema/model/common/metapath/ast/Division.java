@@ -29,15 +29,22 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
 
-public class Division
-    extends AbstractArithmeticExpr<INumericItem> {
+import java.util.List;
+
+public class Division extends AbstractArithmeticExpr<INumericItem> {
 
   public Division(IExpression<?> left, IExpression<?> right) {
-    super(left, right);
+    super(left, right, INumericItem.class);
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends INumericItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+  public Class<INumericItem> getBaseResultType() {
+    return INumericItem.class;
+  }
+
+  @Override
+  public <CONTEXT> ISequence<? extends INumericItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
+      CONTEXT context) {
     return visitor.visitDivision(this, context);
   }
 

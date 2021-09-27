@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import java.util.Collections;
@@ -50,6 +51,14 @@ public abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeI
 
   public boolean isName() {
     return getNode() instanceof Name;
+  }
+
+  @Override
+  public abstract Class<RESULT_TYPE> getBaseResultType();
+
+  @Override
+  public Class<RESULT_TYPE> getStaticResultType() {
+    return getBaseResultType();
   }
 
   public Predicate<IInstance> getInstanceMatcher() {

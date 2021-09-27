@@ -38,9 +38,4 @@ public interface ILiteralExpression<RESULT_TYPE extends IAnyAtomicItem> extends 
     // a literal never has children
     return Collections.emptyList();
   }
-
-  @Override
-  default boolean isNodeExpression() {
-    return false;
-  }
 }

@@ -28,11 +28,20 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
 
-public abstract class AbstractArithmeticExpr<ITEM_TYPE extends INumericItem>
-    extends AbstractBinaryExpr<ITEM_TYPE>
+import java.util.List;
+
+public abstract class AbstractArithmeticExpr<ITEM_TYPE extends INumericItem> extends AbstractBinaryExpr<ITEM_TYPE>
     implements IArithmeticExpression<ITEM_TYPE> {
 
-  public AbstractArithmeticExpr(IExpression<?> left, IExpression<?> right) {
+  private final Class<? extends ITEM_TYPE> staticResultType;
+
+  public AbstractArithmeticExpr(IExpression<?> left, IExpression<?> right, Class<? extends ITEM_TYPE> baseType) {
     super(left, right);
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(baseType, List.of(left, right));
+  }
+
+  @Override
+  public Class<? extends ITEM_TYPE> getStaticResultType() {
+    return staticResultType;
   }
 }

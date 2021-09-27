@@ -60,6 +60,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.StringLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
 import gov.nist.secauto.metaschema.model.common.metapath.function.Functions;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
@@ -80,6 +81,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluationVisitor<INodeContext> {
@@ -548,8 +550,14 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
 
   @Override
   public ISequence<?> visitFunctionCall(FunctionCall expr, INodeContext context) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException(expr.getFunction().getName());
+    List<ISequence<?>> arguments = expr.getChildren().stream().map(expression -> {
+      ISequence<?> result = expression.accept(this, context);
+      return result;
+    }).collect(Collectors.toList());
+
+    IFunction function = expr.getFunction();
+    arguments = function.convertArguments(function, arguments);
+    return function.execute(arguments);
   }
 
   @Override
@@ -562,7 +570,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
 
   @Override
   public ISequence<?> visitParenthesizedExpression(ParenthesizedExpression expr, INodeContext context) {
-    IExpression<?> childExpr = expr.getNode();
+    IExpression<?> childExpr = expr.getChild();
     return childExpr.accept(this, context);
   }
 
