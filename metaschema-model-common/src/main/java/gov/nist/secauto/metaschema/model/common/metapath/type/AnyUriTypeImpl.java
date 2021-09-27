@@ -23,10 +23,11 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyUriItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
 
 import java.net.URI;
 
@@ -42,7 +43,7 @@ class AnyUriTypeImpl implements IAnyUriType {
 
   @Override
   public IAnyUriItem newItem(Object value) {
-    URI item = (URI)getDataType().getJavaTypeAdapter().toValue(value);
+    URI item = (URI) getDataType().getJavaTypeAdapter().toValue(value);
     return IAnyUriItem.valueOf(item);
   }
 }

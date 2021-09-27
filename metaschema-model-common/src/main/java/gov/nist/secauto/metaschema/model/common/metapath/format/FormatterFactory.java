@@ -43,16 +43,18 @@ public class FormatterFactory {
   protected FormatterFactory() {
 
   }
-  
+
   public IFlagPathSegment newFlagPathSegment(IModelPositionalPathSegment parentPathSegment, IFlagInstance instance) {
     return new FlagPathSegmentImpl(parentPathSegment, instance);
   }
 
-  public IFieldPathSegment newFieldPathSegment(IAssemblyPathSegment parentPathSegment, IFieldInstance instance, int position) {
+  public IFieldPathSegment newFieldPathSegment(IAssemblyPathSegment parentPathSegment, IFieldInstance instance,
+      int position) {
     return new FieldPathSegmentImpl(parentPathSegment, instance, position);
   }
 
-  public IAssemblyPathSegment newAssemblyPathSegment(IAssemblyPathSegment parentPathSegment, IAssemblyInstance instance, int position) {
+  public IAssemblyPathSegment newAssemblyPathSegment(IAssemblyPathSegment parentPathSegment, IAssemblyInstance instance,
+      int position) {
     return new AssemblyPathSegmentImpl(parentPathSegment, instance, position);
   }
 

@@ -45,7 +45,7 @@ public class TypeFactory {
   public static final IIPv6AddressType IP_V6_ADDRESS_TYPE = new IPv6AddressTypeImpl();
   public static final IMarkupType MARKUP_LINE_TYPE = new MarkupLineTypeImpl();
   public static final IMarkupType MARKUP_MULTILINE_TYPE = new MarkupMultiLineTypeImpl();
-  
+
   public static final INcNameType NCNAME_TYPE = new NcNameTypeImpl();
   public static final INonNegativeIntegerType NON_NEGATIVE_INTEGER_TYPE = new NonNegativeIntegerTypeImpl();
   public static final IPositiveIntegerType POSITIVE_INTEGER_TYPE = new PositiveIntegerTypeImpl();

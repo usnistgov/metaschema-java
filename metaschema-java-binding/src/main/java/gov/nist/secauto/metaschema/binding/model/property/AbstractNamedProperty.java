@@ -35,9 +35,9 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +45,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding> extends AbstractProperty<CLASS_BINDING>
+public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
+    extends AbstractProperty<CLASS_BINDING>
     implements NamedProperty, INamedInstance {
   private static final Logger logger = LogManager.getLogger(AbstractNamedProperty.class);
 

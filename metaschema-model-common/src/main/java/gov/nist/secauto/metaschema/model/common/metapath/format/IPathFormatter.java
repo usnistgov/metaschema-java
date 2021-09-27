@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 
 /**
  * This interface provides an implementation contract for all path formatters. When
- * {@link #format(IPathSegment)} is called on a formatter implementation, the formatter will render the path
- * segments based on the implemented path syntax. This allows a collection of path segments to be
- * rendered in different forms by swapping out the formatter used.
+ * {@link #format(IPathSegment)} is called on a formatter implementation, the formatter will render
+ * the path segments based on the implemented path syntax. This allows a collection of path segments
+ * to be rendered in different forms by swapping out the formatter used.
  * 
  * A path formatter is expected to be stateless and thus thread safe.
  */

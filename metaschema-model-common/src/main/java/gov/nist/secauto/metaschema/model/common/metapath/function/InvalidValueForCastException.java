@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.MetapathDynamicException;
 
-public class InvalidValueForCastException extends MetapathDynamicException {
+public class InvalidValueForCastException
+    extends MetapathDynamicException {
   /**
    * the serial version UID.
    */

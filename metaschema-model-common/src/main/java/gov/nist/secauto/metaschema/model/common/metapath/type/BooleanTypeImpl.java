@@ -23,14 +23,11 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IUuidItem;
-
-import java.util.UUID;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 
 class BooleanTypeImpl implements IBooleanType {
 
@@ -44,7 +41,7 @@ class BooleanTypeImpl implements IBooleanType {
 
   @Override
   public IBooleanItem newItem(Object value) {
-    Boolean item = (Boolean)getDataType().getJavaTypeAdapter().toValue(value);
+    Boolean item = (Boolean) getDataType().getJavaTypeAdapter().toValue(value);
     return IBooleanItem.valueOf(item);
   }
 }

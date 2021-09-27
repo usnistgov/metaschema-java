@@ -47,6 +47,7 @@ class ArgumentImpl implements IArgument {
     return sequenceType;
   }
 
+  @Override
   public boolean isSupported(IExpression<?> expression) {
     // Class<? extends IItem> itemType = expression.getItemType();
     // TODO: implement this test

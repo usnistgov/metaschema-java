@@ -26,13 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function.impl;
 
-import gov.nist.secauto.metaschema.model.common.metapath.function.Functions;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionHandler;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 import java.util.List;
 

@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.function.impl;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.AbstractFunctionLibrary;
 
-public class DefaultFunctionLibrary extends AbstractFunctionLibrary {
+public class DefaultFunctionLibrary
+    extends AbstractFunctionLibrary {
 
   public DefaultFunctionLibrary() {
     registerFunction(Exists.SIGNATURE);

@@ -70,7 +70,7 @@ public class MapPropertyInfo
 
   @Override
   public Stream<?> getItemsFromValue(Object value) {
-    return value == null ? Stream.empty() : ((Map<?, ?>)value).values().stream();
+    return value == null ? Stream.empty() : ((Map<?, ?>) value).values().stream();
   }
 
   public MapPropertyInfo(NamedModelProperty property) {

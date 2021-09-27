@@ -23,10 +23,11 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INonNegativeIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INonNegativeIntegerItem;
 
 import java.math.BigInteger;
 
@@ -39,7 +40,7 @@ class NonNegativeIntegerTypeImpl implements INonNegativeIntegerType {
 
   @Override
   public INonNegativeIntegerItem newItem(Object value) {
-    BigInteger item = (BigInteger)getDataType().getJavaTypeAdapter().toValue(value);
+    BigInteger item = (BigInteger) getDataType().getJavaTypeAdapter().toValue(value);
     return INonNegativeIntegerItem.valueOf(item);
   }
 }

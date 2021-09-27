@@ -28,11 +28,9 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
 
-import java.util.List;
-
-public class RelativeDoubleSlashPath extends AbstractRelativePathExpression {
+public class RelativeDoubleSlashPath
+    extends AbstractRelativePathExpression {
 
   public RelativeDoubleSlashPath(IExpression<?> left, IExpression<?> right) {
     super(left, right);

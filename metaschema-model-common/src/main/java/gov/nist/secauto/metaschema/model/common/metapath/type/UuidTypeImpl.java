@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IUuidItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IUuidItem;
 
 import java.util.UUID;
 
@@ -43,7 +43,7 @@ class UuidTypeImpl implements IUuidType {
 
   @Override
   public IUuidItem newItem(Object value) {
-    UUID item = (UUID)getDataType().getJavaTypeAdapter().toValue(value);
+    UUID item = (UUID) getDataType().getJavaTypeAdapter().toValue(value);
     return IUuidItem.valueOf(item);
   }
 }

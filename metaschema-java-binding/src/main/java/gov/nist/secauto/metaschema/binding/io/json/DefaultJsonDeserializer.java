@@ -114,7 +114,8 @@ public class DefaultJsonDeserializer<CLASS>
     // token.toString()));
     // }
 
-    DefaultJsonParsingContext parsingContext = new DefaultJsonParsingContext(parser, new DefaultJsonProblemHandler(), isValidating());
+    DefaultJsonParsingContext parsingContext
+        = new DefaultJsonParsingContext(parser, new DefaultJsonProblemHandler(), isValidating());
 
     AssemblyClassBinding classBinding = getClassBinding();
     CLASS retval;

@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractStringJavaTypeAdapter;
 
-public class StringAdapter extends AbstractStringJavaTypeAdapter {
+public class StringAdapter
+    extends AbstractStringJavaTypeAdapter {
   public StringAdapter() {
   }
 }

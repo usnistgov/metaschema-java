@@ -28,11 +28,10 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import gov.nist.secauto.metaschema.model.common.metapath.function.Functions;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IIntegerItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.ItemFactory;
+import gov.nist.secauto.metaschema.model.common.metapath.function.impl.Functions;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -45,11 +44,13 @@ import java.util.stream.Stream;
 
 class FunctionsTest {
   private static IDecimalItem decimal(String value) {
-    return IDecimalItem.valueOf(new BigDecimal(value,MathContext.DECIMAL64));
+    return IDecimalItem.valueOf(new BigDecimal(value, MathContext.DECIMAL64));
   }
+
   private static IDecimalItem decimal(double value) {
-    return IDecimalItem.valueOf(new BigDecimal(value,MathContext.DECIMAL64));
+    return IDecimalItem.valueOf(new BigDecimal(value, MathContext.DECIMAL64));
   }
+
   private static IIntegerItem integer(int value) {
     return IIntegerItem.valueOf(BigInteger.valueOf(value));
   }

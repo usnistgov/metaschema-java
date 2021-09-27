@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.model.common.instance;
 import gov.nist.secauto.metaschema.model.common.Field;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.DefaultMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 import gov.nist.secauto.metaschema.model.common.metapath.format.FormatterFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFieldPathSegment;
@@ -89,6 +89,6 @@ public interface IFieldInstance extends INamedModelInstance, Field {
 
   @Override
   default IFieldPathSegment newPathSegment(IAssemblyPathSegment parentSegment, int position) {
-    return FormatterFactory.instance().newFieldPathSegment((IAssemblyPathSegment)parentSegment, this, position);
+    return FormatterFactory.instance().newFieldPathSegment((IAssemblyPathSegment) parentSegment, this, position);
   }
 }

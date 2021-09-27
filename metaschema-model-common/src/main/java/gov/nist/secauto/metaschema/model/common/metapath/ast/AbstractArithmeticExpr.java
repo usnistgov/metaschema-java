@@ -26,11 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
 import java.util.List;
 
-public abstract class AbstractArithmeticExpr<ITEM_TYPE extends INumericItem> extends AbstractBinaryExpr<ITEM_TYPE>
+public abstract class AbstractArithmeticExpr<ITEM_TYPE extends INumericItem>
+    extends AbstractBinaryExpr<ITEM_TYPE>
     implements IArithmeticExpression<ITEM_TYPE> {
 
   private final Class<? extends ITEM_TYPE> staticResultType;

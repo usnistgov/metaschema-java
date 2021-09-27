@@ -69,7 +69,7 @@ public abstract class AbstractJavaTypeAdapter<TYPE> implements JavaTypeAdapter<T
   @Override
   @SuppressWarnings("unchecked")
   public TYPE toValue(Object value) {
-    return (TYPE)value;
+    return (TYPE) value;
   }
 
   @Override
@@ -139,7 +139,6 @@ public abstract class AbstractJavaTypeAdapter<TYPE> implements JavaTypeAdapter<T
   public String asString(Object value) {
     return value.toString();
   }
-
 
   @Override
   public void writeXml(Object value, StartElement parent, XMLEventFactory2 eventFactory, XMLEventWriter eventWriter)

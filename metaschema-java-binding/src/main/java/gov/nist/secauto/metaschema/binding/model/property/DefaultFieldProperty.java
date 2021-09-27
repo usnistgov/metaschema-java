@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.metapath.type.NodeItemFactory;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.type.NodeItemFactory;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
@@ -290,11 +290,11 @@ public class DefaultFieldProperty
     }
     return definition;
   }
-//
-//  @Override
-//  public IPathSegment newPathSegment(int position) {
-//    return FormatterFactory.instance().newFieldPathSegment(this, position);
-//  }
+  //
+  // @Override
+  // public IPathSegment newPathSegment(int position) {
+  // return FormatterFactory.instance().newFieldPathSegment(this, position);
+  // }
 
   private class ScalarFieldDefinition implements FieldDefinition {
     @Override
@@ -405,7 +405,8 @@ public class DefaultFieldProperty
 
   @Override
   public void validateItem(Object value, ParsingContext<?, ?> context) {
-    context.getConstraintValidator().validateItem(this, context.getPathBuilder().getContextPathSegment(), value, context);
+    context.getConstraintValidator().validateItem(this, context.getPathBuilder().getContextPathSegment(), value,
+        context);
   }
 
   @Override

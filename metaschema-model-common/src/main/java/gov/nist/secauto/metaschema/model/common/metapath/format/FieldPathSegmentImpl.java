@@ -23,12 +23,15 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.format;
 
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 
-class FieldPathSegmentImpl extends AbstractModelPositionalPathSegment<IFieldInstance> implements IFieldPathSegment {
+class FieldPathSegmentImpl
+    extends AbstractModelPositionalPathSegment<IFieldInstance>
+    implements IFieldPathSegment {
 
   public FieldPathSegmentImpl(IAssemblyPathSegment parent, IFieldInstance instance, int position) {
     super(parent, instance, position);
@@ -41,6 +44,6 @@ class FieldPathSegmentImpl extends AbstractModelPositionalPathSegment<IFieldInst
 
   @Override
   public IAssemblyPathSegment getParent() {
-    return (IAssemblyPathSegment)super.getParent();
+    return (IAssemblyPathSegment) super.getParent();
   }
 }

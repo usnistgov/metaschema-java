@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IDateItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
 
 import java.time.ZonedDateTime;
 
@@ -43,7 +43,7 @@ class DateWithTimeZoneTypeImpl implements IDateType {
 
   @Override
   public IDateItem newItem(Object value) {
-    ZonedDateTime item = (ZonedDateTime)getDataType().getJavaTypeAdapter().toValue(value);
+    ZonedDateTime item = (ZonedDateTime) getDataType().getJavaTypeAdapter().toValue(value);
     return IDateItem.valueOf(item);
   }
 }

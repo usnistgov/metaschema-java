@@ -51,6 +51,6 @@ public interface PathBuilder {
   <SEGMENT extends IPathSegment> SEGMENT getContextPathSegment();
 
   List<IPathSegment> getPathSegments();
-  
+
   List<IPathSegment> getLeadingPathSegments();
 }

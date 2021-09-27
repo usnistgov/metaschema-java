@@ -54,7 +54,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class ListPropertyInfo extends AbstractModelPropertyInfo<ParameterizedType> implements ModelPropertyInfo {
+public class ListPropertyInfo
+    extends AbstractModelPropertyInfo<ParameterizedType>
+    implements ModelPropertyInfo {
 
   public ListPropertyInfo(NamedModelProperty property) {
     super(property);

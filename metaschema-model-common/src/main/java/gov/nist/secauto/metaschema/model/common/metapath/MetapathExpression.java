@@ -30,9 +30,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.ASTPrinter;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.BuildAstVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ContextItem;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaInstanceEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IMetaschemaContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.MetaschemaInstanceEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.antlr.v4.runtime.tree.ParseTree;

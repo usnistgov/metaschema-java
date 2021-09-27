@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -37,7 +35,6 @@ public class StreamSequence<ITEM_TYPE extends IItem> implements ISequence<ITEM_T
   private Stream<ITEM_TYPE> stream;
   private List<ITEM_TYPE> list;
 
-  
   public StreamSequence(Stream<ITEM_TYPE> stream) {
     Objects.requireNonNull(stream, "stream");
     this.stream = stream;

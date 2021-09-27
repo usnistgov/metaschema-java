@@ -23,10 +23,11 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IIPv6AddressItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIPv6AddressItem;
 
 import inet.ipaddr.ipv6.IPv6Address;
 
@@ -39,7 +40,7 @@ class IPv6AddressTypeImpl implements IIPv6AddressType {
 
   @Override
   public IIPv6AddressItem newItem(Object value) {
-    IPv6Address item = (IPv6Address)getDataType().getJavaTypeAdapter().toValue(value);
+    IPv6Address item = (IPv6Address) getDataType().getJavaTypeAdapter().toValue(value);
     return IIPv6AddressItem.valueOf(item);
   }
 

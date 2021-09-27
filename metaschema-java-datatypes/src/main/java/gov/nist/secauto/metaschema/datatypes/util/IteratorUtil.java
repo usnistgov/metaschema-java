@@ -83,7 +83,7 @@ public class IteratorUtil {
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false)
         .collect(Collectors.toList());
   }
-  
+
   public static <T> Iterable<T> descendingIterable(List<T> list) {
     return toIterable(descendingIterator(list));
   }
@@ -91,7 +91,7 @@ public class IteratorUtil {
   public static <T> Iterator<T> descendingIterator(List<T> list) {
     Iterator<T> retval;
     if (list instanceof LinkedList) {
-      retval = ((LinkedList<T>)list).descendingIterator();
+      retval = ((LinkedList<T>) list).descendingIterator();
     } else if (list instanceof ArrayList) {
       retval = IntStream.range(0, list.size())
           .map(i -> list.size() - 1 - i)

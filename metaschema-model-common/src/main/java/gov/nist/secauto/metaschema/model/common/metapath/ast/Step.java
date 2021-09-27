@@ -77,7 +77,8 @@ public class Step
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends INodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+  public <CONTEXT> ISequence<? extends INodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
+      CONTEXT context) {
     return visitor.visitStep(this, context);
   }
 

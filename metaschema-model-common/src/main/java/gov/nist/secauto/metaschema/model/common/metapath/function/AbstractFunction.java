@@ -27,10 +27,11 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.function.impl.Functions;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.MetapathDynamicException;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -179,7 +180,7 @@ public abstract class AbstractFunction implements IFunction {
               String.format("The type '%s' is not a subtype of '%s'", itemClass.getName(), argumentClass.getName()));
         }
       }
-      
+
       retval.add(parameter);
     }
     return retval;

@@ -34,9 +34,9 @@ public class DefaultJsonParsingContext
     extends AbstractParsingContext<JsonParser, JsonProblemHandler>
     implements JsonParsingContext {
 
-//  public DefaultJsonParsingContext(JsonParser parser) {
-//    this(parser, new DefaultJsonProblemHandler(), false);
-//  }
+  // public DefaultJsonParsingContext(JsonParser parser) {
+  // this(parser, new DefaultJsonProblemHandler(), false);
+  // }
 
   public DefaultJsonParsingContext(JsonParser parser,
       JsonProblemHandler problemHandler, boolean validating) {

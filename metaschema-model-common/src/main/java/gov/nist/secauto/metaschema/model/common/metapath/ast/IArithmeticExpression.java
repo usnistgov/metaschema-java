@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
 public interface IArithmeticExpression<RESULT_TYPE extends INumericItem> extends IExpression<RESULT_TYPE> {
 }

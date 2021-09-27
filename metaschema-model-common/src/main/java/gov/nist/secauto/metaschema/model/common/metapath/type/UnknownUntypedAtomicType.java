@@ -23,11 +23,12 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.AbstractUntypedAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IUntypedAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.AbstractUntypedAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
 
 public class UnknownUntypedAtomicType implements IUntypedAtomicType {
   private final DataTypes dataType;
@@ -47,7 +48,8 @@ public class UnknownUntypedAtomicType implements IUntypedAtomicType {
     return new UnknownUntypedAtomicItem(item);
   }
 
-  public class UnknownUntypedAtomicItem extends AbstractUntypedAtomicItem<Object> {
+  public class UnknownUntypedAtomicItem
+      extends AbstractUntypedAtomicItem<Object> {
 
     public UnknownUntypedAtomicItem(Object value) {
       super(value);

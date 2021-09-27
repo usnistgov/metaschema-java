@@ -29,11 +29,12 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 
-class AssemblyPathSegmentImpl extends AbstractModelPositionalPathSegment<IAssemblyInstance>
+class AssemblyPathSegmentImpl
+    extends AbstractModelPositionalPathSegment<IAssemblyInstance>
     implements IAssemblyPathSegment {
 
   public AssemblyPathSegmentImpl(IAssemblyPathSegment parent, IAssemblyInstance instance, int position) {
-    super(parent,instance, position);
+    super(parent, instance, position);
   }
 
   @Override
@@ -43,6 +44,6 @@ class AssemblyPathSegmentImpl extends AbstractModelPositionalPathSegment<IAssemb
 
   @Override
   public IAssemblyPathSegment getParent() {
-    return (IAssemblyPathSegment)super.getParent();
+    return (IAssemblyPathSegment) super.getParent();
   }
 }

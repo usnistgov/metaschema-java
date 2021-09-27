@@ -27,12 +27,13 @@
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringLiteral extends AbstractLiteralExpression<IStringItem, String> {
+public class StringLiteral
+    extends AbstractLiteralExpression<IStringItem, String> {
   private static final Pattern pattern = Pattern.compile("^'(.*)'$|^\"(.*)\"$");
 
   public StringLiteral(String value) {

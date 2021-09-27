@@ -37,7 +37,8 @@ public class RootDoubleSlashPath
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends INodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+  public <CONTEXT> ISequence<? extends INodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
+      CONTEXT context) {
     return visitor.visitRootDoubleSlashPath(this, context);
   }
 

@@ -31,7 +31,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import java.io.IOException;
 import java.math.BigInteger;
 
-public class AbstractIntegerAdapter extends AbstractJavaTypeAdapter<BigInteger> {
+public class AbstractIntegerAdapter
+    extends AbstractJavaTypeAdapter<BigInteger> {
 
   protected AbstractIntegerAdapter() {
     super(BigInteger.class);

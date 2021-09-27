@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-public class DataTypeException extends IllegalArgumentException {
+public class DataTypeException
+    extends IllegalArgumentException {
 
   /**
    * the serial version UID.
@@ -47,8 +48,9 @@ public class DataTypeException extends IllegalArgumentException {
   public DataTypeException(String message, Throwable cause) {
     super(message, cause);
   }
-//
-//  public DataTypeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-//    super(message, cause, enableSuppression, writableStackTrace);
-//  }
+  //
+  // public DataTypeException(String message, Throwable cause, boolean enableSuppression, boolean
+  // writableStackTrace) {
+  // super(message, cause, enableSuppression, writableStackTrace);
+  // }
 }

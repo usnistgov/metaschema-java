@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 class FlagPathSegmentImpl implements IFlagPathSegment {
   private final IFlagInstance instance;
   private final IModelPositionalPathSegment parent;
-  
+
   public FlagPathSegmentImpl(IModelPositionalPathSegment parent, IFlagInstance instance) {
     Objects.requireNonNull(instance, "instance");
     this.instance = instance;

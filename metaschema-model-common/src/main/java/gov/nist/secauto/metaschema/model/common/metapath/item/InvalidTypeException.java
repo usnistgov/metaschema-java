@@ -26,9 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
-
-public class InvalidTypeException extends MetapathException {
+public class InvalidTypeException
+    extends MetapathException {
 
   /**
    * the serial version UID.

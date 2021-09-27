@@ -26,63 +26,50 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IIntegerItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IStringItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.ItemFactory;
-
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.MathContext;
-import java.util.stream.Stream;
-
 class CastFunctionsTest {
 
-//
-//  private static IDecimalItem decimal(String value) {
-//    return ItemFactory.instance().newDecimalItem(new BigDecimal(value, MathContext.DECIMAL64));
-//  }
-//
-//  private static IDecimalItem decimal(double value) {
-//    return ItemFactory.instance().newDecimalItem(new BigDecimal(value, MathContext.DECIMAL64));
-//  }
-//
-//  private static IIntegerItem integer(int value) {
-//    return ItemFactory.instance().newIntegerItem(BigInteger.valueOf(value));
-//  }
-//  private static IStringItem string(String value) {
-//    return ItemFactory.instance().newDecimalItem(new BigDecimal(value, MathContext.DECIMAL64));
-//  }
-//  private static IAnyUriItem uri(String value) {
-//    return ItemFactory.instance().newDecimalItem(new BigDecimal(value, MathContext.DECIMAL64));
-//  }
-//
-//  private static Stream<Arguments> provideValuesForString() {
-//    return Stream.of(
-//        Arguments.of(string("test"), "test"),
-//        Arguments.of(uri("http://test.org/test"), "http://test.org/test")
-//        );
-//
-//  @ParameterizedTest
-//  @MethodSource("provideValuesForString")
-//  void testIntegerDivide(INumericItem dividend, INumericItem divisor, IIntegerItem expected) {
-//    INumericItem result = Functions.opNumericIntegerDivide(dividend, divisor);
-//    assertEquals(expected, result);
-//  }
-//
-//  private static Stream<Arguments> provideValuesForDecimal() {
-//    return Stream.of(Arguments.of(integer(10), integer(3), integer(3)),
-//        Arguments.of(integer(3), integer(-2), integer(-1)), Arguments.of(integer(-3), integer(2), integer(-1)),
-//        Arguments.of(integer(-3), integer(-2), integer(1)), Arguments.of(decimal("9.0"), integer(3), integer(3)),
-//        Arguments.of(decimal("-3.5"), integer(3), integer(-1)), Arguments.of(decimal("3.0"), integer(4), integer(0)),
-//        Arguments.of(decimal("3.1E1"), integer(6), integer(5)), Arguments.of(decimal("3.1E1"), integer(7), integer(4)));
-//  }
+  //
+  // private static IDecimalItem decimal(String value) {
+  // return ItemFactory.instance().newDecimalItem(new BigDecimal(value, MathContext.DECIMAL64));
+  // }
+  //
+  // private static IDecimalItem decimal(double value) {
+  // return ItemFactory.instance().newDecimalItem(new BigDecimal(value, MathContext.DECIMAL64));
+  // }
+  //
+  // private static IIntegerItem integer(int value) {
+  // return ItemFactory.instance().newIntegerItem(BigInteger.valueOf(value));
+  // }
+  // private static IStringItem string(String value) {
+  // return ItemFactory.instance().newDecimalItem(new BigDecimal(value, MathContext.DECIMAL64));
+  // }
+  // private static IAnyUriItem uri(String value) {
+  // return ItemFactory.instance().newDecimalItem(new BigDecimal(value, MathContext.DECIMAL64));
+  // }
+  //
+  // private static Stream<Arguments> provideValuesForString() {
+  // return Stream.of(
+  // Arguments.of(string("test"), "test"),
+  // Arguments.of(uri("http://test.org/test"), "http://test.org/test")
+  // );
+  //
+  // @ParameterizedTest
+  // @MethodSource("provideValuesForString")
+  // void testIntegerDivide(INumericItem dividend, INumericItem divisor, IIntegerItem expected) {
+  // INumericItem result = Functions.opNumericIntegerDivide(dividend, divisor);
+  // assertEquals(expected, result);
+  // }
+  //
+  // private static Stream<Arguments> provideValuesForDecimal() {
+  // return Stream.of(Arguments.of(integer(10), integer(3), integer(3)),
+  // Arguments.of(integer(3), integer(-2), integer(-1)), Arguments.of(integer(-3), integer(2),
+  // integer(-1)),
+  // Arguments.of(integer(-3), integer(-2), integer(1)), Arguments.of(decimal("9.0"), integer(3),
+  // integer(3)),
+  // Arguments.of(decimal("-3.5"), integer(3), integer(-1)), Arguments.of(decimal("3.0"), integer(4),
+  // integer(0)),
+  // Arguments.of(decimal("3.1E1"), integer(6), integer(5)), Arguments.of(decimal("3.1E1"),
+  // integer(7), integer(4)));
+  // }
 
 }

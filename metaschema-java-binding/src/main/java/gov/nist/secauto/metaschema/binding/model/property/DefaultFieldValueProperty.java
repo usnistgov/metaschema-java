@@ -52,9 +52,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
-public class DefaultFieldValueProperty
-    extends AbstractProperty<FieldClassBinding>
-    implements FieldValueProperty {
+public class DefaultFieldValueProperty extends AbstractProperty<FieldClassBinding> implements FieldValueProperty {
   private static final Logger logger = LogManager.getLogger(DefaultFieldValueProperty.class);
 
   private final FieldValue fieldValue;
@@ -65,7 +63,6 @@ public class DefaultFieldValueProperty
     this.fieldValue = field.getAnnotation(FieldValue.class);
     this.javaTypeAdapter = fieldClassBinding.getBindingContext().getJavaTypeAdapterInstance(fieldValue.typeAdapter());
   }
-
 
   protected FieldValue getFieldValueAnnotation() {
     return fieldValue;
@@ -86,44 +83,8 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public Object read(XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
-    return readInternal(context);
-  }
-
-  @Override
-  public boolean read(Object parentInstance, StartElement start, XmlParsingContext context)
-      throws IOException, XMLStreamException, BindingException {
-    Object value = readInternal(context);
-    setValue(parentInstance, value);
-    return true;
-  }
-
-  protected Object readInternal(XmlParsingContext context) throws IOException {
-    // parse the value
-    Object retval = getJavaTypeAdapter().parse(context.getReader());
-
-    // validate the flag value
-    if (context.isValidating()) {
-      validateValue(retval, context);
-    }
-    return retval;
-  }
-
-  public boolean isNextProperty(JsonParsingContext context) throws IOException {
-    JsonParser parser = context.getReader();
-
-    // the parser's current token should be the JSON field name
-    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
-
-    boolean handled = false;
-    FlagProperty jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
-    if (jsonValueKey != null) {
-      // assume this is the JSON value key case
-      handled = true;
-    } else {
-      handled = getJsonValueKeyName().equals(parser.currentName());
-    }
-    return handled;
+  public PropertyCollector newPropertyCollector() {
+    return new SingletonPropertyCollector();
   }
 
   @Override
@@ -141,11 +102,6 @@ public class DefaultFieldValueProperty
       retval = readInternal(context);
     }
     return retval;
-  }
-
-  protected Object readInternal(JsonParsingContext context) throws IOException {
-    // parse the value
-    return getJavaTypeAdapter().parse(context.getReader());
   }
 
   @Override
@@ -172,13 +128,54 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public PropertyCollector newPropertyCollector() {
-    return new SingletonPropertyCollector();
+  public Object read(XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+    return readInternal(context);
+  }
+
+  @Override
+  public boolean read(Object parentInstance, StartElement start, XmlParsingContext context)
+      throws IOException, XMLStreamException, BindingException {
+    Object value = readInternal(context);
+    setValue(parentInstance, value);
+    return true;
   }
 
   @Override
   public Object readValue(Object parentInstance, JsonParsingContext context) throws IOException, BindingException {
     return readInternal(context);
+  }
+
+  public boolean isNextProperty(JsonParsingContext context) throws IOException {
+    JsonParser parser = context.getReader();
+
+    // the parser's current token should be the JSON field name
+    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
+
+    boolean handled = false;
+    FlagProperty jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
+    if (jsonValueKey != null) {
+      // assume this is the JSON value key case
+      handled = true;
+    } else {
+      handled = getJsonValueKeyName().equals(parser.currentName());
+    }
+    return handled;
+  }
+
+  protected Object readInternal(JsonParsingContext context) throws IOException {
+    // parse the value
+    return getJavaTypeAdapter().parse(context.getReader());
+  }
+
+  protected Object readInternal(XmlParsingContext context) throws IOException {
+    // parse the value
+    Object retval = getJavaTypeAdapter().parse(context.getReader());
+
+    // validate the flag value
+    if (context.isValidating()) {
+      validateValue(retval, context);
+    }
+    return retval;
   }
 
   @Override

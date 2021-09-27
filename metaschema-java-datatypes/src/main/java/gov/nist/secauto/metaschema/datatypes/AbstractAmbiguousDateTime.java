@@ -30,8 +30,8 @@ import java.time.ZonedDateTime;
 
 /**
  * OSCAL has a need to represent dates and times that allow for an ambiguous timezone. This class
- * wraps a ZonedDateTime object and tracks if a timezone was found when parsing, which can be used to
- * ensure that the assumed timezone is not written back out.
+ * wraps a ZonedDateTime object and tracks if a timezone was found when parsing, which can be used
+ * to ensure that the assumed timezone is not written back out.
  */
 public abstract class AbstractAmbiguousDateTime<TYPE extends AbstractAmbiguousDateTime<TYPE>>
     extends AbstractDatatype<TYPE, ZonedDateTime> {

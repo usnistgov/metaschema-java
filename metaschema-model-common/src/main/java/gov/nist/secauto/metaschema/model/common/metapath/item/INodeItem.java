@@ -29,8 +29,6 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.format.FormatterFactory;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 
 public interface INodeItem extends IPathItem, INodeContext {
 

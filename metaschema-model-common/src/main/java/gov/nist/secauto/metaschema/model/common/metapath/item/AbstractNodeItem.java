@@ -30,13 +30,13 @@ import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IValuedDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 import java.util.Objects;
 
 public abstract class AbstractNodeItem<SEGMENT extends IPathSegment, PARENT extends IModelNodeItem>
-    extends AbstractPathItem<SEGMENT> implements INodeItem {
+    extends AbstractPathItem<SEGMENT>
+    implements INodeItem {
   /**
    * The current node.
    */

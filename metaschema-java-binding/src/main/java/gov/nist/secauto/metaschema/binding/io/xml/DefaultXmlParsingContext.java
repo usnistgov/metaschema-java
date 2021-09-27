@@ -34,9 +34,9 @@ public class DefaultXmlParsingContext
     extends AbstractParsingContext<XMLEventReader2, XmlProblemHandler>
     implements XmlParsingContext {
 
-//  public DefaultXmlParsingContext(XMLEventReader2 eventReader) {
-//    this(eventReader, new DefaultXmlProblemHandler());
-//  }
+  // public DefaultXmlParsingContext(XMLEventReader2 eventReader) {
+  // this(eventReader, new DefaultXmlProblemHandler());
+  // }
 
   public DefaultXmlParsingContext(XMLEventReader2 eventReader,
       XmlProblemHandler problemHandler, boolean validating) {

@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 import java.util.Collections;
 import java.util.List;

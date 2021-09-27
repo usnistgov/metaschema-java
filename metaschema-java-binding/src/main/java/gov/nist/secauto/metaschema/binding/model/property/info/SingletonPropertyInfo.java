@@ -49,7 +49,9 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
-public class SingletonPropertyInfo extends AbstractModelPropertyInfo<Type> implements ModelPropertyInfo {
+public class SingletonPropertyInfo
+    extends AbstractModelPropertyInfo<Type>
+    implements ModelPropertyInfo {
 
   public SingletonPropertyInfo(NamedModelProperty property) {
     super(property);

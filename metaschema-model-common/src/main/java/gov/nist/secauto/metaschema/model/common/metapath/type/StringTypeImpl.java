@@ -23,10 +23,11 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 class StringTypeImpl implements IStringType {
 
@@ -40,7 +41,7 @@ class StringTypeImpl implements IStringType {
 
   @Override
   public IStringItem newItem(Object value) {
-    String item = (String)getDataType().getJavaTypeAdapter().asString(value);
+    String item = (String) getDataType().getJavaTypeAdapter().asString(value);
     return IStringItem.valueOf(item);
   }
 }

@@ -45,7 +45,8 @@ public class RootSlashOnlyPath
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends INodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+  public <CONTEXT> ISequence<? extends INodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
+      CONTEXT context) {
     return visitor.visitRootSlashOnlyPath(this, context);
   }
 

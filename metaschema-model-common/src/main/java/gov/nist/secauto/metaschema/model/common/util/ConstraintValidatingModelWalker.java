@@ -47,8 +47,8 @@ import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.ConstraintVisitingModelWalker;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.DefaultMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,7 +58,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-public class ConstraintValidatingModelWalker extends ConstraintVisitingModelWalker<ConstraintValidatingModelWalker> {
+public class ConstraintValidatingModelWalker
+    extends ConstraintVisitingModelWalker<ConstraintValidatingModelWalker> {
   private static final Logger logger = LogManager.getLogger(ConstraintValidatingModelWalker.class);
 
   private final Set<IAssemblyDefinition> seenAssemblies = new HashSet<>();

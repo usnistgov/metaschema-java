@@ -33,7 +33,8 @@ import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-public class DecimalAdapter extends AbstractJavaTypeAdapter<BigDecimal> {
+public class DecimalAdapter
+    extends AbstractJavaTypeAdapter<BigDecimal> {
 
   public DecimalAdapter() {
     super(BigDecimal.class);

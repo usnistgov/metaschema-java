@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
 public interface ISequenceType {
   public static final ISequenceType EMPTY = new ISequenceType() {

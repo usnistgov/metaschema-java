@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class StaticContext {
-//  private final List<? extends INamedDefinition> knownDefinitions;
+  // private final List<? extends INamedDefinition> knownDefinitions;
   private final IItemType contextItemType;
   private final Map<String, IItemType> uriToKnownDocumentTypeMap;
   private URI baseUri;

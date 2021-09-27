@@ -138,11 +138,11 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
   // return new TerminalNodeItem(item, this.newPathSegment(1), precedingPath);
   // }
 
-//  @Override
-//  public Stream<? extends INodeItem> getNodeItemsFromParentInstance(IAssemblyNodeItem parentItem, Object parentValue) {
-//    return newNodeItems(parentItem, getPropertyInfo().getItemsFromParentInstance(parentValue));
-//  }
-
+  // @Override
+  // public Stream<? extends INodeItem> getNodeItemsFromParentInstance(IAssemblyNodeItem parentItem,
+  // Object parentValue) {
+  // return newNodeItems(parentItem, getPropertyInfo().getItemsFromParentInstance(parentValue));
+  // }
 
   /**
    * Gets information about the bound property.
@@ -230,6 +230,29 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
     return handled;
   }
 
+  @Override
+  protected Object readInternal(Object parentInstance, JsonParsingContext context)
+      throws IOException, BindingException {
+    PathBuilder pathBuilder = context.getPathBuilder();
+    pathBuilder.pushInstance(this);
+
+    JsonParser parser = context.getReader();
+    // advance past the property name
+    parser.nextFieldName();
+    // parse the value
+    PropertyCollector collector = newPropertyCollector();
+    ModelPropertyInfo info = getPropertyInfo();
+    info.readValue(collector, parentInstance, context);
+    Object retval = collector.getValue();
+
+    // validate the flag value
+    if (context.isValidating()) {
+      validateValue(retval, context);
+    }
+    pathBuilder.popInstance();
+    return retval;
+  }
+
   protected Object readInternal(Object parentInstance, StartElement start, XmlParsingContext context)
       throws IOException, XMLStreamException, BindingException {
     XMLEventReader2 eventReader = context.getReader();
@@ -279,29 +302,6 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
   public List<Object> readItem(Object parentInstance, JsonParsingContext context) throws BindingException, IOException {
     DataTypeHandler supplier = getDataTypeHandler();
     return supplier.get(parentInstance, context);
-  }
-
-  @Override
-  protected Object readInternal(Object parentInstance, JsonParsingContext context)
-      throws IOException, BindingException {
-    PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushInstance(this);
-
-    JsonParser parser = context.getReader();
-    // advance past the property name
-    parser.nextFieldName();
-    // parse the value
-    PropertyCollector collector = newPropertyCollector();
-    ModelPropertyInfo info = getPropertyInfo();
-    info.readValue(collector, parentInstance, context);
-    Object retval = collector.getValue();
-
-    // validate the flag value
-    if (context.isValidating()) {
-      validateValue(retval, context);
-    }
-    pathBuilder.popInstance();
-    return retval;
   }
 
   @Override

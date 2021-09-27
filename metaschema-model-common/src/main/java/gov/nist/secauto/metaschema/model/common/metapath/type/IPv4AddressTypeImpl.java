@@ -23,10 +23,11 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IIPv4AddressItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIPv4AddressItem;
 
 import inet.ipaddr.ipv4.IPv4Address;
 
@@ -39,7 +40,7 @@ class IPv4AddressTypeImpl implements IIPv4AddressType {
 
   @Override
   public IIPv4AddressItem newItem(Object value) {
-    IPv4Address item = (IPv4Address)getDataType().getJavaTypeAdapter().toValue(value);
+    IPv4Address item = (IPv4Address) getDataType().getJavaTypeAdapter().toValue(value);
     return IIPv4AddressItem.valueOf(item);
   }
 

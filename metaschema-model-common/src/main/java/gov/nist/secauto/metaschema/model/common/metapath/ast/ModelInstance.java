@@ -42,7 +42,8 @@ public class ModelInstance
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IModelNodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+  public <CONTEXT> ISequence<? extends IModelNodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
+      CONTEXT context) {
     return visitor.visitModelInstance(this, context);
   }
 

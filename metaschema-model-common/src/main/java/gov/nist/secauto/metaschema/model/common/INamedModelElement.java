@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common;
 
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 
 import javax.xml.namespace.QName;
 

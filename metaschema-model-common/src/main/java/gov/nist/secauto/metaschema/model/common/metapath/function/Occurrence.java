@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import java.util.Objects;
@@ -31,19 +32,19 @@ public enum Occurrence {
   /**
    * The occurrence indicator {@code "?"}.
    */
-  ZERO_OR_ONE("?",true),
+  ZERO_OR_ONE("?", true),
   /**
    * No occurrence indicator.
    */
-  ONE("",false),
+  ONE("", false),
   /**
    * The occurrence indicator {@code "*"}.
    */
-  ZERO_OR_MORE("*",true),
+  ZERO_OR_MORE("*", true),
   /**
    * The occurrence indicator {@code "+"}.
    */
-  ONE_OR_MORE("+",false);
+  ONE_OR_MORE("+", false);
 
   private final String indicator;
   private final boolean optional;

@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.constraint;
 
 import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
@@ -32,12 +33,8 @@ import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFieldPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
-
-import java.util.List;
 
 public class NoOpConstraintValidator implements ConstraintValidator {
-
 
   @Override
   public void validateItem(AssemblyProperty property, IAssemblyPathSegment pathSegment, Object item,
@@ -55,11 +52,11 @@ public class NoOpConstraintValidator implements ConstraintValidator {
   }
 
   @Override
-  public void validateValue(AssemblyProperty property, Object value, ParsingContext<?,?> context) {
+  public void validateValue(AssemblyProperty property, Object value, ParsingContext<?, ?> context) {
   }
 
   @Override
-  public void validateValue(FieldProperty property, Object value, ParsingContext<?,?> context) {
+  public void validateValue(FieldProperty property, Object value, ParsingContext<?, ?> context) {
   }
 
   @Override

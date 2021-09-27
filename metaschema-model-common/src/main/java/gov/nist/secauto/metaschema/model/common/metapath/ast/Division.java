@@ -26,12 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
 
-import java.util.List;
-
-public class Division extends AbstractArithmeticExpr<INumericItem> {
+public class Division
+    extends AbstractArithmeticExpr<INumericItem> {
 
   public Division(IExpression<?> left, IExpression<?> right) {
     super(left, right, INumericItem.class);

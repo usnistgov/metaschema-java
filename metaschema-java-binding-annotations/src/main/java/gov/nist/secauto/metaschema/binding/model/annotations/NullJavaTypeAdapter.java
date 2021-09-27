@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.DataTypeException;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
 
 /**
  * Used to mark a Java type that has no configured adapter.

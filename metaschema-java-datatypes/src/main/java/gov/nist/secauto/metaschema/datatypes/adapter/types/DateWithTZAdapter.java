@@ -31,7 +31,8 @@ import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 
-public class DateWithTZAdapter extends AbstractJavaTypeAdapter<ZonedDateTime> {
+public class DateWithTZAdapter
+    extends AbstractJavaTypeAdapter<ZonedDateTime> {
 
   public DateWithTZAdapter() {
     super(ZonedDateTime.class);

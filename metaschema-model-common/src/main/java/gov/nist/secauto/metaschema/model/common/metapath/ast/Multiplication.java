@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
 
 public class Multiplication
     extends AbstractArithmeticExpr<INumericItem> {
@@ -42,7 +42,8 @@ public class Multiplication
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends INumericItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+  public <CONTEXT> ISequence<? extends INumericItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
+      CONTEXT context) {
     return visitor.visitMultiplication(this, context);
   }
 

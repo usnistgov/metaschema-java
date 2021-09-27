@@ -26,15 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IIntegerItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 public interface ExpressionEvaluationVisitor<CONTEXT> {
 
@@ -74,7 +74,8 @@ public interface ExpressionEvaluationVisitor<CONTEXT> {
 
   ISequence<?> visitParenthesizedExpression(ParenthesizedExpression expr, CONTEXT context);
 
-  ISequence<? extends INodeItem> visitRelativeDoubleSlashPath(RelativeDoubleSlashPath relativeDoubleSlashPath, CONTEXT context);
+  ISequence<? extends INodeItem> visitRelativeDoubleSlashPath(RelativeDoubleSlashPath relativeDoubleSlashPath,
+      CONTEXT context);
 
   ISequence<? extends INodeItem> visitRelativeSlashPath(RelativeSlashPath relativeSlashPath, CONTEXT context);
 

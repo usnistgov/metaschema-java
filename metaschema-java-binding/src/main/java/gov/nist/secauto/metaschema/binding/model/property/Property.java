@@ -64,7 +64,7 @@ import javax.xml.stream.events.XMLEvent;
  * </ul>
  */
 public interface Property extends IInstance {
-  
+
   /**
    * Get the {@link ClassBinding} for the Java class within which this property exists.
    * 
@@ -224,7 +224,7 @@ public interface Property extends IInstance {
   void write(Object parentInstance, JsonWritingContext context) throws IOException;
 
   /**
-   * Validate the value(s) for this property
+   * Validate the value(s) for this property.
    * 
    * @param value
    *          the properties value instance
@@ -232,5 +232,5 @@ public interface Property extends IInstance {
    *          the parsing context
    */
   void validateValue(Object value, ParsingContext<?, ?> context);
-  
+
 }

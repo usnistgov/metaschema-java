@@ -26,12 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 
 import java.util.List;
 
-public class Union extends AbstractNAryExpression<IItem> implements IExpression<IItem> {
+public class Union
+    extends AbstractNAryExpression<IItem>
+    implements IExpression<IItem> {
 
   private final Class<? extends IItem> staticResultType;
 

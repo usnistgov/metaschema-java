@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.metapath.type.NodeItemFactory;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.type.NodeItemFactory;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
@@ -130,10 +130,10 @@ public abstract class AbstractAssemblyProperty
     context.getConstraintValidator().validateValue(this, value, context);
   }
 
-
   @Override
   public void validateItem(Object value, ParsingContext<?, ?> context) {
-    context.getConstraintValidator().validateItem(this, context.getPathBuilder().getContextPathSegment(), value, context);
+    context.getConstraintValidator().validateItem(this, context.getPathBuilder().getContextPathSegment(), value,
+        context);
   }
 
   @Override
@@ -158,7 +158,8 @@ public abstract class AbstractAssemblyProperty
     return getNodeItemsForValue(parentPathSegment, value, null);
   }
 
-  protected Stream<IAssemblyNodeItem> getNodeItemsForValue(IAssemblyPathSegment parentPathSegment, Object value, IAssemblyNodeItem parentItem) {
+  protected Stream<IAssemblyNodeItem> getNodeItemsForValue(IAssemblyPathSegment parentPathSegment, Object value,
+      IAssemblyNodeItem parentItem) {
     AtomicInteger index = new AtomicInteger();
     return getPropertyInfo().getItemsFromValue(value).map(item -> {
       IAssemblyPathSegment segment = newPathSegment(parentPathSegment, index.incrementAndGet());

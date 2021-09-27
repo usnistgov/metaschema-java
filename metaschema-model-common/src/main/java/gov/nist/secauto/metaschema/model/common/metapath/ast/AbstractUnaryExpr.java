@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public abstract class AbstractUnaryExpr<RESULT_TYPE extends IItem> implements IE
   public IExpression<?> getChild() {
     return expr;
   }
-  
+
   @Override
   public List<? extends IExpression<?>> getChildren() {
     return List.of(expr);

@@ -59,21 +59,21 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.StringConcat;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.StringLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
-import gov.nist.secauto.metaschema.model.common.metapath.function.Functions;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.function.impl.Functions;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.InvalidTypeException;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IIntegerItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IStringItem;
 
 import java.math.BigInteger;
 import java.util.Collection;
@@ -84,12 +84,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluationVisitor<INodeContext> {
+public class MetaschemaPathEvaluationVisitor
+    extends AbstractExpressionEvaluationVisitor<INodeContext> {
 
-  
   public <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> visit(IExpression<?> expr, INodeContext context) {
     @SuppressWarnings("unchecked")
-    ISequence<ITEM_TYPE> retval = (ISequence<ITEM_TYPE>)expr.accept(this, context);
+    ISequence<ITEM_TYPE> retval = (ISequence<ITEM_TYPE>) expr.accept(this, context);
     return retval;
   }
 
@@ -255,7 +255,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
   public ISequence<? extends INodeItem> visitRelativeSlashPath(RelativeSlashPath expr, INodeContext context) {
     IExpression<?> left = expr.getLeft();
     @SuppressWarnings("unchecked")
-    ISequence<? extends INodeItem> leftResult = (ISequence<? extends INodeItem>)left.accept(this, context);
+    ISequence<? extends INodeItem> leftResult = (ISequence<? extends INodeItem>) left.accept(this, context);
     IExpression<?> right = expr.getRight();
 
     List<INodeItem> result = new LinkedList<INodeItem>();
@@ -264,7 +264,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
 
       // evaluate the right path in the context of the left
       @SuppressWarnings("unchecked")
-      ISequence<? extends INodeItem> otherResult = (ISequence<? extends INodeItem>)right.accept(this, node);
+      ISequence<? extends INodeItem> otherResult = (ISequence<? extends INodeItem>) right.accept(this, node);
       otherResult.asStream().forEachOrdered(otherItem -> {
         result.add(otherItem);
       });
@@ -275,7 +275,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
   @Override
   public ISequence<? extends INodeItem> visitStep(Step expr, INodeContext context) {
     @SuppressWarnings("unchecked")
-    ISequence<? extends INodeItem> retval = (ISequence<? extends INodeItem>)expr.getStep().accept(this, context);
+    ISequence<? extends INodeItem> retval = (ISequence<? extends INodeItem>) expr.getStep().accept(this, context);
 
     // evaluate the predicates for this step
     AtomicInteger index = new AtomicInteger();
@@ -325,10 +325,11 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
   }
 
   @Override
-  public ISequence<? extends INodeItem> visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr, INodeContext context) {
+  public ISequence<? extends INodeItem> visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr,
+      INodeContext context) {
     IExpression<?> left = expr.getLeft();
     @SuppressWarnings("unchecked")
-    ISequence<? extends INodeItem> leftResult = (ISequence<? extends INodeItem>)left.accept(this, context);
+    ISequence<? extends INodeItem> leftResult = (ISequence<? extends INodeItem>) left.accept(this, context);
 
     Stream<? extends INodeItem> result = leftResult.asStream().flatMap(item -> {
       // evaluate the right path in the context of the left

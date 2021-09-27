@@ -29,20 +29,20 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
-public class Flag
-    extends AbstractNamedInstanceExpression<IFlagNodeItem> {
+public class Flag extends AbstractNamedInstanceExpression<IFlagNodeItem> {
   public Flag(IExpression<?> node) {
     super(node);
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IFlagNodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitFlag(this, context);
+  public Class<IFlagNodeItem> getBaseResultType() {
+    return IFlagNodeItem.class;
   }
 
   @Override
-  public Class<IFlagNodeItem> getBaseResultType() {
-    return IFlagNodeItem.class;
+  public <CONTEXT> ISequence<? extends IFlagNodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
+      CONTEXT context) {
+    return visitor.visitFlag(this, context);
   }
 
   @Override

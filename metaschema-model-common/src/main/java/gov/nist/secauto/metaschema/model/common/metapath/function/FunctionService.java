@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.stream.Stream;
@@ -46,7 +45,7 @@ public class FunctionService {
   }
 
   private final ServiceLoader<IFunctionLibrary> loader;
-  private LoadedFunctionsLibrary library; 
+  private LoadedFunctionsLibrary library;
 
   public FunctionService() {
     this.loader = ServiceLoader.load(IFunctionLibrary.class);
@@ -73,11 +72,12 @@ public class FunctionService {
   }
 
   public synchronized IFunction getFunction(String name, List<IExpression<?>> args) {
-//    Stream<Provider<IFunctionLibrary>> providerStream = getLoader().stream();
-//    Stream<IFunctionLibrary> functionLibraryStream = providerStream.map(Provider<IFunctionLibrary>::get);
-//    Optional<IFunctionLibrary> functionLibrary
-//        = functionLibraryStream.filter(x -> x.hasFunction(name, args)).findFirst();
-//    return functionLibrary.map(x -> x.getFunction(name, args)).orElse(null);
+    // Stream<Provider<IFunctionLibrary>> providerStream = getLoader().stream();
+    // Stream<IFunctionLibrary> functionLibraryStream =
+    // providerStream.map(Provider<IFunctionLibrary>::get);
+    // Optional<IFunctionLibrary> functionLibrary
+    // = functionLibraryStream.filter(x -> x.hasFunction(name, args)).findFirst();
+    // return functionLibrary.map(x -> x.getFunction(name, args)).orElse(null);
     return library.getFunction(name, args);
   }
 }

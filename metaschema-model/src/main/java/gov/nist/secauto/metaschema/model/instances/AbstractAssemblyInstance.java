@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.instances;
 
-import gov.nist.secauto.metaschema.model.common.metapath.format.FormatterFactory;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
 
 public abstract class AbstractAssemblyInstance<DEFINITION extends AssemblyDefinition>

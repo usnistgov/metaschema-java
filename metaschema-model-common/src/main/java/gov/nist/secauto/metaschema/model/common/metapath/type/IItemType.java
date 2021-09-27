@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
 public interface IItemType {
 

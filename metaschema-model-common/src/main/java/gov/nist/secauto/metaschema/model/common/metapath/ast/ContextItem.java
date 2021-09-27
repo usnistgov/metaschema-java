@@ -32,7 +32,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import java.util.Collections;
 import java.util.List;
 
-public class ContextItem extends AbstractPathExpression<INodeItem> {
+public class ContextItem
+    extends AbstractPathExpression<INodeItem> {
 
   private final Class<? extends INodeItem> staticResultType;
 

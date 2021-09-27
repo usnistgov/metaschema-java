@@ -27,9 +27,11 @@
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
-public class Name extends AbstractLiteralExpression<IStringItem, String> implements INameExpression<IStringItem> {
+public class Name
+    extends AbstractLiteralExpression<IStringItem, String>
+    implements INameExpression<IStringItem> {
   public Name(String value) {
     super(value);
   }

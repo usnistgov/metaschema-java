@@ -46,19 +46,17 @@ public class Base64Adapter
 
   @Override
   public ByteBuffer copy(ByteBuffer obj) {
-    final ByteBuffer clone = (obj.isDirect()) ?
-        ByteBuffer.allocateDirect(obj.capacity()) :
-        ByteBuffer.allocate(obj.capacity());
+    final ByteBuffer clone
+        = (obj.isDirect()) ? ByteBuffer.allocateDirect(obj.capacity()) : ByteBuffer.allocate(obj.capacity());
     final ByteBuffer readOnlyCopy = obj.asReadOnlyBuffer();
     readOnlyCopy.flip();
     clone.put(readOnlyCopy);
     return clone;
   }
 
-
   @Override
   public String asString(Object value) {
-    Base64.Encoder encoder =Base64.getEncoder();
-    return encoder.encodeToString(((ByteBuffer)value).array());
+    Base64.Encoder encoder = Base64.getEncoder();
+    return encoder.encodeToString(((ByteBuffer) value).array());
   }
 }

@@ -30,7 +30,8 @@ import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
 
 import java.net.URI;
 
-public class UriReferenceAdapter extends AbstractJavaTypeAdapter<URI> {
+public class UriReferenceAdapter
+    extends AbstractJavaTypeAdapter<URI> {
   public UriReferenceAdapter() {
     super(URI.class);
   }

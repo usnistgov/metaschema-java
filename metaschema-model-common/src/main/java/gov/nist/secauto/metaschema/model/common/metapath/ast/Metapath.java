@@ -26,13 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
 
 import java.util.List;
 
-public class Metapath extends AbstractNAryExpression<IItem> implements IExpression<IItem> {
+public class Metapath
+    extends AbstractNAryExpression<IItem>
+    implements IExpression<IItem> {
 
   private final Class<? extends INumericItem> staticResultType;
 

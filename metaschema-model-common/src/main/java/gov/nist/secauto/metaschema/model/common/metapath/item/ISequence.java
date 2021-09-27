@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +43,7 @@ public interface ISequence<ITEM_TYPE extends IItem> {
 
   @SuppressWarnings("unchecked")
   public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> empty() {
-    return (ISequence<ITEM_TYPE>)EMPTY;
+    return (ISequence<ITEM_TYPE>) EMPTY;
   }
 
   public static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of(ITEM_TYPE item) {

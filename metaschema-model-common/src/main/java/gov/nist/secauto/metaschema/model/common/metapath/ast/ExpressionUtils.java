@@ -23,9 +23,9 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +42,8 @@ public class ExpressionUtils {
       // no expressions, so use the base type
       retval = baseType;
     } else {
-      List<Class<?>> expressionClasses = expressions.stream().map(expr -> expr.getStaticResultType()).collect(Collectors.toList());
+      List<Class<?>> expressionClasses
+          = expressions.stream().map(expr -> expr.getStaticResultType()).collect(Collectors.toList());
 
       // check if the expression classes, are derived from the base type
       if (!checkDerivedFrom(baseType, expressionClasses)) {
@@ -59,11 +60,11 @@ public class ExpressionUtils {
     Class<? extends RESULT_TYPE> retval;
     if (expressionClasses.size() == 1) {
       @SuppressWarnings("unchecked")
-      Class<? extends RESULT_TYPE> result = (Class<? extends RESULT_TYPE>)expressionClasses.iterator().next();
+      Class<? extends RESULT_TYPE> result = (Class<? extends RESULT_TYPE>) expressionClasses.iterator().next();
       retval = result;
     } else {
       @SuppressWarnings("unchecked")
-      Class<? extends RESULT_TYPE> first = (Class<? extends RESULT_TYPE>)expressionClasses.iterator().next();
+      Class<? extends RESULT_TYPE> first = (Class<? extends RESULT_TYPE>) expressionClasses.iterator().next();
       if (first.equals(baseType)) {
         // the first type is the same as the base, which is the least common type
         retval = baseType;
@@ -86,5 +87,5 @@ public class ExpressionUtils {
     }
     return retval;
   }
-  
+
 }

@@ -38,7 +38,7 @@ public class UriAdapter
 
   @Override
   public URI parse(String value) throws IllegalArgumentException {
-      return URI.create(value);
+    return URI.create(value);
   }
 
   @Override

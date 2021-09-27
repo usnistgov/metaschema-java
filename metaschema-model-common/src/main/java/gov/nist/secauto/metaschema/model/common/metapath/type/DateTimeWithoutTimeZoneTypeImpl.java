@@ -23,11 +23,12 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.DateTime;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
 
 class DateTimeWithoutTimeZoneTypeImpl implements IDateTimeType {
 
@@ -38,7 +39,7 @@ class DateTimeWithoutTimeZoneTypeImpl implements IDateTimeType {
 
   @Override
   public IDateTimeItem newItem(Object value) {
-    DateTime item = (DateTime)getDataType().getJavaTypeAdapter().toValue(value);
+    DateTime item = (DateTime) getDataType().getJavaTypeAdapter().toValue(value);
     return IDateTimeItem.valueOf(item);
   }
 }

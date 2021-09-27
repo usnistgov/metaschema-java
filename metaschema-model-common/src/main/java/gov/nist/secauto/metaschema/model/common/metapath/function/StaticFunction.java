@@ -23,13 +23,16 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import java.util.List;
 
-public class StaticFunction extends AbstractFunction {
+public class StaticFunction
+    extends AbstractFunction {
 
-  protected StaticFunction(String name, List<IArgument> arguments, boolean unboundedArity, ISequenceType result, IFunctionHandler handler) {
+  protected StaticFunction(String name, List<IArgument> arguments, boolean unboundedArity, ISequenceType result,
+      IFunctionHandler handler) {
     super(name, arguments, unboundedArity, result, handler);
   }
 

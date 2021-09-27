@@ -23,11 +23,12 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IMarkupItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IMarkupItem;
 
 class MarkupMultiLineTypeImpl implements IMarkupType {
 
@@ -38,7 +39,7 @@ class MarkupMultiLineTypeImpl implements IMarkupType {
 
   @Override
   public IMarkupItem newItem(Object value) {
-    MarkupMultiline item = (MarkupMultiline)getDataType().getJavaTypeAdapter().toValue(value);
+    MarkupMultiline item = (MarkupMultiline) getDataType().getJavaTypeAdapter().toValue(value);
     return IMarkupItem.valueOf(item);
   }
 }

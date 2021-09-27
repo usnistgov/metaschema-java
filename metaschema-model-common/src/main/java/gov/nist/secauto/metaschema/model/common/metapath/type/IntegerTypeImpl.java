@@ -23,15 +23,12 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IIntegerItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
 class IntegerTypeImpl implements IIntegerType {
@@ -46,7 +43,7 @@ class IntegerTypeImpl implements IIntegerType {
 
   @Override
   public IIntegerItem newItem(Object value) {
-    BigInteger item = (BigInteger)getDataType().getJavaTypeAdapter().toValue(value);
+    BigInteger item = (BigInteger) getDataType().getJavaTypeAdapter().toValue(value);
     return IIntegerItem.valueOf(item);
   }
 }

@@ -29,8 +29,6 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 
-import java.util.stream.Stream;
-
 class RootAssemblyDefinitionPathSegmentImpl implements IAssemblyPathSegment, IRootAssemblyPathSegment {
   private final IAssemblyDefinition definition;
 

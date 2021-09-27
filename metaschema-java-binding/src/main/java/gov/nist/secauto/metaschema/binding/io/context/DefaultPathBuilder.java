@@ -72,7 +72,7 @@ public class DefaultPathBuilder implements PathBuilder {
   @SuppressWarnings("unchecked")
   @Override
   public <SEGMENT extends IPathSegment> SEGMENT getContextPathSegment() {
-    return (SEGMENT)pathStack.peekLast();
+    return (SEGMENT) pathStack.peekLast();
   }
 
   @Override

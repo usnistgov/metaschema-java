@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.datatypes.adapter;
 
-public abstract class AbstractStringJavaTypeAdapter extends AbstractJavaTypeAdapter<String> {
+public abstract class AbstractStringJavaTypeAdapter
+    extends AbstractJavaTypeAdapter<String> {
 
   protected AbstractStringJavaTypeAdapter() {
     super(String.class);

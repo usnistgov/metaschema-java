@@ -36,8 +36,8 @@ import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ASTPrinter;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.DefaultMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 import gov.nist.secauto.metaschema.model.common.util.ConstraintValidatingModelWalker;
 import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;
 
@@ -97,81 +97,84 @@ class JavaGeneratorTest {
       System.out.println(instance);
     }
   }
-//
-//  private void printDefinition(IDefinition definition, String padding) {
-//    if (definition instanceof IFlagDefinition) {
-//      printFlag((IFlagDefinition) definition, padding);
-//    } else if (definition instanceof IFieldDefinition) {
-//      printField((IFieldDefinition) definition, padding);
-//    } else if (definition instanceof IAssemblyDefinition) {
-//      printAssembly((IAssemblyDefinition) definition, padding);
-//    }
-//  }
-//
-//  private void printFlag(IFlagDefinition flag, String padding) {
-//    System.out.println(String.format("%sFlag Definition: %s", padding, flag.getName()));
-//    List<? extends IAllowedValuesConstraint> constraints;
-//    try {
-//      constraints = flag.getAllowedValuesContraints();
-//    } catch (Exception ex) {
-//      ex.printStackTrace();
-//      throw ex;
-//    }
-//
-//    printConstraints(constraints, padding);
-//  }
-//
-//  private void printField(IFieldDefinition field, String padding) {
-//    System.out.println(String.format("%sField Definition: %s", padding, field.getName()));
-//
-//    List<? extends IAllowedValuesConstraint> constraints;
-//    try {
-//      constraints = field.getAllowedValuesContraints();
-//    } catch (Exception ex) {
-//      ex.printStackTrace();
-//      throw ex;
-//    }
-//
-//    printConstraints(constraints, padding);
-//
-//    for (IFlagInstance flag : field.getFlagInstances().values()) {
-//      printFlag(flag.getDefinition(), padding + "  ");
-//    }
-//  }
-//
-//  private void printAssembly(IAssemblyDefinition assembly, String padding) {
-//    System.out.println(String.format("%sAssembly Definition: %s", padding, assembly.getName()));
-//
-//    List<? extends IAllowedValuesConstraint> constraints;
-//    try {
-//      constraints = assembly.getAllowedValuesContraints();
-//    } catch (Exception ex) {
-//      ex.printStackTrace();
-//      throw ex;
-//    }
-//
-//    printConstraints(constraints, padding);
-//
-//    for (IFlagInstance flag : assembly.getFlagInstances().values()) {
-//      printFlag(flag.getDefinition(), padding + "  ");
-//    }
-//
-//    for (IModelInstance instance : assembly.getNamedModelInstances().values()) {
-//      if (instance instanceof IFieldInstance) {
-//        printField(((IFieldInstance) instance).getDefinition(), padding + "  ");
-//      } else if (instance instanceof IAssemblyInstance) {
-//        // printAssembly(((IAssemblyInstance) instance).getDefinition(), padding + " ");
-//      }
-//    }
-//  }
-//
-//  private void printConstraints(List<? extends IAllowedValuesConstraint> constraints, String padding) {
-//    for (IAllowedValuesConstraint constraint : constraints) {
-//      System.out.println(String.format("%s  %s: %s", padding, constraint.getId(), constraint.getTarget().getPath()));
-//      for (IAllowedValue value : constraint.getAllowedValues().values()) {
-//        System.out
-//            .println(String.format("%s    %s: %s", padding, value.getValue(), value.getDescription().toMarkdown()));
-//      }
-//    }
-//  }
+  //
+  // private void printDefinition(IDefinition definition, String padding) {
+  // if (definition instanceof IFlagDefinition) {
+  // printFlag((IFlagDefinition) definition, padding);
+  // } else if (definition instanceof IFieldDefinition) {
+  // printField((IFieldDefinition) definition, padding);
+  // } else if (definition instanceof IAssemblyDefinition) {
+  // printAssembly((IAssemblyDefinition) definition, padding);
+  // }
+  // }
+  //
+  // private void printFlag(IFlagDefinition flag, String padding) {
+  // System.out.println(String.format("%sFlag Definition: %s", padding, flag.getName()));
+  // List<? extends IAllowedValuesConstraint> constraints;
+  // try {
+  // constraints = flag.getAllowedValuesContraints();
+  // } catch (Exception ex) {
+  // ex.printStackTrace();
+  // throw ex;
+  // }
+  //
+  // printConstraints(constraints, padding);
+  // }
+  //
+  // private void printField(IFieldDefinition field, String padding) {
+  // System.out.println(String.format("%sField Definition: %s", padding, field.getName()));
+  //
+  // List<? extends IAllowedValuesConstraint> constraints;
+  // try {
+  // constraints = field.getAllowedValuesContraints();
+  // } catch (Exception ex) {
+  // ex.printStackTrace();
+  // throw ex;
+  // }
+  //
+  // printConstraints(constraints, padding);
+  //
+  // for (IFlagInstance flag : field.getFlagInstances().values()) {
+  // printFlag(flag.getDefinition(), padding + " ");
+  // }
+  // }
+  //
+  // private void printAssembly(IAssemblyDefinition assembly, String padding) {
+  // System.out.println(String.format("%sAssembly Definition: %s", padding, assembly.getName()));
+  //
+  // List<? extends IAllowedValuesConstraint> constraints;
+  // try {
+  // constraints = assembly.getAllowedValuesContraints();
+  // } catch (Exception ex) {
+  // ex.printStackTrace();
+  // throw ex;
+  // }
+  //
+  // printConstraints(constraints, padding);
+  //
+  // for (IFlagInstance flag : assembly.getFlagInstances().values()) {
+  // printFlag(flag.getDefinition(), padding + " ");
+  // }
+  //
+  // for (IModelInstance instance : assembly.getNamedModelInstances().values()) {
+  // if (instance instanceof IFieldInstance) {
+  // printField(((IFieldInstance) instance).getDefinition(), padding + " ");
+  // } else if (instance instanceof IAssemblyInstance) {
+  // // printAssembly(((IAssemblyInstance) instance).getDefinition(), padding + " ");
+  // }
+  // }
+  // }
+  //
+  // private void printConstraints(List<? extends IAllowedValuesConstraint> constraints, String
+  // padding) {
+  // for (IAllowedValuesConstraint constraint : constraints) {
+  // System.out.println(String.format("%s %s: %s", padding, constraint.getId(),
+  // constraint.getTarget().getPath()));
+  // for (IAllowedValue value : constraint.getAllowedValues().values()) {
+  // System.out
+  // .println(String.format("%s %s: %s", padding, value.getValue(),
+  // value.getDescription().toMarkdown()));
+  // }
+  // }
+  // }
 }

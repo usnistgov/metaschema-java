@@ -26,12 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
 
 import java.util.List;
 
-public class Negate extends AbstractUnaryExpr<INumericItem> implements IArithmeticExpression<INumericItem> {
+public class Negate
+    extends AbstractUnaryExpr<INumericItem>
+    implements IArithmeticExpression<INumericItem> {
 
   private final Class<? extends INumericItem> staticResultType;
 

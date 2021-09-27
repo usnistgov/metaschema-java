@@ -26,10 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IIntegerItem;
 
-public class IntegerDivision extends AbstractArithmeticExpr<IIntegerItem> {
+public class IntegerDivision
+    extends AbstractArithmeticExpr<IIntegerItem> {
 
   public IntegerDivision(IExpression<?> left, IExpression<?> right) {
     super(left, right, IIntegerItem.class);

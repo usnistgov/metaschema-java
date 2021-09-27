@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.Date;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IDateItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
 
 class DateWithoutTimeZoneTypeImpl implements IDateType {
 
@@ -39,10 +39,10 @@ class DateWithoutTimeZoneTypeImpl implements IDateType {
   public DataTypes getDataType() {
     return DataTypes.DATE;
   }
-  
+
   @Override
   public IDateItem newItem(Object value) {
-    Date item = (Date)getDataType().getJavaTypeAdapter().toValue(value);
+    Date item = (Date) getDataType().getJavaTypeAdapter().toValue(value);
     return IDateItem.valueOf(item);
   }
 }

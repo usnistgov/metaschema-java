@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IBase64BinaryItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
 
 import java.nio.ByteBuffer;
 

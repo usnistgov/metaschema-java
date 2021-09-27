@@ -38,7 +38,8 @@ import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ModelWalker;
 
-public class ConstraintVisitingModelWalker<DATA> extends ModelWalker<DATA> {
+public class ConstraintVisitingModelWalker<DATA>
+    extends ModelWalker<DATA> {
 
   @Override
   protected boolean visit(IAssemblyDefinition def, DATA data) {

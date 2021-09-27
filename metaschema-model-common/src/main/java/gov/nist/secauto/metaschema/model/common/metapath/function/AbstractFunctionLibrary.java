@@ -29,11 +29,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Stream;
 
 public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
@@ -54,7 +51,8 @@ public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
     }
     IFunction duplicate = functions.addFunction(function);
     if (duplicate != null) {
-      throw new IllegalArgumentException(String.format("Duplicate functions with same arity: %s shadows %s",duplicate.toSignature(), function.toSignature()));
+      throw new IllegalArgumentException(String.format("Duplicate functions with same arity: %s shadows %s",
+          duplicate.toSignature(), function.toSignature()));
     }
   }
 

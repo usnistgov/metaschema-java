@@ -27,9 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IUuidItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 
 import java.math.BigDecimal;
 
@@ -42,7 +40,7 @@ class DecimalTypeImpl implements IDecimalType {
 
   @Override
   public IDecimalItem newItem(Object value) {
-    BigDecimal item = (BigDecimal)getDataType().getJavaTypeAdapter().toValue(value);
+    BigDecimal item = (BigDecimal) getDataType().getJavaTypeAdapter().toValue(value);
     return IDecimalItem.valueOf(item);
   }
 }

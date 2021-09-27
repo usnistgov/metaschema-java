@@ -30,7 +30,8 @@ import gov.nist.secauto.metaschema.datatypes.adapter.AbstractJavaTypeAdapter;
 
 import java.util.UUID;
 
-public class UuidAdapter extends AbstractJavaTypeAdapter<UUID> {
+public class UuidAdapter
+    extends AbstractJavaTypeAdapter<UUID> {
 
   public UuidAdapter() {
     super(UUID.class);

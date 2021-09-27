@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-public class MetapathDynamicException extends MetapathException {
+public class MetapathDynamicException
+    extends MetapathException {
   public static final String CODE_INVALID_VALUE_FOR_CAST = "err:FORG0001";
 
   /**

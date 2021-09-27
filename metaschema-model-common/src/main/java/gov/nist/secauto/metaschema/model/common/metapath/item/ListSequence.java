@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

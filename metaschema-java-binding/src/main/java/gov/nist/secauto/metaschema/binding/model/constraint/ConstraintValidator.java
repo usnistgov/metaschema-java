@@ -36,15 +36,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment
 
 public interface ConstraintValidator {
 
-  void validateItem(AssemblyProperty property, IAssemblyPathSegment pathSegment, Object item, ParsingContext<?,?> context);
+  void validateItem(AssemblyProperty property, IAssemblyPathSegment pathSegment, Object item,
+      ParsingContext<?, ?> context);
 
-  void validateItem(FieldProperty property, IFieldPathSegment pathSegment, Object item, ParsingContext<?,?> context);
+  void validateItem(FieldProperty property, IFieldPathSegment pathSegment, Object item, ParsingContext<?, ?> context);
 
-  void validateItem(FlagProperty property, IFlagPathSegment pathSegment, Object item, ParsingContext<?,?> context);
+  void validateItem(FlagProperty property, IFlagPathSegment pathSegment, Object item, ParsingContext<?, ?> context);
 
-  void validateValue(AssemblyProperty property, Object value, ParsingContext<?,?> context);
+  void validateValue(AssemblyProperty property, Object value, ParsingContext<?, ?> context);
 
-  void validateValue(FieldProperty property, Object value, ParsingContext<?,?> context);
+  void validateValue(FieldProperty property, Object value, ParsingContext<?, ?> context);
 
-  void finalizeValidation(ParsingContext<?,?> context);
+  void finalizeValidation(ParsingContext<?, ?> context);
 }

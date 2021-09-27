@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.xmlbeans;
 
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathFactory;
 
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.apache.xmlbeans.SimpleValue;

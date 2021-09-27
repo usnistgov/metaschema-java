@@ -106,9 +106,8 @@ public interface JavaTypeAdapter<TYPE> {
    * 
    * @param value
    *          the string value to parse
-   * @return the parsed data as the adapter's type
-//   * @throws IOException
-//   *           if an error occurs while parsing
+   * @return the parsed data as the adapter's type // * @throws IOException // * if an error occurs
+   *         while parsing
    * @throws IllegalArgumentException
    *           if the data is not valid to the data type
    */

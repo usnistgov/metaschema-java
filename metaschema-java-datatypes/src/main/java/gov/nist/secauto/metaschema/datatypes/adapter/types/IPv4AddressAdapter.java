@@ -34,7 +34,8 @@ import inet.ipaddr.IPAddressStringParameters;
 import inet.ipaddr.IncompatibleAddressException;
 import inet.ipaddr.ipv4.IPv4Address;
 
-public class IPv4AddressAdapter extends AbstractJavaTypeAdapter<IPv4Address> {
+public class IPv4AddressAdapter
+    extends AbstractJavaTypeAdapter<IPv4Address> {
   private static final IPAddressStringParameters IPv4;
 
   static {
@@ -56,7 +57,7 @@ public class IPv4AddressAdapter extends AbstractJavaTypeAdapter<IPv4Address> {
   @Override
   public IPv4Address parse(String value) throws IllegalArgumentException {
     try {
-      return (IPv4Address)new IPAddressString(value, IPv4).toAddress();
+      return (IPv4Address) new IPAddressString(value, IPv4).toAddress();
     } catch (AddressStringException | IncompatibleAddressException ex) {
       throw new IllegalArgumentException(ex);
     }

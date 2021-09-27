@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
 import gov.nist.secauto.metaschema.datatypes.adapter.AbstractIntegerAdapter;
 
-public class NegativeIntegerAdapter extends AbstractIntegerAdapter {
+public class NegativeIntegerAdapter
+    extends AbstractIntegerAdapter {
 
   public NegativeIntegerAdapter() {
   }

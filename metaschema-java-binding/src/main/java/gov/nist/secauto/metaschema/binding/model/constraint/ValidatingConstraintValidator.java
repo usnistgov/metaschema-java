@@ -48,15 +48,15 @@ import gov.nist.secauto.metaschema.model.common.metapath.format.FormatterFactory
 import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFieldPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.function.Functions;
+import gov.nist.secauto.metaschema.model.common.metapath.function.impl.Functions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.MetapathException;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -95,6 +95,11 @@ public class ValidatingConstraintValidator implements ConstraintValidator {
   }
 
   @Override
+  public void validateValue(FieldProperty property, Object value, ParsingContext<?, ?> context) {
+    // do nothing
+  }
+
+  @Override
   public void validateItem(AssemblyProperty property, IAssemblyPathSegment pathSegment, Object itemValue,
       ParsingContext<?, ?> context) {
     IAssemblyNodeItem item = property.newNodeItem(pathSegment, itemValue, null);
@@ -105,11 +110,6 @@ public class ValidatingConstraintValidator implements ConstraintValidator {
     validateAllowedValues(definition.getAllowedValuesContraints(), item);
     validateIndexHasKey(definition.getIndexHasKeyConstraints(), item);
     validateMatches(definition.getMatchesConstraints(), item);
-  }
-
-  @Override
-  public void validateValue(FieldProperty property, Object value, ParsingContext<?, ?> context) {
-    // do nothing
   }
 
   @Override
@@ -138,7 +138,8 @@ public class ValidatingConstraintValidator implements ConstraintValidator {
     validateMatches(definition.getMatchesConstraints(), item);
   }
 
-  protected void validateHasCardinality(List<? extends ICardinalityConstraint> constraints, List<? extends IModelNodeItem> items) {
+  protected void validateHasCardinality(List<? extends ICardinalityConstraint> constraints,
+      List<? extends IModelNodeItem> items) {
 
     items.stream().forEachOrdered(item -> {
       for (ICardinalityConstraint constraint : constraints) {
@@ -149,63 +150,8 @@ public class ValidatingConstraintValidator implements ConstraintValidator {
     });
   }
 
-  protected void validateIndex(List<? extends IIndexConstraint> constraints, List<? extends IModelNodeItem> items) {
-
-    items.stream().forEachOrdered(item -> {
-      for (IIndexConstraint constraint : constraints) {
-        MetapathExpression metapath = constraint.getTarget();
-        ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
-        validateIndex(constraint, item, targets);
-      }
-    });
-  }
-
-  protected void validateUnique(List<? extends IUniqueConstraint> constraints, List<? extends IModelNodeItem> items) {
-
-    items.stream().forEachOrdered(item -> {
-      for (IUniqueConstraint constraint : constraints) {
-        MetapathExpression metapath = constraint.getTarget();
-        ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
-        validateUnique(constraint, item, targets);
-      }
-    });
-  }
-
-  protected void validateMatches(List<? extends IMatchesConstraint> constraints, INodeItem item) {
-
-    for (IMatchesConstraint constraint : constraints) {
-      MetapathExpression metapath = constraint.getTarget();
-      ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
-      validateMatches(constraint, item, targets);
-    }
-  }
-
-  protected void validateIndexHasKey(List<? extends IIndexHasKeyConstraint> constraints, INodeItem item) {
-
-    for (IIndexHasKeyConstraint constraint : constraints) {
-      MetapathExpression metapath = constraint.getTarget();
-      ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
-      validateIndexHasKey(constraint, item, targets);
-    }
-  }
-
-  protected void validateExpect(List<? extends IExpectConstraint> constraints, INodeItem item) {
-    for (IExpectConstraint constraint : constraints) {
-      MetapathExpression metapath = constraint.getTarget();
-      ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
-      validateExpect(constraint, item, targets);
-    }
-  }
-
-  protected void validateAllowedValues(List<? extends IAllowedValuesConstraint> constraints, INodeItem item) {
-    for (IAllowedValuesConstraint constraint : constraints) {
-      MetapathExpression metapath = constraint.getTarget();
-      ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
-      validateAllowedValues(constraint, item, targets);
-    }
-  }
-
-  protected void validateHasCardinality(ICardinalityConstraint constraint, INodeItem node, ISequence<? extends INodeItem> targets) {
+  protected void validateHasCardinality(ICardinalityConstraint constraint, INodeItem node,
+      ISequence<? extends INodeItem> targets) {
     List<? extends INodeItem> items = targets.asList();
     int itemCount = items.size();
     Integer minOccurs = constraint.getMinOccurs();
@@ -220,7 +166,174 @@ public class ValidatingConstraintValidator implements ConstraintValidator {
     }
   }
 
-  protected void validateAllowedValues(IAllowedValuesConstraint constraint, @SuppressWarnings("unused") INodeItem node, ISequence<? extends INodeItem> targets) {
+  protected void validateIndex(List<? extends IIndexConstraint> constraints, List<? extends IModelNodeItem> items) {
+
+    items.stream().forEachOrdered(item -> {
+      for (IIndexConstraint constraint : constraints) {
+        MetapathExpression metapath = constraint.getTarget();
+        ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
+        validateIndex(constraint, item, targets);
+      }
+    });
+  }
+
+  protected void validateIndex(IIndexConstraint constraint, INodeItem node, ISequence<?> targets) {
+    String indexName = constraint.getName();
+    if (indexToKeyToItemMap.containsKey(indexName)) {
+      throw new MetapathException(String.format("Duplicate index named '%s' found at path '%s'", indexName,
+          node.toPath(FormatterFactory.METAPATH_FORMATTER)));
+    }
+
+    Map<String, INodeItem> indexItems = new HashMap<>();
+    targets.asStream().map(item -> (INodeItem) item).forEachOrdered(item -> {
+      String key = buildKey(constraint.getKeyFields(), item);
+
+      // logger.info("key: {} {}", key, item);
+      //
+      INodeItem oldItem = indexItems.put(key, item);
+      if (oldItem != null) {
+        throw new MetapathException(String.format("Index '%s' has duplicate key for item at path '%s'", indexName,
+            item.toPath(FormatterFactory.METAPATH_FORMATTER)));
+      }
+    });
+    indexToKeyToItemMap.put(indexName, indexItems);
+  }
+
+  protected void validateUnique(List<? extends IUniqueConstraint> constraints, List<? extends IModelNodeItem> items) {
+
+    items.stream().forEachOrdered(item -> {
+      for (IUniqueConstraint constraint : constraints) {
+        MetapathExpression metapath = constraint.getTarget();
+        ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
+        validateUnique(constraint, item, targets);
+      }
+    });
+  }
+
+  protected void validateUnique(IUniqueConstraint constraint, @SuppressWarnings("unused") INodeItem node,
+      ISequence<?> targets) {
+    Map<String, INodeItem> keyToItemMap = new HashMap<>();
+
+    targets.asStream().map(item -> (INodeItem) item).forEachOrdered(item -> {
+      String key = buildKey(constraint.getKeyFields(), item);
+
+      if (keyToItemMap.containsKey(key)) {
+        INodeItem oldItem = keyToItemMap.get(key);
+        logger.error(String.format("Unique constraint violation at path '%s' and '%s'",
+            item.toPath(FormatterFactory.METAPATH_FORMATTER), oldItem.toPath(FormatterFactory.METAPATH_FORMATTER)));
+      } else {
+        keyToItemMap.put(key, item);
+      }
+    });
+  }
+
+  protected void validateMatches(List<? extends IMatchesConstraint> constraints, INodeItem item) {
+
+    for (IMatchesConstraint constraint : constraints) {
+      MetapathExpression metapath = constraint.getTarget();
+      ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
+      validateMatches(constraint, item, targets);
+    }
+  }
+
+  protected void validateMatches(IMatchesConstraint constraint, @SuppressWarnings("unused") INodeItem node,
+      ISequence<?> targets) {
+    targets.asStream().map(item -> (INodeItem) item).forEachOrdered(item -> {
+      String value = Functions.fnDataItem(item).asString();
+
+      Pattern pattern = constraint.getPattern();
+      if (pattern != null) {
+        // validate pattern
+        Predicate<String> predicate = pattern.asMatchPredicate();
+        if (!predicate.test(value)) {
+          logger.error(String.format("Value '%s' did not match the pattern '%s' at path '%s'", value, pattern.pattern(),
+              item.toPath(FormatterFactory.METAPATH_FORMATTER)));
+        }
+      }
+
+      DataTypes dataType = constraint.getDataType();
+      if (dataType != null) {
+        JavaTypeAdapter<?> adapter = dataType.getJavaTypeAdapter();
+        try {
+          adapter.parse(value);
+        } catch (IllegalArgumentException ex) {
+          logger.error(String.format("Value '%s' did not conform to the data type '%s' at path '%s'", value,
+              dataType.name(), item.toPath(FormatterFactory.METAPATH_FORMATTER)), ex);
+        }
+      }
+    });
+  }
+
+  protected void validateIndexHasKey(List<? extends IIndexHasKeyConstraint> constraints, INodeItem item) {
+
+    for (IIndexHasKeyConstraint constraint : constraints) {
+      MetapathExpression metapath = constraint.getTarget();
+      ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
+      validateIndexHasKey(constraint, item, targets);
+    }
+  }
+
+  protected void validateIndexHasKey(IIndexHasKeyConstraint constraint, @SuppressWarnings("unused") INodeItem node,
+      ISequence<?> targets) {
+    String indexName = constraint.getIndexName();
+
+    Map<String, List<INodeItem>> keyRefItems = indexToKeyRefToItemMap.get(indexName);
+    if (keyRefItems == null) {
+      keyRefItems = new LinkedHashMap<>();
+      indexToKeyRefToItemMap.put(indexName, keyRefItems);
+    }
+
+    for (IItem target : targets.asList()) {
+      INodeItem item = (INodeItem) target;
+      String key = buildKey(constraint.getKeyFields(), item);
+
+      // logger.info("key-ref: {} {}", key, item);
+      //
+      List<INodeItem> items = keyRefItems.get(key);
+      if (items == null) {
+        items = new LinkedList<>();
+        keyRefItems.put(key, items);
+      }
+
+      items.add(item);
+    }
+  }
+
+  protected void validateExpect(List<? extends IExpectConstraint> constraints, INodeItem item) {
+    for (IExpectConstraint constraint : constraints) {
+      MetapathExpression metapath = constraint.getTarget();
+      ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
+      validateExpect(constraint, item, targets);
+    }
+  }
+
+  protected void validateExpect(IExpectConstraint constraint, @SuppressWarnings("unused") INodeItem node,
+      ISequence<?> targets) {
+    targets.asStream().map(item -> (INodeItem) item).forEachOrdered(item -> {
+      MetapathExpression metapath = constraint.getTest();
+      try {
+        ISequence<?> result = item.evaluateMetapath(metapath);
+        if (!Functions.fnBoolean(result).toBoolean()) {
+          logger.error(String.format("Expect constraint '%s' did not match the data at path '%s'", metapath.getPath(),
+              item.toPath(FormatterFactory.METAPATH_FORMATTER)));
+        }
+      } catch (Exception ex) {
+        logger.error(String.format("Unable to evaluate expect constraint '%s' at path '%s'", metapath.getPath(),
+            item.toPath(FormatterFactory.METAPATH_FORMATTER)), ex);
+      }
+    });
+  }
+
+  protected void validateAllowedValues(List<? extends IAllowedValuesConstraint> constraints, INodeItem item) {
+    for (IAllowedValuesConstraint constraint : constraints) {
+      MetapathExpression metapath = constraint.getTarget();
+      ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
+      validateAllowedValues(constraint, item, targets);
+    }
+  }
+
+  protected void validateAllowedValues(IAllowedValuesConstraint constraint, @SuppressWarnings("unused") INodeItem node,
+      ISequence<? extends INodeItem> targets) {
     targets.asStream().forEachOrdered(item -> {
       String value = Functions.fnDataItem(item).asString();
       if (!constraint.getAllowedValues().containsKey(value)) {
@@ -250,77 +363,17 @@ public class ValidatingConstraintValidator implements ConstraintValidator {
     }
   }
 
-  protected void validateMatches(IMatchesConstraint constraint, @SuppressWarnings("unused") INodeItem node, ISequence<?> targets) {
-    targets.asStream().map(item -> (INodeItem) item).forEachOrdered(item -> {
-      String value = Functions.fnDataItem(item).asString();
-
-      Pattern pattern = constraint.getPattern();
-      if (pattern != null) {
-        // validate pattern
-        Predicate<String> predicate = pattern.asMatchPredicate();
-        if (!predicate.test(value)) {
-          logger.error(String.format("Value '%s' did not match the pattern '%s' at path '%s'", value, pattern.pattern(),
-              item.toPath(FormatterFactory.METAPATH_FORMATTER)));
-        }
-      }
-
-      DataTypes dataType = constraint.getDataType();
-      if (dataType != null) {
-        JavaTypeAdapter<?> adapter = dataType.getJavaTypeAdapter();
-        try {
-          adapter.parse(value);
-        } catch (IllegalArgumentException ex) {
-          logger.error(String.format("Value '%s' did not conform to the data type '%s' at path '%s'", value,
-              dataType.name(), item.toPath(FormatterFactory.METAPATH_FORMATTER)), ex);
-        }
-      }
-    });
-  }
-
-  protected void validateExpect(IExpectConstraint constraint, @SuppressWarnings("unused") INodeItem node, ISequence<?> targets) {
-    targets.asStream().map(item -> (INodeItem) item).forEachOrdered(item -> {
-      MetapathExpression metapath = constraint.getTest();
-      try {
-        ISequence<?> result = item.evaluateMetapath(metapath);
-        if (!Functions.fnBoolean(result).toBoolean()) {
-          logger.error(String.format("Expect constraint '%s' did not match the data at path '%s'", metapath.getPath(),
-              item.toPath(FormatterFactory.METAPATH_FORMATTER)));
-        }
-      } catch (Exception ex) {
-        logger.error(String.format("Unable to evaluate expect constraint '%s' at path '%s'", metapath.getPath(),
-            item.toPath(FormatterFactory.METAPATH_FORMATTER)), ex);
-      }
-    });
-  }
-
-  protected void validateUnique(IUniqueConstraint constraint, @SuppressWarnings("unused") INodeItem node, ISequence<?> targets) {
-    Map<String, INodeItem> keyToItemMap = new HashMap<>();
-
-    targets.asStream().map(item -> (INodeItem) item).forEachOrdered(item -> {
-      String key = buildKey(constraint.getKeyFields(), item);
-
-      if (keyToItemMap.containsKey(key)) {
-        INodeItem oldItem = keyToItemMap.get(key);
-        logger.error(String.format("Unique constraint violation at path '%s' and '%s'",
-            item.toPath(FormatterFactory.METAPATH_FORMATTER), oldItem.toPath(FormatterFactory.METAPATH_FORMATTER)));
-      } else {
-        keyToItemMap.put(key, item);
-      }
-    });
-  }
-
   protected String buildKey(List<? extends IKeyField> keyFields, INodeItem item) {
     StringBuilder key = new StringBuilder();
     for (IKeyField keyField : keyFields) {
       MetapathExpression keyPath = keyField.getTarget();
 
       @SuppressWarnings("unchecked")
-      List<? extends INodeItem> result
-          = (List<? extends INodeItem>) item.evaluateMetapath(keyPath).asList();
+      List<? extends INodeItem> result = (List<? extends INodeItem>) item.evaluateMetapath(keyPath).asList();
       if (result.size() > 1) {
         throw new MetapathException("Key resulted in multiple nodes: " + result);
       }
-      
+
       String keyValue;
       if (result.size() == 1) {
         INodeItem keyItem = result.iterator().next();
@@ -343,60 +396,12 @@ public class ValidatingConstraintValidator implements ConstraintValidator {
         keyValue = null;
       }
 
-
       if (keyValue != null) {
         key.append(keyValue);
       }
       key.append("|||");
     }
     return key.toString();
-  }
-
-  protected void validateIndex(IIndexConstraint constraint, INodeItem node, ISequence<?> targets) {
-    String indexName = constraint.getName();
-    if (indexToKeyToItemMap.containsKey(indexName)) {
-      throw new MetapathException(String.format("Duplicate index named '%s' found at path '%s'", indexName,
-          node.toPath(FormatterFactory.METAPATH_FORMATTER)));
-    }
-
-    Map<String, INodeItem> indexItems = new HashMap<>();
-    targets.asStream().map(item -> (INodeItem) item).forEachOrdered(item -> {
-      String key = buildKey(constraint.getKeyFields(), item);
-
-      // logger.info("key: {} {}", key, item);
-      //
-      INodeItem oldItem = indexItems.put(key, item);
-      if (oldItem != null) {
-        throw new MetapathException(String.format("Index '%s' has duplicate key for item at path '%s'", indexName,
-            item.toPath(FormatterFactory.METAPATH_FORMATTER)));
-      }
-    });
-    indexToKeyToItemMap.put(indexName, indexItems);
-  }
-
-  protected void validateIndexHasKey(IIndexHasKeyConstraint constraint, @SuppressWarnings("unused") INodeItem node, ISequence<?> targets) {
-    String indexName = constraint.getIndexName();
-
-    Map<String, List<INodeItem>> keyRefItems = indexToKeyRefToItemMap.get(indexName);
-    if (keyRefItems == null) {
-      keyRefItems = new LinkedHashMap<>();
-      indexToKeyRefToItemMap.put(indexName, keyRefItems);
-    }
-
-    for (IItem target : targets.asList()) {
-      INodeItem item = (INodeItem) target;
-      String key = buildKey(constraint.getKeyFields(), item);
-
-      // logger.info("key-ref: {} {}", key, item);
-      //
-      List<INodeItem> items = keyRefItems.get(key);
-      if (items == null) {
-        items = new LinkedList<>();
-        keyRefItems.put(key, items);
-      }
-
-      items.add(item);
-    }
   }
 
   @Override

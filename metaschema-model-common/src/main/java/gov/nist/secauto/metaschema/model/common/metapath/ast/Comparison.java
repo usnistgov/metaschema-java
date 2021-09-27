@@ -26,13 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.INumericItem;
 
 import java.util.Objects;
 
-public class Comparison extends AbstractBinaryExpr<IBooleanItem> implements IBooleanLogicExpression {
+public class Comparison
+    extends AbstractBinaryExpr<IBooleanItem>
+    implements IBooleanLogicExpression {
   public enum Operator {
     EQ,
     NE,

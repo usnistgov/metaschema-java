@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ext.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 public interface IAnyAtomicType extends IItemType {
 
@@ -43,5 +43,6 @@ public interface IAnyAtomicType extends IItemType {
     return true;
   }
 
+  @Override
   IAnyAtomicItem newItem(Object value);
 }

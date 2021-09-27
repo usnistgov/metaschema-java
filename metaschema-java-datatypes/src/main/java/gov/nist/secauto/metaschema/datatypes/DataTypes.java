@@ -36,9 +36,9 @@ import gov.nist.secauto.metaschema.datatypes.adapter.types.DateWithTZAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.DecimalAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.EmailAddressAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.HostnameAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.IPv4AddressAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.IPv6AddressAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.IntegerAdapter;
-import gov.nist.secauto.metaschema.datatypes.adapter.types.IPv4AddressAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.MarkupLineAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.MarkupMultilineAdapter;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.NcNameAdapter;
@@ -133,6 +133,5 @@ public enum DataTypes {
   public JavaTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
-
 
 }

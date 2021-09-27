@@ -51,26 +51,28 @@ import javax.xml.stream.events.XMLEvent;
 public interface NamedModelProperty extends NamedProperty, INamedModelInstance {
   DataTypeHandler getDataTypeHandler();
 
-//  /**
-//   * Create new node items for the specific instances of this property. The value of {@code value} is
-//   * may be many values based on the cardinality of the property. The {@code precedingPath} argument
-//   * must not include the current node, as this will result in duplication of this node in the path.
-//   * 
-//   * @param value
-//   *          the instance
-//   * @param precedingPath
-//   *          any preceding path segments to register or an empty list
-//   * @return the new node item
-//   */
-//  Stream<INodeItem> newNodeItems(Object value, List<IPathSegment> precedingPath);
+  // /**
+  // * Create new node items for the specific instances of this property. The value of {@code value}
+  // is
+  // * may be many values based on the cardinality of the property. The {@code precedingPath} argument
+  // * must not include the current node, as this will result in duplication of this node in the path.
+  // *
+  // * @param value
+  // * the instance
+  // * @param precedingPath
+  // * any preceding path segments to register or an empty list
+  // * @return the new node item
+  // */
+  // Stream<INodeItem> newNodeItems(Object value, List<IPathSegment> precedingPath);
 
   /**
-   * Retrieve a stream of model items for this property, who's value is retrieved from the parent node item.
+   * Retrieve a stream of model items for this property, who's value is retrieved from the parent node
+   * item.
    * 
    * @param parentItem
    *          the parent node item on which this model property may exist
-   * @return a stream containing the model items associated with this property or an empty
-   *         stream if the property doesn't exist
+   * @return a stream containing the model items associated with this property or an empty stream if
+   *         the property doesn't exist
    */
   Stream<? extends IModelNodeItem> getNodeItemsFromParentInstance(IAssemblyNodeItem parentItem);
 

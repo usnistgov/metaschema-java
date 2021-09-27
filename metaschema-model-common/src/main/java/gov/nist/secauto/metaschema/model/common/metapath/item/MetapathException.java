@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-public class MetapathException extends RuntimeException {
+public class MetapathException
+    extends RuntimeException {
 
   /**
    * the serial version UID.
