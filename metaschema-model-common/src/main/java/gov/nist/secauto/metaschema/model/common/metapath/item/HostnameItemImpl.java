@@ -26,8 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.HostnameAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IHostnameType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 class HostnameItemImpl
     extends AbstractStringItem
@@ -39,7 +40,12 @@ class HostnameItemImpl
 
   @Override
   public IHostnameType getItemType() {
-    return TypeFactory.HOSTNAME_TYPE;
+    return getJavaTypeAdapter();
+  }
+
+  @Override
+  protected HostnameAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.HOSTNAME;
   }
 
   @Override

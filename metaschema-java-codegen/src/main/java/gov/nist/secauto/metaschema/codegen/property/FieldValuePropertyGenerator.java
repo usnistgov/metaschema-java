@@ -33,8 +33,9 @@ import com.squareup.javapoet.TypeName;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.codegen.FieldJavaClassGenerator;
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
 
@@ -50,15 +51,15 @@ import java.util.Set;
  * @author davidwal
  *
  */
-public class FieldValuePropertyGenerator
-    extends AbstractPropertyGenerator<FieldJavaClassGenerator> {
+public class FieldValuePropertyGenerator extends AbstractPropertyGenerator<FieldJavaClassGenerator> {
   private static final Logger logger = LogManager.getLogger(FieldValuePropertyGenerator.class);
 
-  public static DataTypes getValueDataType(FieldDefinition definition) {
-    DataTypes retval = definition.getDatatype();
+  public static IJavaTypeAdapter<?> getValueDataType(FieldDefinition definition) {
+    IJavaTypeAdapter<?> retval = definition.getDatatype();
     if (retval == null) {
-      logger.warn("Unsupported datatype '{}', using {} instead", retval, DataTypes.DEFAULT_DATA_TYPE.toString());
-      retval = DataTypes.DEFAULT_DATA_TYPE;
+      logger.warn("Unsupported datatype '{}', using {} instead", retval,
+          MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.toString());
+      retval = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
     }
     return retval;
   }
@@ -69,8 +70,8 @@ public class FieldValuePropertyGenerator
 
   @Override
   public TypeName getJavaType() {
-    return ClassName.get(FieldValuePropertyGenerator.getValueDataType(getClassGenerator().getDefinition())
-        .getJavaTypeAdapter().getJavaClass());
+    return ClassName
+        .get(FieldValuePropertyGenerator.getValueDataType(getClassGenerator().getDefinition()).getJavaClass());
   }
 
   @Override
@@ -97,7 +98,7 @@ public class FieldValuePropertyGenerator
     FieldDefinition definition = getClassGenerator().getDefinition();
     AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(FieldValue.class);
 
-    DataTypes valueDataType = getValueDataType(definition);
+    IJavaTypeAdapter<?> valueDataType = getValueDataType(definition);
 
     // a field object always has a single value
     if (definition.hasJsonValueKeyFlagInstance()) {
@@ -106,7 +107,7 @@ public class FieldValuePropertyGenerator
       fieldValue.addMember("name", "$S", definition.getJsonValueKeyName());
     }
 
-    fieldValue.addMember("typeAdapter", "$T.class", valueDataType.getJavaTypeAdapter().getClass());
+    fieldValue.addMember("typeAdapter", "$T.class", valueDataType.getClass());
 
     builder.addAnnotation(fieldValue.build());
     return Collections.emptySet();

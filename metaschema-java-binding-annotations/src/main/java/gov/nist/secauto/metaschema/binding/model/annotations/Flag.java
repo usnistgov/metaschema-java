@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedV
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -95,7 +95,7 @@ public @interface Flag {
    * 
    * @return the data type adapter
    */
-  Class<? extends JavaTypeAdapter<?>> typeAdapter();
+  Class<? extends IJavaTypeAdapter<?>> typeAdapter();
 
   /**
    * Get the allowed value constraints for this flag.

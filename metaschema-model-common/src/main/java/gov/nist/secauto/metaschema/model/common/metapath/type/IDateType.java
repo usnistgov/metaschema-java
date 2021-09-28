@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
-public interface IDateType extends IAnyAtomicType {
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
 
+public interface IDateType extends IAnyAtomicType {
+  @Override
+  IDateItem newItem(Object value);
 }

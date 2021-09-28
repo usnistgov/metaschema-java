@@ -27,8 +27,9 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.datatypes.DateTime;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.DateTimeAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IDateTimeType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 import java.time.ZonedDateTime;
 
@@ -42,12 +43,17 @@ class DateTimeWithoutTimeZoneItemImpl
 
   @Override
   public IDateTimeType getItemType() {
-    return TypeFactory.DATETIME_WITHOUT_TZ_TYPE;
+    return getJavaTypeAdapter();
   }
 
   @Override
   public ZonedDateTime asZonedDateTime() {
     return getValue().getValue();
+  }
+
+  @Override
+  protected DateTimeAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.DATE_TIME;
   }
 
 }

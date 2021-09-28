@@ -26,8 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.TokenAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.type.ITokenType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 class TokenItemImpl
     extends AbstractStringItem
@@ -39,7 +40,12 @@ class TokenItemImpl
 
   @Override
   public ITokenType getItemType() {
-    return TypeFactory.TOKEN_TYPE;
+    return getJavaTypeAdapter();
+  }
+
+  @Override
+  protected TokenAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.TOKEN;
   }
 
   @Override

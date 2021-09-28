@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.binding.model.property;
 import gov.nist.secauto.metaschema.binding.model.BoundDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
@@ -38,7 +37,7 @@ public interface NamedProperty extends Property, INamedInstance {
   @Override
   BoundDefinition getDefinition();
 
-  <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> evaluateMetapath(MetapathExpression metapath, INodeItem item);
+  ISequence<?> evaluateMetapath(MetapathExpression metapath, INodeItem item);
 
   // void writeValue(Object parentInstance, JsonParsingContext context);
 }

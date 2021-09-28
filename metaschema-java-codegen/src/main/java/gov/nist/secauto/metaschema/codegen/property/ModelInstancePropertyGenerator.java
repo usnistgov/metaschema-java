@@ -36,9 +36,10 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.codegen.AssemblyJavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
@@ -150,7 +151,7 @@ public class ModelInstancePropertyGenerator
     if (modelInstance instanceof FieldInstance) {
       FieldInstance<?> fieldInstance = (FieldInstance<?>) modelInstance;
       FieldDefinition fieldDefinition = (FieldDefinition) definition;
-      DataTypes valueDataType = fieldDefinition.getDatatype();
+      IJavaTypeAdapter<?> valueDataType = fieldDefinition.getDatatype();
 
       // a field object always has a single value
       if (!fieldInstance.isInXmlWrapped()) {
@@ -163,7 +164,7 @@ public class ModelInstancePropertyGenerator
         fieldAnnoation.addMember("valueName", "$S", fieldDefinition.getJsonValueKeyName());
 
         fieldAnnoation.addMember("typeAdapter", "$T.class",
-            valueDataType.getJavaTypeAdapter().getClass());
+            valueDataType.getClass());
 
         AnnotationUtils.applyAllowedValuesConstraints(fieldAnnoation, fieldDefinition.getAllowedValuesContraints());
         AnnotationUtils.applyIndexHasKeyConstraints(fieldAnnoation, fieldDefinition.getIndexHasKeyConstraints());
@@ -213,9 +214,9 @@ public class ModelInstancePropertyGenerator
     if (instance instanceof FieldInstance) {
       FieldInstance<?> fieldInstance = (FieldInstance<?>) instance;
       if (fieldInstance.getDefinition().getFlagInstances().isEmpty()) {
-        DataTypes dataType = fieldInstance.getDefinition().getDatatype();
+        IJavaTypeAdapter<?> dataType = fieldInstance.getDefinition().getDatatype();
         // this is a simple value
-        item = ClassName.get(dataType.getJavaTypeAdapter().getJavaClass());
+        item = ClassName.get(dataType.getJavaClass());
       } else {
         item = getClassGenerator().getTypeResolver().getClassName(fieldInstance.getDefinition());
       }
@@ -225,7 +226,7 @@ public class ModelInstancePropertyGenerator
       if (assemblyDefinition.getFlagInstances().isEmpty() && assemblyDefinition.getModelInstances().isEmpty()) {
         // make this a boolean type, since this is a marker without any contents
         // TODO: make sure global definitions of this type are suppressed
-        item = ClassName.get(DataTypes.BOOLEAN.getJavaTypeAdapter().getJavaClass());
+        item = ClassName.get(MetaschemaDataTypeProvider.BOOLEAN.getJavaClass());
       } else {
         item = getClassGenerator().getTypeResolver().getClassName(assemblyInstance.getDefinition());
       }

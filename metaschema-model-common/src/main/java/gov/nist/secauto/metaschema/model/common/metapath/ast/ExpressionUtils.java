@@ -70,8 +70,42 @@ public class ExpressionUtils {
         retval = baseType;
       } else {
         // search for the least common type
-        // TODO: implement this by searching the parent interfaces for a common type
-        retval = baseType;
+        @SuppressWarnings("unchecked")
+        Class<? extends RESULT_TYPE> newBase = (Class<? extends RESULT_TYPE>)getCommonBaseClass(baseType, first, expressionClasses.subList(1, expressionClasses.size()));
+        if (newBase != null) {
+          retval = newBase;
+        } else {
+          retval = baseType;
+        }
+      }
+    }
+    return retval;
+  }
+
+  private static Class<?> getCommonBaseClass(Class<?> baseType, Class<?> first,
+      List<Class<?>> expressionClasses) {
+    boolean match = true;
+    for (Class<?> clazz : expressionClasses) {
+      if (!baseType.isAssignableFrom(clazz)) {
+        match = false;
+        break;
+      }
+    }
+
+    Class<?> retval;
+    if (match) {
+      retval = first;
+    } else  {
+      retval = null;
+      // TODO: search the parent interfaces for a common type
+      for (Class<?> clazz : first.getInterfaces()) {
+        if (baseType.isAssignableFrom(clazz)) {
+          Class<?> newBase = getCommonBaseClass(baseType, clazz, expressionClasses);
+          if (newBase != null) {
+            retval = newBase;
+            break;
+          }
+        }
       }
     }
     return retval;

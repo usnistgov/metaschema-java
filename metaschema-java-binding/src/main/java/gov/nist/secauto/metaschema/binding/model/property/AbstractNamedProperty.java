@@ -35,7 +35,6 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
@@ -96,7 +95,7 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
       throws IOException, BindingException;
 
   @Override
-  public <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> evaluateMetapath(MetapathExpression metapath, INodeItem item) {
+  public ISequence<?> evaluateMetapath(MetapathExpression metapath, INodeItem item) {
     return item.evaluateMetapath(metapath);
   }
 

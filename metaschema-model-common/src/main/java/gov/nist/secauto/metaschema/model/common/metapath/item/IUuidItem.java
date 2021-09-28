@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.metapath.type.IUuidType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 import java.util.UUID;
 
@@ -41,9 +40,7 @@ public interface IUuidItem extends IAnyAtomicItem {
   UUID getValue();
 
   @Override
-  default IUuidType getItemType() {
-    return TypeFactory.UUID_TYPE;
-  }
+  IUuidType getItemType();
 
   @Override
   default IUuidItem toAtomicItem() {

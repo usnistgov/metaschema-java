@@ -26,8 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.NonNegativeIntegerAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.type.INonNegativeIntegerType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 import java.math.BigInteger;
 
@@ -41,7 +42,12 @@ class NonNegativeIntegerItemImpl
 
   @Override
   public INonNegativeIntegerType getItemType() {
-    return TypeFactory.NON_NEGATIVE_INTEGER_TYPE;
+    return getJavaTypeAdapter();
+  }
+
+  @Override
+  protected NonNegativeIntegerAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.NON_NEGATIVE_INTEGER;
   }
 
   @Override

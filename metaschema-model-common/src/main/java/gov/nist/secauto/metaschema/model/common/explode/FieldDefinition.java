@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.explode;
 
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
@@ -39,7 +39,7 @@ public class FieldDefinition
   }
 
   @Override
-  public DataTypes getDatatype() {
+  public IJavaTypeAdapter<?> getDatatype() {
     return getDelegate().getDatatype();
   }
 

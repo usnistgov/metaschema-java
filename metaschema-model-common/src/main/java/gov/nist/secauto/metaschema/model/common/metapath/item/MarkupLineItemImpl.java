@@ -26,9 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MarkupLineAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IMarkupType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 class MarkupLineItemImpl
     extends AbstractMarkupItem<MarkupLine>
@@ -40,7 +41,12 @@ class MarkupLineItemImpl
 
   @Override
   public IMarkupType getItemType() {
-    return TypeFactory.MARKUP_LINE_TYPE;
+    return getJavaTypeAdapter();
+  }
+
+  @Override
+  protected MarkupLineAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.MARKUP_LINE;
   }
 
   @Override

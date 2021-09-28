@@ -613,7 +613,6 @@
 
 	<modules>
 		<module>metaschema-model</module>
-		<module>metaschema-java-datatypes</module>
 		<module>metaschema-java-binding-annotations</module>
 		<module>metaschema-java-codegen</module>
 		<module>metaschema-maven-plugin</module>

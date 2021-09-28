@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.binding.io.Serializer;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import java.math.BigInteger;
 import java.time.ZonedDateTime;
@@ -54,7 +54,7 @@ public interface BindingContext {
   }
 
   /**
-   * Get's the {@link JavaTypeAdapter} associated with the specified Java class, which is used to read
+   * Get's the {@link IJavaTypeAdapter} associated with the specified Java class, which is used to read
    * and write XML, JSON, and YAML data to and from instances of that class. Thus, this adapter
    * supports a direct binding between the Java class and structured data in one of the supported
    * formats. Adapters are used to support bindings for simple data objects (e.g., {@link String},
@@ -66,7 +66,7 @@ public interface BindingContext {
    *          the Java {@link Class} for the bound type
    * @return the adapter instance or {@code null} if the provided class is not bound
    */
-  <TYPE extends JavaTypeAdapter<?>> JavaTypeAdapter<TYPE> getJavaTypeAdapterInstance(Class<TYPE> clazz);
+  <TYPE extends IJavaTypeAdapter<?>> IJavaTypeAdapter<TYPE> getJavaTypeAdapterInstance(Class<TYPE> clazz);
 
   // boolean hasClassBinding(Class<?> clazz) throws BindingException;
 

@@ -26,8 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.IPv4AddressAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IIPv4AddressType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 import inet.ipaddr.ipv4.IPv4Address;
 
@@ -41,7 +42,12 @@ class IPv4AddressItemImpl
 
   @Override
   public IIPv4AddressType getItemType() {
-    return TypeFactory.IP_V4_ADDRESS_TYPE;
+    return getJavaTypeAdapter();
+  }
+
+  @Override
+  protected IPv4AddressAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.IP_V4_ADDRESS;
   }
 
   @Override

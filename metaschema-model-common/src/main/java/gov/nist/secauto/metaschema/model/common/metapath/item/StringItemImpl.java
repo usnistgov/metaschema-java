@@ -26,8 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IStringType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 class StringItemImpl
     extends AbstractStringItem
@@ -39,7 +40,12 @@ class StringItemImpl
 
   @Override
   public IStringType getItemType() {
-    return TypeFactory.STRING_TYPE;
+    return getJavaTypeAdapter();
+  }
+
+  @Override
+  protected StringAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.STRING;
   }
 
   @Override

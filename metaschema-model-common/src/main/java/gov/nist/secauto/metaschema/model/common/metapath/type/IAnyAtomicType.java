@@ -26,17 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 public interface IAnyAtomicType extends IItemType {
-
-  /**
-   * Get the Metaschema data type associated with this type.
-   * 
-   * @return the associated Metaschema data type
-   */
-  DataTypes getDataType();
 
   @Override
   default boolean isAtomic() {

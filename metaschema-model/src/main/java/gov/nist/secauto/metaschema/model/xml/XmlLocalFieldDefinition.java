@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.Defaults;
@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
@@ -112,7 +113,7 @@ public class XmlLocalFieldDefinition
   @Override
   public boolean isInXmlWrapped() {
     boolean retval;
-    if (DataTypes.MARKUP_MULTILINE.equals(getDefinition().getDatatype())) {
+    if (MetaschemaDataTypeProvider.MARKUP_MULTILINE.equals(getDefinition().getDatatype())) {
       // default value
       retval = Defaults.DEFAULT_FIELD_IN_XML_WRAPPED;
       if (getXmlField().isSetInXml()) {
@@ -263,13 +264,13 @@ public class XmlLocalFieldDefinition
     }
 
     @Override
-    public DataTypes getDatatype() {
-      DataTypes retval;
+    public IJavaTypeAdapter<?> getDatatype() {
+      IJavaTypeAdapter<?> retval;
       if (getXmlField().isSetAsType()) {
         retval = getXmlField().getAsType();
       } else {
         // the default
-        retval = DataTypes.DEFAULT_DATA_TYPE;
+        retval = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
       }
       return retval;
     }
@@ -297,7 +298,7 @@ public class XmlLocalFieldDefinition
       }
 
       if (retval == null || retval.isEmpty()) {
-        retval = getDatatype().getJavaTypeAdapter().getDefaultJsonValueKey();
+        retval = getDatatype().getDefaultJsonValueKey();
       }
       return retval;
     }

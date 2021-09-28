@@ -32,8 +32,6 @@ import gov.nist.secauto.metaschema.binding.model.FieldDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
@@ -42,6 +40,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IKeyField;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.format.FormatterFactory;
@@ -71,6 +70,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+// TODO: change the name of this class
 public class ValidatingConstraintValidator implements ConstraintValidator {
   private static final Logger logger = LogManager.getLogger(ValidatingConstraintValidator.class);
 
@@ -144,7 +144,8 @@ public class ValidatingConstraintValidator implements ConstraintValidator {
     items.stream().forEachOrdered(item -> {
       for (ICardinalityConstraint constraint : constraints) {
         MetapathExpression metapath = constraint.getTarget();
-        ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
+        @SuppressWarnings("unchecked")
+        ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>)item.evaluateMetapath(metapath);
         validateHasCardinality(constraint, item, targets);
       }
     });
@@ -171,7 +172,8 @@ public class ValidatingConstraintValidator implements ConstraintValidator {
     items.stream().forEachOrdered(item -> {
       for (IIndexConstraint constraint : constraints) {
         MetapathExpression metapath = constraint.getTarget();
-        ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
+        @SuppressWarnings("unchecked")
+        ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>)item.evaluateMetapath(metapath);
         validateIndex(constraint, item, targets);
       }
     });
@@ -204,7 +206,8 @@ public class ValidatingConstraintValidator implements ConstraintValidator {
     items.stream().forEachOrdered(item -> {
       for (IUniqueConstraint constraint : constraints) {
         MetapathExpression metapath = constraint.getTarget();
-        ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
+        @SuppressWarnings("unchecked")
+        ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>)item.evaluateMetapath(metapath);
         validateUnique(constraint, item, targets);
       }
     });
@@ -231,7 +234,8 @@ public class ValidatingConstraintValidator implements ConstraintValidator {
 
     for (IMatchesConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
-      ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
+      @SuppressWarnings("unchecked")
+      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>)item.evaluateMetapath(metapath);
       validateMatches(constraint, item, targets);
     }
   }
@@ -251,15 +255,12 @@ public class ValidatingConstraintValidator implements ConstraintValidator {
         }
       }
 
-      DataTypes dataType = constraint.getDataType();
-      if (dataType != null) {
-        JavaTypeAdapter<?> adapter = dataType.getJavaTypeAdapter();
-        try {
-          adapter.parse(value);
-        } catch (IllegalArgumentException ex) {
-          logger.error(String.format("Value '%s' did not conform to the data type '%s' at path '%s'", value,
-              dataType.name(), item.toPath(FormatterFactory.METAPATH_FORMATTER)), ex);
-        }
+      IJavaTypeAdapter<?> adapter = constraint.getDataType();
+      try {
+        adapter.parse(value);
+      } catch (IllegalArgumentException ex) {
+        logger.error(String.format("Value '%s' did not conform to the data type '%s' at path '%s'", value,
+            adapter.getName(), item.toPath(FormatterFactory.METAPATH_FORMATTER)), ex);
       }
     });
   }
@@ -268,7 +269,8 @@ public class ValidatingConstraintValidator implements ConstraintValidator {
 
     for (IIndexHasKeyConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
-      ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
+      @SuppressWarnings("unchecked")
+      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>)item.evaluateMetapath(metapath);
       validateIndexHasKey(constraint, item, targets);
     }
   }
@@ -302,7 +304,8 @@ public class ValidatingConstraintValidator implements ConstraintValidator {
   protected void validateExpect(List<? extends IExpectConstraint> constraints, INodeItem item) {
     for (IExpectConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
-      ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
+      @SuppressWarnings("unchecked")
+      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>)item.evaluateMetapath(metapath);
       validateExpect(constraint, item, targets);
     }
   }
@@ -327,7 +330,8 @@ public class ValidatingConstraintValidator implements ConstraintValidator {
   protected void validateAllowedValues(List<? extends IAllowedValuesConstraint> constraints, INodeItem item) {
     for (IAllowedValuesConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
-      ISequence<? extends INodeItem> targets = item.evaluateMetapath(metapath);
+      @SuppressWarnings("unchecked")
+      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>)item.evaluateMetapath(metapath);
       validateAllowedValues(constraint, item, targets);
     }
   }

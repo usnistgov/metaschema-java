@@ -26,8 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.EmailAddressAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IEmailAddressType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 class EmailAddressItemImpl
     extends AbstractStringItem
@@ -39,7 +40,12 @@ class EmailAddressItemImpl
 
   @Override
   public IEmailAddressType getItemType() {
-    return TypeFactory.EMAIL_ADDRESS_TYPE;
+    return getJavaTypeAdapter();
+  }
+
+  @Override
+  protected EmailAddressAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.EMAIL_ADDRESS;
   }
 
   @Override

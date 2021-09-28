@@ -38,7 +38,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHas
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IsUnique;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.KeyField;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
@@ -50,6 +49,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IKeyField;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
@@ -170,9 +170,9 @@ public class AnnotationUtils {
         constraintAnnotation.addMember("pattern", "$S", pattern.pattern());
       }
 
-      DataTypes dataType = constraint.getDataType();
+      IJavaTypeAdapter<?> dataType = constraint.getDataType();
       if (dataType != null) {
-        constraintAnnotation.addMember("typeAdapter", "$T.class", dataType.getJavaTypeAdapter().getClass());
+        constraintAnnotation.addMember("typeAdapter", "$T.class", dataType.getClass());
       }
       annotation.addMember("matches", "$L", constraintAnnotation.build());
     }

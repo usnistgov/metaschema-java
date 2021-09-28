@@ -36,8 +36,9 @@ import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFl
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.codegen.AbstractJavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
@@ -56,17 +57,17 @@ public class FlagPropertyGenerator
   private static final Logger logger = LogManager.getLogger(FlagPropertyGenerator.class);
 
   private final FlagInstance<?> instance;
-  private final DataTypes dataType;
+  private final IJavaTypeAdapter<?> dataType;
 
   public FlagPropertyGenerator(FlagInstance<?> instance, AbstractJavaClassGenerator<?> classGenerator) {
     super(classGenerator);
     this.instance = instance;
 
     IFlagDefinition definition = instance.getDefinition();
-    DataTypes type = definition.getDatatype();
+    IJavaTypeAdapter<?> type = definition.getDatatype();
     if (type == null) {
-      logger.warn("Unsupported datatype '{}', using {}", type, DataTypes.DEFAULT_DATA_TYPE);
-      type = DataTypes.DEFAULT_DATA_TYPE;
+      logger.warn("Unsupported datatype '{}', using {}", type, MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE);
+      type = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
     }
     this.dataType = type;
   }
@@ -75,7 +76,7 @@ public class FlagPropertyGenerator
     return instance;
   }
 
-  public DataTypes getDataType() {
+  public IJavaTypeAdapter<?> getDataType() {
     return dataType;
   }
 
@@ -86,7 +87,7 @@ public class FlagPropertyGenerator
 
   @Override
   protected TypeName getJavaType() {
-    return ClassName.get(getDataType().getJavaTypeAdapter().getJavaClass());
+    return ClassName.get(getDataType().getJavaClass());
   }
 
   @Override
@@ -103,9 +104,9 @@ public class FlagPropertyGenerator
       annotation.addMember("required", "$L", true);
     }
 
-    DataTypes valueDataType = getDataType();
+    IJavaTypeAdapter<?> valueDataType = getDataType();
     annotation.addMember("typeAdapter", "$T.class",
-        valueDataType.getJavaTypeAdapter().getClass());
+        valueDataType.getClass());
 
     AnnotationUtils.applyAllowedValuesConstraints(annotation,
         getInstance().getDefinition().getAllowedValuesContraints());

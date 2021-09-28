@@ -26,22 +26,26 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.DecimalAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IDecimalType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-class DecimalItemImpl
-    extends AbstractNumericItem<BigDecimal>
-    implements IDecimalItem {
+class DecimalItemImpl extends AbstractNumericItem<BigDecimal> implements IDecimalItem {
   public DecimalItemImpl(BigDecimal value) {
     super(value);
   }
 
   @Override
   public IDecimalType getItemType() {
-    return TypeFactory.DECIMAL_TYPE;
+    return getJavaTypeAdapter();
+  }
+
+  @Override
+  protected DecimalAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.DECIMAL;
   }
 
   @Override

@@ -29,14 +29,10 @@ package gov.nist.secauto.metaschema.codegen;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-
 import java.io.File;
 import java.io.IOException;
 
 public interface JavaClassGenerator {
-  public static final DataTypes DEFAULT_DATA_TYPE = DataTypes.DEFAULT_DATA_TYPE;
-
   /**
    * Generates the associated Java class and saves it using the provided file.
    * 

@@ -56,5 +56,5 @@ public interface INodeItem extends IPathItem, INodeContext {
     return toPath(FormatterFactory.METAPATH_FORMATTER);
   }
 
-  <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> evaluateMetapath(MetapathExpression metapath);
+  <ITEM_TYPE extends IItem> ISequence<? extends ITEM_TYPE> evaluateMetapath(MetapathExpression metapath);
 }

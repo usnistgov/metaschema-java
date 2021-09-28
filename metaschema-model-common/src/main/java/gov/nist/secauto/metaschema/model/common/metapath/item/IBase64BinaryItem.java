@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.metapath.type.IBase64BinaryType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 import java.nio.ByteBuffer;
 
@@ -41,9 +40,7 @@ public interface IBase64BinaryItem extends IAnyAtomicItem {
   ByteBuffer getValue();
 
   @Override
-  default IBase64BinaryType getItemType() {
-    return TypeFactory.BASE64_TYPE;
-  }
+  IBase64BinaryType getItemType();
 
   @Override
   default IBase64BinaryItem toAtomicItem() {

@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.Defaults;
@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.definitions.AbstractInfoElementDefinition;
 import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.LocalInfoElementDefinition;
@@ -163,13 +164,13 @@ public class XmlLocalFlagDefinition
     }
 
     @Override
-    public DataTypes getDatatype() {
-      DataTypes retval;
+    public IJavaTypeAdapter<?> getDatatype() {
+      IJavaTypeAdapter<?> retval;
       if (getXmlFlag().isSetAsType()) {
         retval = getXmlFlag().getAsType();
       } else {
         // the default
-        retval = DataTypes.DEFAULT_DATA_TYPE;
+        retval = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
       }
       return retval;
     }

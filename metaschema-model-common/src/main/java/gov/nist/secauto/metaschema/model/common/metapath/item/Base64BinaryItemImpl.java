@@ -26,6 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.Base64Adapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.model.common.metapath.type.IBase64BinaryType;
+
 import java.nio.ByteBuffer;
 
 class Base64BinaryItemImpl
@@ -34,5 +38,15 @@ class Base64BinaryItemImpl
 
   public Base64BinaryItemImpl(ByteBuffer value) {
     super(value);
+  }
+
+  @Override
+  public IBase64BinaryType getItemType() {
+    return getJavaTypeAdapter();
+  }
+
+  @Override
+  protected Base64Adapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.BASE64;
   }
 }

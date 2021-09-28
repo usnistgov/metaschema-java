@@ -44,8 +44,8 @@ import gov.nist.secauto.metaschema.binding.model.property.info.MapPropertyInfo;
 import gov.nist.secauto.metaschema.binding.model.property.info.ModelPropertyInfo;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyInfo;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -74,7 +74,7 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
     super(field, parentClassBinding);
   }
 
-  protected abstract JavaTypeAdapter<?> getJavaTypeAdapter();
+  protected abstract IJavaTypeAdapter<?> getJavaTypeAdapter();
 
   @Override
   public Class<?> getItemType() {
@@ -160,7 +160,7 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
   protected DataTypeHandler newDataTypeHandler() {
     DataTypeHandler retval;
     // get the binding supplier
-    JavaTypeAdapter<?> adapter = getJavaTypeAdapter();
+    IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
     if (adapter == null) {
       ClassBinding classBinding
           = getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());

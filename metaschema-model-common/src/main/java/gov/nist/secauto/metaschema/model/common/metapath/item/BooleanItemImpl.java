@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IBooleanType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 enum BooleanItemImpl implements IBooleanItem {
   TRUE(true, "true"),
@@ -60,7 +60,7 @@ enum BooleanItemImpl implements IBooleanItem {
 
   @Override
   public IBooleanType getItemType() {
-    return TypeFactory.BOOLEAN_TYPE;
+    return MetaschemaDataTypeProvider.BOOLEAN;
   }
 
   @Override

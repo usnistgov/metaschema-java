@@ -26,8 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.IntegerAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IIntegerType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 import java.math.BigInteger;
 
@@ -40,7 +41,12 @@ class IntegerItemImpl
 
   @Override
   public IIntegerType getItemType() {
-    return TypeFactory.INTEGER_TYPE;
+    return getJavaTypeAdapter();
+  }
+
+  @Override
+  protected IntegerAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.INTEGER;
   }
 
   @Override

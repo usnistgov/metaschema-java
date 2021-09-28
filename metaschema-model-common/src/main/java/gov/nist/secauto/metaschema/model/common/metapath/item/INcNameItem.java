@@ -26,13 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.datatypes.adapter.types.NcNameAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 
 public interface INcNameItem extends IStringItem {
   public static INcNameItem valueOf(String string) {
-    NcNameAdapter adapter = (NcNameAdapter) DataTypes.NCNAME.getJavaTypeAdapter();
-    return new NcNameItemImpl(adapter.parse(string));
+    return new NcNameItemImpl(MetaschemaDataTypeProvider.NCNAME.parse(string));
   }
 
   @Override

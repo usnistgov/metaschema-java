@@ -26,9 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.datatypes.DateTime;
-import gov.nist.secauto.metaschema.datatypes.adapter.types.DateTimeAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IDateTimeType;
 
 import java.time.ZonedDateTime;
@@ -44,8 +43,7 @@ public interface IDateTimeItem extends IAnyAtomicItem {
   }
 
   public static IDateTimeItem valueOf(String value) {
-    DateTimeAdapter adapter = (DateTimeAdapter) DataTypes.DATE_TIME.getJavaTypeAdapter();
-    return valueOf(adapter.parse(value));
+    return valueOf(MetaschemaDataTypeProvider.DATE_TIME.parse(value));
   }
 
   ZonedDateTime asZonedDateTime();

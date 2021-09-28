@@ -26,8 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.datatypes.adapter.types.BooleanAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 
 public interface IBooleanItem extends IAnyAtomicItem {
   public static final IBooleanItem TRUE = BooleanItemImpl.TRUE;
@@ -42,7 +41,7 @@ public interface IBooleanItem extends IAnyAtomicItem {
   }
 
   public static IBooleanItem valueOf(String value) {
-    Boolean bool = ((BooleanAdapter) DataTypes.BOOLEAN.getJavaTypeAdapter()).parse(value);
+    Boolean bool = MetaschemaDataTypeProvider.BOOLEAN.parse(value);
     return valueOf(bool);
   }
 

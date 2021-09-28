@@ -26,14 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.DateWithTZAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IDateType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 import java.time.ZonedDateTime;
 
-class DateWithTimeZoneItemImpl
-    extends AbstractAnyAtomicItem<ZonedDateTime>
-    implements IDateItem {
+class DateWithTimeZoneItemImpl extends AbstractAnyAtomicItem<ZonedDateTime> implements IDateItem {
 
   public DateWithTimeZoneItemImpl(ZonedDateTime value) {
     super(value);
@@ -41,7 +40,7 @@ class DateWithTimeZoneItemImpl
 
   @Override
   public IDateType getItemType() {
-    return TypeFactory.DATE_WITH_TZ_TYPE;
+    return getJavaTypeAdapter();
   }
 
   @Override
@@ -49,4 +48,8 @@ class DateWithTimeZoneItemImpl
     return getValue();
   }
 
+  @Override
+  protected DateWithTZAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.DATE_WITH_TZ;
+  }
 }

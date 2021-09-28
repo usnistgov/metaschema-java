@@ -42,8 +42,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter
 import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.XmlBindingSupplier;
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
@@ -52,6 +50,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
@@ -86,7 +85,7 @@ public class DefaultFieldProperty
   }
 
   private final Field field;
-  private final JavaTypeAdapter<?> javaTypeAdapter;
+  private final IJavaTypeAdapter<?> javaTypeAdapter;
   private FieldDefinition definition;
   private IValueConstraintSupport constraints;
 
@@ -98,7 +97,7 @@ public class DefaultFieldProperty
           field.getName(), parentClassBinding.getBoundClass().getName(), Field.class.getName()));
     }
 
-    Class<? extends JavaTypeAdapter<?>> adapterClass = getFieldAnnotation().typeAdapter();
+    Class<? extends IJavaTypeAdapter<?>> adapterClass = getFieldAnnotation().typeAdapter();
     if (NullJavaTypeAdapter.class.equals(adapterClass)) {
       javaTypeAdapter = null;
     } else {
@@ -111,7 +110,7 @@ public class DefaultFieldProperty
   }
 
   @Override
-  protected JavaTypeAdapter<?> getJavaTypeAdapter() {
+  protected IJavaTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
 
@@ -178,7 +177,7 @@ public class DefaultFieldProperty
       XMLEvent event = eventReader.peek();
       if (event.isStartElement()) {
         QName qname = event.asStartElement().getName();
-        JavaTypeAdapter<?> adapter = getJavaTypeAdapter();
+        IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
         retval = !isInXmlWrapped() && adapter.isUnrappedValueAllowedInXml() && adapter.canHandleQName(qname);
       }
     }
@@ -192,7 +191,7 @@ public class DefaultFieldProperty
     XmlBindingSupplier supplier = getDataTypeHandler();
 
     // figure out if we need to parse the wrapper or not
-    JavaTypeAdapter<?> adapter = getJavaTypeAdapter();
+    IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
     boolean parseWrapper = true;
     if (adapter != null && !isInXmlWrapped() && adapter.isUnrappedValueAllowedInXml()) {
       parseWrapper = false;
@@ -298,8 +297,8 @@ public class DefaultFieldProperty
 
   private class ScalarFieldDefinition implements FieldDefinition {
     @Override
-    public DataTypes getDatatype() {
-      return DataTypes.getDataTypeForAdapter(getJavaTypeAdapter());
+    public IJavaTypeAdapter<?> getDatatype() {
+      return getJavaTypeAdapter();
     }
 
     @Override

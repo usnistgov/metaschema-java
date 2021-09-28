@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.metapath.type.IAnyUriType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 import java.net.URI;
 
@@ -40,9 +39,7 @@ public interface IAnyUriItem extends IAnyAtomicItem {
   URI getValue();
 
   @Override
-  default IAnyUriType getItemType() {
-    return TypeFactory.URI_TYPE;
-  }
+  IAnyUriType getItemType();
 
   @Override
   default IAnyUriItem toAtomicItem() {

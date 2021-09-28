@@ -42,7 +42,7 @@ import gov.nist.secauto.metaschema.binding.model.DefaultAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.DefaultFieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -56,7 +56,7 @@ import java.util.Objects;
 public class DefaultBindingContext implements BindingContext {
 
   private final Map<Class<?>, ClassBinding> classBindingsByClass = new HashMap<>();
-  private final Map<Class<? extends JavaTypeAdapter<?>>, JavaTypeAdapter<?>> javaTypeAdapterMap = new HashMap<>();
+  private final Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> javaTypeAdapterMap = new HashMap<>();
 
   /**
    * Construct a new binding context.
@@ -87,10 +87,10 @@ public class DefaultBindingContext implements BindingContext {
   }
 
   @Override
-  public <TYPE extends JavaTypeAdapter<?>> JavaTypeAdapter<TYPE> getJavaTypeAdapterInstance(Class<TYPE> clazz) {
+  public <TYPE extends IJavaTypeAdapter<?>> IJavaTypeAdapter<TYPE> getJavaTypeAdapterInstance(Class<TYPE> clazz) {
     synchronized (javaTypeAdapterMap) {
       @SuppressWarnings("unchecked")
-      JavaTypeAdapter<TYPE> retval = (JavaTypeAdapter<TYPE>) javaTypeAdapterMap.get(clazz);
+      IJavaTypeAdapter<TYPE> retval = (IJavaTypeAdapter<TYPE>) javaTypeAdapterMap.get(clazz);
       if (retval == null) {
         Constructor<TYPE> constructor;
         try {
@@ -101,7 +101,7 @@ public class DefaultBindingContext implements BindingContext {
 
         try {
           @SuppressWarnings("unchecked")
-          JavaTypeAdapter<TYPE> instance = (JavaTypeAdapter<TYPE>) constructor.newInstance();
+          IJavaTypeAdapter<TYPE> instance = (IJavaTypeAdapter<TYPE>) constructor.newInstance();
           retval = instance;
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
             | InvocationTargetException e) {

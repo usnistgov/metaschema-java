@@ -26,8 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.UriReferenceAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IUriReferenceType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 import java.net.URI;
 
@@ -41,7 +42,12 @@ class UriReferenceItemImpl
 
   @Override
   public IUriReferenceType getItemType() {
-    return TypeFactory.URI_REFERENCE_TYPE;
+    return getJavaTypeAdapter();
+  }
+
+  @Override
+  protected UriReferenceAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.URI_REFERENCE;
   }
 
   @Override

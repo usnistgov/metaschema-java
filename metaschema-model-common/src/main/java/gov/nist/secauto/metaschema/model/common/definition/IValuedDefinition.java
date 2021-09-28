@@ -26,11 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.definition;
 
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import java.util.List;
 
@@ -39,11 +39,11 @@ import java.util.List;
  */
 public interface IValuedDefinition extends IDefinition {
   /**
-   * Retrieves the value data type of the definition.
+   * Retrieves the data type of the definition's value.
    * 
    * @return the data type
    */
-  DataTypes getDatatype();
+  IJavaTypeAdapter<?> getDatatype();
 
   /**
    * Retrieve the list of allowed value constraints that apply to this definition's value.

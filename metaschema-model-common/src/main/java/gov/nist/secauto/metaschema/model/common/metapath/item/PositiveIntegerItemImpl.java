@@ -26,14 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.PositiveIntegerAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IPositiveIntegerType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 import java.math.BigInteger;
 
-class PositiveIntegerItemImpl
-    extends AbstractIntegerItem
-    implements IPositiveIntegerItem {
+class PositiveIntegerItemImpl extends AbstractIntegerItem implements IPositiveIntegerItem {
 
   protected PositiveIntegerItemImpl(BigInteger value) {
     super(value);
@@ -41,7 +40,12 @@ class PositiveIntegerItemImpl
 
   @Override
   public IPositiveIntegerType getItemType() {
-    return TypeFactory.POSITIVE_INTEGER_TYPE;
+    return getJavaTypeAdapter();
+  }
+
+  @Override
+  protected PositiveIntegerAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.POSITIVE_INTEGER;
   }
 
   @Override

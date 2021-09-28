@@ -33,8 +33,8 @@ import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedV
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
@@ -80,7 +80,7 @@ public @interface Field {
    * 
    * @return the data type adapter
    */
-  Class<? extends JavaTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
+  Class<? extends IJavaTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
 
   /**
    * The name of the JSON property that contains the field's value. If this value is provided, the

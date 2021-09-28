@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IMetaschemaContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.MetaschemaInstanceEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -67,8 +68,9 @@ public class MetapathExpression {
 
   public IInstanceSet evaluateMetaschemaInstance(IMetaschemaContext context) {
     IExpression<?> node = getASTNode();
-    if (!node.getStaticResultType().isInstance(INodeItem.class)) {
-      throw new UnsupportedOperationException(String.format("The expression '%s' is not a node expression", getPath()));
+    Class<? extends IItem> type = node.getStaticResultType();
+    if (!INodeItem.class.isAssignableFrom(type)) {
+      throw new UnsupportedOperationException(String.format("The expression '%s' with static type '%s' is not a node expression", getPath(), type.getName()));
     }
     return new MetaschemaInstanceEvaluationVisitor().visit(node, context);
   }

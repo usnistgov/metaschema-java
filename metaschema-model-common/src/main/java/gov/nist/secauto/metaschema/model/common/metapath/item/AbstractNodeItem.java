@@ -26,11 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IValuedDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 import java.util.Objects;
 
@@ -80,8 +79,8 @@ public abstract class AbstractNodeItem<SEGMENT extends IPathSegment, PARENT exte
     if (atomicItem == null) {
       IDefinition definition = getPathSegment().getDefinition();
       if (definition instanceof IValuedDefinition) {
-        DataTypes type = ((IValuedDefinition) definition).getDatatype();
-        atomicItem = TypeFactory.instance().getTypeForDataType(type).newItem(getValue());
+        IJavaTypeAdapter<?> type = ((IValuedDefinition) definition).getDatatype();
+        atomicItem = type.newItem(getValue());
       } else {
         throw new MetapathDynamicException("FOTY0012",
             String.format("the node type '%s' does not have a typed value", this.getClass().getName()));

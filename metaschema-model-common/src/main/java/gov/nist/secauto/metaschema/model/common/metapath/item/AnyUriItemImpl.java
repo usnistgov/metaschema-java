@@ -26,13 +26,25 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.UriAdapter;
+import gov.nist.secauto.metaschema.model.common.metapath.type.IAnyUriType;
+
 import java.net.URI;
 
-public class AnyUriItemImpl
-    extends AbstractAnyAtomicItem<URI>
-    implements IAnyUriItem {
+public class AnyUriItemImpl extends AbstractAnyAtomicItem<URI> implements IAnyUriItem {
 
   public AnyUriItemImpl(URI value) {
     super(value);
+  }
+
+  @Override
+  public IAnyUriType getItemType() {
+    return getJavaTypeAdapter();
+  }
+
+  @Override
+  protected UriAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.URI;
   }
 }

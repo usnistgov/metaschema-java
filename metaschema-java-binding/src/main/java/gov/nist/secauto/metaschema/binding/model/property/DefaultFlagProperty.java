@@ -45,8 +45,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
@@ -54,6 +52,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
@@ -78,7 +77,7 @@ public class DefaultFlagProperty
   // private static final Logger logger = LogManager.getLogger(DefaultFlagProperty.class);
 
   private final Flag flag;
-  private final JavaTypeAdapter<?> javaTypeAdapter;
+  private final IJavaTypeAdapter<?> javaTypeAdapter;
   private InternalFlagDefinition definition;
   private IValueConstraintSupport constraints;
 
@@ -107,7 +106,7 @@ public class DefaultFlagProperty
     return getFlagAnnotation().required();
   }
 
-  public JavaTypeAdapter<?> getJavaTypeAdapter() {
+  public IJavaTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
 
@@ -288,8 +287,8 @@ public class DefaultFlagProperty
 
   private class InternalFlagDefinition implements FlagDefinition {
     @Override
-    public DataTypes getDatatype() {
-      return DataTypes.getDataTypeForAdapter(getJavaTypeAdapter());
+    public IJavaTypeAdapter<?> getDatatype() {
+      return getJavaTypeAdapter();
     }
 
     @Override

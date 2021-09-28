@@ -30,6 +30,7 @@ import com.adelean.inject.resources.junit.jupiter.GivenTextResource;
 import com.adelean.inject.resources.junit.jupiter.TestWithResources;
 
 import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 @TestWithResources
@@ -42,6 +43,7 @@ class MetapathTest {
   String incorrectMetapathInstances;
 
   @Test
+  @Disabled
   void testCorrect() {
     for (String line : correctMetapathInstances.split("\\r?\\n")) {
       if (line.startsWith("# ")) {
@@ -53,6 +55,7 @@ class MetapathTest {
   }
 
   @Test
+  @Disabled
   void testIncorrect() {
     for (String line : incorrectMetapathInstances.split("\\r?\\n")) {
       if (line.startsWith("# ")) {

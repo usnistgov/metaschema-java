@@ -40,7 +40,7 @@ import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,7 +56,7 @@ public class DefaultFieldValueProperty extends AbstractProperty<FieldClassBindin
   private static final Logger logger = LogManager.getLogger(DefaultFieldValueProperty.class);
 
   private final FieldValue fieldValue;
-  private final JavaTypeAdapter<?> javaTypeAdapter;
+  private final IJavaTypeAdapter<?> javaTypeAdapter;
 
   public DefaultFieldValueProperty(FieldClassBinding fieldClassBinding, Field field) {
     super(field, fieldClassBinding);
@@ -78,7 +78,7 @@ public class DefaultFieldValueProperty extends AbstractProperty<FieldClassBindin
   }
 
   @Override
-  public JavaTypeAdapter<?> getJavaTypeAdapter() {
+  public IJavaTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
 

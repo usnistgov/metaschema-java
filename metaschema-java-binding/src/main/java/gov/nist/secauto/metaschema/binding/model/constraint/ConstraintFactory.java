@@ -36,8 +36,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHas
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IsUnique;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.KeyField;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValue;
@@ -49,6 +47,8 @@ import gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexHasKeyCon
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultKeyField;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultUniqueConstraint;
+import gov.nist.secauto.metaschema.model.common.datatype.DataTypeService;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathFactory;
 
@@ -103,12 +103,12 @@ public class ConstraintFactory {
     return retval;
   }
 
-  static DataTypes toDataType(Class<? extends JavaTypeAdapter<?>> adapterClass) {
-    DataTypes retval;
+  static IJavaTypeAdapter<?> toDataType(Class<? extends IJavaTypeAdapter<?>> adapterClass) {
+    IJavaTypeAdapter<?> retval;
     if (adapterClass.isAssignableFrom(NullJavaTypeAdapter.class)) {
       retval = null;
     } else {
-      retval = DataTypes.getDataTypeForAdapter(adapterClass);
+      retval = DataTypeService.getInstance().getJavaTypeAdapterByClass(adapterClass);
     }
     return retval;
   }

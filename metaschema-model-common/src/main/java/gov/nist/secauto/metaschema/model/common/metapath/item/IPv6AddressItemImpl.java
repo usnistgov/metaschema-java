@@ -26,8 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.IPv6AddressAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IIPv6AddressType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 import inet.ipaddr.ipv6.IPv6Address;
 
@@ -41,7 +42,12 @@ class IPv6AddressItemImpl
 
   @Override
   public IIPv6AddressType getItemType() {
-    return TypeFactory.IP_V6_ADDRESS_TYPE;
+    return getJavaTypeAdapter();
+  }
+
+  @Override
+  protected IPv6AddressAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.IP_V6_ADDRESS;
   }
 
   @Override

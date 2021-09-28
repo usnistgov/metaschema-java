@@ -26,8 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.NcNameAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.type.INcNameType;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeFactory;
 
 class NcNameItemImpl
     extends AbstractStringItem
@@ -39,7 +40,12 @@ class NcNameItemImpl
 
   @Override
   public INcNameType getItemType() {
-    return TypeFactory.NCNAME_TYPE;
+    return getJavaTypeAdapter();
+  }
+
+  @Override
+  protected NcNameAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.NCNAME;
   }
 
   @Override

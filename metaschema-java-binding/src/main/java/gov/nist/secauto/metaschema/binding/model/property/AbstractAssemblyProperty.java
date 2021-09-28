@@ -32,9 +32,9 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.type.NodeItemFactory;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 
@@ -60,7 +60,7 @@ public abstract class AbstractAssemblyProperty
   }
 
   @Override
-  protected JavaTypeAdapter<?> getJavaTypeAdapter() {
+  protected IJavaTypeAdapter<?> getJavaTypeAdapter() {
     // an assembly property is always associated with a bound class, so there will never be a class
     // binding
     return null;
