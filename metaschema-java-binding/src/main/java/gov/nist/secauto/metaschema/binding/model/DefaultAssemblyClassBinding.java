@@ -501,10 +501,6 @@ public class DefaultAssemblyClassBinding
       }
     }
 
-    if (context.isValidating()) {
-      validate(instance);
-    }
-
     if (jsonKey != null) {
       // read the END_OBJECT for the JSON key value
       JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);

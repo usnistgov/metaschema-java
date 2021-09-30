@@ -23,46 +23,10 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.definition;
 
-package gov.nist.secauto.metaschema.model.common.metapath.format;
+import gov.nist.secauto.metaschema.model.common.IModelContainer;
 
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+public interface INamedModelDefinition extends INamedDefinition, IFlaggedDefinition {
 
-public class FormatterFactory {
-  public static final IPathFormatter METAPATH_FORMATTER = new MetapathFormatter();
-
-  private static final FormatterFactory instance = new FormatterFactory();
-
-  public static FormatterFactory instance() {
-    return instance;
-  }
-
-  protected FormatterFactory() {
-
-  }
-
-  public IFlagPathSegment newFlagPathSegment(IModelPositionalPathSegment parentPathSegment, IFlagInstance instance) {
-    return new FlagPathSegmentImpl(parentPathSegment, instance);
-  }
-
-  public IFieldPathSegment newFieldPathSegment(IAssemblyPathSegment parentPathSegment, IFieldInstance instance,
-      int position) {
-    return new FieldPathSegmentImpl(parentPathSegment, instance, position);
-  }
-
-  public IAssemblyPathSegment newAssemblyPathSegment(IAssemblyPathSegment parentPathSegment, IAssemblyInstance instance,
-      int position) {
-    return new AssemblyPathSegmentImpl(parentPathSegment, instance, position);
-  }
-
-  public IRootAssemblyPathSegment newRootAssemblyPathSegment(IAssemblyInstance instance) {
-    return new RootAssemblyInstancePathSegmentImpl(instance);
-  }
-
-  public IRootAssemblyPathSegment newRootAssemblyPathSegment(IAssemblyDefinition definition) {
-    return new RootAssemblyDefinitionPathSegmentImpl(definition);
-  }
 }

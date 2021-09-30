@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.format.FormatterFactory;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
 
 public interface INodeItem extends IPathItem, INodeContext {
 
@@ -37,15 +37,22 @@ public interface INodeItem extends IPathItem, INodeContext {
    * 
    * @return the parent node item, or {@code null} if this node item has no known parent
    */
-  INodeItem getParent();
+  INodeItem getParentNodeItem();
 
   /**
    * Determine if the node is a root node.
    * 
    * @return {@code true} if the node is a root node, or {@code false} otherwise
    */
-  boolean isRootNode();
+  default boolean isRootNode() {
+    return false;
+  }
 
+  /**
+   * Retrieve the value associated with the item
+   * 
+   * @return the value
+   */
   Object getValue();
 
   // TODO: rename to asAtomicItem
@@ -53,8 +60,17 @@ public interface INodeItem extends IPathItem, INodeContext {
   IAnyAtomicItem toAtomicItem();
 
   default String getMetapath() {
-    return toPath(FormatterFactory.METAPATH_FORMATTER);
+    return toPath(IFormatterFactory.METAPATH_FORMATTER);
   }
 
+  /**
+   * Evaluate the provided Metapath, producing a sequence of result items.
+   * 
+   * @param <ITEM_TYPE>
+   *          the type of items in the sequence
+   * @param metapath
+   *          the compiled Metapath expression
+   * @return the result items
+   */
   <ITEM_TYPE extends IItem> ISequence<? extends ITEM_TYPE> evaluateMetapath(MetapathExpression metapath);
 }

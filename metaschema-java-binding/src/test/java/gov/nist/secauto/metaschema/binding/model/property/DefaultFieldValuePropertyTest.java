@@ -93,8 +93,6 @@ class DefaultFieldValuePropertyTest {
 
         allowing(jsonParsingContext).getReader();
         will(returnValue(jsonParser));
-        allowing(jsonParsingContext).isValidating();
-        will(returnValue(false));
       }
     });
 
@@ -136,8 +134,6 @@ class DefaultFieldValuePropertyTest {
 
         allowing(xmlParsingContext).getReader();
         will(returnValue(eventReader));
-        allowing(xmlParsingContext).isValidating();
-        will(returnValue(false));
       }
     });
 
@@ -199,8 +195,6 @@ class DefaultFieldValuePropertyTest {
 
         allowing(jsonParsingContext).getReader();
         will(returnValue(jsonParser));
-        allowing(jsonParsingContext).isValidating();
-        will(returnValue(false));
       }
     });
 
@@ -242,8 +236,6 @@ class DefaultFieldValuePropertyTest {
 
         allowing(xmlParsingContext).getReader();
         will(returnValue(eventReader));
-        allowing(xmlParsingContext).isValidating();
-        will(returnValue(false));
       }
     });
 

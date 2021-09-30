@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 
+import javax.xml.namespace.QName;
+
 class RootAssemblyDefinitionPathSegmentImpl implements IAssemblyPathSegment, IRootAssemblyPathSegment {
   private final IAssemblyDefinition definition;
 
@@ -44,6 +46,11 @@ class RootAssemblyDefinitionPathSegmentImpl implements IAssemblyPathSegment, IRo
   @Override
   public String getName() {
     return getDefinition().getRootName();
+  }
+
+  @Override
+  public QName getQName() {
+    return getDefinition().getRootXmlQName();
   }
 
   @Override

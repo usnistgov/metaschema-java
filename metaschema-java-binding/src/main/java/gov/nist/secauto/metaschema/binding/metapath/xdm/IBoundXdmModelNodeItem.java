@@ -24,26 +24,39 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.metapath.xdm.type;
+package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.metapath.MetaschemaPathEvaluationVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.AbstractNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.binding.model.IBoundNamedModelDefinition;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
 
-public abstract class AbstractBindingNodeItem<SEGMENT extends IPathSegment, PARENT extends IModelNodeItem>
-    extends AbstractNodeItem<SEGMENT, PARENT> {
+import java.util.Map;
+import java.util.stream.Stream;
 
-  public AbstractBindingNodeItem(Object value, SEGMENT segment, PARENT parent) {
-    super(value, segment, parent);
-  }
+public interface IBoundXdmModelNodeItem extends IXdmModelNodeItem, IBoundXdmNodeItem {
+  @Override
+  IBoundXdmModelNodeItem getNodeItem();
 
   @Override
-  public <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> evaluateMetapath(MetapathExpression metapath) {
-    return new MetaschemaPathEvaluationVisitor().visit(metapath.getASTNode(), this);
-  }
+  IXdmAssemblyNodeItem getParentNodeItem();
 
+  @Override
+  IModelPositionalPathSegment getPathSegment();
+
+  @Override
+  NamedModelProperty getInstance();
+
+  @Override
+  IBoundNamedModelDefinition getDefinition();
+
+  @Override
+  Map<String, ? extends IBoundXdmFlagNodeItem> getFlags();
+
+  @Override
+  Stream<? extends IBoundXdmFlagNodeItem> flags();
+
+  @Override
+  IBoundXdmFlagNodeItem getFlagByName(String name);
 }

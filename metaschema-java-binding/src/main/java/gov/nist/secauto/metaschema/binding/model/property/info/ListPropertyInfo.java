@@ -31,7 +31,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
@@ -40,7 +39,6 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 
 import org.codehaus.stax2.XMLEventReader2;
 
@@ -105,24 +103,14 @@ public class ListPropertyInfo
     boolean handled = false;
     XMLEvent event;
 
-    PathBuilder pathBuilder = context.getPathBuilder();
-    int position = 0;
     while ((event = eventReader.peek()).isStartElement()
         && expectedFieldItemQName.equals(event.asStartElement().getName())) {
-      pathBuilder.pushItem(
-          getProperty().newPathSegment((IAssemblyPathSegment) pathBuilder.getContextPathSegment(), ++position));
 
       Object value = getProperty().readItem(parentInstance, start, context);
       if (value != null) {
         collector.add(value);
-
-        if (context.isValidating()) {
-          getProperty().validateItem(value, context);
-        }
-
         handled = true;
       }
-      pathBuilder.popItem();
 
       // consume extra whitespace between elements
       XmlEventUtil.skipWhitespace(eventReader);
@@ -143,13 +131,9 @@ public class ListPropertyInfo
       parseArray = false;
     }
 
-    PathBuilder pathBuilder = context.getPathBuilder();
-
     if (parseArray) {
       // advance past the array
       JsonUtil.assertAndAdvance(parser, JsonToken.START_ARRAY);
-
-      int position = 0;
 
       // parse items
       while (!JsonToken.END_ARRAY.equals(parser.currentToken())) {
@@ -160,22 +144,8 @@ public class ListPropertyInfo
           JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
         }
 
-        pathBuilder.pushItem(
-            getProperty().newPathSegment((IAssemblyPathSegment) pathBuilder.getContextPathSegment(), ++position));
-
         List<Object> values = getProperty().readItem(parentInstance, context);
         collector.addAll(values);
-
-        for (Object value : values) {
-          // use the same position, since this refers to the same JSON node for multiple values due to
-          // collapse
-
-          if (context.isValidating()) {
-            getProperty().validateItem(value, context);
-          }
-        }
-
-        pathBuilder.popItem();
 
         if (isObject) {
           // read the object's END_OBJECT
@@ -193,18 +163,8 @@ public class ListPropertyInfo
         JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
       }
 
-      pathBuilder.pushItem(
-          getProperty().newPathSegment((IAssemblyPathSegment) pathBuilder.getContextPathSegment(), 1));
-
       List<Object> values = getProperty().readItem(parentInstance, context);
       collector.addAll(values);
-
-      for (Object value : values) {
-        if (context.isValidating()) {
-          getProperty().validateItem(value, context);
-        }
-      }
-      pathBuilder.popItem();
 
       if (isObject) {
         // read the object's END_OBJECT

@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.FormatterFactory;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 
 import java.util.Objects;
@@ -62,6 +62,6 @@ public abstract class AbstractPathItem<SEGMENT extends IPathSegment> implements 
 
   @Override
   public String toString() {
-    return FormatterFactory.METAPATH_FORMATTER.format(getPathSegment());
+    return IFormatterFactory.METAPATH_FORMATTER.format(getPathSegment());
   }
 }

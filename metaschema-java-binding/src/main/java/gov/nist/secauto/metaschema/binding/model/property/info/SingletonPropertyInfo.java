@@ -30,14 +30,12 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -49,9 +47,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
-public class SingletonPropertyInfo
-    extends AbstractModelPropertyInfo<Type>
-    implements ModelPropertyInfo {
+public class SingletonPropertyInfo extends AbstractModelPropertyInfo<Type> implements ModelPropertyInfo {
 
   public SingletonPropertyInfo(NamedModelProperty property) {
     super(property);
@@ -80,20 +76,9 @@ public class SingletonPropertyInfo
       // read the object's START_OBJECT
       JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     }
-    PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushItem(
-        getProperty().newPathSegment((IAssemblyPathSegment) pathBuilder.getContextPathSegment(), 1));
 
     List<Object> values = property.readItem(parentInstance, context);
     collector.addAll(values);
-
-    for (Object value : values) {
-
-      if (context.isValidating()) {
-        getProperty().validateItem(value, context);
-      }
-    }
-    pathBuilder.popItem();
 
     if (isObject) {
       // read the object's END_OBJECT
@@ -104,22 +89,12 @@ public class SingletonPropertyInfo
   @Override
   public boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start,
       XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
-
-    PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushItem(
-        getProperty().newPathSegment((IAssemblyPathSegment) pathBuilder.getContextPathSegment(), 1));
-
     boolean handled = true;
     Object value = getProperty().readItem(parentInstance, start, context);
     if (value != null) {
       collector.add(value);
       handled = true;
-
-      if (context.isValidating()) {
-        getProperty().validateItem(value, context);
-      }
     }
-    pathBuilder.popItem();
     return handled;
   }
 

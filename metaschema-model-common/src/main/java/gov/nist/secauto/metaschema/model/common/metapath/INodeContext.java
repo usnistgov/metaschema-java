@@ -50,7 +50,7 @@ public interface INodeContext {
    *          if the search should recurse over the child model instances
    * @return a stream of matching flag node items
    */
-  Stream<? extends INodeItem> getChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor, IExpression<?> expr,
+  Stream<? extends INodeItem> getMatchingChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor, IExpression<?> expr,
       boolean recurse);
 
   /**
@@ -61,7 +61,7 @@ public interface INodeContext {
    *          the search expression
    * @return a stream of matching flag node items
    */
-  Stream<IFlagNodeItem> getChildFlags(Flag flag);
+  Stream<? extends IFlagNodeItem> getMatchingChildFlags(Flag flag);
 
   /**
    * Searches the child model nodes for {@link IModelNodeItem} instances that match the provided
@@ -71,7 +71,7 @@ public interface INodeContext {
    *          the search expression
    * @return a stream of matching model node items
    */
-  Stream<? extends IModelNodeItem> getChildModelInstances(ModelInstance modelInstance);
+  Stream<? extends IModelNodeItem> getMatchingChildModelInstances(ModelInstance modelInstance);
 
   // default IMetapathResult evaluateMetapath(MetapathExpression metapath) {
   // MetaschemaPathEvaluationVisitor visitor = new MetaschemaPathEvaluationVisitor();

@@ -54,12 +54,12 @@ public class TerminalNodeContext implements INodeContext {
   }
 
   @Override
-  public Stream<IFlagNodeItem> getChildFlags(Flag expr) {
+  public Stream<IFlagNodeItem> getMatchingChildFlags(Flag expr) {
     return Stream.empty();
   }
 
   @Override
-  public Stream<IModelNodeItem> getChildModelInstances(ModelInstance modelInstance) {
+  public Stream<IModelNodeItem> getMatchingChildModelInstances(ModelInstance modelInstance) {
     Stream<IModelNodeItem> retval;
 
     if (modelInstance.isName()) {
@@ -76,7 +76,7 @@ public class TerminalNodeContext implements INodeContext {
   }
 
   @Override
-  public Stream<? extends INodeItem> getChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor,
+  public Stream<? extends INodeItem> getMatchingChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor,
       IExpression<?> expr, boolean recurse) {
     return Stream.empty();
   }

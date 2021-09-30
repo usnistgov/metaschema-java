@@ -28,8 +28,17 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
 public interface IAssemblyNodeItem extends IModelNodeItem {
 
   @Override
   IAssemblyPathSegment getPathSegment();
-}
+
+  Map<String, ? extends List<? extends IModelNodeItem>> getModelItems();
+  
+  Stream<? extends IModelNodeItem> modelItems();
+  
+  List<? extends IModelNodeItem> getModelItemsByName(String name);}

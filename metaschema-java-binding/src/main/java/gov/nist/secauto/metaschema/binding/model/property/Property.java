@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
@@ -222,15 +221,4 @@ public interface Property extends IInstance {
       throws XMLStreamException, IOException;
 
   void write(Object parentInstance, JsonWritingContext context) throws IOException;
-
-  /**
-   * Validate the value(s) for this property.
-   * 
-   * @param value
-   *          the properties value instance
-   * @param context
-   *          the parsing context
-   */
-  void validateValue(Object value, ParsingContext<?, ?> context);
-
 }

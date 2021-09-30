@@ -24,43 +24,12 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.model.constraint;
+package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
-import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
-import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
-import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFieldPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
+public interface INodeItemVisitor<RESULT, CONTEXT> {
+  RESULT visitFlag(IBoundXdmFlagNodeItem item, CONTEXT context);
 
-public class NoOpConstraintValidator implements ConstraintValidator {
+  RESULT visitField(IBoundXdmFieldNodeItem item, CONTEXT context);
 
-  @Override
-  public void validateItem(AssemblyProperty property, IAssemblyPathSegment pathSegment, Object item,
-      ParsingContext<?, ?> context) {
-  }
-
-  @Override
-  public void validateItem(FieldProperty property, IFieldPathSegment pathSegment, Object item,
-      ParsingContext<?, ?> context) {
-  }
-
-  @Override
-  public void validateItem(FlagProperty property, IFlagPathSegment pathSegment, Object item,
-      ParsingContext<?, ?> context) {
-  }
-
-  @Override
-  public void validateValue(AssemblyProperty property, Object value, ParsingContext<?, ?> context) {
-  }
-
-  @Override
-  public void validateValue(FieldProperty property, Object value, ParsingContext<?, ?> context) {
-  }
-
-  @Override
-  public void finalizeValidation(ParsingContext<?, ?> context) {
-  }
-
+  RESULT visitAssembly(IBoundXdmAssemblyNodeItem item, CONTEXT context);
 }

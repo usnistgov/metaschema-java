@@ -30,7 +30,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
@@ -169,13 +168,7 @@ public class DefaultFieldValueProperty extends AbstractProperty<FieldClassBindin
 
   protected Object readInternal(XmlParsingContext context) throws IOException {
     // parse the value
-    Object retval = getJavaTypeAdapter().parse(context.getReader());
-
-    // validate the flag value
-    if (context.isValidating()) {
-      validateValue(retval, context);
-    }
-    return retval;
+    return getJavaTypeAdapter().parse(context.getReader());
   }
 
   @Override
@@ -213,12 +206,6 @@ public class DefaultFieldValueProperty extends AbstractProperty<FieldClassBindin
   @Override
   public void writeValue(Object value, JsonWritingContext context) throws IOException {
     getJavaTypeAdapter().writeJsonValue(value, context.getWriter());
-  }
-
-  @Override
-  public void validateValue(Object value, ParsingContext<?, ?> context) {
-    // TODO Auto-generated method stub
-
   }
 
   @Override

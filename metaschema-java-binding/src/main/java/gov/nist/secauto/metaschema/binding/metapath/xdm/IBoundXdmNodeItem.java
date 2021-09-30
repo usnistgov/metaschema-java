@@ -23,21 +23,29 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-package gov.nist.secauto.metaschema.binding.metapath;
+import gov.nist.secauto.metaschema.binding.model.BoundDefinition;
+import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
+import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmNodeItem;
 
-import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+public interface IBoundXdmNodeItem extends IXdmNodeItem {
+  @Override
+  IBoundXdmNodeItem getNodeItem();
 
-public interface NodeContextStack {
-  void push(Object item, NamedModelProperty property);
+  @Override
+  NamedProperty getInstance();
 
-  void push(Object item, FlagProperty property);
+  @Override
+  BoundDefinition getDefinition();
 
-  void push(INodeItem item);
-
-  INodeItem pop();
-
-  INodeItem peek();
+  /**
+   * A visitor callback. 
+   * @param <RESULT> the type of the visitor result
+   * @param <CONTEXT> the type of the context parameter
+   * @param visitor the calling visitor
+   * @param context a parameter used to pass contextual information between visitors
+   * @return the visitor result
+   */
+  <RESULT, CONTEXT> RESULT accept(INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
 }

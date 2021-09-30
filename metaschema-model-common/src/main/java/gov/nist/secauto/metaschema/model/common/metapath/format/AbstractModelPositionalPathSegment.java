@@ -31,6 +31,8 @@ import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+
 /**
  * This abstract implementation represents a path segment that is part of an assembly's model.
  */
@@ -74,12 +76,12 @@ public abstract class AbstractModelPositionalPathSegment<INSTANCE extends INamed
   }
 
   @Override
-  public IModelPositionalPathSegment getParent() {
-    return parent;
+  public QName getQName() {
+    return getInstance().getXmlQName();
   }
 
   @Override
-  public Stream<IPathSegment> getPathStream() {
-    return parent == null ? Stream.of(this) : Stream.concat(parent.getPathStream(), Stream.of(this));
+  public IModelPositionalPathSegment getParentSegment() {
+    return parent;
   }
 }

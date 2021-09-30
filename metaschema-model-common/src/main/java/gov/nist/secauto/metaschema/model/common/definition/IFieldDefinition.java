@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 
-public interface IFieldDefinition extends INamedValuedDefinition, IFlaggedDefinition, Field {
+public interface IFieldDefinition extends INamedValuedDefinition, INamedModelDefinition, Field {
   /**
    * Retrieves the key to use as the field name for this field's value in JSON.
    * 

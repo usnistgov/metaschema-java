@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 
 public interface IRootAssemblyPathSegment extends IAssemblyPathSegment {
   @Override
-  default IModelPositionalPathSegment getParent() {
+  default IModelPositionalPathSegment getParentSegment() {
     return null;
   }
 

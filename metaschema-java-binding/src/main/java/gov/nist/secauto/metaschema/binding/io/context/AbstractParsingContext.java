@@ -26,37 +26,18 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.binding.model.constraint.ConstraintValidator;
-import gov.nist.secauto.metaschema.binding.model.constraint.NoOpConstraintValidator;
-import gov.nist.secauto.metaschema.binding.model.constraint.ValidatingConstraintValidator;
-
 import java.util.Objects;
 
 public class AbstractParsingContext<READER, PROBLEM_HANDLER extends ProblemHandler>
     implements ParsingContext<READER, PROBLEM_HANDLER> {
   private final READER parser;
   private final PROBLEM_HANDLER problemHandler;
-  private final boolean validating;
-  private final PathBuilder pathBuilder;
-  private final ConstraintValidator validator;
 
-  public AbstractParsingContext(READER parser, PROBLEM_HANDLER problemHandler, boolean validating) {
+  public AbstractParsingContext(READER parser, PROBLEM_HANDLER problemHandler) {
     Objects.requireNonNull(parser, "parser");
     Objects.requireNonNull(problemHandler, "problemHandler");
     this.parser = parser;
     this.problemHandler = problemHandler;
-    this.validating = validating;
-    this.pathBuilder = new DefaultPathBuilder();
-    if (validating) {
-      this.validator = new ValidatingConstraintValidator();
-    } else {
-      this.validator = new NoOpConstraintValidator();
-    }
-  }
-
-  @Override
-  public boolean isValidating() {
-    return validating;
   }
 
   @Override
@@ -67,15 +48,5 @@ public class AbstractParsingContext<READER, PROBLEM_HANDLER extends ProblemHandl
   @Override
   public PROBLEM_HANDLER getProblemHandler() {
     return problemHandler;
-  }
-
-  @Override
-  public PathBuilder getPathBuilder() {
-    return pathBuilder;
-  }
-
-  @Override
-  public ConstraintValidator getConstraintValidator() {
-    return validator;
   }
 }

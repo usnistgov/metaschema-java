@@ -117,7 +117,6 @@ public interface IInstanceSet {
           public IAssemblyDefinition getDefinition() {
             return definition;
           }
-
         });
       }
 
@@ -200,6 +199,7 @@ public interface IInstanceSet {
           public boolean isInXmlWrapped() {
             return true;
           }
+
         });
       }
 

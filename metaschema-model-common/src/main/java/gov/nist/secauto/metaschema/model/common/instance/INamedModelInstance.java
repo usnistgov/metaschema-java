@@ -29,7 +29,10 @@ package gov.nist.secauto.metaschema.model.common.instance;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
 
+import java.util.Collection;
+
 public interface INamedModelInstance extends INamedInstance, IModelInstance {
+
   /**
    * Generate a new path segment for this instance.
    * 

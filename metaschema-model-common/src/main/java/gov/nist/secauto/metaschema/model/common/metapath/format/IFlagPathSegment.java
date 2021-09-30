@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
+import java.util.stream.Stream;
+
 public interface IFlagPathSegment extends IPathSegment {
   @Override
   IFlagInstance getInstance();

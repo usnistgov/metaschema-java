@@ -31,13 +31,10 @@ import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
-import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.type.NodeItemFactory;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.FlagDefinition;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
@@ -53,10 +50,6 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 
@@ -64,16 +57,13 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
-public class DefaultFlagProperty
-    extends AbstractNamedProperty<ClassBinding>
-    implements FlagProperty {
+public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> implements FlagProperty {
   // private static final Logger logger = LogManager.getLogger(DefaultFlagProperty.class);
 
   private final Flag flag;
@@ -137,8 +127,6 @@ public class DefaultFlagProperty
 
   @Override
   public boolean read(Object parentInstance, StartElement parent, XmlParsingContext context) throws IOException {
-    PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushInstance(this);
 
     // when reading an attribute:
     // - "parent" will contain the attributes to read
@@ -152,17 +140,9 @@ public class DefaultFlagProperty
         // apply the value to the parentObject
         setValue(parentInstance, value);
 
-        pathBuilder.pushItem(newPathSegment((IModelPositionalPathSegment) pathBuilder.getContextPathSegment()));
-
-        // validate the flag value
-        if (context.isValidating()) {
-          validateValue(value, context);
-        }
-        pathBuilder.popItem();
         handled = true;
       }
     }
-    pathBuilder.popInstance();
     return handled;
   }
 
@@ -173,26 +153,13 @@ public class DefaultFlagProperty
 
   @Override
   protected Object readInternal(Object parentInstance, JsonParsingContext context) throws IOException {
-
-    PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushInstance(this);
-
     JsonParser parser = context.getReader();
+
     // advance past the property name
     parser.nextFieldName();
+
     // parse the value
-    Object retval = readValueAndSupply(context).get();
-
-    pathBuilder.pushItem(newPathSegment((IModelPositionalPathSegment) pathBuilder.getContextPathSegment()));
-
-    // validate the flag value
-    if (context.isValidating()) {
-      validateValue(retval, context);
-    }
-
-    pathBuilder.popItem();
-    pathBuilder.popInstance();
-    return retval;
+    return readValueAndSupply(context).get();
   }
 
   // TODO: implement collector?
@@ -352,32 +319,4 @@ public class DefaultFlagProperty
     }
   }
 
-  @Override
-  public void validateValue(Object value, ParsingContext<?, ?> context) {
-    context.getConstraintValidator().validateItem(this, context.getPathBuilder().getContextPathSegment(), value,
-        context);
-  }
-
-  @Override
-  public Stream<IFlagNodeItem> getNodeItemFromParentInstance(IModelNodeItem parentItem) {
-    return getNodeItemFromValue(parentItem, getValue(parentItem.getValue()));
-  }
-
-  @Override
-  public Stream<IFlagNodeItem> getNodeItemFromValue(IModelNodeItem parentItem, Object value) {
-    Stream<IFlagNodeItem> retval;
-    if (value == null) {
-      retval = Stream.empty();
-    } else {
-      IFlagPathSegment segment = newPathSegment(parentItem.getPathSegment());
-      retval = Stream.of(newNodeItem(segment, value, parentItem));
-    }
-    return retval;
-  }
-
-  @Override
-  public IFlagNodeItem newNodeItem(IFlagPathSegment pathSegment, Object value, IModelNodeItem parent) {
-    // TODO: migrate implementation here?
-    return NodeItemFactory.newNodeItem(pathSegment, value, parent);
-  }
 }

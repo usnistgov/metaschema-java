@@ -42,8 +42,7 @@ public interface IFieldNodeItem extends IModelNodeItem {
   }
 
   @Override
-  default Stream<IModelNodeItem> getChildModelInstances(ModelInstance modelInstance) {
+  default Stream<? extends IModelNodeItem> getMatchingChildModelInstances(ModelInstance modelInstance) {
     return Stream.empty();
   }
-
 }

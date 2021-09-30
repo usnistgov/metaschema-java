@@ -32,6 +32,8 @@ import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+
 class FlagPathSegmentImpl implements IFlagPathSegment {
   private final IFlagInstance instance;
   private final IModelPositionalPathSegment parent;
@@ -58,12 +60,12 @@ class FlagPathSegmentImpl implements IFlagPathSegment {
   }
 
   @Override
-  public IModelPositionalPathSegment getParent() {
-    return parent;
+  public QName getQName() {
+    return getInstance().getXmlQName();
   }
 
   @Override
-  public Stream<IPathSegment> getPathStream() {
-    return Stream.concat(parent.getPathStream(), Stream.of(this));
+  public IModelPositionalPathSegment getParentSegment() {
+    return parent;
   }
 }

@@ -34,9 +34,6 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -93,30 +90,4 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
 
   protected abstract Object readInternal(Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException;
-
-  @Override
-  public ISequence<?> evaluateMetapath(MetapathExpression metapath, INodeItem item) {
-    return item.evaluateMetapath(metapath);
-  }
-
-  //
-  // protected Object readInternal(Object parentInstance, JsonParsingContext context)
-  // throws IOException, BindingException {
-  // JsonParser parser = context.getReader();
-  // // advance past the property name
-  // parser.nextFieldName();
-  // // parse the value
-  // PropertyCollector collector = newPropertyCollector();
-  // ModelPropertyInfo info = getPropertyInfo();
-  // info.readValue(collector, parentInstance, context);
-  // readValue(collector, parentInstance, context);
-  //
-  // Object retval = collector.getValue();
-  //
-  // // validate the flag value
-  // if (context.isValidating()) {
-  // validateValue(retval, context);
-  // }
-  // return retval;
-  // }
 }

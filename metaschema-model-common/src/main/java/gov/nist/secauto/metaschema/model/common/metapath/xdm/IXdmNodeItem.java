@@ -23,58 +23,27 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
-package gov.nist.secauto.metaschema.binding.metapath.xdm.type;
+package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFieldPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class FieldNodeItemImpl
-    extends AbstractModelNodeItem<IFieldPathSegment>
-    implements IFieldNodeItem {
-
-  public FieldNodeItemImpl(Object value, IFieldPathSegment segment, IAssemblyNodeItem parent) {
-    super(value, segment, parent);
-  }
+public interface IXdmNodeItem extends INodeItem, IPathSegment {
+  @Override
+  IXdmNodeItem getNodeItem();
 
   @Override
-  public Stream<? extends INodeItem> getChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor,
-      IExpression<?> expr, boolean recurse) {
-    // check the current node
-    @SuppressWarnings("unchecked")
-    Stream<? extends INodeItem> retval = (Stream<? extends INodeItem>) expr.accept(visitor, this).asStream();
-
-    {
-      List<? extends INodeItem> list = retval.collect(Collectors.toList());
-      for (INodeItem item : list) {
-        System.out.println(String.format("field(current) item: %s = %s", item.getMetapath(), item.getValue()));
-      }
-      retval = list.stream();
-    }
-    //
-    // // get matching flag instances
-    // Collection<? extends IFlagInstance> flags =
-    // getPathSegment().getDefinition().getFlagInstances().values();
-    // Stream<IFlagNodeItem> flagStream = flags.stream().map(flagInstance -> {
-    // return (FlagProperty) flagInstance;
-    // }).flatMap(flagInstance -> {
-    // return flagInstance.getNodeItemFromParentInstance(this);
-    // }).flatMap(flag -> {
-    // IMetapathResult result = expr.accept(visitor, flag);
-    // return result.asSequence().asStream().map(item -> (IFlagNodeItem) item);
-    // });
-    //
-    // return Stream.concat(flagStream, retval);
-    return retval;
+  default String toPath(IPathFormatter formatter) {
+    return formatter.format(this);
   }
-
+  
+  @Override
+  Stream<? extends IXdmNodeItem> getMatchingChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor, IExpression<?> expr,
+      boolean recurse);
 }

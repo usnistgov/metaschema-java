@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmAssemblyNodeItem;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -42,8 +44,6 @@ import java.net.URL;
 public interface Deserializer<CLASS> {
   boolean isValidating();
 
-  // Format supportedFromat();
-  //
   /**
    * Read data from the {@link InputStream} into a bound class instance.
    * 
@@ -91,4 +91,14 @@ public interface Deserializer<CLASS> {
    *           if an error occurred while reading data from the stream
    */
   CLASS deserialize(Reader reader) throws BindingException;
+
+  /**
+   * Read data from the {@link Reader} into a node item instance.
+   * @param reader
+   *          the reader to read from
+   * @return a new node item
+   * @throws BindingException
+   *           if an error occurred while reading data from the stream
+   */
+  IBoundXdmAssemblyNodeItem deserializeToNodeItem(Reader reader) throws BindingException;
 }

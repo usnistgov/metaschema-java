@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.binding.model.property;
 import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
@@ -57,6 +56,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -157,6 +157,11 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
     return propertyInfo;
   }
 
+  @Override
+  public Stream<? extends Object> getItemValues(Object value) {
+    return getPropertyInfo().getItemsFromValue(value);
+  }
+
   protected DataTypeHandler newDataTypeHandler() {
     DataTypeHandler retval;
     // get the binding supplier
@@ -233,24 +238,17 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
   @Override
   protected Object readInternal(Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
-    PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushInstance(this);
-
     JsonParser parser = context.getReader();
+
     // advance past the property name
     parser.nextFieldName();
+
     // parse the value
     PropertyCollector collector = newPropertyCollector();
     ModelPropertyInfo info = getPropertyInfo();
     info.readValue(collector, parentInstance, context);
-    Object retval = collector.getValue();
 
-    // validate the flag value
-    if (context.isValidating()) {
-      validateValue(retval, context);
-    }
-    pathBuilder.popInstance();
-    return retval;
+    return collector.getValue();
   }
 
   protected Object readInternal(Object parentInstance, StartElement start, XmlParsingContext context)
@@ -260,9 +258,6 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
     XmlEventUtil.skipWhitespace(eventReader);
 
     StartElement currentStart = start;
-
-    PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushInstance(this);
 
     QName groupQName = getXmlGroupAsQName();
     if (groupQName != null) {
@@ -277,10 +272,6 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
 
     Object value = collector.getValue();
 
-    if (context.isValidating()) {
-      validateValue(value, context);
-    }
-
     // consume extra whitespace between elements
     XmlEventUtil.skipWhitespace(eventReader);
 
@@ -289,7 +280,6 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
       XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.END_ELEMENT, groupQName);
     }
 
-    pathBuilder.popInstance();
     return value;
   }
 

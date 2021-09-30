@@ -31,8 +31,8 @@ import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
-import gov.nist.secauto.metaschema.model.common.metapath.format.FormatterFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
 
 import java.util.Collections;
@@ -79,7 +79,7 @@ public interface IFlagInstance extends INamedInstance, Flag {
    * @return the path segment
    */
   default IFlagPathSegment newPathSegment(IModelPositionalPathSegment parentSegment) {
-    return FormatterFactory.instance().newFlagPathSegment(parentSegment, this);
+    return IFormatterFactory.INSTANCE.newFlagPathSegment(parentSegment, this);
   }
 
   @Override

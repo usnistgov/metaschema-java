@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+
 /**
  * A named segment of a path that can be formatted.
  */
@@ -57,6 +59,12 @@ public interface IPathSegment {
    * @return the name
    */
   String getName();
+  
+  /**
+   * Get the XML qualified name of the path segment.
+   * @return the name
+   */
+  QName getQName();
 
   /**
    * Apply formatting for the path segment. This is a visitor pattern that will be called to format
@@ -68,11 +76,14 @@ public interface IPathSegment {
    */
   String format(IPathFormatter formatter);
 
-  IModelPositionalPathSegment getParent();
+  IModelPositionalPathSegment getParentSegment();
 
   default List<IPathSegment> getPath() {
     return getPathStream().collect(Collectors.toList());
   }
 
-  Stream<IPathSegment> getPathStream();
+  default Stream<IPathSegment> getPathStream() {
+    IModelPositionalPathSegment parentSegment = getParentSegment();
+    return parentSegment == null ? Stream.of(this) : Stream.concat(parentSegment.getPathStream(), Stream.of(this));
+  }
 }

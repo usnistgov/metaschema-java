@@ -24,41 +24,22 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.metapath.xdm.type;
+package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
+import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
 
 import java.util.stream.Stream;
 
-class FlagNodeItemImpl
-    extends AbstractBindingNodeItem<IFlagPathSegment, IModelNodeItem>
-    implements IFlagNodeItem {
+import javax.xml.namespace.QName;
 
-  public FlagNodeItemImpl(Object value, IFlagPathSegment segment, IModelNodeItem parent) {
-    super(value, segment, parent);
-  }
+public class XdmFlagNodeItemImpl extends AbstractBoundXdmFlagNodeItem<FlagProperty> {
 
-  @Override
-  public Stream<? extends INodeItem> getChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor,
-      IExpression<?> expr, boolean recurse) {
-    return Stream.empty();
-  }
-
-  @Override
-  public Stream<IFlagNodeItem> getChildFlags(Flag flag) {
-    return Stream.empty();
-  }
-
-  @Override
-  public Stream<IModelNodeItem> getChildModelInstances(ModelInstance modelInstance) {
-    return Stream.empty();
+  public XdmFlagNodeItemImpl(FlagProperty instance, Object value, IXdmModelNodeItem parentNodeItem) {
+    super(instance, value, parentNodeItem);
   }
 }

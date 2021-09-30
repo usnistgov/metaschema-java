@@ -39,7 +39,7 @@ public interface IPathFormatter {
 
   /**
    * Format the path represented by the provided path segment. The provided segment is the last node
-   * in this path. {@link IPathSegment#getParent()} is used to walk the path tree.
+   * in this path. {@link IPathSegment#getParentSegment()} is used to walk the path tree.
    * 
    * @param segment
    *          The last segment in a sequence of path segments

@@ -27,24 +27,18 @@
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.type.NodeItemFactory;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -123,47 +117,5 @@ public abstract class AbstractAssemblyProperty
   @Override
   public MarkupMultiline getRemarks() {
     throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public void validateValue(Object value, ParsingContext<?, ?> context) {
-    context.getConstraintValidator().validateValue(this, value, context);
-  }
-
-  @Override
-  public void validateItem(Object value, ParsingContext<?, ?> context) {
-    context.getConstraintValidator().validateItem(this, context.getPathBuilder().getContextPathSegment(), value,
-        context);
-  }
-
-  @Override
-  public IAssemblyNodeItem newNodeItem(IAssemblyPathSegment segment, Object value, IAssemblyNodeItem parent) {
-    // TODO: migrate implementation here?
-    return NodeItemFactory.newNodeItem(segment, value, parent);
-  }
-
-  @Override
-  public Stream<IAssemblyNodeItem> getNodeItemsFromParentInstance(IAssemblyNodeItem parentItem) {
-    return getNodeItemsForValue(parentItem, getValue(parentItem.getValue()));
-  }
-
-  @Override
-  public Stream<IAssemblyNodeItem> getNodeItemsForValue(IAssemblyNodeItem parentItem, Object value) {
-    IAssemblyPathSegment parentPathSegment = parentItem.getPathSegment();
-    return getNodeItemsForValue(parentPathSegment, value, parentItem);
-  }
-
-  @Override
-  public Stream<IAssemblyNodeItem> getNodeItemsForValue(IAssemblyPathSegment parentPathSegment, Object value) {
-    return getNodeItemsForValue(parentPathSegment, value, null);
-  }
-
-  protected Stream<IAssemblyNodeItem> getNodeItemsForValue(IAssemblyPathSegment parentPathSegment, Object value,
-      IAssemblyNodeItem parentItem) {
-    AtomicInteger index = new AtomicInteger();
-    return getPropertyInfo().getItemsFromValue(value).map(item -> {
-      IAssemblyPathSegment segment = newPathSegment(parentPathSegment, index.incrementAndGet());
-      return newNodeItem(segment, item, parentItem);
-    });
   }
 }

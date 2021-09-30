@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.binding.model.constraint.ConstraintValidator;
-
 /**
  * Provides objects used for parsing data associated with a specific format.
  * 
@@ -37,8 +35,6 @@ import gov.nist.secauto.metaschema.binding.model.constraint.ConstraintValidator;
  *          the format specific problem handler
  */
 public interface ParsingContext<READER, PROBLEM_HANDLER extends ProblemHandler> {
-  boolean isValidating();
-
   /**
    * The parser used for reading data associated with the supported format.
    * 
@@ -52,8 +48,4 @@ public interface ParsingContext<READER, PROBLEM_HANDLER extends ProblemHandler> 
    * @return the configured handler
    */
   PROBLEM_HANDLER getProblemHandler();
-
-  ConstraintValidator getConstraintValidator();
-
-  PathBuilder getPathBuilder();
 }

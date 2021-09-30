@@ -84,7 +84,6 @@ class DefaultFieldPropertyTest {
     JsonParser jsonParser = factory.createParser(json);
     Class<?> theClass = TestField.class;
 
-    PathBuilder pathBuilder = new DefaultPathBuilder();
     context.checking(new Expectations() {
       {
         allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
@@ -97,10 +96,6 @@ class DefaultFieldPropertyTest {
 
         allowing(jsonParsingContext).getReader();
         will(returnValue(jsonParser));
-        allowing(jsonParsingContext).isValidating();
-        will(returnValue(false));
-        allowing(jsonParsingContext).getPathBuilder();
-        will(returnValue(pathBuilder));
       }
     });
 
@@ -137,7 +132,6 @@ class DefaultFieldPropertyTest {
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
     Class<?> theClass = TestField.class;
 
-    PathBuilder pathBuilder = new DefaultPathBuilder();
     context.checking(new Expectations() {
       {
         allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
@@ -150,10 +144,6 @@ class DefaultFieldPropertyTest {
 
         allowing(xmlParsingContext).getReader();
         will(returnValue(eventReader));
-        allowing(xmlParsingContext).isValidating();
-        will(returnValue(false));
-        allowing(xmlParsingContext).getPathBuilder();
-        will(returnValue(pathBuilder));
       }
     });
 
@@ -188,7 +178,6 @@ class DefaultFieldPropertyTest {
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
     Class<?> theClass = TestField.class;
 
-    PathBuilder pathBuilder = new DefaultPathBuilder();
     context.checking(new Expectations() {
       {
         allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
@@ -201,10 +190,6 @@ class DefaultFieldPropertyTest {
 
         allowing(xmlParsingContext).getReader();
         will(returnValue(eventReader));
-        allowing(xmlParsingContext).isValidating();
-        will(returnValue(false));
-        allowing(xmlParsingContext).getPathBuilder();
-        will(returnValue(pathBuilder));
       }
     });
 
@@ -238,7 +223,6 @@ class DefaultFieldPropertyTest {
     JsonParser jsonParser = factory.createParser(json);
     Class<?> theClass = TestField.class;
 
-    PathBuilder pathBuilder = new DefaultPathBuilder();
     context.checking(new Expectations() {
       {
         allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
@@ -251,10 +235,6 @@ class DefaultFieldPropertyTest {
 
         allowing(jsonParsingContext).getReader();
         will(returnValue(jsonParser));
-        allowing(jsonParsingContext).isValidating();
-        will(returnValue(false));
-        allowing(jsonParsingContext).getPathBuilder();
-        will(returnValue(pathBuilder));
       }
     });
 

@@ -31,7 +31,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
@@ -41,7 +40,6 @@ import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 
 import org.codehaus.stax2.XMLEventReader2;
 
@@ -118,25 +116,12 @@ public class MapPropertyInfo
     // String.format("Unable to parse type '%s', which is not a known bound class", getItemType()));
     // }
 
-    PathBuilder pathBuilder = context.getPathBuilder();
     NamedModelProperty property = getProperty();
     // process all map items
-    int index = 0;
     while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
-      pathBuilder.pushItem(
-          getProperty().newPathSegment((IAssemblyPathSegment) pathBuilder.getContextPathSegment(), ++index));
 
       List<Object> values = property.readItem(parentInstance, context);
       collector.addAll(values);
-
-      for (Object value : values) {
-
-        if (context.isValidating()) {
-          getProperty().validateItem(value, context);
-        }
-
-      }
-      pathBuilder.popItem();
     }
 
     // advance to next token
@@ -152,26 +137,16 @@ public class MapPropertyInfo
     // consume extra whitespace between elements
     XmlEventUtil.skipWhitespace(eventReader);
 
-    PathBuilder pathBuilder = context.getPathBuilder();
     boolean handled = false;
     XMLEvent event;
-    int position = 0;
     while ((event = eventReader.peek()).isStartElement() && qname.equals(event.asStartElement().getName())) {
-      pathBuilder.pushItem(
-          getProperty().newPathSegment((IAssemblyPathSegment) pathBuilder.getContextPathSegment(), ++position));
 
       // Consume the start element
       Object value = getProperty().readItem(parentInstance, start, context);
       if (value != null) {
         collector.add(value);
         handled = true;
-
-        if (context.isValidating()) {
-          getProperty().validateItem(value, context);
-        }
       }
-
-      pathBuilder.popItem();
 
       // consume extra whitespace between elements
       XmlEventUtil.skipWhitespace(eventReader);

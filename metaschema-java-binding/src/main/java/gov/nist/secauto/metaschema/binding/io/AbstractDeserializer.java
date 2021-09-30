@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 
 import java.io.File;

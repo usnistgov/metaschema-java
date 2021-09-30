@@ -43,7 +43,7 @@ class AssemblyPathSegmentImpl
   }
 
   @Override
-  public IAssemblyPathSegment getParent() {
-    return (IAssemblyPathSegment) super.getParent();
+  public IAssemblyPathSegment getParentSegment() {
+    return (IAssemblyPathSegment) super.getParentSegment();
   }
 }

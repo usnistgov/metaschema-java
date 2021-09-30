@@ -37,8 +37,6 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.DefaultPathBuilder;
-import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
@@ -81,7 +79,6 @@ class DefaultFlagPropertyTest {
 
     Field field = SimpleAssembly.class.getDeclaredField("_id");
 
-    PathBuilder pathBuilder = new DefaultPathBuilder();
     context.checking(new Expectations() {
       {
         oneOf(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
@@ -94,10 +91,6 @@ class DefaultFlagPropertyTest {
 
         allowing(jsonParsingContext).getReader();
         will(returnValue(jsonParser));
-        allowing(jsonParsingContext).isValidating();
-        will(returnValue(false));
-        allowing(jsonParsingContext).getPathBuilder();
-        will(returnValue(pathBuilder));
       }
     });
 
@@ -125,7 +118,6 @@ class DefaultFlagPropertyTest {
 
     Field field = SimpleAssembly.class.getDeclaredField("_id");
 
-    PathBuilder pathBuilder = new DefaultPathBuilder();
     context.checking(new Expectations() {
       {
         oneOf(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
@@ -136,10 +128,6 @@ class DefaultFlagPropertyTest {
 
         allowing(xmlParsingContext).getReader();
         will(returnValue(eventReader));
-        allowing(xmlParsingContext).isValidating();
-        will(returnValue(false));
-        allowing(xmlParsingContext).getPathBuilder();
-        will(returnValue(pathBuilder));
       }
     });
 

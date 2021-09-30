@@ -71,7 +71,7 @@ public abstract class AbstractNodeItem<SEGMENT extends IPathSegment, PARENT exte
   }
 
   @Override
-  public PARENT getParent() {
+  public PARENT getParentNodeItem() {
     return parent;
   }
 

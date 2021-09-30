@@ -27,7 +27,11 @@
 package gov.nist.secauto.metaschema.model.common.instance;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+
+import java.util.Collection;
+import java.util.Collections;
 
 public class RootAssemblyDefinitionInstance implements IAssemblyInstance {
   private final IAssemblyDefinition rootAssemblyDefinition;

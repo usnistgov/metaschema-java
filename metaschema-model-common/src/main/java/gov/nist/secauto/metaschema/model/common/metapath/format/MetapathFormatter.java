@@ -43,7 +43,7 @@ class MetapathFormatter implements IPathFormatter {
 
   @Override
   public String formatPathSegment(IFlagPathSegment segment) {
-    return "@" + segment.getInstance().getEffectiveName();
+    return "@" + segment.getName();
   }
 
   @Override
@@ -54,7 +54,7 @@ class MetapathFormatter implements IPathFormatter {
   @Override
   public String formatPathSegment(IAssemblyPathSegment segment) {
     String retval;
-    if (segment.getParent() == null && segment instanceof IRootAssemblyPathSegment) {
+    if (segment.getParentSegment() == null && segment instanceof IRootAssemblyPathSegment) {
       StringBuilder builder = new StringBuilder();
       builder.append('/');
       builder.append(segment.getName());

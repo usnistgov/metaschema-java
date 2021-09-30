@@ -39,7 +39,7 @@ public class DefaultJsonParsingContext
   // }
 
   public DefaultJsonParsingContext(JsonParser parser,
-      JsonProblemHandler problemHandler, boolean validating) {
-    super(parser, problemHandler, validating);
+      JsonProblemHandler problemHandler) {
+    super(parser, problemHandler);
   }
 }

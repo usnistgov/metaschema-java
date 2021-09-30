@@ -543,12 +543,7 @@ public class DefaultFieldClassBinding
       }
     }
 
-    List<? extends Object> instance = collector.getValue();
-    if (context.isValidating()) {
-      validate(instance);
-    }
-
-    return instance;
+    return collector.getValue();
   }
 
   @Override

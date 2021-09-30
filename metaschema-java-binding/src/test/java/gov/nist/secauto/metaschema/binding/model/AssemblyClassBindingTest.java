@@ -40,13 +40,11 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.DefaultPathBuilder;
-import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.model.BoundClass.FlaggedField;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
-import gov.nist.secauto.metaschema.binding.model.property.RootAssemblyProperty;
+import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -127,15 +125,10 @@ class AssemblyClassBindingTest {
     XMLInputFactory factory = WstxInputFactory.newInstance();
     XMLEventReader2 parser = (XMLEventReader2) factory.createXMLEventReader(reader);
 
-    PathBuilder pathBuilder = new DefaultPathBuilder();
     context.checking(new Expectations() {
       {
         allowing(xmlParsingContext).getReader();
         will(returnValue(parser));
-        allowing(xmlParsingContext).isValidating();
-        will(returnValue(false));
-        allowing(xmlParsingContext).getPathBuilder();
-        will(returnValue(pathBuilder));
       }
     });
     return parser;
@@ -145,15 +138,10 @@ class AssemblyClassBindingTest {
     JsonFactory factory = new JsonFactory();
     JsonParser jsonParser = factory.createParser(reader);
 
-    PathBuilder pathBuilder = new DefaultPathBuilder();
     context.checking(new Expectations() {
       {
         allowing(jsonParsingContext).getReader();
         will(returnValue(jsonParser));
-        allowing(jsonParsingContext).isValidating();
-        will(returnValue(false));
-        allowing(jsonParsingContext).getPathBuilder();
-        will(returnValue(pathBuilder));
       }
     });
     return jsonParser;
@@ -169,7 +157,7 @@ class AssemblyClassBindingTest {
     assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
 
     AssemblyClassBinding classBinding = getAssemblyClassBinding();
-    AssemblyProperty root = new RootAssemblyProperty(classBinding);
+    AssemblyProperty root = new RootDefinitionAssemblyProperty(classBinding);
     BoundClass obj = (BoundClass) root.read(jsonParsingContext);
 
     assertEquals(JsonToken.END_OBJECT, jsonParser.currentToken());
@@ -219,7 +207,7 @@ class AssemblyClassBindingTest {
     assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
 
     AssemblyClassBinding classBinding = getAssemblyClassBinding();
-    AssemblyProperty root = new RootAssemblyProperty(classBinding);
+    AssemblyProperty root = new RootDefinitionAssemblyProperty(classBinding);
     BoundClass obj = (BoundClass) root.read(jsonParsingContext);
 
     assertEquals(JsonToken.END_OBJECT, jsonParser.currentToken());

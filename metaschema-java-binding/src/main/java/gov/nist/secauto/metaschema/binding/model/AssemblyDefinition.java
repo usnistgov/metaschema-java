@@ -26,8 +26,47 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
+import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
+import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
+import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
 
-public interface AssemblyDefinition extends IAssemblyDefinition, BoundDefinition {
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+public interface AssemblyDefinition extends IBoundNamedModelDefinition, IAssemblyDefinition {
+
+  @Override
+  default FieldProperty getFieldInstanceByName(String name) {
+    return getFieldInstances().get(name);
+  }
+
+  @Override
+  default AssemblyProperty getAssemblyInstanceByName(String name) {
+    return getAssemblyInstances().get(name);
+  }
+
+  @Override
+  default NamedModelProperty getModelInstanceByName(String name) {
+    return getNamedModelInstances().get(name);
+  }
+
+  @Override
+  Map<String, ? extends NamedModelProperty> getNamedModelInstances();
+
+  @Override
+  Map<String, ? extends FieldProperty> getFieldInstances();
+
+  @Override
+  Map<String, ? extends AssemblyProperty> getAssemblyInstances();
+
+  @Override
+  List<? extends IChoiceInstance> getChoiceInstances();
+
+  @Override
+  Collection<? extends IModelInstance> getModelInstances();
 
 }

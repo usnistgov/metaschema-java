@@ -28,10 +28,8 @@ package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.type.NodeItemFactory;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
@@ -54,10 +52,6 @@ import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFieldPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -66,8 +60,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -327,7 +319,7 @@ public class DefaultFieldProperty
     }
 
     @Override
-    public Map<String, ? extends IFlagInstance> getFlagInstances() {
+    public Map<String, ? extends FlagProperty> getFlagInstances() {
       return Collections.emptyMap();
     }
 
@@ -395,37 +387,5 @@ public class DefaultFieldProperty
     public BindingContext getBindingContext() {
       return getContainingDefinition().getBindingContext();
     }
-  }
-
-  @Override
-  public void validateValue(Object value, ParsingContext<?, ?> context) {
-    context.getConstraintValidator().validateValue(this, value, context);
-  }
-
-  @Override
-  public void validateItem(Object value, ParsingContext<?, ?> context) {
-    context.getConstraintValidator().validateItem(this, context.getPathBuilder().getContextPathSegment(), value,
-        context);
-  }
-
-  @Override
-  public IFieldNodeItem newNodeItem(IFieldPathSegment segment, Object value, IAssemblyNodeItem parent) {
-    // TODO: migrate implementation here?
-    return NodeItemFactory.newNodeItem(segment, value, parent);
-  }
-
-  @Override
-  public Stream<IFieldNodeItem> getNodeItemsFromParentInstance(IAssemblyNodeItem parentItem) {
-    return getNodeItemsForValue(parentItem, getValue(parentItem.getValue()));
-  }
-
-  @Override
-  public Stream<IFieldNodeItem> getNodeItemsForValue(IAssemblyNodeItem parentItem, Object value) {
-    IAssemblyPathSegment parentPathSegment = parentItem.getPathSegment();
-    AtomicInteger index = new AtomicInteger();
-    return getPropertyInfo().getItemsFromValue(value).map(item -> {
-      IFieldPathSegment segment = newPathSegment(parentPathSegment, index.incrementAndGet());
-      return newNodeItem(segment, item, parentItem);
-    });
   }
 }

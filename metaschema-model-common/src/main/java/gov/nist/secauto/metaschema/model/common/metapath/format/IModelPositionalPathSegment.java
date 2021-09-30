@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 
+import java.util.stream.Stream;
+
 public interface IModelPositionalPathSegment extends IPathSegment {
 
   @Override

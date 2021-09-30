@@ -39,7 +39,7 @@ public class DefaultXmlParsingContext
   // }
 
   public DefaultXmlParsingContext(XMLEventReader2 eventReader,
-      XmlProblemHandler problemHandler, boolean validating) {
-    super(eventReader, problemHandler, validating);
+      XmlProblemHandler problemHandler) {
+    super(eventReader, problemHandler);
   }
 }

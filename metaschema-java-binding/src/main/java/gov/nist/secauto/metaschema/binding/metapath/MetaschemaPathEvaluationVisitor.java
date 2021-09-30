@@ -26,9 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding.metapath;
 
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.AbstractExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Addition;
@@ -76,7 +73,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.InvalidTypeException;
 
 import java.math.BigInteger;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -316,12 +312,12 @@ public class MetaschemaPathEvaluationVisitor
 
   @Override
   public ISequence<? extends IFlagNodeItem> visitFlag(Flag expr, INodeContext context) {
-    return ISequence.of(context.getChildFlags(expr));
+    return ISequence.of(context.getMatchingChildFlags(expr));
   }
 
   @Override
   public ISequence<? extends IModelNodeItem> visitModelInstance(ModelInstance expr, INodeContext context) {
-    return ISequence.of(context.getChildModelInstances(expr));
+    return ISequence.of(context.getMatchingChildModelInstances(expr));
   }
 
   @Override
@@ -353,7 +349,7 @@ public class MetaschemaPathEvaluationVisitor
       retval = searchModelInstances((ModelInstance) expr, context);
     } else {
       // recurse tree
-      retval = context.getChildInstances(this, expr, true);
+      retval = context.getMatchingChildInstances(this, expr, true);
     }
     return retval;
   }
@@ -371,23 +367,18 @@ public class MetaschemaPathEvaluationVisitor
   private Stream<? extends IModelNodeItem> searchModelInstances(ModelInstance expr, INodeContext context) {
 
     // check if the current node context matches the expression
-    Stream<? extends IModelNodeItem> retval = context.getChildModelInstances(expr);
+    Stream<? extends IModelNodeItem> retval = context.getMatchingChildModelInstances(expr);
 
-    // next iterate over the child model instances, if they are an assembly
-    final INodeItem contextItem = context.getNodeItem();
-    IDefinition definition = contextItem.getPathSegment().getDefinition();
-    if (definition instanceof AssemblyClassBinding) {
-      AssemblyClassBinding assembly = (AssemblyClassBinding) definition;
-      Collection<? extends NamedModelProperty> instances = assembly.getNamedModelInstances().values();
+    // next iterate over the child model instances, if the context item is an assembly
+    INodeItem contextItem = context.getNodeItem();
 
-      Stream<? extends IModelNodeItem> childModelInstances = instances.stream().flatMap(property -> {
-        // get the node items for the children, using their associated values
-        return property.getNodeItemsFromParentInstance((IAssemblyNodeItem) contextItem);
-      }).flatMap(item -> {
+    if (contextItem instanceof IAssemblyNodeItem) {
+      IAssemblyNodeItem assemblyContextItem = (IAssemblyNodeItem)contextItem;
+
+      Stream<? extends IModelNodeItem> childModelInstances = assemblyContextItem.modelItems().flatMap(modelItem -> {
         // apply the search criteria to these node items
-        return searchModelInstances(expr, item);
-      }).sequential();
-
+        return searchModelInstances(expr, modelItem);
+      });
       retval = Stream.concat(retval, childModelInstances);
     }
     return retval;
@@ -403,29 +394,22 @@ public class MetaschemaPathEvaluationVisitor
    *          the current node context
    * @return a stream of matching flag node items
    */
-  private Stream<IFlagNodeItem> searchFlags(Flag expr, INodeContext context) {
+  private Stream<? extends IFlagNodeItem> searchFlags(Flag expr, INodeContext context) {
 
     // check if any flags on the the current node context matches the expression
-    Stream<IFlagNodeItem> retval = context.getChildFlags(expr);
-    // List<IFlagNodeItem> flags = retval.collect(Collectors.toList());
-    // retval = flags.stream();
+    Stream<? extends IFlagNodeItem> retval = context.getMatchingChildFlags(expr);
 
-    // next iterate over the child model instances, if they are an assembly
-    final INodeItem contextItem = context.getNodeItem();
-    IDefinition definition = contextItem.getPathSegment().getDefinition();
-    if (definition instanceof AssemblyClassBinding) {
-      AssemblyClassBinding assembly = (AssemblyClassBinding) definition;
-      Collection<? extends NamedModelProperty> instances = assembly.getNamedModelInstances().values();
+    // next iterate over the child model instances, if the context item is an assembly
+    INodeItem contextItem = context.getNodeItem();
 
-      Stream<IFlagNodeItem> childFlags = instances.stream().flatMap(property -> {
-        // get the node items for the children, using their associated values
-        return property.getNodeItemsFromParentInstance((IAssemblyNodeItem) contextItem);
-      }).flatMap(item -> {
+    if (contextItem instanceof IAssemblyNodeItem) {
+      IAssemblyNodeItem assemblyContextItem = (IAssemblyNodeItem)contextItem;
+
+      Stream<? extends IFlagNodeItem> childFlagInstances = assemblyContextItem.modelItems().flatMap(modelItem -> {
         // apply the search criteria to these node items
-        return searchFlags(expr, item);
+        return searchFlags(expr, modelItem);
       });
-
-      retval = Stream.concat(retval, childFlags).sequential();
+      retval = Stream.concat(retval, childFlagInstances);
     }
     return retval;
   }

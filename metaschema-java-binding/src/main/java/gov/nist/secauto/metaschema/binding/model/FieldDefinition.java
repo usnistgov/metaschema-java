@@ -28,6 +28,6 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 
-public interface FieldDefinition extends IFieldDefinition, BoundDefinition {
+public interface FieldDefinition extends IBoundNamedModelDefinition, IFieldDefinition {
 
 }

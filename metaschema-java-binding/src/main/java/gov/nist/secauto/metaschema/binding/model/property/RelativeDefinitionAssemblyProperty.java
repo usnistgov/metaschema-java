@@ -37,94 +37,28 @@ import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 import javax.xml.namespace.QName;
 
-public class RootAssemblyProperty
-    extends AbstractAssemblyProperty
-    implements AssemblyProperty {
+public class RelativeDefinitionAssemblyProperty
+    extends AbstractDefinitionAssemblyProperty {
 
-  public RootAssemblyProperty(AssemblyClassBinding rootAssemblyDefinition) {
-    super(rootAssemblyDefinition, null);
+  public RelativeDefinitionAssemblyProperty(AssemblyClassBinding rootAssemblyDefinition) {
+    super(rootAssemblyDefinition);
     if (!rootAssemblyDefinition.isRoot()) {
       throw new IllegalArgumentException();
     }
   }
 
   @Override
-  public AssemblyClassBinding getDefinition() {
-    return getParentClassBinding();
-  }
-
-  @Override
-  protected DataTypeHandler newDataTypeHandler() {
-    return new ClassDataTypeHandler(getDefinition(), this);
-  }
-
-  @Override
-  protected ModelPropertyInfo newPropertyInfo() {
-    return new SingletonPropertyInfo(this);
-  }
-
-  @Override
   public String getName() {
-    return getDefinition().getRootName();
-  }
-
-  @Override
-  public String getUseName() {
-    return null;
+    return getDefinition().getEffectiveName();
   }
 
   @Override
   public String getXmlNamespace() {
-    return getDefinition().getRootXmlQName().getNamespaceURI();
+    return getDefinition().getXmlNamespace();
   }
 
   @Override
   public QName getXmlQName() {
-    return getDefinition().getRootXmlQName();
-  }
-
-  @Override
-  public String toCoordinates() {
-    return getDefinition().toCoordinates();
-  }
-
-  @Override
-  public MarkupMultiline getRemarks() {
-    return getDefinition().getRemarks();
-  }
-
-  @Override
-  public AssemblyClassBinding getContainingDefinition() {
-    return getParentClassBinding();
-  }
-
-  @Override
-  public int getMinOccurs() {
-    return 1;
-  }
-
-  @Override
-  public int getMaxOccurs() {
-    return 1;
-  }
-
-  @Override
-  public String getGroupAsName() {
-    return null;
-  }
-
-  @Override
-  public String getGroupAsXmlNamespace() {
-    return null;
-  }
-
-  @Override
-  public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    return JsonGroupAsBehavior.NONE;
-  }
-
-  @Override
-  public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    return XmlGroupAsBehavior.UNGROUPED;
+    return getDefinition().getXmlQName();
   }
 }

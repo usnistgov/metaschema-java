@@ -37,7 +37,6 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
-import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
 
 import org.codehaus.stax2.XMLStreamReader2;
 
@@ -54,7 +53,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public interface ClassBinding extends IFlaggedDefinition, BoundDefinition {
+public interface ClassBinding extends IBoundNamedModelDefinition {
   @Override
   BindingContext getBindingContext();
 
@@ -64,15 +63,6 @@ public interface ClassBinding extends IFlaggedDefinition, BoundDefinition {
    * @return the bound class
    */
   Class<?> getBoundClass();
-
-  // Provides a compatible return value
-  @Override
-  Map<String, ? extends FlagProperty> getFlagInstances();
-
-  @Override
-  default FlagProperty getFlagInstanceByName(String name) {
-    return getFlagInstances().get(name);
-  }
 
   // Provides a compatible return value
   @Override
@@ -108,8 +98,7 @@ public interface ClassBinding extends IFlaggedDefinition, BoundDefinition {
    *           if an error occurred parsing content into java instances
    */
   // TODO: check if a boolean return value is needed
-  List<Object> readItem(Object parentInstance, JsonParsingContext context)
-      throws IOException, BindingException;
+  List<Object> readItem(Object parentInstance, JsonParsingContext context) throws IOException, BindingException;
 
   /**
    * Reads a XML element storing the associated data in a Java class instance and adds the resulting
@@ -138,8 +127,6 @@ public interface ClassBinding extends IFlaggedDefinition, BoundDefinition {
    */
   Object readItem(Object parentInstance, StartElement start, XmlParsingContext context)
       throws BindingException, IOException, XMLStreamException;
-
-  boolean validate(Object instance);
 
   void writeItem(Object item, QName parentName, XmlWritingContext context) throws IOException, XMLStreamException;
 

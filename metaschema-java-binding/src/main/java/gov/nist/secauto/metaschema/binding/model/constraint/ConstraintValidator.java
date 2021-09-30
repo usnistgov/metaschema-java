@@ -26,26 +26,16 @@
 
 package gov.nist.secauto.metaschema.binding.model.constraint;
 
-import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
-import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
-import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
-import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFieldPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmAssemblyNodeItem;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmFieldNodeItem;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmFlagNodeItem;
 
 public interface ConstraintValidator {
+  void validate(IBoundXdmFlagNodeItem item);
 
-  void validateItem(AssemblyProperty property, IAssemblyPathSegment pathSegment, Object item,
-      ParsingContext<?, ?> context);
+  void validate(IBoundXdmFieldNodeItem item);
 
-  void validateItem(FieldProperty property, IFieldPathSegment pathSegment, Object item, ParsingContext<?, ?> context);
+  void validate(IBoundXdmAssemblyNodeItem item);
 
-  void validateItem(FlagProperty property, IFlagPathSegment pathSegment, Object item, ParsingContext<?, ?> context);
-
-  void validateValue(AssemblyProperty property, Object value, ParsingContext<?, ?> context);
-
-  void validateValue(FieldProperty property, Object value, ParsingContext<?, ?> context);
-
-  void finalizeValidation(ParsingContext<?, ?> context);
+  void finalizeValidation();
 }

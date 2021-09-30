@@ -27,14 +27,11 @@
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 
 import java.io.IOException;
 import java.util.List;
@@ -51,41 +48,12 @@ import javax.xml.stream.events.XMLEvent;
 public interface NamedModelProperty extends NamedProperty, INamedModelInstance {
   DataTypeHandler getDataTypeHandler();
 
-  // /**
-  // * Create new node items for the specific instances of this property. The value of {@code value}
-  // is
-  // * may be many values based on the cardinality of the property. The {@code precedingPath} argument
-  // * must not include the current node, as this will result in duplication of this node in the path.
-  // *
-  // * @param value
-  // * the instance
-  // * @param precedingPath
-  // * any preceding path segments to register or an empty list
-  // * @return the new node item
-  // */
-  // Stream<INodeItem> newNodeItems(Object value, List<IPathSegment> precedingPath);
-
   /**
-   * Retrieve a stream of model items for this property, who's value is retrieved from the parent node
-   * item.
-   * 
-   * @param parentItem
-   *          the parent node item on which this model property may exist
-   * @return a stream containing the model items associated with this property or an empty stream if
-   *         the property doesn't exist
+   * Get the item values associated with the provided value.
+   * @param value the value which may be a singleton or a collection
+   * @return the ordered collection of values
    */
-  Stream<? extends IModelNodeItem> getNodeItemsFromParentInstance(IAssemblyNodeItem parentItem);
-
-  /**
-   * Retrieve the model items for the provided property value as a stream.
-   * 
-   * @param parentItem
-   *          the parent node item on which this property's values exists
-   * @param value
-   *          the property's value
-   * @return a stream containing the model items
-   */
-  Stream<? extends IModelNodeItem> getNodeItemsForValue(IAssemblyNodeItem parentItem, Object value);
+  Stream<? extends Object> getItemValues(Object value);
 
   /**
    * Reads an individual XML item from the XML stream.
@@ -130,13 +98,4 @@ public interface NamedModelProperty extends NamedProperty, INamedModelInstance {
 
   // void writeItem(Object instance, JsonWritingContext context);
 
-  /**
-   * Perform validation of the property's value instance.
-   * 
-   * @param instance
-   *          the instance on which the property is located
-   * @param context
-   *          the parsing context
-   */
-  void validateItem(Object instance, ParsingContext<?, ?> context);
 }
