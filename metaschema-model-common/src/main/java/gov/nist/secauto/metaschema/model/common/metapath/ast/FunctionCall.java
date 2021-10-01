@@ -82,4 +82,9 @@ public class FunctionCall implements IExpression<IItem> {
   public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitFunctionCall(this, context);
   }
+
+  @Override
+  public String toString() {
+    return new ASTPrinter().visit(this);
+  }
 }

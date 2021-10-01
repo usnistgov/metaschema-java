@@ -27,6 +27,12 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 public interface IItem {
+  Object getValue();
 
   IAnyAtomicItem toAtomicItem();
+
+  default String getItemName() {
+    // TODO: make something more human readable
+    return this.getClass().getName();
+  }
 }

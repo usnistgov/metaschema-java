@@ -35,17 +35,11 @@ import java.util.Objects;
 
 public class StaticContext {
   // private final List<? extends INamedDefinition> knownDefinitions;
-  private final IItemType contextItemType;
   private final Map<String, IItemType> uriToKnownDocumentTypeMap;
   private URI baseUri;
 
-  public StaticContext(IItemType contextItemType) {
-    this.contextItemType = contextItemType;
+  public StaticContext() {
     this.uriToKnownDocumentTypeMap = new HashMap<>();
-  }
-
-  public IItemType getContextItemType() {
-    return contextItemType;
   }
 
   public URI getBaseUri() {
@@ -63,5 +57,9 @@ public class StaticContext {
 
   public IItemType getTypeForDocument(String uri) {
     return uriToKnownDocumentTypeMap.get(uri);
+  }
+  
+  public DynamicContext newDynamicContext() {
+    return new DynamicContext(this);
   }
 }

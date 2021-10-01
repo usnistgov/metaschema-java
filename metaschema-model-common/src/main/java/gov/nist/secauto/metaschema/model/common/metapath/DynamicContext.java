@@ -51,4 +51,20 @@ public class DynamicContext {
     this.availableDocuments = new HashMap<>();
   }
 
+  public StaticContext getStaticContext() {
+    return staticContext;
+  }
+
+  public ZoneId getImplicitTimeZone() {
+    return implicitTimeZone;
+  }
+
+  public ZonedDateTime getCurrentDateTime() {
+    return currentDateTime;
+  }
+
+  public Map<String, INodeItem> getAvailableDocuments() {
+    return availableDocuments;
+  }
+
 }

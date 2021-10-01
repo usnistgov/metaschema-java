@@ -23,46 +23,48 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath.function.impl;
 
-package gov.nist.secauto.metaschema.model.common.metapath.ast;
-
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.model.common.metapath.function.CastFunctions;
+import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionHandler;
+import gov.nist.secauto.metaschema.model.common.metapath.function.XPathFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INonNegativeIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
-import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractLiteralExpression<RESULT_TYPE extends IAnyAtomicItem, VALUE>
-    implements ILiteralExpression<RESULT_TYPE> {
-  private final VALUE value;
-
-  public AbstractLiteralExpression(VALUE value) {
-    this.value = value;
-  }
-
-  public VALUE getValue() {
-    return value;
-  }
-
-  @Override
-  public abstract Class<RESULT_TYPE> getBaseResultType();
+public class NonNegativeInteger implements IFunctionHandler {
+  static final IFunction SIGNATURE = IFunction.newBuilder()
+      .name("nonNegativeInteger")
+      .argument(IArgument.newBuilder()
+          .name("arg1")
+          .type(IAnyAtomicItem.class)
+          .one()
+          .build())
+      .returnType(INonNegativeIntegerItem.class)
+      .returnOne()
+      .functionHandler(new NonNegativeInteger())
+      .build();
 
   @Override
-  public Class<RESULT_TYPE> getStaticResultType() {
-    return getBaseResultType();
-  }
-
-  @Override
-  public String toASTString() {
-    return String.format("%s[value=%s]", getClass().getName(), getValue().toString());
-  }
-
-  @Override
-  public List<? extends IExpression<?>> getChildren() {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public String toString() {
-    return new ASTPrinter().visit(this);
+  public ISequence<INonNegativeIntegerItem> execute(List<ISequence<?>> arguments, DynamicContext dynamicContext) {
+    ISequence<?> arg = arguments.iterator().next();
+    IAnyAtomicItem argItem;
+    {
+      IItem item = FunctionUtils.getFirstItem(arg, true);
+      if (item == null) {
+        return ISequence.empty();
+      }
+      argItem = XPathFunctions.fnDataItem(item);
+    }
+    
+    return ISequence.of(CastFunctions.castToNonNegativeInteger(argItem));
   }
 }

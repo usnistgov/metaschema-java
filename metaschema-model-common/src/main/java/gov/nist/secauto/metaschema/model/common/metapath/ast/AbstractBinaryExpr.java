@@ -70,4 +70,9 @@ public abstract class AbstractBinaryExpr<RESULT_TYPE extends IItem>
     }
     return retval;
   }
+
+  @Override
+  public String toString() {
+    return new ASTPrinter().visit(this);
+  }
 }

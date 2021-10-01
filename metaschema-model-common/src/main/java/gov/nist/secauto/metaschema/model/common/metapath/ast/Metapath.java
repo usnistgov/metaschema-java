@@ -63,4 +63,8 @@ public class Metapath
     return visitor.visitMetapath(this, context);
   }
 
+  @Override
+  public String toString() {
+    return new ASTPrinter().visit(this);
+  }
 }

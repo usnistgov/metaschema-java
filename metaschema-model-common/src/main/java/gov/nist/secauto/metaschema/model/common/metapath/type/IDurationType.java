@@ -23,30 +23,8 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath.type;
 
-package gov.nist.secauto.metaschema.binding.metapath.xdm;
+public interface IDurationType extends IAnyAtomicType {
 
-import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
-
-public class XdmRootAssemblyNodeItemImpl extends AbstractBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty>
-    implements IBoundXdmRootAssemblyNodeItem {
-
-  public XdmRootAssemblyNodeItemImpl(RootDefinitionAssemblyProperty instance, Object value) {
-    super(instance, value, 1, null);
-  }
-
-  @Override
-  public boolean isRootNode() {
-    return true;
-  }
-
-  @Override
-  public IBoundXdmRootAssemblyNodeItem getNodeItem() {
-    return this;
-  }
-
-  @Override
-  public IBoundXdmRootAssemblyNodeItem getPathSegment() {
-    return this;
-  }
 }

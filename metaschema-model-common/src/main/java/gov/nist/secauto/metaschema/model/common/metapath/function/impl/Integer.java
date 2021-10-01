@@ -23,31 +23,47 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.model.common.metapath.function.impl;
 
-import gov.nist.secauto.metaschema.model.common.metapath.function.AbstractFunctionLibrary;
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.model.common.metapath.function.CastFunctions;
+import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionHandler;
+import gov.nist.secauto.metaschema.model.common.metapath.function.XPathFunctions;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
-public class DefaultFunctionLibrary
-    extends AbstractFunctionLibrary {
+import java.util.List;
 
-  public DefaultFunctionLibrary() {
-    registerFunction(Exists.SIGNATURE);
-    registerFunction(Not.SIGNATURE);
-    registerFunction(StartsWith.SIGNATURE);
+public class Integer implements IFunctionHandler {
+  static final IFunction SIGNATURE = IFunction.newBuilder()
+      .name("integer")
+      .argument(IArgument.newBuilder()
+          .name("arg1")
+          .type(IAnyAtomicItem.class)
+          .one()
+          .build())
+      .returnType(IIntegerItem.class)
+      .returnOne()
+      .functionHandler(new Integer())
+      .build();
 
+  @Override
+  public ISequence<IIntegerItem> execute(List<ISequence<?>> arguments, DynamicContext dynamicContext) {
+    ISequence<?> arg = arguments.iterator().next();
+    IAnyAtomicItem argItem;
+    {
+      IItem item = FunctionUtils.getFirstItem(arg, true);
+      if (item == null) {
+        return ISequence.empty();
+      }
+      argItem = XPathFunctions.fnDataItem(item);
+    }
     
-    // casting functions
-    registerFunction(Boolean.SIGNATURE);
-    registerFunction(Date.SIGNATURE);
-    registerFunction(DateTime.SIGNATURE);
-    registerFunction(Decimal.SIGNATURE);
-    registerFunction(Duration.SIGNATURE);
-    registerFunction(Integer.SIGNATURE);
-    registerFunction(NcName.SIGNATURE);
-    registerFunction(NonNegativeInteger.SIGNATURE);
-    registerFunction(PositiveInteger.SIGNATURE);
-    registerFunction(String.SIGNATURE);
+    return ISequence.of(CastFunctions.castToInteger(argItem));
   }
-
 }

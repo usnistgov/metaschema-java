@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.metapath;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.AbstractExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Addition;
@@ -56,12 +57,19 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.StringConcat;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.StringLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
+import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
-import gov.nist.secauto.metaschema.model.common.metapath.function.impl.Functions;
+import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
+import gov.nist.secauto.metaschema.model.common.metapath.function.XPathFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDurationItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
@@ -70,23 +78,29 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.InvalidTypeException;
 
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MetaschemaPathEvaluationVisitor
-    extends AbstractExpressionEvaluationVisitor<INodeContext> {
+public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluationVisitor<INodeContext> {
 
-  public <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> visit(IExpression<?> expr, INodeContext context) {
-    @SuppressWarnings("unchecked")
-    ISequence<ITEM_TYPE> retval = (ISequence<ITEM_TYPE>) expr.accept(this, context);
-    return retval;
+  private final DynamicContext dynamicContext;
+
+  public MetaschemaPathEvaluationVisitor(DynamicContext context) {
+    Objects.requireNonNull(context, "context");
+    this.dynamicContext = context;
+  }
+
+  protected DynamicContext getDynamicContext() {
+    return dynamicContext;
   }
 
   @Override
@@ -94,7 +108,7 @@ public class MetaschemaPathEvaluationVisitor
     boolean retval = true;
     for (IExpression<?> child : expr.getChildren()) {
       ISequence<?> result = child.accept(this, context);
-      if (!Functions.fnBooleanAsPrimative(result)) {
+      if (!XPathFunctions.fnBooleanAsPrimative(result)) {
         retval = false;
         break;
       }
@@ -107,7 +121,7 @@ public class MetaschemaPathEvaluationVisitor
     boolean retval = false;
     for (IExpression<?> child : expr.getChildren()) {
       ISequence<?> result = child.accept(this, context);
-      if (Functions.fnBooleanAsPrimative(result)) {
+      if (XPathFunctions.fnBooleanAsPrimative(result)) {
         retval = true;
         break;
       }
@@ -117,110 +131,276 @@ public class MetaschemaPathEvaluationVisitor
 
   @Override
   public ISequence<? extends IBooleanItem> visitComparison(Comparison expr, INodeContext context) {
-    IItem leftItem = Functions.getFirstItem(expr.getLeft().accept(this, context), false);
+    IItem leftItem = FunctionUtils.getFirstItem(expr.getLeft().accept(this, context), false);
     if (leftItem == null) {
       return ISequence.empty();
     }
-    IItem rightItem = Functions.getFirstItem(expr.getRight().accept(this, context), false);
+    IItem rightItem = FunctionUtils.getFirstItem(expr.getRight().accept(this, context), false);
     if (rightItem == null) {
       return ISequence.empty();
     }
 
-    IAnyAtomicItem left = Functions.fnDataItem(leftItem);
-    IAnyAtomicItem right = Functions.fnDataItem(rightItem);
+    IAnyAtomicItem left = XPathFunctions.fnDataItem(leftItem);
+    IAnyAtomicItem right = XPathFunctions.fnDataItem(rightItem);
 
     Comparison.Operator operator = expr.getOperator();
-    IBooleanItem retval;
+    IBooleanItem retval = null;
+    boolean supported = true;
     if (left instanceof IStringItem || right instanceof IStringItem) {
       switch (operator) {
       case EQ:
-        retval
-            = Functions.opNumericEqual(Functions.fnCompare((IStringItem) left, (IStringItem) right), IIntegerItem.ZERO);
-        break;
-      case GE:
-        retval = Functions.opNumericGreaterThan(Functions.fnCompare((IStringItem) left, (IStringItem) right),
-            IIntegerItem.NEGATIVE_ONE);
-        break;
-      case GT:
-        retval = Functions.opNumericGreaterThan(Functions.fnCompare((IStringItem) left, (IStringItem) right),
+        retval = OperationFunctions.opNumericEqual(XPathFunctions.fnCompare((IStringItem) left, (IStringItem) right),
             IIntegerItem.ZERO);
         break;
+      case GE:
+        retval = OperationFunctions.opNumericGreaterThan(
+            XPathFunctions.fnCompare((IStringItem) left, (IStringItem) right), IIntegerItem.NEGATIVE_ONE);
+        break;
+      case GT:
+        retval = OperationFunctions
+            .opNumericGreaterThan(XPathFunctions.fnCompare((IStringItem) left, (IStringItem) right), IIntegerItem.ZERO);
+        break;
       case LE:
-        retval = Functions.opNumericLessThan(Functions.fnCompare((IStringItem) left, (IStringItem) right),
+        retval = OperationFunctions.opNumericLessThan(XPathFunctions.fnCompare((IStringItem) left, (IStringItem) right),
             IIntegerItem.ONE);
         break;
       case LT:
-        retval = Functions.opNumericLessThan(Functions.fnCompare((IStringItem) left, (IStringItem) right),
+        retval = OperationFunctions.opNumericLessThan(XPathFunctions.fnCompare((IStringItem) left, (IStringItem) right),
             IIntegerItem.ZERO);
         break;
       case NE:
-        retval = Functions.fnNot(
-            Functions.opNumericEqual(Functions.fnCompare((IStringItem) left, (IStringItem) right), IIntegerItem.ZERO));
+        retval = XPathFunctions.fnNot(OperationFunctions
+            .opNumericEqual(XPathFunctions.fnCompare((IStringItem) left, (IStringItem) right), IIntegerItem.ZERO));
         break;
       default:
-        throw new UnsupportedOperationException(operator.name());
+        supported = false;
       }
     } else if (left instanceof INumericItem && right instanceof INumericItem) {
       switch (operator) {
       case EQ:
-        retval = Functions.opNumericEqual((INumericItem) left, (INumericItem) right);
+        retval = OperationFunctions.opNumericEqual((INumericItem) left, (INumericItem) right);
         break;
       case GE: {
-        IBooleanItem gt = Functions.opNumericGreaterThan((INumericItem) left, (INumericItem) right);
-        IBooleanItem eq = Functions.opNumericEqual((INumericItem) left, (INumericItem) right);
+        IBooleanItem gt = OperationFunctions.opNumericGreaterThan((INumericItem) left, (INumericItem) right);
+        IBooleanItem eq = OperationFunctions.opNumericEqual((INumericItem) left, (INumericItem) right);
         retval = IBooleanItem.valueOf(gt.toBoolean() || eq.toBoolean());
         break;
       }
       case GT:
-        retval = Functions.opNumericGreaterThan((INumericItem) left, (INumericItem) right);
+        retval = OperationFunctions.opNumericGreaterThan((INumericItem) left, (INumericItem) right);
         break;
       case LE: {
-        IBooleanItem lt = Functions.opNumericLessThan((INumericItem) left, (INumericItem) right);
-        IBooleanItem eq = Functions.opNumericEqual((INumericItem) left, (INumericItem) right);
+        IBooleanItem lt = OperationFunctions.opNumericLessThan((INumericItem) left, (INumericItem) right);
+        IBooleanItem eq = OperationFunctions.opNumericEqual((INumericItem) left, (INumericItem) right);
         retval = IBooleanItem.valueOf(lt.toBoolean() || eq.toBoolean());
         break;
       }
       case LT:
-        retval = Functions.opNumericLessThan((INumericItem) left, (INumericItem) right);
+        retval = OperationFunctions.opNumericLessThan((INumericItem) left, (INumericItem) right);
         break;
       case NE:
-        retval = Functions.fnNot(Functions.opNumericEqual((INumericItem) left, (INumericItem) right));
+        retval = XPathFunctions.fnNot(OperationFunctions.opNumericEqual((INumericItem) left, (INumericItem) right));
         break;
       default:
-        throw new UnsupportedOperationException(operator.name());
+        supported = false;
       }
     } else if (left instanceof IBooleanItem && right instanceof IBooleanItem) {
       switch (operator) {
       case EQ:
-        retval = Functions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right);
+        retval = OperationFunctions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right);
         break;
       case GE: {
-        IBooleanItem gt = Functions.opBooleanGreaterThan((IBooleanItem) left, (IBooleanItem) right);
-        IBooleanItem eq = Functions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right);
+        IBooleanItem gt = OperationFunctions.opBooleanGreaterThan((IBooleanItem) left, (IBooleanItem) right);
+        IBooleanItem eq = OperationFunctions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right);
         retval = IBooleanItem.valueOf(gt.toBoolean() || eq.toBoolean());
         break;
       }
       case GT:
-        retval = Functions.opBooleanGreaterThan((IBooleanItem) left, (IBooleanItem) right);
+        retval = OperationFunctions.opBooleanGreaterThan((IBooleanItem) left, (IBooleanItem) right);
         break;
       case LE: {
-        IBooleanItem lt = Functions.opBooleanLessThan((IBooleanItem) left, (IBooleanItem) right);
-        IBooleanItem eq = Functions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right);
+        IBooleanItem lt = OperationFunctions.opBooleanLessThan((IBooleanItem) left, (IBooleanItem) right);
+        IBooleanItem eq = OperationFunctions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right);
         retval = IBooleanItem.valueOf(lt.toBoolean() || eq.toBoolean());
         break;
       }
       case LT:
-        retval = Functions.opBooleanLessThan((IBooleanItem) left, (IBooleanItem) right);
+        retval = OperationFunctions.opBooleanLessThan((IBooleanItem) left, (IBooleanItem) right);
         break;
       case NE:
-        retval = Functions.fnNot(Functions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right));
+        retval = XPathFunctions.fnNot(OperationFunctions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right));
         break;
       default:
-        throw new UnsupportedOperationException(operator.name());
+        supported = false;
+      }
+    } else if (left instanceof IDateTimeItem && right instanceof IDateTimeItem) {
+      switch (operator) {
+      case EQ:
+        retval = OperationFunctions.opDateTimeEqual((IDateTimeItem) left, (IDateTimeItem) right);
+        break;
+      case GE: {
+        IBooleanItem gt = OperationFunctions.opDateTimeGreaterThan((IDateTimeItem) left, (IDateTimeItem) right);
+        IBooleanItem eq = OperationFunctions.opDateTimeEqual((IDateTimeItem) left, (IDateTimeItem) right);
+        retval = IBooleanItem.valueOf(gt.toBoolean() || eq.toBoolean());
+        break;
+      }
+      case GT:
+        retval = OperationFunctions.opDateTimeGreaterThan((IDateTimeItem) left, (IDateTimeItem) right);
+        break;
+      case LE: {
+        IBooleanItem lt = OperationFunctions.opDateTimeLessThan((IDateTimeItem) left, (IDateTimeItem) right);
+        IBooleanItem eq = OperationFunctions.opDateTimeEqual((IDateTimeItem) left, (IDateTimeItem) right);
+        retval = IBooleanItem.valueOf(lt.toBoolean() || eq.toBoolean());
+        break;
+      }
+      case LT:
+        retval = OperationFunctions.opDateTimeLessThan((IDateTimeItem) left, (IDateTimeItem) right);
+        break;
+      case NE:
+        retval = XPathFunctions.fnNot(OperationFunctions.opDateTimeEqual((IDateTimeItem) left, (IDateTimeItem) right));
+        break;
+      default:
+        supported = false;
+      }
+    } else if (left instanceof IDateItem && right instanceof IDateItem) {
+      switch (operator) {
+      case EQ:
+        retval = OperationFunctions.opDateEqual((IDateItem) left, (IDateItem) right);
+        break;
+      case GE: {
+        IBooleanItem gt = OperationFunctions.opDateGreaterThan((IDateItem) left, (IDateItem) right);
+        IBooleanItem eq = OperationFunctions.opDateEqual((IDateItem) left, (IDateItem) right);
+        retval = IBooleanItem.valueOf(gt.toBoolean() || eq.toBoolean());
+        break;
+      }
+      case GT:
+        retval = OperationFunctions.opDateGreaterThan((IDateItem) left, (IDateItem) right);
+        break;
+      case LE: {
+        IBooleanItem lt = OperationFunctions.opDateLessThan((IDateItem) left, (IDateItem) right);
+        IBooleanItem eq = OperationFunctions.opDateEqual((IDateItem) left, (IDateItem) right);
+        retval = IBooleanItem.valueOf(lt.toBoolean() || eq.toBoolean());
+        break;
+      }
+      case LT:
+        retval = OperationFunctions.opDateLessThan((IDateItem) left, (IDateItem) right);
+        break;
+      case NE:
+        retval = XPathFunctions.fnNot(OperationFunctions.opDateEqual((IDateItem) left, (IDateItem) right));
+        break;
+      default:
+        supported = false;
+      }
+    } else if (left instanceof IDurationItem && right instanceof IDurationItem) {
+      switch (operator) {
+      case EQ:
+        retval = OperationFunctions.opDurationEqual((IDurationItem) left, (IDurationItem) right);
+        break;
+      case GE: {
+        if (left instanceof IYearMonthDurationItem && right instanceof IYearMonthDurationItem) {
+          IBooleanItem gt = OperationFunctions.opYearMonthDurationGreaterThan((IYearMonthDurationItem) left,
+              (IYearMonthDurationItem) right);
+          IBooleanItem eq
+              = OperationFunctions.opDurationEqual((IYearMonthDurationItem) left, (IYearMonthDurationItem) right);
+          retval = IBooleanItem.valueOf(gt.toBoolean() || eq.toBoolean());
+        } else if (left instanceof IDayTimeDurationItem && right instanceof IDayTimeDurationItem) {
+          IBooleanItem gt = OperationFunctions.opDayTimeDurationGreaterThan((IDayTimeDurationItem) left,
+              (IDayTimeDurationItem) right);
+          IBooleanItem eq
+              = OperationFunctions.opDurationEqual((IDayTimeDurationItem) left, (IDayTimeDurationItem) right);
+          retval = IBooleanItem.valueOf(gt.toBoolean() || eq.toBoolean());
+        } else {
+          supported = false;
+        }
+        break;
+      }
+      case GT:
+        if (left instanceof IYearMonthDurationItem && right instanceof IYearMonthDurationItem) {
+          retval = OperationFunctions.opYearMonthDurationGreaterThan((IYearMonthDurationItem) left,
+              (IYearMonthDurationItem) right);
+        } else if (left instanceof IDayTimeDurationItem && right instanceof IDayTimeDurationItem) {
+          retval = OperationFunctions.opDayTimeDurationGreaterThan((IDayTimeDurationItem) left,
+              (IDayTimeDurationItem) right);
+        } else {
+          supported = false;
+        }
+        break;
+      case LE: {
+        if (left instanceof IYearMonthDurationItem && right instanceof IYearMonthDurationItem) {
+          IBooleanItem lt = OperationFunctions.opYearMonthDurationLessThan((IYearMonthDurationItem) left,
+              (IYearMonthDurationItem) right);
+          IBooleanItem eq
+              = OperationFunctions.opDurationEqual((IYearMonthDurationItem) left, (IYearMonthDurationItem) right);
+          retval = IBooleanItem.valueOf(lt.toBoolean() || eq.toBoolean());
+        } else if (left instanceof IDayTimeDurationItem && right instanceof IDayTimeDurationItem) {
+          IBooleanItem lt
+              = OperationFunctions.opDayTimeDurationLessThan((IDayTimeDurationItem) left, (IDayTimeDurationItem) right);
+          IBooleanItem eq
+              = OperationFunctions.opDurationEqual((IDayTimeDurationItem) left, (IDayTimeDurationItem) right);
+          retval = IBooleanItem.valueOf(lt.toBoolean() || eq.toBoolean());
+        } else {
+          supported = false;
+        }
+        break;
+      }
+      case LT: {
+        if (left instanceof IYearMonthDurationItem && right instanceof IYearMonthDurationItem) {
+          retval = OperationFunctions.opYearMonthDurationLessThan((IYearMonthDurationItem) left,
+              (IYearMonthDurationItem) right);
+        } else if (left instanceof IDayTimeDurationItem && right instanceof IDayTimeDurationItem) {
+          retval
+              = OperationFunctions.opDayTimeDurationLessThan((IDayTimeDurationItem) left, (IDayTimeDurationItem) right);
+        } else {
+          supported = false;
+        }
+        break;
+      }
+      case NE:
+        retval = XPathFunctions.fnNot(OperationFunctions.opDurationEqual((IDurationItem) left, (IDurationItem) right));
+        break;
+      default:
+        supported = false;
+      }
+    } else if (left instanceof IBase64BinaryItem && right instanceof IBase64BinaryItem) {
+      switch (operator) {
+      case EQ:
+        retval = OperationFunctions.opBase64BinaryEqual((IBase64BinaryItem) left, (IBase64BinaryItem) right);
+        break;
+      case GE: {
+        IBooleanItem gt
+            = OperationFunctions.opBase64BinaryGreaterThan((IBase64BinaryItem) left, (IBase64BinaryItem) right);
+        IBooleanItem eq = OperationFunctions.opBase64BinaryEqual((IBase64BinaryItem) left, (IBase64BinaryItem) right);
+        retval = IBooleanItem.valueOf(gt.toBoolean() || eq.toBoolean());
+        break;
+      }
+      case GT:
+        retval = OperationFunctions.opBase64BinaryGreaterThan((IBase64BinaryItem) left, (IBase64BinaryItem) right);
+        break;
+      case LE: {
+        IBooleanItem lt
+            = OperationFunctions.opBase64BinaryLessThan((IBase64BinaryItem) left, (IBase64BinaryItem) right);
+        IBooleanItem eq = OperationFunctions.opBase64BinaryEqual((IBase64BinaryItem) left, (IBase64BinaryItem) right);
+        retval = IBooleanItem.valueOf(lt.toBoolean() || eq.toBoolean());
+        break;
+      }
+      case LT:
+        retval = OperationFunctions.opBase64BinaryLessThan((IBase64BinaryItem) left, (IBase64BinaryItem) right);
+        break;
+      case NE:
+        retval = XPathFunctions
+            .fnNot(OperationFunctions.opBase64BinaryEqual((IBase64BinaryItem) left, (IBase64BinaryItem) right));
+        break;
+      default:
+        supported = false;
       }
     } else {
-      throw new InvalidTypeException(String.format("invalid types for comparison: %s %s %s", left.getClass(),
-          operator.name().toLowerCase(), right.getClass()));
+      throw new InvalidTypeException(String.format("invalid types for comparison: %s %s %s", left.getItemName(),
+          operator.name().toLowerCase(), right.getItemName()));
+    }
+
+    if (!supported) {
+      throw new UnsupportedOperationException(String.format("The expression '%s %s %s' is not supported",
+          leftItem.getItemName(), operator.name().toLowerCase(), rightItem.getItemName()));
     }
 
     return resultOrEmptySequence(retval);
@@ -238,7 +418,7 @@ public class MetaschemaPathEvaluationVisitor
       ISequence<? extends INodeItem> retval = (ISequence<? extends INodeItem>) expr.getNode().accept(this, context);
       return retval;
     } else {
-      throw new UnsupportedOperationException("root searching is not supported");
+      throw new UnsupportedOperationException("root searching is not supported on non-root nodes");
     }
   }
 
@@ -301,7 +481,7 @@ public class MetaschemaPathEvaluationVisitor
           bool = position.equals(predicateIndex);
         } else {
           ISequence<?> predicateResult = predicateExpr.accept(this, childContext);
-          bool = Functions.fnBoolean(predicateResult).toBoolean();
+          bool = XPathFunctions.fnBoolean(predicateResult).toBoolean();
         }
         return bool;
       }).anyMatch(x -> !x);
@@ -373,7 +553,7 @@ public class MetaschemaPathEvaluationVisitor
     INodeItem contextItem = context.getNodeItem();
 
     if (contextItem instanceof IAssemblyNodeItem) {
-      IAssemblyNodeItem assemblyContextItem = (IAssemblyNodeItem)contextItem;
+      IAssemblyNodeItem assemblyContextItem = (IAssemblyNodeItem) contextItem;
 
       Stream<? extends IModelNodeItem> childModelInstances = assemblyContextItem.modelItems().flatMap(modelItem -> {
         // apply the search criteria to these node items
@@ -403,7 +583,7 @@ public class MetaschemaPathEvaluationVisitor
     INodeItem contextItem = context.getNodeItem();
 
     if (contextItem instanceof IAssemblyNodeItem) {
-      IAssemblyNodeItem assemblyContextItem = (IAssemblyNodeItem)contextItem;
+      IAssemblyNodeItem assemblyContextItem = (IAssemblyNodeItem) contextItem;
 
       Stream<? extends IFlagNodeItem> childFlagInstances = assemblyContextItem.modelItems().flatMap(modelItem -> {
         // apply the search criteria to these node items
@@ -416,76 +596,298 @@ public class MetaschemaPathEvaluationVisitor
 
   @Override
   public ISequence<? extends INumericItem> visitNegate(Negate expr, INodeContext context) {
-    INumericItem item = Functions.toNumeric(expr.getChild().accept(this, context), true);
+    INumericItem item = FunctionUtils.toNumeric(expr.getChild().accept(this, context), true);
     if (item == null) {
       return ISequence.empty();
     }
-    return resultOrEmptySequence(Functions.opNumericUnaryMinus(item));
+    return resultOrEmptySequence(OperationFunctions.opNumericUnaryMinus(item));
   }
 
   @Override
-  public ISequence<? extends INumericItem> visitAddition(Addition expr, INodeContext context) {
-    INumericItem left = Functions.toNumeric(expr.getLeft().accept(this, context), true);
-    if (left == null) {
-      return ISequence.empty();
+  public ISequence<? extends IAnyAtomicItem> visitAddition(Addition expr, INodeContext context) {
+    ISequence<?> leftSequence = expr.getLeft().accept(this, context);
+    IAnyAtomicItem leftItem;
+    {
+      IItem item = FunctionUtils.getFirstItem(leftSequence, true);
+      if (item == null) {
+        return ISequence.empty();
+      }
+      leftItem = XPathFunctions.fnDataItem(item);
     }
-    INumericItem right = Functions.toNumeric(expr.getRight().accept(this, context), true);
-    if (right == null) {
-      return ISequence.empty();
+
+    ISequence<?> rightSequence = expr.getRight().accept(this, context);
+    IAnyAtomicItem rightItem;
+    {
+      IItem item = FunctionUtils.getFirstItem(rightSequence, true);
+      if (item == null) {
+        return ISequence.empty();
+      }
+      rightItem = XPathFunctions.fnDataItem(item);
     }
-    return resultOrEmptySequence(Functions.opNumericAdd(left, right));
+
+    IAnyAtomicItem retval = null;
+    boolean supported = true;
+    if (leftItem instanceof IDateItem) {
+      IDateItem left = (IDateItem) leftItem;
+      if (rightItem instanceof IYearMonthDurationItem) {
+        retval = OperationFunctions.opAddYearMonthDurationToDate(left, (IYearMonthDurationItem) rightItem);
+      } else if (rightItem instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opAddDayTimeDurationToDate(left, (IDayTimeDurationItem) rightItem);
+      } else {
+        supported = false;
+      }
+    } else if (leftItem instanceof IDateTimeItem) {
+      IDateTimeItem left = (IDateTimeItem) leftItem;
+      if (rightItem instanceof IYearMonthDurationItem) {
+        retval = OperationFunctions.opAddYearMonthDurationToDateTime(left, (IYearMonthDurationItem) rightItem);
+      } else if (rightItem instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opAddDayTimeDurationToDateTime(left, (IDayTimeDurationItem) rightItem);
+      } else {
+        supported = false;
+      }
+    } else if (leftItem instanceof IYearMonthDurationItem) {
+      IYearMonthDurationItem left = (IYearMonthDurationItem) leftItem;
+      if (rightItem instanceof IDateItem) {
+        retval = OperationFunctions.opAddYearMonthDurationToDate((IDateItem) rightItem, left);
+      } else if (rightItem instanceof IDateTimeItem) {
+        retval = OperationFunctions.opAddYearMonthDurationToDateTime((IDateTimeItem) rightItem, left);
+      } else if (rightItem instanceof IYearMonthDurationItem) {
+        retval = OperationFunctions.opSubtractYearMonthDurations(left, (IYearMonthDurationItem) rightItem);
+      } else {
+        supported = false;
+      }
+    } else if (leftItem instanceof IDayTimeDurationItem) {
+      IDayTimeDurationItem left = (IDayTimeDurationItem) leftItem;
+      if (rightItem instanceof IDateItem) {
+        retval = OperationFunctions.opAddDayTimeDurationToDate((IDateItem) rightItem, left);
+      } else if (rightItem instanceof IDateTimeItem) {
+        retval = OperationFunctions.opAddDayTimeDurationToDateTime((IDateTimeItem) rightItem, left);
+      } else if (rightItem instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opAddDayTimeDurations(left, (IDayTimeDurationItem) rightItem);
+      } else {
+        supported = false;
+      }
+    } else {
+      // handle as numeric
+      INumericItem left = FunctionUtils.toNumeric(leftItem);
+      INumericItem right = FunctionUtils.toNumeric(rightItem);
+      retval = OperationFunctions.opNumericAdd(left, right);
+    }
+    if (!supported) {
+      throw new UnsupportedOperationException(
+          String.format("The expression '%s + %s' is not supported", leftItem.getItemName(), rightItem.getItemName()));
+    }
+    return resultOrEmptySequence(retval);
   }
 
   @Override
-  public ISequence<? extends INumericItem> visitSubtraction(Subtraction expr, INodeContext context) {
-    INumericItem left = Functions.toNumeric(expr.getLeft().accept(this, context), true);
-    if (left == null) {
-      return ISequence.empty();
+  public ISequence<? extends IAnyAtomicItem> visitSubtraction(Subtraction expr, INodeContext context) {
+    ISequence<?> leftSequence = expr.getLeft().accept(this, context);
+    IAnyAtomicItem leftItem;
+    {
+      IItem item = FunctionUtils.getFirstItem(leftSequence, true);
+      if (item == null) {
+        return ISequence.empty();
+      }
+      leftItem = XPathFunctions.fnDataItem(item);
     }
-    INumericItem right = Functions.toNumeric(expr.getRight().accept(this, context), true);
-    if (right == null) {
-      return ISequence.empty();
+
+    ISequence<?> rightSequence = expr.getRight().accept(this, context);
+    IAnyAtomicItem rightItem;
+    {
+      IItem item = FunctionUtils.getFirstItem(rightSequence, true);
+      if (item == null) {
+        return ISequence.empty();
+      }
+      rightItem = XPathFunctions.fnDataItem(item);
     }
-    return resultOrEmptySequence(Functions.opNumericSubtract(left, right));
+
+    IAnyAtomicItem retval = null;
+    boolean supported = true;
+    if (leftItem instanceof IDateItem) {
+      IDateItem left = (IDateItem) leftItem;
+
+      if (rightItem instanceof IDateItem) {
+        retval = OperationFunctions.opSubtractDates(left, (IDateItem) rightItem);
+      } else if (rightItem instanceof IYearMonthDurationItem) {
+        retval = OperationFunctions.opSubtractYearMonthDurationFromDate(left, (IYearMonthDurationItem) rightItem);
+      } else if (rightItem instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opSubtractDayTimeDurationFromDate(left, (IDayTimeDurationItem) rightItem);
+      } else {
+        supported = false;
+      }
+    } else if (leftItem instanceof IDateTimeItem) {
+      IDateTimeItem left = (IDateTimeItem) leftItem;
+      if (rightItem instanceof IDateTimeItem) {
+        retval = OperationFunctions.opSubtractDateTimes(left, (IDateTimeItem) rightItem);
+      } else if (rightItem instanceof IYearMonthDurationItem) {
+        retval = OperationFunctions.opSubtractYearMonthDurationFromDateTime(left, (IYearMonthDurationItem) rightItem);
+      } else if (rightItem instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opSubtractDayTimeDurationFromDateTime(left, (IDayTimeDurationItem) rightItem);
+      } else {
+        supported = false;
+      }
+    } else if (leftItem instanceof IYearMonthDurationItem) {
+      IYearMonthDurationItem left = (IYearMonthDurationItem) leftItem;
+      if (rightItem instanceof IYearMonthDurationItem) {
+        retval = OperationFunctions.opSubtractYearMonthDurations(left, (IYearMonthDurationItem) rightItem);
+      } else {
+        supported = false;
+      }
+    } else if (leftItem instanceof IDayTimeDurationItem) {
+      IDayTimeDurationItem left = (IDayTimeDurationItem) leftItem;
+      if (rightItem instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opSubtractDayTimeDurations(left, (IDayTimeDurationItem) rightItem);
+      } else {
+        supported = false;
+      }
+    } else {
+      // handle as numeric
+      INumericItem left = FunctionUtils.toNumeric(leftItem);
+      INumericItem right = FunctionUtils.toNumeric(rightItem);
+      retval = OperationFunctions.opNumericSubtract(left, right);
+    }
+    if (!supported) {
+      throw new UnsupportedOperationException(
+          String.format("The expression '%s - %s' is not supported", leftItem.getItemName(), rightItem.getItemName()));
+    }
+    return resultOrEmptySequence(retval);
   }
 
   @Override
-  public ISequence<? extends INumericItem> visitMultiplication(Multiplication expr, INodeContext context) {
-    INumericItem left = Functions.toNumeric(expr.getLeft().accept(this, context), true);
-    if (left == null) {
-      return ISequence.empty();
+  public ISequence<? extends IAnyAtomicItem> visitMultiplication(Multiplication expr, INodeContext context) {
+    ISequence<?> leftSequence = expr.getLeft().accept(this, context);
+    IAnyAtomicItem leftItem;
+    {
+      IItem item = FunctionUtils.getFirstItem(leftSequence, true);
+      if (item == null) {
+        return ISequence.empty();
+      }
+      leftItem = XPathFunctions.fnDataItem(item);
     }
-    INumericItem right = Functions.toNumeric(expr.getRight().accept(this, context), true);
-    if (right == null) {
-      return ISequence.empty();
+
+    ISequence<?> rightSequence = expr.getRight().accept(this, context);
+    IAnyAtomicItem rightItem;
+    {
+      IItem item = FunctionUtils.getFirstItem(rightSequence, true);
+      if (item == null) {
+        return ISequence.empty();
+      }
+      rightItem = XPathFunctions.fnDataItem(item);
     }
-    return resultOrEmptySequence(Functions.opNumericMultiply(left, right));
+
+    IAnyAtomicItem retval = null;
+    boolean supported = true;
+    if (leftItem instanceof IYearMonthDurationItem) {
+      IYearMonthDurationItem left = (IYearMonthDurationItem) leftItem;
+      if (rightItem instanceof INumericItem) {
+        retval = OperationFunctions.opMultiplyYearMonthDuration(left, (INumericItem) rightItem);
+      } else {
+        supported = false;
+      }
+    } else if (leftItem instanceof IDayTimeDurationItem) {
+      IDayTimeDurationItem left = (IDayTimeDurationItem) leftItem;
+      if (rightItem instanceof INumericItem) {
+        retval = OperationFunctions.opMultiplyDayTimeDuration(left, (INumericItem) rightItem);
+      } else {
+        supported = false;
+      }
+    } else {
+      // handle as numeric
+      INumericItem left = FunctionUtils.toNumeric(leftItem);
+      if (rightItem instanceof INumericItem) {
+        INumericItem right = FunctionUtils.toNumeric(rightItem);
+        retval = OperationFunctions.opNumericMultiply(left, right);
+      } else if (rightItem instanceof IYearMonthDurationItem) {
+        retval = OperationFunctions.opMultiplyYearMonthDuration((IYearMonthDurationItem) rightItem, left);
+      } else if (rightItem instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opMultiplyDayTimeDuration((IDayTimeDurationItem) rightItem, left);
+      } else {
+        supported = false;
+      }
+    }
+    if (!supported) {
+      throw new UnsupportedOperationException(
+          String.format("The expression '%s - %s' is not supported", leftItem.getItemName(), rightItem.getItemName()));
+    }
+    return resultOrEmptySequence(retval);
   }
 
   @Override
-  public ISequence<? extends INumericItem> visitDivision(Division expr, INodeContext context) {
-    INumericItem left = Functions.toNumeric(expr.getLeft().accept(this, context), true);
-    if (left == null) {
-      return ISequence.empty();
+  public ISequence<? extends IAnyAtomicItem> visitDivision(Division expr, INodeContext context) {
+    ISequence<?> leftSequence = expr.getLeft().accept(this, context);
+    IAnyAtomicItem leftItem;
+    {
+      IItem item = FunctionUtils.getFirstItem(leftSequence, true);
+      if (item == null) {
+        return ISequence.empty();
+      }
+      leftItem = XPathFunctions.fnDataItem(item);
     }
-    INumericItem right = Functions.toNumeric(expr.getRight().accept(this, context), true);
-    if (right == null) {
-      return ISequence.empty();
+
+    ISequence<?> rightSequence = expr.getRight().accept(this, context);
+    IAnyAtomicItem rightItem;
+    {
+      IItem item = FunctionUtils.getFirstItem(rightSequence, true);
+      if (item == null) {
+        return ISequence.empty();
+      }
+      rightItem = XPathFunctions.fnDataItem(item);
     }
-    return resultOrEmptySequence(Functions.opNumericDivide(left, right));
+
+    IAnyAtomicItem retval = null;
+    boolean supported = true;
+    if (leftItem instanceof IYearMonthDurationItem) {
+      IYearMonthDurationItem left = (IYearMonthDurationItem) leftItem;
+      if (rightItem instanceof INumericItem) {
+        retval = OperationFunctions.opDivideYearMonthDuration(left, (INumericItem) rightItem);
+      } else if (rightItem instanceof IYearMonthDurationItem) {
+        // TODO: find a way to support this
+        supported = false;
+      } else {
+        supported = false;
+      }
+    } else if (leftItem instanceof IDayTimeDurationItem) {
+      IDayTimeDurationItem left = (IDayTimeDurationItem) leftItem;
+      if (rightItem instanceof INumericItem) {
+        retval = OperationFunctions.opDivideDayTimeDuration(left, (INumericItem) rightItem);
+      } else if (rightItem instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opDivideDayTimeDurationByDayTimeDuration(left, (IDayTimeDurationItem) rightItem);
+      } else {
+        supported = false;
+      }
+    } else {
+      // handle as numeric
+      INumericItem left = FunctionUtils.toNumeric(leftItem);
+      if (rightItem instanceof INumericItem) {
+        INumericItem right = FunctionUtils.toNumeric(rightItem);
+        retval = OperationFunctions.opNumericDivide(left, right);
+      } else if (rightItem instanceof IYearMonthDurationItem) {
+        retval = OperationFunctions.opMultiplyYearMonthDuration((IYearMonthDurationItem) rightItem, left);
+      } else if (rightItem instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opMultiplyDayTimeDuration((IDayTimeDurationItem) rightItem, left);
+      } else {
+        supported = false;
+      }
+    }
+    if (!supported) {
+      throw new UnsupportedOperationException(
+          String.format("The expression '%s - %s' is not supported", leftItem.getItemName(), rightItem.getItemName()));
+    }
+    return resultOrEmptySequence(retval);
   }
 
   @Override
   public ISequence<? extends IIntegerItem> visitIntegerDivision(IntegerDivision expr, INodeContext context) {
-    INumericItem left = Functions.toNumeric(expr.getLeft().accept(this, context), true);
+    INumericItem left = FunctionUtils.toNumeric(expr.getLeft().accept(this, context), true);
     if (left == null) {
       return ISequence.empty();
     }
-    INumericItem right = Functions.toNumeric(expr.getRight().accept(this, context), true);
+    INumericItem right = FunctionUtils.toNumeric(expr.getRight().accept(this, context), true);
     if (right == null) {
       return ISequence.empty();
     }
-    return resultOrEmptySequence(Functions.opNumericIntegerDivide(left, right));
+    return resultOrEmptySequence(OperationFunctions.opNumericIntegerDivide(left, right));
   }
 
   private <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> resultOrEmptySequence(ITEM_TYPE item) {
@@ -494,15 +896,15 @@ public class MetaschemaPathEvaluationVisitor
 
   @Override
   public ISequence<? extends INumericItem> visitMod(Mod expr, INodeContext context) {
-    INumericItem left = Functions.toNumeric(expr.getLeft().accept(this, context), true);
+    INumericItem left = FunctionUtils.toNumeric(expr.getLeft().accept(this, context), true);
     if (left == null) {
       return ISequence.empty();
     }
-    INumericItem right = Functions.toNumeric(expr.getRight().accept(this, context), true);
+    INumericItem right = FunctionUtils.toNumeric(expr.getRight().accept(this, context), true);
     if (right == null) {
       return ISequence.empty();
     }
-    return resultOrEmptySequence(Functions.opNumericMod(left, right));
+    return resultOrEmptySequence(OperationFunctions.opNumericMod(left, right));
   }
 
   @Override
@@ -520,7 +922,7 @@ public class MetaschemaPathEvaluationVisitor
     StringBuilder builder = new StringBuilder();
     for (IExpression<?> child : expr.getChildren()) {
       ISequence<?> result = child.accept(this, context);
-      Functions.fnData(result).asStream().forEachOrdered(item -> {
+      XPathFunctions.fnData(result).asStream().forEachOrdered(item -> {
         // TODO: is this right to concat all sequence members?
         builder.append(((IAnyAtomicItem) item).asString());
       });
@@ -542,7 +944,7 @@ public class MetaschemaPathEvaluationVisitor
 
     IFunction function = expr.getFunction();
     arguments = function.convertArguments(function, arguments);
-    return function.execute(arguments);
+    return function.execute(arguments, getDynamicContext());
   }
 
   @Override
@@ -550,7 +952,7 @@ public class MetaschemaPathEvaluationVisitor
     return ISequence.of(expr.getChildren().stream().flatMap(child -> {
       ISequence<?> result = child.accept(this, context);
       return result.asStream();
-    }));
+    }).distinct());
   }
 
   @Override

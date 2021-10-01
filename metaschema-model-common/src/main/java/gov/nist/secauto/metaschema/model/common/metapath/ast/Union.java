@@ -61,4 +61,9 @@ public class Union
   public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitUnion(this, context);
   }
+
+  @Override
+  public String toString() {
+    return new ASTPrinter().visit(this);
+  }
 }

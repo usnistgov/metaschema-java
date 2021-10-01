@@ -24,117 +24,208 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.function.impl;
+package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDurationItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.InvalidTypeException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.MetapathDynamicException;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
-import java.util.List;
-import java.util.stream.Stream;
+import java.time.Duration;
+import java.time.Period;
+import java.time.ZonedDateTime;
+import java.time.temporal.TemporalAmount;
 
-public class Functions {
-  public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
-
-  private Functions() {
+public class OperationFunctions {
+  private OperationFunctions() {
     // disable
   }
 
-  /**
-   * An implementation of XPath 3.1
-   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-data">func:data</a> supporting
-   * <a href="https://www.w3.org/TR/xpath-31/#id-atomization">item atomization</a>.
-   * 
-   * @param sequence
-   *          the sequence of items to atomize
-   * @return the atomized result
-   */
-  public static ISequence<IAnyAtomicItem> fnData(ISequence<?> sequence) {
-    Stream<? extends IItem> stream = sequence.asStream();
-    return ISequence.of(stream.flatMap(x -> {
-      return Stream.of((IAnyAtomicItem) fnDataItem(x));
-    }));
+  public static IDateItem opAddYearMonthDurationToDate(IDateItem arg1, IYearMonthDurationItem arg2) {
+    return addDurationToDate(arg1.asZonedDateTime(), arg2.getValue());
   }
 
-  public static IAnyAtomicItem fnDataItem(IItem item) {
-    IAnyAtomicItem retval;
-    if (item instanceof IAnyAtomicItem) {
-      retval = (IAnyAtomicItem) item;
-    } else if (item instanceof INodeItem) {
-      retval = item.toAtomicItem();
-    } else {
-      throw new MetapathDynamicException("err:FOTY0012",
-          String.format("Unrecognized item '%s' during atomization", item.getClass().getName()));
-    }
-    return retval;
+  public static IDateItem opAddDayTimeDurationToDate(IDateItem arg1, IDayTimeDurationItem arg2) {
+    return addDurationToDate(arg1.asZonedDateTime(), arg2.getValue());
   }
 
-  /**
-   * Get the effective boolean value of the provided sequence.
-   * <p>
-   * Based on the XPath 3.1
-   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-boolean">fn:boolean</a> function.
-   * 
-   * @param sequence
-   *          the sequence to evaluate
-   * @return the effective boolean value of the sequence
-   */
-  public static IBooleanItem fnBoolean(ISequence<?> sequence) {
-    IBooleanItem retval;
-    if (sequence == null) {
-      retval = IBooleanItem.FALSE;
-    } else {
-      retval = IBooleanItem.valueOf(fnBooleanAsPrimative(sequence));
-    }
-    return retval;
+  protected static IDateItem addDurationToDate(ZonedDateTime dateTime, TemporalAmount duration) {
+    ZonedDateTime result = dateTime.plus(duration);
+    return IDateItem.valueOf(result);
   }
 
-  public static boolean fnBooleanAsPrimative(ISequence<?> sequence) {
-    boolean retval = false;
-    if (!sequence.isEmpty()) {
-      List<? extends IItem> items = sequence.asList();
-      IItem first = items.iterator().next();
-      if (first instanceof INodeItem) {
-        retval = true;
-      } else if (items.size() == 1) {
-        retval = fnBooleanAsPrimative(first);
-      }
-    }
-    return retval;
+  public static IYearMonthDurationItem opAddYearMonthDurations(IYearMonthDurationItem arg1,
+      IYearMonthDurationItem arg2) {
+    Period duration1 = arg1.getValue();
+    Period duration2 = arg2.getValue();
+    return IYearMonthDurationItem.valueOf(duration1.plus(duration2));
   }
 
-  public static boolean fnBooleanAsPrimative(IItem item) {
-    boolean retval = false;
-    if (item instanceof IBooleanItem) {
-      retval = ((IBooleanItem) item).toBoolean();
-    } else if (item instanceof IStringItem) {
-      String string = ((IStringItem) item).asString();
-      retval = !string.isBlank();
-    } else if (item instanceof INumericItem) {
-      retval = ((INumericItem) item).toEffectiveBoolean();
-    } else if (item instanceof IUntypedAtomicItem) {
-      String string = ((IUntypedAtomicItem) item).asString();
-      retval = !string.isBlank();
-    } else if (item instanceof IAnyUriItem) {
-      String string = ((IAnyUriItem) item).asString();
-      retval = !string.isBlank();
-    } else {
-      throw new InvalidTypeException(item.getClass());
+  public static IDayTimeDurationItem opAddDayTimeDurations(IDayTimeDurationItem arg1, IDayTimeDurationItem arg2) {
+    Duration duration1 = arg1.getValue();
+    Duration duration2 = arg2.getValue();
+    return IDayTimeDurationItem.valueOf(duration1.plus(duration2));
+  }
+
+  public static IDateTimeItem opAddYearMonthDurationToDateTime(IDateTimeItem arg1, IYearMonthDurationItem arg2) {
+    return IDateTimeItem.valueOf(arg1.asZonedDateTime().plus(arg2.getValue()));
+  }
+
+  public static IDateTimeItem opAddDayTimeDurationToDateTime(IDateTimeItem arg1, IDayTimeDurationItem arg2) {
+    return IDateTimeItem.valueOf(arg1.asZonedDateTime().plus(arg2.getValue()));
+  }
+
+  public static IDayTimeDurationItem opSubtractDates(IDateItem arg1, IDateItem arg2) {
+    return between(arg1.asZonedDateTime(), arg2.asZonedDateTime());
+  }
+
+  public static IDateItem opSubtractYearMonthDurationFromDate(IDateItem arg1, IYearMonthDurationItem arg2) {
+    return subtractDurationFromDate(arg1.asZonedDateTime(), arg2.getValue());
+  }
+
+  public static IDateItem opSubtractDayTimeDurationFromDate(IDateItem arg1, IDayTimeDurationItem arg2) {
+    return subtractDurationFromDate(arg1.asZonedDateTime(), arg2.getValue());
+  }
+
+  protected static IDateItem subtractDurationFromDate(ZonedDateTime dateTime, TemporalAmount duration) {
+    ZonedDateTime result = dateTime.minus(duration);
+    return IDateItem.valueOf(result);
+  }
+
+  public static IYearMonthDurationItem opSubtractYearMonthDurations(IYearMonthDurationItem arg1,
+      IYearMonthDurationItem arg2) {
+    Period duration1 = arg1.getValue();
+    Period duration2 = arg2.getValue();
+    return IYearMonthDurationItem.valueOf(duration1.minus(duration2));
+  }
+
+  public static IDayTimeDurationItem opSubtractDayTimeDurations(IDayTimeDurationItem arg1, IDayTimeDurationItem arg2) {
+    Duration duration1 = arg1.getValue();
+    Duration duration2 = arg2.getValue();
+    return IDayTimeDurationItem.valueOf(duration1.minus(duration2));
+  }
+
+  public static IDayTimeDurationItem opSubtractDateTimes(IDateTimeItem arg1, IDateTimeItem arg2) {
+    return between(arg1.asZonedDateTime(), arg2.asZonedDateTime());
+  }
+
+  protected static IDayTimeDurationItem between(ZonedDateTime time1, ZonedDateTime time2) {
+    Duration between = Duration.between(time1, time2);
+    return IDayTimeDurationItem.valueOf(between);
+  }
+
+  public static IDateTimeItem opSubtractYearMonthDurationFromDateTime(IDateTimeItem arg1, IYearMonthDurationItem arg2) {
+    return IDateTimeItem.valueOf(arg1.asZonedDateTime().minus(arg2.getValue()));
+  }
+
+  public static IDateTimeItem opSubtractDayTimeDurationFromDateTime(IDateTimeItem arg1, IDayTimeDurationItem arg2) {
+    return IDateTimeItem.valueOf(arg1.asZonedDateTime().plus(arg2.getValue()));
+  }
+
+  public static IYearMonthDurationItem opMultiplyYearMonthDuration(IYearMonthDurationItem arg1, INumericItem arg2) {
+    return IYearMonthDurationItem.valueOf(arg1.getValue().multipliedBy(FunctionUtils.asInteger(XPathFunctions.fnRound(arg2))));
+  }
+
+  public static IDayTimeDurationItem opMultiplyDayTimeDuration(IDayTimeDurationItem arg1, INumericItem arg2) {
+    return IDayTimeDurationItem.valueOf(arg1.getValue().multipliedBy(FunctionUtils.asLong(XPathFunctions.fnRound(arg2))));
+  }
+
+  public static IYearMonthDurationItem opDivideYearMonthDuration(IYearMonthDurationItem arg1, INumericItem arg2)
+      throws MetapathDynamicException {
+    IIntegerItem totalMonths = IIntegerItem.valueOf(arg1.getValue().toTotalMonths());
+    IIntegerItem result = opNumericIntegerDivide(totalMonths, arg2);
+    int months = FunctionUtils.asInteger(result.asInteger());
+    int years = months / 12;
+    months = months % 12;
+    return IYearMonthDurationItem.valueOf(years, months, 0);
+  }
+
+  public static IDayTimeDurationItem opDivideDayTimeDuration(IDayTimeDurationItem arg1, INumericItem arg2) {
+    try {
+      return IDayTimeDurationItem.valueOf(arg1.getValue().dividedBy(FunctionUtils.asLong(XPathFunctions.fnRound(arg2))));
+    } catch (ArithmeticException ex) {
+      throw new MetapathDynamicException("err:FOAR0001", "Division by zero", ex);
     }
-    return retval;
+  }
+
+  public static IDecimalItem opDivideDayTimeDurationByDayTimeDuration(IDayTimeDurationItem arg1,
+      IDayTimeDurationItem arg2) {
+    return CastFunctions.castToDecimal(opNumericDivide(IDecimalItem.valueOf(arg1.getValue().toSeconds()),
+        IDecimalItem.valueOf(arg1.getValue().toSeconds())));
+  }
+
+  public static IBooleanItem opDateEqual(IDateItem arg1, IDateItem arg2) {
+    return opDateTimeEqual(CastFunctions.castToDateTime(arg1), CastFunctions.castToDateTime(arg2));
+  }
+
+  public static IBooleanItem opDateTimeEqual(IDateTimeItem arg1, IDateTimeItem arg2) {
+    return IBooleanItem.valueOf(arg1.asZonedDateTime().equals(arg2.asZonedDateTime()));
+  }
+
+  public static IBooleanItem opDurationEqual(IDurationItem arg1, IDurationItem arg2) {
+    return IBooleanItem.valueOf(arg1.getValue().equals(arg2.getValue()));
+  }
+
+  public static IBooleanItem opBase64BinaryEqual(IBase64BinaryItem arg1, IBase64BinaryItem arg2) {
+    return IBooleanItem.valueOf(arg1.getValue().equals(arg2.getValue()));
+  }
+
+  public static IBooleanItem opDateGreaterThan(IDateItem arg1, IDateItem arg2) {
+    return opDateTimeGreaterThan(CastFunctions.castToDateTime(arg1), CastFunctions.castToDateTime(arg2));
+  }
+
+  public static IBooleanItem opDateTimeGreaterThan(IDateTimeItem arg1, IDateTimeItem arg2) {
+    return IBooleanItem.valueOf(arg1.asZonedDateTime().compareTo(arg2.asZonedDateTime()) > 0);
+  }
+
+  public static IBooleanItem opYearMonthDurationGreaterThan(IYearMonthDurationItem arg1, IYearMonthDurationItem arg2) {
+    Period p1 = arg1.getValue();
+    Period p2 = arg2.getValue();
+
+    // this is only an approximation
+    return IBooleanItem.valueOf(p1.toTotalMonths() > p2.toTotalMonths());
+  }
+
+  public static IBooleanItem opDayTimeDurationGreaterThan(IDayTimeDurationItem arg1, IDayTimeDurationItem arg2) {
+    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg1.getValue()) > 0);
+  }
+
+  public static IBooleanItem opBase64BinaryGreaterThan(IBase64BinaryItem arg1, IBase64BinaryItem arg2) {
+    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg1.getValue()) > 0);
+  }
+
+  public static IBooleanItem opDateLessThan(IDateItem arg1, IDateItem arg2) {
+    return opDateTimeLessThan(CastFunctions.castToDateTime(arg1), CastFunctions.castToDateTime(arg2));
+  }
+
+  public static IBooleanItem opDateTimeLessThan(IDateTimeItem arg1, IDateTimeItem arg2) {
+    return IBooleanItem.valueOf(arg1.asZonedDateTime().compareTo(arg2.asZonedDateTime()) < 0);
+  }
+
+  public static IBooleanItem opYearMonthDurationLessThan(IYearMonthDurationItem arg1, IYearMonthDurationItem arg2) {
+    Period p1 = arg1.getValue();
+    Period p2 = arg2.getValue();
+
+    // this is only an approximation
+    return IBooleanItem.valueOf(p1.toTotalMonths() < p2.toTotalMonths());
+  }
+
+  public static IBooleanItem opDayTimeDurationLessThan(IDayTimeDurationItem arg1, IDayTimeDurationItem arg2) {
+    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg1.getValue()) < 0);
+  }
+
+  public static IBooleanItem opBase64BinaryLessThan(IBase64BinaryItem arg1, IBase64BinaryItem arg2) {
+    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg1.getValue()) < 0);
   }
 
   public static INumericItem opNumericAdd(INumericItem left, INumericItem right) {
@@ -158,7 +249,7 @@ public class Functions {
       } else {
         throw new InvalidTypeException(right.getClass());
       }
-      BigDecimal result = decimalLeft.add(decimalRight, MATH_CONTEXT);
+      BigDecimal result = decimalLeft.add(decimalRight, FunctionUtils.MATH_CONTEXT);
       retval = IDecimalItem.valueOf(result);
     } else {
       // create an integer result
@@ -206,7 +297,7 @@ public class Functions {
       } else {
         throw new InvalidTypeException(right.getClass());
       }
-      BigDecimal result = decimalLeft.subtract(decimalRight, MATH_CONTEXT);
+      BigDecimal result = decimalLeft.subtract(decimalRight, FunctionUtils.MATH_CONTEXT);
       retval = IDecimalItem.valueOf(result);
     } else {
       // create an integer result
@@ -254,7 +345,7 @@ public class Functions {
       } else {
         throw new InvalidTypeException(right.getClass());
       }
-      BigDecimal result = decimalLeft.multiply(decimalRight, MATH_CONTEXT);
+      BigDecimal result = decimalLeft.multiply(decimalRight, FunctionUtils.MATH_CONTEXT);
       retval = IDecimalItem.valueOf(result);
     } else {
       // create an integer result
@@ -275,7 +366,7 @@ public class Functions {
       }
 
       BigDecimal decimalDividend = dividend.asDecimal();
-      BigDecimal result = decimalDividend.divide(decimalDivisor, MATH_CONTEXT);
+      BigDecimal result = decimalDividend.divide(decimalDivisor, FunctionUtils.MATH_CONTEXT);
       retval = IDecimalItem.valueOf(result);
     } else {
       // create an integer result
@@ -303,7 +394,7 @@ public class Functions {
       }
 
       BigDecimal decimalDividend = dividend.asDecimal();
-      BigInteger result = decimalDividend.divideToIntegralValue(decimalDivisor, MATH_CONTEXT).toBigInteger();
+      BigInteger result = decimalDividend.divideToIntegralValue(decimalDivisor, FunctionUtils.MATH_CONTEXT).toBigInteger();
       retval = IIntegerItem.valueOf(result);
     } else {
       // create an integer result
@@ -356,7 +447,7 @@ public class Functions {
     if (BigDecimal.ZERO.equals(decimalDividend)) {
       retval = dividend;
     } else {
-      BigDecimal result = decimalDividend.remainder(decimalDivisor, MATH_CONTEXT);
+      BigDecimal result = decimalDividend.remainder(decimalDivisor, FunctionUtils.MATH_CONTEXT);
       retval = IDecimalItem.valueOf(result);
     }
     return retval;
@@ -367,7 +458,7 @@ public class Functions {
     if (item instanceof IDecimalItem) {
       // create a decimal result
       BigDecimal decimal = item.asDecimal();
-      BigDecimal result = decimal.negate(MATH_CONTEXT);
+      BigDecimal result = decimal.negate(FunctionUtils.MATH_CONTEXT);
       retval = IDecimalItem.valueOf(result);
     } else if (item instanceof IIntegerItem) {
       // create a decimal result
@@ -378,85 +469,6 @@ public class Functions {
       throw new InvalidTypeException(item.getClass());
     }
     return retval;
-  }
-
-  // TODO: use a cast instead?
-  public static INumericItem toNumeric(IItem item) throws InvalidTypeException {
-    INumericItem retval;
-    if (item == null) {
-      retval = null;
-    } else {
-      // atomize
-      IAnyAtomicItem atomicItem = Functions.fnDataItem(item);
-
-      if (atomicItem instanceof INumericItem) {
-        retval = (INumericItem) atomicItem;
-      } else {
-        String value = atomicItem.asString();
-        try {
-          retval = IDecimalItem.valueOf(value);
-        } catch (NumberFormatException ex) {
-          throw new InvalidTypeException(String.format("The value '%s' is not a valid decimal value", value), ex);
-        }
-      }
-    }
-    return retval;
-  }
-
-  /**
-   * Casts a result to a numeric value. If the result is a {@link ISequence}, then the first item is
-   * used. If the sequence is empty, then a {@link InvalidTypeException} is thrown.
-   * 
-   * @param result
-   *          a Metapath result
-   * @param requireSingleton
-   *          if {@code true} then a {@link InvalidTypeException} is thrown if the provided result is
-   *          sequence that contains more than one item
-   * @return the item as a numeric, or {@code null} if the result is an empty sequence
-   * @throws InvalidTypeException
-   *           if the sequence contains more than one item, or the item cannot be cast to a decimal
-   *           value
-   * 
-   */
-  public static INumericItem toNumeric(ISequence<?> result, boolean requireSingleton) {
-    IItem item = getFirstItem(result, requireSingleton);
-    return toNumeric(item);
-  }
-
-  /**
-   * Retrieves the first item in a sequence. If the sequence is empty, a {@code null} result is
-   * returned. If requireSingleton is {@code true} and the sequence contains more than one item, a
-   * {@link InvalidTypeException} is thrown.
-   * 
-   * @param sequence
-   *          the sequence to retrieve the first item from
-   * @param requireSingleton
-   *          if {@code true} then a {@link InvalidTypeException} is thrown if the sequence contains
-   *          more than one item
-   * @return {@code null} if the sequence is empty, or the item otherwise
-   * @throws InvalidTypeException
-   *           if the sequence contains more than one item and requireSingleton is {@code true}
-   */
-  public static IItem getFirstItem(ISequence<?> sequence, boolean requireSingleton) throws InvalidTypeException {
-    IItem retval = null;
-    if (!sequence.isEmpty()) {
-      List<? extends IItem> items = sequence.asList();
-      if (requireSingleton && items.size() != 1) {
-        throw new InvalidTypeException("sequence contains more than one item");
-      }
-      retval = items.iterator().next();
-    }
-    return retval;
-  }
-
-  public static IIntegerItem fnCompare(IStringItem arg1, IStringItem arg2) {
-    if (arg1 == null || arg2 == null) {
-      return null;
-    }
-
-    String leftString = arg1.asString();
-    String rightString = arg2.asString();
-    return IIntegerItem.valueOf(leftString.compareTo(rightString));
   }
 
   public static IBooleanItem opNumericEqual(INumericItem arg1, INumericItem arg2) {
@@ -530,22 +542,5 @@ public class Functions {
     }
 
     return IBooleanItem.valueOf(!arg1.toBoolean() && arg2.toBoolean());
-  }
-
-  public static IBooleanItem fnNot(ISequence<?> arg) {
-    return IBooleanItem.valueOf(!fnBooleanAsPrimative(arg));
-  }
-
-  public static IBooleanItem fnNot(IItem arg) {
-    return IBooleanItem.valueOf(!fnBooleanAsPrimative(arg));
-  }
-
-  public static IBooleanItem fnExists(ISequence<?> items) {
-    return IBooleanItem.valueOf(!items.isEmpty());
-  }
-
-  public static IBooleanItem fnStartsWith(ISequence<?> arg1, ISequence<?> arg2) {
-    // implement
-    throw new UnsupportedOperationException();
   }
 }

@@ -23,30 +23,46 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
-package gov.nist.secauto.metaschema.binding.metapath.xdm;
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.type.IDayTimeDurationType;
 
-import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
+import java.time.Duration;
+import java.time.format.DateTimeParseException;
 
-public class XdmRootAssemblyNodeItemImpl extends AbstractBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty>
-    implements IBoundXdmRootAssemblyNodeItem {
+public class DayTimeAdapter extends AbstractJavaTypeAdapter<Duration> implements IDayTimeDurationType {
 
-  public XdmRootAssemblyNodeItemImpl(RootDefinitionAssemblyProperty instance, Object value) {
-    super(instance, value, 1, null);
+  protected DayTimeAdapter() {
+    super(Duration.class);
   }
 
   @Override
-  public boolean isRootNode() {
-    return true;
+  public IDayTimeDurationItem newItem(Object value) {
+    Duration item = toValue(value);
+    return IDayTimeDurationItem.valueOf(item);
   }
 
   @Override
-  public IBoundXdmRootAssemblyNodeItem getNodeItem() {
-    return this;
+  public String getName() {
+    return "day-time-duration";
   }
 
   @Override
-  public IBoundXdmRootAssemblyNodeItem getPathSegment() {
-    return this;
+  public Duration copy(Duration obj) {
+    // value in immutable
+    return obj;
   }
+
+  @Override
+  public Duration parse(String value) throws IllegalArgumentException {
+    try {
+      return Duration.parse(value);
+    } catch (DateTimeParseException ex) {
+      throw new IllegalArgumentException(ex);
+    }
+  }
+
+
 }

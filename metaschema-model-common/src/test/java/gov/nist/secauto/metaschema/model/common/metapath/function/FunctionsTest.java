@@ -23,13 +23,12 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-package gov.nist.secauto.metaschema.model.common.metapath;
-
+import static gov.nist.secauto.metaschema.model.common.metapath.TestUtils.decimal;
+import static gov.nist.secauto.metaschema.model.common.metapath.TestUtils.integer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
@@ -37,56 +36,34 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.MathContext;
 import java.util.stream.Stream;
 
 class FunctionsTest {
-  private static IDecimalItem decimal(String value) {
-    return IDecimalItem.valueOf(new BigDecimal(value, MathContext.DECIMAL64));
-  }
 
-  private static IDecimalItem decimal(double value) {
-    return IDecimalItem.valueOf(new BigDecimal(value, MathContext.DECIMAL64));
-  }
-
-  private static IIntegerItem integer(int value) {
-    return IIntegerItem.valueOf(BigInteger.valueOf(value));
-  }
-
-  private static Stream<Arguments> provideValuesForIntegerDivide() {
+  private static Stream<Arguments> provideValuesForRound() {
     return Stream.of(
-        Arguments.of(integer(10), integer(3), integer(3)),
-        Arguments.of(integer(3), integer(-2), integer(-1)),
-        Arguments.of(integer(-3), integer(2), integer(-1)),
-        Arguments.of(integer(-3), integer(-2), integer(1)),
-        Arguments.of(decimal("9.0"), integer(3), integer(3)),
-        Arguments.of(decimal("-3.5"), integer(3), integer(-1)),
-        Arguments.of(decimal("3.0"), integer(4), integer(0)),
-        Arguments.of(decimal("3.1E1"), integer(6), integer(5)),
-        Arguments.of(decimal("3.1E1"), integer(7), integer(4)));
+        Arguments.of(integer(-100), integer(-3), integer(0)),
+        Arguments.of(integer(-153), integer(-2), integer(-200)),
+        Arguments.of(integer(-153), integer(-1), integer(-150)),
+        Arguments.of(integer(654321), integer(-6), integer(0)),
+        Arguments.of(integer(654321), integer(-5), integer(700000)),
+        Arguments.of(integer(654321), integer(-4), integer(650000)),
+        Arguments.of(integer(654321), integer(0), integer(654321)),
+        Arguments.of(integer(654321), integer(2), integer(654321)),
+        Arguments.of(decimal(2.5), integer(0), decimal(3.0)),
+        Arguments.of(decimal(2.4999), integer(0), decimal(2.0)),
+        Arguments.of(decimal(-2.5), integer(0), decimal(-2.0)),
+        Arguments.of(decimal(1.125), integer(2), decimal("1.13")),
+        Arguments.of(integer(8452), integer(-2), integer(8500)),
+        Arguments.of(decimal("3.1415e0"), integer(2), decimal("3.14")),
+        Arguments.of(decimal(35.425e0d), integer(2), decimal("35.42"))
+      );
   }
-
+  
   @ParameterizedTest
-  @MethodSource("provideValuesForIntegerDivide")
-  void testIntegerDivide(INumericItem dividend, INumericItem divisor, IIntegerItem expected) {
-    INumericItem result = OperationFunctions.opNumericIntegerDivide(dividend, divisor);
-    assertEquals(expected, result);
-  }
-
-  private static Stream<Arguments> provideValuesForMod() {
-    return Stream.of(
-        Arguments.of(integer(5), integer(3), decimal(2)),
-        Arguments.of(integer(6), integer(-2), decimal(0)),
-        Arguments.of(decimal("4.5"), decimal("1.2"), decimal("0.9")),
-        Arguments.of(integer(123), integer(6), decimal(3)));
-  }
-
-  @ParameterizedTest
-  @MethodSource("provideValuesForMod")
-  void test(INumericItem dividend, INumericItem divisor, INumericItem expected) {
-    INumericItem result = OperationFunctions.opNumericMod(dividend, divisor);
+  @MethodSource("provideValuesForRound")
+  void testRound(INumericItem arg, IIntegerItem precision, INumericItem expected) {
+    INumericItem result = XPathFunctions.fnRound(arg, precision);
     assertEquals(expected, result);
   }
 

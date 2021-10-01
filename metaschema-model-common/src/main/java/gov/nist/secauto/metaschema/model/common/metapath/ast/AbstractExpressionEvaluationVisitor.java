@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
@@ -69,8 +70,14 @@ public class AbstractExpressionEvaluationVisitor<CONTEXT> implements ExpressionE
     return ISequence.empty();
   }
 
+  public <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> visit(IExpression<?> expr, CONTEXT context) {
+    @SuppressWarnings("unchecked")
+    ISequence<ITEM_TYPE> retval = (ISequence<ITEM_TYPE>) expr.accept(this, context);
+    return retval;
+  }
+
   @Override
-  public ISequence<? extends INumericItem> visitAddition(Addition expr, CONTEXT context) {
+  public ISequence<? extends IAnyAtomicItem> visitAddition(Addition expr, CONTEXT context) {
     return visitChildren(expr, context);
   }
 
@@ -95,7 +102,7 @@ public class AbstractExpressionEvaluationVisitor<CONTEXT> implements ExpressionE
   }
 
   @Override
-  public ISequence<? extends INumericItem> visitDivision(Division expr, CONTEXT context) {
+  public ISequence<? extends IAnyAtomicItem> visitDivision(Division expr, CONTEXT context) {
     return visitChildren(expr, context);
   }
 
@@ -135,7 +142,7 @@ public class AbstractExpressionEvaluationVisitor<CONTEXT> implements ExpressionE
   }
 
   @Override
-  public ISequence<? extends INumericItem> visitMultiplication(Multiplication expr, CONTEXT context) {
+  public ISequence<? extends IAnyAtomicItem> visitMultiplication(Multiplication expr, CONTEXT context) {
     return visitChildren(expr, context);
   }
 
@@ -195,7 +202,7 @@ public class AbstractExpressionEvaluationVisitor<CONTEXT> implements ExpressionE
   }
 
   @Override
-  public ISequence<? extends INumericItem> visitSubtraction(Subtraction expr, CONTEXT context) {
+  public ISequence<? extends IAnyAtomicItem> visitSubtraction(Subtraction expr, CONTEXT context) {
     return visitChildren(expr, context);
   }
 

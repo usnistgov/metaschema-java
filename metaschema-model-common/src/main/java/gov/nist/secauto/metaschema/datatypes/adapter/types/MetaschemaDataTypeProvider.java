@@ -39,6 +39,7 @@ public class MetaschemaDataTypeProvider extends AbstractDataTypeProvider {
   public static final DateTimeAdapter DATE_TIME = new DateTimeAdapter();
   public static final DateWithTZAdapter DATE_WITH_TZ = new DateWithTZAdapter();
   public static final DateTimeWithTZAdapter DATE_TIME_WITH_TZ = new DateTimeWithTZAdapter();
+  public static final DayTimeAdapter DAY_TIME_DURATION = new DayTimeAdapter();
   public static final Base64Adapter BASE64 = new Base64Adapter();
   public static final EmailAddressAdapter EMAIL_ADDRESS = new EmailAddressAdapter();
   public static final HostnameAdapter HOSTNAME = new HostnameAdapter();
@@ -51,6 +52,7 @@ public class MetaschemaDataTypeProvider extends AbstractDataTypeProvider {
   public static final MarkupMultilineAdapter MARKUP_MULTILINE = new MarkupMultilineAdapter();
   public static final BooleanAdapter BOOLEAN = new BooleanAdapter();
   public static final StringAdapter STRING = new StringAdapter();
+  public static final YearMonthAdapter YEAR_MONTH_DURATION = new YearMonthAdapter();
 
   public static final StringAdapter DEFAULT_DATA_TYPE = STRING;
   
@@ -65,6 +67,7 @@ public class MetaschemaDataTypeProvider extends AbstractDataTypeProvider {
     registerJavaTypeAdapter(DATE_TIME);
     registerJavaTypeAdapter(DATE_WITH_TZ);
     registerJavaTypeAdapter(DATE_TIME_WITH_TZ);
+    registerJavaTypeAdapter(DAY_TIME_DURATION);
     registerJavaTypeAdapter(BASE64);
     registerJavaTypeAdapter(EMAIL_ADDRESS);
     registerJavaTypeAdapter(HOSTNAME);
@@ -77,5 +80,6 @@ public class MetaschemaDataTypeProvider extends AbstractDataTypeProvider {
     registerJavaTypeAdapter(MARKUP_MULTILINE);
     registerJavaTypeAdapter(BOOLEAN);
     registerJavaTypeAdapter(STRING);
+    registerJavaTypeAdapter(YEAR_MONTH_DURATION);
   }
 }

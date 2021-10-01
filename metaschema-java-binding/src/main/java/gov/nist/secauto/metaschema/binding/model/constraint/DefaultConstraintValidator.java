@@ -41,9 +41,11 @@ import gov.nist.secauto.metaschema.model.common.constraint.IKeyField;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
-import gov.nist.secauto.metaschema.model.common.metapath.function.impl.Functions;
+import gov.nist.secauto.metaschema.model.common.metapath.function.XPathFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
@@ -69,8 +71,13 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   private final Map<Object, ValueStatus> valueMap = new LinkedHashMap<>();
   private final Map<String, Map<String, INodeItem>> indexToKeyToItemMap = new LinkedHashMap<>();
   private final Map<String, Map<String, List<INodeItem>>> indexToKeyRefToItemMap = new LinkedHashMap<>();
+  private final DynamicContext metapathContext = new StaticContext().newDynamicContext();
 
   public DefaultConstraintValidator() {
+  }
+
+  protected DynamicContext getMetapathContext() {
+    return metapathContext;
   }
 
   @Override
@@ -118,7 +125,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     for (ICardinalityConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
       @SuppressWarnings("unchecked")
-      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>) item.evaluateMetapath(metapath);
+      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>) item.evaluateMetapath(metapath, getMetapathContext());
       validateHasCardinality(constraint, item, targets);
     }
   }
@@ -150,7 +157,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     for (IIndexConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
       @SuppressWarnings("unchecked")
-      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>) item.evaluateMetapath(metapath);
+      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>) item.evaluateMetapath(metapath, getMetapathContext());
       validateIndex(constraint, item, targets);
     }
   }
@@ -189,7 +196,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     for (IUniqueConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
       @SuppressWarnings("unchecked")
-      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>) item.evaluateMetapath(metapath);
+      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>) item.evaluateMetapath(metapath, getMetapathContext());
       validateUnique(constraint, item, targets);
     }
   }
@@ -216,7 +223,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     for (IMatchesConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
       @SuppressWarnings("unchecked")
-      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>) item.evaluateMetapath(metapath);
+      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>) item.evaluateMetapath(metapath, getMetapathContext());
       validateMatches(constraint, item, targets);
     }
   }
@@ -224,7 +231,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   protected void validateMatches(IMatchesConstraint constraint, @SuppressWarnings("unused") INodeItem node,
       ISequence<?> targets) {
     targets.asStream().map(item -> (INodeItem) item).forEachOrdered(item -> {
-      String value = Functions.fnDataItem(item).asString();
+      String value = XPathFunctions.fnDataItem(item).asString();
 
       Pattern pattern = constraint.getPattern();
       if (pattern != null) {
@@ -251,7 +258,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     for (IIndexHasKeyConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
       @SuppressWarnings("unchecked")
-      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>) item.evaluateMetapath(metapath);
+      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>) item.evaluateMetapath(metapath, getMetapathContext());
       validateIndexHasKey(constraint, item, targets);
     }
   }
@@ -286,7 +293,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     for (IExpectConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
       @SuppressWarnings("unchecked")
-      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>) item.evaluateMetapath(metapath);
+      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>) item.evaluateMetapath(metapath, getMetapathContext());
       validateExpect(constraint, item, targets);
     }
   }
@@ -296,8 +303,8 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     targets.asStream().map(item -> (INodeItem) item).forEachOrdered(item -> {
       MetapathExpression metapath = constraint.getTest();
       try {
-        ISequence<?> result = item.evaluateMetapath(metapath);
-        if (!Functions.fnBoolean(result).toBoolean()) {
+        ISequence<?> result = item.evaluateMetapath(metapath, getMetapathContext());
+        if (!XPathFunctions.fnBoolean(result).toBoolean()) {
           logger.error(String.format("Expect constraint '%s' did not match the data at path '%s'", metapath.getPath(),
               item.toPath(IFormatterFactory.METAPATH_FORMATTER)));
         }
@@ -312,7 +319,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     for (IAllowedValuesConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
       @SuppressWarnings("unchecked")
-      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>) item.evaluateMetapath(metapath);
+      ISequence<? extends INodeItem> targets = (ISequence<? extends INodeItem>) item.evaluateMetapath(metapath, getMetapathContext());
       validateAllowedValues(constraint, item, targets);
     }
   }
@@ -320,7 +327,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   protected void validateAllowedValues(IAllowedValuesConstraint constraint, @SuppressWarnings("unused") INodeItem node,
       ISequence<? extends INodeItem> targets) {
     targets.asStream().forEachOrdered(item -> {
-      String value = Functions.fnDataItem(item).asString();
+      String value = XPathFunctions.fnDataItem(item).asString();
       if (!constraint.getAllowedValues().containsKey(value)) {
         if (constraint.isAllowedOther()) {
           updateValueStatus(item, false);
@@ -354,7 +361,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
       MetapathExpression keyPath = keyField.getTarget();
 
       @SuppressWarnings("unchecked")
-      List<? extends INodeItem> result = (List<? extends INodeItem>) item.evaluateMetapath(keyPath).asList();
+      List<? extends INodeItem> result = (List<? extends INodeItem>) item.evaluateMetapath(keyPath, getMetapathContext()).asList();
       if (result.size() > 1) {
         throw new MetapathException("Key resulted in multiple nodes: " + result);
       }
@@ -363,7 +370,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
       if (result.size() == 1) {
         INodeItem keyItem = result.iterator().next();
 
-        keyValue = Functions.fnDataItem(keyItem).asString();
+        keyValue = XPathFunctions.fnDataItem(keyItem).asString();
         Pattern pattern = keyField.getPattern();
         if (pattern != null) {
           Matcher matcher = pattern.matcher(keyValue);

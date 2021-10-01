@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
@@ -38,7 +39,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 public interface ExpressionEvaluationVisitor<CONTEXT> {
 
-  ISequence<? extends INumericItem> visitAddition(Addition expr, CONTEXT context);
+  ISequence<? extends IAnyAtomicItem> visitAddition(Addition expr, CONTEXT context);
 
   ISequence<? extends IBooleanItem> visitAnd(And expr, CONTEXT context);
 
@@ -50,7 +51,7 @@ public interface ExpressionEvaluationVisitor<CONTEXT> {
 
   ISequence<? extends IDecimalItem> visitDecimalLiteral(DecimalLiteral expr, CONTEXT context);
 
-  ISequence<? extends INumericItem> visitDivision(Division expr, CONTEXT context);
+  ISequence<? extends IAnyAtomicItem> visitDivision(Division expr, CONTEXT context);
 
   ISequence<? extends IFlagNodeItem> visitFlag(Flag expr, CONTEXT context);
 
@@ -66,7 +67,7 @@ public interface ExpressionEvaluationVisitor<CONTEXT> {
 
   ISequence<? extends IModelNodeItem> visitModelInstance(ModelInstance modelInstance, CONTEXT context);
 
-  ISequence<? extends INumericItem> visitMultiplication(Multiplication expr, CONTEXT context);
+  ISequence<? extends IAnyAtomicItem> visitMultiplication(Multiplication expr, CONTEXT context);
 
   ISequence<? extends INumericItem> visitNegate(Negate expr, CONTEXT context);
 
@@ -89,7 +90,7 @@ public interface ExpressionEvaluationVisitor<CONTEXT> {
 
   ISequence<? extends IStringItem> visitStringLiteral(StringLiteral expr, CONTEXT context);
 
-  ISequence<? extends INumericItem> visitSubtraction(Subtraction expr, CONTEXT context);
+  ISequence<? extends IAnyAtomicItem> visitSubtraction(Subtraction expr, CONTEXT context);
 
   ISequence<?> visitUnion(Union expr, CONTEXT context);
 }

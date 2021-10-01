@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.function.impl.Functions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
@@ -167,7 +167,7 @@ public abstract class AbstractFunction implements IFunction {
       Class<? extends IItem> argumentClass = argument.getSequenceType().getType();
       if (argumentClass.isInstance(IAnyAtomicItem.class)) {
         // atomize
-        parameter = Functions.fnData(parameter);
+        parameter = XPathFunctions.fnData(parameter);
       }
 
       // TODO: https://www.w3.org/TR/xpath-31/#dt-function-conversion
@@ -187,8 +187,8 @@ public abstract class AbstractFunction implements IFunction {
   }
 
   @Override
-  public ISequence<?> execute(List<ISequence<?>> arguments) {
-    return handler.execute(arguments);
+  public ISequence<?> execute(List<ISequence<?>> arguments, DynamicContext dynamicContext) {
+    return handler.execute(arguments,dynamicContext);
   }
 
   @Override

@@ -23,30 +23,18 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-package gov.nist.secauto.metaschema.binding.metapath.xdm;
+import java.time.temporal.TemporalAmount;
 
-import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
+public interface IDurationItem extends IAnyAtomicItem {
 
-public class XdmRootAssemblyNodeItemImpl extends AbstractBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty>
-    implements IBoundXdmRootAssemblyNodeItem {
-
-  public XdmRootAssemblyNodeItemImpl(RootDefinitionAssemblyProperty instance, Object value) {
-    super(instance, value, 1, null);
+  @Override
+  default IAnyAtomicItem toAtomicItem() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
   @Override
-  public boolean isRootNode() {
-    return true;
-  }
-
-  @Override
-  public IBoundXdmRootAssemblyNodeItem getNodeItem() {
-    return this;
-  }
-
-  @Override
-  public IBoundXdmRootAssemblyNodeItem getPathSegment() {
-    return this;
-  }
+  TemporalAmount getValue();
 }

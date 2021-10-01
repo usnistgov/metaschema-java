@@ -37,7 +37,8 @@ public interface IDecimalItem extends INumericItem {
   }
 
   public static IDecimalItem valueOf(double value) throws NumberFormatException {
-    return valueOf(BigDecimal.valueOf(value));
+    // it is important to use this BigDecimal constructor to preserve the precision of the double value
+    return valueOf(new BigDecimal(value));
   }
 
   public static IDecimalItem valueOf(BigDecimal value) {

@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.metapath.MetaschemaPathEvaluationVisitor;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
@@ -65,7 +66,10 @@ public abstract class AbstractBoundXdmNodeItem<INSTANCE extends NamedProperty, P
   }
 
   @Override
-  public <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> evaluateMetapath(MetapathExpression metapath) {
-    return new MetaschemaPathEvaluationVisitor().visit(metapath.getASTNode(), this);
+  public <ITEM_TYPE extends IItem> ISequence<? extends ITEM_TYPE> evaluateMetapath(MetapathExpression metapath,
+      DynamicContext context) {
+    return new MetaschemaPathEvaluationVisitor(context).visit(metapath.getASTNode(), this);
   }
+
+  
 }

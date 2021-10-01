@@ -26,9 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function.impl;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionHandler;
+import gov.nist.secauto.metaschema.model.common.metapath.function.XPathFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
@@ -54,9 +56,9 @@ public class StartsWith implements IFunctionHandler {
       .build();
 
   @Override
-  public ISequence<IBooleanItem> execute(List<ISequence<?>> arguments) {
+  public ISequence<IBooleanItem> execute(List<ISequence<?>> arguments, DynamicContext dynamicContext) {
     ISequence<?> arg1 = arguments.iterator().next();
     ISequence<?> arg2 = arguments.iterator().next();
-    return ISequence.of(Functions.fnStartsWith(arg1, arg2));
+    return ISequence.of(XPathFunctions.fnStartsWith(arg1, arg2));
   }
 }

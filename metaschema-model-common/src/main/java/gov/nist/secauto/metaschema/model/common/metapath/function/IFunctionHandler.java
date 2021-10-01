@@ -26,10 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
 import java.util.List;
 
 public interface IFunctionHandler {
-  ISequence<?> execute(List<ISequence<?>> arguments);
+  ISequence<?> execute(List<ISequence<?>> arguments, DynamicContext dynamicContext);
 }

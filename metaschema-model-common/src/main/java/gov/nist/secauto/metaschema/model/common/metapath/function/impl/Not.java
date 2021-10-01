@@ -26,9 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function.impl;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionHandler;
+import gov.nist.secauto.metaschema.model.common.metapath.function.XPathFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
@@ -52,9 +54,9 @@ public class Not implements IFunctionHandler {
   }
 
   @Override
-  public ISequence<IBooleanItem> execute(List<ISequence<?>> arguments) {
+  public ISequence<IBooleanItem> execute(List<ISequence<?>> arguments, DynamicContext dynamicContext) {
     ISequence<?> items = arguments.iterator().next();
-    return ISequence.of(Functions.fnExists(items));
+    return ISequence.of(XPathFunctions.fnExists(items));
   }
 
 }

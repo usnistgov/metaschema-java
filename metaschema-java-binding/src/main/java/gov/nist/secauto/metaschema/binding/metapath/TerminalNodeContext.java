@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmNodeItem;
 
 import java.util.stream.Stream;
 
@@ -78,6 +79,10 @@ public class TerminalNodeContext implements INodeContext {
   @Override
   public Stream<? extends INodeItem> getMatchingChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor,
       IExpression<?> expr, boolean recurse) {
+//    // check the current node
+//    @SuppressWarnings("unchecked")
+//    Stream<? extends IXdmNodeItem> retval = (Stream<? extends IXdmNodeItem>) expr.accept(visitor, this).asStream();
+
     return Stream.empty();
   }
 }

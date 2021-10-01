@@ -23,30 +23,39 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-package gov.nist.secauto.metaschema.binding.metapath.xdm;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.DayTimeAdapter;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.model.common.metapath.type.IDayTimeDurationType;
 
-import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
+import java.time.Duration;
 
-public class XdmRootAssemblyNodeItemImpl extends AbstractBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty>
-    implements IBoundXdmRootAssemblyNodeItem {
+class DayTimeDurationItemImpl extends AbstractAnyAtomicItem<Duration> implements IDayTimeDurationItem {
 
-  public XdmRootAssemblyNodeItemImpl(RootDefinitionAssemblyProperty instance, Object value) {
-    super(instance, value, 1, null);
+  public DayTimeDurationItemImpl(Duration value) {
+    super(value);
   }
 
   @Override
-  public boolean isRootNode() {
-    return true;
+  public String asString() {
+    return getValue().toString();
   }
 
+
   @Override
-  public IBoundXdmRootAssemblyNodeItem getNodeItem() {
+  public IAnyAtomicItem toAtomicItem() {
     return this;
   }
 
   @Override
-  public IBoundXdmRootAssemblyNodeItem getPathSegment() {
-    return this;
+  public IDayTimeDurationType getItemType() {
+    return getJavaTypeAdapter();
   }
+
+  @Override
+  protected DayTimeAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.DAY_TIME_DURATION;
+  }
+
 }

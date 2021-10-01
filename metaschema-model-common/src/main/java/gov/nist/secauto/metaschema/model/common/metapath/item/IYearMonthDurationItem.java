@@ -23,30 +23,27 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-package gov.nist.secauto.metaschema.binding.metapath.xdm;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 
-import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
+import java.time.Period;
 
-public class XdmRootAssemblyNodeItemImpl extends AbstractBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty>
-    implements IBoundXdmRootAssemblyNodeItem {
+public interface IYearMonthDurationItem extends IDurationItem {
 
-  public XdmRootAssemblyNodeItemImpl(RootDefinitionAssemblyProperty instance, Object value) {
-    super(instance, value, 1, null);
+  public static IYearMonthDurationItem valueOf(Period item) {
+    return new YearMonthDurationItemImpl(item);
+  }
+
+  public static IYearMonthDurationItem valueOf(int years, int months, int days) {
+    return valueOf(Period.of(years, months, days));
+  }
+
+  public static IYearMonthDurationItem valueOf(String value) throws IllegalArgumentException {
+    Period period = MetaschemaDataTypeProvider.YEAR_MONTH_DURATION.parse(value);
+    return valueOf(period);
   }
 
   @Override
-  public boolean isRootNode() {
-    return true;
-  }
-
-  @Override
-  public IBoundXdmRootAssemblyNodeItem getNodeItem() {
-    return this;
-  }
-
-  @Override
-  public IBoundXdmRootAssemblyNodeItem getPathSegment() {
-    return this;
-  }
+  Period getValue();
 }

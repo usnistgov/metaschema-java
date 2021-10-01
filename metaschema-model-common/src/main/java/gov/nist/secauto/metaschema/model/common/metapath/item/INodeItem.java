@@ -26,8 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
 
 public interface INodeItem extends IPathItem, INodeContext {
@@ -72,5 +74,23 @@ public interface INodeItem extends IPathItem, INodeContext {
    *          the compiled Metapath expression
    * @return the result items
    */
-  <ITEM_TYPE extends IItem> ISequence<? extends ITEM_TYPE> evaluateMetapath(MetapathExpression metapath);
+  @SuppressWarnings("unchecked")
+  default <ITEM_TYPE extends IItem> ISequence<? extends ITEM_TYPE> evaluateMetapath(MetapathExpression metapath) {
+    return (ISequence<? extends ITEM_TYPE>) evaluateMetapath(metapath, new StaticContext().newDynamicContext());
+  };
+
+  /**
+   * Evaluate the provided Metapath, producing a sequence of result items.
+   * 
+   * @param <ITEM_TYPE>
+   *          the type of items in the sequence
+   * @param metapath
+   *          the compiled Metapath expression
+   * @param context
+   *          the dynamic Metapath context
+   * @return the result items
+   */
+  <ITEM_TYPE extends IItem> ISequence<? extends ITEM_TYPE> evaluateMetapath(MetapathExpression metapath,
+      DynamicContext context);
+
 }

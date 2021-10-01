@@ -43,4 +43,9 @@ public abstract class AbstractNAryExpression<RESULT_TYPE extends IItem> implemen
   public List<IExpression<?>> getChildren() {
     return children;
   }
+
+  @Override
+  public String toString() {
+    return new ASTPrinter().visit(this);
+  }
 }

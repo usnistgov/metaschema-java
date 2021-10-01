@@ -46,4 +46,9 @@ public abstract class AbstractUnaryExpr<RESULT_TYPE extends IItem> implements IE
   public List<? extends IExpression<?>> getChildren() {
     return List.of(expr);
   }
+
+  @Override
+  public String toString() {
+    return new ASTPrinter().visit(this);
+  }
 }

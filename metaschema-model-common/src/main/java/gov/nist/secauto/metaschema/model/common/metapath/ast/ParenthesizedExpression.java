@@ -60,4 +60,9 @@ public class ParenthesizedExpression
   public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitParenthesizedExpression(this, context);
   }
+
+  @Override
+  public String toString() {
+    return new ASTPrinter().visit(this);
+  }
 }

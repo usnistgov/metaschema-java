@@ -29,4 +29,9 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 public abstract class AbstractPathExpression<RESULT_TYPE extends INodeItem> implements IPathExpression<RESULT_TYPE> {
+
+  @Override
+  public String toString() {
+    return new ASTPrinter().visit(this);
+  }
 }

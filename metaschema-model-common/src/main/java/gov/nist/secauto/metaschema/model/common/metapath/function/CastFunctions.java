@@ -24,14 +24,15 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.function.impl;
+package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDurationItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INcNameItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INonNegativeIntegerItem;
@@ -39,6 +40,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IPositiveIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 
 public class CastFunctions {
   private CastFunctions() {
@@ -106,9 +108,25 @@ public class CastFunctions {
     return retval;
   }
 
-  // TODO: duration
+  public static IDurationItem castToDuration(IAnyAtomicItem item) throws InvalidValueForCastException {
+    IDurationItem retval;
+    if (item instanceof IDurationItem) {
+      retval = (IDurationItem)item;
+    } else {
+      try {
+        retval = IDayTimeDurationItem.valueOf(item.asString());
+      } catch (IllegalArgumentException ex) {
+        try {
+          retval = IYearMonthDurationItem.valueOf(item.asString());
+        } catch(IllegalArgumentException ex2) {
+          throw new InvalidValueForCastException(ex2);
+        }
+      }
+    }
+    return retval;
+  }
 
-  public static IDateTimeItem dateTime(IAnyAtomicItem item) {
+  public static IDateTimeItem castToDateTime(IAnyAtomicItem item) {
     // TODO: bring up to spec
     IDateTimeItem retval;
     if (item instanceof IDateTimeItem) {
@@ -125,7 +143,7 @@ public class CastFunctions {
 
   // TODO: time?
 
-  public static IDateItem date(IAnyAtomicItem item) {
+  public static IDateItem castToDate(IAnyAtomicItem item) {
     // TODO: bring up to spec
     IDateItem retval;
     if (item instanceof IDateItem) {
@@ -152,7 +170,7 @@ public class CastFunctions {
   //
   // }
 
-  public static INcNameItem ncName(IAnyAtomicItem item) {
+  public static INcNameItem castToNcName(IAnyAtomicItem item) {
     return INcNameItem.valueOf(item.asString());
   }
 
@@ -193,12 +211,13 @@ public class CastFunctions {
     return retval;
   }
 
-  public static INonNegativeIntegerItem nonNegativeInteger(IAnyAtomicItem item) throws InvalidValueForCastException {
+  public static INonNegativeIntegerItem castToNonNegativeInteger(IAnyAtomicItem item)
+      throws InvalidValueForCastException {
     IIntegerItem integerItem = castToInteger(item);
     return INonNegativeIntegerItem.valueOf(integerItem);
   }
 
-  public static IPositiveIntegerItem positiveInteger(IAnyAtomicItem item) throws InvalidValueForCastException {
+  public static IPositiveIntegerItem castToPositiveInteger(IAnyAtomicItem item) throws InvalidValueForCastException {
     IIntegerItem integerItem = castToInteger(item);
     return IPositiveIntegerItem.valueOf(integerItem);
   }

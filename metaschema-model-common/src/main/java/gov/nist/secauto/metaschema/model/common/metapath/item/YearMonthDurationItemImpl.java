@@ -23,30 +23,32 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-package gov.nist.secauto.metaschema.binding.metapath.xdm;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.YearMonthAdapter;
+import gov.nist.secauto.metaschema.model.common.metapath.type.IYearMonthDurationType;
 
-import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
+import java.time.Period;
 
-public class XdmRootAssemblyNodeItemImpl extends AbstractBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty>
-    implements IBoundXdmRootAssemblyNodeItem {
+class YearMonthDurationItemImpl extends AbstractAnyAtomicItem<Period> implements IYearMonthDurationItem {
 
-  public XdmRootAssemblyNodeItemImpl(RootDefinitionAssemblyProperty instance, Object value) {
-    super(instance, value, 1, null);
+  public YearMonthDurationItemImpl(Period value) {
+    super(value);
   }
 
   @Override
-  public boolean isRootNode() {
-    return true;
-  }
-
-  @Override
-  public IBoundXdmRootAssemblyNodeItem getNodeItem() {
+  public IYearMonthDurationItem toAtomicItem() {
     return this;
   }
 
   @Override
-  public IBoundXdmRootAssemblyNodeItem getPathSegment() {
-    return this;
+  public IYearMonthDurationType getItemType() {
+    return getJavaTypeAdapter();
+  }
+
+  @Override
+  protected YearMonthAdapter getJavaTypeAdapter() {
+    return MetaschemaDataTypeProvider.YEAR_MONTH_DURATION;
   }
 }

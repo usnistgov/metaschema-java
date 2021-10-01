@@ -23,30 +23,46 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-package gov.nist.secauto.metaschema.binding.metapath.xdm;
+import java.math.BigInteger;
 
-import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
-
-public class XdmRootAssemblyNodeItemImpl extends AbstractBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty>
-    implements IBoundXdmRootAssemblyNodeItem {
-
-  public XdmRootAssemblyNodeItemImpl(RootDefinitionAssemblyProperty instance, Object value) {
-    super(instance, value, 1, null);
+public class Test {
+  static BigInteger round(BigInteger value, int precision) {
+    System.out.println(String.format("round(%s,%d)",value.toString(), precision));
+    BigInteger retval;
+    if (precision >= 0) {
+      retval = value;
+    } else {
+      // round to a power of 10
+      BigInteger divisor = BigInteger.TEN.pow(0 - precision);
+      
+      if (divisor.compareTo(value.abs()) > 0) {
+        retval = BigInteger.ZERO;
+      } else {
+        BigInteger remainder = value.mod(divisor);
+        System.out.println("  mod: "+remainder.toString());
+  
+        BigInteger lessRemainder = value.subtract(remainder);
+        System.out.println("  lessRemainder: "+lessRemainder.toString());
+  
+        BigInteger halfDivisor = divisor.divide(BigInteger.TWO);
+        
+        retval = remainder.compareTo(halfDivisor) >= 0 ? lessRemainder.add(divisor) : lessRemainder;
+      }
+    }
+    System.out.println("  rounded: "+retval.toString());
+    return retval;
   }
 
-  @Override
-  public boolean isRootNode() {
-    return true;
-  }
-
-  @Override
-  public IBoundXdmRootAssemblyNodeItem getNodeItem() {
-    return this;
-  }
-
-  @Override
-  public IBoundXdmRootAssemblyNodeItem getPathSegment() {
-    return this;
+  public static void main(String[] args) {
+    round(BigInteger.valueOf(100), -3);
+    round(BigInteger.valueOf(-153), -2);
+    round(BigInteger.valueOf(-153), -1);
+    round(BigInteger.valueOf(654321), -6);
+    round(BigInteger.valueOf(654321), -5);
+    round(BigInteger.valueOf(654321), -4);
+    round(BigInteger.valueOf(654321), 0);
+    round(BigInteger.valueOf(654321), 2);
   }
 }

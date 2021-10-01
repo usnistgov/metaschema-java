@@ -23,30 +23,22 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-package gov.nist.secauto.metaschema.binding.metapath.xdm;
+import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 
-import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
+import java.time.Duration;
 
-public class XdmRootAssemblyNodeItemImpl extends AbstractBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty>
-    implements IBoundXdmRootAssemblyNodeItem {
+public interface IDayTimeDurationItem extends IDurationItem {
+  public static IDayTimeDurationItem valueOf(Duration value) {
+    return new DayTimeDurationItemImpl(value);
+  }
 
-  public XdmRootAssemblyNodeItemImpl(RootDefinitionAssemblyProperty instance, Object value) {
-    super(instance, value, 1, null);
+  public static IDayTimeDurationItem valueOf(String value) throws IllegalArgumentException {
+    Duration duration = MetaschemaDataTypeProvider.DAY_TIME_DURATION.parse(value);
+    return valueOf(duration);
   }
 
   @Override
-  public boolean isRootNode() {
-    return true;
-  }
-
-  @Override
-  public IBoundXdmRootAssemblyNodeItem getNodeItem() {
-    return this;
-  }
-
-  @Override
-  public IBoundXdmRootAssemblyNodeItem getPathSegment() {
-    return this;
-  }
+  Duration getValue();
 }

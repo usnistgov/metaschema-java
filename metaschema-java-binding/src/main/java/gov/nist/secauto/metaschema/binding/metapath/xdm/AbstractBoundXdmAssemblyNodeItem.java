@@ -135,24 +135,24 @@ public abstract class AbstractBoundXdmAssemblyNodeItem<INSTANCE extends Assembly
     @SuppressWarnings("unchecked")
     Stream<? extends IXdmNodeItem> retval = (Stream<? extends IXdmNodeItem>) expr.accept(visitor, this).asStream();
 
+//    {
+//      List<? extends IXdmNodeItem> list = retval.collect(Collectors.toList());
+//      retval = list.stream();
+//    }
+    
     IAssemblyDefinition definition = getPathSegment().getDefinition();
 
     // get matching model instances
     if (recurse) {
-      Collection<? extends INamedModelInstance> modelInstances = definition.getNamedModelInstances().values();
-      Stream<? extends IXdmNodeItem> modelStream = modelInstances.stream().flatMap(modelInstance -> {
+      Stream<? extends IXdmModelNodeItem> instances = modelItems();
 
-        Stream<? extends IXdmModelNodeItem> instances = modelItems();
+      Stream<? extends IXdmNodeItem> childMatches = instances.flatMap(instance -> {
+        // IMetapathResult result = expr.accept(visitor, instance);
+        // Stream<? extends INodeItem> items = result.asSequence().asStream().map(item -> (INodeItem) item);
 
-        Stream<? extends IXdmNodeItem> childMatches = instances.flatMap(instance -> {
-          // IMetapathResult result = expr.accept(visitor, instance);
-          // Stream<? extends INodeItem> items = result.asSequence().asStream().map(item -> (INodeItem) item);
-
-          return instance.getMatchingChildInstances(visitor, expr, recurse);
-        });
-        return childMatches;
+        return instance.getMatchingChildInstances(visitor, expr, recurse);
       });
-      retval = Stream.concat(retval, modelStream);
+      retval = Stream.concat(retval, childMatches);
     }
 
     return retval;

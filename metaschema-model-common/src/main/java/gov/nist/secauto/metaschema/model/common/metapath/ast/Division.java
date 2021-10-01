@@ -26,23 +26,24 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
 public class Division
-    extends AbstractArithmeticExpr<INumericItem> {
+    extends AbstractArithmeticExpr<IAnyAtomicItem> {
 
   public Division(IExpression<?> left, IExpression<?> right) {
     super(left, right, INumericItem.class);
   }
 
   @Override
-  public Class<INumericItem> getBaseResultType() {
-    return INumericItem.class;
+  public Class<IAnyAtomicItem> getBaseResultType() {
+    return IAnyAtomicItem.class;
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends INumericItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
+  public <CONTEXT> ISequence<? extends IAnyAtomicItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
       CONTEXT context) {
     return visitor.visitDivision(this, context);
   }

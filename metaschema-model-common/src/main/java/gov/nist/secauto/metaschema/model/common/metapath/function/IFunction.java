@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
@@ -83,7 +84,7 @@ public interface IFunction {
 
   List<ISequence<?>> convertArguments(IFunction function, List<ISequence<?>> arguments);
 
-  ISequence<?> execute(List<ISequence<?>> arguments);
+  ISequence<?> execute(List<ISequence<?>> arguments, DynamicContext dynamicContext);
 
   /**
    * Get the signature of the function as a string.

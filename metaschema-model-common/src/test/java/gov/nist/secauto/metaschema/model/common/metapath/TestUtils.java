@@ -23,30 +23,25 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath;
 
-package gov.nist.secauto.metaschema.binding.metapath.xdm;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 
-import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.MathContext;
 
-public class XdmRootAssemblyNodeItemImpl extends AbstractBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty>
-    implements IBoundXdmRootAssemblyNodeItem {
-
-  public XdmRootAssemblyNodeItemImpl(RootDefinitionAssemblyProperty instance, Object value) {
-    super(instance, value, 1, null);
+public class TestUtils {
+  public static IDecimalItem decimal(String value) {
+    return IDecimalItem.valueOf(new BigDecimal(value, MathContext.DECIMAL64));
   }
 
-  @Override
-  public boolean isRootNode() {
-    return true;
+  public static IDecimalItem decimal(double value) {
+    return IDecimalItem.valueOf(new BigDecimal(value));
   }
 
-  @Override
-  public IBoundXdmRootAssemblyNodeItem getNodeItem() {
-    return this;
-  }
-
-  @Override
-  public IBoundXdmRootAssemblyNodeItem getPathSegment() {
-    return this;
+  public static IIntegerItem integer(int value) {
+    return IIntegerItem.valueOf(BigInteger.valueOf(value));
   }
 }
