@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
@@ -50,8 +53,8 @@ public class And
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IBooleanItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
-      CONTEXT context) {
+  public ISequence<? extends IBooleanItem> accept(IExpressionEvaluationVisitor visitor,
+      INodeContext context) {
     return visitor.visitAnd(this, context);
   }
 

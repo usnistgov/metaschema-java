@@ -37,6 +37,7 @@ public class StaticContext {
   // private final List<? extends INamedDefinition> knownDefinitions;
   private final Map<String, IItemType> uriToKnownDocumentTypeMap;
   private URI baseUri;
+  private DocumentLoader documentLoader;
 
   public StaticContext() {
     this.uriToKnownDocumentTypeMap = new HashMap<>();
@@ -62,4 +63,13 @@ public class StaticContext {
   public DynamicContext newDynamicContext() {
     return new DynamicContext(this);
   }
+
+  public DocumentLoader getDocumentLoader() {
+    return documentLoader;
+  }
+
+  public void setDocumentLoader(DocumentLoader documentLoader) {
+    this.documentLoader = documentLoader;
+  }
+
 }

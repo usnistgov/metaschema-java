@@ -26,13 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
 import java.math.BigInteger;
 
-public class IntegerLiteral
-    extends AbstractLiteralExpression<IIntegerItem, BigInteger> {
+public class IntegerLiteral extends AbstractLiteralExpression<IIntegerItem, BigInteger> {
 
   public IntegerLiteral(BigInteger value) {
     super(value);
@@ -44,8 +46,7 @@ public class IntegerLiteral
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IIntegerItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
-      CONTEXT context) {
+  public ISequence<? extends IIntegerItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
     return visitor.visitIntegerLiteral(this, context);
   }
 

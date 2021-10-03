@@ -41,7 +41,7 @@ import java.util.List;
 
 public class PositiveInteger implements IFunctionHandler {
   static final IFunction SIGNATURE = IFunction.newBuilder()
-      .name("nonNegativeInteger")
+      .name("positiveInteger")
       .argument(IArgument.newBuilder()
           .name("arg1")
           .type(IAnyAtomicItem.class)

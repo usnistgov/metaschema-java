@@ -26,14 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringLiteral
-    extends AbstractLiteralExpression<IStringItem, String> {
+public class StringLiteral extends AbstractLiteralExpression<IStringItem, String> {
   private static final Pattern pattern = Pattern.compile("^'(.*)'$|^\"(.*)\"$");
 
   public StringLiteral(String value) {
@@ -58,8 +60,7 @@ public class StringLiteral
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IStringItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
-      CONTEXT context) {
+  public ISequence<? extends IStringItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
     return visitor.visitStringLiteral(this, context);
   }
 

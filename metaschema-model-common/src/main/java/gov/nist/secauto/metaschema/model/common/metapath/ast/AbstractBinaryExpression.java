@@ -28,23 +28,47 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
-public abstract class AbstractUnaryExpr<RESULT_TYPE extends IItem> implements IExpression<RESULT_TYPE> {
-  private IExpression<?> expr;
+public abstract class AbstractBinaryExpression<RESULT_TYPE extends IItem>
+    implements IExpression<RESULT_TYPE> {
+  private final IExpression<?> left;
+  private final IExpression<?> right;
 
-  public AbstractUnaryExpr(IExpression<?> expr) {
-    // Objects.requireNonNull(expr);
-    this.expr = expr;
+  public AbstractBinaryExpression(IExpression<?> left, IExpression<?> right) {
+    Objects.requireNonNull(left);
+    Objects.requireNonNull(right);
+    this.left = left;
+    this.right = right;
   }
 
-  public IExpression<?> getChild() {
-    return expr;
+  public IExpression<?> getLeft() {
+    return left;
+  }
+
+  public IExpression<?> getRight() {
+    return right;
   }
 
   @Override
   public List<? extends IExpression<?>> getChildren() {
-    return List.of(expr);
+    List<? extends IExpression<?>> retval;
+    if (left != null) {
+      if (right != null) {
+        retval = List.of(left, right);
+      } else {
+        retval = List.of(left);
+      }
+    } else {
+      if (right != null) {
+        retval = List.of(right);
+      } else {
+        retval = Collections.emptyList();
+      }
+    }
+    return retval;
   }
 
   @Override

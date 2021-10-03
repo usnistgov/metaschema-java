@@ -28,11 +28,10 @@ package gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance;
 
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IContext;
 
 import java.util.function.Predicate;
 
-public interface IMetaschemaContext extends IContext {
+public interface IMetaschemaContext {
 
   IInstanceSet getInstanceSet();
 

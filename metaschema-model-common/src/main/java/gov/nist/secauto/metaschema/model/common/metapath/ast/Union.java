@@ -26,14 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
 import java.util.List;
 
-public class Union
-    extends AbstractNAryExpression<IItem>
-    implements IExpression<IItem> {
+public class Union extends AbstractNAryExpression<IItem> implements IExpression<IItem> {
 
   private final Class<? extends IItem> staticResultType;
 
@@ -53,7 +54,7 @@ public class Union
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+  public ISequence<? extends IItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
     return visitor.visitUnion(this, context);
   }
 

@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaPathEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
 
 public interface INodeItem extends IPathItem, INodeContext {
@@ -55,6 +56,7 @@ public interface INodeItem extends IPathItem, INodeContext {
    * 
    * @return the value
    */
+  @Override
   Object getValue();
 
   // TODO: rename to asAtomicItem
@@ -82,15 +84,14 @@ public interface INodeItem extends IPathItem, INodeContext {
   /**
    * Evaluate the provided Metapath, producing a sequence of result items.
    * 
-   * @param <ITEM_TYPE>
-   *          the type of items in the sequence
    * @param metapath
    *          the compiled Metapath expression
    * @param context
    *          the dynamic Metapath context
    * @return the result items
    */
-  <ITEM_TYPE extends IItem> ISequence<? extends ITEM_TYPE> evaluateMetapath(MetapathExpression metapath,
-      DynamicContext context);
+  default ISequence<?> evaluateMetapath(MetapathExpression metapath, DynamicContext context) {
+    return new MetaschemaPathEvaluationVisitor(context).visit(metapath.getASTNode(), this);
+  }
 
 }

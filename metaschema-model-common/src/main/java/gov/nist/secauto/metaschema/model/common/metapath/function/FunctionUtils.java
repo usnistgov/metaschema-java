@@ -88,10 +88,10 @@ public class FunctionUtils {
    * @throws InvalidTypeException
    *           if the sequence contains more than one item and requireSingleton is {@code true}
    */
-  public static IItem getFirstItem(ISequence<?> sequence, boolean requireSingleton) throws InvalidTypeException {
-    IItem retval = null;
+  public static <ITEM extends IItem> ITEM getFirstItem(ISequence<ITEM> sequence, boolean requireSingleton) throws InvalidTypeException {
+    ITEM retval = null;
     if (!sequence.isEmpty()) {
-      List<? extends IItem> items = sequence.asList();
+      List<ITEM> items = sequence.asList();
       if (requireSingleton && items.size() != 1) {
         throw new InvalidTypeException("sequence contains more than one item");
       }

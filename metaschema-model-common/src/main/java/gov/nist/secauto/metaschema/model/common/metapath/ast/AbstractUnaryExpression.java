@@ -26,37 +26,29 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
 import java.util.List;
 
-public class OrNode
-    extends AbstractNAryExpression<IBooleanItem>
-    implements IBooleanLogicExpression {
+public abstract class AbstractUnaryExpression<RESULT_TYPE extends IItem> implements IExpression<RESULT_TYPE> {
+  private IExpression<?> expr;
 
-  public OrNode(List<IExpression<?>> chidren) {
-    super(chidren);
+  public AbstractUnaryExpression(IExpression<?> expr) {
+    // Objects.requireNonNull(expr);
+    this.expr = expr;
+  }
+
+  public IExpression<?> getChild() {
+    return expr;
   }
 
   @Override
-  public Class<IBooleanItem> getBaseResultType() {
-    return IBooleanItem.class;
+  public List<? extends IExpression<?>> getChildren() {
+    return List.of(expr);
   }
 
   @Override
-  public Class<IBooleanItem> getStaticResultType() {
-    return getBaseResultType();
-  }
-
-  @Override
-  public <CONTEXT> ISequence<? extends IBooleanItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
-      CONTEXT context) {
-    return visitor.visitOr(this, context);
-  }
-
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitOr(this, context);
+  public String toString() {
+    return new ASTPrinter().visit(this);
   }
 }

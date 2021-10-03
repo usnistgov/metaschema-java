@@ -24,8 +24,39 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.evaluate;
+package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public interface IContext {
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
+import java.util.List;
+
+public class Or extends AbstractNAryExpression<IBooleanItem> implements IBooleanLogicExpression {
+
+  public Or(List<IExpression<?>> chidren) {
+    super(chidren);
+  }
+
+  @Override
+  public Class<IBooleanItem> getBaseResultType() {
+    return IBooleanItem.class;
+  }
+
+  @Override
+  public Class<IBooleanItem> getStaticResultType() {
+    return getBaseResultType();
+  }
+
+  @Override
+  public ISequence<? extends IBooleanItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+    return visitor.visitOr(this, context);
+  }
+
+  @Override
+  public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitOr(this, context);
+  }
 }

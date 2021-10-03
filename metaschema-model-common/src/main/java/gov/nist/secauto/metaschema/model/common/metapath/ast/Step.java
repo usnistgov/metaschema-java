@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
@@ -34,8 +37,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Step
-    extends AbstractPathExpression<INodeItem> {
+public class Step extends AbstractPathExpression<INodeItem> {
   private final IExpression<?> step;
   private final List<IExpression<?>> predicates;
   private final Class<? extends INodeItem> staticResultType;
@@ -77,8 +79,7 @@ public class Step
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends INodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
-      CONTEXT context) {
+  public ISequence<? extends INodeItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
     return visitor.visitStep(this, context);
   }
 

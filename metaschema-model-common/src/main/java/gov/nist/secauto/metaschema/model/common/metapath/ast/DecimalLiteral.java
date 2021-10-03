@@ -26,13 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
 import java.math.BigDecimal;
 
-public class DecimalLiteral
-    extends AbstractLiteralExpression<IDecimalItem, BigDecimal> {
+public class DecimalLiteral extends AbstractLiteralExpression<IDecimalItem, BigDecimal> {
 
   public DecimalLiteral(BigDecimal value) {
     super(value);
@@ -44,8 +46,7 @@ public class DecimalLiteral
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IDecimalItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
-      CONTEXT context) {
+  public ISequence<? extends IDecimalItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
     return visitor.visitDecimalLiteral(this, context);
   }
 

@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
@@ -50,7 +50,7 @@ public interface INodeContext {
    *          if the search should recurse over the child model instances
    * @return a stream of matching flag node items
    */
-  Stream<? extends INodeItem> getMatchingChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor, IExpression<?> expr,
+  Stream<? extends INodeItem> getMatchingChildInstances(IExpressionEvaluationVisitor visitor, IExpression<?> expr,
       boolean recurse);
 
   /**

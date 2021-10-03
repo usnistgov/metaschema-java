@@ -159,7 +159,7 @@ public class BuildAstVisitor
 
   @Override
   public IExpression<?> visitOrexpr(OrexprContext context) {
-    return handleNAiryCollection(context, children -> new OrNode(children));
+    return handleNAiryCollection(context, children -> new Or(children));
   }
 
   @Override

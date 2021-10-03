@@ -30,13 +30,13 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 import java.util.List;
 
-public abstract class AbstractArithmeticExpr<ITEM_TYPE extends IAnyAtomicItem>
-    extends AbstractBinaryExpr<ITEM_TYPE>
+public abstract class AbstractArithmeticExpression<ITEM_TYPE extends IAnyAtomicItem>
+    extends AbstractBinaryExpression<ITEM_TYPE>
     implements IArithmeticExpression<ITEM_TYPE> {
 
   private final Class<? extends ITEM_TYPE> staticResultType;
 
-  public AbstractArithmeticExpr(IExpression<?> left, IExpression<?> right, Class<? extends ITEM_TYPE> baseType) {
+  public AbstractArithmeticExpression(IExpression<?> left, IExpression<?> right, Class<? extends ITEM_TYPE> baseType) {
     super(left, right);
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(baseType, List.of(left, right));
   }

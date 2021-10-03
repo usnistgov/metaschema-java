@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance;
 
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.AbstractExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ContextItem;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;

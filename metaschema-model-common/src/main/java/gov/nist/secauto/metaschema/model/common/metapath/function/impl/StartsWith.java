@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function.impl;
 
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionHandler;
@@ -38,27 +39,18 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import java.util.List;
 
 public class StartsWith implements IFunctionHandler {
-  static final IFunction SIGNATURE = IFunction.newBuilder()
-      .name("starts-with")
-      .argument(IArgument.newBuilder()
-          .name("arg1")
-          .type(IStringItem.class)
-          .zeroOrOne()
-          .build())
-      .argument(IArgument.newBuilder()
-          .name("arg2")
-          .type(IStringItem.class)
-          .zeroOrOne()
-          .build())
-      .returnType(IBooleanItem.class)
-      .returnOne()
-      .functionHandler(new Not())
-      .build();
+  static final IFunction SIGNATURE = IFunction.newBuilder().name("starts-with")
+      .argument(IArgument.newBuilder().name("arg1").type(IStringItem.class).zeroOrOne().build())
+      .argument(IArgument.newBuilder().name("arg2").type(IStringItem.class).zeroOrOne().build())
+      .returnType(IBooleanItem.class).returnOne().functionHandler(new Not()).build();
 
   @Override
   public ISequence<IBooleanItem> execute(List<ISequence<?>> arguments, DynamicContext dynamicContext) {
-    ISequence<?> arg1 = arguments.iterator().next();
-    ISequence<?> arg2 = arguments.iterator().next();
+    @SuppressWarnings("unchecked")
+    IStringItem arg1 = FunctionUtils.getFirstItem((ISequence<IStringItem>) arguments.iterator().next(), true);
+    @SuppressWarnings("unchecked")
+    IStringItem arg2 = FunctionUtils.getFirstItem((ISequence<IStringItem>) arguments.iterator().next(), true);
+
     return ISequence.of(XPathFunctions.fnStartsWith(arg1, arg2));
   }
 }

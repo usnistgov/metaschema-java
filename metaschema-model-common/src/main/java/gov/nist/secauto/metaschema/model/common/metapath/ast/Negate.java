@@ -26,14 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
 import java.util.List;
 
-public class Negate
-    extends AbstractUnaryExpr<INumericItem>
-    implements IArithmeticExpression<INumericItem> {
+public class Negate extends AbstractUnaryExpression<INumericItem> implements IArithmeticExpression<INumericItem> {
 
   private final Class<? extends INumericItem> staticResultType;
 
@@ -53,8 +54,7 @@ public class Negate
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends INumericItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
-      CONTEXT context) {
+  public ISequence<? extends INumericItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
     return visitor.visitNegate(this, context);
   }
 

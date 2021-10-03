@@ -26,11 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
 
 import java.util.stream.Stream;
@@ -49,7 +48,7 @@ public interface IFlagNodeItem extends INodeItem {
   }
 
   @Override
-  default Stream<? extends INodeItem> getMatchingChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor,
+  default Stream<? extends INodeItem> getMatchingChildInstances(IExpressionEvaluationVisitor visitor,
       IExpression<?> expr, boolean recurse) {
     return Stream.empty();
   }

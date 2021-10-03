@@ -24,10 +24,9 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.metapath;
+package gov.nist.secauto.metaschema.model.common.metapath.evaluate;
 
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
@@ -36,7 +35,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmNodeItem;
 
 import java.util.stream.Stream;
 
@@ -77,7 +75,7 @@ public class TerminalNodeContext implements INodeContext {
   }
 
   @Override
-  public Stream<? extends INodeItem> getMatchingChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor,
+  public Stream<? extends INodeItem> getMatchingChildInstances(IExpressionEvaluationVisitor visitor,
       IExpression<?> expr, boolean recurse) {
 //    // check the current node
 //    @SuppressWarnings("unchecked")

@@ -26,13 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
 import java.util.Objects;
 
 public class Comparison
-    extends AbstractBinaryExpr<IBooleanItem>
+    extends AbstractBinaryExpression<IBooleanItem>
     implements IBooleanLogicExpression {
   public enum Operator {
     EQ,
@@ -71,8 +74,8 @@ public class Comparison
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IBooleanItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
-      CONTEXT context) {
+  public ISequence<? extends IBooleanItem> accept(IExpressionEvaluationVisitor visitor,
+      INodeContext context) {
     return visitor.visitComparison(this, context);
   }
 

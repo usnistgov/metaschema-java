@@ -33,10 +33,10 @@ import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Name;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmNodeItem;
@@ -128,7 +128,7 @@ public abstract class AbstractBoundXdmAssemblyNodeItem<INSTANCE extends Assembly
   }
 
   @Override
-  public Stream<? extends IXdmNodeItem> getMatchingChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor,
+  public Stream<? extends IXdmNodeItem> getMatchingChildInstances(IExpressionEvaluationVisitor visitor,
       IExpression<?> expr, boolean recurse) {
     
     // check the current node
@@ -147,9 +147,6 @@ public abstract class AbstractBoundXdmAssemblyNodeItem<INSTANCE extends Assembly
       Stream<? extends IXdmModelNodeItem> instances = modelItems();
 
       Stream<? extends IXdmNodeItem> childMatches = instances.flatMap(instance -> {
-        // IMetapathResult result = expr.accept(visitor, instance);
-        // Stream<? extends INodeItem> items = result.asSequence().asStream().map(item -> (INodeItem) item);
-
         return instance.getMatchingChildInstances(visitor, expr, recurse);
       });
       retval = Stream.concat(retval, childMatches);

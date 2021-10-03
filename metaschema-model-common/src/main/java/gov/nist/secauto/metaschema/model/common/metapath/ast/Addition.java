@@ -26,12 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
 public class Addition
-    extends AbstractArithmeticExpr<IAnyAtomicItem> {
+    extends AbstractArithmeticExpression<IAnyAtomicItem> {
 
   public Addition(IExpression<?> left, IExpression<?> right) {
     super(left, right, INumericItem.class);
@@ -43,8 +46,8 @@ public class Addition
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IAnyAtomicItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
-      CONTEXT context) {
+  public ISequence<? extends IAnyAtomicItem> accept(IExpressionEvaluationVisitor visitor,
+      INodeContext context) {
     return visitor.visitAddition(this, context);
   }
 

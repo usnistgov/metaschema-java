@@ -24,7 +24,38 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.ast;
+package gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance;
+
+import gov.nist.secauto.metaschema.model.common.metapath.ast.Addition;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.And;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.Comparison;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.ContextItem;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.DecimalLiteral;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.Division;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.FunctionCall;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.IntegerDivision;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.IntegerLiteral;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.Metapath;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.Mod;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.Multiplication;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.Name;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.Negate;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.Or;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.ParenthesizedExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.RelativeDoubleSlashPath;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.RelativeSlashPath;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.RootDoubleSlashPath;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.RootSlashOnlyPath;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.RootSlashPath;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.Step;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.StringConcat;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.StringLiteral;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.Wildcard;
 
 public class AbstractExpressionVisitor<RESULT, CONTEXT> implements ExpressionVisitor<RESULT, CONTEXT> {
 
@@ -142,7 +173,7 @@ public class AbstractExpressionVisitor<RESULT, CONTEXT> implements ExpressionVis
   }
 
   @Override
-  public RESULT visitOr(OrNode expr, CONTEXT context) {
+  public RESULT visitOr(Or expr, CONTEXT context) {
     return visitChildren(expr, context);
   }
 

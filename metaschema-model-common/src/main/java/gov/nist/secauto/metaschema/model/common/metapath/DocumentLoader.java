@@ -23,56 +23,18 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath;
 
-package gov.nist.secauto.metaschema.model.common.metapath.ast;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
-public abstract class AbstractBinaryExpr<RESULT_TYPE extends IItem>
-    implements IExpression<RESULT_TYPE> {
-  private final IExpression<?> left;
-  private final IExpression<?> right;
-
-  public AbstractBinaryExpr(IExpression<?> left, IExpression<?> right) {
-    Objects.requireNonNull(left);
-    Objects.requireNonNull(right);
-    this.left = left;
-    this.right = right;
-  }
-
-  public IExpression<?> getLeft() {
-    return left;
-  }
-
-  public IExpression<?> getRight() {
-    return right;
-  }
-
-  @Override
-  public List<? extends IExpression<?>> getChildren() {
-    List<? extends IExpression<?>> retval;
-    if (left != null) {
-      if (right != null) {
-        retval = List.of(left, right);
-      } else {
-        retval = List.of(left);
-      }
-    } else {
-      if (right != null) {
-        retval = List.of(right);
-      } else {
-        retval = Collections.emptyList();
-      }
-    }
-    return retval;
-  }
-
-  @Override
-  public String toString() {
-    return new ASTPrinter().visit(this);
-  }
+public interface DocumentLoader {
+  INodeItem loadAsNodeItem(URL url) throws IOException;
+  INodeItem loadAsNodeItem(File file) throws FileNotFoundException, IOException;
+  INodeItem loadAsNodeItem(InputStream is) throws IOException;
 }

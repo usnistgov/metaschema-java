@@ -26,11 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
-public class Mod
-    extends AbstractArithmeticExpr<INumericItem> {
+public class Mod extends AbstractArithmeticExpression<INumericItem> {
 
   public Mod(IExpression<?> left, IExpression<?> right) {
     super(left, right, INumericItem.class);
@@ -42,8 +44,7 @@ public class Mod
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends INumericItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
-      CONTEXT context) {
+  public ISequence<? extends INumericItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
     return visitor.visitMod(this, context);
   }
 

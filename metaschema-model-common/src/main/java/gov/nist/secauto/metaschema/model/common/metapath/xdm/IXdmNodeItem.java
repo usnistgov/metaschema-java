@@ -23,11 +23,11 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 
-import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
@@ -42,8 +42,8 @@ public interface IXdmNodeItem extends INodeItem, IPathSegment {
   default String toPath(IPathFormatter formatter) {
     return formatter.format(this);
   }
-  
+
   @Override
-  Stream<? extends IXdmNodeItem> getMatchingChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor, IExpression<?> expr,
+  Stream<? extends IXdmNodeItem> getMatchingChildInstances(IExpressionEvaluationVisitor visitor, IExpression<?> expr,
       boolean recurse);
 }

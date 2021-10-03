@@ -26,12 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
-public class Subtraction
-    extends AbstractArithmeticExpr<IAnyAtomicItem> {
+public class Subtraction extends AbstractArithmeticExpression<IAnyAtomicItem> {
 
   public Subtraction(IExpression<?> left, IExpression<?> right) {
     super(left, right, INumericItem.class);
@@ -43,8 +45,7 @@ public class Subtraction
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IAnyAtomicItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
-      CONTEXT context) {
+  public ISequence<? extends IAnyAtomicItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
     return visitor.visitSubtraction(this, context);
   }
 

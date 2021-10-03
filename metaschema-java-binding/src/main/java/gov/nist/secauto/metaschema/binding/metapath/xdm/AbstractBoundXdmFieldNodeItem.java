@@ -28,9 +28,8 @@ package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.FieldDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmNodeItem;
 
@@ -60,7 +59,7 @@ public abstract class AbstractBoundXdmFieldNodeItem<INSTANCE extends FieldProper
   }
 
   @Override
-  public Stream<? extends IXdmNodeItem> getMatchingChildInstances(ExpressionEvaluationVisitor<INodeContext> visitor,
+  public Stream<? extends IXdmNodeItem> getMatchingChildInstances(IExpressionEvaluationVisitor visitor,
       IExpression<?> expr, boolean recurse) {
     // check the current node
     @SuppressWarnings("unchecked")

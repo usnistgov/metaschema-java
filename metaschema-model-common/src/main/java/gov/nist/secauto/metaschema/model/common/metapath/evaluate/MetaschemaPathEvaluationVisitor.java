@@ -24,11 +24,10 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.metapath;
+package gov.nist.secauto.metaschema.model.common.metapath.evaluate;
 
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.AbstractExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Addition;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.And;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Comparison;
@@ -45,7 +44,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.Mod;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Multiplication;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Negate;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.OrNode;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.Or;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ParenthesizedExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.RelativeDoubleSlashPath;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.RelativeSlashPath;
@@ -90,7 +89,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluationVisitor<INodeContext> {
+public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluationVisitor {
 
   private final DynamicContext dynamicContext;
 
@@ -117,7 +116,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
   }
 
   @Override
-  public ISequence<? extends IBooleanItem> visitOr(OrNode expr, INodeContext context) {
+  public ISequence<? extends IBooleanItem> visitOr(Or expr, INodeContext context) {
     boolean retval = false;
     for (IExpression<?> child : expr.getChildren()) {
       ISequence<?> result = child.accept(this, context);
@@ -952,7 +951,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
     return ISequence.of(expr.getChildren().stream().flatMap(child -> {
       ISequence<?> result = child.accept(this, context);
       return result.asStream();
-    }).distinct());
+    }));
   }
 
   @Override

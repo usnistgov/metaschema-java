@@ -26,12 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
-public class Name
-    extends AbstractLiteralExpression<IStringItem, String>
-    implements INameExpression<IStringItem> {
+public class Name extends AbstractLiteralExpression<IStringItem, String> implements INameExpression<IStringItem> {
   public Name(String value) {
     super(value);
   }
@@ -42,8 +43,7 @@ public class Name
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IStringItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
-      CONTEXT context) {
+  public ISequence<? extends IStringItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
     throw new UnsupportedOperationException();
   }
 

@@ -26,14 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
 import java.util.Collections;
 import java.util.List;
 
-public class RootSlashOnlyPath
-    extends AbstractRootPathExpression {
+public class RootSlashOnlyPath extends AbstractRootPathExpression {
 
   public RootSlashOnlyPath() {
     super(null);
@@ -45,8 +47,7 @@ public class RootSlashOnlyPath
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends INodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
-      CONTEXT context) {
+  public ISequence<? extends INodeItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
     return visitor.visitRootSlashOnlyPath(this, context);
   }
 

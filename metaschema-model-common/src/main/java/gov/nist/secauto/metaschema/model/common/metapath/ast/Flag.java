@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
@@ -40,8 +43,7 @@ public class Flag extends AbstractNamedInstanceExpression<IFlagNodeItem> {
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IFlagNodeItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor,
-      CONTEXT context) {
+  public ISequence<? extends IFlagNodeItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
     return visitor.visitFlag(this, context);
   }
 

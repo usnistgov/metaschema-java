@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionService;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
@@ -74,7 +77,7 @@ public class FunctionCall implements IExpression<IItem> {
   }
 
   @Override
-  public <CONTEXT> ISequence<? extends IItem> accept(ExpressionEvaluationVisitor<CONTEXT> visitor, CONTEXT context) {
+  public ISequence<? extends IItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
     return visitor.visitFunctionCall(this, context);
   }
 
