@@ -23,17 +23,26 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.AssemblyDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmAssemblyNodeItem;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.net.URI;
 
 public class XdmAssemblyNodeItemImpl extends AbstractBoundXdmAssemblyNodeItem<AssemblyProperty> {
 
-  public XdmAssemblyNodeItemImpl(AssemblyProperty instance, Object value, int position, IXdmAssemblyNodeItem parentNodeItem) {
-    super(instance, value, position, parentNodeItem);
+  private final @NotNull IBoundXdmAssemblyNodeItem parent;
+
+  public XdmAssemblyNodeItemImpl(
+      @NotNull AssemblyProperty instance,
+      @NotNull Object value,
+      int position,
+      @NotNull IBoundXdmAssemblyNodeItem parent) {
+    super(instance, value, position);
+    this.parent = parent;
   }
 
   @Override
@@ -44,5 +53,16 @@ public class XdmAssemblyNodeItemImpl extends AbstractBoundXdmAssemblyNodeItem<As
   @Override
   public IBoundXdmAssemblyNodeItem getPathSegment() {
     return this;
+  }
+
+  @Override
+  @NotNull
+  public IBoundXdmAssemblyNodeItem getParentNodeItem() {
+    return parent;
+  }
+
+  @Override
+  public URI getBaseUri() {
+    return getParentNodeItem().getBaseUri();
   }
 }

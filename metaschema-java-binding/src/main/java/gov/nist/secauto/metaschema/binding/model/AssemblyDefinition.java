@@ -30,43 +30,44 @@ import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 public interface AssemblyDefinition extends IBoundNamedModelDefinition, IAssemblyDefinition {
 
   @Override
   default FieldProperty getFieldInstanceByName(String name) {
-    return getFieldInstances().get(name);
+    return getFieldInstanceMap().get(name);
   }
 
   @Override
   default AssemblyProperty getAssemblyInstanceByName(String name) {
-    return getAssemblyInstances().get(name);
+    return getAssemblyInstanceMap().get(name);
   }
 
   @Override
   default NamedModelProperty getModelInstanceByName(String name) {
-    return getNamedModelInstances().get(name);
+    return getNamedModelInstanceMap().get(name);
+  }
+
+  // align the return value with the extended marker interface
+
+  @Override
+  Map<String, ? extends NamedModelProperty> getNamedModelInstanceMap();
+
+  @Override
+  default Collection<? extends NamedModelProperty> getNamedModelInstances() {
+    return getNamedModelInstanceMap().values();
   }
 
   @Override
-  Map<String, ? extends NamedModelProperty> getNamedModelInstances();
+  Map<String, ? extends FieldProperty> getFieldInstanceMap();
 
   @Override
-  Map<String, ? extends FieldProperty> getFieldInstances();
+  Map<String, ? extends AssemblyProperty> getAssemblyInstanceMap();
 
   @Override
-  Map<String, ? extends AssemblyProperty> getAssemblyInstances();
-
-  @Override
-  List<? extends IChoiceInstance> getChoiceInstances();
-
-  @Override
-  Collection<? extends IModelInstance> getModelInstances();
+  Collection<? extends NamedModelProperty> getModelInstances();
 
 }

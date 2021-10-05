@@ -28,9 +28,16 @@ package gov.nist.secauto.metaschema.codegen.type;
 
 import com.squareup.javapoet.ClassName;
 
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
 public interface TypeResolver {
 
-  ClassName getClassName(MetaschemaFlaggedDefinition definition);
+  /**
+   * Get the name of the class associated with the provided definition.
+   * 
+   * @param definition
+   *          a definition that may be built as a subclass
+   * @return the class name information for the definition
+   */
+  ClassName getClassName(INamedModelDefinition definition);
 }

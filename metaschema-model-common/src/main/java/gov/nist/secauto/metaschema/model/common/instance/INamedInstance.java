@@ -27,7 +27,10 @@
 package gov.nist.secauto.metaschema.model.common.instance;
 
 import gov.nist.secauto.metaschema.model.common.INamedModelElement;
+import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This marker interface indicates that the instance has a flag, field, or assembly name associated
@@ -40,5 +43,40 @@ public interface INamedInstance extends IInstance, INamedModelElement {
    * 
    * @return the corresponding definition
    */
+  @NotNull
   INamedDefinition getDefinition();
+  
+
+  /**
+   * Generates a "coordinate" string for the provided information element instance.
+   * 
+   * A coordinate consists of the element's:
+   * <ul>
+   * <li>containing Metaschema's short name</li>
+   * <li>model type</li>
+   * <li>name</li>
+   * <li>hash code</li>
+   * <li>the hash code of the definition</li>
+   * </ul>
+   * 
+   * @return the coordinate
+   */
+  @SuppressWarnings("null")
+  @Override
+  default String toCoordinates() {
+    IDefinition definition = getDefinition();
+
+    IDefinition containingDefinition = getContainingDefinition();
+    String retval;
+    if (containingDefinition == null) {
+      retval = String.format("%s:%s@%d(%d)", getModelType(), definition != null ? definition.getName() : "N/A",
+          hashCode(), definition != null && definition.isGlobal() ? definition.hashCode() : 0);
+    } else {
+      retval = String.format("%s:%s:%s@%d(%d)", containingDefinition.getContainingMetaschema().getShortName(),
+          getModelType(), definition != null ? definition.getName() : "N/A", hashCode(),
+          definition != null && definition.isGlobal() ? definition.hashCode() : 0);
+    }
+
+    return retval;
+  }
 }

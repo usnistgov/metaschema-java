@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
@@ -41,6 +42,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+// TODO: rethink the inner anonymous classes
 public interface IInstanceSet {
   public static final IInstanceSet EMPTY_INSTANCE_SET = new DefaultInstanceSet(Collections.emptyList());
 
@@ -55,27 +57,27 @@ public interface IInstanceSet {
 
           @Override
           public String getName() {
-            return definition.getName();
+            return getDefinition().getName();
           }
 
           @Override
           public String getUseName() {
-            return definition.getUseName();
+            return getDefinition().getUseName();
           }
 
           @Override
           public String getXmlNamespace() {
-            return definition.getXmlNamespace();
+            return getDefinition().getXmlNamespace();
           }
 
           @Override
           public String toCoordinates() {
-            return definition.toCoordinates();
+            return getDefinition().toCoordinates();
           }
 
           @Override
           public MarkupMultiline getRemarks() {
-            return definition.getRemarks();
+            return getDefinition().getRemarks();
           }
 
           @Override
@@ -117,6 +119,11 @@ public interface IInstanceSet {
           public IAssemblyDefinition getDefinition() {
             return definition;
           }
+
+          @Override
+          public IMetaschema getContainingMetaschema() {
+            return getDefinition().getContainingMetaschema();
+          }
         });
       }
 
@@ -132,27 +139,27 @@ public interface IInstanceSet {
 
           @Override
           public String getName() {
-            return definition.getName();
+            return getDefinition().getName();
           }
 
           @Override
           public String getUseName() {
-            return definition.getUseName();
+            return getDefinition().getUseName();
           }
 
           @Override
           public String getXmlNamespace() {
-            return definition.getXmlNamespace();
+            return getDefinition().getXmlNamespace();
           }
 
           @Override
           public String toCoordinates() {
-            return definition.toCoordinates();
+            return getDefinition().toCoordinates();
           }
 
           @Override
           public MarkupMultiline getRemarks() {
-            return definition.getRemarks();
+            return getDefinition().getRemarks();
           }
 
           @Override
@@ -200,6 +207,11 @@ public interface IInstanceSet {
             return true;
           }
 
+          @Override
+          public IMetaschema getContainingMetaschema() {
+            return getDefinition().getContainingMetaschema();
+          }
+
         });
       }
 
@@ -215,27 +227,27 @@ public interface IInstanceSet {
 
           @Override
           public String getName() {
-            return definition.getName();
+            return getDefinition().getName();
           }
 
           @Override
           public String getUseName() {
-            return definition.getUseName();
+            return getDefinition().getUseName();
           }
 
           @Override
           public String getXmlNamespace() {
-            return definition.getXmlNamespace();
+            return getDefinition().getXmlNamespace();
           }
 
           @Override
           public String toCoordinates() {
-            return definition.toCoordinates();
+            return getDefinition().toCoordinates();
           }
 
           @Override
           public MarkupMultiline getRemarks() {
-            return definition.getRemarks();
+            return getDefinition().getRemarks();
           }
 
           @Override
@@ -251,6 +263,11 @@ public interface IInstanceSet {
           @Override
           public boolean isRequired() {
             return false;
+          }
+
+          @Override
+          public IMetaschema getContainingMetaschema() {
+            return getDefinition().getContainingMetaschema();
           }
         });
       }

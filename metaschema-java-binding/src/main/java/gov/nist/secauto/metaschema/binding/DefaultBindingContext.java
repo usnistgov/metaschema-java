@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding;
 
-import gov.nist.secauto.metaschema.binding.io.Configuration;
+import gov.nist.secauto.metaschema.binding.io.BoundLoader;
+import gov.nist.secauto.metaschema.binding.io.DefaultBoundLoader;
 import gov.nist.secauto.metaschema.binding.io.Deserializer;
 import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.io.Serializer;
@@ -46,9 +47,14 @@ import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import javax.xml.namespace.QName;
 
 /**
  * A basic implementation of a {@link BindingContext} used by this implementation.
@@ -57,6 +63,7 @@ public class DefaultBindingContext implements BindingContext {
 
   private final Map<Class<?>, ClassBinding> classBindingsByClass = new HashMap<>();
   private final Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> javaTypeAdapterMap = new HashMap<>();
+  private final List<IBindingMatcher> bindingMatchers = new LinkedList<>();
 
   /**
    * Construct a new binding context.
@@ -73,11 +80,9 @@ public class DefaultBindingContext implements BindingContext {
       } else if (clazz.isAnnotationPresent(MetaschemaField.class)) {
         retval = DefaultFieldClassBinding.createInstance(clazz, this);
       } else {
-        throw new IllegalArgumentException(
-            String.format(
-                "Class '%s' does not represent a Metaschema definition" +
-                    " since it is missing a '%s' or '%s' annotation.",
-                clazz.getName(), MetaschemaAssembly.class.getName(), MetaschemaField.class.getName()));
+        throw new IllegalArgumentException(String.format(
+            "Class '%s' does not represent a Metaschema definition" + " since it is missing a '%s' or '%s' annotation.",
+            clazz.getName(), MetaschemaAssembly.class.getName(), MetaschemaField.class.getName()));
       }
       if (retval != null) {
         classBindingsByClass.put(clazz, retval);
@@ -114,20 +119,20 @@ public class DefaultBindingContext implements BindingContext {
   }
 
   @Override
-  public <CLASS> Serializer<CLASS> newSerializer(Format format, Class<CLASS> clazz, Configuration configuration) {
+  public <CLASS> Serializer<CLASS> newSerializer(Format format, Class<CLASS> clazz) {
     Objects.requireNonNull(format, "format");
     AssemblyClassBinding classBinding = (AssemblyClassBinding) getClassBinding(clazz);
 
     Serializer<CLASS> retval;
     switch (format) {
     case JSON:
-      retval = new DefaultJsonSerializer<CLASS>(this, classBinding, configuration);
+      retval = new DefaultJsonSerializer<CLASS>(this, classBinding);
       break;
     case XML:
-      retval = new DefaultXmlSerializer<CLASS>(this, classBinding, configuration);
+      retval = new DefaultXmlSerializer<CLASS>(this, classBinding);
       break;
     case YAML:
-      retval = new DefaultYamlSerializer<CLASS>(this, classBinding, configuration);
+      retval = new DefaultYamlSerializer<CLASS>(this, classBinding);
       break;
     default:
       throw new UnsupportedOperationException(String.format("Unsupported format '%s'", format));
@@ -135,66 +140,22 @@ public class DefaultBindingContext implements BindingContext {
 
     return retval;
   }
-  //
-  // @Override
-  // public void serializeToFormat(Format format, Object data, OutputStream out) throws
-  // BindingException {
-  // Class<?> clazz = data.getClass();
-  // newSerializer(format, clazz, null).serialize(data, out);
-  // }
-  //
-  // @Override
-  // public void serializeToFormat(Format format, Object data, File file)
-  // throws BindingException, FileNotFoundException {
-  // Class<?> clazz = data.getClass();
-  // newSerializer(format, clazz, null).serialize(data, file);
-  // }
-  //
-  // @Override
-  // public void serializeToFormat(Format format, Object data, Writer writer) throws BindingException
-  // {
-  // Class<?> clazz = data.getClass();
-  // newSerializer(format, clazz, null).serialize(data, writer);
-  // }
-  //
-  // @Override
-  // public void serializeToFormat(Format format, Object data, OutputStream out, Configuration
-  // configuration)
-  // throws BindingException {
-  // Class<?> clazz = data.getClass();
-  // newSerializer(format, clazz, configuration).serialize(data, out);
-  // }
-  //
-  // @Override
-  // public void serializeToFormat(Format format, Object data, File file, Configuration configuration)
-  // throws BindingException, FileNotFoundException {
-  // Class<?> clazz = data.getClass();
-  // newSerializer(format, clazz, configuration).serialize(data, file);
-  // }
-  //
-  // @Override
-  // public void serializeToFormat(Format format, Object data, Writer writer, Configuration
-  // configuration)
-  // throws BindingException {
-  // Class<?> clazz = data.getClass();
-  // newSerializer(format, clazz, configuration).serialize(data, writer);
-  // }
 
   @Override
-  public <CLASS> Deserializer<CLASS> newDeserializer(Format format, Class<CLASS> clazz, Configuration configuration) {
+  public <CLASS> Deserializer<CLASS> newDeserializer(Format format, Class<CLASS> clazz) {
     Objects.requireNonNull(format, "format");
     AssemblyClassBinding classBinding = (AssemblyClassBinding) getClassBinding(clazz);
 
     Deserializer<CLASS> retval;
     switch (format) {
     case JSON:
-      retval = new DefaultJsonDeserializer<CLASS>(this, classBinding, configuration);
+      retval = new DefaultJsonDeserializer<CLASS>(this, classBinding);
       break;
     case XML:
-      retval = new DefaultXmlDeserializer<CLASS>(this, classBinding, configuration);
+      retval = new DefaultXmlDeserializer<CLASS>(this, classBinding);
       break;
     case YAML:
-      retval = new DefaultYamlDeserializer<CLASS>(this, classBinding, configuration);
+      retval = new DefaultYamlDeserializer<CLASS>(this, classBinding);
       break;
     default:
       throw new UnsupportedOperationException(String.format("Unsupported format '%s'", format));
@@ -202,54 +163,42 @@ public class DefaultBindingContext implements BindingContext {
 
     return retval;
   }
-  //
-  // @Override
-  // public <CLASS> CLASS deserializeFromFormat(Format format, Class<CLASS> clazz, InputStream out)
-  // throws BindingException {
-  // return newDeserializer(format, clazz, null).deserialize(out);
-  // }
-  //
-  // @Override
-  // public <CLASS> CLASS deserializeFromFormat(Format format, Class<CLASS> clazz, File file)
-  // throws BindingException, FileNotFoundException {
-  // return newDeserializer(format, clazz, null).deserialize(file);
-  // }
-  //
-  // @Override
-  // public <CLASS> CLASS deserializeFromFormat(Format format, Class<CLASS> clazz, URL url) throws
-  // BindingException {
-  // return newDeserializer(format, clazz, null).deserialize(url);
-  // }
-  //
-  // @Override
-  // public <CLASS> CLASS deserializeFromFormat(Format format, Class<CLASS> clazz, Reader reader)
-  // throws BindingException {
-  // return newDeserializer(format, clazz, null).deserialize(reader);
-  // }
-  //
-  // @Override
-  // public <CLASS> CLASS deserializeFromFormat(Format format, Class<CLASS> clazz, InputStream out,
-  // Configuration configuration) throws BindingException {
-  // return newDeserializer(format, clazz, configuration).deserialize(out);
-  // }
-  //
-  // @Override
-  // public <CLASS> CLASS deserializeFromFormat(Format format, Class<CLASS> clazz, File file,
-  // Configuration configuration)
-  // throws BindingException, FileNotFoundException {
-  // return newDeserializer(format, clazz, configuration).deserialize(file);
-  // }
-  //
-  // @Override
-  // public <CLASS> CLASS deserializeFromFormat(Format format, Class<CLASS> clazz, URL url,
-  // Configuration configuration)
-  // throws BindingException {
-  // return newDeserializer(format, clazz, configuration).deserialize(url);
-  // }
-  //
-  // @Override
-  // public <CLASS> CLASS deserializeFromFormat(Format format, Class<CLASS> clazz, Reader reader,
-  // Configuration configuration) throws BindingException {
-  // return newDeserializer(format, clazz, configuration).deserialize(reader);
-  // }
+
+  @Override
+  public void registerBindingMatcher(IBindingMatcher matcher) {
+    bindingMatchers.add(matcher);
+  }
+
+  protected List<IBindingMatcher> getBindingMatchers() {
+    return Collections.unmodifiableList(bindingMatchers);
+  }
+
+  @Override
+  public Class<?> getBoundClassForXmlQName(QName rootQName) {
+    Class<?> retval = null;
+    for (IBindingMatcher matcher : getBindingMatchers()) {
+      retval = matcher.getBoundClassForXmlQName(rootQName);
+      if (retval != null) {
+        break;
+      }
+    }
+    return retval;
+  }
+
+  @Override
+  public Class<?> getBoundClassForJsonName(String rootName) {
+    Class<?> retval = null;
+    for (IBindingMatcher matcher : getBindingMatchers()) {
+      retval = matcher.getBoundClassForJsonName(rootName);
+      if (retval != null) {
+        break;
+      }
+    }
+    return retval;
+  }
+
+  @Override
+  public BoundLoader newBoundLoader() {
+    return new DefaultBoundLoader(this);
+  }
 }

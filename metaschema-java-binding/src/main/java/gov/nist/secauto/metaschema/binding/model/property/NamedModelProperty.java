@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.IBoundNamedModelDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 
@@ -46,6 +47,9 @@ import javax.xml.stream.events.XMLEvent;
  * This marker interface TBD.
  */
 public interface NamedModelProperty extends NamedProperty, INamedModelInstance {
+  @Override
+  IBoundNamedModelDefinition getDefinition();
+
   DataTypeHandler getDataTypeHandler();
 
   /**

@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.model.common.instance;
 
 import gov.nist.secauto.metaschema.model.common.Flag;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
@@ -35,15 +36,24 @@ import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 
 import javax.xml.namespace.QName;
 
 public interface IFlagInstance extends INamedInstance, Flag {
   @Override
+  @NotNull
   default QName getXmlQName() {
-    return QName.valueOf(getEffectiveName());
+    @SuppressWarnings("null")
+    @NotNull
+    QName retval = QName.valueOf(getEffectiveName());
+    return retval;
   }
+
+  @Override
+  INamedModelDefinition getContainingDefinition();
 
   @Override
   IFlagDefinition getDefinition();

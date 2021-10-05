@@ -28,6 +28,9 @@ package gov.nist.secauto.metaschema.model.common.definition;
 
 import gov.nist.secauto.metaschema.model.common.INamedModelElement;
 
+/**
+ * This marker interface is used for some collections that contain various named definitions.
+ */
 public interface INamedDefinition extends IDefinition, INamedModelElement {
 
 }

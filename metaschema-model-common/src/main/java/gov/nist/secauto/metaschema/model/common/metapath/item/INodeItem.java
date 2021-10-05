@@ -26,12 +26,17 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaPathEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
+
+import org.jetbrains.annotations.Nullable;
+
+import java.net.URI;
 
 public interface INodeItem extends IPathItem, INodeContext {
 
@@ -40,6 +45,7 @@ public interface INodeItem extends IPathItem, INodeContext {
    * 
    * @return the parent node item, or {@code null} if this node item has no known parent
    */
+  @Nullable
   INodeItem getParentNodeItem();
 
   /**
@@ -51,8 +57,10 @@ public interface INodeItem extends IPathItem, INodeContext {
     return false;
   }
 
+  INamedDefinition getDefinition();
+
   /**
-   * Retrieve the value associated with the item
+   * Retrieve the value associated with the item.
    * 
    * @return the value
    */
@@ -63,6 +71,11 @@ public interface INodeItem extends IPathItem, INodeContext {
   @Override
   IAnyAtomicItem toAtomicItem();
 
+  /**
+   * Get the path for this node item as a Metapath.
+   * 
+   * @return the Metapath
+   */
   default String getMetapath() {
     return toPath(IFormatterFactory.METAPATH_FORMATTER);
   }
@@ -79,7 +92,7 @@ public interface INodeItem extends IPathItem, INodeContext {
   @SuppressWarnings("unchecked")
   default <ITEM_TYPE extends IItem> ISequence<? extends ITEM_TYPE> evaluateMetapath(MetapathExpression metapath) {
     return (ISequence<? extends ITEM_TYPE>) evaluateMetapath(metapath, new StaticContext().newDynamicContext());
-  };
+  }
 
   /**
    * Evaluate the provided Metapath, producing a sequence of result items.
@@ -93,5 +106,12 @@ public interface INodeItem extends IPathItem, INodeContext {
   default ISequence<?> evaluateMetapath(MetapathExpression metapath, DynamicContext context) {
     return new MetaschemaPathEvaluationVisitor(context).visit(metapath.getASTNode(), this);
   }
+
+  /**
+   * Retrieve the base URI of the document containing this node.
+   * 
+   * @return the base URI or {@code null} if it is unknown
+   */
+  URI getBaseUri();
 
 }

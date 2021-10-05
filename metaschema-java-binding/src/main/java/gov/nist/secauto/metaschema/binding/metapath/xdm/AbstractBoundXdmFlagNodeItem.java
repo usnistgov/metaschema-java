@@ -28,15 +28,12 @@ package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.FlagDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
 
 public abstract class AbstractBoundXdmFlagNodeItem<INSTANCE extends FlagProperty>
-    extends AbstractBoundXdmNodeItem<INSTANCE, IXdmModelNodeItem> implements IBoundXdmFlagNodeItem {
+    extends AbstractBoundXdmNodeItem<INSTANCE> implements IBoundXdmFlagNodeItem {
 
-  public AbstractBoundXdmFlagNodeItem(INSTANCE instance, Object value, IXdmModelNodeItem parentNodeItem) {
-    super(instance, value, parentNodeItem);
+  public AbstractBoundXdmFlagNodeItem(INSTANCE instance, Object value) {
+    super(instance, value);
   }
 
   @Override

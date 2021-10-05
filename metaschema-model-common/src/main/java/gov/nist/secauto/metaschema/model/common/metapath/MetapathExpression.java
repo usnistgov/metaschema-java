@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.jetbrains.annotations.NotNull;
 
 public class MetapathExpression {
   public static final MetapathExpression CONTEXT_NODE = new MetapathExpression(".", new ContextItem());
@@ -66,6 +67,7 @@ public class MetapathExpression {
     return new ASTPrinter().visit(getASTNode());
   }
 
+  @NotNull 
   public IInstanceSet evaluateMetaschemaInstance(IMetaschemaContext context) {
     IExpression<?> node = getASTNode();
     Class<? extends IItem> type = node.getStaticResultType();

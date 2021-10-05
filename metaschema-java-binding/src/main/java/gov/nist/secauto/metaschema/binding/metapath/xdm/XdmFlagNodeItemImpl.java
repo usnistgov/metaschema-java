@@ -27,19 +27,31 @@
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
 
-import java.util.stream.Stream;
+import org.jetbrains.annotations.NotNull;
 
-import javax.xml.namespace.QName;
+import java.net.URI;
 
 public class XdmFlagNodeItemImpl extends AbstractBoundXdmFlagNodeItem<FlagProperty> {
 
-  public XdmFlagNodeItemImpl(FlagProperty instance, Object value, IXdmModelNodeItem parentNodeItem) {
-    super(instance, value, parentNodeItem);
+  private final @NotNull IBoundXdmModelNodeItem parent;
+
+  public XdmFlagNodeItemImpl(
+      @NotNull FlagProperty instance,
+      @NotNull Object value,
+      @NotNull IBoundXdmModelNodeItem parent) {
+    super(instance, value);
+    this.parent = parent;
+  }
+
+  @Override
+  @NotNull
+  public IBoundXdmModelNodeItem getParentNodeItem() {
+    return parent;
+  }
+
+  @Override
+  public URI getBaseUri() {
+    return getParentNodeItem().getBaseUri();
   }
 }

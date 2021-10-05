@@ -78,7 +78,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.InvalidTypeException;
+import gov.nist.secauto.metaschema.model.common.metapath.type.InvalidTypeMetapathException;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.util.LinkedList;
@@ -393,7 +395,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
         supported = false;
       }
     } else {
-      throw new InvalidTypeException(String.format("invalid types for comparison: %s %s %s", left.getItemName(),
+      throw new InvalidTypeMetapathException(String.format("invalid types for comparison: %s %s %s", left.getItemName(),
           operator.name().toLowerCase(), right.getItemName()));
     }
 
@@ -413,8 +415,8 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
   @Override
   public ISequence<? extends INodeItem> visitRootSlashPath(RootSlashPath expr, INodeContext context) {
     if (context.getNodeItem().isRootNode()) {
-      @SuppressWarnings("unchecked")
-      ISequence<? extends INodeItem> retval = (ISequence<? extends INodeItem>) expr.getNode().accept(this, context);
+      @SuppressWarnings("unchecked") ISequence<? extends INodeItem> retval
+          = (ISequence<? extends INodeItem>) expr.getNode().accept(this, context);
       return retval;
     } else {
       throw new UnsupportedOperationException("root searching is not supported on non-root nodes");
@@ -429,8 +431,8 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
   @Override
   public ISequence<? extends INodeItem> visitRelativeSlashPath(RelativeSlashPath expr, INodeContext context) {
     IExpression<?> left = expr.getLeft();
-    @SuppressWarnings("unchecked")
-    ISequence<? extends INodeItem> leftResult = (ISequence<? extends INodeItem>) left.accept(this, context);
+    @SuppressWarnings("unchecked") ISequence<? extends INodeItem> leftResult
+        = (ISequence<? extends INodeItem>) left.accept(this, context);
     IExpression<?> right = expr.getRight();
 
     List<INodeItem> result = new LinkedList<INodeItem>();
@@ -438,8 +440,8 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
       INodeItem node = (INodeItem) item;
 
       // evaluate the right path in the context of the left
-      @SuppressWarnings("unchecked")
-      ISequence<? extends INodeItem> otherResult = (ISequence<? extends INodeItem>) right.accept(this, node);
+      @SuppressWarnings("unchecked") ISequence<? extends INodeItem> otherResult
+          = (ISequence<? extends INodeItem>) right.accept(this, node);
       otherResult.asStream().forEachOrdered(otherItem -> {
         result.add(otherItem);
       });
@@ -449,22 +451,18 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
 
   @Override
   public ISequence<? extends INodeItem> visitStep(Step expr, INodeContext context) {
-    @SuppressWarnings("unchecked")
-    ISequence<? extends INodeItem> retval = (ISequence<? extends INodeItem>) expr.getStep().accept(this, context);
+    @SuppressWarnings("unchecked") ISequence<? extends INodeItem> retval
+        = (ISequence<? extends INodeItem>) expr.getStep().accept(this, context);
 
     // evaluate the predicates for this step
     AtomicInteger index = new AtomicInteger();
-    Stream<? extends INodeItem> stream = retval.asStream().map(item -> {
+    Stream<@NotNull ? extends INodeItem> stream = retval.asStream().map(item -> {
       // build a positional index of the items
       return Map.entry(BigInteger.valueOf(index.incrementAndGet()), item);
     }).filter(entry -> {
-      IItem item = entry.getValue();
-      INodeContext childContext;
-      if (item instanceof INodeItem) {
-        childContext = (INodeItem) item;
-      } else {
-        childContext = context;
-      }
+      @SuppressWarnings("null")
+      @NotNull INodeItem item = entry.getValue();
+      INodeContext childContext = item;
 
       // return false if any predicate evaluates to false
       boolean result = !expr.getPredicates().stream().map(predicateExpr -> {
@@ -503,8 +501,8 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
   public ISequence<? extends INodeItem> visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr,
       INodeContext context) {
     IExpression<?> left = expr.getLeft();
-    @SuppressWarnings("unchecked")
-    ISequence<? extends INodeItem> leftResult = (ISequence<? extends INodeItem>) left.accept(this, context);
+    @SuppressWarnings("unchecked") ISequence<? extends INodeItem> leftResult
+        = (ISequence<? extends INodeItem>) left.accept(this, context);
 
     Stream<? extends INodeItem> result = leftResult.asStream().flatMap(item -> {
       // evaluate the right path in the context of the left

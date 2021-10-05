@@ -29,7 +29,9 @@ package gov.nist.secauto.metaschema.model.xml;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.IXmlMetaschema;
 import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
@@ -37,31 +39,25 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.definitions.AbstractInfoElementDefinition;
-import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.definitions.GlobalInfoElementDefinition;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.model.instances.FlagInstance;
+import gov.nist.secauto.metaschema.model.definitions.IXmlFieldDefinition;
+import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
 import gov.nist.secauto.metaschema.model.xml.constraint.ValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.FlagDocument;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalFieldDefinitionType;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFlagDefinitionType;
 
-import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlObject;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class XmlGlobalFieldDefinition
-    extends AbstractInfoElementDefinition
-    implements FieldDefinition, GlobalInfoElementDefinition {
+public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
+  @NotNull
   private final GlobalFieldDefinitionType xmlField;
-  private final Map<String, FlagInstance<?>> flagInstances;
+  @NotNull
+  private final IXmlMetaschema metaschema;
+  private XmlFlagContainerSupport flagContainer;
+
   private IValueConstraintSupport constraints;
 
   /**
@@ -72,31 +68,9 @@ public class XmlGlobalFieldDefinition
    * @param metaschema
    *          the containing Metaschema
    */
-  public XmlGlobalFieldDefinition(GlobalFieldDefinitionType xmlField, XmlMetaschema metaschema) {
-    super(metaschema);
+  public XmlGlobalFieldDefinition(@NotNull GlobalFieldDefinitionType xmlField, @NotNull IXmlMetaschema metaschema) {
     this.xmlField = xmlField;
-
-    // handle flags
-    if (getXmlField().getFlagList().size() > 0 || getXmlField().getDefineFlagList().size() > 0) {
-      XmlCursor cursor = getXmlField().newCursor();
-      cursor.selectPath(
-          "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" + "$this/m:flag|$this/m:define-flag");
-
-      Map<String, FlagInstance<?>> flagInstances = new LinkedHashMap<>();
-      while (cursor.toNextSelection()) {
-        XmlObject obj = cursor.getObject();
-        if (obj instanceof FlagDocument.Flag) {
-          FlagInstance<?> flagInstance = new XmlFlagInstance((FlagDocument.Flag) obj, this);
-          flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
-        } else if (obj instanceof LocalFlagDefinitionType) {
-          FlagInstance<?> flagInstance = new XmlLocalFlagDefinition((LocalFlagDefinitionType) obj, this);
-          flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
-        }
-      }
-      this.flagInstances = Collections.unmodifiableMap(flagInstances);
-    } else {
-      this.flagInstances = Collections.emptyMap();
-    }
+    this.metaschema = metaschema;
   }
 
   /**
@@ -104,8 +78,19 @@ public class XmlGlobalFieldDefinition
    * 
    * @return the underlying XML data
    */
+  @NotNull
   protected GlobalFieldDefinitionType getXmlField() {
     return xmlField;
+  }
+
+  @Override
+  public @NotNull IXmlMetaschema getContainingMetaschema() {
+    return metaschema;
+  }
+
+  @Override
+  public boolean isGlobal() {
+    return true;
   }
 
   /**
@@ -152,6 +137,7 @@ public class XmlGlobalFieldDefinition
     return constraints.getExpectConstraints();
   }
 
+  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlField().getName();
@@ -177,16 +163,20 @@ public class XmlGlobalFieldDefinition
     return MarkupStringConverter.toMarkupString(getXmlField().getDescription());
   }
 
+  @SuppressWarnings("null")
+  protected synchronized void initFlagContainer() {
+    if (flagContainer == null) {
+      flagContainer = new XmlFlagContainerSupport(getXmlField(), this);
+    }
+  }
+  
   @Override
-  public Map<String, FlagInstance<?>> getFlagInstances() {
-    return flagInstances;
+  public Map<@NotNull String, ? extends IXmlFlagInstance> getFlagInstanceMap() {
+    initFlagContainer();
+    return flagContainer.getFlagInstanceMap();
   }
 
-  @Override
-  public FlagInstance<?> getFlagInstanceByName(String name) {
-    return getFlagInstances().get(name);
-  }
-
+  @SuppressWarnings("null")
   @Override
   public IJavaTypeAdapter<?> getDatatype() {
     IJavaTypeAdapter<?> retval;
@@ -233,8 +223,8 @@ public class XmlGlobalFieldDefinition
   }
 
   @Override
-  public FlagInstance<?> getJsonKeyFlagInstance() {
-    FlagInstance<?> retval = null;
+  public IXmlFlagInstance getJsonKeyFlagInstance() {
+    IXmlFlagInstance retval = null;
     if (hasJsonKey()) {
       retval = getFlagInstanceByName(getXmlField().getJsonKey().getFlagName());
     }
@@ -251,9 +241,10 @@ public class XmlGlobalFieldDefinition
     return retval;
   }
 
+  @SuppressWarnings("null")
   @Override
   public ModuleScopeEnum getModuleScope() {
-    ModuleScopeEnum retval = MetaschemaDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
+    ModuleScopeEnum retval = IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
     if (getXmlField().isSetScope()) {
       retval = getXmlField().getScope();
     }

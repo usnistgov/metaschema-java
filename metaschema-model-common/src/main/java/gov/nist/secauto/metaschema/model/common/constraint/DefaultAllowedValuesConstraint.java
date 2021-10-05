@@ -28,24 +28,51 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public class DefaultAllowedValuesConstraint
-    extends AbstractConstraint
-    implements IAllowedValuesConstraint {
+public class DefaultAllowedValuesConstraint extends AbstractConstraint implements IAllowedValuesConstraint {
   private final boolean allowedOther;
-  private final Map<String, DefaultAllowedValue> allowedValues;
+  @NotNull
+  private final Map<@NotNull String, @NotNull DefaultAllowedValue> allowedValues;
 
-  public DefaultAllowedValuesConstraint(String id, MetapathExpression target,
-      Map<String, DefaultAllowedValue> allowedValues, boolean allowedOther, MarkupMultiline remarks) {
+  /**
+   * Construct a new allowed values constraint which ensures that a target instance's value match one
+   * of the allowed values. This match is required if {@link #isAllowedOther()} is {@code false},
+   * otherwise the constraint will generate a validation warning message if the target instance's
+   * value does not match any of the associated allowed value constraints targeting it.
+   * 
+   * the associated test evaluates to {@link IBooleanItem#TRUE} against the target.
+   * 
+   * @param id
+   *          the optional identifier for the constraint
+   * @param target
+   *          the Metapath expression identifying the nodes the constraint targets
+   * @param allowedValues
+   *          the list of allowed values for this constraint
+   * @param allowedOther
+   *          when {@code true} values other than the values specified by {@code allowedValues} are
+   *          allowed, or disallowed if {@code false}
+   * @param remarks
+   *          optional remarks describing the intent of the constraint
+   */
+  public DefaultAllowedValuesConstraint(
+      @Nullable String id,
+      @NotNull MetapathExpression target,
+      @NotNull Map<@NotNull String, @NotNull DefaultAllowedValue> allowedValues,
+      boolean allowedOther,
+      @Nullable MarkupMultiline remarks) {
     super(id, target, remarks);
     this.allowedValues = allowedValues;
     this.allowedOther = allowedOther;
   }
 
   @Override
-  public Map<String, DefaultAllowedValue> getAllowedValues() {
+  public Map<@NotNull String, @NotNull DefaultAllowedValue> getAllowedValues() {
     return allowedValues;
   }
 

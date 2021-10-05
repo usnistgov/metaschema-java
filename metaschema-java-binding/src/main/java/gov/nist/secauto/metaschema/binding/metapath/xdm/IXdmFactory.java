@@ -32,25 +32,33 @@ import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.net.URI;
 
 public interface IXdmFactory {
   public static final IXdmFactory INSTANCE = new DefaultXdmFactory();
 
-  IBoundXdmAssemblyNodeItem newAssemblyNodeItem(AssemblyProperty instance, Object value, int position,
-      IXdmAssemblyNodeItem parentNodeItem);
+  IBoundXdmAssemblyNodeItem newAssemblyNodeItem(@NotNull AssemblyProperty instance, @NotNull Object value, int position,
+      @NotNull IBoundXdmAssemblyNodeItem parentNodeItem);
 
-  IBoundXdmFieldNodeItem newFieldNodeItem(FieldProperty instance, Object value, int position,
-      IXdmAssemblyNodeItem parentNodeItem);
+  IBoundXdmFieldNodeItem newFieldNodeItem(@NotNull FieldProperty instance, @NotNull Object value, int position,
+      @NotNull IBoundXdmAssemblyNodeItem parentNodeItem);
 
-  IBoundXdmFlagNodeItem newFlagNodeItem(FlagProperty instance, Object value, IXdmModelNodeItem parentNodeItem);
+  IBoundXdmFlagNodeItem newFlagNodeItem(@NotNull FlagProperty instance, @NotNull Object value,
+      @NotNull IBoundXdmModelNodeItem parentNodeItem);
 
-  IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(RootDefinitionAssemblyProperty instance, Object value);
+  IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(@NotNull RootDefinitionAssemblyProperty instance,
+      @NotNull Object value, @Nullable URI documentUri);
 
-  IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(AssemblyClassBinding definition, Object value);
+  IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(@NotNull AssemblyClassBinding definition, @NotNull Object value,
+      @Nullable URI documentUri);
 
-  IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(Object value, BindingContext bindingContext);
+  IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(@NotNull Object value, @NotNull BindingContext bindingContext,
+      @Nullable URI documentUri);
 
-  IBoundXdmAssemblyNodeItem newRelativeAssemblyNodeItem(AssemblyClassBinding definition, Object value);
+  IBoundXdmAssemblyNodeItem newRelativeAssemblyNodeItem(@NotNull AssemblyClassBinding definition, @NotNull Object value,
+      @Nullable URI documentUri);
 }

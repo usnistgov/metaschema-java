@@ -26,15 +26,20 @@
 
 package gov.nist.secauto.metaschema.model.common.explode;
 
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
+import org.jetbrains.annotations.NotNull;
+
 public class FieldDefinition
-    extends AbstractFlaggedDefinition<IFieldDefinition>
+    extends AbstractNamedModelDefinition<IFieldDefinition>
     implements IFieldDefinition {
 
-  public FieldDefinition(IFieldDefinition delegate) {
+  public FieldDefinition(@NotNull IFieldDefinition delegate) {
     super(delegate);
   }
 
@@ -59,4 +64,28 @@ public class FieldDefinition
     return getDelegate().isCollapsible();
   }
 
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    return getDelegate().getContainingMetaschema();
+  }
+
+  @Override
+  public String getFormalName() {
+    return getDelegate().getFormalName();
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+    return getDelegate().getDescription();
+  }
+
+  @Override
+  public ModuleScopeEnum getModuleScope() {
+    return ModuleScopeEnum.LOCAL;
+  }
+
+  @Override
+  public boolean isGlobal() {
+    return false;
+  }
 }

@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.xmlbeans;
 
-import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 
 public class ScopeType {
   /**

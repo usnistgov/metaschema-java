@@ -26,13 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common.instance;
 
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
 
-import java.util.Collection;
+import org.jetbrains.annotations.NotNull;
 
 public interface INamedModelInstance extends INamedInstance, IModelInstance {
-
+  @Override
+  INamedModelDefinition getDefinition();
   /**
    * Generate a new path segment for this instance.
    * 
@@ -40,5 +42,6 @@ public interface INamedModelInstance extends INamedInstance, IModelInstance {
    *          the path segment at the end of the current path
    * @return the path segment
    */
+  @NotNull
   IModelPositionalPathSegment newPathSegment(IAssemblyPathSegment parentSegment, int position);
 }

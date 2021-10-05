@@ -27,12 +27,12 @@
 package gov.nist.secauto.metaschema.model.common.explode;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
 public abstract class AbstractNamedInstance<PROXY extends INamedInstance, DEFINITION extends INamedDefinition,
-    PARENT extends IFlaggedDefinition>
+    PARENT extends INamedModelDefinition>
     extends AbstractInstance<PROXY, PARENT>
     implements INamedInstance {
 

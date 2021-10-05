@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
 
+import org.jetbrains.annotations.Nullable;
+
 public interface ICardinalityConstraint extends IConstraint {
   /**
    * Retrieve the required minimum occurrence of the target instance. If specified, this value must be
@@ -36,6 +38,7 @@ public interface ICardinalityConstraint extends IConstraint {
    * 
    * @return a non-negative integer or {@code null} if not defined
    */
+  @Nullable
   Integer getMinOccurs();
 
   /**
@@ -45,5 +48,6 @@ public interface ICardinalityConstraint extends IConstraint {
    * 
    * @return a non-negative integer or {@code null} if not defined
    */
+  @Nullable
   Integer getMaxOccurs();
 }

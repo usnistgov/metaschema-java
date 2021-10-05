@@ -23,18 +23,24 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 
 public interface DocumentLoader {
   INodeItem loadAsNodeItem(URL url) throws IOException;
+
   INodeItem loadAsNodeItem(File file) throws FileNotFoundException, IOException;
-  INodeItem loadAsNodeItem(InputStream is) throws IOException;
+
+  INodeItem loadAsNodeItem(InputStream is, @Nullable URI documentUri) throws IOException;
 }

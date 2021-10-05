@@ -42,7 +42,10 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
@@ -52,6 +55,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSuppo
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import org.codehaus.stax2.XMLStreamWriter2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -252,6 +256,12 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
     return definition;
   }
 
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    // TODO: implement
+    return null;
+  }
+
   private class InternalFlagDefinition implements FlagDefinition {
     @Override
     public IJavaTypeAdapter<?> getDatatype() {
@@ -316,6 +326,35 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
     @Override
     public BindingContext getBindingContext() {
       return getParentClassBinding().getBindingContext();
+    }
+
+    @Override
+    public String getFormalName() {
+      // TODO: implement
+      return null;
+    }
+
+    @Override
+    public MarkupLine getDescription() {
+      // TODO: implement
+      return null;
+    }
+
+    @Override
+    public @NotNull ModuleScopeEnum getModuleScope() {
+      // TODO: is this the right value?
+      return ModuleScopeEnum.INHERITED;
+    }
+
+    @Override
+    public boolean isGlobal() {
+      return false;
+    }
+
+    @Override
+    public IMetaschema getContainingMetaschema() {
+      // TODO: implement
+      return null;
     }
   }
 

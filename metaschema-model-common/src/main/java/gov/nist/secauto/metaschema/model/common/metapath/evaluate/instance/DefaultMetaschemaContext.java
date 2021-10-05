@@ -89,9 +89,9 @@ public class DefaultMetaschemaContext implements IMetaschemaContext {
     for (IInstance instance : instances) {
       Collection<? extends IFlagInstance> flags = null;
       if (instance instanceof IAssemblyInstance) {
-        flags = ((IAssemblyInstance) instance).getDefinition().getFlagInstances().values();
+        flags = ((IAssemblyInstance) instance).getDefinition().getFlagInstances();
       } else if (instance instanceof IFieldInstance) {
-        flags = ((IFieldInstance) instance).getDefinition().getFlagInstances().values();
+        flags = ((IFieldInstance) instance).getDefinition().getFlagInstances();
       }
 
       if (flags != null && !flags.isEmpty()) {

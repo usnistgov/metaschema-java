@@ -36,7 +36,9 @@ import gov.nist.secauto.metaschema.codegen.JavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.ClassUtils;
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Set;
@@ -53,6 +55,7 @@ import javax.lang.model.element.Modifier;
  */
 public abstract class AbstractPropertyGenerator<CLASS_GENERATOR extends JavaClassGenerator>
     implements PropertyGenerator {
+  @NotNull
   private final CLASS_GENERATOR classGenerator;
   private String propertyName;
   private String variableName;
@@ -63,7 +66,7 @@ public abstract class AbstractPropertyGenerator<CLASS_GENERATOR extends JavaClas
    * @param classGenerator
    *          the containing Java class generator
    */
-  public AbstractPropertyGenerator(CLASS_GENERATOR classGenerator) {
+  public AbstractPropertyGenerator(@NotNull CLASS_GENERATOR classGenerator) {
     this.classGenerator = classGenerator;
   }
 
@@ -143,11 +146,11 @@ public abstract class AbstractPropertyGenerator<CLASS_GENERATOR extends JavaClas
   // }
 
   @Override
-  public Set<MetaschemaFlaggedDefinition> build(TypeSpec.Builder builder, TypeResolver typeResolver) {
+  public Set<INamedModelDefinition> build(TypeSpec.Builder builder, TypeResolver typeResolver) {
     FieldSpec.Builder field = FieldSpec.builder(getJavaType(), getJavaFieldName())
         .addModifiers(Modifier.PRIVATE);
 
-    final Set<MetaschemaFlaggedDefinition> retval = buildField(field);
+    final Set<INamedModelDefinition> retval = buildField(field);
 
     FieldSpec valueField = field.build();
     builder.addField(valueField);
@@ -171,7 +174,7 @@ public abstract class AbstractPropertyGenerator<CLASS_GENERATOR extends JavaClas
     return retval;
   }
 
-  protected Set<MetaschemaFlaggedDefinition> buildField(FieldSpec.Builder builder) {
+  protected Set<INamedModelDefinition> buildField(FieldSpec.Builder builder) {
     MarkupLine description = getDescription();
     if (description != null) {
       builder.addJavadoc("$S", description.toHtml());

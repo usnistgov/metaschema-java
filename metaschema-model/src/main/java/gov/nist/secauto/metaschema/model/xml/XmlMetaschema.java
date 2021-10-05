@@ -26,13 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.model.AbstractMetaschema;
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.MetaschemaException;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.IXmlMetaschema;
+import gov.nist.secauto.metaschema.model.common.AbstractMetaschema;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.definitions.IXmlFieldDefinition;
+import gov.nist.secauto.metaschema.model.definitions.IXmlFlagDefinition;
+import gov.nist.secauto.metaschema.model.definitions.IXmlNamedModelDefinition;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalFieldDefinitionType;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalFlagDefinitionType;
@@ -42,7 +43,7 @@ import gov.nist.secauto.metaschema.model.xmlbeans.xml.METASCHEMADocument.METASCH
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 import java.util.Collections;
@@ -52,15 +53,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class XmlMetaschema
-    extends AbstractMetaschema {
+public class XmlMetaschema extends AbstractMetaschema implements IXmlMetaschema {
   private static final Logger logger = LogManager.getLogger(XmlMetaschema.class);
 
   private final METASCHEMADocument metaschema;
-  private final Map<String, FlagDefinition> flagDefinitions;
-  private final Map<String, FieldDefinition> fieldDefinitions;
-  private final Map<String, AssemblyDefinition> assemblyDefinitions;
-  private final Map<String, AssemblyDefinition> rootAssemblyDefinitions;
+  private final Map<String, ? extends IXmlFlagDefinition> flagDefinitions;
+  private final Map<String, ? extends IXmlFieldDefinition> fieldDefinitions;
+  private final Map<String, ? extends IXmlAssemblyDefinition> assemblyDefinitions;
+  private final Map<String, ? extends IXmlAssemblyDefinition> rootAssemblyDefinitions;
 
   /**
    * Constructs a new Metaschema instance.
@@ -74,8 +74,10 @@ public class XmlMetaschema
    * @throws MetaschemaException
    *           if a processing error occurs
    */
-  public XmlMetaschema(URI resource, METASCHEMADocument metaschemaXml, Map<URI, Metaschema> importedMetaschema)
-      throws MetaschemaException {
+  public XmlMetaschema(
+      @NotNull URI resource,
+      @NotNull METASCHEMADocument metaschemaXml,
+      @NotNull Map<@NotNull URI, IMetaschema> importedMetaschema) throws MetaschemaException {
     super(resource, importedMetaschema);
     this.metaschema = metaschemaXml;
 
@@ -84,14 +86,14 @@ public class XmlMetaschema
     // handle definitions in this metaschema
     {
       // start with flag definitions
-      Map<String, FlagDefinition> flagDefinitions = new LinkedHashMap<>();
-
       XmlCursor cursor = metaschemaNode.newCursor();
       cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" + "$this/m:define-flag");
 
+      Map<String, IXmlFlagDefinition> flagDefinitions = new LinkedHashMap<>();
       while (cursor.toNextSelection()) {
-        XmlObject obj = cursor.getObject();
-        XmlGlobalFlagDefinition flag = new XmlGlobalFlagDefinition((GlobalFlagDefinitionType) obj, this);
+        @SuppressWarnings("null")
+        @NotNull GlobalFlagDefinitionType obj = (GlobalFlagDefinitionType) cursor.getObject();
+        IXmlFlagDefinition flag = new XmlGlobalFlagDefinition(obj, this);
         logger.trace("New flag definition '{}'", flag.toCoordinates());
         flagDefinitions.put(flag.getName(), flag);
       }
@@ -101,35 +103,34 @@ public class XmlMetaschema
 
     {
       // now field definitions
-      Map<String, FieldDefinition> fieldDefinitions = new LinkedHashMap<>();
-
       XmlCursor cursor = metaschemaNode.newCursor();
       cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" + "$this/m:define-field");
 
+      Map<String, IXmlFieldDefinition> fieldDefinitions = new LinkedHashMap<>();
       while (cursor.toNextSelection()) {
-        XmlObject obj = cursor.getObject();
-        XmlGlobalFieldDefinition field = new XmlGlobalFieldDefinition((GlobalFieldDefinitionType) obj, this);
+        @SuppressWarnings("null")
+        @NotNull GlobalFieldDefinitionType obj = (GlobalFieldDefinitionType) cursor.getObject();
+        XmlGlobalFieldDefinition field = new XmlGlobalFieldDefinition(obj, this);
         logger.trace("New field definition '{}'", field.toCoordinates());
         fieldDefinitions.put(field.getName(), field);
       }
-
       this.fieldDefinitions
           = fieldDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(fieldDefinitions);
     }
 
     {
       // finally assembly definitions
-      Map<String, AssemblyDefinition> assemblyDefinitions = new LinkedHashMap<>();
-      Map<String, AssemblyDefinition> rootAssemblyDefinitions = new LinkedHashMap<>();
+      Map<String, IXmlAssemblyDefinition> assemblyDefinitions = new LinkedHashMap<>();
+      Map<String, IXmlAssemblyDefinition> rootAssemblyDefinitions = new LinkedHashMap<>();
 
       XmlCursor cursor = metaschemaNode.newCursor();
       cursor.selectPath(
           "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" + "$this/m:define-assembly");
 
       while (cursor.toNextSelection()) {
-        XmlObject obj = cursor.getObject();
-        XmlGlobalAssemblyDefinition assembly
-            = new XmlGlobalAssemblyDefinition((GlobalAssemblyDefinitionType) obj, this);
+        @SuppressWarnings("null")
+        @NotNull GlobalAssemblyDefinitionType obj = (GlobalAssemblyDefinitionType) cursor.getObject();
+        XmlGlobalAssemblyDefinition assembly = new XmlGlobalAssemblyDefinition(obj, this);
         logger.trace("New assembly definition '{}'", assembly.toCoordinates());
         assemblyDefinitions.put(assembly.getName(), assembly);
         if (assembly.isRoot()) {
@@ -146,39 +147,45 @@ public class XmlMetaschema
     parseExportedDefinitions();
   }
 
+  @SuppressWarnings("null")
   @Override
   public String getShortName() {
     return metaschema.getMETASCHEMA().getShortName();
   }
 
+  @SuppressWarnings("null")
   @Override
   public URI getXmlNamespace() {
     return URI.create(metaschema.getMETASCHEMA().getNamespace());
   }
 
+  @SuppressWarnings("null")
   @Override
-  public Map<String, AssemblyDefinition> getAssemblyDefinitions() {
+  public Map<String, ? extends IXmlAssemblyDefinition> getAssemblyDefinitionMap() {
     return assemblyDefinitions;
   }
 
   @Override
-  public Map<String, FieldDefinition> getFieldDefinitions() {
+  public Map<String, ? extends IXmlFieldDefinition> getFieldDefinitionMap() {
     return fieldDefinitions;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public List<? extends MetaschemaFlaggedDefinition> getAssemblyAndFieldDefinitions() {
-    return Stream.of(getAssemblyDefinitions().values(), getFieldDefinitions().values()).flatMap(x -> x.stream())
+  public List<? extends IXmlNamedModelDefinition> getAssemblyAndFieldDefinitions() {
+    return Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())
         .collect(Collectors.toList());
   }
 
+  @SuppressWarnings("null")
   @Override
-  public Map<String, FlagDefinition> getFlagDefinitions() {
+  public Map<String, ? extends IXmlFlagDefinition> getFlagDefinitionMap() {
     return flagDefinitions;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public Map<String, AssemblyDefinition> getRootAssemblyDefinitions() {
+  public Map<String, ? extends IXmlAssemblyDefinition> getRootAssemblyDefinitionMap() {
     return rootAssemblyDefinitions;
   }
 }

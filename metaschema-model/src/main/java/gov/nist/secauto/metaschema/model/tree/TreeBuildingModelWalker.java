@@ -26,19 +26,19 @@
 
 package gov.nist.secauto.metaschema.model.tree;
 
-import gov.nist.secauto.metaschema.model.Metaschema;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.util.ModelWalker;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -53,11 +53,10 @@ import java.util.function.Function;
  * 
  * The associated data represents the definition that is the current root node.
  */
-public class TreeBuildingModelWalker
-    extends ModelWalker<TreeBuildingModelWalker.WalkerData> {
+public class TreeBuildingModelWalker extends ModelWalker<TreeBuildingModelWalker.WalkerData> {
   private static final Logger logger = LogManager.getLogger(TreeBuildingModelWalker.class);
 
-  private static final Function<MetaschemaDefinition, Boolean> FILTER = (def) -> {
+  private static final Function<IDefinition, Boolean> FILTER = (def) -> {
     return true;
     // return def.isGlobal();
     // return def.isGlobal() || (def instanceof AssemblyDefinition &&
@@ -72,17 +71,18 @@ public class TreeBuildingModelWalker
    *          the metaschemas to analyze
    * @return a collection of matching definitions
    */
-  public static Collection<? extends Node<?, ?>> buildTrees(Collection<? extends Metaschema> metaschemas) {
+  public static Collection<@NotNull ? extends Node<?, ?>>
+      buildTrees(@NotNull Collection<@NotNull ? extends IMetaschema> metaschemas) {
     TreeBuildingModelWalker walker = new TreeBuildingModelWalker();
-    for (Metaschema metaschema : metaschemas) {
+    for (IMetaschema metaschema : metaschemas) {
       // get local roots in case they are scope=local
-      for (AssemblyDefinition rootDef : metaschema.getRootAssemblyDefinitions().values()) {
+      for (IAssemblyDefinition rootDef : metaschema.getRootAssemblyDefinitions()) {
         WalkerData data = new WalkerData(rootDef);
         walker.walk(rootDef, data);
       }
 
       // get roots from exported
-      for (AssemblyDefinition assembly : metaschema.getExportedAssemblyDefinitions().values()) {
+      for (IAssemblyDefinition assembly : metaschema.getExportedAssemblyDefinitions()) {
         if (assembly.isRoot()) {
           WalkerData data = new WalkerData(assembly);
           walker.walk(assembly, data);
@@ -100,12 +100,13 @@ public class TreeBuildingModelWalker
    *          the metaschema to analyze
    * @return a collection of matching definitions
    */
-  public static Collection<? extends Node<?, ?>> collectUsedDefinitions(Metaschema metaschema) {
+  @SuppressWarnings("null")
+  public static Collection<? extends Node<?, ?>> collectUsedDefinitions(@NotNull IMetaschema metaschema) {
     return buildTrees(Collections.singleton(metaschema));
   }
 
-  private final Function<MetaschemaDefinition, Boolean> filter;
-  private final Set<Node<?, ?>> nodes = new LinkedHashSet<>();
+  private final Function<IDefinition, Boolean> filter;
+  private final Set<@NotNull Node<?, ?>> nodes = new LinkedHashSet<>();
 
   /**
    * Construct a new walker.
@@ -119,7 +120,7 @@ public class TreeBuildingModelWalker
    * 
    * @return the filter
    */
-  protected Function<MetaschemaDefinition, Boolean> getFilter() {
+  protected Function<IDefinition, Boolean> getFilter() {
     return filter;
   }
 
@@ -128,7 +129,7 @@ public class TreeBuildingModelWalker
    * 
    * @return the collection of definitions
    */
-  public Collection<? extends Node<?, ?>> getNodes() {
+  public Collection<@NotNull ? extends Node<?, ?>> getNodes() {
     return nodes;
   }
 
@@ -159,14 +160,14 @@ public class TreeBuildingModelWalker
   }
 
   @Override
-  protected void walkFlagInstances(Collection<? extends IFlagInstance> instances, WalkerData data) {
+  protected void walkFlagInstances(Collection<@NotNull ? extends IFlagInstance> instances, WalkerData data) {
     ++depth;
     super.walkFlagInstances(instances, data);
     --depth;
   }
 
   @Override
-  protected void walkModelInstances(Collection<? extends IModelInstance> instances, WalkerData data) {
+  protected void walkModelInstances(Collection<@NotNull ? extends IModelInstance> instances, WalkerData data) {
     ++depth;
     super.walkModelInstances(instances, data);
     --depth;
@@ -216,7 +217,7 @@ public class TreeBuildingModelWalker
     private final IAssemblyDefinition rootAssemblyDefinition;
     private Deque<IAssemblyDefinition> assemblyStack = new LinkedList<>();
 
-    public WalkerData(AssemblyDefinition rootAssemblyDefinition) {
+    public WalkerData(IAssemblyDefinition rootAssemblyDefinition) {
       this.rootAssemblyDefinition = rootAssemblyDefinition;
     }
 

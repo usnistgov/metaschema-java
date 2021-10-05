@@ -26,30 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import freemarker.cache.ClassTemplateLoader;
-import freemarker.core.ParseException;
-import freemarker.template.Configuration;
-import freemarker.template.MalformedTemplateNameException;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateExceptionHandler;
-import freemarker.template.TemplateNotFoundException;
-
 import gov.nist.secauto.metaschema.freemarker.support.AbstractFreemarkerGenerator;
-import gov.nist.secauto.metaschema.freemarker.support.MarkupToHtmlMethod;
-import gov.nist.secauto.metaschema.freemarker.support.ToCamelCaseMethod;
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
-import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;
-
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 public abstract class AbstractSchemaGenerator
     extends AbstractFreemarkerGenerator

@@ -33,45 +33,53 @@ import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.RelativeDefinitionAssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.net.URI;
 
 public class DefaultXdmFactory implements IXdmFactory {
 
   @Override
   public IBoundXdmAssemblyNodeItem newAssemblyNodeItem(AssemblyProperty instance, Object value, int position,
-      IXdmAssemblyNodeItem parentNodeItem) {
+      IBoundXdmAssemblyNodeItem parentNodeItem) {
     return new XdmAssemblyNodeItemImpl(instance, value, position, parentNodeItem);
   }
 
   @Override
-  public IBoundXdmFieldNodeItem newFieldNodeItem(FieldProperty instance, Object value, int position,
-      IXdmAssemblyNodeItem parentNodeItem) {
+  public IBoundXdmFieldNodeItem newFieldNodeItem(@NotNull FieldProperty instance, Object value, int position,
+      IBoundXdmAssemblyNodeItem parentNodeItem) {
     return new XdmFieldNodeItemImpl(instance, value, position, parentNodeItem);
   }
 
   @Override
-  public IBoundXdmFlagNodeItem newFlagNodeItem(FlagProperty instance, Object value, IXdmModelNodeItem parentNodeItem) {
+  public IBoundXdmFlagNodeItem newFlagNodeItem(FlagProperty instance, Object value,
+      IBoundXdmModelNodeItem parentNodeItem) {
     return new XdmFlagNodeItemImpl(instance, value, parentNodeItem);
   }
 
   @Override
-  public IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(RootDefinitionAssemblyProperty instance, Object value) {
-    return new XdmRootAssemblyNodeItemImpl(instance, value);
+  public IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(RootDefinitionAssemblyProperty instance, Object value,
+      URI documentUri) {
+    return new XdmRootAssemblyNodeItemImpl(instance, value, documentUri);
   }
 
   @Override
-  public IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(AssemblyClassBinding definition, Object value) {
-    return newRootAssemblyNodeItem(new RootDefinitionAssemblyProperty(definition), value);
+  public IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(AssemblyClassBinding definition, Object value,
+      URI documentUri) {
+    return newRootAssemblyNodeItem(new RootDefinitionAssemblyProperty(definition), value, documentUri);
   }
 
   @Override
-  public IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(Object value, BindingContext bindingContext) {
-    return newRootAssemblyNodeItem((AssemblyClassBinding)bindingContext.getClassBinding(value.getClass()), value);
+  public IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(Object value, BindingContext bindingContext,
+      URI documentUri) {
+    return newRootAssemblyNodeItem((AssemblyClassBinding) bindingContext.getClassBinding(value.getClass()), value,
+        documentUri);
   }
 
   @Override
-  public IBoundXdmAssemblyNodeItem newRelativeAssemblyNodeItem(AssemblyClassBinding definition, Object value) {
+  public IBoundXdmAssemblyNodeItem newRelativeAssemblyNodeItem(AssemblyClassBinding definition, Object value,
+      URI documentUri) {
     return newAssemblyNodeItem(new RelativeDefinitionAssemblyProperty(definition), value, 1, null);
   }
 }

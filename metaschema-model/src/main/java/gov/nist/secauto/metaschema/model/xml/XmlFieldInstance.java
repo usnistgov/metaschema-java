@@ -29,18 +29,21 @@ package gov.nist.secauto.metaschema.model.xml;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFieldInstance;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.FieldDocument;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.math.BigInteger;
 
-public class XmlFieldInstance
-    extends AbstractFieldInstance<XmlGlobalFieldDefinition> {
+public class XmlFieldInstance extends AbstractFieldInstance {
   // private static final Logger logger = LogManager.getLogger(XmlFieldInstance.class);
 
+  @NotNull
   private final FieldDocument.Field xmlField;
 
   /**
@@ -52,7 +55,7 @@ public class XmlFieldInstance
    * @param parent
    *          the field definition this object is an instance of
    */
-  public XmlFieldInstance(FieldDocument.Field xmlField, AssemblyDefinition parent) {
+  public XmlFieldInstance(@NotNull FieldDocument.Field xmlField, @NotNull IXmlAssemblyDefinition parent) {
     super(parent);
     this.xmlField = xmlField;
   }
@@ -66,10 +69,10 @@ public class XmlFieldInstance
     return xmlField;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public XmlGlobalFieldDefinition getDefinition() {
-    return (XmlGlobalFieldDefinition) getContainingDefinition().getContainingMetaschema()
-        .getFieldDefinitionByName(getName());
+  public IFieldDefinition getDefinition() {
+    return getContainingDefinition().getContainingMetaschema().getScopedFieldDefinitionByName(getName());
   }
 
   @Override
@@ -88,11 +91,7 @@ public class XmlFieldInstance
     return retval;
   }
 
-  // @Override
-  // public String getInstanceName() {
-  // return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : getName();
-  // }
-
+  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlField().getRef();

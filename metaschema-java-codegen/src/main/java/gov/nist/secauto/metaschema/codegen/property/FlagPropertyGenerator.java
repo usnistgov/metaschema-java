@@ -34,42 +34,33 @@ import com.squareup.javapoet.TypeName;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
-import gov.nist.secauto.metaschema.codegen.AbstractJavaClassGenerator;
+import gov.nist.secauto.metaschema.codegen.JavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
-import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
-import gov.nist.secauto.metaschema.model.instances.FlagInstance;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Set;
 
-public class FlagPropertyGenerator
-    extends AbstractPropertyGenerator<AbstractJavaClassGenerator<?>> {
-  private static final Logger logger = LogManager.getLogger(FlagPropertyGenerator.class);
-
-  private final FlagInstance<?> instance;
+public class FlagPropertyGenerator extends AbstractPropertyGenerator<JavaClassGenerator> {
+  @NotNull
+  private final IFlagInstance instance;
+  @NotNull
   private final IJavaTypeAdapter<?> dataType;
 
-  public FlagPropertyGenerator(FlagInstance<?> instance, AbstractJavaClassGenerator<?> classGenerator) {
+  public FlagPropertyGenerator(@NotNull IFlagInstance instance, @NotNull JavaClassGenerator classGenerator) {
     super(classGenerator);
     this.instance = instance;
 
     IFlagDefinition definition = instance.getDefinition();
-    IJavaTypeAdapter<?> type = definition.getDatatype();
-    if (type == null) {
-      logger.warn("Unsupported datatype '{}', using {}", type, MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE);
-      type = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
-    }
-    this.dataType = type;
+    this.dataType = definition.getDatatype();
   }
 
   protected IFlagInstance getInstance() {
@@ -96,17 +87,16 @@ public class FlagPropertyGenerator
   }
 
   @Override
-  protected Set<MetaschemaFlaggedDefinition> buildField(FieldSpec.Builder builder) {
-    AnnotationSpec.Builder annotation = AnnotationSpec.builder(Flag.class)
-        .addMember("useName", "$S", instance.getEffectiveName());
+  protected Set<INamedModelDefinition> buildField(FieldSpec.Builder builder) {
+    AnnotationSpec.Builder annotation
+        = AnnotationSpec.builder(Flag.class).addMember("useName", "$S", instance.getEffectiveName());
 
     if (getInstance().isRequired()) {
       annotation.addMember("required", "$L", true);
     }
 
     IJavaTypeAdapter<?> valueDataType = getDataType();
-    annotation.addMember("typeAdapter", "$T.class",
-        valueDataType.getClass());
+    annotation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
 
     AnnotationUtils.applyAllowedValuesConstraints(annotation,
         getInstance().getDefinition().getAllowedValuesContraints());
@@ -118,7 +108,7 @@ public class FlagPropertyGenerator
 
     IFlagInstance instance = getInstance();
     IFlaggedDefinition parent = instance.getContainingDefinition();
-    if (parent.hasJsonKey() && instance.equals(parent.getJsonKeyFlagInstance())) {
+    if (parent != null && parent.hasJsonKey() && instance.equals(parent.getJsonKeyFlagInstance())) {
       builder.addAnnotation(JsonKey.class);
     }
 

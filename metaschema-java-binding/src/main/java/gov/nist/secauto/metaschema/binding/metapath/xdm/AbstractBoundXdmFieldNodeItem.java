@@ -30,17 +30,15 @@ import gov.nist.secauto.metaschema.binding.model.FieldDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmNodeItem;
 
 import java.util.stream.Stream;
 
 public abstract class AbstractBoundXdmFieldNodeItem<INSTANCE extends FieldProperty>
-    extends AbstractBoundXdmModelNodeItem<INSTANCE, IXdmAssemblyNodeItem> implements IBoundXdmFieldNodeItem {
+    extends AbstractBoundXdmModelNodeItem<INSTANCE> implements IBoundXdmFieldNodeItem {
 
-  public AbstractBoundXdmFieldNodeItem(INSTANCE instance, Object value, int position,
-      IXdmAssemblyNodeItem parentNodeItem) {
-    super(instance, value, position, parentNodeItem);
+  public AbstractBoundXdmFieldNodeItem(INSTANCE instance, Object value, int position) {
+    super(instance, value, position);
   }
 
   @Override

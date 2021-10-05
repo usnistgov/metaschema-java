@@ -31,18 +31,26 @@ import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface IFormatterFactory {
+  @NotNull
   public static final IPathFormatter METAPATH_FORMATTER = new MetapathFormatter();
   public static final IFormatterFactory INSTANCE = new DefaultFormatterFactory();
 
+  @NotNull
   IFlagPathSegment newFlagPathSegment(IModelPositionalPathSegment parentPathSegment, IFlagInstance instance);
 
+  @NotNull
   IFieldPathSegment newFieldPathSegment(IAssemblyPathSegment parentPathSegment, IFieldInstance instance, int position);
 
+  @NotNull
   IAssemblyPathSegment newAssemblyPathSegment(IAssemblyPathSegment parentPathSegment, IAssemblyInstance instance,
       int position);
 
+  @NotNull
   IRootAssemblyPathSegment newRootAssemblyPathSegment(IAssemblyInstance instance);
 
+  @NotNull
   IRootAssemblyPathSegment newRootAssemblyPathSegment(IAssemblyDefinition definition);
 }

@@ -29,10 +29,17 @@ package gov.nist.secauto.metaschema.codegen;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
 
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 
 public interface JavaClassGenerator {
+  @NotNull
+  INamedModelDefinition getDefinition();
+
   /**
    * Generates the associated Java class and saves it using the provided file.
    * 

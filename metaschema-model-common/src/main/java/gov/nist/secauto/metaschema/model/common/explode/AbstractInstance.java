@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.explode;
 
-import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 
 import java.util.Objects;
 
-public class AbstractInstance<PROXY extends IInstance, PARENT extends IFlaggedDefinition> implements IInstance {
+public abstract class AbstractInstance<PROXY extends IInstance, PARENT extends INamedModelDefinition> implements IInstance {
   private final PROXY proxy;
   private final PARENT containingDefinition;
 

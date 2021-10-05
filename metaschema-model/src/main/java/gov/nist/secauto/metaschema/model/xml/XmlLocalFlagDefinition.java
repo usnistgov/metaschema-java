@@ -29,7 +29,9 @@ package gov.nist.secauto.metaschema.model.xml;
 import gov.nist.secauto.metaschema.datatypes.adapter.types.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.IXmlMetaschema;
 import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
@@ -37,21 +39,21 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.definitions.AbstractInfoElementDefinition;
-import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
-import gov.nist.secauto.metaschema.model.definitions.LocalInfoElementDefinition;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.model.definitions.ILocalDefinition;
+import gov.nist.secauto.metaschema.model.definitions.IXmlFlagDefinition;
+import gov.nist.secauto.metaschema.model.definitions.IXmlNamedModelDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFlagInstance;
-import gov.nist.secauto.metaschema.model.xml.XmlLocalFlagDefinition.InternalFlagDefinition;
 import gov.nist.secauto.metaschema.model.xml.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFlagDefinitionType;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
-public class XmlLocalFlagDefinition
-    extends AbstractFlagInstance<InternalFlagDefinition> {
+public class XmlLocalFlagDefinition extends AbstractFlagInstance {
+  @NotNull
   private final LocalFlagDefinitionType xmlFlag;
+  @NotNull
   private final InternalFlagDefinition flagDefinition;
   private IValueConstraintSupport constraints;
 
@@ -63,7 +65,7 @@ public class XmlLocalFlagDefinition
    * @param parent
    *          the parent definition, which must be a definition type that can contain flags.
    */
-  public XmlLocalFlagDefinition(LocalFlagDefinitionType xmlFlag, MetaschemaFlaggedDefinition parent) {
+  public XmlLocalFlagDefinition(@NotNull LocalFlagDefinitionType xmlFlag, @NotNull IXmlNamedModelDefinition parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
     this.flagDefinition = new InternalFlagDefinition();
@@ -98,6 +100,12 @@ public class XmlLocalFlagDefinition
   }
 
   @Override
+  public IXmlMetaschema getContainingMetaschema() {
+    return getContainingDefinition().getContainingMetaschema();
+  }
+
+  @SuppressWarnings("null")
+  @Override
   public String getName() {
     return getXmlFlag().getName();
   }
@@ -122,15 +130,12 @@ public class XmlLocalFlagDefinition
     return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
   }
 
-  public class InternalFlagDefinition
-      extends AbstractInfoElementDefinition
-      implements FlagDefinition, LocalInfoElementDefinition<XmlLocalFlagDefinition> {
+  public class InternalFlagDefinition implements IXmlFlagDefinition, ILocalDefinition<XmlLocalFlagDefinition> {
 
     /**
      * Create the corresponding definition for the local flag instance.
      */
     public InternalFlagDefinition() {
-      super(XmlLocalFlagDefinition.this.getContainingDefinition().getContainingMetaschema());
     }
 
     @Override
@@ -163,6 +168,7 @@ public class XmlLocalFlagDefinition
       return MarkupStringConverter.toMarkupString(getXmlFlag().getDescription());
     }
 
+    @SuppressWarnings("null")
     @Override
     public IJavaTypeAdapter<?> getDatatype() {
       IJavaTypeAdapter<?> retval;
@@ -213,6 +219,11 @@ public class XmlLocalFlagDefinition
     @Override
     public MarkupMultiline getRemarks() {
       return XmlLocalFlagDefinition.this.getRemarks();
+    }
+
+    @Override
+    public IXmlMetaschema getContainingMetaschema() {
+      return XmlLocalFlagDefinition.this.getContainingMetaschema();
     }
   }
 }

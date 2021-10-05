@@ -30,22 +30,19 @@ import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Name;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmFlagNodeItem;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public abstract class AbstractBoundXdmModelNodeItem<INSTANCE extends NamedModelProperty,
-    PARENT extends IXdmAssemblyNodeItem> extends AbstractBoundXdmNodeItem<INSTANCE, PARENT>
-    implements IBoundXdmModelNodeItem {
+public abstract class AbstractBoundXdmModelNodeItem<INSTANCE extends NamedModelProperty>
+    extends AbstractBoundXdmNodeItem<INSTANCE> implements IBoundXdmModelNodeItem {
 
   private final int position;
   private Map<String, IBoundXdmFlagNodeItem> flags;
 
-  public AbstractBoundXdmModelNodeItem(INSTANCE instance, Object value, int position, PARENT parentNodeItem) {
-    super(instance, value, parentNodeItem);
+  public AbstractBoundXdmModelNodeItem(INSTANCE instance, Object value, int position) {
+    super(instance, value);
     this.position = position;
   }
 
@@ -64,7 +61,7 @@ public abstract class AbstractBoundXdmModelNodeItem<INSTANCE extends NamedModelP
     if (this.flags == null) {
       Map<String, IBoundXdmFlagNodeItem> flags = new LinkedHashMap<>();
       Object parentValue = getValue();
-      for (FlagProperty instance : getDefinition().getFlagInstances().values()) {
+      for (FlagProperty instance : getDefinition().getFlagInstances()) {
         Object instanceValue = instance.getValue(parentValue);
         if (instanceValue != null) {
           IBoundXdmFlagNodeItem item = IXdmFactory.INSTANCE.newFlagNodeItem(instance, instanceValue, this);
@@ -75,10 +72,12 @@ public abstract class AbstractBoundXdmModelNodeItem<INSTANCE extends NamedModelP
     }
   }
 
+  @Override
   public Stream<? extends IBoundXdmFlagNodeItem> flags() {
     return getFlags().values().stream();
   }
 
+  @Override
   public IBoundXdmFlagNodeItem getFlagByName(String name) {
     return getFlags().get(name);
   }

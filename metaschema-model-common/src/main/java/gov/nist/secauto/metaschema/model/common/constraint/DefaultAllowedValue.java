@@ -28,11 +28,23 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 
+import org.jetbrains.annotations.NotNull;
+
 public class DefaultAllowedValue implements IAllowedValue {
+  @NotNull
   private final String value;
+  @NotNull
   private final MarkupLine description;
 
-  public DefaultAllowedValue(String value, MarkupLine description) {
+  /**
+   * Construct a new allowed value entry for use in an {@link IAllowedValuesConstraint}.
+   * 
+   * @param value
+   *          the allowed value
+   * @param description
+   *          a textual description of the value
+   */
+  public DefaultAllowedValue(@NotNull String value, @NotNull MarkupLine description) {
     this.value = value;
     this.description = description;
   }

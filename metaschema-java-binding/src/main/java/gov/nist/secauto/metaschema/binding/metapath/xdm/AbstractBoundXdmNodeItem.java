@@ -27,24 +27,19 @@
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaPathEvaluationVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.AbstractXdmNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
 
 import java.util.Objects;
 
 import javax.xml.namespace.QName;
 
-public abstract class AbstractBoundXdmNodeItem<INSTANCE extends NamedProperty, PARENT extends IXdmModelNodeItem>
-    extends AbstractXdmNodeItem<PARENT> implements IBoundXdmNodeItem {
+public abstract class AbstractBoundXdmNodeItem<INSTANCE extends NamedProperty>
+    extends AbstractXdmNodeItem implements IBoundXdmNodeItem {
 
   private final INSTANCE instance;
 
-  public AbstractBoundXdmNodeItem(INSTANCE instance, Object value, PARENT parentNodeItem) {
-    super(value, parentNodeItem);
+  public AbstractBoundXdmNodeItem(INSTANCE instance, Object value) {
+    super(value);
     Objects.requireNonNull(instance, "instance");
     this.instance = instance;
   }

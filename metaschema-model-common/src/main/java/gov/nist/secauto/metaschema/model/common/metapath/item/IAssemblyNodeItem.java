@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 
 import java.util.List;
@@ -37,8 +38,12 @@ public interface IAssemblyNodeItem extends IModelNodeItem {
   @Override
   IAssemblyPathSegment getPathSegment();
 
+  @Override
+  IAssemblyDefinition getDefinition();
+
   Map<String, ? extends List<? extends IModelNodeItem>> getModelItems();
-  
+
   Stream<? extends IModelNodeItem> modelItems();
-  
-  List<? extends IModelNodeItem> getModelItemsByName(String name);}
+
+  List<? extends IModelNodeItem> getModelItemsByName(String name);
+}

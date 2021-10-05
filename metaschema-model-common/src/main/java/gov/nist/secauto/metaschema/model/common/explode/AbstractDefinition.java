@@ -29,13 +29,20 @@ package gov.nist.secauto.metaschema.model.common.explode;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+
 public abstract class AbstractDefinition<DELEGATE extends IDefinition> implements IDefinition {
+  @NotNull
   private final DELEGATE delegate;
 
-  public AbstractDefinition(DELEGATE delegate) {
+  public AbstractDefinition(@NotNull DELEGATE delegate) {
+    Objects.requireNonNull(delegate, "delegate");
     this.delegate = delegate;
   }
 
+  @NotNull
   public DELEGATE getDelegate() {
     return delegate;
   }

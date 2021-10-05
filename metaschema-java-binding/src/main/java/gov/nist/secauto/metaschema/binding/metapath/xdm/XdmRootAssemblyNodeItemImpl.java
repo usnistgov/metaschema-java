@@ -28,11 +28,18 @@ package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
 
-public class XdmRootAssemblyNodeItemImpl extends AbstractBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty>
-    implements IBoundXdmRootAssemblyNodeItem {
+import org.jetbrains.annotations.NotNull;
 
-  public XdmRootAssemblyNodeItemImpl(RootDefinitionAssemblyProperty instance, Object value) {
-    super(instance, value, 1, null);
+import java.net.URI;
+
+public class XdmRootAssemblyNodeItemImpl extends
+    AbstractTerminalBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty> implements IBoundXdmRootAssemblyNodeItem {
+
+  public XdmRootAssemblyNodeItemImpl(
+      @NotNull RootDefinitionAssemblyProperty instance,
+      @NotNull Object value,
+      @NotNull URI documentUri) {
+    super(instance, value, 1, documentUri);
   }
 
   @Override

@@ -32,7 +32,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 
 import gov.nist.secauto.metaschema.datatypes.markup.AbstractMarkupAdapter;
 import gov.nist.secauto.metaschema.datatypes.markup.AbstractMarkupString;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupXmlEventWriter;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupXmlStreamWriter;

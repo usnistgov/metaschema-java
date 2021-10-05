@@ -42,7 +42,7 @@ public interface IDateTimeItem extends IAnyAtomicItem {
     return new DateTimeWithTimeZoneItemImpl(value);
   }
 
-  public static IDateTimeItem valueOf(String value) {
+  public static IDateTimeItem valueOf(String value) throws IllegalArgumentException {
     return valueOf(MetaschemaDataTypeProvider.DATE_TIME.parse(value));
   }
 

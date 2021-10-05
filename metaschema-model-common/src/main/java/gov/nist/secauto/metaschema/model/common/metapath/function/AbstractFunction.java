@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.MetapathDynamicException;
+import gov.nist.secauto.metaschema.model.common.metapath.type.InvalidTypeMetapathException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,7 +45,11 @@ public abstract class AbstractFunction implements IFunction {
   private final ISequenceType result;
   private final IFunctionHandler handler;
 
-  protected AbstractFunction(String name, List<IArgument> arguments, boolean unboundedArity, ISequenceType result,
+  protected AbstractFunction(
+      String name,
+      List<IArgument> arguments,
+      boolean unboundedArity,
+      ISequenceType result,
       IFunctionHandler handler) {
     this.name = name;
     this.arguments = arguments;
@@ -89,7 +93,8 @@ public abstract class AbstractFunction implements IFunction {
       // // the context item will be the argument
       // // TODO: check the context item for type compatibility
       // retval = true;
-    } else {
+    } else if ((expressionArguments.size() == getArguments().size())
+        || (isArityUnbounded() && expressionArguments.size() > getArguments().size())) {
       retval = true;
       // check that argument requirements are satisfied
       Iterator<IArgument> argumentIterator = getArguments().iterator();
@@ -120,8 +125,9 @@ public abstract class AbstractFunction implements IFunction {
           // check remaining expressions against the last argument
           while (expressionIterator.hasNext()) {
             IExpression<?> expression = expressionIterator.next();
-            retval = argument.isSupported(expression);
-            if (!retval) {
+            @SuppressWarnings("null") boolean result = argument.isSupported(expression);
+            if (!result) {
+              retval = result;
               break;
             }
           }
@@ -130,6 +136,8 @@ public abstract class AbstractFunction implements IFunction {
           retval = false;
         }
       }
+    } else {
+      retval = false;
     }
     return retval;
   }
@@ -164,7 +172,7 @@ public abstract class AbstractFunction implements IFunction {
       // // do nothing
       // }
 
-      Class<? extends IItem> argumentClass = argument.getSequenceType().getType();
+      @SuppressWarnings("null") Class<? extends IItem> argumentClass = argument.getSequenceType().getType();
       if (argumentClass.isInstance(IAnyAtomicItem.class)) {
         // atomize
         parameter = XPathFunctions.fnData(parameter);
@@ -176,8 +184,7 @@ public abstract class AbstractFunction implements IFunction {
       for (IItem item : parameter.asList()) {
         Class<? extends IItem> itemClass = item.getClass();
         if (!argumentClass.isAssignableFrom(itemClass)) {
-          throw new MetapathDynamicException("err:XPTY0004",
-              String.format("The type '%s' is not a subtype of '%s'", itemClass.getName(), argumentClass.getName()));
+          throw new InvalidTypeMetapathException(String.format("The type '%s' is not a subtype of '%s'", itemClass.getName(), argumentClass.getName()));
         }
       }
 
@@ -188,7 +195,7 @@ public abstract class AbstractFunction implements IFunction {
 
   @Override
   public ISequence<?> execute(List<ISequence<?>> arguments, DynamicContext dynamicContext) {
-    return handler.execute(arguments,dynamicContext);
+    return handler.execute(arguments, dynamicContext);
   }
 
   @Override

@@ -31,9 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.io.Writer;
 
-public interface Serializer<CLASS> {
-  Format supportedFromat();
-
+public interface Serializer<CLASS> extends MutableConfiguration {
   void serialize(CLASS data, OutputStream os) throws BindingException;
 
   void serialize(CLASS data, File file) throws BindingException, FileNotFoundException;

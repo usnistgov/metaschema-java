@@ -26,13 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.tree;
 
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -49,14 +50,15 @@ class TreeBuildingModelWalkerTest {
   void test() throws MetaschemaException, IOException {
     MetaschemaLoader loader = new MetaschemaLoader();
 
-    Metaschema metaschema = loader.loadXmlMetaschema(new URL(
+    IMetaschema metaschema = loader.loadXmlMetaschema(new URL(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
 
-    Collection<? extends Node<?, ?>> roots
+    @SuppressWarnings("null")
+    Collection<@NotNull ? extends Node<?, ?>> roots
         = TreeBuildingModelWalker.buildTrees(Collections.singleton(metaschema));
 
     for (Node<?, ?> node : roots) {
-      MetaschemaDefinition definition = node.getDefinition();
+      IDefinition definition = node.getDefinition();
       logger.info(String.format("%s: %s %s", definition.getContainingMetaschema().getShortName(),
           definition.getModelType().name(), definition.getName()));
     }

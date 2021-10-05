@@ -230,11 +230,11 @@ public class DefaultAssemblyClassBinding
 
   @Override
   public Collection<? extends NamedModelProperty> getModelInstances() {
-    return getNamedModelInstances().values();
+    return getNamedModelInstances();
   }
 
   @Override
-  public Map<String, ? extends NamedModelProperty> getNamedModelInstances() {
+  public Map<String, ? extends NamedModelProperty> getNamedModelInstanceMap() {
     initalizeModelInstances();
     return modelInstances;
   }
@@ -246,15 +246,15 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public Map<String, ? extends FieldProperty> getFieldInstances() {
+  public Map<String, ? extends FieldProperty> getFieldInstanceMap() {
     return Collections.unmodifiableMap(
-        getNamedModelInstances().values().stream().filter(x -> x instanceof FieldProperty).map(x -> (FieldProperty) x)
+        getNamedModelInstances().stream().filter(x -> x instanceof FieldProperty).map(x -> (FieldProperty) x)
             .collect(Collectors.toMap(FieldProperty::getEffectiveName, Function.identity())));
   }
 
   @Override
-  public Map<String, ? extends AssemblyProperty> getAssemblyInstances() {
-    return Collections.unmodifiableMap(getNamedModelInstances().values().stream()
+  public Map<String, ? extends AssemblyProperty> getAssemblyInstanceMap() {
+    return Collections.unmodifiableMap(getNamedModelInstances().stream()
         .filter(x -> x instanceof AssemblyProperty).map(x -> (AssemblyProperty) x)
         .collect(Collectors.toMap(AssemblyProperty::getEffectiveName, Function.identity())));
   }
@@ -616,5 +616,4 @@ public class DefaultAssemblyClassBinding
       writeInternal(item, writeObjectWrapper, context);
     }
   }
-
 }

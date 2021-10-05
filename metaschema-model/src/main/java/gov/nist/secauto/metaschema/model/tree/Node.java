@@ -26,10 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.tree;
 
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
-import gov.nist.secauto.metaschema.model.instances.MetaschemaInstance;
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
-public interface Node<DEFINITION extends MetaschemaDefinition, INSTANCE extends MetaschemaInstance> {
+import org.jetbrains.annotations.NotNull;
+
+public interface Node<DEFINITION extends INamedDefinition, INSTANCE extends INamedInstance> {
+  @NotNull 
   DEFINITION getDefinition();
 
   INSTANCE getInstance();

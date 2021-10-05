@@ -42,7 +42,7 @@ public interface IIntegerItem extends IDecimalItem {
     return value == null ? null : new IntegerItemImpl(value);
   }
 
-  public static IIntegerItem valueOf(String value) {
+  public static IIntegerItem valueOf(String value) throws NumberFormatException  {
     IIntegerItem retval;
     if (value == null) {
       retval = null;

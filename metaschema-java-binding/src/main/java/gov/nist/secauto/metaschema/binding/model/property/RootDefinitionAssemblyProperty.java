@@ -27,13 +27,6 @@
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.info.ClassDataTypeHandler;
-import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
-import gov.nist.secauto.metaschema.binding.model.property.info.ModelPropertyInfo;
-import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyInfo;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 import javax.xml.namespace.QName;
 

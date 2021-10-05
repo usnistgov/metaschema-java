@@ -26,13 +26,14 @@
 
 package gov.nist.secauto.metaschema.docsgen;
 
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;
 
 import org.apache.commons.io.output.TeeOutputStream;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileOutputStream;
@@ -57,13 +58,14 @@ class XmlOutlineDocumentationGeneratorTest {
 
     MetaschemaLoader loader = new MetaschemaLoader();
 
-    List<Metaschema> metaschemas = new LinkedList<>();
-    Metaschema metaschema
+    List<@NotNull IMetaschema> metaschemas = new LinkedList<>();
+    @NotNull 
+    IMetaschema metaschema
         = loader.loadXmlMetaschema(new URL(
             "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
     metaschemas.add(metaschema);
 
-    Collection<? extends IDefinition> definitions
+    Collection<@NotNull ? extends IDefinition> definitions
         = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschemas);
 
     try (FileOutputStream fos = new FileOutputStream("xml-outline.html")) {

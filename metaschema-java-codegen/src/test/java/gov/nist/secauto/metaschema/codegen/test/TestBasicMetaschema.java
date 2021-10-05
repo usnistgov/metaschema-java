@@ -26,16 +26,12 @@
 
 package gov.nist.secauto.metaschema.codegen.test;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.Feature;
-import gov.nist.secauto.metaschema.binding.io.Format;
-import gov.nist.secauto.metaschema.binding.io.MutableConfiguration;
 import gov.nist.secauto.metaschema.codegen.JavaGenerator;
 import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +41,6 @@ import org.junit.platform.commons.util.ReflectionUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -57,13 +52,13 @@ public class TestBasicMetaschema {
 
   private static final MetaschemaLoader loader = new MetaschemaLoader();
 
-  private static Metaschema loadMetaschema(File metaschemaFile) throws MetaschemaException, IOException {
+  private static IMetaschema loadMetaschema(File metaschemaFile) throws MetaschemaException, IOException {
     return loader.loadXmlMetaschema(metaschemaFile);
   }
 
   public static Class<?> compileMetaschema(File metaschemaFile, File bindingFile, String rootClassName, File classDir)
       throws IOException, ClassNotFoundException, MetaschemaException {
-    Metaschema metaschema = loadMetaschema(metaschemaFile);
+    IMetaschema metaschema = loadMetaschema(metaschemaFile);
 
     DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
     if (bindingFile != null && bindingFile.exists() && bindingFile.isFile()) {
@@ -110,13 +105,13 @@ public class TestBasicMetaschema {
   // }
   //
 
-  @SuppressWarnings("unused")
-  private static Object readJson(Reader reader, Class<?> rootClass) throws IOException, BindingException {
-    BindingContext context = BindingContext.newInstance();
-    return context
-        .newDeserializer(Format.JSON, rootClass, new MutableConfiguration().enableFeature(Feature.DESERIALIZE_ROOT))
-        .deserialize(reader);
-  }
+//  @SuppressWarnings("unused")
+//  private static Object readJson(Reader reader, Class<?> rootClass) throws IOException, BindingException {
+//    BindingContext context = BindingContext.newInstance();
+//    Deserializer<?> deserializer = context.newDeserializer(Format.JSON, rootClass);
+//    deserializer.enableFeature(Feature.DESERIALIZE_ROOT);
+//    return deserializer.deserialize(reader);
+//  }
   //
   // private static <CLASS> void writeJson(Writer writer, CLASS rootObject) throws BindingException {
   // BindingContext context = BindingContext.newInstance();

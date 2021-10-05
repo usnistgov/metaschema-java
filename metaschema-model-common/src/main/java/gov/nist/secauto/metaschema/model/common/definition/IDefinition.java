@@ -26,17 +26,86 @@
 
 package gov.nist.secauto.metaschema.model.common.definition;
 
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.INamedModelElement;
+import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public interface IDefinition extends INamedModelElement {
+
+  public static final ModuleScopeEnum DEFAULT_DEFINITION_MODEL_SCOPE = ModuleScopeEnum.INHERITED;
 
   /**
    * Retrieve the list of constraints associated with this definition.
    * 
    * @return the list of constraints
    */
-  List<? extends IConstraint> getConstraints();
+  @NotNull
+  List<@NotNull ? extends IConstraint> getConstraints();
+
+  /**
+   * The formal display name for a definition.
+   * 
+   * @return the formal name
+   */
+  String getFormalName();
+
+  /**
+   * Get the text that describes the basic use of the definition.
+   * 
+   * @return a line of markup text
+   */
+  MarkupLine getDescription();
+
+  /**
+   * Retrieve the definition's scope within the context of its defining module.
+   * 
+   * @return the module scope
+   */
+  @NotNull
+  ModuleScopeEnum getModuleScope();
+
+  /**
+   * A definition can be locally defined (inline with instances) or globally defined. In the former
+   * case {@link #isGlobal()} will be {@code false}, and in the latter case {@link #isGlobal()} will
+   * be {@code true}.
+   * 
+   * @return {@code true} if the definition is globally defined, or {@code false} otherwise
+   */
+  boolean isGlobal();
+
+  /**
+   * Generates a coordinate string for the provided information element definition.
+   * 
+   * A coordinate consists of the element's:
+   * <ul>
+   * <li>containing Metaschema's short name</li>
+   * <li>model type</li>
+   * <li>name</li>
+   * <li>hash code</li>
+   * </ul>
+   * 
+   * @return the coordinate
+   */
+  @SuppressWarnings("null")
+  @Override
+  default String toCoordinates() {
+    IMetaschema metaschema = getContainingMetaschema();
+
+    @NotNull
+    String retval;
+    if (metaschema == null) {
+      retval = String.format("%s:%s(%d)", getModelType(),
+          getName(), hashCode());
+    } else {
+      retval = String.format("%s:%s:%s(%d)", getContainingMetaschema().getShortName(), getModelType(),
+          getName(), hashCode());
+    }
+    return retval;
+  }
 }

@@ -29,6 +29,7 @@ import gov.nist.secauto.metaschema.binding.metapath.xdm.AbstractXdmNodeItemVisit
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmAssemblyNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmFieldNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
 
 public class ValidatingXdmVisitor extends AbstractXdmNodeItemVisitor<Boolean, DefaultConstraintValidator> {
 

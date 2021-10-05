@@ -30,32 +30,43 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.sequence.BasedSequence;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
-public class InsertAnchorNode
-    extends Node {
+import org.jetbrains.annotations.NotNull;
+
+public class InsertAnchorNode extends Node {
+
+  @NotNull
   private BasedSequence type;
+  @NotNull
   private BasedSequence idReference;
 
-  public InsertAnchorNode(String type, String idReference) {
+  @SuppressWarnings("null")
+  public InsertAnchorNode(@NotNull String type, @NotNull String idReference) {
     this(CharSubSequence.of(type), CharSubSequence.of(idReference));
   }
 
-  public InsertAnchorNode(BasedSequence type, BasedSequence idReference) {
+  public InsertAnchorNode(@NotNull BasedSequence type, @NotNull BasedSequence idReference) {
     super();
     this.type = type;
     this.idReference = idReference;
   }
 
+  @NotNull
   public BasedSequence getType() {
     return type;
   }
 
+  @NotNull
   public BasedSequence getIdReference() {
     return idReference;
   }
 
   @Override
+  @NotNull
   public BasedSequence[] getSegments() {
-    return new BasedSequence[] { getType(), getIdReference() };
+    @SuppressWarnings("null")
+    @NotNull
+    BasedSequence[] retval = new BasedSequence[] { getType(), getIdReference() };
+    return retval;
   }
 
   @Override

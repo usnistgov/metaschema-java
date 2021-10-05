@@ -48,12 +48,9 @@ public abstract class AbstractSerializer<CLASS>
    *          the binding context used to supply bound Java classes while reading
    * @param classBinding
    *          the bound class information for the Java type this serializer is operating on
-   * @param configuration
-   *          the serializer configuration, or {@code null} if the default configuration is to be used
    */
-  public AbstractSerializer(BindingContext bindingContext, AssemblyClassBinding classBinding,
-      Configuration configuration) {
-    super(bindingContext, classBinding, configuration);
+  public AbstractSerializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {
+    super(bindingContext, classBinding);
   }
 
   @Override

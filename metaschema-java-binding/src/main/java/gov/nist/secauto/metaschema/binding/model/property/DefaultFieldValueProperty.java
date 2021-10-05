@@ -39,10 +39,15 @@ import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -211,5 +216,23 @@ public class DefaultFieldValueProperty extends AbstractProperty<FieldClassBindin
   @Override
   public FieldClassBinding getContainingDefinition() {
     return getParentClassBinding();
+  }
+
+  @Override
+  public @NotNull ModelType getModelType() {
+    // TODO: is this right? Is there a way to not make this derived from a property?
+    return ModelType.FIELD;
+  }
+
+  @Override
+  public @Nullable MarkupMultiline getRemarks() {
+    // TODO: implement?
+    return null;
+  }
+
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    // TODO: implement
+    return null;
   }
 }

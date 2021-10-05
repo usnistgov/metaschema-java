@@ -26,11 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.explode;
 
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
-
-import java.util.Collection;
 
 public class FieldInstance
     extends AbstractNamedInstance<IFieldInstance, FieldDefinition, AssemblyDefinition>
@@ -79,4 +78,11 @@ public class FieldInstance
   public boolean isInXmlWrapped() {
     return getProxy().isInXmlWrapped();
   }
+
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    return getProxy().getContainingMetaschema();
+  }
+
+  
 }

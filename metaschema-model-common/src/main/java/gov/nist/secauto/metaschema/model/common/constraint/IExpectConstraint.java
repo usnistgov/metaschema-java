@@ -28,7 +28,10 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface IExpectConstraint extends IConstraint {
+  @NotNull
   MetapathExpression getTest();
 
 }

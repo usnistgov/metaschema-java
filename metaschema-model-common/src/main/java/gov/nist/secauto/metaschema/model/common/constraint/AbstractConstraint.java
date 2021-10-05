@@ -29,14 +29,31 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 public abstract class AbstractConstraint implements IConstraint {
+  @Nullable
   private final String id;
+  @NotNull
   private final MetapathExpression target;
+  @Nullable
   private final MarkupMultiline remarks;
 
-  public AbstractConstraint(String id, MetapathExpression target, MarkupMultiline remarks) {
+  /**
+   * Construct a new Metaschema constraint.
+   * 
+   * @param id
+   *          the optional identifier for the constraint
+   * @param target
+   *          the Metapath expression identifying the nodes the constraint targets
+   * @param remarks
+   *          optional remarks describing the intent of the constraint
+   */
+  public AbstractConstraint(@Nullable String id, @NotNull MetapathExpression target,
+      @Nullable MarkupMultiline remarks) {
     Objects.requireNonNull(target);
     this.id = id;
     this.target = target;

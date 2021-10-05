@@ -33,9 +33,9 @@ import gov.nist.csrc.ns.metaschemaBinding.x10.MetaschemaBindingsDocument;
 import gov.nist.csrc.ns.metaschemaBinding.x10.MetaschemaBindingsType;
 import gov.nist.csrc.ns.metaschemaBinding.x10.ModelBindingType;
 import gov.nist.csrc.ns.metaschemaBinding.x10.ObjectDefinitionBindingType;
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.MetaschemaException;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
 import org.apache.xmlbeans.XmlException;
 import org.glassfish.jaxb.core.api.impl.NameConverter;
@@ -64,13 +64,13 @@ public class DefaultBindingConfiguration implements BindingConfiguration {
   }
 
   @Override
-  public String getPackageNameForMetaschema(Metaschema metaschema) {
+  public String getPackageNameForMetaschema(IMetaschema metaschema) {
     URI namespace = metaschema.getXmlNamespace();
     return getPackageNameForNamespace(namespace.toASCIIString());
   }
 
   @Override
-  public String getClassName(MetaschemaFlaggedDefinition definition) {
+  public String getClassName(INamedModelDefinition definition) {
     DefinitionBindingConfiguration config = getDefinitionBindingConfiguration(definition);
 
     String retval = null;
@@ -127,7 +127,7 @@ public class DefaultBindingConfiguration implements BindingConfiguration {
     return packageName;
   }
 
-  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(Metaschema metaschema) {
+  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(IMetaschema metaschema) {
     String metaschemaUri = metaschema.getLocation().toString();
     return getMetaschemaBindingConfiguration(metaschemaUri);
 
@@ -163,7 +163,7 @@ public class DefaultBindingConfiguration implements BindingConfiguration {
   // metaschemaConfigs.put(name, managedObjectConfig);
   // }
 
-  protected DefinitionBindingConfiguration getDefinitionBindingConfiguration(MetaschemaFlaggedDefinition definition) {
+  protected DefinitionBindingConfiguration getDefinitionBindingConfiguration(INamedModelDefinition definition) {
     String metaschemaUri = definition.getContainingMetaschema().getLocation().toString();
     String definitionName = definition.getName();
 

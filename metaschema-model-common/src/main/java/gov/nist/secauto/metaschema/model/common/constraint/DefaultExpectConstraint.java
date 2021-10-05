@@ -28,16 +28,33 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class DefaultExpectConstraint
-    extends AbstractConstraint
-    implements IExpectConstraint {
+public class DefaultExpectConstraint extends AbstractConstraint implements IExpectConstraint {
+  @NotNull
   private final MetapathExpression test;
 
-  public DefaultExpectConstraint(String id, MetapathExpression target, MetapathExpression test,
-      MarkupMultiline remarks) {
+  /**
+   * Construct a new expect constraint which requires that the associated test evaluates to
+   * {@link IBooleanItem#TRUE} against the target.
+   * 
+   * @param id
+   *          the optional identifier for the constraint
+   * @param target
+   *          the Metapath expression identifying the nodes the constraint targets
+   * @param test
+   *          a Metapath expression that is evaluated against the target node to determine if the
+   *          constraint passes
+   * @param remarks
+   *          optional remarks describing the intent of the constraint
+   */
+  public DefaultExpectConstraint(@Nullable String id, @NotNull MetapathExpression target,
+      @NotNull MetapathExpression test, MarkupMultiline remarks) {
     super(id, target, remarks);
     Objects.requireNonNull(test);
     this.test = test;

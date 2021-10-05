@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.datatypes.adapter.types;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IBase64BinaryType;
 
@@ -35,6 +34,7 @@ import java.nio.ByteBuffer;
 import java.util.Base64;
 
 public class Base64Adapter extends AbstractJavaTypeAdapter<ByteBuffer> implements IBase64BinaryType {
+  @SuppressWarnings("null")
   public Base64Adapter() {
     super(ByteBuffer.class);
   }

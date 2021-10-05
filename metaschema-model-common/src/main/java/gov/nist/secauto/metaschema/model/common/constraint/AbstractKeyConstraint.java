@@ -29,15 +29,29 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
-public abstract class AbstractKeyConstraint
-    extends AbstractConstraint
-    implements IKeyConstraint {
-  private final List<DefaultKeyField> keyFields;
+public abstract class AbstractKeyConstraint extends AbstractConstraint implements IKeyConstraint {
+  @NotNull
+  private final List<@NotNull DefaultKeyField> keyFields;
 
-  public AbstractKeyConstraint(String id, MetapathExpression target, List<DefaultKeyField> keyFields,
-      MarkupMultiline remarks) {
+  /**
+   * Create a new key-based constraint, which uses a set of key fields to build a key.
+   * 
+   * @param id
+   *          the optional identifier for the constraint
+   * @param target
+   *          the Metapath expression identifying the nodes the constraint targets
+   * @param keyFields
+   *          a list of key fields associated with the constraint
+   * @param remarks
+   *          optional remarks describing the intent of the constraint
+   */
+  public AbstractKeyConstraint(@Nullable String id, @NotNull MetapathExpression target,
+      @NotNull List<@NotNull DefaultKeyField> keyFields, MarkupMultiline remarks) {
     super(id, target, remarks);
     if (keyFields.isEmpty()) {
       throw new IllegalArgumentException("an empty list of key fields is not allowed");
@@ -46,7 +60,7 @@ public abstract class AbstractKeyConstraint
   }
 
   @Override
-  public List<DefaultKeyField> getKeyFields() {
+  public List<@NotNull DefaultKeyField> getKeyFields() {
     return keyFields;
   }
 }

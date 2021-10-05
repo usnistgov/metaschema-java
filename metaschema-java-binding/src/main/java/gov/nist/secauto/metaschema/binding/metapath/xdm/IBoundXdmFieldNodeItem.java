@@ -35,6 +35,9 @@ public interface IBoundXdmFieldNodeItem extends IBoundXdmModelNodeItem, IXdmFiel
   IBoundXdmFieldNodeItem getNodeItem();
 
   @Override
+  IBoundXdmAssemblyNodeItem getParentNodeItem();
+
+  @Override
   IBoundXdmFieldNodeItem getPathSegment();
 
   @Override

@@ -31,8 +31,6 @@ import com.ctc.wstx.stax.WstxOutputFactory;
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.Configuration;
-import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 
 import org.codehaus.stax2.XMLOutputFactory2;
@@ -44,18 +42,11 @@ import java.io.Writer;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
-public class DefaultXmlSerializer<CLASS>
-    extends AbstractSerializer<CLASS> {
+public class DefaultXmlSerializer<CLASS> extends AbstractSerializer<CLASS> {
   private XMLOutputFactory2 xmlOutputFactory;
 
-  public DefaultXmlSerializer(BindingContext bindingContext, AssemblyClassBinding classBinding,
-      Configuration configuration) {
-    super(bindingContext, classBinding, configuration);
-  }
-
-  @Override
-  public Format supportedFromat() {
-    return Format.XML;
+  public DefaultXmlSerializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {
+    super(bindingContext, classBinding);
   }
 
   protected XMLOutputFactory2 getXMLOutputFactory() {

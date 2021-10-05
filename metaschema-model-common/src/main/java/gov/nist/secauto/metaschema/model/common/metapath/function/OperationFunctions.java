@@ -36,8 +36,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDurationItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.InvalidTypeException;
-import gov.nist.secauto.metaschema.model.common.metapath.item.MetapathDynamicException;
+import gov.nist.secauto.metaschema.model.common.metapath.type.InvalidTypeMetapathException;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -132,29 +131,51 @@ public class OperationFunctions {
     return IDateTimeItem.valueOf(arg1.asZonedDateTime().plus(arg2.getValue()));
   }
 
-  public static IYearMonthDurationItem opMultiplyYearMonthDuration(IYearMonthDurationItem arg1, INumericItem arg2) {
-    return IYearMonthDurationItem.valueOf(arg1.getValue().multipliedBy(FunctionUtils.asInteger(XPathFunctions.fnRound(arg2))));
+  public static IYearMonthDurationItem opMultiplyYearMonthDuration(IYearMonthDurationItem arg1, INumericItem arg2)
+      throws ArithmeticFunctionException {
+    int arg2Int;
+    try {
+      arg2Int = FunctionUtils.asInteger(XPathFunctions.fnRound(arg2));
+    } catch (ArithmeticException ex) {
+      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);
+    }
+    return IYearMonthDurationItem.valueOf(arg1.getValue().multipliedBy(arg2Int));
   }
 
-  public static IDayTimeDurationItem opMultiplyDayTimeDuration(IDayTimeDurationItem arg1, INumericItem arg2) {
-    return IDayTimeDurationItem.valueOf(arg1.getValue().multipliedBy(FunctionUtils.asLong(XPathFunctions.fnRound(arg2))));
+  public static IDayTimeDurationItem opMultiplyDayTimeDuration(IDayTimeDurationItem arg1, INumericItem arg2)
+      throws ArithmeticFunctionException {
+    long arg2Long;
+    try {
+      arg2Long = FunctionUtils.asLong(XPathFunctions.fnRound(arg2));
+    } catch (ArithmeticException ex) {
+      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);
+    }
+    return IDayTimeDurationItem.valueOf(arg1.getValue().multipliedBy(arg2Long));
   }
 
   public static IYearMonthDurationItem opDivideYearMonthDuration(IYearMonthDurationItem arg1, INumericItem arg2)
-      throws MetapathDynamicException {
+      throws DateTimeFunctionException {
     IIntegerItem totalMonths = IIntegerItem.valueOf(arg1.getValue().toTotalMonths());
     IIntegerItem result = opNumericIntegerDivide(totalMonths, arg2);
-    int months = FunctionUtils.asInteger(result.asInteger());
+    int months;
+    try {
+      months = FunctionUtils.asInteger(result.asInteger());
+    } catch (ArithmeticException ex) {
+      throw new DateTimeFunctionException(DateTimeFunctionException.DURATION_OVERFLOW_UNDERFLOW_ERROR,
+          "Overflow/underflow in duration operation.", ex);
+    }
     int years = months / 12;
     months = months % 12;
     return IYearMonthDurationItem.valueOf(years, months, 0);
   }
 
-  public static IDayTimeDurationItem opDivideDayTimeDuration(IDayTimeDurationItem arg1, INumericItem arg2) {
+  public static IDayTimeDurationItem opDivideDayTimeDuration(IDayTimeDurationItem arg1, INumericItem arg2)
+      throws ArithmeticFunctionException {
     try {
-      return IDayTimeDurationItem.valueOf(arg1.getValue().dividedBy(FunctionUtils.asLong(XPathFunctions.fnRound(arg2))));
+      return IDayTimeDurationItem
+          .valueOf(arg1.getValue().dividedBy(FunctionUtils.asLong(XPathFunctions.fnRound(arg2))));
     } catch (ArithmeticException ex) {
-      throw new MetapathDynamicException("err:FOAR0001", "Division by zero", ex);
+      throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO, "Division by zero", ex);
     }
   }
 
@@ -238,7 +259,7 @@ public class OperationFunctions {
       } else if (left instanceof IDecimalItem) {
         decimalLeft = ((IDecimalItem) left).asDecimal();
       } else {
-        throw new InvalidTypeException(left.getClass());
+        throw new InvalidTypeMetapathException(left);
       }
 
       BigDecimal decimalRight;
@@ -247,7 +268,7 @@ public class OperationFunctions {
       } else if (left instanceof IDecimalItem) {
         decimalRight = ((IDecimalItem) right).asDecimal();
       } else {
-        throw new InvalidTypeException(right.getClass());
+        throw new InvalidTypeMetapathException(right);
       }
       BigDecimal result = decimalLeft.add(decimalRight, FunctionUtils.MATH_CONTEXT);
       retval = IDecimalItem.valueOf(result);
@@ -259,7 +280,7 @@ public class OperationFunctions {
       } else if (left instanceof IDecimalItem) {
         integerLeft = ((IDecimalItem) left).asInteger();
       } else {
-        throw new InvalidTypeException(left.getClass());
+        throw new InvalidTypeMetapathException(left);
       }
 
       BigInteger integerRight;
@@ -268,7 +289,7 @@ public class OperationFunctions {
       } else if (left instanceof IDecimalItem) {
         integerRight = ((IDecimalItem) right).asInteger();
       } else {
-        throw new InvalidTypeException(right.getClass());
+        throw new InvalidTypeMetapathException(right);
       }
       BigInteger result = integerLeft.add(integerRight);
       retval = IIntegerItem.valueOf(result);
@@ -286,7 +307,7 @@ public class OperationFunctions {
       } else if (left instanceof IDecimalItem) {
         decimalLeft = ((IDecimalItem) left).asDecimal();
       } else {
-        throw new InvalidTypeException(left.getClass());
+        throw new InvalidTypeMetapathException(left);
       }
 
       BigDecimal decimalRight;
@@ -295,7 +316,7 @@ public class OperationFunctions {
       } else if (left instanceof IDecimalItem) {
         decimalRight = ((IDecimalItem) right).asDecimal();
       } else {
-        throw new InvalidTypeException(right.getClass());
+        throw new InvalidTypeMetapathException(right);
       }
       BigDecimal result = decimalLeft.subtract(decimalRight, FunctionUtils.MATH_CONTEXT);
       retval = IDecimalItem.valueOf(result);
@@ -307,7 +328,7 @@ public class OperationFunctions {
       } else if (left instanceof IDecimalItem) {
         integerLeft = ((IDecimalItem) left).asInteger();
       } else {
-        throw new InvalidTypeException(left.getClass());
+        throw new InvalidTypeMetapathException(left);
       }
 
       BigInteger integerRight;
@@ -316,7 +337,7 @@ public class OperationFunctions {
       } else if (left instanceof IDecimalItem) {
         integerRight = ((IDecimalItem) right).asInteger();
       } else {
-        throw new InvalidTypeException(right.getClass());
+        throw new InvalidTypeMetapathException(right);
       }
       BigInteger result = integerLeft.subtract(integerRight);
       retval = IIntegerItem.valueOf(result);
@@ -334,7 +355,7 @@ public class OperationFunctions {
       } else if (left instanceof IDecimalItem) {
         decimalLeft = ((IDecimalItem) left).asDecimal();
       } else {
-        throw new InvalidTypeException(left.getClass());
+        throw new InvalidTypeMetapathException(left);
       }
 
       BigDecimal decimalRight;
@@ -343,7 +364,7 @@ public class OperationFunctions {
       } else if (left instanceof IDecimalItem) {
         decimalRight = ((IDecimalItem) right).asDecimal();
       } else {
-        throw new InvalidTypeException(right.getClass());
+        throw new InvalidTypeMetapathException(right);
       }
       BigDecimal result = decimalLeft.multiply(decimalRight, FunctionUtils.MATH_CONTEXT);
       retval = IDecimalItem.valueOf(result);
@@ -362,7 +383,8 @@ public class OperationFunctions {
       BigDecimal decimalDivisor = divisor.asDecimal();
 
       if (BigDecimal.ZERO.equals(decimalDivisor)) {
-        throw new MetapathDynamicException("err:FOAR0001", "Division by zero");
+        throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,
+            ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
       }
 
       BigDecimal decimalDividend = dividend.asDecimal();
@@ -373,7 +395,8 @@ public class OperationFunctions {
       BigInteger integerDivisor = divisor.asInteger();
 
       if (BigInteger.ZERO.equals(integerDivisor)) {
-        throw new MetapathDynamicException("err:FOAR0001", "Division by zero");
+        throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,
+            ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
       }
 
       BigInteger integerDividend = dividend.asInteger();
@@ -390,18 +413,21 @@ public class OperationFunctions {
       BigDecimal decimalDivisor = divisor.asDecimal();
 
       if (BigDecimal.ZERO.equals(decimalDivisor)) {
-        throw new MetapathDynamicException("err:FOAR0001", "Division by zero");
+        throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,
+            ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
       }
 
       BigDecimal decimalDividend = dividend.asDecimal();
-      BigInteger result = decimalDividend.divideToIntegralValue(decimalDivisor, FunctionUtils.MATH_CONTEXT).toBigInteger();
+      BigInteger result
+          = decimalDividend.divideToIntegralValue(decimalDivisor, FunctionUtils.MATH_CONTEXT).toBigInteger();
       retval = IIntegerItem.valueOf(result);
     } else {
       // create an integer result
       BigInteger integerDivisor = divisor.asInteger();
 
       if (BigInteger.ZERO.equals(integerDivisor)) {
-        throw new MetapathDynamicException("err:FOAR0001", "Division by zero");
+        throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,
+            ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
       }
 
       BigInteger result = dividend.asInteger().divide(integerDivisor);
@@ -427,11 +453,12 @@ public class OperationFunctions {
     } else if (divisor instanceof IDecimalItem) {
       decimalDivisor = ((IDecimalItem) divisor).asDecimal();
     } else {
-      throw new InvalidTypeException(divisor.getClass());
+      throw new InvalidTypeMetapathException(divisor);
     }
 
     if (BigDecimal.ZERO.equals(decimalDivisor)) {
-      throw new MetapathDynamicException("err:FOAR0001", "Division by zero");
+      throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,
+          ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
     }
 
     BigDecimal decimalDividend;
@@ -440,7 +467,7 @@ public class OperationFunctions {
     } else if (dividend instanceof IDecimalItem) {
       decimalDividend = ((IDecimalItem) dividend).asDecimal();
     } else {
-      throw new InvalidTypeException(dividend.getClass());
+      throw new InvalidTypeMetapathException(dividend);
     }
 
     INumericItem retval;
@@ -466,7 +493,7 @@ public class OperationFunctions {
       BigInteger result = integer.negate();
       retval = IIntegerItem.valueOf(result);
     } else {
-      throw new InvalidTypeException(item.getClass());
+      throw new InvalidTypeMetapathException(item);
     }
     return retval;
   }

@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.MarkupLineType;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.MarkupMultilineType;
 
@@ -35,6 +37,7 @@ import org.apache.xmlbeans.XmlTokenSource;
 import java.io.IOException;
 import java.io.StringWriter;
 
+// TODO: is this needed, or can we use methods on the markup implementations?
 public class MarkupStringConverter {
   private MarkupStringConverter() {
     // disable construction
@@ -47,9 +50,9 @@ public class MarkupStringConverter {
    *          the content to convert
    * @return the equivalent formatted text as a MarkupLine
    */
-  public static gov.nist.secauto.metaschema.datatypes.markup.MarkupLine toMarkupString(MarkupLineType content) {
+  public static MarkupLine toMarkupString(MarkupLineType content) {
     String html = processHTML(content);
-    return gov.nist.secauto.metaschema.datatypes.markup.MarkupLine.fromHtml(html);
+    return MarkupLine.fromHtml(html);
   }
 
   /**
@@ -59,10 +62,10 @@ public class MarkupStringConverter {
    *          the content to convert
    * @return the equivalent formatted text as a MarkupLine
    */
-  public static gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline
+  public static MarkupMultiline
       toMarkupString(MarkupMultilineType content) {
     String html = processHTML(content);
-    return gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline.fromHtml(html);
+    return MarkupMultiline.fromHtml(html);
   }
 
   /**

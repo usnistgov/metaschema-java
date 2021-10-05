@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.model.common.instance;
 
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 
+import org.jetbrains.annotations.Nullable;
+
 import javax.xml.namespace.QName;
 
 /**
@@ -35,7 +37,11 @@ import javax.xml.namespace.QName;
  * assembly's model.
  */
 public interface IModelInstance extends IInstance {
-
+  /**
+   * Retrieve the Metaschema assembly definition on which the info element was declared.
+   * 
+   * @return the Metaschema assembly definition on which the info element was declared
+   */
   @Override
   IAssemblyDefinition getContainingDefinition();
 
@@ -47,6 +53,7 @@ public interface IModelInstance extends IInstance {
    * @return the groupAs QName or {@code null} if no name is configured, such as when
    *         {@link #getMaxOccurs()} = 1.
    */
+  @Nullable
   default QName getXmlGroupAsQName() {
     QName retval = null;
     if (XmlGroupAsBehavior.GROUPED.equals(getXmlGroupAsBehavior())) {
@@ -77,11 +84,13 @@ public interface IModelInstance extends IInstance {
   int getMaxOccurs();
 
   /**
-   * Get the name provided for grouping.
+   * Get the name provided for grouping. An instance in Metaschema must have a group name if the
+   * instance has a cardinality greater than {@code 1}.
    * 
    * @return the group-as name or {@code null} if no name is configured, such as when
    *         {@link #getMaxOccurs()} = 1
    */
+  @Nullable
   String getGroupAsName();
 
   /**

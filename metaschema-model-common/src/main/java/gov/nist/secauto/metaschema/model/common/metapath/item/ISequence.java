@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -64,9 +66,11 @@ public interface ISequence<ITEM_TYPE extends IItem> {
     return new StreamSequence<ITEM_TYPE>(items);
   }
 
-  List<ITEM_TYPE> asList();
+  @NotNull
+  List<@NotNull ITEM_TYPE> asList();
 
-  Stream<ITEM_TYPE> asStream();
+  @NotNull
+  Stream<@NotNull ITEM_TYPE> asStream();
 
   boolean isEmpty();
 

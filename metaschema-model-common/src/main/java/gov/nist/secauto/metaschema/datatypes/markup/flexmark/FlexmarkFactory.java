@@ -117,6 +117,7 @@ public class FlexmarkFactory {
     return parser.parse(markdown);
   }
 
+  @SuppressWarnings("null")
   protected void applyOptions(BuilderBase<?> builder) {
     builder.set(Parser.FENCED_CODE_CONTENT_BLOCK, true);
     // GitHub-flavored tables

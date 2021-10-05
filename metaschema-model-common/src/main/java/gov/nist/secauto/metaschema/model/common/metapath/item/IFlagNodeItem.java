@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
@@ -48,6 +49,9 @@ public interface IFlagNodeItem extends INodeItem {
   }
 
   @Override
+  IFlagDefinition getDefinition();
+
+  @Override
   default Stream<? extends INodeItem> getMatchingChildInstances(IExpressionEvaluationVisitor visitor,
       IExpression<?> expr, boolean recurse) {
     return Stream.empty();
@@ -62,5 +66,4 @@ public interface IFlagNodeItem extends INodeItem {
   default Stream<? extends IModelNodeItem> getMatchingChildModelInstances(ModelInstance modelInstance) {
     return Stream.empty();
   }
-
 }

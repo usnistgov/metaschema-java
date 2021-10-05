@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.explode;
 
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
@@ -34,13 +37,15 @@ import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class FlagDefinition
     extends AbstractDefinition<IFlagDefinition>
     implements IFlagDefinition {
 
-  public FlagDefinition(IFlagDefinition delegate) {
+  public FlagDefinition(@NotNull IFlagDefinition delegate) {
     super(delegate);
   }
 
@@ -72,5 +77,30 @@ public class FlagDefinition
   @Override
   public List<? extends IExpectConstraint> getExpectConstraints() {
     return getDelegate().getExpectConstraints();
+  }
+
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    return getDelegate().getContainingMetaschema();
+  }
+
+  @Override
+  public String getFormalName() {
+    return getDelegate().getFormalName();
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+    return getDelegate().getDescription();
+  }
+
+  @Override
+  public ModuleScopeEnum getModuleScope() {
+    return ModuleScopeEnum.LOCAL;
+  }
+
+  @Override
+  public boolean isGlobal() {
+    return false;
   }
 }

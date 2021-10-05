@@ -104,6 +104,11 @@
 			<scope>test</scope>
 		</dependency>
 
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+    </dependency>
+
 		<dependency>
 			<groupId>com.adelean</groupId>
 			<artifactId>inject-resources-junit-jupiter</artifactId>

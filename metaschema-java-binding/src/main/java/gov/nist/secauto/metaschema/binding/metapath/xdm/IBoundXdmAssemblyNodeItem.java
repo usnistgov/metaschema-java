@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.binding.metapath.xdm;
 import gov.nist.secauto.metaschema.binding.model.AssemblyDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
 
 import java.util.List;
 import java.util.Map;
@@ -38,6 +37,9 @@ public interface IBoundXdmAssemblyNodeItem extends IBoundXdmModelNodeItem, IXdmA
 
   @Override
   IBoundXdmAssemblyNodeItem getNodeItem();
+
+  @Override
+  IBoundXdmAssemblyNodeItem getParentNodeItem();
 
   @Override
   IBoundXdmAssemblyNodeItem getPathSegment();

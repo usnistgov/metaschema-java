@@ -28,16 +28,19 @@ package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.AssemblyDocument;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
 public class XmlAssemblyInstance
-    extends AbstractAssemblyInstance<XmlGlobalAssemblyDefinition> {
+    extends AbstractAssemblyInstance {
   // private static final Logger logger = LogManager.getLogger(XmlAssemblyInstance.class);
 
   private final AssemblyDocument.Assembly xmlAssembly;
@@ -51,7 +54,7 @@ public class XmlAssemblyInstance
    * @param parent
    *          the assembly definition this object is an instance of
    */
-  public XmlAssemblyInstance(AssemblyDocument.Assembly xmlAssembly, AssemblyDefinition parent) {
+  public XmlAssemblyInstance(@NotNull AssemblyDocument.Assembly xmlAssembly, @NotNull IXmlAssemblyDefinition parent) {
     super(parent);
     this.xmlAssembly = xmlAssembly;
   }
@@ -65,12 +68,14 @@ public class XmlAssemblyInstance
     return xmlAssembly;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public XmlGlobalAssemblyDefinition getDefinition() {
-    return (XmlGlobalAssemblyDefinition) getContainingDefinition().getContainingMetaschema()
-        .getAssemblyDefinitionByName(getName());
+  public IAssemblyDefinition getDefinition() {
+    return getContainingDefinition().getContainingMetaschema()
+        .getScopedAssemblyDefinitionByName(getName());
   }
 
+  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlAssembly().getRef();

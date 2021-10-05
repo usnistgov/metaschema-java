@@ -28,6 +28,9 @@ package gov.nist.secauto.metaschema.model.common;
 
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 public interface IModelElement {
 
   /**
@@ -35,6 +38,7 @@ public interface IModelElement {
    * 
    * @return the type
    */
+  @NotNull
   ModelType getModelType();
 
   /**
@@ -44,6 +48,7 @@ public interface IModelElement {
    * 
    * @return the coordinates
    */
+  @NotNull
   String toCoordinates();
 
   /**
@@ -51,5 +56,13 @@ public interface IModelElement {
    * 
    * @return the remarks or {@code null} if no remarks are defined
    */
+  @Nullable
   MarkupMultiline getRemarks();
+
+  /**
+   * Retrieves the Metaschema instance that contains for the information element's declaration.
+   * 
+   * @return the Metaschema instance or {@code null} if it is unknown
+   */
+  IMetaschema getContainingMetaschema();
 }

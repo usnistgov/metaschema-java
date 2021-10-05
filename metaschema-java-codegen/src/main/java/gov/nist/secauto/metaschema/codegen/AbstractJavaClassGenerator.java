@@ -36,15 +36,17 @@ import gov.nist.secauto.metaschema.codegen.property.FlagPropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.PropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
-import gov.nist.secauto.metaschema.model.instances.FlagInstance;
+import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.explode.FlagInstance;
+import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
 import org.apache.commons.lang3.builder.MultilineRecursiveToStringStyle;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,12 +60,15 @@ import java.util.Set;
 
 import javax.lang.model.element.Modifier;
 
-public abstract class AbstractJavaClassGenerator<DEFINITION extends MetaschemaFlaggedDefinition>
+public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelDefinition>
     implements JavaClassGenerator {
   private static final Logger logger = LogManager.getLogger(AbstractJavaClassGenerator.class);
 
+  @NotNull
   private final DEFINITION definition;
+  @NotNull
   private final TypeResolver typeResolver;
+  @NotNull
   private final Map<String, PropertyGenerator> propertyNameToPropertyGeneratorMap = new LinkedHashMap<>();
   private boolean hasJsonKeyFlag = false;
 
@@ -75,7 +80,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends MetaschemaFl
    * @param typeResolver
    *          the resolver to use to lookup Java type information for Metaschema objects
    */
-  public AbstractJavaClassGenerator(DEFINITION definition, TypeResolver typeResolver) {
+  public AbstractJavaClassGenerator(@NotNull DEFINITION definition, @NotNull TypeResolver typeResolver) {
     Objects.requireNonNull(definition, "definition");
     Objects.requireNonNull(typeResolver, "typeResolver");
     this.definition = definition;
@@ -83,7 +88,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends MetaschemaFl
     this.hasJsonKeyFlag = definition.hasJsonKey();
 
     // create Java properties for the definition's flags
-    for (FlagInstance<?> instance : definition.getFlagInstances().values()) {
+    for (IFlagInstance instance : definition.getFlagInstances()) {
       newFlagPropertyGenerator(instance);
     }
   }
@@ -93,6 +98,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends MetaschemaFl
    * 
    * @return the definition
    */
+  @Override
   public DEFINITION getDefinition() {
     return definition;
   }
@@ -107,6 +113,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends MetaschemaFl
    * 
    * @return the type resolver
    */
+  @NotNull
   public TypeResolver getTypeResolver() {
     return typeResolver;
   }
@@ -156,18 +163,18 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends MetaschemaFl
       builder.addModifiers(Modifier.STATIC);
     }
 
-    Set<MetaschemaFlaggedDefinition> additionalChildClasses = buildClass(builder);
+    Set<INamedModelDefinition> additionalChildClasses = buildClass(builder);
 
-    for (MetaschemaFlaggedDefinition definition : additionalChildClasses) {
+    for (INamedModelDefinition definition : additionalChildClasses) {
       TypeSpec.Builder childBuilder;
       switch (definition.getModelType()) {
       case ASSEMBLY:
         childBuilder
-            = new AssemblyJavaClassGenerator((AssemblyDefinition) definition, getTypeResolver()).generateChildClass();
+            = new AssemblyJavaClassGenerator((IAssemblyDefinition) definition, getTypeResolver()).generateChildClass();
         break;
       case FIELD:
         childBuilder
-            = new FieldJavaClassGenerator((FieldDefinition) definition, getTypeResolver()).generateChildClass();
+            = new FieldJavaClassGenerator((IFieldDefinition) definition, getTypeResolver()).generateChildClass();
         break;
       default:
         throw new UnsupportedOperationException(String
@@ -211,7 +218,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends MetaschemaFl
    *          the flag instance to generate the property for
    * @return the new property generator
    */
-  public FlagPropertyGenerator newFlagPropertyGenerator(FlagInstance<?> instance) {
+  public FlagPropertyGenerator newFlagPropertyGenerator(@NotNull IFlagInstance instance) {
     FlagPropertyGenerator context = new FlagPropertyGenerator(instance, this);
     addPropertyGenerator(context);
     return context;
@@ -250,14 +257,14 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends MetaschemaFl
    * @throws IOException
    *           if an error occurred while building the class
    */
-  protected Set<MetaschemaFlaggedDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
+  protected Set<INamedModelDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
     builder.addJavadoc(getDefinition().getDescription().toHtml());
 
     // generate a no-arg constructor
     builder.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC).build());
 
     // generate all the properties and access methods
-    Set<MetaschemaFlaggedDefinition> additionalChildClasses = new HashSet<>();
+    Set<INamedModelDefinition> additionalChildClasses = new HashSet<>();
     for (PropertyGenerator property : getPropertyGenerators()) {
       additionalChildClasses.addAll(property.build(builder, getTypeResolver()));
     }

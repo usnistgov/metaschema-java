@@ -30,12 +30,15 @@ import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 public abstract class AbstractPathItem<SEGMENT extends IPathSegment> implements IPathItem {
+  @NotNull
   private final SEGMENT segment;
 
-  public AbstractPathItem(SEGMENT segment) {
+  public AbstractPathItem(@NotNull SEGMENT segment) {
     Objects.requireNonNull(segment, "segment");
     this.segment = segment;
   }
@@ -45,7 +48,7 @@ public abstract class AbstractPathItem<SEGMENT extends IPathSegment> implements 
     return segment;
   }
 
-  protected INamedDefinition getDefinition() {
+  public INamedDefinition getDefinition() {
     return getPathSegment().getDefinition();
   }
 

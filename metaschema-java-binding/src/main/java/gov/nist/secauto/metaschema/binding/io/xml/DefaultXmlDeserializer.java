@@ -31,14 +31,10 @@ import com.ctc.wstx.stax.WstxInputFactory;
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.Configuration;
 import gov.nist.secauto.metaschema.binding.io.Feature;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmAssemblyNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.constraint.DefaultConstraintValidator;
-import gov.nist.secauto.metaschema.binding.model.constraint.ValidatingXdmVisitor;
-import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 
@@ -46,24 +42,24 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URI;
 
 import javax.xml.stream.EventFilter;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-public class DefaultXmlDeserializer<CLASS>
-    extends AbstractDeserializer<CLASS> {
+public class DefaultXmlDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
   private static final Logger logger = LogManager.getLogger(DefaultXmlDeserializer.class);
 
   private XMLInputFactory2 xmlInputFactory;
 
-  public DefaultXmlDeserializer(BindingContext bindingContext, AssemblyClassBinding classBinding,
-      Configuration configuration) {
-    super(bindingContext, classBinding, configuration);
+  public DefaultXmlDeserializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {
+    super(bindingContext, classBinding);
   }
 
   // @Override
@@ -100,31 +96,26 @@ public class DefaultXmlDeserializer<CLASS>
     }
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public CLASS deserialize(Reader reader) throws BindingException {
-    return (CLASS) deserializeToNodeItem(reader).getValue();
-  }
-
-  public IBoundXdmAssemblyNodeItem deserializeToNodeItem(Reader reader) throws BindingException {
+  public IBoundXdmAssemblyNodeItem deserializeToNodeItem(Reader reader, URI documentUri) throws BindingException {
     XMLEventReader2 eventReader = newXMLEventReader2(reader);
     try {
-      return parseXmlInternal(eventReader);
+      return parseXmlInternal(eventReader, documentUri);
     } catch (XMLStreamException ex) {
       throw new BindingException(ex);
     }
   }
 
-  protected IBoundXdmAssemblyNodeItem parseXmlInternal(XMLEventReader2 reader) throws XMLStreamException, BindingException {
+  protected IBoundXdmAssemblyNodeItem parseXmlInternal(XMLEventReader2 reader, @Nullable URI documentUri)
+      throws XMLStreamException, BindingException {
 
     AssemblyClassBinding classBinding = getClassBinding();
 
-    DefaultXmlParsingContext parsingContext
-        = new DefaultXmlParsingContext(reader, new DefaultXmlProblemHandler());
+    DefaultXmlParsingContext parsingContext = new DefaultXmlParsingContext(reader, new DefaultXmlProblemHandler());
 
     CLASS retval;
     IBoundXdmAssemblyNodeItem parsedNodeItem;
-    if (classBinding.isRoot() && getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT, false)) {
+    if (classBinding.isRoot() && getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT)) {
       // we may be at the START_DOCUMENT
       if (reader.peek().isStartDocument()) {
         XmlEventUtil.consumeAndAssert(reader, XMLEvent.START_DOCUMENT);
@@ -141,7 +132,7 @@ public class DefaultXmlDeserializer<CLASS>
 
       // XmlEventUtil.consumeAndAssert(reader, XMLEvent.END_ELEMENT);
       XmlEventUtil.consumeAndAssert(reader, XMLEvent.END_DOCUMENT);
-      parsedNodeItem = IXdmFactory.INSTANCE.newRootAssemblyNodeItem(property, retval);
+      parsedNodeItem = IXdmFactory.INSTANCE.newRootAssemblyNodeItem(property, retval, documentUri);
     } else {
       try {
         @SuppressWarnings("unchecked")
@@ -150,7 +141,7 @@ public class DefaultXmlDeserializer<CLASS>
       } catch (IOException | XMLStreamException ex) {
         throw new BindingException(ex);
       }
-      parsedNodeItem = IXdmFactory.INSTANCE.newRelativeAssemblyNodeItem(classBinding, retval);
+      parsedNodeItem = IXdmFactory.INSTANCE.newRelativeAssemblyNodeItem(classBinding, retval, documentUri);
     }
 
     if (reader.hasNext()) {
@@ -159,11 +150,6 @@ public class DefaultXmlDeserializer<CLASS>
       }
     }
 
-    if (isValidating()) {
-      DefaultConstraintValidator validator = new DefaultConstraintValidator();
-      new ValidatingXdmVisitor().visit(parsedNodeItem, validator);
-      validator.finalizeValidation();
-    }
     return parsedNodeItem;
   }
 }

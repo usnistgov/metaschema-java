@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
@@ -38,19 +37,13 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.InvalidTypeException;
-import gov.nist.secauto.metaschema.model.common.metapath.item.MetapathDynamicException;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -84,7 +77,7 @@ public class XPathFunctions {
     } else if (item instanceof INodeItem) {
       retval = item.toAtomicItem();
     } else {
-      throw new MetapathDynamicException("err:FOTY0012",
+      throw new InvalidTypeFunctionMetapathException(InvalidTypeFunctionMetapathException.NODE_HAS_NO_TYPED_VALUE,
           String.format("Unrecognized item '%s' during atomization", item.getClass().getName()));
     }
     return retval;
@@ -140,7 +133,8 @@ public class XPathFunctions {
       String string = ((IAnyUriItem) item).asString();
       retval = !string.isBlank();
     } else {
-      throw new InvalidTypeException(item.getClass());
+      throw new InvalidArgumentFunctionMetapathException(InvalidArgumentFunctionMetapathException.INVALID_ARGUMENT_TYPE,
+          String.format(" Invalid argument type '%s'", item.getItemName()));
     }
     return retval;
   }
@@ -198,8 +192,14 @@ public class XPathFunctions {
     return fnRound(arg, IIntegerItem.ZERO);
   }
 
-  public static INumericItem fnRound(INumericItem arg, IIntegerItem precisionItem) {
-    int precision = FunctionUtils.asInteger(precisionItem);
+  public static INumericItem fnRound(INumericItem arg, IIntegerItem precisionItem) throws ArithmeticFunctionException {
+    int precision;
+    try {
+      precision = FunctionUtils.asInteger(precisionItem);
+    } catch (ArithmeticException ex) {
+      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR,
+          "Numeric operation overflow/underflow.", ex);
+    }
     INumericItem retval;
     if (precision >= 0) {
       // round to precision decimal places
@@ -243,6 +243,19 @@ public class XPathFunctions {
     return retval;
   }
 
+//  public static IAnyUriItem fnDocumentUri(INodeItem arg) {
+//    if (arg == null) {
+//      return null;
+//    }
+//
+//    // this behavior is different from XPath
+//    URI documentBaseURi = arg.getBaseUri();
+//    if (documentBaseUri == null) {
+//      throw new DynamicMetapathException("err:XPDY0002", "The base URI of the document is not known in this context");
+//    }
+//    return IAnyUriItem.valueOf();
+//  }
+//
 //  public static INodeItem fnDoc(IStringItem uri, DynamicContext context) {
 //    if (uri == null) {
 //      return null;
@@ -260,9 +273,9 @@ public class XPathFunctions {
 //    if (documentNodeItem == null) {
 //      // load the document
 //      URL documentUrl = documentUri.toURL();
-//      URLConnection connection = documentUrl.openConnection();
-//      connection.connect();
-//      InputStream is = connection.getInputStream();
+//      documentNodeItem = context.getStaticContext().getDocumentLoader().loadAsNodeItem(documentUrl);
+//      context.getAvailableDocuments().put(documentUriString, documentNodeItem);
 //    }
+//    return documentNodeItem;
 //  }
 }

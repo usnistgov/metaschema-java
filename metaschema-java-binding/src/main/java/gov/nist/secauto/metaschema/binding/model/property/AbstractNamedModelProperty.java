@@ -44,6 +44,7 @@ import gov.nist.secauto.metaschema.binding.model.property.info.ModelPropertyInfo
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyInfo;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 
@@ -72,6 +73,11 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
 
   protected AbstractNamedModelProperty(AssemblyClassBinding parentClassBinding, Field field) {
     super(field, parentClassBinding);
+  }
+
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    return null;
   }
 
   protected abstract IJavaTypeAdapter<?> getJavaTypeAdapter();

@@ -31,15 +31,22 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.xml.namespace.QName;
 
 public interface IFlagDefinition extends INamedValuedDefinition, Flag {
   @Override
+  @NotNull
   default QName getXmlQName() {
-    return QName.valueOf(getEffectiveName());
+    @SuppressWarnings("null")
+    @NotNull
+    QName retval = QName.valueOf(getEffectiveName());
+    return retval;
   }
 
   @Override
+  @NotNull
   default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {
     return metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(IInstanceSet.newInstanceSet(this)));
   }

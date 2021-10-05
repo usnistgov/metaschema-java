@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.type.IAnyAtomicType;
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.codehaus.stax2.evt.XMLEventFactory2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -279,6 +280,7 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    * 
    * @return the default field name to use
    */
+  @NotNull
   String getDefaultJsonValueKey();
 
   /**

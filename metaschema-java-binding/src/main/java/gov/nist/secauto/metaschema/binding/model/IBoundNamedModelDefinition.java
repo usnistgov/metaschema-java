@@ -23,20 +23,27 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
+import java.util.Collection;
 import java.util.Map;
 
 public interface IBoundNamedModelDefinition extends INamedModelDefinition, BoundDefinition {
 
   @Override
   default FlagProperty getFlagInstanceByName(String name) {
-    return getFlagInstances().get(name);
+    return getFlagInstanceMap().get(name);
   }
 
   @Override
-  Map<String, ? extends FlagProperty> getFlagInstances();
+  Map<String, ? extends FlagProperty> getFlagInstanceMap();
+
+  @Override
+  default Collection<? extends FlagProperty> getFlagInstances() {
+    return getFlagInstanceMap().values();
+  }
 }

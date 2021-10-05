@@ -24,16 +24,35 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmAssemblyNodeItem;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.net.URI;
 
 public class XdmFieldNodeItemImpl extends AbstractBoundXdmFieldNodeItem<FieldProperty> {
 
-  public XdmFieldNodeItemImpl(FieldProperty instance, Object value, int position, IXdmAssemblyNodeItem parentNodeItem) {
-    super(instance, value, position, parentNodeItem);
+  private final @NotNull IBoundXdmAssemblyNodeItem parent;
+
+  public XdmFieldNodeItemImpl(
+      @NotNull FieldProperty instance,
+      @NotNull Object value,
+      int position,
+      @NotNull IBoundXdmAssemblyNodeItem parent) {
+    super(instance, value, position);
+    this.parent = parent;
   }
 
+  @Override
+  @NotNull
+  public IBoundXdmAssemblyNodeItem getParentNodeItem() {
+    return parent;
+  }
+
+  @Override
+  public URI getBaseUri() {
+    return getParentNodeItem().getBaseUri();
+  }
 }

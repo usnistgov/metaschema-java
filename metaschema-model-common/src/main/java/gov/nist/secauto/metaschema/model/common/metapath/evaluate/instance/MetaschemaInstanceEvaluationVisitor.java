@@ -152,6 +152,7 @@ public class MetaschemaInstanceEvaluationVisitor
     return expr.getChild().accept(this, context);
   }
 
+  @SuppressWarnings("null")
   protected IInstanceSet buildUnion(List<? extends IExpression<?>> children, IMetaschemaContext context) {
     IInstanceSet retval;
     if (children.isEmpty()) {

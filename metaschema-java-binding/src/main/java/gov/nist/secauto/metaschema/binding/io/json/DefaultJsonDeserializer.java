@@ -35,31 +35,25 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.Configuration;
 import gov.nist.secauto.metaschema.binding.io.Feature;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmAssemblyNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.constraint.DefaultConstraintValidator;
-import gov.nist.secauto.metaschema.binding.model.constraint.ValidatingXdmVisitor;
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URI;
 
 public class DefaultJsonDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
   private JsonFactory jsonFactory;
 
-  public DefaultJsonDeserializer(BindingContext bindingContext, AssemblyClassBinding classBinding,
-      Configuration configuration) {
-    super(bindingContext, classBinding, configuration);
+  public DefaultJsonDeserializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {
+    super(bindingContext, classBinding);
   }
-
-  // @Override
-  // public Format supportedFromat() {
-  // return Format.JSON;
-  // }
 
   protected JsonFactory getJsonFactoryInstance() {
     return JsonFactoryFactory.singletonInstance();
@@ -101,22 +95,16 @@ public class DefaultJsonDeserializer<CLASS> extends AbstractDeserializer<CLASS> 
     }
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public CLASS deserialize(Reader reader) throws BindingException {
-    return (CLASS) deserializeToNodeItem(reader).getValue();
-  }
-
-  public IBoundXdmAssemblyNodeItem deserializeToNodeItem(Reader reader) throws BindingException {
+  public IBoundXdmAssemblyNodeItem deserializeToNodeItem(Reader reader, @Nullable URI documentUri) throws BindingException {
     JsonParser parser = newJsonParser(reader);
 
-    DefaultJsonParsingContext parsingContext
-        = new DefaultJsonParsingContext(parser, new DefaultJsonProblemHandler());
+    DefaultJsonParsingContext parsingContext = new DefaultJsonParsingContext(parser, new DefaultJsonProblemHandler());
 
     AssemblyClassBinding classBinding = getClassBinding();
     CLASS retval;
     IBoundXdmAssemblyNodeItem parsedNodeItem;
-    if (classBinding.isRoot() && getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT, false)) {
+    if (classBinding.isRoot() && getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT)) {
       RootDefinitionAssemblyProperty property = new RootDefinitionAssemblyProperty(classBinding);
       try {
         // first read the initial START_OBJECT
@@ -132,7 +120,7 @@ public class DefaultJsonDeserializer<CLASS> extends AbstractDeserializer<CLASS> 
       } catch (IOException ex) {
         throw new BindingException(ex);
       }
-      parsedNodeItem = IXdmFactory.INSTANCE.newRootAssemblyNodeItem(property, retval);
+      parsedNodeItem = IXdmFactory.INSTANCE.newRootAssemblyNodeItem(property, retval, documentUri);
     } else {
       try {
         @SuppressWarnings("unchecked")
@@ -141,13 +129,7 @@ public class DefaultJsonDeserializer<CLASS> extends AbstractDeserializer<CLASS> 
       } catch (IOException ex) {
         throw new BindingException(ex);
       }
-      parsedNodeItem = IXdmFactory.INSTANCE.newRelativeAssemblyNodeItem(classBinding, retval);
-    }
-
-    if (isValidating()) {
-      DefaultConstraintValidator validator = new DefaultConstraintValidator();
-      new ValidatingXdmVisitor().visit(parsedNodeItem, validator);
-      validator.finalizeValidation();
+      parsedNodeItem = IXdmFactory.INSTANCE.newRelativeAssemblyNodeItem(classBinding, retval, documentUri);
     }
     return parsedNodeItem;
   }

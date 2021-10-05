@@ -29,24 +29,20 @@ package gov.nist.secauto.metaschema.binding.io;
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 
+import java.util.Map;
 import java.util.Objects;
 
-abstract class AbstractSerializationBase {
+abstract class AbstractSerializationBase implements MutableConfiguration {
   private final BindingContext bindingContext;
   private final AssemblyClassBinding classBinding;
-  private final Configuration configuration;
+  private final MutableConfiguration configuration;
 
-  protected AbstractSerializationBase(BindingContext bindingContext, AssemblyClassBinding classBinding,
-      Configuration configuration) {
+  protected AbstractSerializationBase(BindingContext bindingContext, AssemblyClassBinding classBinding) {
     Objects.requireNonNull(bindingContext, "bindingContext");
     Objects.requireNonNull(classBinding, "classBinding");
     this.bindingContext = bindingContext;
     this.classBinding = classBinding;
-    if (configuration == null) {
-      this.configuration = new MutableConfiguration();
-    } else {
-      this.configuration = configuration;
-    }
+    this.configuration = new DefaultMutableConfiguration();
   }
 
   protected BindingContext getBindingContext() {
@@ -59,5 +55,25 @@ abstract class AbstractSerializationBase {
 
   protected Configuration getConfiguration() {
     return configuration;
+  }
+
+  @Override
+  public MutableConfiguration enableFeature(Feature feature) {
+    return configuration.enableFeature(feature);
+  }
+
+  @Override
+  public MutableConfiguration disableFeature(Feature feature) {
+    return configuration.disableFeature(feature);
+  }
+
+  @Override
+  public boolean isFeatureEnabled(Feature feature) {
+    return configuration.isFeatureEnabled(feature);
+  }
+
+  @Override
+  public Map<Feature, Boolean> getFeatureSettings() {
+    return configuration.getFeatureSettings();
   }
 }

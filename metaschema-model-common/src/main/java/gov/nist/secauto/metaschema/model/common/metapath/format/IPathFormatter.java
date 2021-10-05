@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.format;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * This interface provides an implementation contract for all path formatters. When
  * {@link #format(IPathSegment)} is called on a formatter implementation, the formatter will render
@@ -45,6 +47,7 @@ public interface IPathFormatter {
    *          The last segment in a sequence of path segments
    * @return a formatted path
    */
+  @NotNull
   String format(IPathSegment segment);
 
   /**

@@ -61,18 +61,18 @@ public class CastFunctions {
     return IBooleanItem.valueOf(item.toEffectiveBoolean());
   }
 
-  public static IBooleanItem castToBoolean(IStringItem item) throws InvalidValueForCastException {
+  public static IBooleanItem castToBoolean(IStringItem item) throws InvalidValueForCastFunctionMetapathException {
     IBooleanItem retval;
     try {
       INumericItem numeric = castToNumeric(item);
       retval = castToBoolean(numeric);
-    } catch (InvalidValueForCastException ex) {
+    } catch (InvalidValueForCastFunctionMetapathException ex) {
       retval = IBooleanItem.valueOf(item.asString());
     }
     return retval;
   }
 
-  public static IBooleanItem castToBoolean(IAnyAtomicItem item) {
+  public static IBooleanItem castToBoolean(IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     IBooleanItem retval;
     if (item instanceof IBooleanItem) {
       retval = (IBooleanItem) item;
@@ -86,7 +86,7 @@ public class CastFunctions {
     return retval;
   }
 
-  public static IDecimalItem castToDecimal(IAnyAtomicItem item) throws InvalidValueForCastException {
+  public static IDecimalItem castToDecimal(IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     IDecimalItem retval;
     if (item instanceof INumericItem) {
       if (item instanceof IDecimalItem) {
@@ -102,31 +102,31 @@ public class CastFunctions {
       try {
         retval = IDecimalItem.valueOf(item.asString());
       } catch (NumberFormatException ex) {
-        throw new InvalidValueForCastException(ex);
+        throw new InvalidValueForCastFunctionMetapathException(ex);
       }
     }
     return retval;
   }
 
-  public static IDurationItem castToDuration(IAnyAtomicItem item) throws InvalidValueForCastException {
+  public static IDurationItem castToDuration(IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     IDurationItem retval;
     if (item instanceof IDurationItem) {
-      retval = (IDurationItem)item;
+      retval = (IDurationItem) item;
     } else {
       try {
         retval = IDayTimeDurationItem.valueOf(item.asString());
       } catch (IllegalArgumentException ex) {
         try {
           retval = IYearMonthDurationItem.valueOf(item.asString());
-        } catch(IllegalArgumentException ex2) {
-          throw new InvalidValueForCastException(ex2);
+        } catch (IllegalArgumentException ex2) {
+          throw new InvalidValueForCastFunctionMetapathException(ex2);
         }
       }
     }
     return retval;
   }
 
-  public static IDateTimeItem castToDateTime(IAnyAtomicItem item) {
+  public static IDateTimeItem castToDateTime(IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     // TODO: bring up to spec
     IDateTimeItem retval;
     if (item instanceof IDateTimeItem) {
@@ -134,16 +134,23 @@ public class CastFunctions {
     } else if (item instanceof IDateItem) {
       retval = IDateTimeItem.valueOf(((IDateItem) item).asZonedDateTime());
     } else if (item instanceof IStringItem || item instanceof IUntypedAtomicItem) {
-      retval = IDateTimeItem.valueOf(item.asString());
+      String itemString = item.asString();
+      try {
+        retval = IDateTimeItem.valueOf(itemString);
+      } catch (IllegalArgumentException ex) {
+        throw new InvalidValueForCastFunctionMetapathException(
+            String.format("value '%s' is not a correctly formatted date", itemString), ex);
+      }
     } else {
-      throw new UnsupportedOperationException();
+      throw new InvalidValueForCastFunctionMetapathException(
+          String.format("unsupported item type '%s'", item.getItemName()));
     }
     return retval;
   }
 
   // TODO: time?
 
-  public static IDateItem castToDate(IAnyAtomicItem item) {
+  public static IDateItem castToDate(IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     // TODO: bring up to spec
     IDateItem retval;
     if (item instanceof IDateItem) {
@@ -151,9 +158,16 @@ public class CastFunctions {
     } else if (item instanceof IDateTimeItem) {
       retval = IDateItem.valueOf(((IDateTimeItem) item).asZonedDateTime());
     } else if (item instanceof IStringItem || item instanceof IUntypedAtomicItem) {
-      retval = IDateItem.valueOf(item.asString());
+      String itemString = item.asString();
+      try {
+        retval = IDateItem.valueOf(itemString);
+      } catch (IllegalArgumentException ex) {
+        throw new InvalidValueForCastFunctionMetapathException(
+            String.format("value '%s' is not a correctly formatted date", itemString), ex);
+      }
     } else {
-      throw new UnsupportedOperationException();
+      throw new InvalidValueForCastFunctionMetapathException(
+          String.format("unsupported item type '%s'", item.getItemName()));
     }
     return retval;
   }
@@ -174,7 +188,7 @@ public class CastFunctions {
     return INcNameItem.valueOf(item.asString());
   }
 
-  public static IIntegerItem castToInteger(IAnyAtomicItem item) throws InvalidValueForCastException {
+  public static IIntegerItem castToInteger(IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     IIntegerItem retval;
     if (item instanceof INumericItem) {
       if (item instanceof IIntegerItem) {
@@ -190,14 +204,14 @@ public class CastFunctions {
       try {
         retval = IIntegerItem.valueOf(item.asString());
       } catch (NumberFormatException ex) {
-        throw new InvalidValueForCastException(ex);
+        throw new InvalidValueForCastFunctionMetapathException(ex);
       }
     }
     return retval;
 
   }
 
-  public static INumericItem castToNumeric(IAnyAtomicItem item) throws InvalidValueForCastException {
+  public static INumericItem castToNumeric(IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     INumericItem retval;
     if (item instanceof INumericItem) {
       retval = (INumericItem) item;
@@ -205,19 +219,20 @@ public class CastFunctions {
       try {
         retval = IDecimalItem.valueOf(item.asString());
       } catch (NumberFormatException ex) {
-        throw new InvalidValueForCastException(ex);
+        throw new InvalidValueForCastFunctionMetapathException(ex);
       }
     }
     return retval;
   }
 
   public static INonNegativeIntegerItem castToNonNegativeInteger(IAnyAtomicItem item)
-      throws InvalidValueForCastException {
+      throws InvalidValueForCastFunctionMetapathException {
     IIntegerItem integerItem = castToInteger(item);
     return INonNegativeIntegerItem.valueOf(integerItem);
   }
 
-  public static IPositiveIntegerItem castToPositiveInteger(IAnyAtomicItem item) throws InvalidValueForCastException {
+  public static IPositiveIntegerItem castToPositiveInteger(IAnyAtomicItem item)
+      throws InvalidValueForCastFunctionMetapathException {
     IIntegerItem integerItem = castToInteger(item);
     return IPositiveIntegerItem.valueOf(integerItem);
   }

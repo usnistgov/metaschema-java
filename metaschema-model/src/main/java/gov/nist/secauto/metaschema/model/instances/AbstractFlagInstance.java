@@ -26,12 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.instances;
 
-import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.IXmlMetaschema;
+import gov.nist.secauto.metaschema.model.definitions.IXmlNamedModelDefinition;
 
-public abstract class AbstractFlagInstance<DEF extends FlagDefinition>
-    extends AbstractDefinedInfoElementInstance<MetaschemaFlaggedDefinition, DEF>
-    implements FlagInstance<DEF> {
+import org.jetbrains.annotations.NotNull;
+
+public abstract class AbstractFlagInstance implements IXmlFlagInstance {
+  @NotNull
+  private final IXmlNamedModelDefinition parent;
 
   /**
    * Create a new flag instance.
@@ -39,10 +41,19 @@ public abstract class AbstractFlagInstance<DEF extends FlagDefinition>
    * @param parent
    *          the parent definition, which must be a definition type that can contain flags.
    */
-  public AbstractFlagInstance(MetaschemaFlaggedDefinition parent) {
-    super(parent);
+  public AbstractFlagInstance(@NotNull IXmlNamedModelDefinition parent) {
+    this.parent = parent;
   }
 
+  @Override
+  public IXmlNamedModelDefinition getContainingDefinition() {
+    return parent;
+  }
+
+  @Override
+  public IXmlMetaschema getContainingMetaschema() {
+    return getContainingDefinition().getContainingMetaschema();
+  }
   // @Override
   // public boolean isJsonKey() {
   // return this.equals(getContainingDefinition().getJsonKeyFlagInstance());

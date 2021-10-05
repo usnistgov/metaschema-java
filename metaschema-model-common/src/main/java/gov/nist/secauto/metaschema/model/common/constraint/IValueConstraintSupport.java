@@ -26,43 +26,74 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.List;
 
 public interface IValueConstraintSupport extends IConstraintSupport {
   public static final IValueConstraintSupport NULL_CONSTRAINT = new IValueConstraintSupport() {
 
+    @SuppressWarnings("null")
     @Override
-    public List<? extends IConstraint> getConstraints() {
+    public List<@NotNull ? extends IConstraint> getConstraints() {
       return Collections.emptyList();
     }
 
+    @SuppressWarnings("null")
     @Override
-    public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+    public List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
       return Collections.emptyList();
     }
 
+    @SuppressWarnings("null")
     @Override
-    public List<? extends IMatchesConstraint> getMatchesConstraints() {
+    public List<@NotNull ? extends IMatchesConstraint> getMatchesConstraints() {
       return Collections.emptyList();
     }
 
+    @SuppressWarnings("null")
     @Override
-    public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+    public List<@NotNull ? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
       return Collections.emptyList();
     }
 
+    @SuppressWarnings("null")
     @Override
-    public List<? extends IExpectConstraint> getExpectConstraints() {
+    public List<@NotNull ? extends IExpectConstraint> getExpectConstraints() {
       return Collections.emptyList();
     }
   };
 
-  List<? extends IAllowedValuesConstraint> getAllowedValuesContraints();
+  /**
+   * Get the collection of allowed value constraints, if any.
+   * 
+   * @return the constraints or an empty list
+   */
+  @NotNull
+  List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesContraints();
 
-  List<? extends IMatchesConstraint> getMatchesConstraints();
+  /**
+   * Get the collection of matches constraints, if any.
+   * 
+   * @return the constraints or an empty list
+   */
+  @NotNull
+  List<@NotNull ? extends IMatchesConstraint> getMatchesConstraints();
 
-  List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints();
+  /**
+   * Get the collection of index key reference constraints, if any.
+   * 
+   * @return the constraints or an empty list
+   */
+  @NotNull
+  List<@NotNull ? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints();
 
-  List<? extends IExpectConstraint> getExpectConstraints();
+  /**
+   * Get the collection of expect constraints, if any.
+   * 
+   * @return the constraints or an empty list
+   */
+  @NotNull
+  List<@NotNull ? extends IExpectConstraint> getExpectConstraints();
 }

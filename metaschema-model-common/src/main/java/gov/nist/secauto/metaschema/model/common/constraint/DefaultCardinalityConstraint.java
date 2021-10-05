@@ -29,17 +29,40 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
-public class DefaultCardinalityConstraint
-    extends AbstractConstraint
-    implements ICardinalityConstraint {
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+public class DefaultCardinalityConstraint extends AbstractConstraint implements ICardinalityConstraint {
+  @Nullable
   private final Integer minOccurs;
+  @Nullable
   private final Integer maxOccurs;
 
-  public DefaultCardinalityConstraint(String id, MetapathExpression target, Integer minOccurs, Integer maxOccurs,
+  /**
+   * Construct a new cardinality constraint which enforces that the number of items matching the
+   * target fall within the inclusive range described by the {@code minOccurs} or {@code maxOccurs}
+   * values.
+   * 
+   * @param id
+   *          the optional identifier for the constraint
+   * @param target
+   *          the Metapath expression identifying the nodes the constraint targets
+   * @param minOccurs
+   *          if provided, the constraint ensures that the count of targets is at least this value
+   * @param maxOccurs
+   *          if provided, the constraint ensures that the count of targets is at most this value
+   * @param remarks
+   *          optional remarks describing the intent of the constraint
+   */
+  public DefaultCardinalityConstraint(
+      @Nullable String id,
+      @NotNull MetapathExpression target,
+      @Nullable Integer minOccurs,
+      @Nullable Integer maxOccurs,
       MarkupMultiline remarks) {
     super(id, target, remarks);
     if (minOccurs == null && maxOccurs == null) {
-      throw new IllegalArgumentException("a pattern or data type must be provided");
+      throw new IllegalArgumentException("at least one of minOccurs or maxOccurs must be provided");
     }
     this.minOccurs = minOccurs;
     this.maxOccurs = maxOccurs;

@@ -38,7 +38,7 @@ public class DefaultFunctionLibrary
 
     
     // casting functions
-    registerFunction(Boolean.SIGNATURE);
+    registerFunction(BooleanFunction.SIGNATURE);
     registerFunction(Date.SIGNATURE);
     registerFunction(DateTime.SIGNATURE);
     registerFunction(Decimal.SIGNATURE);

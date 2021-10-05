@@ -28,10 +28,6 @@ package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
-
-import java.util.stream.Stream;
 
 public interface AssemblyProperty extends NamedModelProperty, IAssemblyInstance {
   @Override

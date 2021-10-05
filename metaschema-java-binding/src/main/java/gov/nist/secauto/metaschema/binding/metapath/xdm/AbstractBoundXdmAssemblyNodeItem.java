@@ -30,18 +30,13 @@ import gov.nist.secauto.metaschema.binding.model.AssemblyDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Name;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmNodeItem;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,18 +45,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class AbstractBoundXdmAssemblyNodeItem<INSTANCE extends AssemblyProperty>
-    extends AbstractBoundXdmModelNodeItem<INSTANCE, IXdmAssemblyNodeItem> implements IBoundXdmAssemblyNodeItem {
+    extends AbstractBoundXdmModelNodeItem<INSTANCE> implements IBoundXdmAssemblyNodeItem {
 
   private Map<String, List<IBoundXdmModelNodeItem>> modelItems;
 
-  public AbstractBoundXdmAssemblyNodeItem(INSTANCE instance, Object value, int position,
-      IXdmAssemblyNodeItem parentNodeItem) {
-    super(instance, value, position, parentNodeItem);
-  }
-
-  @Override
-  public IBoundXdmAssemblyNodeItem getPathSegment() {
-    return this;
+  public AbstractBoundXdmAssemblyNodeItem(INSTANCE instance, Object value, int position) {
+    super(instance, value, position);
   }
 
   @Override
@@ -79,7 +68,7 @@ public abstract class AbstractBoundXdmAssemblyNodeItem<INSTANCE extends Assembly
     if (this.modelItems == null) {
       Map<String, List<IBoundXdmModelNodeItem>> modelItems = new LinkedHashMap<>();
       Object parentValue = getValue();
-      for (NamedModelProperty instance : getDefinition().getNamedModelInstances().values()) {
+      for (NamedModelProperty instance : getDefinition().getNamedModelInstances()) {
 
         Object instanceValue = instance.getValue(parentValue);
         Stream<? extends Object> itemValues = instance.getItemValues(instanceValue);
@@ -90,8 +79,8 @@ public abstract class AbstractBoundXdmAssemblyNodeItem<INSTANCE extends Assembly
             item = IXdmFactory.INSTANCE.newAssemblyNodeItem((AssemblyProperty) instance, itemValue,
                 index.incrementAndGet(), this);
           } else if (instance instanceof FieldProperty) {
-            item = IXdmFactory.INSTANCE.newFieldNodeItem((FieldProperty) instance, itemValue,
-                index.incrementAndGet(), this);
+            item = IXdmFactory.INSTANCE.newFieldNodeItem((FieldProperty) instance, itemValue, index.incrementAndGet(),
+                this);
           } else {
             throw new UnsupportedOperationException("unsupported instance type: " + instance.getClass().getName());
           }
@@ -130,17 +119,15 @@ public abstract class AbstractBoundXdmAssemblyNodeItem<INSTANCE extends Assembly
   @Override
   public Stream<? extends IXdmNodeItem> getMatchingChildInstances(IExpressionEvaluationVisitor visitor,
       IExpression<?> expr, boolean recurse) {
-    
-    // check the current node
-    @SuppressWarnings("unchecked")
-    Stream<? extends IXdmNodeItem> retval = (Stream<? extends IXdmNodeItem>) expr.accept(visitor, this).asStream();
 
-//    {
-//      List<? extends IXdmNodeItem> list = retval.collect(Collectors.toList());
-//      retval = list.stream();
-//    }
-    
-    IAssemblyDefinition definition = getPathSegment().getDefinition();
+    // check the current node
+    @SuppressWarnings("unchecked") Stream<? extends IXdmNodeItem> retval
+        = (Stream<? extends IXdmNodeItem>) expr.accept(visitor, this).asStream();
+
+    // {
+    // List<? extends IXdmNodeItem> list = retval.collect(Collectors.toList());
+    // retval = list.stream();
+    // }
 
     // get matching model instances
     if (recurse) {

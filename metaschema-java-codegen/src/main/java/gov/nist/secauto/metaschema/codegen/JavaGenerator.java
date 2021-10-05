@@ -34,10 +34,10 @@ import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
 import gov.nist.secauto.metaschema.codegen.binding.config.BindingConfiguration;
 import gov.nist.secauto.metaschema.codegen.type.DefaultTypeResolver;
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -77,7 +77,7 @@ public class JavaGenerator {
    * @throws IOException
    *           if a build error occurred while generating the class
    */
-  public static Map<Metaschema, List<GeneratedClass>> generate(Metaschema metaschema, File targetDir,
+  public static Map<IMetaschema, List<GeneratedClass>> generate(IMetaschema metaschema, File targetDir,
       BindingConfiguration bindingConfiguration) throws IOException {
     return generate(Collections.singletonList(metaschema), targetDir, bindingConfiguration);
   }
@@ -96,7 +96,7 @@ public class JavaGenerator {
    * @throws IOException
    *           if a build error occurred while generating the class
    */
-  public static Map<Metaschema, List<GeneratedClass>> generate(Collection<? extends Metaschema> metaschemas,
+  public static Map<IMetaschema, List<GeneratedClass>> generate(Collection<? extends IMetaschema> metaschemas,
       File targetDirectory, BindingConfiguration bindingConfiguration) throws IOException {
     Objects.requireNonNull(metaschemas, "metaschemas");
     Objects.requireNonNull(targetDirectory, "generationTargetDirectory");
@@ -104,26 +104,26 @@ public class JavaGenerator {
     logger.info("Generating Java classes in: {}", targetDirectory.getPath());
 
     Map<URI, String> xmlNamespaceToPackageNameMap = new HashMap<>();
-    Map<URI, Set<Metaschema>> xmlNamespaceToMetaschemaMap = new HashMap<>();
+    Map<URI, Set<IMetaschema>> xmlNamespaceToMetaschemaMap = new HashMap<>();
 
     TypeResolver typeResolver = new DefaultTypeResolver(bindingConfiguration);
 
-    Map<Metaschema, List<? extends MetaschemaDefinition>> metaschemaToInformationElementsMap
+    Map<IMetaschema, List<? extends IDefinition>> metaschemaToInformationElementsMap
         = buildMetaschemaMap(metaschemas);
 
-    Map<Metaschema, List<GeneratedClass>> retval = new HashMap<>();
-    for (Map.Entry<Metaschema, List<? extends MetaschemaDefinition>> entry : metaschemaToInformationElementsMap
+    Map<IMetaschema, List<GeneratedClass>> retval = new HashMap<>();
+    for (Map.Entry<IMetaschema, List<? extends IDefinition>> entry : metaschemaToInformationElementsMap
         .entrySet()) {
-      Metaschema metaschema = entry.getKey();
+      IMetaschema metaschema = entry.getKey();
       List<GeneratedClass> generatedClasses = null;
       Set<String> classNames = new HashSet<>();
 
-      for (MetaschemaDefinition definition : entry.getValue()) {
+      for (IDefinition definition : entry.getValue()) {
         JavaClassGenerator classGenerator = null;
-        if (definition instanceof AssemblyDefinition) {
-          classGenerator = new AssemblyJavaClassGenerator((AssemblyDefinition) definition, typeResolver);
-        } else if (definition instanceof FieldDefinition) {
-          FieldDefinition fieldDefinition = (FieldDefinition) definition;
+        if (definition instanceof IAssemblyDefinition) {
+          classGenerator = new AssemblyJavaClassGenerator((IAssemblyDefinition) definition, typeResolver);
+        } else if (definition instanceof IFieldDefinition) {
+          IFieldDefinition fieldDefinition = (IFieldDefinition) definition;
 
           // if field is just a simple data value, then no class is needed
           if (!fieldDefinition.getFlagInstances().isEmpty()) {
@@ -171,7 +171,7 @@ public class JavaGenerator {
         xmlNamespaceToPackageNameMap.put(xmlNamespace, packageName);
       }
 
-      Set<Metaschema> metaschemaSet = xmlNamespaceToMetaschemaMap.get(xmlNamespace);
+      Set<IMetaschema> metaschemaSet = xmlNamespaceToMetaschemaMap.get(xmlNamespace);
       if (metaschemaSet == null) {
         metaschemaSet = new HashSet<>();
         xmlNamespaceToMetaschemaMap.put(xmlNamespace, metaschemaSet);
@@ -196,7 +196,7 @@ public class JavaGenerator {
         writer.format("package %s;%n", packageName);
       }
 
-      for (Metaschema metaschema : xmlNamespaceToMetaschemaMap.get(namespace)) {
+      for (IMetaschema metaschema : xmlNamespaceToMetaschemaMap.get(namespace)) {
         GeneratedClass packageInfoClass
             = new GeneratedClass(packageInfo, ClassName.get(packageName, "package-info"), false);
         List<GeneratedClass> generatedClasses = retval.get(metaschema);
@@ -210,24 +210,24 @@ public class JavaGenerator {
     return Collections.unmodifiableMap(retval);
   }
 
-  private static Map<Metaschema, List<? extends MetaschemaDefinition>>
-      buildMetaschemaMap(Collection<? extends Metaschema> metaschemas) {
-    Map<Metaschema, List<? extends MetaschemaDefinition>> retval = new HashMap<>();
+  private static Map<IMetaschema, List<? extends IDefinition>>
+      buildMetaschemaMap(Collection<? extends IMetaschema> metaschemas) {
+    Map<IMetaschema, List<? extends IDefinition>> retval = new HashMap<>();
 
-    for (Metaschema metaschema : metaschemas) {
+    for (IMetaschema metaschema : metaschemas) {
       processMetaschema(metaschema, retval);
     }
     return retval;
   }
 
-  private static void processMetaschema(Metaschema metaschema,
-      Map<Metaschema, List<? extends MetaschemaDefinition>> map) {
-    for (Metaschema importedMetaschema : metaschema.getImportedMetaschema().values()) {
+  private static void processMetaschema(IMetaschema metaschema,
+      Map<IMetaschema, List<? extends IDefinition>> map) {
+    for (IMetaschema importedMetaschema : metaschema.getImportedMetaschemas()) {
       processMetaschema(importedMetaschema, map);
     }
 
     if (!map.containsKey(metaschema)) {
-      List<? extends MetaschemaDefinition> definitions = metaschema.getAssemblyAndFieldDefinitions();
+      List<? extends IDefinition> definitions = metaschema.getAssemblyAndFieldDefinitions();
       map.put(metaschema, definitions);
     }
   }

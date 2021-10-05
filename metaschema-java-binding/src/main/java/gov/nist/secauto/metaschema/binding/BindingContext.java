@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding;
 
-import gov.nist.secauto.metaschema.binding.io.Configuration;
+import gov.nist.secauto.metaschema.binding.io.BoundLoader;
 import gov.nist.secauto.metaschema.binding.io.Deserializer;
 import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.io.Serializer;
@@ -37,6 +37,8 @@ import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import java.math.BigInteger;
 import java.time.ZonedDateTime;
+
+import javax.xml.namespace.QName;
 
 /**
  * Represents information supporting a binding between a set of models and related Java classes.
@@ -54,8 +56,37 @@ public interface BindingContext {
   }
 
   /**
-   * Get's the {@link IJavaTypeAdapter} associated with the specified Java class, which is used to read
-   * and write XML, JSON, and YAML data to and from instances of that class. Thus, this adapter
+   * Register a matcher used to identify a bound class by the content's root name.
+   * 
+   * @param matcher
+   *          the matcher implementation
+   */
+  void registerBindingMatcher(IBindingMatcher matcher);
+
+  /**
+   * Determine the bound class for the provided XML {@link QName}.
+   * 
+   * @param rootQName
+   *          the root XML element's QName
+   * @return the bound class or {@code null} if not recognized
+   * @see BindingContext#registerBindingMatcher(IBindingMatcher)
+   */
+  Class<?> getBoundClassForXmlQName(QName rootQName);
+
+  /**
+   * Determine the bound class for the provided JSON/YAML property/item name using any registered
+   * matchers.
+   * 
+   * @param rootName
+   *          the JSON/YAML property/item name
+   * @return the bound class or {@code null} if not recognized
+   * @see BindingContext#registerBindingMatcher(IBindingMatcher)
+   */
+  Class<?> getBoundClassForJsonName(String rootName);
+
+  /**
+   * Get's the {@link IJavaTypeAdapter} associated with the specified Java class, which is used to
+   * read and write XML, JSON, and YAML data to and from instances of that class. Thus, this adapter
    * supports a direct binding between the Java class and structured data in one of the supported
    * formats. Adapters are used to support bindings for simple data objects (e.g., {@link String},
    * {@link BigInteger}, {@link ZonedDateTime}, etc).
@@ -96,8 +127,6 @@ public interface BindingContext {
    *          the format to serialize into
    * @param clazz
    *          the Java data type to serialize
-   * @param configuration
-   *          provides configuration parameters to customize the serializer's behavior
    * @return the serializer instance
    * @throws NullPointerException
    *           if any of the provided arguments, except the configuration, are {@code null}
@@ -107,23 +136,7 @@ public interface BindingContext {
    *           if the requested format is not supported by the implementation
    * @see #getClassBinding(Class)
    */
-  <CLASS> Serializer<CLASS> newSerializer(Format format, Class<CLASS> clazz, Configuration configuration);
-  //
-  // void serializeToFormat(Format format, Object data, OutputStream out) throws BindingException;
-  //
-  // void serializeToFormat(Format format, Object data, File file) throws BindingException,
-  // FileNotFoundException;
-  //
-  // void serializeToFormat(Format format, Object data, Writer writer) throws BindingException;
-  //
-  // void serializeToFormat(Format format, Object data, OutputStream out, Configuration configuration)
-  // throws BindingException;
-  //
-  // void serializeToFormat(Format format, Object data, File file, Configuration configuration)
-  // throws BindingException, FileNotFoundException;
-  //
-  // void serializeToFormat(Format format, Object data, Writer writer, Configuration configuration)
-  // throws BindingException;
+  <CLASS> Serializer<CLASS> newSerializer(Format format, Class<CLASS> clazz);
 
   /**
    * Gets a data {@link Deserializer} which can be used to read Java instance data for the provided
@@ -137,8 +150,6 @@ public interface BindingContext {
    *          the format to serialize into
    * @param clazz
    *          the Java data type to serialize
-   * @param configuration
-   *          provides configuration parameters to customize the serializer's behavior
    * @return the deserializer instance
    * @throws NullPointerException
    *           if any of the provided arguments, except the configuration, are {@code null}
@@ -148,33 +159,12 @@ public interface BindingContext {
    *           if the requested format is not supported by the implementation
    * @see #getClassBinding(Class)
    */
-  <CLASS> Deserializer<CLASS> newDeserializer(Format format, Class<CLASS> clazz, Configuration configuration);
-  //
-  // <CLASS> CLASS deserializeFromFormat(Format format, Class<CLASS> clazz, InputStream out) throws
-  // BindingException;
-  //
-  // <CLASS> CLASS deserializeFromFormat(Format format, Class<CLASS> clazz, File file)
-  // throws BindingException, FileNotFoundException;
-  //
-  // <CLASS> CLASS deserializeFromFormat(Format format, Class<CLASS> clazz, URL url) throws
-  // BindingException;
-  //
-  // <CLASS> CLASS deserializeFromFormat(Format format, Class<CLASS> clazz, Reader reader) throws
-  // BindingException;
-  //
-  // <CLASS> CLASS deserializeFromFormat(Format format, Class<CLASS> clazz, InputStream out,
-  // Configuration configuration)
-  // throws BindingException;
-  //
-  // <CLASS> CLASS deserializeFromFormat(Format format, Class<CLASS> clazz, File file, Configuration
-  // configuration)
-  // throws BindingException, FileNotFoundException;
-  //
-  // <CLASS> CLASS deserializeFromFormat(Format format, Class<CLASS> clazz, URL url, Configuration
-  // configuration)
-  // throws BindingException;
-  //
-  // <CLASS> CLASS deserializeFromFormat(Format format, Class<CLASS> clazz, Reader reader,
-  // Configuration configuration)
-  // throws BindingException;
+  <CLASS> Deserializer<CLASS> newDeserializer(Format format, Class<CLASS> clazz);
+
+  /**
+   * Get a new {@link BoundLoader} instance.
+   * 
+   * @return the instance
+   */
+  BoundLoader newBoundLoader();
 }

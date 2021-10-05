@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface IPathItem extends IItem {
   // /**
   // * Contains the paths of all nodes (including this one). This path may be incomplete if the
@@ -40,6 +42,11 @@ public interface IPathItem extends IItem {
   // */
   // List<IPathSegment> getPath();
 
+  /**
+   * Get the path segment for this item.
+   * @return the path segment
+   */
+  @NotNull
   IPathSegment getPathSegment();
 
   // Stream<IPathSegment> getPathStream();
@@ -52,7 +59,13 @@ public interface IPathItem extends IItem {
   // */
   // List<? extends IPathItem> getNodePath();
 
-  default String toPath(IPathFormatter formatter) {
+  /**
+   * Get the path for this node item using the provided formatter.
+   * 
+   * @return the formatted path
+   */
+  @NotNull
+  default String toPath(@NotNull IPathFormatter formatter) {
     return formatter.format(getPathSegment());
   }
 }

@@ -28,12 +28,10 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.InvalidTypeException;
-import gov.nist.secauto.metaschema.model.common.metapath.item.MetapathDynamicException;
+import gov.nist.secauto.metaschema.model.common.metapath.type.TypeMetapathException;
 
 import java.math.BigInteger;
 import java.math.MathContext;
@@ -46,54 +44,44 @@ public class FunctionUtils {
 
   public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
 
-  public static int asInteger(INumericItem value) throws MetapathDynamicException {
+  public static int asInteger(INumericItem value) throws ArithmeticException {
     return asInteger(value.asInteger());
   }
 
-  public static int asInteger(BigInteger value) throws MetapathDynamicException {
-    try {
-      return value.intValueExact();
-    } catch (ArithmeticException ex) {
-      throw new MetapathDynamicException("err:FODT0002", "Overflow/underflow in duration operation. ", ex);
-    }
+  public static int asInteger(BigInteger value) throws ArithmeticException {
+    return value.intValueExact();
   }
 
-  public static long asLong(INumericItem value) throws MetapathDynamicException {
-    return asInteger(value.asInteger());
+  public static long asLong(INumericItem value) throws ArithmeticException {
+    return asLong(value.asInteger());
   }
 
-  public static long asLong(IIntegerItem value) throws MetapathDynamicException {
-    return asInteger(value.asInteger());
-  }
-
-  public static long asLong(BigInteger value) throws MetapathDynamicException {
-    try {
-      return value.longValueExact();
-    } catch (ArithmeticException ex) {
-      throw new MetapathDynamicException("err:FODT0002", "Overflow/underflow in duration operation. ", ex);
-    }
+  public static long asLong(BigInteger value) throws ArithmeticException {
+    return value.longValueExact();
   }
 
   /**
    * Retrieves the first item in a sequence. If the sequence is empty, a {@code null} result is
    * returned. If requireSingleton is {@code true} and the sequence contains more than one item, a
-   * {@link InvalidTypeException} is thrown.
+   * {@link TypeMetapathException} is thrown.
    * 
    * @param sequence
    *          the sequence to retrieve the first item from
    * @param requireSingleton
-   *          if {@code true} then a {@link InvalidTypeException} is thrown if the sequence contains
+   *          if {@code true} then a {@link TypeMetapathException} is thrown if the sequence contains
    *          more than one item
    * @return {@code null} if the sequence is empty, or the item otherwise
-   * @throws InvalidTypeException
+   * @throws TypeMetapathException
    *           if the sequence contains more than one item and requireSingleton is {@code true}
    */
-  public static <ITEM extends IItem> ITEM getFirstItem(ISequence<ITEM> sequence, boolean requireSingleton) throws InvalidTypeException {
+  public static <ITEM extends IItem> ITEM getFirstItem(ISequence<ITEM> sequence, boolean requireSingleton)
+      throws TypeMetapathException {
     ITEM retval = null;
     if (!sequence.isEmpty()) {
       List<ITEM> items = sequence.asList();
       if (requireSingleton && items.size() != 1) {
-        throw new InvalidTypeException("sequence contains more than one item");
+        throw new TypeMetapathException(TypeMetapathException.INVALID_TYPE_ERROR,
+            String.format("sequence expected to contain one item, but found '%d'", items.size()));
       }
       retval = items.iterator().next();
     }
@@ -102,15 +90,15 @@ public class FunctionUtils {
 
   /**
    * Casts a result to a numeric value. If the result is a {@link ISequence}, then the first item is
-   * used. If the sequence is empty, then a {@link InvalidTypeException} is thrown.
+   * used. If the sequence is empty, then a {@link TypeMetapathException} is thrown.
    * 
    * @param result
    *          a Metapath result
    * @param requireSingleton
-   *          if {@code true} then a {@link InvalidTypeException} is thrown if the provided result is
+   *          if {@code true} then a {@link TypeMetapathException} is thrown if the provided result is
    *          sequence that contains more than one item
    * @return the item as a numeric, or {@code null} if the result is an empty sequence
-   * @throws InvalidTypeException
+   * @throws TypeMetapathException
    *           if the sequence contains more than one item, or the item cannot be cast to a decimal
    *           value
    * 
@@ -122,7 +110,7 @@ public class FunctionUtils {
   }
 
   // TODO: use a cast instead?
-  public static INumericItem toNumeric(IItem item) throws InvalidTypeException {
+  public static INumericItem toNumeric(IItem item) throws TypeMetapathException {
     INumericItem retval;
     if (item == null) {
       retval = null;
@@ -137,7 +125,8 @@ public class FunctionUtils {
         try {
           retval = IDecimalItem.valueOf(value);
         } catch (NumberFormatException ex) {
-          throw new InvalidTypeException(String.format("The value '%s' is not a valid decimal value", value), ex);
+          throw new TypeMetapathException(TypeMetapathException.INVALID_TYPE_ERROR,
+              String.format("The value '%s' is not a valid decimal value", value), ex);
         }
       }
     }

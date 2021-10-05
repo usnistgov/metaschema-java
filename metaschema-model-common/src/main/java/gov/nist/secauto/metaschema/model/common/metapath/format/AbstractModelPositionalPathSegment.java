@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 

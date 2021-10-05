@@ -30,12 +30,12 @@ import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IValuedDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeFunctionMetapathException;
 
 import java.util.Objects;
 
 public abstract class AbstractNodeItem<SEGMENT extends IPathSegment, PARENT extends IModelNodeItem>
-    extends AbstractPathItem<SEGMENT>
-    implements INodeItem {
+    extends AbstractPathItem<SEGMENT> implements INodeItem {
   /**
    * The current node.
    */
@@ -82,8 +82,8 @@ public abstract class AbstractNodeItem<SEGMENT extends IPathSegment, PARENT exte
         IJavaTypeAdapter<?> type = ((IValuedDefinition) definition).getDatatype();
         atomicItem = type.newItem(getValue());
       } else {
-        throw new MetapathDynamicException("FOTY0012",
-            String.format("the node type '%s' does not have a typed value", this.getClass().getName()));
+        throw new InvalidTypeFunctionMetapathException(InvalidTypeFunctionMetapathException.NODE_HAS_NO_TYPED_VALUE,
+            String.format("the node type '%s' does not have a typed value", this.getItemName()));
       }
     }
   }

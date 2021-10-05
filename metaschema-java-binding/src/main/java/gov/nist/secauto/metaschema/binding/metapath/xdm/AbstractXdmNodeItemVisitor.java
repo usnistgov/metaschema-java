@@ -61,17 +61,19 @@ public abstract class AbstractXdmNodeItemVisitor<RESULT, CONTEXT> implements INo
     return result;
   }
 
-  protected boolean shouldVisitNextChild(IXdmFlagNodeItem item,
-      RESULT result, CONTEXT context) {
+  protected boolean shouldVisitNextChild(
+      @SuppressWarnings("unused") IXdmFlagNodeItem item,
+      @SuppressWarnings("unused") RESULT result, @SuppressWarnings("unused") CONTEXT context) {
     return true;
   }
 
-  protected boolean shouldVisitNextChild(IXdmModelNodeItem item,
-      RESULT result, CONTEXT context) {
+  protected boolean shouldVisitNextChild(
+      @SuppressWarnings("unused") IXdmModelNodeItem item,
+      @SuppressWarnings("unused") RESULT result, @SuppressWarnings("unused") CONTEXT context) {
     return true;
   }
 
-  private RESULT aggregateResult(RESULT result, RESULT childResult) {
+  private RESULT aggregateResult(@SuppressWarnings("unused") RESULT result, RESULT childResult) {
     return childResult;
   }
 

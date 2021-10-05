@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFieldPathSegment;
 
@@ -40,6 +41,9 @@ public interface IFieldNodeItem extends IModelNodeItem {
   default boolean isRootNode() {
     return false;
   }
+
+  @Override
+  IFieldDefinition getDefinition();
 
   @Override
   default Stream<? extends IModelNodeItem> getMatchingChildModelInstances(ModelInstance modelInstance) {

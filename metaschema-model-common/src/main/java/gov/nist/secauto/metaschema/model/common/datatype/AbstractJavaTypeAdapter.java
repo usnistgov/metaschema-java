@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.codehaus.stax2.evt.XMLEventFactory2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -62,7 +63,7 @@ public abstract class AbstractJavaTypeAdapter<TYPE> implements IJavaTypeAdapter<
    * @param clazz
    *          the Java type this adapter supports
    */
-  protected AbstractJavaTypeAdapter(Class<TYPE> clazz) {
+  protected AbstractJavaTypeAdapter(@NotNull Class<TYPE> clazz) {
     this.clazz = clazz;
   }
 

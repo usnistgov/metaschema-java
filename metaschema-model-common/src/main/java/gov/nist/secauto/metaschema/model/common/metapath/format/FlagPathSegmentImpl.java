@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 

@@ -37,6 +37,9 @@ import java.util.stream.Stream;
 public interface IXdmNodeItem extends INodeItem, IPathSegment {
   @Override
   IXdmNodeItem getNodeItem();
+  
+  @Override
+  IXdmModelNodeItem getParentNodeItem();
 
   @Override
   default String toPath(IPathFormatter formatter) {

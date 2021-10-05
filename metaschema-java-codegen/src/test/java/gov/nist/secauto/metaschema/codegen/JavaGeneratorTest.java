@@ -27,14 +27,14 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ASTPrinter;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
@@ -59,7 +59,7 @@ class JavaGeneratorTest {
   void test() throws IOException, MetaschemaException {
     // Metaschema metaschema = new MetaschemaLoader().loadXmlMetaschema(new URL(
     // "https://raw.githubusercontent.com/usnistgov/OSCAL/main/src/metaschema/oscal_complete_metaschema.xml"));
-    Metaschema metaschema;
+    IMetaschema metaschema;
     try {
       MetaschemaLoader loader = new MetaschemaLoader();
       loader.allowEntityResolution();

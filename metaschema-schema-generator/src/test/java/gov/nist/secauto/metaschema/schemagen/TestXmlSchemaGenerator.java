@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;
 
@@ -58,8 +58,8 @@ public class TestXmlSchemaGenerator {
 
     MetaschemaLoader loader = new MetaschemaLoader();
 
-    List<Metaschema> metaschemas = new LinkedList<>();
-    Metaschema metaschema
+    List<IMetaschema> metaschemas = new LinkedList<>();
+    IMetaschema metaschema
         = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_catalog_metaschema.xml"));
     metaschemas.add(metaschema);
     metaschema

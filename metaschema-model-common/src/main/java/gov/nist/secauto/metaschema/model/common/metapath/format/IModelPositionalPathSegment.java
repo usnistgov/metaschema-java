@@ -26,14 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.format;
 
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
-
-import java.util.stream.Stream;
 
 public interface IModelPositionalPathSegment extends IPathSegment {
 
   @Override
   INamedModelInstance getInstance();
+
+  @Override
+  INamedModelDefinition getDefinition();
 
   /**
    * Retrieve the relative position of the associated instance in a collection of instances. A

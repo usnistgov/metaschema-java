@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -59,9 +61,10 @@ public interface IPathSegment {
    * @return the name
    */
   String getName();
-  
+
   /**
    * Get the XML qualified name of the path segment.
+   * 
    * @return the name
    */
   QName getQName();
@@ -74,14 +77,19 @@ public interface IPathSegment {
    *          the path formatter
    * @return a textual representation of the path segment
    */
-  String format(IPathFormatter formatter);
+  @NotNull
+  String format(@NotNull IPathFormatter formatter);
 
   IModelPositionalPathSegment getParentSegment();
 
-  default List<IPathSegment> getPath() {
+  @SuppressWarnings("null")
+  @NotNull
+  default List<@NotNull IPathSegment> getPath() {
     return getPathStream().collect(Collectors.toList());
   }
 
+  @SuppressWarnings("null")
+  @NotNull
   default Stream<IPathSegment> getPathStream() {
     IModelPositionalPathSegment parentSegment = getParentSegment();
     return parentSegment == null ? Stream.of(this) : Stream.concat(parentSegment.getPathStream(), Stream.of(this));

@@ -26,12 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.instances;
 
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
+import gov.nist.secauto.metaschema.model.IXmlMetaschema;
+import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
 
-public abstract class AbstractFieldInstance<DEF extends FieldDefinition>
-    extends AbstractDefinedInfoElementInstance<AssemblyDefinition, DEF>
-    implements FieldInstance<DEF> {
+import org.jetbrains.annotations.NotNull;
+
+public abstract class AbstractFieldInstance implements IXmlFieldInstance {
+  @NotNull
+  private final IXmlAssemblyDefinition parent;
 
   /**
    * Create a new field instance.
@@ -39,12 +41,18 @@ public abstract class AbstractFieldInstance<DEF extends FieldDefinition>
    * @param parent
    *          the parent assembly definition
    */
-  public AbstractFieldInstance(AssemblyDefinition parent) {
-    super(parent);
+  public AbstractFieldInstance(@NotNull IXmlAssemblyDefinition parent) {
+    this.parent = parent;
   }
 
   @Override
-  public boolean isSimple() {
-    return getDefinition().getFlagInstances().isEmpty();
+  @NotNull
+  public IXmlAssemblyDefinition getContainingDefinition() {
+    return parent;
+  }
+
+  @Override
+  public IXmlMetaschema getContainingMetaschema() {
+    return getContainingDefinition().getContainingMetaschema();
   }
 }

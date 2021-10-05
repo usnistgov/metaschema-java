@@ -29,22 +29,14 @@ package gov.nist.secauto.metaschema.binding.io.yaml;
 import com.fasterxml.jackson.core.JsonFactory;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
-import gov.nist.secauto.metaschema.binding.io.Configuration;
-import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.io.json.DefaultJsonSerializer;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 
 public class DefaultYamlSerializer<CLASS>
     extends DefaultJsonSerializer<CLASS> {
 
-  public DefaultYamlSerializer(BindingContext bindingContext, AssemblyClassBinding classBinding,
-      Configuration configuration) {
-    super(bindingContext, classBinding, configuration);
-  }
-
-  @Override
-  public Format supportedFromat() {
-    return Format.YAML;
+  public DefaultYamlSerializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {
+    super(bindingContext, classBinding);
   }
 
   @Override

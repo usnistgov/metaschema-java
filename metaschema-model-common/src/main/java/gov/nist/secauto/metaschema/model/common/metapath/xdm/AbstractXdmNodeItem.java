@@ -23,35 +23,32 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IValuedDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.MetapathDynamicException;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public abstract class AbstractXdmNodeItem<PARENT extends IXdmModelNodeItem> implements IXdmNodeItem {
+public abstract class AbstractXdmNodeItem implements IXdmNodeItem {
+  @NotNull
   private final Object value;
-  private final PARENT parentNodeItem;
 
   /**
    * Used to cache this object as an atomic item.
    */
   private IAnyAtomicItem atomicItem;
 
-  public AbstractXdmNodeItem(Object value, PARENT parentNodeItem) {
+  public AbstractXdmNodeItem(@NotNull Object value) {
     Objects.requireNonNull(value, "value");
     this.value = value;
-    this.parentNodeItem = parentNodeItem;
-  }
-
-  @Override
-  public PARENT getParentNodeItem() {
-    return parentNodeItem;
   }
 
   @Override
@@ -61,12 +58,12 @@ public abstract class AbstractXdmNodeItem<PARENT extends IXdmModelNodeItem> impl
 
   protected synchronized void initAtomicItem() {
     if (atomicItem == null) {
-      IDefinition definition = getDefinition();
+      IDefinition definition = getPathSegment().getDefinition();
       if (definition instanceof IValuedDefinition) {
         IJavaTypeAdapter<?> type = ((IValuedDefinition) definition).getDatatype();
         atomicItem = type.newItem(getValue());
       } else {
-        throw new MetapathDynamicException("FOTY0012",
+        throw new InvalidTypeFunctionMetapathException(InvalidTypeFunctionMetapathException.NODE_HAS_NO_TYPED_VALUE,
             String.format("the node type '%s' does not have a typed value", this.getClass().getName()));
       }
     }

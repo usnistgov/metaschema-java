@@ -34,15 +34,21 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInst
 import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 
 public interface IAssemblyInstance extends INamedModelInstance, Assembly {
 
   @Override
   default String getJsonName() {
+    @NotNull
     String retval;
     if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      retval = getGroupAsName();
+      @SuppressWarnings("null")
+      @NotNull
+      String groupName = getGroupAsName();
+      retval = groupName;
     } else {
       retval = getEffectiveName();
     }

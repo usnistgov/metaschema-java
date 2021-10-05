@@ -40,8 +40,11 @@ import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter
 import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.XmlBindingSupplier;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
@@ -55,6 +58,7 @@ import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -319,7 +323,7 @@ public class DefaultFieldProperty
     }
 
     @Override
-    public Map<String, ? extends FlagProperty> getFlagInstances() {
+    public Map<String, ? extends FlagProperty> getFlagInstanceMap() {
       return Collections.emptyMap();
     }
 
@@ -386,6 +390,35 @@ public class DefaultFieldProperty
     @Override
     public BindingContext getBindingContext() {
       return getContainingDefinition().getBindingContext();
+    }
+
+    @Override
+    public String getFormalName() {
+      // TODO: implement
+      return null;
+    }
+
+    @Override
+    public MarkupLine getDescription() {
+      // TODO: implement
+      return null;
+    }
+
+    @Override
+    public @NotNull ModuleScopeEnum getModuleScope() {
+      // TODO: is this the right value?
+      return ModuleScopeEnum.INHERITED;
+    }
+
+    @Override
+    public boolean isGlobal() {
+      return false;
+    }
+
+    @Override
+    public IMetaschema getContainingMetaschema() {
+      // TODO: implement
+      return null;
     }
   }
 }

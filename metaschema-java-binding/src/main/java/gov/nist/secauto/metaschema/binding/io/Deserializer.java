@@ -28,10 +28,13 @@ package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmAssemblyNodeItem;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -41,7 +44,7 @@ import java.net.URL;
  * @param <CLASS>
  *          the Java type into which data can be read
  */
-public interface Deserializer<CLASS> {
+public interface Deserializer<CLASS> extends MutableConfiguration {
   boolean isValidating();
 
   /**
@@ -49,11 +52,12 @@ public interface Deserializer<CLASS> {
    * 
    * @param is
    *          the input stream to read from
+   * @param documentUri the URI of the document to read from
    * @return the instance data
    * @throws BindingException
    *           if an error occurred while reading data from the stream
    */
-  CLASS deserialize(InputStream is) throws BindingException;
+  CLASS deserialize(InputStream is, @Nullable URI documentUri) throws BindingException;
 
   /**
    * Read data from the {@link File} into a bound class instance.
@@ -86,19 +90,21 @@ public interface Deserializer<CLASS> {
    * 
    * @param reader
    *          the reader to read from
+   * @param documentUri the URI of the document to read from
    * @return the instance data
    * @throws BindingException
    *           if an error occurred while reading data from the stream
    */
-  CLASS deserialize(Reader reader) throws BindingException;
+  CLASS deserialize(Reader reader, @Nullable URI documentUri) throws BindingException;
 
   /**
    * Read data from the {@link Reader} into a node item instance.
    * @param reader
    *          the reader to read from
+   * @param documentUri the URI of the document to read from
    * @return a new node item
    * @throws BindingException
    *           if an error occurred while reading data from the stream
    */
-  IBoundXdmAssemblyNodeItem deserializeToNodeItem(Reader reader) throws BindingException;
+  IBoundXdmAssemblyNodeItem deserializeToNodeItem(Reader reader, @Nullable URI documentUri) throws BindingException;
 }

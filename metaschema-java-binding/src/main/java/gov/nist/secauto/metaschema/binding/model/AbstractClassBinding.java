@@ -36,8 +36,13 @@ import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultFlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
+import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -122,6 +127,35 @@ public abstract class AbstractClassBinding implements ClassBinding {
   }
 
   @Override
+  public String getFormalName() {
+    // TODO: implement
+    return null;
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+    // TODO: implement
+    return null;
+  }
+
+  @Override
+  public @NotNull ModuleScopeEnum getModuleScope() {
+    // TODO: is this the right value?
+    return ModuleScopeEnum.INHERITED;
+  }
+
+  @Override
+  public boolean isGlobal() {
+    return getBoundClass().getEnclosingClass() == null;
+  }
+
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    // TODO: implement
+    return null;
+  }
+
+  @Override
   public MarkupMultiline getRemarks() {
     return null;
   }
@@ -193,7 +227,7 @@ public abstract class AbstractClassBinding implements ClassBinding {
   }
 
   @Override
-  public synchronized Map<String, FlagProperty> getFlagInstances() {
+  public synchronized Map<String, FlagProperty> getFlagInstanceMap() {
     // check that the flag instances are lazy loaded
     initalizeFlagInstances();
     return flagInstances;
@@ -214,9 +248,9 @@ public abstract class AbstractClassBinding implements ClassBinding {
   public Map<String, ? extends NamedProperty> getNamedInstances(Predicate<FlagProperty> filter) {
     Map<String, ? extends NamedProperty> retval;
     if (filter == null) {
-      retval = getFlagInstances();
+      retval = getFlagInstanceMap();
     } else {
-      retval = getFlagInstances().values().stream().filter(filter)
+      retval = getFlagInstances().stream().filter(filter)
           .collect(Collectors.toMap(IFlagInstance::getJsonName, Function.identity()));
     }
     return retval;
@@ -311,7 +345,7 @@ public abstract class AbstractClassBinding implements ClassBinding {
 
   protected void readInternal(@SuppressWarnings("unused") Object parentInstance, Object instance, StartElement start,
       XmlParsingContext context) throws IOException, XMLStreamException, BindingException {
-    for (FlagProperty flag : getFlagInstances().values()) {
+    for (FlagProperty flag : getFlagInstances()) {
       flag.read(instance, start, context);
     }
     readBody(instance, start, context);
@@ -331,7 +365,7 @@ public abstract class AbstractClassBinding implements ClassBinding {
   protected void writeInternal(Object instance, QName parentName, XmlWritingContext context)
       throws IOException, XMLStreamException {
     // write flags
-    for (FlagProperty flag : getFlagInstances().values()) {
+    for (FlagProperty flag : getFlagInstances()) {
       flag.write(instance, parentName, context);
     }
     writeBody(instance, parentName, context);
