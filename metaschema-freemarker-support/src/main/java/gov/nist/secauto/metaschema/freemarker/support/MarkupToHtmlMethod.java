@@ -29,9 +29,9 @@ package gov.nist.secauto.metaschema.freemarker.support;
 import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupText;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupXmlStreamWriter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupText;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupXmlStreamWriter;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;

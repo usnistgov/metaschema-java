@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.function.XPathFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
@@ -40,7 +41,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,12 +61,10 @@ import java.util.regex.Pattern;
 public class DefaultConstraintValidator implements ConstraintValidator {
   private static final Logger logger = LogManager.getLogger(DefaultConstraintValidator.class);
 
-  private final Map<@NotNull INodeItem, @Nullable ValueStatus> valueMap = new LinkedHashMap<>();
-  private final Map<@NotNull String, @NotNull Map<@NotNull String, @NotNull INodeItem>> indexToKeyToItemMap
+  private final Map<@NotNull INodeItem, ValueStatus> valueMap = new LinkedHashMap<>();
+  private final Map<@NotNull String, Map<@NotNull String, INodeItem>> indexToKeyToItemMap = new LinkedHashMap<>();
+  private final Map<@NotNull String, Map<@NotNull String, List<@NotNull INodeItem>>> indexToKeyRefToItemMap
       = new LinkedHashMap<>();
-  private final Map<
-      @NotNull String,
-      @NotNull Map<@NotNull String, @NotNull List<@NotNull INodeItem>>> indexToKeyRefToItemMap = new LinkedHashMap<>();
   @NotNull
   private final DynamicContext metapathContext;
 
@@ -161,8 +159,10 @@ public class DefaultConstraintValidator implements ConstraintValidator {
       @NotNull IAssemblyNodeItem item) {
     for (@NotNull IIndexConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
-      @SuppressWarnings("unchecked") @NotNull ISequence<? extends INodeItem> targets
-          = (@NotNull ISequence<? extends INodeItem>) item.evaluateMetapath(metapath, getMetapathContext());
+      @SuppressWarnings("unchecked")
+      @NotNull ISequence<? extends INodeItem> targets
+          = (gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence<? extends INodeItem>) item
+              .evaluateMetapath(metapath, getMetapathContext());
       validateIndex(constraint, item, targets);
     }
   }
@@ -176,18 +176,18 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     }
 
     Map<@NotNull String, INodeItem> indexItems = new HashMap<>();
-    targets.asStream().map(item -> (@NotNull INodeItem) item).forEachOrdered(item -> {
-      @NotNull 
-      String key = buildKey(constraint.getKeyFields(), item);
+    targets.asStream().map(item -> (INodeItem) item)
+        .forEachOrdered(item -> {
+          @NotNull String key = buildKey(constraint.getKeyFields(), item);
 
-      // logger.info("key: {} {}", key, item);
-      //
-      INodeItem oldItem = indexItems.put(key, item);
-      if (oldItem != null) {
-        throw new MetapathException(String.format("Index '%s' has duplicate key for item at path '%s'", indexName,
-            item.toPath(IFormatterFactory.METAPATH_FORMATTER)));
-      }
-    });
+          // logger.info("key: {} {}", key, item);
+          //
+          INodeItem oldItem = indexItems.put(key, item);
+          if (oldItem != null) {
+            throw new MetapathException(String.format("Index '%s' has duplicate key for item at path '%s'", indexName,
+                item.toPath(IFormatterFactory.METAPATH_FORMATTER)));
+          }
+        });
     indexToKeyToItemMap.put(indexName, indexItems);
   }
 
@@ -204,7 +204,8 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     for (IUniqueConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
       @SuppressWarnings("unchecked") ISequence<? extends INodeItem> targets
-          = (@NotNull ISequence<? extends INodeItem>) item.evaluateMetapath(metapath, getMetapathContext());
+          = (gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence<? extends INodeItem>) item
+              .evaluateMetapath(metapath, getMetapathContext());
       validateUnique(constraint, item, targets);
     }
   }
@@ -363,21 +364,21 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     }
   }
 
-  @NotNull 
+  @NotNull
   protected String buildKey(@NotNull List<@NotNull ? extends IKeyField> keyFields, @NotNull INodeItem item) {
     StringBuilder key = new StringBuilder();
     for (IKeyField keyField : keyFields) {
-      @SuppressWarnings("null") MetapathExpression keyPath = keyField.getTarget();
+      MetapathExpression keyPath = keyField.getTarget();
 
-      @SuppressWarnings("unchecked") List<? extends INodeItem> result
-          = (List<? extends INodeItem>) item.evaluateMetapath(keyPath, getMetapathContext()).asList();
+      @SuppressWarnings("unchecked") List<@NotNull ? extends INodeItem> result
+          = (List<@NotNull ? extends INodeItem>) item.evaluateMetapath(keyPath, getMetapathContext()).asList();
       if (result.size() > 1) {
         throw new MetapathException("Key resulted in multiple nodes: " + result);
       }
 
       String keyValue;
       if (result.size() == 1) {
-        INodeItem keyItem = result.iterator().next();
+        @SuppressWarnings("null") INodeItem keyItem = result.iterator().next();
 
         keyValue = XPathFunctions.fnDataItem(keyItem).asString();
         Pattern pattern = keyField.getPattern();
@@ -407,7 +408,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
 
   @Override
   public void finalizeValidation() {
-    for (Map.Entry<@NotNull INodeItem, @Nullable ValueStatus> entry : valueMap.entrySet()) {
+    for (Map.Entry<@NotNull INodeItem, ValueStatus> entry : valueMap.entrySet()) {
       ValueStatus status = entry.getValue();
       if (status != null && !status.isValid()) {
         logger.warn(String.format("Value '%s' did not match one of the required allowed values at path '%s'",

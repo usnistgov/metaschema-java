@@ -64,7 +64,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
-  public static final int LOOK_AHEAD_BYTES = 3072;
+  public static final int LOOK_AHEAD_BYTES = 32768;
   private static final JsonFactory jsonFactory = new JsonFactory();
   private static final XmlFactory xmlFactory = new XmlFactory();
   private static final YAMLFactory yamlFactory = new YAMLFactory();
@@ -179,20 +179,20 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
     BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES);
     bis.mark(LOOK_AHEAD_BYTES);
 
-    DataFormatMatcher matcher = matchFormat(bis);
+    DataFormatMatcher matcher = matchFormat(bis, LOOK_AHEAD_BYTES - 1);
     Format format = formatFromMatcher(matcher);
 
     Deserializer<?> deserializer;
     switch (format) {
     case JSON:
-      deserializer = detectModelJson(matcher, Format.JSON);
+      deserializer = detectModelJson(matcher.createParserWithMatch(), Format.JSON);
       break;
     case XML:
-      deserializer = detectModelXml(matcher);
+      deserializer = detectModelXml(matcher.getDataStream());
       break;
     case YAML:
       // uses a JSON-based parser
-      deserializer = detectModelJson(matcher, Format.YAML);
+      deserializer = detectModelJson(matcher.createParserWithMatch(), Format.YAML);
       break;
     default:
       throw new UnsupportedOperationException(
@@ -235,7 +235,7 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
     BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES);
     bis.mark(LOOK_AHEAD_BYTES);
 
-    DataFormatMatcher matcher = matchFormat(is);
+    DataFormatMatcher matcher = matchFormat(bis);
     Format format = formatFromMatcher(matcher);
 
     Deserializer<CLASS> deserializer = getDeserializer(clazz, format, getConfiguration());
@@ -290,13 +290,14 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
     }
   }
 
-  protected Deserializer<?> detectModelXml(DataFormatMatcher matcher) throws IOException {
-    Class<?> clazz = detectModelXmlClass(matcher.getDataStream());
+  protected Deserializer<?> detectModelXml(InputStream is) throws IOException {
+    Class<?> clazz = detectModelXmlClass(is);
+
     return getDeserializer(clazz, Format.XML, getConfiguration());
   }
 
-  private Deserializer<?> detectModelJson(DataFormatMatcher matcher, Format format) throws IOException {
-    Class<?> clazz = detectModelJsonClass(matcher.createParserWithMatch());
+  private Deserializer<?> detectModelJson(JsonParser parser, Format format) throws IOException {
+    Class<?> clazz = detectModelJsonClass(parser);
     return getDeserializer(clazz, format, getConfiguration());
   }
 
@@ -308,22 +309,21 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
       xmlInputFactory.configureForXmlConformance();
       xmlInputFactory.setProperty(XMLInputFactory2.IS_COALESCING, false);
 
-      try (Reader reader = new InputStreamReader(is, Charset.forName("UTF8"))) {
-        XMLEventReader2 eventReader = (XMLEventReader2) xmlInputFactory.createXMLEventReader(reader);
-        if (eventReader.peek().isStartDocument()) {
-          while (eventReader.hasNext() && !eventReader.peek().isStartElement()) {
-            eventReader.nextEvent();
-          }
+      Reader reader = new InputStreamReader(is, Charset.forName("UTF8"));
+      XMLEventReader2 eventReader = (XMLEventReader2) xmlInputFactory.createXMLEventReader(reader);
+      if (eventReader.peek().isStartDocument()) {
+        while (eventReader.hasNext() && !eventReader.peek().isStartElement()) {
+          eventReader.nextEvent();
         }
-
-        if (!eventReader.peek().isStartElement()) {
-          throw new UnsupportedOperationException("Unable to detect a start element");
-        }
-
-        StartElement start = eventReader.nextEvent().asStartElement();
-        startElementQName = start.getName();
       }
-    } catch (IOException | XMLStreamException ex) {
+
+      if (!eventReader.peek().isStartElement()) {
+        throw new UnsupportedOperationException("Unable to detect a start element");
+      }
+
+      StartElement start = eventReader.nextEvent().asStartElement();
+      startElementQName = start.getName();
+    } catch (XMLStreamException ex) {
       throw new IOException(ex);
     }
 

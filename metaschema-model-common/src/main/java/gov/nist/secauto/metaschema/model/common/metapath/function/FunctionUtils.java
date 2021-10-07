@@ -26,12 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.type.TypeMetapathException;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.math.MathContext;
@@ -74,9 +77,10 @@ public class FunctionUtils {
    * @throws TypeMetapathException
    *           if the sequence contains more than one item and requireSingleton is {@code true}
    */
-  public static <ITEM extends IItem> ITEM getFirstItem(ISequence<ITEM> sequence, boolean requireSingleton)
+  @Nullable
+  public static <ITEM extends IItem> ITEM getFirstItem(@NotNull ISequence<ITEM> sequence, boolean requireSingleton)
       throws TypeMetapathException {
-    ITEM retval = null;
+    @Nullable ITEM retval = null;
     if (!sequence.isEmpty()) {
       List<ITEM> items = sequence.asList();
       if (requireSingleton && items.size() != 1) {
@@ -131,5 +135,16 @@ public class FunctionUtils {
       }
     }
     return retval;
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <TYPE extends IItem> TYPE asType(IItem item) {
+    return (TYPE) item;
+  }
+
+  @SuppressWarnings("unchecked")
+  @NotNull
+  public static <TYPE extends IItem> ISequence<TYPE> asType(@NotNull ISequence<?> sequence) {
+    return (ISequence<TYPE>) sequence;
   }
 }

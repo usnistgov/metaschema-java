@@ -34,7 +34,9 @@ public class FlagInstance
     extends AbstractNamedInstance<IFlagInstance, FlagDefinition, INamedModelDefinition>
     implements IFlagInstance {
 
-  public FlagInstance(IFlagInstance proxy, FlagDefinition definition,
+  public FlagInstance(
+      IFlagInstance proxy,
+      FlagDefinition definition,
       INamedModelDefinition containingDefinition) {
     super(proxy, definition, containingDefinition);
   }

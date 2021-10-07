@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IIntegerItem;
 
 public interface IIntegerType extends IDecimalType {
 

@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IPositiveIntegerItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IPositiveIntegerItem;
 
 public interface IPositiveIntegerType extends IIntegerType {
 

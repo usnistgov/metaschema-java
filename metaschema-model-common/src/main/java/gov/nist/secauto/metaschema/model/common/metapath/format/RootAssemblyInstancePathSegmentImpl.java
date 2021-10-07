@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 
 import javax.xml.namespace.QName;
 
-public class RootAssemblyInstancePathSegmentImpl implements IRootAssemblyPathSegment {
+class RootAssemblyInstancePathSegmentImpl implements IRootAssemblyPathSegment {
   private final IAssemblyInstance instance;
 
   public RootAssemblyInstancePathSegmentImpl(IAssemblyInstance instance) {

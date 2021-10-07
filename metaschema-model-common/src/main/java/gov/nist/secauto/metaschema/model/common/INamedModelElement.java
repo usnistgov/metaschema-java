@@ -44,8 +44,7 @@ public interface INamedModelElement extends IModelElement {
   default QName getXmlQName() {
     String namespace = getXmlNamespace();
 
-    @NotNull
-    QName retval;
+    @NotNull QName retval;
     if (namespace != null) {
       retval = new QName(namespace, getEffectiveName());
     } else {
@@ -77,8 +76,7 @@ public interface INamedModelElement extends IModelElement {
    */
   @NotNull
   default String getEffectiveName() {
-    @Nullable
-    String useName = getUseName();
+    @Nullable String useName = getUseName();
     if (useName == null) {
       return getName();
     }

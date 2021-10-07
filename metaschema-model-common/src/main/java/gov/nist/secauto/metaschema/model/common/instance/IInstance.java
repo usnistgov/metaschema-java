@@ -42,7 +42,6 @@ public interface IInstance extends IModelElement {
    */
   INamedModelDefinition getContainingDefinition();
 
-
   /**
    * Generates a "coordinate" string for the provided information element instance.
    * 

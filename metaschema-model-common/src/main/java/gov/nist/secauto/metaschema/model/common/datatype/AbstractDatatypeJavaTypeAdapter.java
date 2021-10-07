@@ -26,14 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+
 /**
  * Provides a Java type adapter implementation for data types that are based on {@link IDatatype}.
  * 
  * @param <TYPE>
  *          the Java type this adapter supports, which is based on {@link IDatatype}
  */
-public abstract class AbstractDatatypeJavaTypeAdapter<TYPE extends IDatatype<TYPE>>
-    extends AbstractJavaTypeAdapter<TYPE> {
+public abstract class AbstractDatatypeJavaTypeAdapter<TYPE extends IDatatype<TYPE>, ITEM_TYPE extends IAnyAtomicItem>
+    extends AbstractJavaTypeAdapter<TYPE, ITEM_TYPE> {
 
   /**
    * Construct a new Java type adapter for the class based on {@link IDatatype}.

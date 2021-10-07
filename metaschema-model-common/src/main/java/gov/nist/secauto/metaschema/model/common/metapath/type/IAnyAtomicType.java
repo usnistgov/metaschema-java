@@ -26,7 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+
+import org.jetbrains.annotations.NotNull;
 
 public interface IAnyAtomicType extends IItemType {
 
@@ -35,6 +38,26 @@ public interface IAnyAtomicType extends IItemType {
     return true;
   }
 
+  /**
+   * Get the java type of the associated item.
+   * 
+   * @return the java associated item type
+   */
+  @NotNull
+  Class<? extends IAnyAtomicItem> getItemClass();
+
   @Override
   IAnyAtomicItem newItem(Object value);
+
+  /**
+   * Cast the provided item to an item of this type, if possible.
+   * 
+   * @param item
+   *          the atomic item to cast
+   * @return an atomic item of this type
+   * @throws InvalidValueForCastFunctionMetapathException
+   *           if the provided item type cannot be cast to this item type
+   */
+  @NotNull
+  IAnyAtomicItem cast(IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException;
 }

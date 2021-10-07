@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import java.util.List;
@@ -35,7 +35,10 @@ public class DefaultUniqueConstraint
     extends AbstractKeyConstraint
     implements IUniqueConstraint {
 
-  public DefaultUniqueConstraint(String id, MetapathExpression target, List<DefaultKeyField> keyFields,
+  public DefaultUniqueConstraint(
+      String id,
+      MetapathExpression target,
+      List<DefaultKeyField> keyFields,
       MarkupMultiline remarks) {
     super(id, target, keyFields, remarks);
   }

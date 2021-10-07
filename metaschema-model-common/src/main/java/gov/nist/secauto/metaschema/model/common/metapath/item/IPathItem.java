@@ -44,6 +44,7 @@ public interface IPathItem extends IItem {
 
   /**
    * Get the path segment for this item.
+   * 
    * @return the path segment
    */
   @NotNull

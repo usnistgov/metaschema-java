@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 public interface INamedModelInstance extends INamedInstance, IModelInstance {
   @Override
   INamedModelDefinition getDefinition();
+
   /**
    * Generate a new path segment for this instance.
    * 

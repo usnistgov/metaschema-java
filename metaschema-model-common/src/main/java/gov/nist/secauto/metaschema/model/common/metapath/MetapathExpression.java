@@ -45,11 +45,12 @@ public class MetapathExpression {
   private final String path;
   private final IExpression<?> node;
 
-  public MetapathExpression(ParseTree tree) {
+  @SuppressWarnings("null")
+  public MetapathExpression(@NotNull ParseTree tree) {
     this(tree.getText(), new BuildAstVisitor().visit(tree));
   }
 
-  public MetapathExpression(String path, IExpression<?> expr) {
+  public MetapathExpression(@NotNull String path, @NotNull IExpression<?> expr) {
     this.path = path;
     this.node = expr;
   }
@@ -58,6 +59,7 @@ public class MetapathExpression {
     return path;
   }
 
+  @NotNull
   public IExpression<?> getASTNode() {
     return node;
   }
@@ -67,12 +69,13 @@ public class MetapathExpression {
     return new ASTPrinter().visit(getASTNode());
   }
 
-  @NotNull 
+  @NotNull
   public IInstanceSet evaluateMetaschemaInstance(IMetaschemaContext context) {
     IExpression<?> node = getASTNode();
     Class<? extends IItem> type = node.getStaticResultType();
     if (!INodeItem.class.isAssignableFrom(type)) {
-      throw new UnsupportedOperationException(String.format("The expression '%s' with static type '%s' is not a node expression", getPath(), type.getName()));
+      throw new UnsupportedOperationException(String
+          .format("The expression '%s' with static type '%s' is not a node expression", getPath(), type.getName()));
     }
     return new MetaschemaInstanceEvaluationVisitor().visit(node, context);
   }

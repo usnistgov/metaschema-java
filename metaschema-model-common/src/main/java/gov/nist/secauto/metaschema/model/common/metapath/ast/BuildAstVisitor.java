@@ -97,8 +97,7 @@ public class BuildAstVisitor
     return handleNAiryCollection(context, 2, (ctx, idx) -> {
       // skip operator, since we know what it is
       ParseTree tree = ctx.getChild(idx + 1);
-      @SuppressWarnings("unchecked")
-      NODE node = (NODE) tree.accept(this);
+      @SuppressWarnings("unchecked") NODE node = (NODE) tree.accept(this);
       return node;
     }, supplier);
   }
@@ -134,8 +133,7 @@ public class BuildAstVisitor
       retval = null;
     } else {
       ParseTree leftTree = context.getChild(0);
-      @SuppressWarnings("unchecked")
-      NODE leftResult = (NODE) leftTree.accept(this);
+      @SuppressWarnings("unchecked") NODE leftResult = (NODE) leftTree.accept(this);
 
       if (numChildren == 1) {
         retval = leftResult;
@@ -489,9 +487,9 @@ public class BuildAstVisitor
       arguments = Collections.singletonList(argument);
     } else {
       // more children than the OP CP tokens
-      arguments = new ArrayList<>((numChildren - 3 / 2) + 1);
+      arguments = new ArrayList<>((numChildren - 1 / 2));
       for (int i = 1; i < numChildren - 1; i = i + 2) {
-        IExpression<?> argument = context.getChild(1).accept(this);
+        IExpression<?> argument = context.getChild(i).accept(this);
         arguments.add(argument);
       }
     }

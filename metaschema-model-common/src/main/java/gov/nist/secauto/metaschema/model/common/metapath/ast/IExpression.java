@@ -28,9 +28,11 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -53,7 +55,8 @@ public interface IExpression<RESULT_TYPE extends IItem> {
     return String.format("%s[]", getClass().getName());
   }
 
-  ISequence<? extends RESULT_TYPE> accept(IExpressionEvaluationVisitor visitor, INodeContext context);
+  @NotNull
+  ISequence<? extends RESULT_TYPE> accept(@NotNull IExpressionEvaluationVisitor visitor, @NotNull INodeContext context);
 
   <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
 }

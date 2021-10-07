@@ -26,11 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

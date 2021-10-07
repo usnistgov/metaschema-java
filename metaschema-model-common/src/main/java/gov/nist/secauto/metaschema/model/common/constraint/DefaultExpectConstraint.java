@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,8 +53,11 @@ public class DefaultExpectConstraint extends AbstractConstraint implements IExpe
    * @param remarks
    *          optional remarks describing the intent of the constraint
    */
-  public DefaultExpectConstraint(@Nullable String id, @NotNull MetapathExpression target,
-      @NotNull MetapathExpression test, MarkupMultiline remarks) {
+  public DefaultExpectConstraint(
+      @Nullable String id,
+      @NotNull MetapathExpression target,
+      @NotNull MetapathExpression test,
+      MarkupMultiline remarks) {
     super(id, target, remarks);
     Objects.requireNonNull(test);
     this.test = test;

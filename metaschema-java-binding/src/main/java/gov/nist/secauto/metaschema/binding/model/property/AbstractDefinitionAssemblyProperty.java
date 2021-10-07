@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.binding.model.property.info.ClassDataTypeHand
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.ModelPropertyInfo;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyInfo;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 

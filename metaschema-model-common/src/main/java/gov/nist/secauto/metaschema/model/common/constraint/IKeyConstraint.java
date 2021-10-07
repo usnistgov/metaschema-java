@@ -36,7 +36,7 @@ public interface IKeyConstraint extends IConstraint {
    * 
    * @return one or more keys
    */
-  @NotNull 
+  @NotNull
   List<@NotNull ? extends IKeyField> getKeyFields();
 
 }

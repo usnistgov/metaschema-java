@@ -70,6 +70,6 @@ public abstract class AbstractCodedMetapathException extends MetapathException {
   protected abstract String getCodePrefix();
 
   protected String getCodeAsString() {
-    return String.format("%s%4d", getCodePrefix(), getCode());
+    return String.format("%s%04d", getCodePrefix(), getCode());
   }
 }

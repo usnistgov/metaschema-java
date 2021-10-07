@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.codegen.property;
 import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
 import java.util.Set;

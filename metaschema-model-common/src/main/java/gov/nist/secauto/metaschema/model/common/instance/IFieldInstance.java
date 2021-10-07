@@ -51,8 +51,7 @@ public interface IFieldInstance extends INamedModelInstance, Field {
    */
   @Override
   default QName getXmlQName() {
-    @Nullable
-    QName retval = null;
+    @Nullable QName retval = null;
     if (isInXmlWrapped()) {
       String namespace = getXmlNamespace();
       if (namespace != null) {
@@ -66,12 +65,10 @@ public interface IFieldInstance extends INamedModelInstance, Field {
 
   @Override
   default String getJsonName() {
-    @NotNull
-    String retval;
+    @NotNull String retval;
     if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
       @SuppressWarnings("null")
-      @NotNull
-      String groupAsName = getGroupAsName();
+      @NotNull String groupAsName = getGroupAsName();
       retval = groupAsName;
     } else {
       retval = getEffectiveName();

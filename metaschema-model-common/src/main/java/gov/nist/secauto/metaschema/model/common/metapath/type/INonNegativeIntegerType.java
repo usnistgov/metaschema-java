@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.INonNegativeIntegerItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.INonNegativeIntegerItem;
 
 public interface INonNegativeIntegerType extends IIntegerType {
 

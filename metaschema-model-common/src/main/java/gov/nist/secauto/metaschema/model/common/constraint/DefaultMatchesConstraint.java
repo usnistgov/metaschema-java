@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import java.util.regex.Pattern;
@@ -38,7 +38,11 @@ public class DefaultMatchesConstraint
   private final Pattern pattern;
   private final IJavaTypeAdapter<?> dataType;
 
-  public DefaultMatchesConstraint(String id, MetapathExpression target, Pattern pattern, IJavaTypeAdapter<?> dataType,
+  public DefaultMatchesConstraint(
+      String id,
+      MetapathExpression target,
+      Pattern pattern,
+      IJavaTypeAdapter<?> dataType,
       MarkupMultiline remarks) {
     super(id, target, remarks);
     if (pattern == null && dataType == null) {

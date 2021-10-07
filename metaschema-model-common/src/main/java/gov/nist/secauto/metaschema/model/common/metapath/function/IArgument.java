@@ -29,17 +29,23 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 public interface IArgument {
+  @NotNull
   String getName();
 
+  @NotNull
   ISequenceType getSequenceType();
 
   boolean isSupported(IExpression<?> expression);
 
+  @NotNull
   String toSignature();
 
+  @NotNull
   public static Builder newBuilder() {
     return new Builder();
   }
@@ -50,14 +56,14 @@ public interface IArgument {
     private Occurrence occurrence = Occurrence.ONE;
 
     public Builder() {
-      this(null);
     }
 
-    public Builder(String name) {
+    public Builder(@NotNull String name) {
       this.name = name;
     }
 
-    public Builder name(String name) {
+    @NotNull
+    public Builder name(@NotNull String name) {
       Objects.requireNonNull(name, "name");
       if (name.isBlank()) {
         throw new IllegalArgumentException("the name must be non-blank");
@@ -66,29 +72,35 @@ public interface IArgument {
       return this;
     }
 
-    public Builder type(Class<? extends IItem> type) {
+    @NotNull
+    public Builder type(@NotNull Class<? extends IItem> type) {
       Objects.requireNonNull(type, "type");
       this.type = type;
       return this;
     }
 
+    @NotNull
     public Builder zeroOrOne() {
       return occurrence(Occurrence.ZERO_OR_ONE);
     }
 
+    @NotNull
     public Builder one() {
       return occurrence(Occurrence.ONE);
     }
 
+    @NotNull
     public Builder zeroOrMore() {
       return occurrence(Occurrence.ZERO_OR_MORE);
     }
 
+    @NotNull
     public Builder oneOrMore() {
       return occurrence(Occurrence.ONE_OR_MORE);
     }
 
-    public Builder occurrence(Occurrence occurrence) {
+    @NotNull
+    public Builder occurrence(@NotNull Occurrence occurrence) {
       Objects.requireNonNull(occurrence, "occurrence");
       this.occurrence = occurrence;
       return this;
@@ -100,6 +112,8 @@ public interface IArgument {
       }
     }
 
+    @SuppressWarnings("null")
+    @NotNull
     public IArgument build() throws IllegalStateException {
       validate();
       return new ArgumentImpl(name, new SequenceTypeImpl(type, occurrence));

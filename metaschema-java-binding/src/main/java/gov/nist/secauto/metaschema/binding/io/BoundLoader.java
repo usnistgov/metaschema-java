@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import gov.nist.secauto.metaschema.model.common.metapath.DocumentLoader;
+import gov.nist.secauto.metaschema.model.common.metapath.IDocumentLoader;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +37,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 
-public interface BoundLoader extends DocumentLoader, MutableConfiguration {
+public interface BoundLoader extends IDocumentLoader, MutableConfiguration {
   Format detectFormat(URL url) throws IOException;
 
   Format detectFormat(File file) throws FileNotFoundException, IOException;

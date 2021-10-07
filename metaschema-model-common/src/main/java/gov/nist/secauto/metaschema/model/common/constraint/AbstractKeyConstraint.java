@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import org.jetbrains.annotations.NotNull;
@@ -50,8 +50,11 @@ public abstract class AbstractKeyConstraint extends AbstractConstraint implement
    * @param remarks
    *          optional remarks describing the intent of the constraint
    */
-  public AbstractKeyConstraint(@Nullable String id, @NotNull MetapathExpression target,
-      @NotNull List<@NotNull DefaultKeyField> keyFields, MarkupMultiline remarks) {
+  public AbstractKeyConstraint(
+      @Nullable String id,
+      @NotNull MetapathExpression target,
+      @NotNull List<@NotNull DefaultKeyField> keyFields,
+      MarkupMultiline remarks) {
     super(id, target, remarks);
     if (keyFields.isEmpty()) {
       throw new IllegalArgumentException("an empty list of key fields is not allowed");

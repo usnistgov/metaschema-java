@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IEmailAddressItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IEmailAddressItem;
 
 public interface IEmailAddressType extends IStringType {
   @Override

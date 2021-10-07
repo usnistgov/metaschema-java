@@ -28,15 +28,16 @@ package gov.nist.secauto.metaschema.model.common.datatype;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IIntegerType;
 
 import java.io.IOException;
 import java.math.BigInteger;
 
-public abstract class AbstractIntegerAdapter
-    extends AbstractJavaTypeAdapter<BigInteger> implements IIntegerType {
+public abstract class AbstractIntegerAdapter<ITEM_TYPE extends IIntegerItem>
+    extends AbstractJavaTypeAdapter<BigInteger, ITEM_TYPE> implements IIntegerType {
 
+  @SuppressWarnings("null")
   protected AbstractIntegerAdapter() {
     super(BigInteger.class);
   }
@@ -59,11 +60,5 @@ public abstract class AbstractIntegerAdapter
   public BigInteger copy(BigInteger obj) {
     // a BigInteger is immutable
     return obj;
-  }
-
-  @Override
-  public IIntegerItem newItem(Object value) {
-    BigInteger item = toValue(value);
-    return IIntegerItem.valueOf(item);
   }
 }

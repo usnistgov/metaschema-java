@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.type;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface IItemType {
 
   /**
@@ -45,5 +47,6 @@ public interface IItemType {
    *          the item's value
    * @return a new item
    */
-  IItem newItem(Object value);
+  @NotNull
+  IItem newItem(@NotNull Object value);
 }

@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IUuidItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IUuidItem;
 
 public interface IUuidType extends IAnyAtomicType {
 

@@ -65,14 +65,13 @@ public class DataTypeService {
    */
   private synchronized void load() throws IllegalStateException {
     Map<String, IJavaTypeAdapter<?>> libraryByName = new HashMap<>();
-    @SuppressWarnings("rawtypes")
-    Map<Class<? extends IJavaTypeAdapter>, IJavaTypeAdapter<?>> libraryByClass = new HashMap<>();
+    @SuppressWarnings("rawtypes") Map<Class<? extends IJavaTypeAdapter>, IJavaTypeAdapter<?>> libraryByClass
+        = new HashMap<>();
     ServiceLoader.load(IDataTypeProvider.class).stream().map(Provider<IDataTypeProvider>::get).flatMap(provider -> {
       return provider.getJavaTypeAdapters().stream();
     }).forEach(adapter -> {
       libraryByName.put(adapter.getName(), adapter);
-      @SuppressWarnings("rawtypes")
-      Class<? extends IJavaTypeAdapter> clazz = adapter.getClass();
+      @SuppressWarnings("rawtypes") Class<? extends IJavaTypeAdapter> clazz = adapter.getClass();
       libraryByClass.put(clazz, adapter);
     });
     this.libraryByName = libraryByName;

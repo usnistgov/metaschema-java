@@ -84,5 +84,4 @@ public class FieldInstance
     return getProxy().getContainingMetaschema();
   }
 
-  
 }

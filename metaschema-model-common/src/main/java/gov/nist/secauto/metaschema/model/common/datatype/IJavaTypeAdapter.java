@@ -54,6 +54,7 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    * 
    * @return the name
    */
+  @NotNull
   String getName();
 
   /**
@@ -61,6 +62,7 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    * 
    * @return the Java class
    */
+  @NotNull
   Class<TYPE> getJavaClass();
 
   /**
@@ -70,7 +72,8 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    *          a value of the provided type
    * @return the typed value
    */
-  TYPE toValue(Object value);
+  @NotNull
+  TYPE toValue(@NotNull Object value);
 
   /**
    * Gets the value as a string suitable for writing as text. This is intended for data types that
@@ -84,7 +87,8 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    * @throws UnsupportedOperationException
    *           if the data type cannot be represented as a string
    */
-  String asString(Object value) throws UnsupportedOperationException;
+  @NotNull
+  String asString(@NotNull Object value) throws UnsupportedOperationException;
 
   /**
    * Create a copy of the provided value.
@@ -93,7 +97,8 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    *          the value to copy
    * @return the copy
    */
-  TYPE copy(TYPE obj);
+  @NotNull
+  TYPE copy(@NotNull TYPE obj);
 
   /**
    * Indicates if the adapter will parse the {@link XMLEvent#START_ELEMENT} before parsing the value
@@ -117,7 +122,7 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    * @return {@code true} if the adapter will parse the element, or {@code false} otherwise
    */
   // TODO: implement this
-  boolean canHandleQName(QName nextElementQName);
+  boolean canHandleQName(@NotNull QName nextElementQName);
 
   /**
    * Parses a provided string. Used to parse XML attributes, simple XML character data, and JSON/YAML
@@ -125,12 +130,12 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    * 
    * @param value
    *          the string value to parse
-   * @return the parsed data as the adapter's type // * @throws IOException // * if an error occurs
-   *         while parsing
+   * @return the parsed data as the adapter's type
    * @throws IllegalArgumentException
    *           if the data is not valid to the data type
    */
-  TYPE parse(String value) throws IllegalArgumentException;
+  @NotNull
+  TYPE parse(@NotNull String value) throws IllegalArgumentException;
 
   /**
    * This method is expected to parse content starting at the next event. Parsing will continue until
@@ -152,7 +157,8 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    * @throws IOException
    *           if a parsing error occurs
    */
-  TYPE parse(XMLEventReader2 eventReader) throws IOException;
+  @NotNull
+  TYPE parse(@NotNull XMLEventReader2 eventReader) throws IOException;
 
   /**
    * Parses a JSON property value.
@@ -163,7 +169,8 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    * @throws IOException
    *           if a parsing error occurs
    */
-  TYPE parse(JsonParser parser) throws IOException;
+  @NotNull
+  TYPE parse(@NotNull JsonParser parser) throws IOException;
 
   /**
    * Parses a provided string using {@link #parse(String)}.
@@ -178,7 +185,8 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    *           if an error occurs while parsing
    * @see #parse(String)
    */
-  default Supplier<TYPE> parseAndSupply(String value) throws IOException {
+  @NotNull
+  default Supplier<TYPE> parseAndSupply(@NotNull String value) throws IOException {
     TYPE retval = parse(value);
     return () -> copy(retval);
   }
@@ -197,7 +205,8 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    * @see #parse(String)
    * @see #parse(XMLEventReader2)
    */
-  default Supplier<TYPE> parseAndSupply(XMLEventReader2 eventReader) throws IOException {
+  @NotNull
+  default Supplier<TYPE> parseAndSupply(@NotNull XMLEventReader2 eventReader) throws IOException {
     TYPE retval = parse(eventReader);
     return () -> copy(retval);
   }
@@ -216,7 +225,8 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    * @see #parse(String)
    * @see #parse(JsonParser)
    */
-  default Supplier<TYPE> parseAndSupply(JsonParser parser) throws IOException {
+  @NotNull
+  default Supplier<TYPE> parseAndSupply(@NotNull JsonParser parser) throws IOException {
     TYPE retval = parse(parser);
     return () -> copy(retval);
   }
@@ -241,7 +251,8 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    * @throws IOException
    *           if an unexpected error occurred while writing to the output stream
    */
-  void writeXml(Object instance, StartElement parent, XMLEventFactory2 eventFactory, XMLEventWriter eventWriter)
+  void writeXml(@NotNull Object instance, @NotNull StartElement parent, @NotNull XMLEventFactory2 eventFactory,
+      @NotNull XMLEventWriter eventWriter)
       throws IOException, XMLStreamException;
 
   /**
@@ -260,7 +271,8 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    * @throws XMLStreamException
    *           if an unexpected error occurred while processing the XML output
    */
-  void writeXmlCharacters(Object instance, QName parentName, XMLStreamWriter2 writer) throws XMLStreamException;
+  void writeXmlCharacters(@NotNull Object instance, @NotNull QName parentName, @NotNull XMLStreamWriter2 writer)
+      throws XMLStreamException;
 
   /**
    * Writes the provided Java class instance as a JSON/YAML field value.
@@ -272,7 +284,7 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    * @throws IOException
    *           if an unexpected error occurred while writing the JSON/YAML output
    */
-  void writeJsonValue(Object instance, JsonGenerator writer) throws IOException;
+  void writeJsonValue(@NotNull Object instance, @NotNull JsonGenerator writer) throws IOException;
 
   /**
    * Gets the default value to use as the JSON/YAML field name for a Metaschema field value if no JSON
@@ -290,5 +302,4 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    * @return {@code true} if allowed, or {@code false} otherwise.
    */
   boolean isUnrappedValueAllowedInXml();
-
 }

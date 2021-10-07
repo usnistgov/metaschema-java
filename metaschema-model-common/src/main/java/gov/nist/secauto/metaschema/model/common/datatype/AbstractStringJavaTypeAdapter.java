@@ -26,12 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IStringType;
 
-public abstract class AbstractStringJavaTypeAdapter
-    extends AbstractJavaTypeAdapter<String> implements IStringType {
+public abstract class AbstractStringJavaTypeAdapter<ITEM_TYPE extends IStringItem>
+    extends AbstractJavaTypeAdapter<String, ITEM_TYPE> implements IStringType {
 
+  @SuppressWarnings("null")
   protected AbstractStringJavaTypeAdapter() {
     super(String.class);
   }
@@ -45,11 +46,5 @@ public abstract class AbstractStringJavaTypeAdapter
   public String copy(String obj) {
     // a Java string is immutable
     return obj;
-  }
-
-  @Override
-  public IStringItem newItem(Object value) {
-    String item = asString(value);
-    return IStringItem.valueOf(item);
   }
 }

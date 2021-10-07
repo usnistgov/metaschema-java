@@ -26,6 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.evaluate;
 
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Addition;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.And;
@@ -56,20 +61,18 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.StringLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+
+import org.jetbrains.annotations.NotNull;
 
 public class AbstractExpressionEvaluationVisitor implements IExpressionEvaluationVisitor {
 
-  protected <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> visitChildren(IExpression<ITEM_TYPE> expr, INodeContext context) {
+  @NotNull
+  protected <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> visitChildren(@NotNull IExpression<ITEM_TYPE> expr,
+      @NotNull INodeContext context) {
     ISequence<ITEM_TYPE> result = defaultResult();
     int numChildren = expr.getChildCount();
     for (int idx = 0; idx < numChildren; idx++) {
@@ -90,11 +93,13 @@ public class AbstractExpressionEvaluationVisitor implements IExpressionEvaluatio
     return true;
   }
 
-  protected <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> aggregateResult(ISequence<ITEM_TYPE> result,
-      ISequence<?> childResult) {
+  @NotNull
+  protected <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> aggregateResult(@NotNull ISequence<ITEM_TYPE> result,
+      @NotNull ISequence<?> childResult) {
     return result;
   }
 
+  @NotNull
   protected <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> defaultResult() {
     return ISequence.empty();
   }
@@ -191,7 +196,8 @@ public class AbstractExpressionEvaluationVisitor implements IExpressionEvaluatio
   }
 
   @Override
-  public ISequence<? extends INodeItem> visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr, INodeContext context) {
+  public ISequence<? extends INodeItem> visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr,
+      INodeContext context) {
     return visitChildren(expr, context);
   }
 

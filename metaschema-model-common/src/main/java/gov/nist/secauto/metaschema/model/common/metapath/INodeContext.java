@@ -34,10 +34,13 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.stream.Stream;
 
 public interface INodeContext {
 
+  @NotNull
   INodeItem getNodeItem();
 
   /**
@@ -50,7 +53,9 @@ public interface INodeContext {
    *          if the search should recurse over the child model instances
    * @return a stream of matching flag node items
    */
-  Stream<? extends INodeItem> getMatchingChildInstances(IExpressionEvaluationVisitor visitor, IExpression<?> expr,
+  @NotNull
+  Stream<? extends INodeItem> getMatchingChildInstances(@NotNull IExpressionEvaluationVisitor visitor,
+      @NotNull IExpression<?> expr,
       boolean recurse);
 
   /**
@@ -61,7 +66,8 @@ public interface INodeContext {
    *          the search expression
    * @return a stream of matching flag node items
    */
-  Stream<? extends IFlagNodeItem> getMatchingChildFlags(Flag flag);
+  @NotNull
+  Stream<? extends IFlagNodeItem> getMatchingChildFlags(@NotNull Flag flag);
 
   /**
    * Searches the child model nodes for {@link IModelNodeItem} instances that match the provided
@@ -71,7 +77,8 @@ public interface INodeContext {
    *          the search expression
    * @return a stream of matching model node items
    */
-  Stream<? extends IModelNodeItem> getMatchingChildModelInstances(ModelInstance modelInstance);
+  @NotNull
+  Stream<? extends IModelNodeItem> getMatchingChildModelInstances(@NotNull ModelInstance modelInstance);
 
   // default IMetapathResult evaluateMetapath(MetapathExpression metapath) {
   // MetaschemaPathEvaluationVisitor visitor = new MetaschemaPathEvaluationVisitor();

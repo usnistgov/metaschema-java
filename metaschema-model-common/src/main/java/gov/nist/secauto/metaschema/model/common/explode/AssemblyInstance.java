@@ -35,7 +35,9 @@ public class AssemblyInstance
     extends AbstractNamedInstance<IAssemblyInstance, AssemblyDefinition, AssemblyDefinition>
     implements IAssemblyInstance {
 
-  public AssemblyInstance(IAssemblyInstance proxy, AssemblyDefinition definition,
+  public AssemblyInstance(
+      IAssemblyInstance proxy,
+      AssemblyDefinition definition,
       AssemblyDefinition containingDefinition) {
     super(proxy, definition, containingDefinition);
   }

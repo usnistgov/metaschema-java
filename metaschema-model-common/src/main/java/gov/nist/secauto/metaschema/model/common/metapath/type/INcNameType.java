@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.INcNameItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.INcNameItem;
 
 public interface INcNameType extends IStringType {
   @Override

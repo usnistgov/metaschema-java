@@ -28,11 +28,15 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 
+import org.jetbrains.annotations.NotNull;
+
 class ArgumentImpl implements IArgument {
+  @NotNull
   private final String name;
+  @NotNull
   private final ISequenceType sequenceType;
 
-  protected ArgumentImpl(String name, ISequenceType sequenceType) {
+  protected ArgumentImpl(@NotNull String name, @NotNull ISequenceType sequenceType) {
     this.name = name;
     this.sequenceType = sequenceType;
   }

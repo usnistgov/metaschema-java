@@ -45,7 +45,6 @@ public interface INamedInstance extends IInstance, INamedModelElement {
    */
   @NotNull
   INamedDefinition getDefinition();
-  
 
   /**
    * Generates a "coordinate" string for the provided information element instance.

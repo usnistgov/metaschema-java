@@ -26,17 +26,37 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IAnyAtomicType;
 
-public interface IAnyAtomicItem extends IItem {
-  Object getValue();
+import org.jetbrains.annotations.NotNull;
 
+public interface IAnyAtomicItem extends IItem {
+
+  /**
+   * Get the textual value of the item's "wrapped" value.
+   * 
+   * @return the textual value of the item's "wrapped" value
+   */
+  @NotNull
   String asString();
 
+  /**
+   * Get a new {@link IStringItem} based on the the textual value of the item's "wrapped" value.
+   * 
+   * @return a new string item
+   */
   // TODO: rename to asStringItem
+  @NotNull
   default IStringItem newStringItem() {
     return IStringItem.valueOf(asString());
   }
 
+  /**
+   * Get the item's type information.
+   * 
+   * @return the type information for the item
+   */
+  @NotNull
   IAnyAtomicType getItemType();
 }

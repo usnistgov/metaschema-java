@@ -26,16 +26,20 @@
 
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
+import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter.VoidItem;
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.item.DataTypeException;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.DataTypeException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.type.IAnyAtomicType;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Used to mark a Java type that has no configured adapter.
  */
 public class NullJavaTypeAdapter
-    extends AbstractJavaTypeAdapter<Void>
+    extends AbstractJavaTypeAdapter<Void, VoidItem>
     implements IJavaTypeAdapter<Void> {
 
   /**
@@ -44,7 +48,7 @@ public class NullJavaTypeAdapter
    * @param clazz
    *          the class to adapt
    */
-  public NullJavaTypeAdapter(Class<Void> clazz) {
+  public NullJavaTypeAdapter(@NotNull Class<Void> clazz) {
     super(clazz);
     throw new UnsupportedOperationException("Not a valid type");
   }
@@ -60,7 +64,7 @@ public class NullJavaTypeAdapter
   }
 
   @Override
-  public IAnyAtomicItem newItem(Object value) {
+  public VoidItem newItem(Object value) {
     throw new UnsupportedOperationException("Not a valid type");
   }
 
@@ -68,4 +72,33 @@ public class NullJavaTypeAdapter
   public String getName() {
     throw new UnsupportedOperationException("Not a valid type");
   }
+
+  @Override
+  public @NotNull Class<VoidItem> getItemClass() {
+    throw new UnsupportedOperationException("Not a valid type");
+  }
+
+  public static class VoidItem implements IAnyAtomicItem {
+
+    @Override
+    public @NotNull Object getValue() {
+      throw new UnsupportedOperationException("Not a valid type");
+    }
+
+    @Override
+    public @NotNull IAnyAtomicItem toAtomicItem() {
+      throw new UnsupportedOperationException("Not a valid type");
+    }
+
+    @Override
+    public @NotNull String asString() {
+      throw new UnsupportedOperationException("Not a valid type");
+    }
+
+    @Override
+    public @NotNull IAnyAtomicType getItemType() {
+      throw new UnsupportedOperationException("Not a valid type");
+    }
+  }
+
 }

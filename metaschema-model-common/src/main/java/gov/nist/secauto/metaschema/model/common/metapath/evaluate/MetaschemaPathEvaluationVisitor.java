@@ -26,6 +26,17 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.evaluate;
 
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBase64BinaryItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDateItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDurationItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IYearMonthDurationItem;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Addition;
@@ -60,24 +71,13 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.function.XPathFunctions;
+import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnNotFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDurationItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 import gov.nist.secauto.metaschema.model.common.metapath.type.InvalidTypeMetapathException;
 
 import org.jetbrains.annotations.NotNull;
@@ -102,6 +102,11 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
 
   protected DynamicContext getDynamicContext() {
     return dynamicContext;
+  }
+
+  @NotNull
+  protected <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> resultOrEmptySequence(ITEM_TYPE item) {
+    return item == null ? ISequence.empty() : ISequence.of(item);
   }
 
   @Override
@@ -170,7 +175,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
             IIntegerItem.ZERO);
         break;
       case NE:
-        retval = XPathFunctions.fnNot(OperationFunctions
+        retval = FnNotFunction.fnNot(OperationFunctions
             .opNumericEqual(XPathFunctions.fnCompare((IStringItem) left, (IStringItem) right), IIntegerItem.ZERO));
         break;
       default:
@@ -200,7 +205,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
         retval = OperationFunctions.opNumericLessThan((INumericItem) left, (INumericItem) right);
         break;
       case NE:
-        retval = XPathFunctions.fnNot(OperationFunctions.opNumericEqual((INumericItem) left, (INumericItem) right));
+        retval = FnNotFunction.fnNot(OperationFunctions.opNumericEqual((INumericItem) left, (INumericItem) right));
         break;
       default:
         supported = false;
@@ -229,7 +234,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
         retval = OperationFunctions.opBooleanLessThan((IBooleanItem) left, (IBooleanItem) right);
         break;
       case NE:
-        retval = XPathFunctions.fnNot(OperationFunctions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right));
+        retval = FnNotFunction.fnNot(OperationFunctions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right));
         break;
       default:
         supported = false;
@@ -258,7 +263,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
         retval = OperationFunctions.opDateTimeLessThan((IDateTimeItem) left, (IDateTimeItem) right);
         break;
       case NE:
-        retval = XPathFunctions.fnNot(OperationFunctions.opDateTimeEqual((IDateTimeItem) left, (IDateTimeItem) right));
+        retval = FnNotFunction.fnNot(OperationFunctions.opDateTimeEqual((IDateTimeItem) left, (IDateTimeItem) right));
         break;
       default:
         supported = false;
@@ -287,7 +292,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
         retval = OperationFunctions.opDateLessThan((IDateItem) left, (IDateItem) right);
         break;
       case NE:
-        retval = XPathFunctions.fnNot(OperationFunctions.opDateEqual((IDateItem) left, (IDateItem) right));
+        retval = FnNotFunction.fnNot(OperationFunctions.opDateEqual((IDateItem) left, (IDateItem) right));
         break;
       default:
         supported = false;
@@ -357,7 +362,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
         break;
       }
       case NE:
-        retval = XPathFunctions.fnNot(OperationFunctions.opDurationEqual((IDurationItem) left, (IDurationItem) right));
+        retval = FnNotFunction.fnNot(OperationFunctions.opDurationEqual((IDurationItem) left, (IDurationItem) right));
         break;
       default:
         supported = false;
@@ -388,7 +393,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
         retval = OperationFunctions.opBase64BinaryLessThan((IBase64BinaryItem) left, (IBase64BinaryItem) right);
         break;
       case NE:
-        retval = XPathFunctions
+        retval = FnNotFunction
             .fnNot(OperationFunctions.opBase64BinaryEqual((IBase64BinaryItem) left, (IBase64BinaryItem) right));
         break;
       default:
@@ -435,7 +440,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
         = (ISequence<? extends INodeItem>) left.accept(this, context);
     IExpression<?> right = expr.getRight();
 
-    List<INodeItem> result = new LinkedList<INodeItem>();
+    List<gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem> result = new LinkedList<>();
     leftResult.asStream().forEachOrdered(item -> {
       INodeItem node = (INodeItem) item;
 
@@ -451,12 +456,13 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
 
   @Override
   public ISequence<? extends INodeItem> visitStep(Step expr, INodeContext context) {
-    @SuppressWarnings("unchecked") ISequence<? extends INodeItem> retval
+    @SuppressWarnings("unchecked") ISequence<? extends INodeItem> stepResult
         = (ISequence<? extends INodeItem>) expr.getStep().accept(this, context);
 
     // evaluate the predicates for this step
     AtomicInteger index = new AtomicInteger();
-    Stream<@NotNull ? extends INodeItem> stream = retval.asStream().map(item -> {
+
+    Stream<? extends INodeItem> stream = stepResult.asStream().map(item -> {
       // build a positional index of the items
       return Map.entry(BigInteger.valueOf(index.incrementAndGet()), item);
     }).filter(entry -> {
@@ -484,7 +490,8 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
       }).anyMatch(x -> !x);
       return result;
     }).map(entry -> entry.getValue());
-    return ISequence.of(stream);
+    @SuppressWarnings("null") ISequence<? extends INodeItem> retval = ISequence.of(stream);
+    return retval;
   }
 
   @Override
@@ -508,7 +515,9 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
       // evaluate the right path in the context of the left
       return search(expr.getRight(), item);
     });
-    return ISequence.of(result);
+
+    @SuppressWarnings("null") ISequence<? extends INodeItem> retval = ISequence.of(result);
+    return retval;
   }
 
   @Override
@@ -516,7 +525,8 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
     return ISequence.of(search(expr.getNode(), context));
   }
 
-  private Stream<? extends INodeItem> search(IExpression<?> expr, INodeContext context) {
+  @NotNull
+  protected Stream<? extends INodeItem> search(@NotNull IExpression<?> expr, @NotNull INodeContext context) {
     Stream<? extends INodeItem> retval;
     if (expr instanceof Flag) {
       // check instances as a flag
@@ -541,7 +551,9 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
    *          the current node context
    * @return a stream of matching model node items
    */
-  private Stream<? extends IModelNodeItem> searchModelInstances(ModelInstance expr, INodeContext context) {
+  @NotNull
+  protected Stream<? extends IModelNodeItem> searchModelInstances(@NotNull ModelInstance expr,
+      @NotNull INodeContext context) {
 
     // check if the current node context matches the expression
     Stream<? extends IModelNodeItem> retval = context.getMatchingChildModelInstances(expr);
@@ -552,10 +564,11 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
     if (contextItem instanceof IAssemblyNodeItem) {
       IAssemblyNodeItem assemblyContextItem = (IAssemblyNodeItem) contextItem;
 
-      Stream<? extends IModelNodeItem> childModelInstances = assemblyContextItem.modelItems().flatMap(modelItem -> {
-        // apply the search criteria to these node items
-        return searchModelInstances(expr, modelItem);
-      });
+      @SuppressWarnings("null") Stream<? extends IModelNodeItem> childModelInstances
+          = assemblyContextItem.modelItems().flatMap(modelItem -> {
+            // apply the search criteria to these node items
+            return searchModelInstances(expr, modelItem);
+          });
       retval = Stream.concat(retval, childModelInstances);
     }
     return retval;
@@ -887,10 +900,6 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
     return resultOrEmptySequence(OperationFunctions.opNumericIntegerDivide(left, right));
   }
 
-  private <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> resultOrEmptySequence(ITEM_TYPE item) {
-    return item == null ? ISequence.empty() : ISequence.of(item);
-  }
-
   @Override
   public ISequence<? extends INumericItem> visitMod(Mod expr, INodeContext context) {
     INumericItem left = FunctionUtils.toNumeric(expr.getLeft().accept(this, context), true);
@@ -940,8 +949,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
     }).collect(Collectors.toList());
 
     IFunction function = expr.getFunction();
-    arguments = function.convertArguments(function, arguments);
-    return function.execute(arguments, getDynamicContext());
+    return function.execute(arguments, getDynamicContext(), context);
   }
 
   @Override

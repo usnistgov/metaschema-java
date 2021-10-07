@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.binding.metapath;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaPathEvaluationVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
 
 import org.junit.jupiter.api.Test;
 

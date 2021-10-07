@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IAnyUriItem;
 
 public interface IAnyUriType extends IAnyAtomicType {
   @Override

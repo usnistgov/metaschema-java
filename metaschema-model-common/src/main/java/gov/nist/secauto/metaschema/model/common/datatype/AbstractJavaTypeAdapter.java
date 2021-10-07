@@ -29,7 +29,9 @@ package gov.nist.secauto.metaschema.model.common.datatype;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 
-import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -52,9 +54,11 @@ import javax.xml.stream.events.XMLEvent;
  * @param <TYPE>
  *          the Java type this adapter supports
  */
-public abstract class AbstractJavaTypeAdapter<TYPE> implements IJavaTypeAdapter<TYPE> {
+public abstract class AbstractJavaTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomicItem>
+    implements IJavaTypeAdapter<TYPE> {
   public static final String DEFAULT_JSON_FIELD_NAME = "STRVALUE";
 
+  @NotNull
   private final Class<TYPE> clazz;
 
   /**
@@ -114,8 +118,11 @@ public abstract class AbstractJavaTypeAdapter<TYPE> implements IJavaTypeAdapter<
               XmlEventUtil.toString(nextEvent.getLocation())));
         }
       }
+
       // trim leading and trailing whitespace
-      return parse(builder.toString().trim());
+      @SuppressWarnings("null")
+      @NotNull String value = builder.toString().trim();
+      return parse(value);
     } catch (XMLStreamException ex) {
       throw new IOException(ex);
     }
@@ -136,6 +143,7 @@ public abstract class AbstractJavaTypeAdapter<TYPE> implements IJavaTypeAdapter<
     return parse(value);
   }
 
+  @SuppressWarnings("null")
   @Override
   public String asString(Object value) {
     return value.toString();
@@ -160,8 +168,53 @@ public abstract class AbstractJavaTypeAdapter<TYPE> implements IJavaTypeAdapter<
   }
 
   @Override
-  public void writeJsonValue(Object value, JsonGenerator generator)
-      throws IOException {
+  public void writeJsonValue(Object value, JsonGenerator generator) throws IOException {
     generator.writeString(value.toString());
+  }
+
+  @Override
+  public abstract Class<ITEM_TYPE> getItemClass();
+
+  @Override
+  public abstract ITEM_TYPE newItem(Object value);
+
+  @Override
+  public ITEM_TYPE cast(IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+    ITEM_TYPE retval;
+    if (item == null) {
+      throw new InvalidValueForCastFunctionMetapathException("item is null");
+    } else if (getItemClass().isAssignableFrom(item.getClass())) {
+      @SuppressWarnings("unchecked") ITEM_TYPE typedItem = (ITEM_TYPE) item;
+      retval = typedItem;
+    } else {
+      retval = castInternal(item);
+    }
+    return retval;
+  }
+
+  /**
+   * Attempt to cast the provided item to this adapter's item type.
+   * <p>
+   * The default implementation of this will attempt to parse the provided item as a string using the
+   * {@link #parse(String)} method. If this behavior is undesirable, then a subclass should override
+   * this method.
+   * 
+   * @param item
+   *          the item to cast
+   * @return the item casted to this adapter's item type
+   * @throws InvalidValueForCastFunctionMetapathException
+   *           if the casting of the item is not possible because the item represents an invalid value
+   *           for this adapter's item type
+   */
+  @NotNull
+  protected ITEM_TYPE castInternal(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+    // try string based casting as a fallback
+    String itemString = item.asString();
+    try {
+      TYPE value = parse(itemString);
+      return newItem(value);
+    } catch (IllegalArgumentException ex) {
+      throw new InvalidValueForCastFunctionMetapathException("textual value is not appropriate for this type", ex);
+    }
   }
 }

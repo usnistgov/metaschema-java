@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBooleanItem;
 
 public interface IBooleanLogicExpression extends IExpression<IBooleanItem> {
 }

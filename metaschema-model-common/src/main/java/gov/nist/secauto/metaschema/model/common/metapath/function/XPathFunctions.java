@@ -26,19 +26,21 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IAnyUriItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnDocumentUriFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -68,11 +70,10 @@ public class XPathFunctions {
     }));
   }
 
-  public static IAnyAtomicItem fnDataItem(IItem item) {
+  @NotNull
+  public static IAnyAtomicItem fnDataItem(@NotNull IItem item) {
     IAnyAtomicItem retval;
-    if (item == null) {
-      retval = null;
-    } else if (item instanceof IAnyAtomicItem) {
+    if (item instanceof IAnyAtomicItem) {
       retval = (IAnyAtomicItem) item;
     } else if (item instanceof INodeItem) {
       retval = item.toAtomicItem();
@@ -149,43 +150,8 @@ public class XPathFunctions {
     return IIntegerItem.valueOf(leftString.compareTo(rightString));
   }
 
-  public static IBooleanItem fnNot(ISequence<?> arg) {
-    return IBooleanItem.valueOf(!fnBooleanAsPrimative(arg));
-  }
-
-  public static IBooleanItem fnNot(IItem arg) {
-    return IBooleanItem.valueOf(!fnBooleanAsPrimative(arg));
-  }
-
   public static IBooleanItem fnExists(ISequence<?> items) {
     return IBooleanItem.valueOf(!items.isEmpty());
-  }
-
-  /**
-   * Determine if the string provided in the first argument contains the string in the second argument
-   * as a leading substring.
-   * <p>
-   * Based on the XPath 3.1
-   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-starts-with">fn:starts-with</a> function.
-   * 
-   * @param arg1
-   *          the string to examine
-   * @param arg2
-   *          the string to check as the leading substring
-   * @return {@link IBooleanItem#TRUE} if {@code arg1} starts with {@code arg2}, or
-   *         {@link IBooleanItem#FALSE} otherwise
-   */
-  public static IBooleanItem fnStartsWith(@Nullable IStringItem arg1, @Nullable IStringItem arg2) {
-    String arg2String = arg2 == null ? "" : arg2.asString();
-
-    boolean retval;
-    if (arg2String.isEmpty()) {
-      retval = true;
-    } else {
-      String arg1String = arg1 == null ? "" : arg1.asString();
-      retval = arg1String.contains(arg2String);
-    }
-    return IBooleanItem.valueOf(retval);
   }
 
   public static INumericItem fnRound(INumericItem arg) {
@@ -243,39 +209,4 @@ public class XPathFunctions {
     return retval;
   }
 
-//  public static IAnyUriItem fnDocumentUri(INodeItem arg) {
-//    if (arg == null) {
-//      return null;
-//    }
-//
-//    // this behavior is different from XPath
-//    URI documentBaseURi = arg.getBaseUri();
-//    if (documentBaseUri == null) {
-//      throw new DynamicMetapathException("err:XPDY0002", "The base URI of the document is not known in this context");
-//    }
-//    return IAnyUriItem.valueOf();
-//  }
-//
-//  public static INodeItem fnDoc(IStringItem uri, DynamicContext context) {
-//    if (uri == null) {
-//      return null;
-//    }
-//
-//    URI documentUri = URI.create(uri.asString());
-//    URI baseUri = context.getStaticContext().getBaseUri();
-//    if (baseUri != null) {
-//      // resolve if possible
-//      documentUri = baseUri.resolve(documentUri);
-//    }
-//
-//    String documentUriString = documentUri.toString();
-//    INodeItem documentNodeItem = context.getAvailableDocuments().get(documentUriString);
-//    if (documentNodeItem == null) {
-//      // load the document
-//      URL documentUrl = documentUri.toURL();
-//      documentNodeItem = context.getStaticContext().getDocumentLoader().loadAsNodeItem(documentUrl);
-//      context.getAvailableDocuments().put(documentUriString, documentNodeItem);
-//    }
-//    return documentNodeItem;
-//  }
 }

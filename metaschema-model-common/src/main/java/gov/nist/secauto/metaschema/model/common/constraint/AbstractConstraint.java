@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +52,9 @@ public abstract class AbstractConstraint implements IConstraint {
    * @param remarks
    *          optional remarks describing the intent of the constraint
    */
-  public AbstractConstraint(@Nullable String id, @NotNull MetapathExpression target,
+  public AbstractConstraint(
+      @Nullable String id,
+      @NotNull MetapathExpression target,
       @Nullable MarkupMultiline remarks) {
     Objects.requireNonNull(target);
     this.id = id;

@@ -31,7 +31,8 @@ import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 
 import java.util.Objects;
 
-public abstract class AbstractInstance<PROXY extends IInstance, PARENT extends INamedModelDefinition> implements IInstance {
+public abstract class AbstractInstance<PROXY extends IInstance, PARENT extends INamedModelDefinition>
+    implements IInstance {
   private final PROXY proxy;
   private final PARENT containingDefinition;
 

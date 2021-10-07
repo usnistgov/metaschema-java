@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.format;
 
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
@@ -31,7 +32,7 @@ import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
 public class DefaultFormatterFactory implements IFormatterFactory {
-  
+
   protected DefaultFormatterFactory() {
 
   }
@@ -58,6 +59,7 @@ public class DefaultFormatterFactory implements IFormatterFactory {
     return new RootAssemblyInstancePathSegmentImpl(instance);
   }
 
+  @Override
   public IRootAssemblyPathSegment newRootAssemblyPathSegment(IAssemblyDefinition definition) {
     return new RootAssemblyDefinitionPathSegmentImpl(definition);
   }

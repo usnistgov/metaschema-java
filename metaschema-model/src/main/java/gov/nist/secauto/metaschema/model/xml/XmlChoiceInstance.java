@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
 import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractChoiceInstance;

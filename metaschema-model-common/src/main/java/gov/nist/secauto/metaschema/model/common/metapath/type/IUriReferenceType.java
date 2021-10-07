@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IUriReferenceItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IUriReferenceItem;
 
 public interface IUriReferenceType extends IAnyUriType {
   @Override

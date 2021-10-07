@@ -36,8 +36,8 @@ import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFl
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.codegen.JavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;

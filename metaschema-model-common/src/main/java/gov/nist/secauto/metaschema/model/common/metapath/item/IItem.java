@@ -26,11 +26,33 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface IItem {
+  /**
+   * Get the item's "wrapped" value.
+   * 
+   * @return the value
+   */
+  @NotNull
   Object getValue();
 
+  /**
+   * Get the atomic value for the item. This may be the same item if the item is an instance of
+   * {@link IAnyAtomicItem}.
+   * 
+   * @return the atomic value
+   */
+  @NotNull
   IAnyAtomicItem toAtomicItem();
 
+  /**
+   * Get a human readable name for the item.
+   * 
+   * @return the name
+   */
+  @SuppressWarnings("null")
+  @NotNull
   default String getItemName() {
     // TODO: make something more human readable
     return this.getClass().getName();

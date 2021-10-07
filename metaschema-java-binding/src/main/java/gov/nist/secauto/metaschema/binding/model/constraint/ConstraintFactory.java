@@ -36,8 +36,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHas
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IsUnique;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.KeyField;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValue;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultCardinalityConstraint;
@@ -49,6 +47,8 @@ import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstra
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathFactory;
 

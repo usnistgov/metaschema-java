@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.ITokenItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.ITokenItem;
 
 public interface ITokenType extends IStringType {
   @Override

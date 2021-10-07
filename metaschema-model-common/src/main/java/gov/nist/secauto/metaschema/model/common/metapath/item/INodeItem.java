@@ -31,9 +31,11 @@ import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaPathEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
@@ -57,6 +59,7 @@ public interface INodeItem extends IPathItem, INodeContext {
     return false;
   }
 
+  @NotNull
   INamedDefinition getDefinition();
 
   /**
@@ -76,6 +79,7 @@ public interface INodeItem extends IPathItem, INodeContext {
    * 
    * @return the Metapath
    */
+  @NotNull
   default String getMetapath() {
     return toPath(IFormatterFactory.METAPATH_FORMATTER);
   }
@@ -90,8 +94,10 @@ public interface INodeItem extends IPathItem, INodeContext {
    * @return the result items
    */
   @SuppressWarnings("unchecked")
+  @NotNull
   default <ITEM_TYPE extends IItem> ISequence<? extends ITEM_TYPE> evaluateMetapath(MetapathExpression metapath) {
-    return (ISequence<? extends ITEM_TYPE>) evaluateMetapath(metapath, new StaticContext().newDynamicContext());
+    return (@NotNull ISequence<? extends ITEM_TYPE>) evaluateMetapath(metapath,
+        new StaticContext().newDynamicContext());
   }
 
   /**
@@ -103,6 +109,7 @@ public interface INodeItem extends IPathItem, INodeContext {
    *          the dynamic Metapath context
    * @return the result items
    */
+  @NotNull
   default ISequence<?> evaluateMetapath(MetapathExpression metapath, DynamicContext context) {
     return new MetaschemaPathEvaluationVisitor(context).visit(metapath.getASTNode(), this);
   }
@@ -112,6 +119,7 @@ public interface INodeItem extends IPathItem, INodeContext {
    * 
    * @return the base URI or {@code null} if it is unknown
    */
+  @Nullable
   URI getBaseUri();
 
 }

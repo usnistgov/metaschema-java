@@ -77,9 +77,10 @@ public class TerminalNodeContext implements INodeContext {
   @Override
   public Stream<? extends INodeItem> getMatchingChildInstances(IExpressionEvaluationVisitor visitor,
       IExpression<?> expr, boolean recurse) {
-//    // check the current node
-//    @SuppressWarnings("unchecked")
-//    Stream<? extends IXdmNodeItem> retval = (Stream<? extends IXdmNodeItem>) expr.accept(visitor, this).asStream();
+    // // check the current node
+    // @SuppressWarnings("unchecked")
+    // Stream<? extends IXdmNodeItem> retval = (Stream<? extends IXdmNodeItem>) expr.accept(visitor,
+    // this).asStream();
 
     return Stream.empty();
   }

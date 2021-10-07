@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.instance;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +40,8 @@ public class RootAssemblyDefinitionInstance implements IAssemblyInstance {
    * Construct a new root assembly instanced based on the provided definition. The provided definition
    * must be a root assembly definition.
    * 
-   * @param definition the root assembly definition
+   * @param definition
+   *          the root assembly definition
    */
   public RootAssemblyDefinitionInstance(@NotNull IAssemblyDefinition definition) {
     if (!definition.isRoot()) {
@@ -63,8 +64,7 @@ public class RootAssemblyDefinitionInstance implements IAssemblyInstance {
   public String getName() {
     // guaranteed to be not null, since we know the proxy is a root assembly
     @SuppressWarnings("null")
-    @NotNull
-    String retval = getProxy().getRootName();
+    @NotNull String retval = getProxy().getRootName();
     return retval;
   }
 

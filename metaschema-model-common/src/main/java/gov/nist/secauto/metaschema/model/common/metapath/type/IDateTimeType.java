@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDateTimeItem;
 
 public interface IDateTimeType extends IAnyAtomicType {
   @Override

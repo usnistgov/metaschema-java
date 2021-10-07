@@ -27,9 +27,12 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -82,9 +85,9 @@ public interface IFunction {
    */
   boolean isSupported(List<IExpression<?>> arguments);
 
-  List<ISequence<?>> convertArguments(IFunction function, List<ISequence<?>> arguments);
-
-  ISequence<?> execute(List<ISequence<?>> arguments, DynamicContext dynamicContext);
+  @NotNull
+  ISequence<?> execute(@NotNull List<@NotNull ISequence<?>> arguments, @NotNull DynamicContext dynamicContext,
+      @NotNull INodeContext focus);
 
   /**
    * Get the signature of the function as a string.
@@ -103,7 +106,7 @@ public interface IFunction {
     private boolean allowUnboundedArity = false;
     private Class<? extends IItem> returnType = IItem.class;
     private Occurrence returnOccurrence = Occurrence.ONE;
-    private IFunctionHandler functionHandler = null;
+    private FunctionExecutor functionHandler = null;
 
     public Builder() {
       this(null);
@@ -113,7 +116,7 @@ public interface IFunction {
       this.name = name;
     }
 
-    public Builder name(String name) {
+    public Builder name(@NotNull String name) {
       Objects.requireNonNull(name, "name");
       if (name.isBlank()) {
         throw new IllegalArgumentException("the name must be non-blank");
@@ -122,7 +125,7 @@ public interface IFunction {
       return this;
     }
 
-    public Builder returnType(Class<? extends IItem> type) {
+    public Builder returnType(@NotNull Class<? extends IItem> type) {
       Objects.requireNonNull(type, "type");
       this.returnType = type;
       return this;
@@ -144,17 +147,17 @@ public interface IFunction {
       return returnOccurrence(Occurrence.ONE_OR_MORE);
     }
 
-    public Builder returnOccurrence(Occurrence occurrence) {
+    public Builder returnOccurrence(@NotNull Occurrence occurrence) {
       Objects.requireNonNull(occurrence, "occurrence");
       this.returnOccurrence = occurrence;
       return this;
     }
 
-    public Builder argument(IArgument.Builder builder) {
+    public Builder argument(@NotNull IArgument.Builder builder) {
       return argument(builder.build());
     }
 
-    public Builder argument(IArgument argument) {
+    public Builder argument(@NotNull IArgument argument) {
       Objects.requireNonNull(argument, "argument");
       this.arguments.add(argument);
       return this;
@@ -165,9 +168,9 @@ public interface IFunction {
       return this;
     }
 
-    public Builder functionHandler(IFunctionHandler functionHandler) {
-      Objects.requireNonNull(functionHandler, "functionHandler");
-      this.functionHandler = functionHandler;
+    public Builder functionHandler(@NotNull FunctionExecutor handler) {
+      Objects.requireNonNull(handler, "handler");
+      this.functionHandler = handler;
       return this;
     }
 

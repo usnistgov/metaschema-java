@@ -26,16 +26,20 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 public abstract class AbstractDatatype<TYPE extends IDatatype<TYPE>, VALUE> implements IDatatype<TYPE> {
+  @NotNull
   private final VALUE value;
 
-  protected AbstractDatatype(VALUE value) {
+  protected AbstractDatatype(@NotNull VALUE value) {
     Objects.requireNonNull(value, "value");
     this.value = value;
   }
 
+  @NotNull
   public VALUE getValue() {
     return value;
   }

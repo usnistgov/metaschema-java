@@ -40,8 +40,7 @@ public interface IFlagDefinition extends INamedValuedDefinition, Flag {
   @NotNull
   default QName getXmlQName() {
     @SuppressWarnings("null")
-    @NotNull
-    QName retval = QName.valueOf(getEffectiveName());
+    @NotNull QName retval = QName.valueOf(getEffectiveName());
     return retval;
   }
 

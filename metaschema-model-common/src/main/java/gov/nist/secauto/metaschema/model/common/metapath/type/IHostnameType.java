@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IHostnameItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IHostnameItem;
 
 public interface IHostnameType extends IStringType {
   @Override

@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.type;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBase64BinaryItem;
 
 public interface IBase64BinaryType extends IAnyAtomicType {
 

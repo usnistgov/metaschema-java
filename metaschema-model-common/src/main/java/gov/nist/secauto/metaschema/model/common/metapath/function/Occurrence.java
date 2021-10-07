@@ -30,6 +30,10 @@ import java.util.Objects;
 
 public enum Occurrence {
   /**
+   * An empty sequence.
+   */
+  ZERO("", true),
+  /**
    * The occurrence indicator {@code "?"}.
    */
   ZERO_OR_ONE("?", true),

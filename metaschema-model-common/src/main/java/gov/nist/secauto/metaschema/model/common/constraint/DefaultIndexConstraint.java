@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import java.util.List;
@@ -36,7 +36,11 @@ public class DefaultIndexConstraint
     implements IIndexConstraint {
   private final String name;
 
-  public DefaultIndexConstraint(String id, MetapathExpression target, String name, List<DefaultKeyField> keyFields,
+  public DefaultIndexConstraint(
+      String id,
+      MetapathExpression target,
+      String name,
+      List<DefaultKeyField> keyFields,
       MarkupMultiline remarks) {
     super(id, target, keyFields, remarks);
     if (name.isBlank()) {

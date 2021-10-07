@@ -26,11 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.definition;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.INamedModelElement;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -97,8 +97,7 @@ public interface IDefinition extends INamedModelElement {
   default String toCoordinates() {
     IMetaschema metaschema = getContainingMetaschema();
 
-    @NotNull
-    String retval;
+    @NotNull String retval;
     if (metaschema == null) {
       retval = String.format("%s:%s(%d)", getModelType(),
           getName(), hashCode());

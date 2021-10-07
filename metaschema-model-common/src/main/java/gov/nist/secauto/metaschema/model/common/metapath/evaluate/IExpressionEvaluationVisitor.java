@@ -26,6 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.evaluate;
 
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Addition;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.And;
@@ -56,71 +61,100 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.StringLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+
+import org.jetbrains.annotations.NotNull;
 
 public interface IExpressionEvaluationVisitor {
-  ISequence<?> visit(IExpression<?> expr, INodeContext context);
-  
-  ISequence<? extends IAnyAtomicItem> visitAddition(Addition expr, INodeContext context);
+  @NotNull
+  ISequence<?> visit(@NotNull IExpression<?> expr, @NotNull INodeContext context);
 
-  ISequence<? extends IBooleanItem> visitAnd(And expr, INodeContext context);
+  @NotNull
+  ISequence<? extends IAnyAtomicItem> visitAddition(@NotNull Addition expr, @NotNull INodeContext context);
 
-  ISequence<? extends INodeItem> visitStep(Step expr, INodeContext context);
+  @NotNull
+  ISequence<? extends IBooleanItem> visitAnd(@NotNull And expr, @NotNull INodeContext context);
 
-  ISequence<? extends IBooleanItem> visitComparison(Comparison expr, INodeContext context);
+  @NotNull
+  ISequence<? extends INodeItem> visitStep(@NotNull Step expr, @NotNull INodeContext context);
 
-  ISequence<? extends INodeItem> visitContextItem(ContextItem expr, INodeContext context);
+  @NotNull
+  ISequence<? extends IBooleanItem> visitComparison(@NotNull Comparison expr, @NotNull INodeContext context);
 
-  ISequence<? extends IDecimalItem> visitDecimalLiteral(DecimalLiteral expr, INodeContext context);
+  @NotNull
+  ISequence<? extends INodeItem> visitContextItem(@NotNull ContextItem expr, @NotNull INodeContext context);
 
-  ISequence<? extends IAnyAtomicItem> visitDivision(Division expr, INodeContext context);
+  @NotNull
+  ISequence<? extends IDecimalItem> visitDecimalLiteral(@NotNull DecimalLiteral expr, @NotNull INodeContext context);
 
-  ISequence<? extends IFlagNodeItem> visitFlag(Flag expr, INodeContext context);
+  @NotNull
+  ISequence<? extends IAnyAtomicItem> visitDivision(@NotNull Division expr, @NotNull INodeContext context);
 
-  ISequence<?> visitFunctionCall(FunctionCall expr, INodeContext context);
+  @NotNull
+  ISequence<? extends IFlagNodeItem> visitFlag(@NotNull Flag expr, @NotNull INodeContext context);
 
-  ISequence<? extends IIntegerItem> visitIntegerDivision(IntegerDivision expr, INodeContext context);
+  @NotNull
+  ISequence<?> visitFunctionCall(@NotNull FunctionCall expr, @NotNull INodeContext context);
 
-  ISequence<? extends IIntegerItem> visitIntegerLiteral(IntegerLiteral expr, INodeContext context);
+  @NotNull
+  ISequence<? extends IIntegerItem> visitIntegerDivision(@NotNull IntegerDivision expr, @NotNull INodeContext context);
 
-  ISequence<?> visitMetapath(Metapath expr, INodeContext context);
+  @NotNull
+  ISequence<? extends IIntegerItem> visitIntegerLiteral(@NotNull IntegerLiteral expr, @NotNull INodeContext context);
 
-  ISequence<? extends INumericItem> visitMod(Mod expr, INodeContext context);
+  @NotNull
+  ISequence<?> visitMetapath(@NotNull Metapath expr, @NotNull INodeContext context);
 
-  ISequence<? extends IModelNodeItem> visitModelInstance(ModelInstance modelInstance, INodeContext context);
+  @NotNull
+  ISequence<? extends INumericItem> visitMod(@NotNull Mod expr, @NotNull INodeContext context);
 
-  ISequence<? extends IAnyAtomicItem> visitMultiplication(Multiplication expr, INodeContext context);
+  @NotNull
+  ISequence<? extends IModelNodeItem> visitModelInstance(@NotNull ModelInstance modelInstance,
+      @NotNull INodeContext context);
 
-  ISequence<? extends INumericItem> visitNegate(Negate expr, INodeContext context);
+  @NotNull
+  ISequence<? extends IAnyAtomicItem> visitMultiplication(@NotNull Multiplication expr, @NotNull INodeContext context);
 
-  ISequence<? extends IBooleanItem> visitOr(Or expr, INodeContext context);
+  @NotNull
+  ISequence<? extends INumericItem> visitNegate(@NotNull Negate expr, @NotNull INodeContext context);
 
-  ISequence<?> visitParenthesizedExpression(ParenthesizedExpression expr, INodeContext context);
+  @NotNull
+  ISequence<? extends IBooleanItem> visitOr(@NotNull Or expr, @NotNull INodeContext context);
 
-  ISequence<? extends INodeItem> visitRelativeDoubleSlashPath(RelativeDoubleSlashPath relativeDoubleSlashPath,
-      INodeContext context);
+  @NotNull
+  ISequence<?> visitParenthesizedExpression(@NotNull ParenthesizedExpression expr, @NotNull INodeContext context);
 
-  ISequence<? extends INodeItem> visitRelativeSlashPath(RelativeSlashPath relativeSlashPath, INodeContext context);
+  @NotNull
+  ISequence<? extends INodeItem> visitRelativeDoubleSlashPath(@NotNull RelativeDoubleSlashPath relativeDoubleSlashPath,
+      @NotNull INodeContext context);
 
-  ISequence<? extends INodeItem> visitRootDoubleSlashPath(RootDoubleSlashPath rootDoubleSlashPath, INodeContext context);
+  @NotNull
+  ISequence<? extends INodeItem> visitRelativeSlashPath(@NotNull RelativeSlashPath relativeSlashPath,
+      @NotNull INodeContext context);
 
-  ISequence<? extends INodeItem> visitRootSlashOnlyPath(RootSlashOnlyPath rootSlashOnlyPath, INodeContext context);
+  @NotNull
+  ISequence<? extends INodeItem> visitRootDoubleSlashPath(@NotNull RootDoubleSlashPath rootDoubleSlashPath,
+      @NotNull INodeContext context);
 
-  ISequence<? extends INodeItem> visitRootSlashPath(RootSlashPath rootSlashPath, INodeContext context);
+  @NotNull
+  ISequence<? extends INodeItem> visitRootSlashOnlyPath(@NotNull RootSlashOnlyPath rootSlashOnlyPath,
+      @NotNull INodeContext context);
 
-  ISequence<? extends IStringItem> visitStringConcat(StringConcat expr, INodeContext context);
+  @NotNull
+  ISequence<? extends INodeItem> visitRootSlashPath(@NotNull RootSlashPath rootSlashPath,
+      @NotNull INodeContext context);
 
-  ISequence<? extends IStringItem> visitStringLiteral(StringLiteral expr, INodeContext context);
+  @NotNull
+  ISequence<? extends IStringItem> visitStringConcat(@NotNull StringConcat expr, @NotNull INodeContext context);
 
-  ISequence<? extends IAnyAtomicItem> visitSubtraction(Subtraction expr, INodeContext context);
+  @NotNull
+  ISequence<? extends IStringItem> visitStringLiteral(@NotNull StringLiteral expr, @NotNull INodeContext context);
 
-  ISequence<?> visitUnion(Union expr, INodeContext context);
+  @NotNull
+  ISequence<? extends IAnyAtomicItem> visitSubtraction(@NotNull Subtraction expr, @NotNull INodeContext context);
+
+  @NotNull
+  ISequence<?> visitUnion(@NotNull Union expr, @NotNull INodeContext context);
 }

@@ -31,8 +31,12 @@ import java.util.List;
 public class StaticFunction
     extends AbstractFunction {
 
-  protected StaticFunction(String name, List<IArgument> arguments, boolean unboundedArity, ISequenceType result,
-      IFunctionHandler handler) {
+  protected StaticFunction(
+      String name,
+      List<IArgument> arguments,
+      boolean unboundedArity,
+      ISequenceType result,
+      FunctionExecutor handler) {
     super(name, arguments, unboundedArity, result, handler);
   }
 
