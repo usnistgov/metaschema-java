@@ -29,6 +29,13 @@ package gov.nist.secauto.metaschema.binding.metapath.xdm;
 import gov.nist.secauto.metaschema.binding.model.FlagDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+//TODO: merge with the concrete class
 public abstract class AbstractBoundXdmFlagNodeItem<INSTANCE extends FlagProperty>
     extends AbstractBoundXdmNodeItem<INSTANCE> implements IBoundXdmFlagNodeItem {
 
@@ -49,6 +56,16 @@ public abstract class AbstractBoundXdmFlagNodeItem<INSTANCE extends FlagProperty
   @Override
   public FlagDefinition getDefinition() {
     return getInstance().getDefinition();
+  }
+
+  @Override
+  public Map<@NotNull String, ? extends IBoundXdmFlagNodeItem> getFlags() {
+    return Collections.emptyMap();
+  }
+
+  @Override
+  public Map<@NotNull String, ? extends List<@NotNull ? extends IBoundXdmModelNodeItem>> getModelItems() {
+    return Collections.emptyMap();
   }
 
   @Override

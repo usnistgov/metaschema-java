@@ -27,24 +27,40 @@
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
+import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmDocumentNodeItem;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 
 public class XdmRootAssemblyNodeItemImpl extends
-    AbstractTerminalBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty> implements IBoundXdmRootAssemblyNodeItem {
+    AbstractBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty> implements IBoundXdmRootAssemblyNodeItem {
+
+  @NotNull
+  private final IXdmDocumentNodeItem parent;
 
   public XdmRootAssemblyNodeItemImpl(
       @NotNull RootDefinitionAssemblyProperty instance,
       @NotNull Object value,
-      @NotNull URI documentUri) {
-    super(instance, value, 1, documentUri);
+      @NotNull IXdmDocumentNodeItem parent) {
+    super(instance, value, 1);
+    this.parent = parent;
+  }
+
+  @NotNull
+  protected IXdmDocumentNodeItem getDocumentNodeItem() {
+    return parent;
   }
 
   @Override
-  public boolean isRootNode() {
-    return true;
+  public IBoundXdmAssemblyNodeItem getParentNodeItem() {
+    return null;
+  }
+
+  @Override
+  public @Nullable URI getBaseUri() {
+    return getDocumentNodeItem().getBaseUri();
   }
 
   @Override
@@ -55,5 +71,15 @@ public class XdmRootAssemblyNodeItemImpl extends
   @Override
   public IBoundXdmRootAssemblyNodeItem getPathSegment() {
     return this;
+  }
+
+  @Override
+  public @NotNull IXdmDocumentNodeItem getDocumentPathSegment() {
+    return getDocumentNodeItem();
+  }
+
+  @Override
+  public boolean isRootNode() {
+    return true;
   }
 }

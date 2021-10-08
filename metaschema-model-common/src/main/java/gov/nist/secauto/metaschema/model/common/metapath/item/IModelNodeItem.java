@@ -28,20 +28,17 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public interface IModelNodeItem extends INodeItem {
+public interface IModelNodeItem extends IContentNodeItem {
 
   @Override
   IAssemblyNodeItem getParentNodeItem();
 
   @Override
   IModelPositionalPathSegment getPathSegment();
-
-  Map<String, ? extends IFlagNodeItem> getFlags();
-
-  Stream<? extends IFlagNodeItem> flags();
-
-  IFlagNodeItem getFlagByName(String name);
 }

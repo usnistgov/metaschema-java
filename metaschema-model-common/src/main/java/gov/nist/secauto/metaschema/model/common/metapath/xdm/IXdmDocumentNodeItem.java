@@ -23,24 +23,17 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IDocumentPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 
-public abstract class AbstractIntermediateXdmNodeItem<PARENT extends IXdmModelNodeItem> extends AbstractXdmNodeItem {
-
-  @Nullable
-  private final PARENT parentNodeItem;
-
-  public AbstractIntermediateXdmNodeItem(@NotNull Object value, @Nullable PARENT parentNodeItem) {
-    super(value);
-    this.parentNodeItem = parentNodeItem;
-  }
+public interface IXdmDocumentNodeItem extends IXdmNodeItem, IDocumentPathSegment, IDocumentNodeItem {
 
   @Override
-  public PARENT getParentNodeItem() {
-    return parentNodeItem;
-  }
+  IXdmDocumentNodeItem getNodeItem();
+
+  @Override
+  IXdmRootAssemblyNodeItem getRootAssemblyNodeItem();
+
 }

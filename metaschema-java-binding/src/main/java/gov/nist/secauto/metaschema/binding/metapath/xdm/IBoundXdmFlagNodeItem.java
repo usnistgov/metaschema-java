@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.binding.model.FlagDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmFlagNodeItem;
 
-public interface IBoundXdmFlagNodeItem extends IBoundXdmNodeItem, IXdmFlagNodeItem {
+public interface IBoundXdmFlagNodeItem extends IBoundXdmContentNodeItem, IXdmFlagNodeItem {
 
   @Override
   IBoundXdmFlagNodeItem getNodeItem();

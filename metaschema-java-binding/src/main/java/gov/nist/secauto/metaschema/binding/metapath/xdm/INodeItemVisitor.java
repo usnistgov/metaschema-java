@@ -27,6 +27,8 @@
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 public interface INodeItemVisitor<RESULT, CONTEXT> {
+  RESULT visitDocument(IBoundXdmDocumentNodeItem item, CONTEXT context);
+
   RESULT visitFlag(IBoundXdmFlagNodeItem item, CONTEXT context);
 
   RESULT visitField(IBoundXdmFieldNodeItem item, CONTEXT context);

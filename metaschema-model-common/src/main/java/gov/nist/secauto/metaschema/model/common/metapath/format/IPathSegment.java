@@ -26,48 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.format;
 
-import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.namespace.QName;
-
 /**
  * A named segment of a path that can be formatted.
  */
 public interface IPathSegment {
-  /**
-   * Retrieve the instance associated with this path segment, if the segment relates to an instance.
-   * 
-   * @return the instance or {@code null} if the segment does not relate to an instance
-   */
-  INamedInstance getInstance();
-
-  /**
-   * Retrieve the definition for the path segment.
-   * 
-   * @return the definition
-   */
-  INamedDefinition getDefinition();
-
-  /**
-   * Get the name of the path segment.
-   * 
-   * @return the name
-   */
-  String getName();
-
-  /**
-   * Get the XML qualified name of the path segment.
-   * 
-   * @return the name
-   */
-  QName getQName();
 
   /**
    * Apply formatting for the path segment. This is a visitor pattern that will be called to format
@@ -80,18 +48,19 @@ public interface IPathSegment {
   @NotNull
   String format(@NotNull IPathFormatter formatter);
 
-  IModelPositionalPathSegment getParentSegment();
-
+  /**
+   * Get a list of  path segments, starting at the root and descending.
+   * @return a list of path segments in descending order
+   */
   @SuppressWarnings("null")
   @NotNull
   default List<@NotNull IPathSegment> getPath() {
-    return getPathStream().collect(Collectors.toList());
+    return getPathStream().collect(Collectors.toUnmodifiableList());
   }
 
-  @SuppressWarnings("null")
-  @NotNull
-  default Stream<IPathSegment> getPathStream() {
-    IModelPositionalPathSegment parentSegment = getParentSegment();
-    return parentSegment == null ? Stream.of(this) : Stream.concat(parentSegment.getPathStream(), Stream.of(this));
-  }
+  /**
+   * Get a stream of path segments, starting at the root and descending.
+   * @return a stream of path segments in descending order
+   */
+  Stream<IPathSegment> getPathStream();
 }

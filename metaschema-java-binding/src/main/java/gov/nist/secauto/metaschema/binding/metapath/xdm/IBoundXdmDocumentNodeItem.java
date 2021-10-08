@@ -24,30 +24,21 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.xdm;
+package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmDocumentNodeItem;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
+import org.jetbrains.annotations.NotNull;
 
-public interface IXdmModelNodeItem extends IXdmNodeItem, IModelNodeItem, IModelPositionalPathSegment {
-  @Override
-  IXdmModelNodeItem getNodeItem();
+public interface IBoundXdmDocumentNodeItem extends IXdmDocumentNodeItem, IBoundXdmNodeItem {
 
   @Override
-  IXdmAssemblyNodeItem getParentNodeItem();
+  IBoundXdmDocumentNodeItem getNodeItem();
 
   @Override
-  IModelPositionalPathSegment getPathSegment();
+  IBoundXdmRootAssemblyNodeItem getRootAssemblyNodeItem();
 
   @Override
-  INamedModelInstance getInstance();
-
-  @Override
-  INamedModelDefinition getDefinition();
+  @NotNull
+  IBoundXdmRootAssemblyNodeItem getRootAssemblyPathSegment();
 }

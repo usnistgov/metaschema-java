@@ -44,13 +44,4 @@ public interface IXdmAssemblyNodeItem extends IXdmModelNodeItem, IAssemblyNodeIt
   default IAssemblyPathSegment getPathSegment() {
     return this;
   }
-
-  @Override
-  Map<String, ? extends List<? extends IXdmModelNodeItem>> getModelItems();
-
-  @Override
-  Stream<? extends IXdmModelNodeItem> modelItems();
-
-  @Override
-  List<? extends IXdmModelNodeItem> getModelItemsByName(String name);
 }

@@ -29,12 +29,28 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.xml.namespace.QName;
 
 class RootAssemblyInstancePathSegmentImpl implements IRootAssemblyPathSegment {
+  @NotNull
+  private final IDocumentPathSegment parent;
+  @NotNull
   private final IAssemblyInstance instance;
 
-  public RootAssemblyInstancePathSegmentImpl(IAssemblyInstance instance) {
+  /**
+   * Construct a new root path segment from the provided instance.
+   * 
+   * @param parent
+   *          the document node of the root
+   * @param instance
+   *          the root path instance
+   */
+  public RootAssemblyInstancePathSegmentImpl(
+      @NotNull IDocumentPathSegment parent,
+      @NotNull IAssemblyInstance instance) {
+    this.parent = parent;
     this.instance = instance;
   }
 
@@ -44,6 +60,7 @@ class RootAssemblyInstancePathSegmentImpl implements IRootAssemblyPathSegment {
   }
 
   @Override
+  @NotNull
   public IAssemblyInstance getInstance() {
     return instance;
   }
@@ -56,5 +73,10 @@ class RootAssemblyInstancePathSegmentImpl implements IRootAssemblyPathSegment {
   @Override
   public QName getQName() {
     return getInstance().getXmlQName();
+  }
+
+  @Override
+  public IDocumentPathSegment getDocumentPathSegment() {
+    return parent;
   }
 }

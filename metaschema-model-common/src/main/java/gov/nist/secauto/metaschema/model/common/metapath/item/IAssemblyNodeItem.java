@@ -40,10 +40,4 @@ public interface IAssemblyNodeItem extends IModelNodeItem {
 
   @Override
   IAssemblyDefinition getDefinition();
-
-  Map<String, ? extends List<? extends IModelNodeItem>> getModelItems();
-
-  Stream<? extends IModelNodeItem> modelItems();
-
-  List<? extends IModelNodeItem> getModelItemsByName(String name);
 }

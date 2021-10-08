@@ -23,31 +23,14 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-package gov.nist.secauto.metaschema.model.common.metapath.xdm;
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IContentPathSegment;
 
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-
-public interface IXdmModelNodeItem extends IXdmNodeItem, IModelNodeItem, IModelPositionalPathSegment {
+public interface IContentPathItem extends IPathItem {
   @Override
-  IXdmModelNodeItem getNodeItem();
-
-  @Override
-  IXdmAssemblyNodeItem getParentNodeItem();
-
-  @Override
-  IModelPositionalPathSegment getPathSegment();
-
-  @Override
-  INamedModelInstance getInstance();
-
-  @Override
-  INamedModelDefinition getDefinition();
+  IContentPathSegment getPathSegment();
+  
+  INamedDefinition getDefinition();
 }

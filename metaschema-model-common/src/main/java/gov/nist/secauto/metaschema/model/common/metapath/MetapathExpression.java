@@ -40,6 +40,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.jetbrains.annotations.NotNull;
 
 public class MetapathExpression {
+  @NotNull
   public static final MetapathExpression CONTEXT_NODE = new MetapathExpression(".", new ContextItem());
 
   private final String path;

@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 import javax.xml.namespace.QName;
@@ -39,6 +41,7 @@ public abstract class AbstractModelPositionalPathSegment<INSTANCE extends INamed
     implements IModelPositionalPathSegment {
 
   private final IAssemblyPathSegment parent;
+  @NotNull
   private final INSTANCE instance;
   private final int position;
 
@@ -60,6 +63,7 @@ public abstract class AbstractModelPositionalPathSegment<INSTANCE extends INamed
   }
 
   @Override
+  @NotNull
   public INSTANCE getInstance() {
     return instance;
   }

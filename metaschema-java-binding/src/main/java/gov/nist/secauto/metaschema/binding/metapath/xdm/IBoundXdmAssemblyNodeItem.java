@@ -49,13 +49,4 @@ public interface IBoundXdmAssemblyNodeItem extends IBoundXdmModelNodeItem, IXdmA
 
   @Override
   AssemblyProperty getInstance();
-
-  @Override
-  Map<String, ? extends List<? extends IBoundXdmModelNodeItem>> getModelItems();
-  
-  @Override
-  Stream<? extends IBoundXdmModelNodeItem> modelItems();
-  
-  @Override
-  List<? extends IBoundXdmModelNodeItem> getModelItemsByName(String name);
 }

@@ -26,62 +26,78 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaPathEvaluationVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
+import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
-public interface INodeItem extends IPathItem, INodeContext {
-
-  /**
-   * Retrieve the parent node item if it exists.
-   * 
-   * @return the parent node item, or {@code null} if this node item has no known parent
-   */
-  @Nullable
-  INodeItem getParentNodeItem();
+public interface INodeItem extends IItem, IPathItem, INodeContext {
 
   /**
-   * Determine if the node is a root node.
+   * Get the Metaschema flags associated this node.
    * 
-   * @return {@code true} if the node is a root node, or {@code false} otherwise
+   * @return a mapping of flag effective name to the flag
    */
-  default boolean isRootNode() {
-    return false;
+  @NotNull
+  Map<@NotNull String, ? extends IFlagNodeItem> getFlags();
+
+  /**
+   * Lookup a Metaschema flag on this node by it's effective name.
+   * 
+   * @param name
+   *          the effective name of the flag
+   * @return the flag with the matching effective name or {@code null} if no match was found
+   */
+  default IFlagNodeItem getFlagByName(@NotNull String name) {
+    return getFlags().get(name);
   }
 
+  /**
+   * Get the Metaschema flags associated with this node as a stream.
+   * 
+   * @return the stream of flags or an empty stream if none exist
+   */
+  @SuppressWarnings("null")
   @NotNull
-  INamedDefinition getDefinition();
+  default Stream<? extends IFlagNodeItem> flags() {
+    return getFlags().values().stream();
+  }
 
   /**
-   * Retrieve the value associated with the item.
+   * Get the Metaschema model items (i.e., fields, assemblies) associated this node.
    * 
-   * @return the value
-   */
-  @Override
-  Object getValue();
-
-  // TODO: rename to asAtomicItem
-  @Override
-  IAnyAtomicItem toAtomicItem();
-
-  /**
-   * Get the path for this node item as a Metapath.
-   * 
-   * @return the Metapath
+   * @return a mapping of flag effective name to the list of matching model items
    */
   @NotNull
-  default String getMetapath() {
-    return toPath(IFormatterFactory.METAPATH_FORMATTER);
+  Map<@NotNull String, ? extends List<@NotNull ? extends IModelNodeItem>> getModelItems();
+
+  @SuppressWarnings("null")
+  @NotNull
+  default List<@NotNull ? extends IModelNodeItem> getModelItemsByName(String name) {
+    List<@NotNull ? extends IModelNodeItem> items = getModelItems().get(name);
+    return items == null ? Collections.emptyList() : items;
+  }
+
+  /**
+   * Get the Metaschema model items (i.e., fields, assemblies) associated this node as a stream.
+   * 
+   * @return the stream of model items or an empty stream if none exist
+   */
+  @SuppressWarnings("null")
+  @NotNull
+  default Stream<? extends IModelNodeItem> modelItems() {
+    return getModelItems().values().stream().flatMap(list -> list.stream());
   }
 
   /**
@@ -115,11 +131,9 @@ public interface INodeItem extends IPathItem, INodeContext {
   }
 
   /**
-   * Retrieve the base URI of the document containing this node.
+   * Retrieve the base URI of this node.
    * 
    * @return the base URI or {@code null} if it is unknown
    */
-  @Nullable
   URI getBaseUri();
-
 }

@@ -32,13 +32,12 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
-import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnDocumentUriFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IValueItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -63,7 +62,10 @@ public class XPathFunctions {
    *          the sequence of items to atomize
    * @return the atomized result
    */
-  public static ISequence<IAnyAtomicItem> fnData(ISequence<?> sequence) {
+  @SuppressWarnings("null")
+  @NotNull
+  public static ISequence<IAnyAtomicItem> fnData(@NotNull ISequence<?> sequence) {
+    @NotNull
     Stream<? extends IItem> stream = sequence.asStream();
     return ISequence.of(stream.flatMap(x -> {
       return Stream.of((IAnyAtomicItem) fnDataItem(x));
@@ -75,11 +77,11 @@ public class XPathFunctions {
     IAnyAtomicItem retval;
     if (item instanceof IAnyAtomicItem) {
       retval = (IAnyAtomicItem) item;
-    } else if (item instanceof INodeItem) {
-      retval = item.toAtomicItem();
+    } else if (item instanceof IValueItem) {
+      retval = ((IValueItem)item).toAtomicItem();
     } else {
       throw new InvalidTypeFunctionMetapathException(InvalidTypeFunctionMetapathException.NODE_HAS_NO_TYPED_VALUE,
-          String.format("Unrecognized item '%s' during atomization", item.getClass().getName()));
+          String.format("Item '%s' has no typed value", item.getClass().getName()));
     }
     return retval;
   }
@@ -135,7 +137,7 @@ public class XPathFunctions {
       retval = !string.isBlank();
     } else {
       throw new InvalidArgumentFunctionMetapathException(InvalidArgumentFunctionMetapathException.INVALID_ARGUMENT_TYPE,
-          String.format(" Invalid argument type '%s'", item.getItemName()));
+          String.format("Invalid argument type '%s'", item.getItemName()));
     }
     return retval;
   }

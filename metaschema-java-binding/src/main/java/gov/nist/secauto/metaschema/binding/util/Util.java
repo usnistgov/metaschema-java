@@ -26,6 +26,12 @@
 
 package gov.nist.secauto.metaschema.binding.util;
 
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IContentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Iterator;
 
 public class Util {
@@ -42,4 +48,19 @@ public class Util {
       }
     };
   }
+
+  @NotNull
+  public static <CLASS> CLASS toClass(@NotNull IBoundXdmNodeItem nodeItem) {
+    CLASS retval;
+    if (nodeItem instanceof IDocumentNodeItem) {
+      @SuppressWarnings("unchecked") CLASS value
+          = (CLASS) ((IDocumentNodeItem) nodeItem).getRootAssemblyNodeItem().getValue();
+      retval = value;
+    } else {
+      @SuppressWarnings("unchecked") CLASS value = (CLASS) ((IContentNodeItem) nodeItem).getValue();
+      retval = value;
+    }
+    return retval;
+  }
+
 }

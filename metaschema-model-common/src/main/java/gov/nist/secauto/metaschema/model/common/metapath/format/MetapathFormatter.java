@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.format;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,11 +36,17 @@ class MetapathFormatter implements IPathFormatter {
   public MetapathFormatter() {
   }
 
+  @SuppressWarnings("null")
   @Override
   public String format(IPathSegment segment) {
     return segment.getPathStream().flatMap(pathSegment -> {
       return Stream.of(pathSegment.format(this));
     }).collect(Collectors.joining("/"));
+  }
+
+  @Override
+  public @NotNull String formatPathSegment(@NotNull IDocumentPathSegment segment) {
+    return "/";
   }
 
   @Override
@@ -51,20 +59,23 @@ class MetapathFormatter implements IPathFormatter {
     return formatModelPathSegment(segment);
   }
 
+  @SuppressWarnings("null")
   @Override
   public String formatPathSegment(IAssemblyPathSegment segment) {
     String retval;
     if (segment.getParentSegment() == null && segment instanceof IRootAssemblyPathSegment) {
       StringBuilder builder = new StringBuilder();
-      builder.append('/');
       builder.append(segment.getName());
       retval = builder.toString();
     } else {
+      // TODO: does it make sense to use this for an intermediate that has no parent?
       retval = formatModelPathSegment(segment);
     }
     return retval;
   }
 
+  @SuppressWarnings("null")
+  @NotNull
   protected String formatModelPathSegment(IModelPositionalPathSegment segment) {
     StringBuilder builder = new StringBuilder(segment.getName());
     builder.append('[');

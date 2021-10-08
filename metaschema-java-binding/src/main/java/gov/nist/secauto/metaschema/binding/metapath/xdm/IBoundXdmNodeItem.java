@@ -23,29 +23,64 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.BoundDefinition;
-import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmNodeItem;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 public interface IBoundXdmNodeItem extends IXdmNodeItem {
   @Override
   IBoundXdmNodeItem getNodeItem();
 
   @Override
-  NamedProperty getInstance();
+  IBoundXdmNodeItem getPathSegment();
 
   @Override
-  BoundDefinition getDefinition();
+  Map<@NotNull String, ? extends IBoundXdmFlagNodeItem> getFlags();
+
+  @Override
+  default IBoundXdmFlagNodeItem getFlagByName(String name) {
+    return getFlags().get(name);
+  }
+
+  @Override
+  default Stream<? extends IBoundXdmFlagNodeItem> flags() {
+    return getFlags().values().stream();
+  }
+
+  @Override
+  Map<@NotNull String, ? extends List<@NotNull ? extends IBoundXdmModelNodeItem>> getModelItems();
+
+  @Override
+  default List<@NotNull ? extends IBoundXdmModelNodeItem> getModelItemsByName(String name) {
+    List<@NotNull ? extends IBoundXdmModelNodeItem> items = getModelItems().get(name);
+    return items == null ? Collections.emptyList() : items;
+  }
+
+  @Override
+  default Stream<? extends IBoundXdmModelNodeItem> modelItems() {
+    return getModelItems().values().stream().flatMap(list -> list.stream());
+  }
 
   /**
-   * A visitor callback. 
-   * @param <RESULT> the type of the visitor result
-   * @param <CONTEXT> the type of the context parameter
-   * @param visitor the calling visitor
-   * @param context a parameter used to pass contextual information between visitors
+   * A visitor callback.
+   * 
+   * @param <RESULT>
+   *          the type of the visitor result
+   * @param <CONTEXT>
+   *          the type of the context parameter
+   * @param visitor
+   *          the calling visitor
+   * @param context
+   *          a parameter used to pass contextual information between visitors
    * @return the visitor result
    */
-  <RESULT, CONTEXT> RESULT accept(INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
+  <RESULT, CONTEXT> RESULT accept(@NotNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
 }

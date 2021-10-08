@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmAssemblyNodeItem;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -106,5 +106,16 @@ public interface Deserializer<CLASS> extends MutableConfiguration {
    * @throws BindingException
    *           if an error occurred while reading data from the stream
    */
-  IBoundXdmAssemblyNodeItem deserializeToNodeItem(Reader reader, @Nullable URI documentUri) throws BindingException;
+  IBoundXdmNodeItem deserializeToNodeItem(Reader reader, @Nullable URI documentUri) throws BindingException;
+
+  /**
+   * Read data from the {@link Reader} into a node item instance.
+   * @param is
+   *          the input stream to read from
+   * @param documentUri the URI of the document to read from
+   * @return a new node item
+   * @throws BindingException
+   *           if an error occurred while reading data from the stream
+   */
+  IBoundXdmNodeItem deserializeToNodeItem(InputStream is, @Nullable URI documentUri) throws BindingException;
 }

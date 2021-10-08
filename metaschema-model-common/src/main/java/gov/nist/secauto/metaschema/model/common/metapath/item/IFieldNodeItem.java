@@ -45,6 +45,7 @@ public interface IFieldNodeItem extends IModelNodeItem {
   @Override
   IFieldDefinition getDefinition();
 
+  @SuppressWarnings("null")
   @Override
   default Stream<? extends IModelNodeItem> getMatchingChildModelInstances(ModelInstance modelInstance) {
     return Stream.empty();

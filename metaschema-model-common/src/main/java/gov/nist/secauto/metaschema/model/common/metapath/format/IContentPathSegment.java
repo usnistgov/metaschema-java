@@ -23,31 +23,60 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath.format;
 
-package gov.nist.secauto.metaschema.model.common.metapath.xdm;
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
-public interface IXdmModelNodeItem extends IXdmNodeItem, IModelNodeItem, IModelPositionalPathSegment {
-  @Override
-  IXdmModelNodeItem getNodeItem();
+import javax.xml.namespace.QName;
+
+public interface IContentPathSegment extends IPathSegment {
+
+  /**
+   * Retrieve the path segment of the containing parent if there is one.
+   * @return the parent path segment or {@code null} if there isn't one
+   */
+  IModelPositionalPathSegment getParentSegment();
 
   @Override
-  IXdmAssemblyNodeItem getParentNodeItem();
+  @SuppressWarnings("null")
+  @NotNull
+  default Stream<IPathSegment> getPathStream() {
+    IModelPositionalPathSegment parentSegment = getParentSegment();
+    return parentSegment == null ? Stream.of(this) : Stream.concat(parentSegment.getPathStream(), Stream.of(this));
+  }
 
-  @Override
-  IModelPositionalPathSegment getPathSegment();
+  /**
+   * Retrieve the instance associated with this path segment, if the segment relates to an instance.
+   * 
+   * @return the instance or {@code null} if the segment does not relate to an instance
+   */
+  INamedInstance getInstance();
 
-  @Override
-  INamedModelInstance getInstance();
+  /**
+   * Retrieve the definition for the path segment.
+   * 
+   * @return the definition
+   */
+  @NotNull
+  INamedDefinition getDefinition();
 
-  @Override
-  INamedModelDefinition getDefinition();
+  /**
+   * Get the name of the path segment.
+   * 
+   * @return the name
+   */
+  @NotNull
+  String getName();
+
+  /**
+   * Get the XML qualified name of the path segment.
+   * 
+   * @return the name
+   */
+  QName getQName();
 }

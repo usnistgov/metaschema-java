@@ -24,37 +24,23 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.format;
+package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.xml.namespace.QName;
+public abstract class AbstractIntermediateContentXdmNodeItem<PARENT extends IXdmModelNodeItem> extends AbstractContentXdmNodeItem {
 
-class RootAssemblyDefinitionPathSegmentImpl implements IAssemblyPathSegment, IRootAssemblyPathSegment {
-  private final IAssemblyDefinition definition;
+  @Nullable
+  private final PARENT parentNodeItem;
 
-  public RootAssemblyDefinitionPathSegmentImpl(IAssemblyDefinition definition) {
-    this.definition = definition;
+  public AbstractIntermediateContentXdmNodeItem(@NotNull Object value, @Nullable PARENT parentNodeItem) {
+    super(value);
+    this.parentNodeItem = parentNodeItem;
   }
 
   @Override
-  public IAssemblyDefinition getDefinition() {
-    return definition;
-  }
-
-  @Override
-  public String getName() {
-    return getDefinition().getRootName();
-  }
-
-  @Override
-  public QName getQName() {
-    return getDefinition().getRootXmlQName();
-  }
-
-  @Override
-  public IAssemblyInstance getInstance() {
-    return null;
+  public PARENT getParentNodeItem() {
+    return parentNodeItem;
   }
 }

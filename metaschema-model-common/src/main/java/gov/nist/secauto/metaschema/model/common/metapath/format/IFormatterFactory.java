@@ -39,18 +39,25 @@ public interface IFormatterFactory {
   public static final IFormatterFactory INSTANCE = new DefaultFormatterFactory();
 
   @NotNull
-  IFlagPathSegment newFlagPathSegment(IModelPositionalPathSegment parentPathSegment, IFlagInstance instance);
+  IFlagPathSegment newFlagPathSegment(IModelPositionalPathSegment parentPathSegment, @NotNull IFlagInstance instance);
 
   @NotNull
-  IFieldPathSegment newFieldPathSegment(IAssemblyPathSegment parentPathSegment, IFieldInstance instance, int position);
-
-  @NotNull
-  IAssemblyPathSegment newAssemblyPathSegment(IAssemblyPathSegment parentPathSegment, IAssemblyInstance instance,
+  IFieldPathSegment newFieldPathSegment(IAssemblyPathSegment parentPathSegment, @NotNull IFieldInstance instance,
       int position);
 
   @NotNull
-  IRootAssemblyPathSegment newRootAssemblyPathSegment(IAssemblyInstance instance);
+  IAssemblyPathSegment newAssemblyPathSegment(IAssemblyPathSegment parentPathSegment,
+      @NotNull IAssemblyInstance instance,
+      int position);
 
   @NotNull
-  IRootAssemblyPathSegment newRootAssemblyPathSegment(IAssemblyDefinition definition);
+  IRootAssemblyPathSegment newRootAssemblyPathSegment(@NotNull IDocumentPathSegment parentPathSegment,
+      @NotNull IAssemblyInstance instance);
+
+  @NotNull
+  IRootAssemblyPathSegment newRootAssemblyPathSegment(@NotNull IDocumentPathSegment parentPathSegment,
+      @NotNull IAssemblyDefinition definition);
+
+  @NotNull
+  IDocumentPathSegment newDocumentPathSegment(@NotNull IRootAssemblyPathSegment rootSegment);
 }

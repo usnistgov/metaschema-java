@@ -36,7 +36,7 @@ import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.Feature;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmAssemblyNodeItem;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
@@ -96,14 +96,14 @@ public class DefaultJsonDeserializer<CLASS> extends AbstractDeserializer<CLASS> 
   }
 
   @Override
-  public IBoundXdmAssemblyNodeItem deserializeToNodeItem(Reader reader, @Nullable URI documentUri) throws BindingException {
+  public IBoundXdmNodeItem deserializeToNodeItem(Reader reader, @Nullable URI documentUri) throws BindingException {
     JsonParser parser = newJsonParser(reader);
 
     DefaultJsonParsingContext parsingContext = new DefaultJsonParsingContext(parser, new DefaultJsonProblemHandler());
 
     AssemblyClassBinding classBinding = getClassBinding();
     CLASS retval;
-    IBoundXdmAssemblyNodeItem parsedNodeItem;
+    IBoundXdmNodeItem parsedNodeItem;
     if (classBinding.isRoot() && getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT)) {
       RootDefinitionAssemblyProperty property = new RootDefinitionAssemblyProperty(classBinding);
       try {
@@ -120,7 +120,7 @@ public class DefaultJsonDeserializer<CLASS> extends AbstractDeserializer<CLASS> 
       } catch (IOException ex) {
         throw new BindingException(ex);
       }
-      parsedNodeItem = IXdmFactory.INSTANCE.newRootAssemblyNodeItem(property, retval, documentUri);
+      parsedNodeItem = IXdmFactory.INSTANCE.newDocumentNodeItem(property, retval, documentUri);
     } else {
       try {
         @SuppressWarnings("unchecked")

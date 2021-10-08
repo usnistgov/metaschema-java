@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.format;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.stream.Stream;
 
 public interface IRootAssemblyPathSegment extends IAssemblyPathSegment {
@@ -39,9 +41,18 @@ public interface IRootAssemblyPathSegment extends IAssemblyPathSegment {
     return 1;
   }
 
+  /**
+   * Get the path segment for the document node associated with this root.
+   * 
+   * @return the document path segment
+   */
+  @NotNull
+  IDocumentPathSegment getDocumentPathSegment();
+
+  @SuppressWarnings("null")
   @Override
   default Stream<IPathSegment> getPathStream() {
-    return Stream.of(this);
+    return Stream.of(getDocumentPathSegment(), this);
   }
 
 }

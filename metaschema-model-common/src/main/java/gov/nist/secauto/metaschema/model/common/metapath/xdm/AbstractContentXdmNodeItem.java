@@ -37,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public abstract class AbstractXdmNodeItem implements IXdmNodeItem {
+public abstract class AbstractContentXdmNodeItem implements IXdmContentNodeItem {
   @NotNull
   private final Object value;
 
@@ -46,7 +46,7 @@ public abstract class AbstractXdmNodeItem implements IXdmNodeItem {
    */
   private IAnyAtomicItem atomicItem;
 
-  public AbstractXdmNodeItem(@NotNull Object value) {
+  public AbstractContentXdmNodeItem(@NotNull Object value) {
     Objects.requireNonNull(value, "value");
     this.value = value;
   }
@@ -69,6 +69,7 @@ public abstract class AbstractXdmNodeItem implements IXdmNodeItem {
     }
   }
 
+  @SuppressWarnings("null")
   @Override
   public IAnyAtomicItem toAtomicItem() {
     initAtomicItem();

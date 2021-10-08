@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public interface IBoundXdmModelNodeItem extends IXdmModelNodeItem, IBoundXdmNodeItem {
+public interface IBoundXdmModelNodeItem extends IBoundXdmContentNodeItem, IXdmModelNodeItem {
   @Override
   IBoundXdmModelNodeItem getNodeItem();
 
@@ -43,20 +43,11 @@ public interface IBoundXdmModelNodeItem extends IXdmModelNodeItem, IBoundXdmNode
   IXdmAssemblyNodeItem getParentNodeItem();
 
   @Override
-  IModelPositionalPathSegment getPathSegment();
+  IBoundXdmModelNodeItem getPathSegment();
 
   @Override
   NamedModelProperty getInstance();
 
   @Override
   IBoundNamedModelDefinition getDefinition();
-
-  @Override
-  Map<String, ? extends IBoundXdmFlagNodeItem> getFlags();
-
-  @Override
-  Stream<? extends IBoundXdmFlagNodeItem> flags();
-
-  @Override
-  IBoundXdmFlagNodeItem getFlagByName(String name);
 }

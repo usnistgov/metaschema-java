@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.Feature;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmAssemblyNodeItem;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
@@ -97,7 +97,7 @@ public class DefaultXmlDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
   }
 
   @Override
-  public IBoundXdmAssemblyNodeItem deserializeToNodeItem(Reader reader, URI documentUri) throws BindingException {
+  public IBoundXdmNodeItem deserializeToNodeItem(Reader reader, URI documentUri) throws BindingException {
     XMLEventReader2 eventReader = newXMLEventReader2(reader);
     try {
       return parseXmlInternal(eventReader, documentUri);
@@ -106,7 +106,7 @@ public class DefaultXmlDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
     }
   }
 
-  protected IBoundXdmAssemblyNodeItem parseXmlInternal(XMLEventReader2 reader, @Nullable URI documentUri)
+  protected IBoundXdmNodeItem parseXmlInternal(XMLEventReader2 reader, @Nullable URI documentUri)
       throws XMLStreamException, BindingException {
 
     AssemblyClassBinding classBinding = getClassBinding();
@@ -114,7 +114,7 @@ public class DefaultXmlDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
     DefaultXmlParsingContext parsingContext = new DefaultXmlParsingContext(reader, new DefaultXmlProblemHandler());
 
     CLASS retval;
-    IBoundXdmAssemblyNodeItem parsedNodeItem;
+    IBoundXdmNodeItem parsedNodeItem;
     if (classBinding.isRoot() && getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT)) {
       // we may be at the START_DOCUMENT
       if (reader.peek().isStartDocument()) {
@@ -132,7 +132,7 @@ public class DefaultXmlDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
 
       // XmlEventUtil.consumeAndAssert(reader, XMLEvent.END_ELEMENT);
       XmlEventUtil.consumeAndAssert(reader, XMLEvent.END_DOCUMENT);
-      parsedNodeItem = IXdmFactory.INSTANCE.newRootAssemblyNodeItem(property, retval, documentUri);
+      parsedNodeItem = IXdmFactory.INSTANCE.newDocumentNodeItem(property, retval, documentUri);
     } else {
       try {
         @SuppressWarnings("unchecked")

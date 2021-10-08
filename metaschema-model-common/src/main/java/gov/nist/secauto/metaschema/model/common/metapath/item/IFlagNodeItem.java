@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment
 
 import java.util.stream.Stream;
 
-public interface IFlagNodeItem extends INodeItem {
+public interface IFlagNodeItem extends IContentNodeItem {
 
   @Override
   IModelNodeItem getParentNodeItem();
@@ -51,17 +51,20 @@ public interface IFlagNodeItem extends INodeItem {
   @Override
   IFlagDefinition getDefinition();
 
+  @SuppressWarnings("null")
   @Override
   default Stream<? extends INodeItem> getMatchingChildInstances(IExpressionEvaluationVisitor visitor,
       IExpression<?> expr, boolean recurse) {
     return Stream.empty();
   }
 
+  @SuppressWarnings("null")
   @Override
   default Stream<IFlagNodeItem> getMatchingChildFlags(Flag flag) {
     return Stream.empty();
   }
 
+  @SuppressWarnings("null")
   @Override
   default Stream<? extends IModelNodeItem> getMatchingChildModelInstances(ModelInstance modelInstance) {
     return Stream.empty();

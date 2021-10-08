@@ -24,30 +24,64 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.xdm;
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IContentPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public interface IXdmModelNodeItem extends IXdmNodeItem, IModelNodeItem, IModelPositionalPathSegment {
+public interface IContentNodeItem extends INodeItem, IValueItem {
+  /**
+   * Retrieve the parent node item if it exists.
+   * 
+   * @return the parent node item, or {@code null} if this node item has no known parent
+   */
+  @Nullable
+  INodeItem getParentNodeItem();
+
+  /**
+   * Determine if the node is a root node.
+   * 
+   * @return {@code true} if the node is a root node, or {@code false} otherwise
+   */
+  default boolean isRootNode() {
+    return false;
+  }
+
+  /**
+   * Get the Metaschema definition associated with this node.
+   * 
+   * @return the definition
+   */
+  @NotNull
+  INamedDefinition getDefinition();
+
+  /**
+   * Retrieve the value associated with the item.
+   * 
+   * @return the value
+   */
   @Override
-  IXdmModelNodeItem getNodeItem();
+  Object getValue();
+
+  // TODO: rename to asAtomicItem
+  @Override
+  IAnyAtomicItem toAtomicItem();
+
+  /**
+   * Get the path for this node item as a Metapath.
+   * 
+   * @return the Metapath
+   */
+  @NotNull
+  default String getMetapath() {
+    return toPath(IFormatterFactory.METAPATH_FORMATTER);
+  }
 
   @Override
-  IXdmAssemblyNodeItem getParentNodeItem();
+  IContentPathSegment getPathSegment();
 
-  @Override
-  IModelPositionalPathSegment getPathSegment();
-
-  @Override
-  INamedModelInstance getInstance();
-
-  @Override
-  INamedModelDefinition getDefinition();
 }

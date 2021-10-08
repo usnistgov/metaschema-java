@@ -59,22 +59,20 @@ public class DefaultXdmFactory implements IXdmFactory {
   }
 
   @Override
-  public IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(RootDefinitionAssemblyProperty instance, Object value,
-      URI documentUri) {
-    return new XdmRootAssemblyNodeItemImpl(instance, value, documentUri);
+  public IBoundXdmDocumentNodeItem newDocumentNodeItem(RootDefinitionAssemblyProperty instance, Object value,URI documentUri) {
+    return new XdmDocumentNodeItemImpl(instance, value, documentUri);
   }
 
   @Override
-  public IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(AssemblyClassBinding definition, Object value,
+  public IBoundXdmDocumentNodeItem newDocumentNodeItem(Object value, BindingContext bindingContext,
       URI documentUri) {
-    return newRootAssemblyNodeItem(new RootDefinitionAssemblyProperty(definition), value, documentUri);
-  }
-
-  @Override
-  public IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(Object value, BindingContext bindingContext,
-      URI documentUri) {
-    return newRootAssemblyNodeItem((AssemblyClassBinding) bindingContext.getClassBinding(value.getClass()), value,
+    return newDocumentNodeItem((AssemblyClassBinding) bindingContext.getClassBinding(value.getClass()), value,
         documentUri);
+  }
+
+  @Override
+  public IBoundXdmDocumentNodeItem newDocumentNodeItem(AssemblyClassBinding definition, Object value,URI documentUri) {
+    return newDocumentNodeItem(new RootDefinitionAssemblyProperty(definition), value, documentUri);
   }
 
   @Override

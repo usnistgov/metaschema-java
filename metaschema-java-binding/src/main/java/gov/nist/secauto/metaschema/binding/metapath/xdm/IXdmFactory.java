@@ -41,24 +41,31 @@ import java.net.URI;
 public interface IXdmFactory {
   public static final IXdmFactory INSTANCE = new DefaultXdmFactory();
 
+  @NotNull
   IBoundXdmAssemblyNodeItem newAssemblyNodeItem(@NotNull AssemblyProperty instance, @NotNull Object value, int position,
       @NotNull IBoundXdmAssemblyNodeItem parentNodeItem);
 
+  @NotNull
   IBoundXdmFieldNodeItem newFieldNodeItem(@NotNull FieldProperty instance, @NotNull Object value, int position,
       @NotNull IBoundXdmAssemblyNodeItem parentNodeItem);
 
+  @NotNull
   IBoundXdmFlagNodeItem newFlagNodeItem(@NotNull FlagProperty instance, @NotNull Object value,
       @NotNull IBoundXdmModelNodeItem parentNodeItem);
 
-  IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(@NotNull RootDefinitionAssemblyProperty instance,
+  @NotNull
+  IBoundXdmDocumentNodeItem newDocumentNodeItem(@NotNull RootDefinitionAssemblyProperty instance,
       @NotNull Object value, @Nullable URI documentUri);
 
-  IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(@NotNull AssemblyClassBinding definition, @NotNull Object value,
+  @NotNull
+  IBoundXdmDocumentNodeItem newDocumentNodeItem(@NotNull AssemblyClassBinding definition, @NotNull Object value,
       @Nullable URI documentUri);
 
-  IBoundXdmRootAssemblyNodeItem newRootAssemblyNodeItem(@NotNull Object value, @NotNull BindingContext bindingContext,
+  @NotNull
+  IBoundXdmDocumentNodeItem newDocumentNodeItem(@NotNull Object value, @NotNull BindingContext bindingContext,
       @Nullable URI documentUri);
 
+  @NotNull
   IBoundXdmAssemblyNodeItem newRelativeAssemblyNodeItem(@NotNull AssemblyClassBinding definition, @NotNull Object value,
       @Nullable URI documentUri);
 }

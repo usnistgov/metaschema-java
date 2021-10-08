@@ -32,12 +32,15 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.jetbrains.annotations.NotNull;
 
 import src.main.antlr4.metapath10Lexer;
 import src.main.antlr4.metapath10Parser;
 
 public class MetapathFactory {
-  public static MetapathExpression parseMetapathString(String path) throws RecognitionException {
+  @NotNull
+  public static MetapathExpression parseMetapathString(@NotNull String path) throws RecognitionException {
+    @NotNull
     MetapathExpression retval;
     if (".".equals(path)) {
       retval = MetapathExpression.CONTEXT_NODE;
@@ -46,6 +49,9 @@ public class MetapathFactory {
       CommonTokenStream tokens = new CommonTokenStream(lexer);
       metapath10Parser parser = new metapath10Parser(tokens);
       parser.addErrorListener(new FailingErrorListener());
+      
+      @SuppressWarnings("null")
+      @NotNull
       ParseTree tree = parser.expr();
       // CSTPrinter printer = new CSTPrinter();
       // printer.print(tree, Arrays.asList(parser.getRuleNames()));

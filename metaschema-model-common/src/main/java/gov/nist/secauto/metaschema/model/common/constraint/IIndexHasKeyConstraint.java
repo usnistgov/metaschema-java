@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface IIndexHasKeyConstraint extends IKeyConstraint {
+  @NotNull
   String getIndexName();
 }

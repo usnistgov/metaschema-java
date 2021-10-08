@@ -32,8 +32,14 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmNodeItem;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
+// TODO: merge with the concrete class
 public abstract class AbstractBoundXdmFieldNodeItem<INSTANCE extends FieldProperty>
     extends AbstractBoundXdmModelNodeItem<INSTANCE> implements IBoundXdmFieldNodeItem {
 
@@ -54,6 +60,11 @@ public abstract class AbstractBoundXdmFieldNodeItem<INSTANCE extends FieldProper
   @Override
   public FieldDefinition getDefinition() {
     return getInstance().getDefinition();
+  }
+
+  @Override
+  public Map<@NotNull String, ? extends List<@NotNull ? extends IBoundXdmModelNodeItem>> getModelItems() {
+    return Collections.emptyMap();
   }
 
   @Override

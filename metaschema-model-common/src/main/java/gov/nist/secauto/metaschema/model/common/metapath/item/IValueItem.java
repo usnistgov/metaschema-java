@@ -23,49 +23,25 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
-package gov.nist.secauto.metaschema.model.common.datatype.adapter;
-
-import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IPathItem;
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
-public abstract class AbstractPathItem<SEGMENT extends IPathSegment> implements IPathItem {
+public interface IValueItem extends IItem {
+  /**
+   * Get the item's "wrapped" value.
+   * 
+   * @return the value
+   */
   @NotNull
-  private final SEGMENT segment;
+  Object getValue();
 
-  public AbstractPathItem(@NotNull SEGMENT segment) {
-    Objects.requireNonNull(segment, "segment");
-    this.segment = segment;
-  }
-
-  @Override
-  public SEGMENT getPathSegment() {
-    return segment;
-  }
-
-  public INamedDefinition getDefinition() {
-    return getPathSegment().getDefinition();
-  }
-
-  // @Override
-  // public IItemType getItemType() {
-  // return getPathSegment().getDefinition().getItemType();
-  // }
-
-  // @Override
-  // public String asString() {
-  // IStringItem result = toStringItem();
-  // return result == null ? null : toStringItem().asString();
-  // }
-
-  @Override
-  public String toString() {
-    return IFormatterFactory.METAPATH_FORMATTER.format(getPathSegment());
-  }
+  /**
+   * Get the atomic value for the item. This may be the same item if the item is an instance of
+   * {@link IAnyAtomicItem}.
+   * 
+   * @return the atomic value
+   */
+  @NotNull
+  IAnyAtomicItem toAtomicItem();
 }

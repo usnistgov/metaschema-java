@@ -24,30 +24,47 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.xdm;
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IContentPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
+import org.jetbrains.annotations.NotNull;
 
-public interface IXdmModelNodeItem extends IXdmNodeItem, IModelNodeItem, IModelPositionalPathSegment {
-  @Override
-  IXdmModelNodeItem getNodeItem();
+import java.util.Objects;
 
-  @Override
-  IXdmAssemblyNodeItem getParentNodeItem();
+public abstract class AbstractPathItem<SEGMENT extends IContentPathSegment> implements IContentPathItem {
+  @NotNull
+  private final SEGMENT segment;
 
-  @Override
-  IModelPositionalPathSegment getPathSegment();
+  public AbstractPathItem(@NotNull SEGMENT segment) {
+    Objects.requireNonNull(segment, "segment");
+    this.segment = segment;
+  }
 
   @Override
-  INamedModelInstance getInstance();
+  public SEGMENT getPathSegment() {
+    return segment;
+  }
+
+  public INamedDefinition getDefinition() {
+    return getPathSegment().getDefinition();
+  }
+
+  // @Override
+  // public IItemType getItemType() {
+  // return getPathSegment().getDefinition().getItemType();
+  // }
+
+  // @Override
+  // public String asString() {
+  // IStringItem result = toStringItem();
+  // return result == null ? null : toStringItem().asString();
+  // }
 
   @Override
-  INamedModelDefinition getDefinition();
+  public String toString() {
+    return IFormatterFactory.METAPATH_FORMATTER.format(getPathSegment());
+  }
 }

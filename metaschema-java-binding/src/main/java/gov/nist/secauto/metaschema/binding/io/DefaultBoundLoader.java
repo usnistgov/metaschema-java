@@ -38,7 +38,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
+import gov.nist.secauto.metaschema.binding.util.Util;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -137,9 +138,8 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
 
   @Override
   public INodeItem loadAsNodeItem(URL url) throws IOException {
-    Object item = load(url);
     try {
-      return IXdmFactory.INSTANCE.newRootAssemblyNodeItem(item, bindingContext, url.toURI());
+      return loadAsNodeItem(url.openStream(), url.toURI());
     } catch (URISyntaxException ex) {
       throw new IOException(ex);
     }
@@ -147,35 +147,14 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
 
   @Override
   public INodeItem loadAsNodeItem(File file) throws FileNotFoundException, IOException {
-    Object item = load(file);
-    return IXdmFactory.INSTANCE.newRootAssemblyNodeItem(item, bindingContext, file.getCanonicalFile().toURI());
-  }
-
-  @Override
-  public INodeItem loadAsNodeItem(InputStream is, @Nullable URI documentUri) throws IOException {
-    Object item = load(is, documentUri);
-    return IXdmFactory.INSTANCE.newRootAssemblyNodeItem(item, bindingContext, documentUri);
-  }
-
-  @Override
-  public <CLASS> CLASS load(URL url) throws IOException {
-    try {
-      return load(url.openStream(), url.toURI());
-    } catch (URISyntaxException ex) {
-      throw new IOException(ex);
+    try (FileInputStream fis = new FileInputStream(file)) {
+      return loadAsNodeItem(fis,file.getCanonicalFile().toURI());
     }
   }
 
+  // TODO: consolidate this with the similar load class
   @Override
-  public <CLASS> CLASS load(File file) throws FileNotFoundException, IOException {
-    if (!file.exists()) {
-      throw new FileNotFoundException(file.getAbsolutePath());
-    }
-    return load(new FileInputStream(file), file.toURI());
-  }
-
-  @Override
-  public <CLASS> CLASS load(InputStream is, @Nullable URI documentUri) throws IOException {
+  public IBoundXdmNodeItem loadAsNodeItem(InputStream is, @Nullable URI documentUri) throws IOException {
     BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES);
     bis.mark(LOOK_AHEAD_BYTES);
 
@@ -206,11 +185,32 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
     }
 
     try {
-      @SuppressWarnings("unchecked") CLASS retval = (CLASS) deserializer.deserialize(bis, documentUri);
-      return retval;
+      return loadAsNodeItem(deserializer, bis, documentUri);
     } catch (BindingException ex) {
       throw new IOException(ex);
     }
+  }
+
+  @Override
+  public <CLASS> CLASS load(URL url) throws IOException {
+    try {
+      return load(url.openStream(), url.toURI());
+    } catch (URISyntaxException ex) {
+      throw new IOException(ex);
+    }
+  }
+
+  @Override
+  public <CLASS> CLASS load(File file) throws FileNotFoundException, IOException {
+    if (!file.exists()) {
+      throw new FileNotFoundException(file.getAbsolutePath());
+    }
+    return load(new FileInputStream(file), file.toURI());
+  }
+
+  @Override
+  public <CLASS> CLASS load(InputStream is, @Nullable URI documentUri) throws IOException {
+    return Util.toClass(loadAsNodeItem(is, documentUri));
   }
 
   @Override
@@ -246,10 +246,21 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
       throw new IOException("Unable to reset input stream before parsing", ex);
     }
     try {
-      return deserializer.deserialize(bis, documentUri);
+      return loadAsObject(deserializer, bis, documentUri);
     } catch (BindingException ex) {
       throw new IOException(ex);
     }
+  }
+
+  protected <CLASS> IBoundXdmNodeItem loadAsNodeItem(Deserializer<CLASS> deserializer, InputStream is, URI documentUri)
+      throws BindingException {
+    return deserializer.deserializeToNodeItem(is, documentUri);
+  }
+
+  protected <CLASS> CLASS loadAsObject(Deserializer<CLASS> deserializer, InputStream is, URI documentUri)
+      throws BindingException {
+    IBoundXdmNodeItem nodeItem = loadAsNodeItem(deserializer, is, documentUri);
+    return Util.toClass(nodeItem);
   }
 
   protected Format formatFromMatcher(DataFormatMatcher matcher) {

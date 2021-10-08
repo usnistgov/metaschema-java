@@ -27,11 +27,14 @@
 package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmAssemblyNodeItem;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValidatingXdmVisitor;
+import gov.nist.secauto.metaschema.binding.util.Util;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -95,7 +98,7 @@ public abstract class AbstractDeserializer<CLASS> extends AbstractSerializationB
 
   @Override
   public CLASS deserialize(Reader reader, URI documentUri) throws BindingException {
-    IBoundXdmAssemblyNodeItem nodeItem = deserializeToNodeItem(reader, documentUri);
+    IBoundXdmNodeItem nodeItem = deserializeToNodeItem(reader, documentUri);
 
     if (isValidating()) {
       StaticContext staticContext = new StaticContext();
@@ -105,8 +108,12 @@ public abstract class AbstractDeserializer<CLASS> extends AbstractSerializationB
       validator.finalizeValidation();
     }
 
-    @SuppressWarnings("unchecked")
-    CLASS retval = (CLASS) nodeItem.getValue();
-    return retval;
+    return Util.toClass(nodeItem);
   }
+
+  @Override
+  public IBoundXdmNodeItem deserializeToNodeItem(InputStream is, @Nullable URI documentUri) throws BindingException {
+    return deserializeToNodeItem(new InputStreamReader(is), documentUri);
+  }
+
 }

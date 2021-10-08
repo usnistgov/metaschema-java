@@ -73,16 +73,6 @@ public abstract class AbstractBoundXdmModelNodeItem<INSTANCE extends NamedModelP
   }
 
   @Override
-  public Stream<? extends IBoundXdmFlagNodeItem> flags() {
-    return getFlags().values().stream();
-  }
-
-  @Override
-  public IBoundXdmFlagNodeItem getFlagByName(String name) {
-    return getFlags().get(name);
-  }
-
-  @Override
   public Stream<? extends IBoundXdmFlagNodeItem> getMatchingChildFlags(Flag flag) {
     Stream<? extends IBoundXdmFlagNodeItem> retval;
 

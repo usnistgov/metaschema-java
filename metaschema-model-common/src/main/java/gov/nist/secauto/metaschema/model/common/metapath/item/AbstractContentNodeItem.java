@@ -24,23 +24,20 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype.adapter;
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IValuedDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IContentPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeFunctionMetapathException;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public abstract class AbstractNodeItem<SEGMENT extends IPathSegment, PARENT extends IModelNodeItem>
-    extends AbstractPathItem<SEGMENT> implements INodeItem {
+public abstract class AbstractContentNodeItem<SEGMENT extends IContentPathSegment, PARENT extends IModelNodeItem>
+    extends AbstractPathItem<SEGMENT> implements IContentNodeItem {
   /**
    * The current node.
    */
@@ -59,7 +56,7 @@ public abstract class AbstractNodeItem<SEGMENT extends IPathSegment, PARENT exte
    */
   private IAnyAtomicItem atomicItem;
 
-  public AbstractNodeItem(@NotNull Object value, @NotNull SEGMENT segment, PARENT parent) {
+  public AbstractContentNodeItem(@NotNull Object value, @NotNull SEGMENT segment, PARENT parent) {
     super(segment);
     Objects.requireNonNull(value, "value");
     this.value = value;

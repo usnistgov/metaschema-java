@@ -27,14 +27,14 @@
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.AbstractXdmNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.xdm.AbstractContentXdmNodeItem;
 
 import java.util.Objects;
 
 import javax.xml.namespace.QName;
 
 public abstract class AbstractBoundXdmNodeItem<INSTANCE extends NamedProperty>
-    extends AbstractXdmNodeItem implements IBoundXdmNodeItem {
+    extends AbstractContentXdmNodeItem implements IBoundXdmContentNodeItem {
 
   private final INSTANCE instance;
 

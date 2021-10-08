@@ -81,6 +81,10 @@ public abstract class AbstractXdmNodeItemVisitor<RESULT, CONTEXT> implements INo
     return item.accept(this, context);
   }
 
+  public RESULT visitDocument(IBoundXdmDocumentNodeItem item, CONTEXT context) {
+    return visitAssembly(item.getRootAssemblyNodeItem(), context);
+  }
+
   @Override
   public RESULT visitFlag(IBoundXdmFlagNodeItem item, CONTEXT context) {
     return defaultResult();

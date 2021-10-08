@@ -40,15 +40,25 @@ public interface IPathFormatter {
   public static final IPathFormatter METAPATH_PATH_FORMATER = new MetapathFormatter();
 
   /**
-   * Format the path represented by the provided path segment. The provided segment is the last node
-   * in this path. {@link IPathSegment#getParentSegment()} is used to walk the path tree.
+   * Format the path represented by the provided path segment. The provided segment is expected to be the last node
+   * in this path. {@link IContentPathSegment#getParentSegment()} is used to walk the path tree.
    * 
    * @param segment
    *          The last segment in a sequence of path segments
    * @return a formatted path
    */
   @NotNull
-  String format(IPathSegment segment);
+  String format(@NotNull IPathSegment segment);
+
+  /**
+   * This visitor callback is used to format an individual document path segment.
+   * 
+   * @param segment
+   *          the segment to format
+   * @return the formatted text for the segment
+   */
+  @NotNull
+  String formatPathSegment(@NotNull IDocumentPathSegment segment);
 
   /**
    * This visitor callback is used to format an individual flag path segment.
@@ -57,7 +67,8 @@ public interface IPathFormatter {
    *          the segment to format
    * @return the formatted text for the segment
    */
-  String formatPathSegment(IFlagPathSegment segment);
+  @NotNull
+  String formatPathSegment(@NotNull IFlagPathSegment segment);
 
   /**
    * This visitor callback is used to format an individual field path segment.
@@ -66,7 +77,8 @@ public interface IPathFormatter {
    *          the segment to format
    * @return the formatted text for the segment
    */
-  String formatPathSegment(IFieldPathSegment segment);
+  @NotNull
+  String formatPathSegment(@NotNull IFieldPathSegment segment);
 
   /**
    * This visitor callback is used to format an individual assembly path segment.
@@ -75,5 +87,6 @@ public interface IPathFormatter {
    *          the segment to format
    * @return the formatted text for the segment
    */
-  String formatPathSegment(IAssemblyPathSegment segment);
+  @NotNull
+  String formatPathSegment(@NotNull IAssemblyPathSegment segment);
 }

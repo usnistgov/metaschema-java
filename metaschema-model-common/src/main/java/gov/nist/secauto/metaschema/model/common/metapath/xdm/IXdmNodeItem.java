@@ -30,8 +30,14 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public interface IXdmNodeItem extends INodeItem, IPathSegment {
@@ -39,11 +45,33 @@ public interface IXdmNodeItem extends INodeItem, IPathSegment {
   IXdmNodeItem getNodeItem();
 
   @Override
-  IXdmModelNodeItem getParentNodeItem();
+  Map<@NotNull String, ? extends IXdmFlagNodeItem> getFlags();
 
   @Override
-  default String toPath(IPathFormatter formatter) {
-    return formatter.format(this);
+  default IXdmFlagNodeItem getFlagByName(String name) {
+    return getFlags().get(name);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default Stream<? extends IXdmFlagNodeItem> flags() {
+    return getFlags().values().stream();
+  }
+
+  @Override
+  Map<@NotNull String, ? extends List<@NotNull ? extends IXdmModelNodeItem>> getModelItems();
+
+  @SuppressWarnings("null")
+  @Override
+  default List<@NotNull ? extends IXdmModelNodeItem> getModelItemsByName(String name) {
+    List<@NotNull ? extends IXdmModelNodeItem> items = getModelItems().get(name);
+    return items == null ? Collections.emptyList() : items;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default Stream<? extends IXdmModelNodeItem> modelItems() {
+    return getModelItems().values().stream().flatMap(list -> list.stream());
   }
 
   @Override

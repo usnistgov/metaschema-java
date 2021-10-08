@@ -74,6 +74,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.XPathFunctions
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnNotFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
@@ -419,12 +420,12 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
 
   @Override
   public ISequence<? extends INodeItem> visitRootSlashPath(RootSlashPath expr, INodeContext context) {
-    if (context.getNodeItem().isRootNode()) {
+    if (context.getNodeItem() instanceof IDocumentNodeItem) {
       @SuppressWarnings("unchecked") ISequence<? extends INodeItem> retval
           = (ISequence<? extends INodeItem>) expr.getNode().accept(this, context);
       return retval;
     } else {
-      throw new UnsupportedOperationException("root searching is not supported on non-root nodes");
+      throw new UnsupportedOperationException("root searching is not supported on non-document nodes");
     }
   }
 
@@ -561,16 +562,12 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
     // next iterate over the child model instances, if the context item is an assembly
     INodeItem contextItem = context.getNodeItem();
 
-    if (contextItem instanceof IAssemblyNodeItem) {
-      IAssemblyNodeItem assemblyContextItem = (IAssemblyNodeItem) contextItem;
-
-      @SuppressWarnings("null") Stream<? extends IModelNodeItem> childModelInstances
-          = assemblyContextItem.modelItems().flatMap(modelItem -> {
-            // apply the search criteria to these node items
-            return searchModelInstances(expr, modelItem);
-          });
-      retval = Stream.concat(retval, childModelInstances);
-    }
+    @SuppressWarnings("null") Stream<? extends IModelNodeItem> childModelInstances
+        = contextItem.modelItems().flatMap(modelItem -> {
+          // apply the search criteria to these node items
+          return searchModelInstances(expr, modelItem);
+        });
+    retval = Stream.concat(retval, childModelInstances);
     return retval;
   }
 

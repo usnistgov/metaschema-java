@@ -23,31 +23,25 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath.format;
 
-package gov.nist.secauto.metaschema.model.common.metapath.xdm;
+import org.jetbrains.annotations.NotNull;
 
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+class DocumentPathSegmentImpl implements IDocumentPathSegment {
+  @NotNull
+  private final IRootAssemblyPathSegment rootSegment;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-
-public interface IXdmModelNodeItem extends IXdmNodeItem, IModelNodeItem, IModelPositionalPathSegment {
-  @Override
-  IXdmModelNodeItem getNodeItem();
+  public DocumentPathSegmentImpl(@NotNull IRootAssemblyPathSegment rootSegment) {
+    this.rootSegment = rootSegment;
+  }
 
   @Override
-  IXdmAssemblyNodeItem getParentNodeItem();
+  public IRootAssemblyPathSegment getRootAssemblyPathSegment() {
+    return rootSegment;
+  }
 
   @Override
-  IModelPositionalPathSegment getPathSegment();
-
-  @Override
-  INamedModelInstance getInstance();
-
-  @Override
-  INamedModelDefinition getDefinition();
+  public @NotNull String format(@NotNull IPathFormatter formatter) {
+    return formatter.formatPathSegment(this);
+  }
 }

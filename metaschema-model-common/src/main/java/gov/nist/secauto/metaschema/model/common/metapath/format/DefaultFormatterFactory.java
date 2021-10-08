@@ -30,13 +30,9 @@ import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.instance.RootAssemblyDefinitionInstance;
 
 public class DefaultFormatterFactory implements IFormatterFactory {
-
-  protected DefaultFormatterFactory() {
-
-  }
-
   @Override
   public IFlagPathSegment newFlagPathSegment(IModelPositionalPathSegment parentPathSegment, IFlagInstance instance) {
     return new FlagPathSegmentImpl(parentPathSegment, instance);
@@ -55,12 +51,20 @@ public class DefaultFormatterFactory implements IFormatterFactory {
   }
 
   @Override
-  public IRootAssemblyPathSegment newRootAssemblyPathSegment(IAssemblyInstance instance) {
-    return new RootAssemblyInstancePathSegmentImpl(instance);
+  public IRootAssemblyPathSegment newRootAssemblyPathSegment(IDocumentPathSegment parentPathSegment,
+      IAssemblyInstance instance) {
+    return new RootAssemblyInstancePathSegmentImpl(parentPathSegment, instance);
   }
 
   @Override
-  public IRootAssemblyPathSegment newRootAssemblyPathSegment(IAssemblyDefinition definition) {
-    return new RootAssemblyDefinitionPathSegmentImpl(definition);
+  public IRootAssemblyPathSegment newRootAssemblyPathSegment(IDocumentPathSegment parentPathSegment,
+      IAssemblyDefinition definition) {
+    IAssemblyInstance instance = new RootAssemblyDefinitionInstance(definition);
+    return newRootAssemblyPathSegment(parentPathSegment, instance);
+  }
+
+  @Override
+  public IDocumentPathSegment newDocumentPathSegment(IRootAssemblyPathSegment rootSegment) {
+    return new DocumentPathSegmentImpl(rootSegment);
   }
 }

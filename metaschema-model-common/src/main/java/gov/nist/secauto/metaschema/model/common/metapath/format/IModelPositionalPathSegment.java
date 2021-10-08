@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 
-public interface IModelPositionalPathSegment extends IPathSegment {
+public interface IModelPositionalPathSegment extends IContentPathSegment {
 
   @Override
   INamedModelInstance getInstance();

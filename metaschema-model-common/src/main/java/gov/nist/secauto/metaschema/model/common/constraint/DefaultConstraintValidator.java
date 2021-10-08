@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.function.XPathFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IContentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
@@ -61,8 +62,11 @@ import java.util.regex.Pattern;
 public class DefaultConstraintValidator implements ConstraintValidator {
   private static final Logger logger = LogManager.getLogger(DefaultConstraintValidator.class);
 
+  @NotNull
   private final Map<@NotNull INodeItem, ValueStatus> valueMap = new LinkedHashMap<>();
+  @NotNull
   private final Map<@NotNull String, Map<@NotNull String, INodeItem>> indexToKeyToItemMap = new LinkedHashMap<>();
+  @NotNull
   private final Map<@NotNull String, Map<@NotNull String, List<@NotNull INodeItem>>> indexToKeyRefToItemMap
       = new LinkedHashMap<>();
   @NotNull
@@ -178,7 +182,9 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     Map<@NotNull String, INodeItem> indexItems = new HashMap<>();
     targets.asStream().map(item -> (INodeItem) item)
         .forEachOrdered(item -> {
-          @NotNull String key = buildKey(constraint.getKeyFields(), item);
+          @SuppressWarnings("null")
+          @NotNull
+          String key = buildKey(constraint.getKeyFields(), item);
 
           // logger.info("key: {} {}", key, item);
           //
@@ -215,6 +221,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     Map<String, INodeItem> keyToItemMap = new HashMap<>();
 
     targets.asStream().map(item -> (INodeItem) item).forEachOrdered(item -> {
+      @SuppressWarnings("null")
       String key = buildKey(constraint.getKeyFields(), item);
 
       if (keyToItemMap.containsKey(key)) {
@@ -237,9 +244,10 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     }
   }
 
-  protected void validateMatches(IMatchesConstraint constraint, @SuppressWarnings("unused") INodeItem node,
+  protected void validateMatches(IMatchesConstraint constraint, INodeItem node,
       ISequence<?> targets) {
     targets.asStream().map(item -> (INodeItem) item).forEachOrdered(item -> {
+      @SuppressWarnings("null")
       String value = XPathFunctions.fnDataItem(item).asString();
 
       Pattern pattern = constraint.getPattern();
@@ -272,11 +280,11 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     }
   }
 
-  protected void validateIndexHasKey(IIndexHasKeyConstraint constraint, @SuppressWarnings("unused") INodeItem node,
+  protected void validateIndexHasKey(IIndexHasKeyConstraint constraint, INodeItem node,
       ISequence<?> targets) {
     String indexName = constraint.getIndexName();
 
-    Map<String, List<INodeItem>> keyRefItems = indexToKeyRefToItemMap.get(indexName);
+    Map<@NotNull String, List<@NotNull INodeItem>> keyRefItems = indexToKeyRefToItemMap.get(indexName);
     if (keyRefItems == null) {
       keyRefItems = new LinkedHashMap<>();
       indexToKeyRefToItemMap.put(indexName, keyRefItems);
@@ -288,7 +296,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
 
       // logger.info("key-ref: {} {}", key, item);
       //
-      List<INodeItem> items = keyRefItems.get(key);
+      List<@NotNull INodeItem> items = keyRefItems.get(key);
       if (items == null) {
         items = new LinkedList<>();
         keyRefItems.put(key, items);
@@ -328,30 +336,29 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     for (IAllowedValuesConstraint constraint : constraints) {
       @SuppressWarnings("null") MetapathExpression metapath = constraint.getTarget();
       @SuppressWarnings("unchecked") ISequence<? extends INodeItem> targets
-          = (ISequence<? extends INodeItem>) item.evaluateMetapath(metapath, getMetapathContext());
+          = (ISequence<? extends IContentNodeItem>) item.evaluateMetapath(metapath, getMetapathContext());
       validateAllowedValues(constraint, item, targets);
     }
   }
 
-  @SuppressWarnings("null")
-  protected void validateAllowedValues(IAllowedValuesConstraint constraint, @SuppressWarnings("unused") INodeItem node,
+  protected void validateAllowedValues(IAllowedValuesConstraint constraint, INodeItem node,
       ISequence<? extends INodeItem> targets) {
     targets.asStream().forEachOrdered(item -> {
       String value = XPathFunctions.fnDataItem(item).asString();
       if (!constraint.getAllowedValues().containsKey(value)) {
         if (constraint.isAllowedOther()) {
-          updateValueStatus(item, false);
+          updateValueStatus((IContentNodeItem)item, false);
         } else {
           logger.error(String.format("Value '%s' did not match on of the required allowed values at path '%s'", value,
               item.toPath(IFormatterFactory.METAPATH_FORMATTER)));
         }
       } else {
-        updateValueStatus(item, true);
+        updateValueStatus((IContentNodeItem)item, true);
       }
     });
   }
 
-  protected void updateValueStatus(@NotNull INodeItem item, boolean newStatus) {
+  protected void updateValueStatus(@NotNull IContentNodeItem item, boolean newStatus) {
     @Nullable ValueStatus valueStatus = valueMap.get(item);
 
     if (valueStatus == null) {
@@ -403,7 +410,10 @@ public class DefaultConstraintValidator implements ConstraintValidator {
       }
       key.append("|||");
     }
-    return key.toString();
+    @SuppressWarnings("null")
+    @NotNull 
+    String retval = key.toString();
+    return retval;
   }
 
   @Override
@@ -416,13 +426,16 @@ public class DefaultConstraintValidator implements ConstraintValidator {
       }
     }
 
-    for (Map.Entry<String, Map<String, List<INodeItem>>> entry : indexToKeyRefToItemMap.entrySet()) {
+    for (@NotNull Map.Entry<@NotNull String, @NotNull Map<@NotNull String, @NotNull List<@NotNull INodeItem>>> entry : indexToKeyRefToItemMap.entrySet()) {
+      @SuppressWarnings("null")
       String indexName = entry.getKey();
 
-      Map<String, INodeItem> indexItems = indexToKeyToItemMap.get(indexName);
+      Map<@NotNull String, INodeItem> indexItems = indexToKeyToItemMap.get(indexName);
 
-      for (Map.Entry<String, List<INodeItem>> keyRefEntry : entry.getValue().entrySet()) {
+      for (@NotNull Map.Entry<@NotNull String, @NotNull List<@NotNull INodeItem>> keyRefEntry : entry.getValue().entrySet()) {
+        @SuppressWarnings("null")
         String key = keyRefEntry.getKey();
+        @SuppressWarnings("null")
         List<INodeItem> items = keyRefEntry.getValue();
 
         if (!indexItems.containsKey(key)) {
@@ -436,10 +449,10 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   }
 
   private static class ValueStatus {
-    private final INodeItem item;
+    private final IContentNodeItem item;
     private boolean valid;
 
-    public ValueStatus(INodeItem item, boolean initialStatus) {
+    public ValueStatus(IContentNodeItem item, boolean initialStatus) {
       this.item = item;
       this.valid = initialStatus;
     }

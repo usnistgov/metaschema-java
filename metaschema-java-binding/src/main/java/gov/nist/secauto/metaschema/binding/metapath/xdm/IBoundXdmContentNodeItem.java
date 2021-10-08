@@ -24,30 +24,25 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.xdm;
+package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.binding.model.BoundDefinition;
+import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
+import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmContentNodeItem;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
+import org.jetbrains.annotations.NotNull;
 
-public interface IXdmModelNodeItem extends IXdmNodeItem, IModelNodeItem, IModelPositionalPathSegment {
+public interface IBoundXdmContentNodeItem extends IBoundXdmNodeItem, IXdmContentNodeItem {
   @Override
-  IXdmModelNodeItem getNodeItem();
+  IBoundXdmContentNodeItem getNodeItem();
 
   @Override
-  IXdmAssemblyNodeItem getParentNodeItem();
+  IBoundXdmContentNodeItem getPathSegment();
 
   @Override
-  IModelPositionalPathSegment getPathSegment();
+  NamedProperty getInstance();
 
   @Override
-  INamedModelInstance getInstance();
+  BoundDefinition getDefinition();
 
-  @Override
-  INamedModelDefinition getDefinition();
 }
