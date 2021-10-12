@@ -29,8 +29,7 @@ package gov.nist.secauto.metaschema.datatypes.adapter.types;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -51,9 +50,8 @@ class BooleanAdapterTest {
     parser  = factory.createParser(TEST_JSON);
   }
 
-  @ParameterizedTest
-  @ValueSource(booleans = { true })
-  void testParse(Boolean value) throws IOException {
+  @Test
+  void testParse() throws IOException {
     // skip to the value
     parser.nextToken();
     parser.nextToken();
