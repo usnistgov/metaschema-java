@@ -26,17 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 
-import java.util.stream.Stream;
-
-public interface IXdmFlagNodeItem extends IXdmNodeItem, IFlagNodeItem, IFlagPathSegment {
+public interface IXdmFlagNodeItem extends IXdmValuedNodeItem, IFlagNodeItem, IFlagPathSegment {
 
   @Override
-  default IXdmFlagNodeItem getNodeItem() {
+  default IXdmFlagNodeItem getContextNodeItem() {
     return this;
   }
 
@@ -46,8 +42,8 @@ public interface IXdmFlagNodeItem extends IXdmNodeItem, IFlagNodeItem, IFlagPath
   }
 
   @Override
-  default Stream<? extends IXdmNodeItem> getMatchingChildInstances(IExpressionEvaluationVisitor visitor,
-      IExpression<?> expr, boolean recurse) {
-    return Stream.empty();
-  }
+  IXdmModelNodeItem getParentNodeItem();
+
+  @Override
+  IXdmModelNodeItem getParentContentNodeItem();
 }

@@ -36,7 +36,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.codegen.AssemblyJavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
-import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.ModelConstants;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
@@ -147,7 +147,7 @@ public class ModelInstancePropertyGenerator extends AbstractPropertyGenerator<As
 
       IJavaTypeAdapter<?> valueDataType = fieldDefinition.getDatatype();
 
-      if (Defaults.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
+      if (ModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
         fieldAnnoation.addMember("inXmlWrapped", "$L", fieldInstance.isInXmlWrapped());
       }
       if (fieldInstance.isSimple()) {
@@ -165,12 +165,12 @@ public class ModelInstancePropertyGenerator extends AbstractPropertyGenerator<As
     }
 
     int minOccurs = modelInstance.getMinOccurs();
-    if (minOccurs != Defaults.DEFAULT_GROUP_AS_MIN_OCCURS) {
+    if (minOccurs != ModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
       fieldAnnoation.addMember("minOccurs", "$L", minOccurs);
     }
 
     int maxOccurs = modelInstance.getMaxOccurs();
-    if (maxOccurs != Defaults.DEFAULT_GROUP_AS_MAX_OCCURS) {
+    if (maxOccurs != ModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
       fieldAnnoation.addMember("maxOccurs", "$L", maxOccurs);
     }
 

@@ -23,46 +23,14 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-package gov.nist.secauto.metaschema.binding.metapath.xdm;
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IDefinitionPathSegment;
 
-import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.net.URI;
-
-public class XdmAssemblyNodeItemImpl extends AbstractBoundXdmAssemblyNodeItem<AssemblyProperty> {
-
-  private final @NotNull IBoundXdmAssemblyNodeItem parent;
-
-  public XdmAssemblyNodeItemImpl(
-      @NotNull AssemblyProperty instance,
-      @NotNull Object value,
-      int position,
-      @NotNull IBoundXdmAssemblyNodeItem parent) {
-    super(instance, value, position);
-    this.parent = parent;
-  }
-
+public interface IDefinitionPathItem extends IPathItem {
   @Override
-  public IBoundXdmAssemblyNodeItem getNodeItem() {
-    return this;
-  }
-
-  @Override
-  public IBoundXdmAssemblyNodeItem getPathSegment() {
-    return this;
-  }
-
-  @Override
-  @NotNull
-  public IBoundXdmAssemblyNodeItem getParentNodeItem() {
-    return parent;
-  }
-
-  @Override
-  public URI getBaseUri() {
-    return getParentNodeItem().getBaseUri();
-  }
+  IDefinitionPathSegment getPathSegment();
+  
+  INamedDefinition getDefinition();
 }

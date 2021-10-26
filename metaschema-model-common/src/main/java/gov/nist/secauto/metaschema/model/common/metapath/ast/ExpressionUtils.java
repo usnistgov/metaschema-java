@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,8 +36,9 @@ public class ExpressionUtils {
     // disable
   }
 
-  public static <RESULT_TYPE> Class<? extends RESULT_TYPE> analyzeStaticResultType(Class<RESULT_TYPE> baseType,
-      List<IExpression<?>> expressions) {
+  @NotNull
+  public static <RESULT_TYPE> Class<? extends RESULT_TYPE> analyzeStaticResultType(@NotNull Class<RESULT_TYPE> baseType,
+      @NotNull List<@NotNull IExpression<?>> expressions) {
 
     Class<? extends RESULT_TYPE> retval;
     if (expressions.isEmpty()) {
@@ -87,7 +90,7 @@ public class ExpressionUtils {
       List<Class<?>> expressionClasses) {
     boolean match = true;
     for (Class<?> clazz : expressionClasses) {
-      if (!baseType.isAssignableFrom(clazz)) {
+      if (!first.isAssignableFrom(clazz)) {
         match = false;
         break;
       }
@@ -98,8 +101,8 @@ public class ExpressionUtils {
       retval = first;
     } else {
       retval = null;
-      // TODO: search the parent interfaces for a common type
       for (Class<?> clazz : first.getInterfaces()) {
+        // ensure the new interface is a sublass of the baseType
         if (baseType.isAssignableFrom(clazz)) {
           Class<?> newBase = getCommonBaseClass(baseType, clazz, expressionClasses);
           if (newBase != null) {

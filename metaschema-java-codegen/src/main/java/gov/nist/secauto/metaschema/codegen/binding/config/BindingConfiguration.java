@@ -48,4 +48,14 @@ public interface BindingConfiguration {
    * @return a Java class name
    */
   String getClassName(INamedModelDefinition definition);
+
+  /**
+   * Get the Java class name of the base class to use for the class associated with the provided
+   * definition.
+   * 
+   * @param definition
+   *          a definition that may be built as a class
+   * @return the name of the base class or {@code null} if no base class is to be used
+   */
+  String getQualifiedBaseClassName(INamedModelDefinition definition);
 }

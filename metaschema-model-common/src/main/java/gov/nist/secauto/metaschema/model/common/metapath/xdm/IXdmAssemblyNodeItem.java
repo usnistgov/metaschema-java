@@ -29,16 +29,15 @@ package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-
 public interface IXdmAssemblyNodeItem extends IXdmModelNodeItem, IAssemblyNodeItem, IAssemblyPathSegment {
 
   @Override
-  default IXdmAssemblyNodeItem getNodeItem() {
+  default IXdmAssemblyNodeItem getContextNodeItem() {
     return this;
   }
+
+  @Override
+  IXdmAssemblyNodeItem getParentContentNodeItem();
 
   @Override
   default IAssemblyPathSegment getPathSegment() {

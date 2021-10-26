@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
 
 import java.util.List;
 
-public abstract class AbstractXdmNodeItemVisitor<RESULT, CONTEXT> implements INodeItemVisitor<RESULT, CONTEXT> {
+public abstract class AbstractXdmNodeItemVisitor<RESULT, CONTEXT> implements IBoundXdmNodeItemVisitor<RESULT, CONTEXT> {
   protected abstract RESULT defaultResult();
 
   protected RESULT visitFlags(IBoundXdmModelNodeItem item, CONTEXT context) {

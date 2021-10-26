@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.binding;
 
-import gov.nist.secauto.metaschema.binding.io.BoundLoader;
 import gov.nist.secauto.metaschema.binding.io.DefaultBoundLoader;
 import gov.nist.secauto.metaschema.binding.io.Deserializer;
 import gov.nist.secauto.metaschema.binding.io.Format;
+import gov.nist.secauto.metaschema.binding.io.IBoundLoader;
 import gov.nist.secauto.metaschema.binding.io.Serializer;
 import gov.nist.secauto.metaschema.binding.io.json.DefaultJsonDeserializer;
 import gov.nist.secauto.metaschema.binding.io.json.DefaultJsonSerializer;
@@ -60,6 +60,14 @@ import javax.xml.namespace.QName;
  * A basic implementation of a {@link BindingContext} used by this implementation.
  */
 public class DefaultBindingContext implements BindingContext {
+  private static DefaultBindingContext instance;
+
+  public static synchronized DefaultBindingContext instance() {
+    if (instance == null) {
+      instance = new DefaultBindingContext();
+    }
+    return instance;
+  }
 
   private final Map<Class<?>, ClassBinding> classBindingsByClass = new HashMap<>();
   private final Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> javaTypeAdapterMap = new HashMap<>();
@@ -92,30 +100,29 @@ public class DefaultBindingContext implements BindingContext {
   }
 
   @Override
-  public <TYPE extends IJavaTypeAdapter<?>> IJavaTypeAdapter<TYPE> getJavaTypeAdapterInstance(Class<TYPE> clazz) {
-    synchronized (javaTypeAdapterMap) {
-      @SuppressWarnings("unchecked")
-      IJavaTypeAdapter<TYPE> retval = (IJavaTypeAdapter<TYPE>) javaTypeAdapterMap.get(clazz);
-      if (retval == null) {
-        Constructor<TYPE> constructor;
-        try {
-          constructor = clazz.getDeclaredConstructor();
-        } catch (NoSuchMethodException | SecurityException e) {
-          throw new RuntimeException(e);
-        }
-
-        try {
-          @SuppressWarnings("unchecked")
-          IJavaTypeAdapter<TYPE> instance = (IJavaTypeAdapter<TYPE>) constructor.newInstance();
-          retval = instance;
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-            | InvocationTargetException e) {
-          throw new RuntimeException(e);
-        }
-        javaTypeAdapterMap.put(clazz, retval);
+  public synchronized <TYPE extends IJavaTypeAdapter<?>> IJavaTypeAdapter<TYPE>
+      getJavaTypeAdapterInstance(Class<TYPE> clazz) {
+    @SuppressWarnings("unchecked") IJavaTypeAdapter<TYPE> retval
+        = (IJavaTypeAdapter<TYPE>) javaTypeAdapterMap.get(clazz);
+    if (retval == null) {
+      Constructor<TYPE> constructor;
+      try {
+        constructor = clazz.getDeclaredConstructor();
+      } catch (NoSuchMethodException | SecurityException e) {
+        throw new RuntimeException(e);
       }
-      return retval;
+
+      try {
+        @SuppressWarnings("unchecked") IJavaTypeAdapter<TYPE> instance
+            = (IJavaTypeAdapter<TYPE>) constructor.newInstance();
+        retval = instance;
+      } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+          | InvocationTargetException e) {
+        throw new RuntimeException(e);
+      }
+      javaTypeAdapterMap.put(clazz, retval);
     }
+    return retval;
   }
 
   @Override
@@ -165,7 +172,7 @@ public class DefaultBindingContext implements BindingContext {
   }
 
   @Override
-  public void registerBindingMatcher(IBindingMatcher matcher) {
+  public synchronized void registerBindingMatcher(IBindingMatcher matcher) {
     bindingMatchers.add(matcher);
   }
 
@@ -198,7 +205,7 @@ public class DefaultBindingContext implements BindingContext {
   }
 
   @Override
-  public BoundLoader newBoundLoader() {
+  public IBoundLoader newBoundLoader() {
     return new DefaultBoundLoader(this);
   }
 }

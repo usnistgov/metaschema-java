@@ -68,6 +68,15 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import org.jetbrains.annotations.NotNull;
 
 public interface IExpressionEvaluationVisitor {
+  /**
+   * Visit the provided expression and evaluate it against the node context;
+   * 
+   * @param expr
+   *          the expression to evaluate
+   * @param context
+   *          the current node context
+   * @return the matching sequence of nodes or an empty sequence if no nodes match
+   */
   @NotNull
   ISequence<?> visit(@NotNull IExpression<?> expr, @NotNull INodeContext context);
 

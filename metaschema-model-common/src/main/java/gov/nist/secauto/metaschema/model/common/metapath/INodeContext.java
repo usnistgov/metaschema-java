@@ -36,49 +36,108 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public interface INodeContext {
 
   @NotNull
-  INodeItem getNodeItem();
+  INodeItem getContextNodeItem();
 
   /**
-   * Searches the node graph for {@link INodeItem} instances that match the provided
-   * {@link IExpression}. The resulting nodes are returned in document order.
+   * Get the Metaschema flags associated this node.
    * 
-   * @param expr
-   *          the search expression
-   * @param recurse
-   *          if the search should recurse over the child model instances
-   * @return a stream of matching flag node items
+   * @return a mapping of flag effective name to the flag
    */
   @NotNull
-  Stream<? extends INodeItem> getMatchingChildInstances(@NotNull IExpressionEvaluationVisitor visitor,
-      @NotNull IExpression<?> expr,
-      boolean recurse);
+  Map<@NotNull String, ? extends IFlagNodeItem> getFlags();
 
   /**
-   * Searches the child flags for {@link IFlagNodeItem} instances that match the provided {@link Flag}
-   * expression. The resulting nodes are returned in document order.
+   * Lookup a Metaschema flag on this node by it's effective name.
    * 
-   * @param flag
-   *          the search expression
-   * @return a stream of matching flag node items
+   * @param name
+   *          the effective name of the flag
+   * @return the flag with the matching effective name or {@code null} if no match was found
    */
-  @NotNull
-  Stream<? extends IFlagNodeItem> getMatchingChildFlags(@NotNull Flag flag);
+  default IFlagNodeItem getFlagByName(@NotNull String name) {
+    return getFlags().get(name);
+  }
 
   /**
-   * Searches the child model nodes for {@link IModelNodeItem} instances that match the provided
-   * {@link ModelInstance} expression. The resulting nodes are returned in document order.
+   * Get the Metaschema flags associated with this node as a stream.
    * 
-   * @param modelInstance
-   *          the search expression
-   * @return a stream of matching model node items
+   * @return the stream of flags or an empty stream if none exist
+   */
+  @SuppressWarnings("null")
+  @NotNull
+  default Stream<? extends IFlagNodeItem> flags() {
+    return getFlags().values().stream();
+  }
+
+  /**
+   * Get the Metaschema model items (i.e., fields, assemblies) associated this node.
+   * 
+   * @return a mapping of flag effective name to the list of matching model items
    */
   @NotNull
-  Stream<? extends IModelNodeItem> getMatchingChildModelInstances(@NotNull ModelInstance modelInstance);
+  Map<@NotNull String, ? extends List<@NotNull ? extends IModelNodeItem>> getModelItems();
+
+  @SuppressWarnings("null")
+  @NotNull
+  default List<@NotNull ? extends IModelNodeItem> getModelItemsByName(String name) {
+    List<@NotNull ? extends IModelNodeItem> items = getModelItems().get(name);
+    return items == null ? Collections.emptyList() : items;
+  }
+
+  /**
+   * Get the Metaschema model items (i.e., fields, assemblies) associated this node as a stream.
+   * 
+   * @return the stream of model items or an empty stream if none exist
+   */
+  @SuppressWarnings("null")
+  @NotNull
+  default Stream<? extends IModelNodeItem> modelItems() {
+    return getModelItems().values().stream().flatMap(list -> list.stream());
+  }
+//
+//  /**
+//   * Searches the node graph for {@link INodeItem} instances that match the provided
+//   * {@link IExpression}. The resulting nodes are returned in document order.
+//   * 
+//   * @param expr
+//   *          the search expression
+//   * @param recurse
+//   *          if the search should recurse over the child model instances
+//   * @return a stream of matching flag node items
+//   */
+//  @NotNull
+//  Stream<? extends INodeItem> getMatchingChildInstances(@NotNull IExpressionEvaluationVisitor visitor,
+//      @NotNull IExpression<?> expr,
+//      boolean recurse);
+//
+//  /**
+//   * Searches the child flags for {@link IFlagNodeItem} instances that match the provided {@link Flag}
+//   * expression. The resulting nodes are returned in document order.
+//   * 
+//   * @param flag
+//   *          the search expression
+//   * @return a stream of matching flag node items
+//   */
+//  @NotNull
+//  Stream<? extends IFlagNodeItem> getMatchingChildFlags(@NotNull Flag flag);
+//
+//  /**
+//   * Searches the child model nodes for {@link IModelNodeItem} instances that match the provided
+//   * {@link ModelInstance} expression. The resulting nodes are returned in document order.
+//   * 
+//   * @param modelInstance
+//   *          the search expression
+//   * @return a stream of matching model node items
+//   */
+//  @NotNull
+//  Stream<? extends IModelNodeItem> getMatchingChildModelInstances(@NotNull ModelInstance modelInstance);
 
   // default IMetapathResult evaluateMetapath(MetapathExpression metapath) {
   // MetaschemaPathEvaluationVisitor visitor = new MetaschemaPathEvaluationVisitor();

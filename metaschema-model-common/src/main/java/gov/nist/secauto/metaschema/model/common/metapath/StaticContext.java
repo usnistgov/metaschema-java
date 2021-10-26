@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.type.IItemType;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +39,6 @@ public class StaticContext {
   // private final List<? extends INamedDefinition> knownDefinitions;
   private final Map<String, IItemType> uriToKnownDocumentTypeMap;
   private URI baseUri;
-  private IDocumentLoader documentLoader;
 
   public StaticContext() {
     this.uriToKnownDocumentTypeMap = new HashMap<>();
@@ -47,29 +48,21 @@ public class StaticContext {
     return baseUri;
   }
 
-  public void setBaseUri(URI baseUri) {
+  public void setBaseUri(@NotNull URI baseUri) {
     Objects.requireNonNull(baseUri, "baseUri");
     this.baseUri = baseUri;
   }
 
-  public IItemType getTypeForDocument(URI uri) {
+  public IItemType getTypeForDocument(@NotNull URI uri) {
     return getTypeForDocument(uri.toString());
   }
 
-  public IItemType getTypeForDocument(String uri) {
+  public IItemType getTypeForDocument(@NotNull String uri) {
     return uriToKnownDocumentTypeMap.get(uri);
   }
 
   public DynamicContext newDynamicContext() {
     return new DynamicContext(this);
-  }
-
-  public IDocumentLoader getDocumentLoader() {
-    return documentLoader;
-  }
-
-  public void setDocumentLoader(IDocumentLoader documentLoader) {
-    this.documentLoader = documentLoader;
   }
 
 }

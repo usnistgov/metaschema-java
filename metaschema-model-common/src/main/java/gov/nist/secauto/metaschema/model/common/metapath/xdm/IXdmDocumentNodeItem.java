@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 
 import gov.nist.secauto.metaschema.model.common.metapath.format.IDocumentPathSegment;
@@ -31,9 +32,18 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 public interface IXdmDocumentNodeItem extends IXdmNodeItem, IDocumentPathSegment, IDocumentNodeItem {
 
   @Override
-  IXdmDocumentNodeItem getNodeItem();
+  IXdmDocumentNodeItem getContextNodeItem();
 
   @Override
   IXdmRootAssemblyNodeItem getRootAssemblyNodeItem();
 
+  @Override
+  default IDocumentPathSegment getPathSegment() {
+    return this;
+  }
+
+//  @Override
+//  default @NotNull Stream<IPathSegment> getPathStream() {
+//    return IDocumentPathSegment.super.getPathStream();
+//  }
 }

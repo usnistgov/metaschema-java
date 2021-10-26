@@ -38,6 +38,7 @@ public class ModelInstance extends AbstractNamedInstanceExpression<IModelNodeIte
     super(node);
   }
 
+  @SuppressWarnings("null")
   @Override
   public Class<IModelNodeItem> getBaseResultType() {
     return IModelNodeItem.class;

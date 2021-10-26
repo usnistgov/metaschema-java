@@ -30,15 +30,15 @@ import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import java.util.Collections;
 import java.util.List;
 
-public class RootSlashOnlyPath extends AbstractRootPathExpression {
+public class RootSlashOnlyPath implements IRootPathExpression {
 
   public RootSlashOnlyPath() {
-    super(null);
   }
 
   @Override
@@ -54,6 +54,16 @@ public class RootSlashOnlyPath extends AbstractRootPathExpression {
   @Override
   public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitRootSlashOnlyPath(this, context);
+  }
+
+  @Override
+  public Class<? extends INodeItem> getBaseResultType() {
+    return IDocumentNodeItem.class;
+  }
+
+  @Override
+  public Class<? extends INodeItem> getStaticResultType() {
+    return IDocumentNodeItem.class;
   }
 
 }

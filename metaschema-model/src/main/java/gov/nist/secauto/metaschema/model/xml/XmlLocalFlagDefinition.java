@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.secauto.metaschema.model.IXmlMetaschema;
-import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.ModelConstants;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
@@ -122,7 +122,7 @@ public class XmlLocalFlagDefinition extends AbstractFlagInstance {
 
   @Override
   public boolean isRequired() {
-    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : Defaults.DEFAULT_FLAG_REQUIRED;
+    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : ModelConstants.DEFAULT_FLAG_REQUIRED;
   }
 
   @Override

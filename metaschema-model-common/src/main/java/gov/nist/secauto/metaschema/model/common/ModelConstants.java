@@ -24,14 +24,21 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.metapath.xdm;
+package gov.nist.secauto.metaschema.model.common;
 
-public interface INodeItemVisitor<RESULT, CONTEXT> {
-  RESULT visitDocument(IBoundXdmDocumentNodeItem item, CONTEXT context);
+import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
-  RESULT visitFlag(IBoundXdmFlagNodeItem item, CONTEXT context);
+public final class ModelConstants {
+  public static final boolean DEFAULT_FLAG_REQUIRED = false;
+  public static final boolean DEFAULT_FIELD_IN_XML_WRAPPED = true;
+  public static final boolean DEFAULT_FIELD_COLLAPSIBLE = false;
+  public static final int DEFAULT_GROUP_AS_MIN_OCCURS = 0;
+  public static final int DEFAULT_GROUP_AS_MAX_OCCURS = 1;
+  public static final JsonGroupAsBehavior DEFAULT_JSON_GROUP_AS_BEHAVIOR = JsonGroupAsBehavior.SINGLETON_OR_LIST;
+  public static final XmlGroupAsBehavior DEFAULT_XML_GROUP_AS_BEHAVIOR = XmlGroupAsBehavior.UNGROUPED;
 
-  RESULT visitField(IBoundXdmFieldNodeItem item, CONTEXT context);
-
-  RESULT visitAssembly(IBoundXdmAssemblyNodeItem item, CONTEXT context);
+  private ModelConstants() {
+    /* disable construction */
+  }
 }

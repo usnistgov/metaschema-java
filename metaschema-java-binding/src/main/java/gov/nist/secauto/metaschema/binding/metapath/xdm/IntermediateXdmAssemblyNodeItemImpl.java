@@ -26,58 +26,40 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.FieldDefinition;
-import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmNodeItem;
+import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
+import java.net.URI;
 
-// TODO: merge with the concrete class
-public abstract class AbstractBoundXdmFieldNodeItem<INSTANCE extends FieldProperty>
-    extends AbstractBoundXdmModelNodeItem<INSTANCE> implements IBoundXdmFieldNodeItem {
+public class IntermediateXdmAssemblyNodeItemImpl extends AbstractBoundXdmAssemblyNodeItem<AssemblyProperty>
+    implements IBoundXdmAssemblyNodeItem {
 
-  public AbstractBoundXdmFieldNodeItem(INSTANCE instance, Object value, int position) {
+  private final @NotNull IBoundXdmAssemblyNodeItem parent;
+
+  public IntermediateXdmAssemblyNodeItemImpl(
+      @NotNull AssemblyProperty instance,
+      @NotNull Object value,
+      int position,
+      @NotNull IBoundXdmAssemblyNodeItem parent) {
     super(instance, value, position);
+    this.parent = parent;
   }
 
   @Override
-  public AbstractBoundXdmFieldNodeItem<INSTANCE> getNodeItem() {
-    return this;
+  @NotNull
+  public IBoundXdmNodeItem getParentNodeItem() {
+    return parent;
   }
 
   @Override
-  public IBoundXdmFieldNodeItem getPathSegment() {
-    return this;
+  @NotNull
+  public IBoundXdmAssemblyNodeItem getParentContentNodeItem() {
+    return parent;
   }
 
   @Override
-  public FieldDefinition getDefinition() {
-    return getInstance().getDefinition();
-  }
-
-  @Override
-  public Map<@NotNull String, ? extends List<@NotNull ? extends IBoundXdmModelNodeItem>> getModelItems() {
-    return Collections.emptyMap();
-  }
-
-  @Override
-  public Stream<? extends IXdmNodeItem> getMatchingChildInstances(IExpressionEvaluationVisitor visitor,
-      IExpression<?> expr, boolean recurse) {
-    // check the current node
-    @SuppressWarnings("unchecked")
-    Stream<? extends IXdmNodeItem> retval = (Stream<? extends IXdmNodeItem>) expr.accept(visitor, this).asStream();
-    return retval;
-  }
-
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitField(this, context);
+  public URI getBaseUri() {
+    return getParentNodeItem().getBaseUri();
   }
 }

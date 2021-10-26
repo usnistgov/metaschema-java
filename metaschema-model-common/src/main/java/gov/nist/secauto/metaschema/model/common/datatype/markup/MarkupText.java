@@ -28,8 +28,46 @@ package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
 import com.vladsch.flexmark.util.ast.Document;
 
-public interface MarkupText {
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.insertanchor.InsertAnchorNode;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.OutputStream;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import javax.xml.stream.XMLStreamException;
+
+public interface MarkupText {
+  @NotNull
   Document getDocument();
 
+  @NotNull
+  void toHtmlAsStream(OutputStream os, String namespace, String prefix) throws XMLStreamException;
+
+  @NotNull
+  String toHtml();
+
+  @NotNull
+  String toMarkdown();
+
+  @NotNull
+  String toMarkdownYaml();
+
+  @NotNull
+  default List<@NotNull InsertAnchorNode> getInserts() {
+    return getMatchingInserts(insert -> true);
+  }
+
+  /**
+   * Retrieve all insert statements that are contained within this markup text that match the provided
+   * filter.
+   * 
+   * @param filter
+   *          a filter used to identify matching insert statements
+   * @return the matching insert statements
+   */
+  @NotNull
+  List<@NotNull InsertAnchorNode> getMatchingInserts(@NotNull Predicate<InsertAnchorNode> filter);
 }

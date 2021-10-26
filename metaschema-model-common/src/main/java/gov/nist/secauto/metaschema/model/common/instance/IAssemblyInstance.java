@@ -31,8 +31,6 @@ import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -60,10 +58,5 @@ public interface IAssemblyInstance extends INamedModelInstance, Assembly {
   default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {
     return metapath.evaluateMetaschemaInstance(
         new DefaultMetaschemaContext(IInstanceSet.newInstanceSet(Collections.singleton(this))));
-  }
-
-  @Override
-  default IAssemblyPathSegment newPathSegment(IAssemblyPathSegment parentSegment, int position) {
-    return IFormatterFactory.INSTANCE.newAssemblyPathSegment(parentSegment, this, position);
   }
 }

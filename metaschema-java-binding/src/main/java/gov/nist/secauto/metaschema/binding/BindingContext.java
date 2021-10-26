@@ -26,14 +26,16 @@
 
 package gov.nist.secauto.metaschema.binding;
 
-import gov.nist.secauto.metaschema.binding.io.BoundLoader;
 import gov.nist.secauto.metaschema.binding.io.Deserializer;
 import gov.nist.secauto.metaschema.binding.io.Format;
+import gov.nist.secauto.metaschema.binding.io.IBoundLoader;
 import gov.nist.secauto.metaschema.binding.io.Serializer;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.time.ZonedDateTime;
@@ -51,6 +53,7 @@ public interface BindingContext {
    * 
    * @return a new binding context
    */
+  @NotNull
   static BindingContext newInstance() {
     return new DefaultBindingContext();
   }
@@ -61,7 +64,7 @@ public interface BindingContext {
    * @param matcher
    *          the matcher implementation
    */
-  void registerBindingMatcher(IBindingMatcher matcher);
+  void registerBindingMatcher(@NotNull IBindingMatcher matcher);
 
   /**
    * Determine the bound class for the provided XML {@link QName}.
@@ -71,7 +74,7 @@ public interface BindingContext {
    * @return the bound class or {@code null} if not recognized
    * @see BindingContext#registerBindingMatcher(IBindingMatcher)
    */
-  Class<?> getBoundClassForXmlQName(QName rootQName);
+  Class<?> getBoundClassForXmlQName(@NotNull QName rootQName);
 
   /**
    * Determine the bound class for the provided JSON/YAML property/item name using any registered
@@ -82,7 +85,7 @@ public interface BindingContext {
    * @return the bound class or {@code null} if not recognized
    * @see BindingContext#registerBindingMatcher(IBindingMatcher)
    */
-  Class<?> getBoundClassForJsonName(String rootName);
+  Class<?> getBoundClassForJsonName(@NotNull String rootName);
 
   /**
    * Get's the {@link IJavaTypeAdapter} associated with the specified Java class, which is used to
@@ -97,9 +100,11 @@ public interface BindingContext {
    *          the Java {@link Class} for the bound type
    * @return the adapter instance or {@code null} if the provided class is not bound
    */
-  <TYPE extends IJavaTypeAdapter<?>> IJavaTypeAdapter<TYPE> getJavaTypeAdapterInstance(Class<TYPE> clazz);
+  <TYPE extends IJavaTypeAdapter<?>> IJavaTypeAdapter<TYPE> getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz);
 
   // boolean hasClassBinding(Class<?> clazz) throws BindingException;
+
+//  <TYPE> void registerSubclassType(@NotNull Class<TYPE> originalClass, @NotNull Class<? extends TYPE> replacementClass);
 
   /**
    * Get the {@link ClassBinding} instance for a {@link MetaschemaAssembly} or {@link MetaschemaField}
@@ -113,7 +118,7 @@ public interface BindingContext {
    * @throws IllegalArgumentException
    *           if the provided class is not bound to a Metaschema assembly or field
    */
-  ClassBinding getClassBinding(Class<?> clazz);
+  ClassBinding getClassBinding(@NotNull Class<?> clazz);
 
   /**
    * Gets a data {@link Serializer} which can be used to write Java instance data for the provided
@@ -136,7 +141,8 @@ public interface BindingContext {
    *           if the requested format is not supported by the implementation
    * @see #getClassBinding(Class)
    */
-  <CLASS> Serializer<CLASS> newSerializer(Format format, Class<CLASS> clazz);
+  @NotNull
+  <CLASS> Serializer<CLASS> newSerializer(@NotNull Format format, @NotNull Class<CLASS> clazz);
 
   /**
    * Gets a data {@link Deserializer} which can be used to read Java instance data for the provided
@@ -159,12 +165,14 @@ public interface BindingContext {
    *           if the requested format is not supported by the implementation
    * @see #getClassBinding(Class)
    */
-  <CLASS> Deserializer<CLASS> newDeserializer(Format format, Class<CLASS> clazz);
+  @NotNull
+  <CLASS> Deserializer<CLASS> newDeserializer(@NotNull Format format, @NotNull Class<CLASS> clazz);
 
   /**
-   * Get a new {@link BoundLoader} instance.
+   * Get a new {@link IBoundLoader} instance.
    * 
    * @return the instance
    */
-  BoundLoader newBoundLoader();
+  @NotNull
+  IBoundLoader newBoundLoader();
 }

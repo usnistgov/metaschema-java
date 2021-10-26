@@ -26,28 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-
-public interface IXdmModelNodeItem extends IXdmNodeItem, IModelNodeItem, IModelPositionalPathSegment {
+public interface IXdmModelNodeItem extends IXdmValuedNodeItem, IModelNodeItem, IModelPositionalPathSegment {
+  
   @Override
-  IXdmModelNodeItem getNodeItem();
+  IXdmModelNodeItem getContextNodeItem();
 
   @Override
-  IXdmAssemblyNodeItem getParentNodeItem();
-
-  @Override
-  IModelPositionalPathSegment getPathSegment();
-
-  @Override
-  INamedModelInstance getInstance();
-
-  @Override
-  INamedModelDefinition getDefinition();
+  IXdmAssemblyNodeItem getParentContentNodeItem();
 }

@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.secauto.metaschema.model.IXmlMetaschema;
-import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.ModelConstants;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
@@ -101,7 +101,7 @@ public class XmlLocalFieldDefinition extends AbstractFieldInstance {
     boolean retval;
     if (MetaschemaDataTypeProvider.MARKUP_MULTILINE.equals(getDefinition().getDatatype())) {
       // default value
-      retval = Defaults.DEFAULT_FIELD_IN_XML_WRAPPED;
+      retval = ModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
       if (getXmlField().isSetInXml()) {
         retval = getXmlField().getInXml();
       }
@@ -140,7 +140,7 @@ public class XmlLocalFieldDefinition extends AbstractFieldInstance {
 
   @Override
   public int getMinOccurs() {
-    int retval = Defaults.DEFAULT_GROUP_AS_MIN_OCCURS;
+    int retval = ModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
     if (getXmlField().isSetMinOccurs()) {
       retval = getXmlField().getMinOccurs().intValueExact();
     }
@@ -149,7 +149,7 @@ public class XmlLocalFieldDefinition extends AbstractFieldInstance {
 
   @Override
   public int getMaxOccurs() {
-    int retval = Defaults.DEFAULT_GROUP_AS_MAX_OCCURS;
+    int retval = ModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
     if (getXmlField().isSetMaxOccurs()) {
       Object value = getXmlField().getMaxOccurs();
       if (value instanceof String) {
@@ -164,7 +164,7 @@ public class XmlLocalFieldDefinition extends AbstractFieldInstance {
 
   @Override
   public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    JsonGroupAsBehavior retval = Defaults.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
+    JsonGroupAsBehavior retval = ModelConstants.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
     if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInJson()) {
       retval = getXmlField().getGroupAs().getInJson();
     }
@@ -173,7 +173,7 @@ public class XmlLocalFieldDefinition extends AbstractFieldInstance {
 
   @Override
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    XmlGroupAsBehavior retval = Defaults.DEFAULT_XML_GROUP_AS_BEHAVIOR;
+    XmlGroupAsBehavior retval = ModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR;
     if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInXml()) {
       retval = getXmlField().getGroupAs().getInXml();
     }
@@ -269,7 +269,7 @@ public class XmlLocalFieldDefinition extends AbstractFieldInstance {
 
     @Override
     public boolean isCollapsible() {
-      return getXmlField().isSetCollapsible() ? getXmlField().getCollapsible() : Defaults.DEFAULT_FIELD_COLLAPSIBLE;
+      return getXmlField().isSetCollapsible() ? getXmlField().getCollapsible() : ModelConstants.DEFAULT_FIELD_COLLAPSIBLE;
     }
 
     @Override

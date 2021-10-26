@@ -23,48 +23,13 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-package gov.nist.secauto.metaschema.model.common.metapath.format;
+import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmValuedNodeItem;
 
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-
-import java.util.Objects;
-
-import javax.xml.namespace.QName;
-
-class FlagPathSegmentImpl implements IFlagPathSegment {
-  private final IFlagInstance instance;
-  private final IModelPositionalPathSegment parent;
-
-  public FlagPathSegmentImpl(IModelPositionalPathSegment parent, IFlagInstance instance) {
-    Objects.requireNonNull(instance, "instance");
-    this.instance = instance;
-    this.parent = parent;
-  }
+public interface IBoundXdmValuedNodeItem extends IBoundXdmNodeItem, IXdmValuedNodeItem {
 
   @Override
-  public IFlagInstance getInstance() {
-    return instance;
-  }
+  IBoundXdmModelNodeItem getParentContentNodeItem();
 
-  @Override
-  public IFlagDefinition getDefinition() {
-    return getInstance().getDefinition();
-  }
-
-  @Override
-  public String getName() {
-    return getInstance().getEffectiveName();
-  }
-
-  @Override
-  public QName getQName() {
-    return getInstance().getXmlQName();
-  }
-
-  @Override
-  public IModelPositionalPathSegment getParentSegment() {
-    return parent;
-  }
 }

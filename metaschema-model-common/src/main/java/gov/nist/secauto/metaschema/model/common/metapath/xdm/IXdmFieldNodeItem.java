@@ -32,9 +32,15 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 public interface IXdmFieldNodeItem extends IXdmModelNodeItem, IFieldNodeItem, IFieldPathSegment {
 
   @Override
-  default IXdmFieldNodeItem getNodeItem() {
+  default IXdmFieldNodeItem getContextNodeItem() {
     return this;
   }
+
+  @Override
+  IXdmAssemblyNodeItem getParentNodeItem();
+
+  @Override
+  IXdmAssemblyNodeItem getParentContentNodeItem();
 
   @Override
   default IFieldPathSegment getPathSegment() {

@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.secauto.metaschema.model.IXmlMetaschema;
-import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.ModelConstants;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
@@ -118,7 +118,7 @@ public class XmlLocalAssemblyDefinition extends AbstractAssemblyInstance {
 
   @Override
   public int getMinOccurs() {
-    int retval = Defaults.DEFAULT_GROUP_AS_MIN_OCCURS;
+    int retval = ModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
     if (getXmlAssembly().isSetMinOccurs()) {
       retval = getXmlAssembly().getMinOccurs().intValueExact();
     }
@@ -127,7 +127,7 @@ public class XmlLocalAssemblyDefinition extends AbstractAssemblyInstance {
 
   @Override
   public int getMaxOccurs() {
-    int retval = Defaults.DEFAULT_GROUP_AS_MAX_OCCURS;
+    int retval = ModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
     if (getXmlAssembly().isSetMaxOccurs()) {
       Object value = getXmlAssembly().getMaxOccurs();
       if (value instanceof String) {

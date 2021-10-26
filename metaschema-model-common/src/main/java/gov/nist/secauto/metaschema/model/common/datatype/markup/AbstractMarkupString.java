@@ -35,14 +35,22 @@ import com.vladsch.flexmark.util.ast.Document;
 import gov.nist.secauto.metaschema.model.common.datatype.IDatatype;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstCollectingVisitor;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.FlexmarkFactory;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.insertanchor.InsertAnchorNode;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.insertanchor.InsertVisitor;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.codehaus.stax2.ri.evt.MergedNsContext;
 import org.codehaus.stax2.ri.evt.NamespaceEventImpl;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
@@ -51,6 +59,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     implements MarkupText, IDatatype<TYPE> {
   private static final String DEFAULT_HTML_NS = "http://www.w3.org/1999/xhtml";
   private static final String DEFAULT_HTML_PREFIX = "";
+  @NotNull
   private final Document document;
 
   //
@@ -58,7 +67,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   // this(null);
   // }
 
-  public AbstractMarkupString(Document document) {
+  public AbstractMarkupString(@NotNull Document document) {
     this.document = document;
   }
 
@@ -67,6 +76,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     return document;
   }
 
+  @Override
   public void toHtmlAsStream(OutputStream os, String namespace, String prefix) throws XMLStreamException {
 
     if (namespace == null) {
@@ -89,32 +99,46 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     xmlStreamWriter.flush();
   }
 
+  @Override
   public String toHtml() {
     return toHTML(FlexmarkFactory.instance().getHtmlRenderer());
   }
 
+  @NotNull 
   protected String toHTML(HtmlRenderer renderer) {
     return renderer.render(getDocument());
   }
 
+  @Override
   public String toMarkdown() {
     return toMarkdown(FlexmarkFactory.instance().getFormatter());
   }
 
+  @NotNull 
   protected String toMarkdown(Formatter formatter) {
     return formatter.render(getDocument());
   }
 
+  @Override
   public String toMarkdownYaml() {
     return toMarkdownYaml(FlexmarkFactory.instance().getFormatter());
   }
 
-  public String toMarkdownYaml(Formatter formatter) {
+  @NotNull 
+  protected String toMarkdownYaml(Formatter formatter) {
     String markdown = formatter.render(getDocument());
     // markdown = markdown.replaceAll("\\n", "\n");
     // markdown = markdown.replaceAll("\\r", "\r");
     return markdown;
   }
+
+  @Override
+  public List<@NotNull InsertAnchorNode> getMatchingInserts(@NotNull Predicate<InsertAnchorNode> filter) {
+    InsertVisitor visitor = new InsertVisitor(filter);
+    visitor.visitChildren(getDocument());
+    return visitor.getInserts();
+  }
+
 
   @Override
   public String toString() {

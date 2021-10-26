@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public abstract class AbstractBoundXdmModelNodeItem<INSTANCE extends NamedModelProperty>
-    extends AbstractBoundXdmNodeItem<INSTANCE> implements IBoundXdmModelNodeItem {
+    extends AbstractBoundXdmValuedNodeItem<INSTANCE> implements IBoundXdmModelNodeItem {
 
   private final int position;
   private Map<String, IBoundXdmFlagNodeItem> flags;
@@ -71,20 +71,4 @@ public abstract class AbstractBoundXdmModelNodeItem<INSTANCE extends NamedModelP
       this.flags = flags;
     }
   }
-
-  @Override
-  public Stream<? extends IBoundXdmFlagNodeItem> getMatchingChildFlags(Flag flag) {
-    Stream<? extends IBoundXdmFlagNodeItem> retval;
-
-    if (flag.isName()) {
-      String name = ((Name) flag.getNode()).getValue();
-      IBoundXdmFlagNodeItem item = getFlagByName(name);
-      retval = item == null ? Stream.empty() : Stream.of(item);
-    } else {
-      // wildcard
-      retval = flags();
-    }
-    return retval;
-  }
-
 }

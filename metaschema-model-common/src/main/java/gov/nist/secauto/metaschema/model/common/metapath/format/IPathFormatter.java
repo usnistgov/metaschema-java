@@ -37,15 +37,19 @@ import org.jetbrains.annotations.NotNull;
  * A path formatter is expected to be stateless and thus thread safe.
  */
 public interface IPathFormatter {
+  @NotNull
   public static final IPathFormatter METAPATH_PATH_FORMATER = new MetapathFormatter();
 
   /**
-   * Format the path represented by the provided path segment. The provided segment is expected to be the last node
-   * in this path. {@link IContentPathSegment#getParentSegment()} is used to walk the path tree.
+   * Format the path represented by the provided path segment. The provided segment is expected to be
+   * the last node in this path. A call to {@link IPathSegment#getPathStream()} or
+   * {@link IPathSegment#getPath()} can be used to walk the path tree in descending order.
    * 
    * @param segment
    *          The last segment in a sequence of path segments
    * @return a formatted path
+   * @see IPathSegment#getPathStream()
+   * @see IPathSegment#getPath()
    */
   @NotNull
   String format(@NotNull IPathSegment segment);

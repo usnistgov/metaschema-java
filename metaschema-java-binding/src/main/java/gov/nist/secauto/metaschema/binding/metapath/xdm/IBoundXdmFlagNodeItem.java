@@ -30,20 +30,26 @@ import gov.nist.secauto.metaschema.binding.model.FlagDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmFlagNodeItem;
 
-public interface IBoundXdmFlagNodeItem extends IBoundXdmContentNodeItem, IXdmFlagNodeItem {
+import org.jetbrains.annotations.NotNull;
+
+public interface IBoundXdmFlagNodeItem extends IBoundXdmValuedNodeItem, IXdmFlagNodeItem {
 
   @Override
-  IBoundXdmFlagNodeItem getNodeItem();
+  default IBoundXdmFlagNodeItem getContextNodeItem() {
+    return this;
+  }
 
   @Override
   IBoundXdmModelNodeItem getParentNodeItem();
-
-  @Override
-  IBoundXdmFlagNodeItem getPathSegment();
 
   @Override
   FlagDefinition getDefinition();
 
   @Override
   FlagProperty getInstance();
+
+  @Override
+  default <RESULT, CONTEXT> RESULT accept(@NotNull IBoundXdmNodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitFlag(this, context);
+  }
 }

@@ -36,17 +36,14 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.util.List;
 
 public class FnDocFunction {
-  private static final Logger logger = LogManager.getLogger(FnDocFunction.class);
+  // private static final Logger logger = LogManager.getLogger(FnDocFunction.class);
 
   static final IFunction SIGNATURE = IFunction.newBuilder()
       .name("doc")
@@ -64,7 +61,7 @@ public class FnDocFunction {
   public static ISequence<?> execute(@NotNull IFunction function,
       @NotNull List<@NotNull ISequence<?>> arguments, @NotNull DynamicContext dynamicContext,
       INodeItem focus) {
-    @SuppressWarnings("null") ISequence<?> arg = arguments.iterator().next();
+    ISequence<? extends IStringItem> arg = FunctionUtils.asType(arguments.get(0));
 
     IItem item = FunctionUtils.getFirstItem(arg, true);
     if (item == null) {
@@ -79,44 +76,33 @@ public class FnDocFunction {
       return null;
     }
 
-    String documentUriString = uri.asString();
     URI documentUri;
     try {
-      documentUri = URI.create(documentUriString);
+      documentUri = URI.create(uri.asString());
     } catch (IllegalArgumentException ex) {
       throw new DocumentFunctionException(DocumentFunctionException.INVALID_ARGUMENT,
-          String.format("Invalid URI argument '%s' to fn:doc or fn:doc-available.", documentUriString), ex);
+          String.format("Invalid URI argument '%s' to fn:doc or fn:doc-available.", uri.asString()), ex);
     }
 
     URI baseUri = context.getStaticContext().getBaseUri();
     if (baseUri != null) {
-      logger.info("base:" + baseUri.toString());
       // resolve if possible
       documentUri = baseUri.resolve(documentUri);
-      logger.info("resolved:" + documentUri.toString());
-      documentUriString = documentUri.toString();
     } else {
       if (!documentUri.isAbsolute() && !documentUri.isOpaque()) {
         throw new DocumentFunctionException(DocumentFunctionException.ERROR_RETRIEVING_RESOURCE, String
-            .format("No base-uri is available in the static context to resolve the URI '%s'.", documentUriString));
+            .format("No base-uri is available in the static context to resolve the URI '%s'.", documentUri.toString()));
       }
     }
 
-    INodeItem documentNodeItem = context.getAvailableDocuments().get(documentUriString);
-    if (documentNodeItem == null) {
-      // load the document
-      try {
-        URL documentUrl = documentUri.toURL();
-        documentNodeItem = context.getStaticContext().getDocumentLoader().loadAsNodeItem(documentUrl);
-        context.getAvailableDocuments().put(documentUriString, documentNodeItem);
-      } catch (IOException ex) {
-        throw new DocumentFunctionException(DocumentFunctionException.ERROR_RETRIEVING_RESOURCE, String
-            .format("Unable to retrieve resource for URI '%s'.", documentUriString), ex);
-      }
-
-      if (logger.isInfoEnabled()) {
-        logger.info(String.format("loaded document '%s'", documentUri.toString()));
-      }
+    INodeItem documentNodeItem;
+    try {
+      @SuppressWarnings("null")
+      INodeItem result = context.getDocumentLoader().loadAsNodeItem(documentUri.toURL());
+      documentNodeItem = result;
+    } catch (IOException e) {
+      throw new DocumentFunctionException(DocumentFunctionException.ERROR_RETRIEVING_RESOURCE, String
+          .format("Unable to retrieve the resource identified by the URI '%s'.", documentUri.toString()));
     }
     return documentNodeItem;
   }

@@ -77,4 +77,6 @@ public interface JavaClassGenerator {
    * @return the associated property or {@code null} if no matching property exists
    */
   boolean hasPropertyWithName(String name);
+
+  ClassName getBaseClassName();
 }

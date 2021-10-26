@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.type.IAnyAtomicType;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface IAnyAtomicItem extends IValueItem {
+public interface IAnyAtomicItem extends IAtomicValuedItem {
 
   /**
    * Get the textual value of the item's "wrapped" value.

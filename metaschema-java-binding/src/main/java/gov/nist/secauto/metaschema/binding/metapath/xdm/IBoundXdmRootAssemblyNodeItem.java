@@ -23,15 +23,33 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
+import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmRootAssemblyNodeItem;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.net.URI;
+
 public interface IBoundXdmRootAssemblyNodeItem extends IBoundXdmAssemblyNodeItem, IXdmRootAssemblyNodeItem {
+  @NotNull
+  IXdmDocumentNodeItem getDocumentNodeItem();
 
   @Override
-  IBoundXdmRootAssemblyNodeItem getNodeItem();
+  default IBoundXdmRootAssemblyNodeItem getContextNodeItem() {
+    return this;
+  }
 
   @Override
-  IBoundXdmRootAssemblyNodeItem getPathSegment();
+  default IBoundXdmAssemblyNodeItem getParentContentNodeItem() {
+    return null;
+  }
+
+  @Override
+  @NotNull
+  default URI getBaseUri() {
+    return getDocumentNodeItem().getBaseUri();
+  }
 }

@@ -26,78 +26,58 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaPathEvaluationVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
-public interface INodeItem extends IItem, IPathItem, INodeContext {
-
+public interface INodeItem extends IPathItem, INodeContext {
   /**
-   * Get the Metaschema flags associated this node.
-   * 
-   * @return a mapping of flag effective name to the flag
+   * Get the type of node item this is.
+   * @return the node item's type
    */
   @NotNull
-  Map<@NotNull String, ? extends IFlagNodeItem> getFlags();
+  NodeItemType getNodeItemType();
 
   /**
-   * Lookup a Metaschema flag on this node by it's effective name.
+   * Retrieve the base URI of this node.
+   * <p>
+   * The base URI of a node will be in order of preference:
+   * <ol>
+   * <li>the base URI defined on the node</li>
+   * <li>the base URI defined on the nearest ancestor node</li>
+   * <li>the base URI defined on the document node</li>
+   * <li>{@code null} if the document node is unknown</li>
+   * </ol>
    * 
-   * @param name
-   *          the effective name of the flag
-   * @return the flag with the matching effective name or {@code null} if no match was found
+   * @return the base URI or {@code null} if it is unknown
    */
-  default IFlagNodeItem getFlagByName(@NotNull String name) {
-    return getFlags().get(name);
-  }
+  URI getBaseUri();
 
   /**
-   * Get the Metaschema flags associated with this node as a stream.
+   * Get the Metaschema definition associated with this node.
    * 
-   * @return the stream of flags or an empty stream if none exist
+   * @return the definition
    */
-  @SuppressWarnings("null")
   @NotNull
-  default Stream<? extends IFlagNodeItem> flags() {
-    return getFlags().values().stream();
-  }
+  INamedDefinition getDefinition();
 
   /**
-   * Get the Metaschema model items (i.e., fields, assemblies) associated this node.
+   * Get the path for this node item as a Metapath.
    * 
-   * @return a mapping of flag effective name to the list of matching model items
+   * @return the Metapath
    */
   @NotNull
-  Map<@NotNull String, ? extends List<@NotNull ? extends IModelNodeItem>> getModelItems();
-
-  @SuppressWarnings("null")
-  @NotNull
-  default List<@NotNull ? extends IModelNodeItem> getModelItemsByName(String name) {
-    List<@NotNull ? extends IModelNodeItem> items = getModelItems().get(name);
-    return items == null ? Collections.emptyList() : items;
-  }
-
-  /**
-   * Get the Metaschema model items (i.e., fields, assemblies) associated this node as a stream.
-   * 
-   * @return the stream of model items or an empty stream if none exist
-   */
-  @SuppressWarnings("null")
-  @NotNull
-  default Stream<? extends IModelNodeItem> modelItems() {
-    return getModelItems().values().stream().flatMap(list -> list.stream());
+  default String getMetapath() {
+    return toPath(IPathFormatter.METAPATH_PATH_FORMATER);
   }
 
   /**
@@ -130,10 +110,4 @@ public interface INodeItem extends IItem, IPathItem, INodeContext {
     return new MetaschemaPathEvaluationVisitor(context).visit(metapath.getASTNode(), this);
   }
 
-  /**
-   * Retrieve the base URI of this node.
-   * 
-   * @return the base URI or {@code null} if it is unknown
-   */
-  URI getBaseUri();
 }

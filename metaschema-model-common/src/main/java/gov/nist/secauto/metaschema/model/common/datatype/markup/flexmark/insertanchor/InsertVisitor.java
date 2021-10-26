@@ -23,27 +23,48 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.insertanchor;
 
-package gov.nist.secauto.metaschema.model.common.metapath.format;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.NodeVisitorBase;
 
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupText;
 
-class FieldPathSegmentImpl
-    extends AbstractModelPositionalPathSegment<IFieldInstance>
-    implements IFieldPathSegment {
+import org.jetbrains.annotations.NotNull;
 
-  public FieldPathSegmentImpl(IAssemblyPathSegment parent, IFieldInstance instance, int position) {
-    super(parent, instance, position);
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Predicate;
+
+public class InsertVisitor extends NodeVisitorBase {
+  @NotNull
+  private final List<@NotNull InsertAnchorNode> inserts = new LinkedList<>();
+  @NotNull
+  private final Predicate<InsertAnchorNode> filter;
+
+  public InsertVisitor(@NotNull Predicate<InsertAnchorNode> filter) {
+    this.filter = filter;
   }
 
+  public InsertVisitor processNode(@NotNull MarkupText markup) {
+    visit(markup.getDocument());
+    return this;
+  }
+  
   @Override
-  public IFieldDefinition getDefinition() {
-    return getInstance().getDefinition();
+  protected void visit(@NotNull Node node) {
+    if (node instanceof InsertAnchorNode) {
+      InsertAnchorNode insert = (InsertAnchorNode)node;
+      if (filter.test(insert)) {
+        inserts.add((InsertAnchorNode)node);
+      }
+    } else {
+      visitChildren(node);
+    }
   }
 
-  @Override
-  public IAssemblyPathSegment getParentSegment() {
-    return (IAssemblyPathSegment) super.getParentSegment();
+  @NotNull 
+  public List<@NotNull InsertAnchorNode> getInserts() {
+    return inserts;
   }
 }

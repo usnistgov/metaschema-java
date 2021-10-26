@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.ModelConstants;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlNamedModelDefinition;
@@ -96,7 +96,7 @@ public class XmlFlagInstance extends AbstractFlagInstance {
 
   @Override
   public boolean isRequired() {
-    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : Defaults.DEFAULT_FLAG_REQUIRED;
+    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : ModelConstants.DEFAULT_FLAG_REQUIRED;
   }
 
   @Override

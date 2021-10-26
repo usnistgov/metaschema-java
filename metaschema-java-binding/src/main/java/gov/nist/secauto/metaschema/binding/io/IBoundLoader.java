@@ -27,8 +27,12 @@
 package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.model.common.metapath.IDocumentLoader;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IValuedNodeItem;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,18 +41,24 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 
-public interface BoundLoader extends IDocumentLoader, MutableConfiguration {
-  Format detectFormat(URL url) throws IOException;
+public interface IBoundLoader extends IDocumentLoader, MutableConfiguration {
+  @NotNull
+  Format detectFormat(@NotNull URL url) throws IOException;
 
-  Format detectFormat(File file) throws FileNotFoundException, IOException;
+  @NotNull
+  Format detectFormat(@NotNull File file) throws FileNotFoundException, IOException;
 
-  Format detectFormat(InputStream is) throws IOException;
+  @NotNull
+  Format detectFormat(@NotNull InputStream is) throws IOException;
 
-  <CLASS> CLASS load(URL url) throws IOException;
+  @NotNull
+  <CLASS> CLASS load(@NotNull URL url) throws IOException;
 
-  <CLASS> CLASS load(File file) throws FileNotFoundException, IOException;
+  @NotNull
+  <CLASS> CLASS load(@NotNull File file) throws FileNotFoundException, IOException;
 
-  <CLASS> CLASS load(InputStream is, @Nullable URI documentUri) throws IOException;
+  @NotNull
+  <CLASS> CLASS load(@NotNull InputStream is, @NotNull URI documentUri) throws IOException;
 
   /**
    * Load the specified data file as the specified Java class.
@@ -65,9 +75,34 @@ public interface BoundLoader extends IDocumentLoader, MutableConfiguration {
    * @throws FileNotFoundException
    *           if the specified file does not exist
    */
-  <CLASS> CLASS load(Class<CLASS> clazz, File file) throws FileNotFoundException, IOException;
+  @NotNull
+  <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull File file) throws FileNotFoundException, IOException;
 
-  <CLASS> CLASS load(Class<CLASS> clazz, URL url) throws IOException;
+  @NotNull
+  <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull URL url) throws IOException;
 
-  <CLASS> CLASS load(Class<CLASS> clazz, InputStream is, @Nullable URI documentUri) throws IOException;
+  @NotNull
+  <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull InputStream is, @NotNull URI documentUri) throws IOException;
+
+  @NotNull
+  public static <CLASS> CLASS toClass(@NotNull INodeItem nodeItem) {
+    IAssemblyNodeItem result = toAssemblyNodeItem(nodeItem);
+    @SuppressWarnings("unchecked") CLASS retval = (CLASS) result.getValue();
+    return retval;
+  }
+
+  @NotNull
+  public static IAssemblyNodeItem toAssemblyNodeItem(@NotNull INodeItem nodeItem) {
+    IAssemblyNodeItem retval;
+    if (nodeItem instanceof IDocumentNodeItem) {
+      retval = ((IDocumentNodeItem) nodeItem).getRootAssemblyNodeItem();
+    } else if (nodeItem instanceof IAssemblyNodeItem) {
+      retval = (IAssemblyNodeItem) nodeItem;
+    } else {
+      throw new IllegalArgumentException(
+          String.format("The node item type '%s' cannot be cast to an assembly node item.", nodeItem.getItemName()));
+    }
+    return retval;
+  }
+
 }

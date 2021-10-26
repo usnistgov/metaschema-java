@@ -23,26 +23,33 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.FieldDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmFieldNodeItem;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface IBoundXdmFieldNodeItem extends IBoundXdmModelNodeItem, IXdmFieldNodeItem {
 
   @Override
-  IBoundXdmFieldNodeItem getNodeItem();
+  default IBoundXdmFieldNodeItem getContextNodeItem() {
+    return this;
+  }
 
   @Override
   IBoundXdmAssemblyNodeItem getParentNodeItem();
-
-  @Override
-  IBoundXdmFieldNodeItem getPathSegment();
 
   @Override
   FieldDefinition getDefinition();
 
   @Override
   FieldProperty getInstance();
+
+  @Override
+  default <RESULT, CONTEXT> RESULT accept(@NotNull IBoundXdmNodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitField(this, context);
+  }
 }

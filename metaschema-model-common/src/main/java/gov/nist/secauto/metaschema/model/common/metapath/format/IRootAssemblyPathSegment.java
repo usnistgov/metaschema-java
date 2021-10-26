@@ -31,10 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.stream.Stream;
 
 public interface IRootAssemblyPathSegment extends IAssemblyPathSegment {
-  @Override
-  default IModelPositionalPathSegment getParentSegment() {
-    return null;
-  }
 
   @Override
   default int getPosition() {

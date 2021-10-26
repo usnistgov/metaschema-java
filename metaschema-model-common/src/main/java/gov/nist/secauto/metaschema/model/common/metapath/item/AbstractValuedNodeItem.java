@@ -24,26 +24,48 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.metapath.xdm;
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.binding.model.property.RelativeDefinitionAssemblyProperty;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IDefinitionPathSegment;
 
-import java.net.URI;
+import org.jetbrains.annotations.NotNull;
 
-public class XdmRelativeAssemblyNodeItemImpl
-    extends AbstractTerminalBoundXdmAssemblyNodeItem<RelativeDefinitionAssemblyProperty> {
+public abstract class AbstractValuedNodeItem<SEGMENT extends @NotNull IDefinitionPathSegment, PARENT extends IModelNodeItem>
+    extends AbstractNodeItem<SEGMENT> implements INodeItem, IValuedNodeItem {
+  /**
+   * The current node.
+   */
+  @NotNull
+  private final Object value;
 
-  public XdmRelativeAssemblyNodeItemImpl(RelativeDefinitionAssemblyProperty instance, Object value, URI documentId) {
-    super(instance, value, 1, documentId);
+  private final PARENT parent;
+
+  // /**
+  // * Used to cache this object as a string.
+  // */
+  // private IStringItem stringItem;
+
+  public AbstractValuedNodeItem(@NotNull Object value, PARENT parent) {
+    this.value = value;
+    this.parent = parent;
   }
 
   @Override
-  public IBoundXdmAssemblyNodeItem getNodeItem() {
-    return this;
+  public Object getValue() {
+    return value;
   }
 
   @Override
-  public IBoundXdmAssemblyNodeItem getPathSegment() {
-    return this;
+  public PARENT getParentNodeItem() {
+    return parent;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append(getAnnotatedPath());
+    builder.append('=');
+    builder.append(System.identityHashCode(getValue()));
+    return builder.toString();
   }
 }

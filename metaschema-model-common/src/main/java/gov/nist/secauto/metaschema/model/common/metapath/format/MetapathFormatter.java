@@ -36,6 +36,10 @@ class MetapathFormatter implements IPathFormatter {
   public MetapathFormatter() {
   }
 
+  protected String getEffectiveName(IDefinitionPathSegment segment) {
+    return segment.getInstance().getEffectiveName();
+  }
+
   @SuppressWarnings("null")
   @Override
   public String format(IPathSegment segment) {
@@ -51,7 +55,7 @@ class MetapathFormatter implements IPathFormatter {
 
   @Override
   public String formatPathSegment(IFlagPathSegment segment) {
-    return "@" + segment.getName();
+    return "@" + getEffectiveName(segment);
   }
 
   @Override
@@ -63,9 +67,9 @@ class MetapathFormatter implements IPathFormatter {
   @Override
   public String formatPathSegment(IAssemblyPathSegment segment) {
     String retval;
-    if (segment.getParentSegment() == null && segment instanceof IRootAssemblyPathSegment) {
+    if (segment instanceof IRootAssemblyPathSegment) {
       StringBuilder builder = new StringBuilder();
-      builder.append(segment.getName());
+      builder.append(getEffectiveName(segment));
       retval = builder.toString();
     } else {
       // TODO: does it make sense to use this for an intermediate that has no parent?
@@ -77,7 +81,7 @@ class MetapathFormatter implements IPathFormatter {
   @SuppressWarnings("null")
   @NotNull
   protected String formatModelPathSegment(IModelPositionalPathSegment segment) {
-    StringBuilder builder = new StringBuilder(segment.getName());
+    StringBuilder builder = new StringBuilder(getEffectiveName(segment));
     builder.append('[');
     builder.append(segment.getPosition());
     builder.append(']');

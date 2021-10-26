@@ -32,9 +32,6 @@ import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -79,17 +76,6 @@ public interface IFlagInstance extends INamedInstance, Flag {
   // * @return {@code true} if the flag is used as a JSON "value key", or {@code false} otherwise
   // */
   // boolean isJsonValueKey();
-
-  /**
-   * Generate a new path segment for this instance.
-   * 
-   * @param parentSegment
-   *          the path segment at the end of the current path
-   * @return the path segment
-   */
-  default IFlagPathSegment newPathSegment(IModelPositionalPathSegment parentSegment) {
-    return IFormatterFactory.INSTANCE.newFlagPathSegment(parentSegment, this);
-  }
 
   @Override
   default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {

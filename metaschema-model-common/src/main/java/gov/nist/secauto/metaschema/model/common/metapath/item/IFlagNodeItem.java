@@ -27,15 +27,23 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
-public interface IFlagNodeItem extends IContentNodeItem {
+public interface IFlagNodeItem extends IAtomicValuedNodeItem {
+  @Override
+  default NodeItemType getNodeItemType() {
+    return NodeItemType.FLAG;
+  }
+
+  @Override
+  @NotNull
+  IModelNodeItem getParentContentNodeItem();
 
   @Override
   IModelNodeItem getParentNodeItem();
@@ -44,29 +52,41 @@ public interface IFlagNodeItem extends IContentNodeItem {
   IFlagPathSegment getPathSegment();
 
   @Override
-  default boolean isRootNode() {
-    return false;
-  }
-
-  @Override
   IFlagDefinition getDefinition();
 
+  /**
+   * Flags do not have flag items. This call should return {@code null}.
+   */
+  @Override
+  default IFlagNodeItem getFlagByName(@NotNull String name) {
+    return null;
+  }
+
+  /**
+   * Flags do not have flag items. This call should return an empty stream.
+   */
   @SuppressWarnings("null")
   @Override
-  default Stream<? extends INodeItem> getMatchingChildInstances(IExpressionEvaluationVisitor visitor,
-      IExpression<?> expr, boolean recurse) {
+  default @NotNull Stream<? extends IFlagNodeItem> flags() {
     return Stream.empty();
   }
 
+  /**
+   * Flags do not have model items. This call should return an empty list.
+   */
   @SuppressWarnings("null")
   @Override
-  default Stream<IFlagNodeItem> getMatchingChildFlags(Flag flag) {
-    return Stream.empty();
+  default @NotNull List<@NotNull ? extends IModelNodeItem> getModelItemsByName(String name) {
+    return Collections.emptyList();
   }
 
+  /**
+   * Flags do not have model items. This call should return an empty stream.
+   */
   @SuppressWarnings("null")
+  @NotNull
   @Override
-  default Stream<? extends IModelNodeItem> getMatchingChildModelInstances(ModelInstance modelInstance) {
+  default Stream<? extends IModelNodeItem> modelItems() {
     return Stream.empty();
   }
 }

@@ -24,26 +24,16 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.format;
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
+import org.jetbrains.annotations.NotNull;
 
-class AssemblyPathSegmentImpl
-    extends AbstractModelPositionalPathSegment<IAssemblyInstance>
-    implements IAssemblyPathSegment {
-
-  public AssemblyPathSegmentImpl(IAssemblyPathSegment parent, IAssemblyInstance instance, int position) {
-    super(parent, instance, position);
-  }
-
-  @Override
-  public IAssemblyDefinition getDefinition() {
-    return getInstance().getDefinition();
-  }
-
-  @Override
-  public IAssemblyPathSegment getParentSegment() {
-    return (IAssemblyPathSegment) super.getParentSegment();
-  }
+public interface IValuedItem extends IItem {
+  /**
+   * Get the item's "wrapped" value.
+   * 
+   * @return the value
+   */
+  @NotNull
+  Object getValue();
 }

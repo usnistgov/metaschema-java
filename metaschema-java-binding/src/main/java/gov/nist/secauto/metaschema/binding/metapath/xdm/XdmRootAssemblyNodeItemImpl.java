@@ -48,38 +48,23 @@ public class XdmRootAssemblyNodeItemImpl extends
     this.parent = parent;
   }
 
-  @NotNull
-  protected IXdmDocumentNodeItem getDocumentNodeItem() {
+  @Override
+  public IXdmDocumentNodeItem getDocumentNodeItem() {
     return parent;
   }
 
   @Override
-  public IBoundXdmAssemblyNodeItem getParentNodeItem() {
-    return null;
+  public IXdmDocumentNodeItem getParentNodeItem() {
+    return parent;
   }
 
   @Override
-  public @Nullable URI getBaseUri() {
-    return getDocumentNodeItem().getBaseUri();
-  }
-
-  @Override
-  public IBoundXdmRootAssemblyNodeItem getNodeItem() {
-    return this;
-  }
-
-  @Override
-  public IBoundXdmRootAssemblyNodeItem getPathSegment() {
+  public IBoundXdmRootAssemblyNodeItem getContextNodeItem() {
     return this;
   }
 
   @Override
   public @NotNull IXdmDocumentNodeItem getDocumentPathSegment() {
     return getDocumentNodeItem();
-  }
-
-  @Override
-  public boolean isRootNode() {
-    return true;
   }
 }

@@ -23,19 +23,10 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Name;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +34,6 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class XdmDocumentNodeItemImpl implements IBoundXdmDocumentNodeItem {
   @NotNull
@@ -51,28 +41,33 @@ public class XdmDocumentNodeItemImpl implements IBoundXdmDocumentNodeItem {
   @NotNull
   private final URI documentUri;
 
-  public XdmDocumentNodeItemImpl(RootDefinitionAssemblyProperty instance, Object value, URI documentUri) {
-    this.rootNodeItem = new XdmRootAssemblyNodeItemImpl(instance, value, this);
+  public XdmDocumentNodeItemImpl(
+      @NotNull RootDefinitionAssemblyProperty instance,
+      @NotNull Object rootValue,
+      @NotNull URI documentUri) {
+    this.rootNodeItem = new XdmRootAssemblyNodeItemImpl(instance, rootValue, this);
     this.documentUri = documentUri;
   }
 
   @Override
-  public IBoundXdmDocumentNodeItem getNodeItem() {
+  public IBoundXdmDocumentNodeItem getContextNodeItem() {
     return this;
   }
 
   @Override
+  public URI getDocumentUri() {
+    return documentUri;
+  }
+
+  @Override
+  @NotNull
   public IBoundXdmRootAssemblyNodeItem getRootAssemblyNodeItem() {
     return rootNodeItem;
   }
 
   @Override
-  public URI getBaseUri() {
-    return documentUri;
-  }
-
-  @Override
-  public @NotNull IBoundXdmRootAssemblyNodeItem getRootAssemblyPathSegment() {
+  @NotNull
+  public IBoundXdmRootAssemblyNodeItem getRootAssemblyPathSegment() {
     return rootNodeItem;
   }
 
@@ -85,59 +80,5 @@ public class XdmDocumentNodeItemImpl implements IBoundXdmDocumentNodeItem {
   public Map<@NotNull String, ? extends List<@NotNull ? extends IBoundXdmModelNodeItem>> getModelItems() {
     IBoundXdmAssemblyNodeItem nodeItem = getRootAssemblyNodeItem();
     return Collections.singletonMap(nodeItem.getInstance().getEffectiveName(), Collections.singletonList(nodeItem));
-  }
-
-  @Override
-  public @NotNull Stream<? extends IFlagNodeItem> getMatchingChildFlags(@NotNull Flag flag) {
-    return Stream.empty();
-  }
-
-  @Override
-  public @NotNull Stream<? extends IModelNodeItem>
-      getMatchingChildModelInstances(@NotNull ModelInstance modelInstance) {
-    IBoundXdmAssemblyNodeItem nodeItem = getRootAssemblyNodeItem();
-    
-    Stream<IModelNodeItem> retval;
-
-    if (modelInstance.isName()) {
-      String name = ((Name) modelInstance.getNode()).getValue();
-      if (name.equals(nodeItem.getPathSegment().getName())) {
-        retval = Stream.of(nodeItem);
-      } else {
-        retval = Stream.empty();
-      }
-    } else {
-      retval = Stream.of(nodeItem);
-    }
-    return retval;
-  }
-
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(@NotNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitDocument(this, context);
-  }
-
-  @Override
-  public Stream<? extends IXdmNodeItem> getMatchingChildInstances(IExpressionEvaluationVisitor visitor,
-      IExpression<?> expr, boolean recurse) {
-    // check the current node
-    @SuppressWarnings("unchecked")
-    Stream<? extends IXdmNodeItem> retval = (Stream<? extends IXdmNodeItem>) expr.accept(visitor, this).asStream();
-    return retval;
-  }
-
-  @Override
-  public @NotNull String format(@NotNull IPathFormatter formatter) {
-    return formatter.formatPathSegment(this);
-  }
-
-  @Override
-  public @NotNull IBoundXdmDocumentNodeItem getPathSegment() {
-    return this;
-  }
-
-  @Override
-  public Stream<IPathSegment> getPathStream() {
-    return Stream.of(getPathSegment());
   }
 }

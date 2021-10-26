@@ -33,12 +33,14 @@ import org.jetbrains.annotations.NotNull;
 public interface IBoundXdmDocumentNodeItem extends IXdmDocumentNodeItem, IBoundXdmNodeItem {
 
   @Override
-  IBoundXdmDocumentNodeItem getNodeItem();
-
-  @Override
-  IBoundXdmRootAssemblyNodeItem getRootAssemblyNodeItem();
+  IBoundXdmDocumentNodeItem getContextNodeItem();
 
   @Override
   @NotNull
-  IBoundXdmRootAssemblyNodeItem getRootAssemblyPathSegment();
+  IBoundXdmRootAssemblyNodeItem getRootAssemblyNodeItem();
+
+  @Override
+  default <RESULT, CONTEXT> RESULT accept(@NotNull IBoundXdmNodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitDocument(this, context);
+  }
 }

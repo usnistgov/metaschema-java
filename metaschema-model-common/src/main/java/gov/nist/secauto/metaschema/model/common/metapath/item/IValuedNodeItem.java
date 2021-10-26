@@ -23,38 +23,28 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
-package gov.nist.secauto.metaschema.binding.metapath.xdm;
-
-import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import java.net.URI;
 
-public abstract class AbstractTerminalBoundXdmAssemblyNodeItem<INSTANCE extends AssemblyProperty>
-    extends AbstractBoundXdmAssemblyNodeItem<INSTANCE> {
+public interface IValuedNodeItem extends INodeItem, IValuedItem {
 
-  @Nullable
-  private final URI documentUri;
-
-  public AbstractTerminalBoundXdmAssemblyNodeItem(
-      @NotNull INSTANCE instance,
-      @NotNull Object value,
-      int position,
-      @Nullable URI documentUri) {
-    super(instance, value, position);
-    this.documentUri = documentUri;
-  }
+  /**
+   * Retrieve the parent node item if it exists.
+   * 
+   * @return the parent node item, or {@code null} if this node item has no known parent
+   */
+  INodeItem getParentNodeItem();
 
   @Override
-  public IBoundXdmAssemblyNodeItem getParentNodeItem() {
-    return null;
+  default URI getBaseUri() {
+    INodeItem parent = getParentNodeItem();
+    return parent == null ? null : parent.getBaseUri();
   }
-
-  @Override
-  public URI getBaseUri() {
-    return documentUri;
-  }
+  /**
+   * Retrieve the parent content node item if it exists. A content node is a non-document node.
+   * 
+   * @return the parent content node item, or {@code null} if this node item has no known parent content node item
+   */
+  IModelNodeItem getParentContentNodeItem();
 }

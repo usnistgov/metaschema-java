@@ -23,60 +23,18 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
-package gov.nist.secauto.metaschema.model.common.metapath.format;
-
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import org.jetbrains.annotations.NotNull;
 
-import javax.xml.namespace.QName;
-
-class RootAssemblyInstancePathSegmentImpl implements IRootAssemblyPathSegment {
-  @NotNull
-  private final IDocumentPathSegment parent;
-  @NotNull
-  private final IAssemblyInstance instance;
+public interface IAtomicValuedItem extends IValuedItem {
 
   /**
-   * Construct a new root path segment from the provided instance.
+   * Get the atomic value for the item. This may be the same item if the item is an instance of
+   * {@link IAnyAtomicItem}.
    * 
-   * @param parent
-   *          the document node of the root
-   * @param instance
-   *          the root path instance
+   * @return the atomic value
    */
-  public RootAssemblyInstancePathSegmentImpl(
-      @NotNull IDocumentPathSegment parent,
-      @NotNull IAssemblyInstance instance) {
-    this.parent = parent;
-    this.instance = instance;
-  }
-
-  @Override
-  public IAssemblyDefinition getDefinition() {
-    return getInstance().getDefinition();
-  }
-
-  @Override
   @NotNull
-  public IAssemblyInstance getInstance() {
-    return instance;
-  }
-
-  @Override
-  public String getName() {
-    return getInstance().getEffectiveName();
-  }
-
-  @Override
-  public QName getQName() {
-    return getInstance().getXmlQName();
-  }
-
-  @Override
-  public IDocumentPathSegment getDocumentPathSegment() {
-    return parent;
-  }
+  IAnyAtomicItem toAtomicItem();
 }

@@ -26,15 +26,29 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
+import gov.nist.secauto.metaschema.binding.model.FlagDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IValuedDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-public class XdmFlagNodeItemImpl extends AbstractBoundXdmFlagNodeItem<FlagProperty> {
+public class XdmFlagNodeItemImpl extends AbstractBoundXdmValuedNodeItem<FlagProperty>
+    implements IBoundXdmFlagNodeItem {
 
-  private final @NotNull IBoundXdmModelNodeItem parent;
+  @NotNull
+  private final IBoundXdmModelNodeItem parent;
+  /**
+   * Used to cache this object as an atomic item.
+   */
+  private IAnyAtomicItem atomicItem;
 
   public XdmFlagNodeItemImpl(
       @NotNull FlagProperty instance,
@@ -44,14 +58,47 @@ public class XdmFlagNodeItemImpl extends AbstractBoundXdmFlagNodeItem<FlagProper
     this.parent = parent;
   }
 
+  protected synchronized void initAtomicItem() {
+    if (atomicItem == null) {
+      IDefinition definition = getInstance().getDefinition();
+      if (definition instanceof IValuedDefinition) {
+        IJavaTypeAdapter<?> type = ((IValuedDefinition) definition).getDatatype();
+        atomicItem = type.newItem(getValue());
+      } else {
+        throw new InvalidTypeFunctionMetapathException(InvalidTypeFunctionMetapathException.NODE_HAS_NO_TYPED_VALUE,
+            String.format("the node type '%s' does not have a typed value", this.getItemName()));
+      }
+    }
+  }
+
   @Override
-  @NotNull
+  public IAnyAtomicItem toAtomicItem() {
+    initAtomicItem();
+    return atomicItem;
+  }
+
+  @Override
+  public FlagDefinition getDefinition() {
+    return getInstance().getDefinition();
+  }
+
+  @Override
   public IBoundXdmModelNodeItem getParentNodeItem() {
     return parent;
   }
 
   @Override
-  public URI getBaseUri() {
-    return getParentNodeItem().getBaseUri();
+  public IBoundXdmModelNodeItem getParentContentNodeItem() {
+    return getParentNodeItem();
+  }
+
+  @Override
+  public Map<@NotNull String, ? extends IBoundXdmFlagNodeItem> getFlags() {
+    return Collections.emptyMap();
+  }
+
+  @Override
+  public Map<@NotNull String, ? extends List<@NotNull ? extends IBoundXdmModelNodeItem>> getModelItems() {
+    return Collections.emptyMap();
   }
 }

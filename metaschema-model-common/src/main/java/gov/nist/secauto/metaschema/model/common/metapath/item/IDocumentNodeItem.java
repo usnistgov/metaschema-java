@@ -23,17 +23,56 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.item;
+
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IDocumentPathSegment;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
+import java.util.Map;
 
 public interface IDocumentNodeItem extends INodeItem {
+  @Override
+  default NodeItemType getNodeItemType() {
+    return NodeItemType.DOCUMENT;
+  }
+
+  /**
+   * Get the root assembly associated with this document.
+   * 
+   * @return the root assembly
+   */
   @NotNull
   IAssemblyNodeItem getRootAssemblyNodeItem();
 
   @Override
+  IDocumentPathSegment getPathSegment();
+
+  /**
+   * Get the URI associated with this document.
+   * 
+   * @return the document's URI
+   */
   @NotNull
-  URI getBaseUri();
+  URI getDocumentUri();
+
+  @Override
+  @NotNull
+  default URI getBaseUri() {
+    return getDocumentUri();
+  }
+
+  /**
+   * Document nodes do not have flags. This must return an empty map.
+   */
+  @Override
+  Map<@NotNull String, ? extends IFlagNodeItem> getFlags();
+
+  @Override
+  default INamedDefinition getDefinition() {
+    return getRootAssemblyNodeItem().getDefinition();
+  }
 }

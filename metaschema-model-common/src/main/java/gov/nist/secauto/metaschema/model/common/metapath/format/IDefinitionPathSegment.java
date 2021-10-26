@@ -23,25 +23,46 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.model.common.metapath.item;
+package gov.nist.secauto.metaschema.model.common.metapath.format;
+
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface IValueItem extends IItem {
+import java.util.stream.Stream;
+
+import javax.xml.namespace.QName;
+
+public interface IDefinitionPathSegment extends IPathSegment {
+
+//  /**
+//   * Retrieve the path segment of the containing parent if there is one.
+//   * @return the parent path segment or {@code null} if there isn't one
+//   */
+//  IModelPositionalPathSegment getParentSegment();
+//
+//  @Override
+//  @SuppressWarnings("null")
+//  @NotNull
+//  default Stream<IPathSegment> getPathStream() {
+//    IModelPositionalPathSegment parentSegment = getParentSegment();
+//    return parentSegment == null ? Stream.of(this) : Stream.concat(parentSegment.getPathStream(), Stream.of(this));
+//  }
+  
   /**
-   * Get the item's "wrapped" value.
+   * Retrieve the instance associated with this path segment.
    * 
-   * @return the value
+   * @return the instance of the segment
    */
   @NotNull
-  Object getValue();
+  INamedInstance getInstance();
 
   /**
-   * Get the atomic value for the item. This may be the same item if the item is an instance of
-   * {@link IAnyAtomicItem}.
+   * Retrieve the definition for the path segment.
    * 
-   * @return the atomic value
+   * @return the definition
    */
   @NotNull
-  IAnyAtomicItem toAtomicItem();
+  INamedDefinition getDefinition();
 }

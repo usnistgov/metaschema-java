@@ -27,27 +27,45 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFieldPathSegment;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
-public interface IFieldNodeItem extends IModelNodeItem {
+public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedNodeItem {
+  @Override
+  default NodeItemType getNodeItemType() {
+    return NodeItemType.FIELD;
+  }
+
+  @Override
+  IAssemblyNodeItem getParentNodeItem();
 
   @Override
   IFieldPathSegment getPathSegment();
 
   @Override
-  default boolean isRootNode() {
-    return false;
-  }
-
-  @Override
   IFieldDefinition getDefinition();
 
+  /**
+   * Fields do not have model items. This call should return an empty list.
+   */
   @SuppressWarnings("null")
   @Override
-  default Stream<? extends IModelNodeItem> getMatchingChildModelInstances(ModelInstance modelInstance) {
+  default @NotNull List<@NotNull ? extends IModelNodeItem> getModelItemsByName(String name) {
+    return Collections.emptyList();
+  }
+
+  /**
+   * Fields do not have model items. This call should return an empty stream.
+   */
+  @SuppressWarnings("null")
+  @NotNull
+  @Override
+  default Stream<? extends IModelNodeItem> modelItems() {
     return Stream.empty();
   }
 }

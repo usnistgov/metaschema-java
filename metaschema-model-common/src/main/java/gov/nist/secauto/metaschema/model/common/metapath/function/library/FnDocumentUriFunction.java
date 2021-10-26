@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function.library;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IAnyUriItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;

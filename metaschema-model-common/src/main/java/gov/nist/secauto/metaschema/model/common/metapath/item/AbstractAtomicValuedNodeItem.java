@@ -24,36 +24,32 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.xdm;
+package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IValuedDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IDefinitionPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeFunctionMetapathException;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
-public abstract class AbstractContentXdmNodeItem implements IXdmContentNodeItem {
-  @NotNull
-  private final Object value;
-
+public abstract class AbstractAtomicValuedNodeItem<
+    SEGMENT extends @NotNull IDefinitionPathSegment,
+    PARENT extends IModelNodeItem>
+    extends AbstractValuedNodeItem<SEGMENT, PARENT> implements IAtomicValuedNodeItem {
   /**
    * Used to cache this object as an atomic item.
    */
   private IAnyAtomicItem atomicItem;
 
-  public AbstractContentXdmNodeItem(@NotNull Object value) {
-    Objects.requireNonNull(value, "value");
-    this.value = value;
-  }
+  // /**
+  // * Used to cache this object as a string.
+  // */
+  // private IStringItem stringItem;
 
-  @Override
-  public Object getValue() {
-    return value;
+  public AbstractAtomicValuedNodeItem(@NotNull Object value, @NotNull SEGMENT segment, PARENT parent) {
+    super(value, parent);
   }
 
   protected synchronized void initAtomicItem() {
@@ -64,7 +60,7 @@ public abstract class AbstractContentXdmNodeItem implements IXdmContentNodeItem 
         atomicItem = type.newItem(getValue());
       } else {
         throw new InvalidTypeFunctionMetapathException(InvalidTypeFunctionMetapathException.NODE_HAS_NO_TYPED_VALUE,
-            String.format("the node type '%s' does not have a typed value", this.getClass().getName()));
+            String.format("the node type '%s' does not have a typed value", this.getItemName()));
       }
     }
   }
@@ -75,15 +71,33 @@ public abstract class AbstractContentXdmNodeItem implements IXdmContentNodeItem 
     initAtomicItem();
     return atomicItem;
   }
-
-  @Override
-  public IModelPositionalPathSegment getParentSegment() {
-    IXdmModelNodeItem parent = getParentNodeItem();
-    return parent == null ? null : parent.getPathSegment();
-  }
+  //
+  // protected synchronized void initStringItem() {
+  // if (stringItem == null && value != null) {
+  // IDefinition definition = getDefinition();
+  // if (definition instanceof IValuedDefinition) {
+  // String string = ((IValuedDefinition)
+  // definition).getDatatype().getJavaTypeAdapter().asString(value);
+  // stringItem = IStringItem.valueOf(string);
+  // } else {
+  // throw new UnsupportedOperationException();
+  // }
+  // stringItem = IStringItem.valueOf(asString());
+  // }
+  // }
+  //
+  // @Override
+  // public IStringItem toStringItem() {
+  // initStringItem();
+  // return stringItem;
+  // }
 
   @Override
   public String toString() {
-    return getMetapath() + " " + getValue();
+    StringBuilder builder = new StringBuilder();
+    builder.append(getAnnotatedPath());
+    builder.append('=');
+    builder.append(toAtomicItem().asString());
+    return builder.toString();
   }
 }

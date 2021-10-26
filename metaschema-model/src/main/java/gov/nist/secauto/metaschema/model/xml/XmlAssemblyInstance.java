@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.ModelConstants;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
@@ -93,7 +93,7 @@ public class XmlAssemblyInstance
 
   @Override
   public int getMinOccurs() {
-    int retval = Defaults.DEFAULT_GROUP_AS_MIN_OCCURS;
+    int retval = ModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
     if (getXmlAssembly().isSetMinOccurs()) {
       retval = getXmlAssembly().getMinOccurs().intValueExact();
     }
@@ -102,7 +102,7 @@ public class XmlAssemblyInstance
 
   @Override
   public int getMaxOccurs() {
-    int retval = Defaults.DEFAULT_GROUP_AS_MAX_OCCURS;
+    int retval = ModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
     if (getXmlAssembly().isSetMaxOccurs()) {
       Object value = getXmlAssembly().getMaxOccurs();
       if (value instanceof String) {
@@ -117,7 +117,7 @@ public class XmlAssemblyInstance
 
   @Override
   public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    JsonGroupAsBehavior retval = Defaults.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
+    JsonGroupAsBehavior retval = ModelConstants.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
     if (getXmlAssembly().isSetGroupAs() && getXmlAssembly().getGroupAs().isSetInJson()) {
       retval = getXmlAssembly().getGroupAs().getInJson();
     }
@@ -126,7 +126,7 @@ public class XmlAssemblyInstance
 
   @Override
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    XmlGroupAsBehavior retval = Defaults.DEFAULT_XML_GROUP_AS_BEHAVIOR;
+    XmlGroupAsBehavior retval = ModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR;
     if (getXmlAssembly().isSetGroupAs() && getXmlAssembly().getGroupAs().isSetInXml()) {
       retval = getXmlAssembly().getGroupAs().getInXml();
     }

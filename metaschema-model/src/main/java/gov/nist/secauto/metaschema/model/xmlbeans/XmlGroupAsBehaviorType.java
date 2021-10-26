@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.xmlbeans;
 
-import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.ModelConstants;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 public class XmlGroupAsBehaviorType {
@@ -48,7 +48,7 @@ public class XmlGroupAsBehaviorType {
         target.setStringValue("UNGROUPED");
         break;
       default:
-        target.setStringValue(Defaults.DEFAULT_XML_GROUP_AS_BEHAVIOR.name());
+        target.setStringValue(ModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR.name());
         // do nothing
       }
     }

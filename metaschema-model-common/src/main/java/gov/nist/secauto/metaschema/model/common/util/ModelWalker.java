@@ -221,6 +221,7 @@ public abstract class ModelWalker<DATA> {
    *          additional information to operate on
    */
   protected void visit(@NotNull IFlagDefinition def, DATA data) {
+    // do nothing by default
   }
 
   /**

@@ -30,8 +30,9 @@ import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValidatingXdmVisitor;
-import gov.nist.secauto.metaschema.binding.util.Util;
+import gov.nist.secauto.metaschema.binding.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 
 import org.jetbrains.annotations.Nullable;
@@ -102,13 +103,14 @@ public abstract class AbstractDeserializer<CLASS> extends AbstractSerializationB
 
     if (isValidating()) {
       StaticContext staticContext = new StaticContext();
-      staticContext.setDocumentLoader(getBindingContext().newBoundLoader());
-      DefaultConstraintValidator validator = new DefaultConstraintValidator(staticContext.newDynamicContext());
+      DynamicContext dynamicContext = staticContext.newDynamicContext();
+      dynamicContext.setDocumentLoader(getBindingContext().newBoundLoader());
+      DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext);
       new ValidatingXdmVisitor().visit(nodeItem, validator);
       validator.finalizeValidation();
     }
 
-    return Util.toClass(nodeItem);
+    return IBoundLoader.toClass(nodeItem);
   }
 
   @Override

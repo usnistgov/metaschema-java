@@ -30,12 +30,6 @@ import gov.nist.secauto.metaschema.binding.model.AssemblyDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Name;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmNodeItem;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -90,60 +84,5 @@ public abstract class AbstractBoundXdmAssemblyNodeItem<INSTANCE extends Assembly
       }
       this.modelItems = modelItems;
     }
-  }
-
-  @Override
-  public Stream<? extends IBoundXdmModelNodeItem> modelItems() {
-    return getModelItems().values().stream().flatMap(items -> items.stream());
-  }
-
-  @Override
-  public List<? extends IBoundXdmModelNodeItem> getModelItemsByName(String name) {
-    return getModelItems().get(name);
-  }
-
-  @Override
-  public Stream<? extends IXdmModelNodeItem> getMatchingChildModelInstances(ModelInstance modelInstance) {
-    Stream<? extends IXdmModelNodeItem> retval = Stream.empty();
-    if (modelInstance.isName()) {
-      String name = ((Name) modelInstance.getNode()).getValue();
-      List<? extends IXdmModelNodeItem> items = getModelItemsByName(name);
-      retval = items == null ? Stream.empty() : items.stream();
-    } else {
-      // wildcard
-      retval = modelItems();
-    }
-    return retval;
-  }
-
-  @Override
-  public Stream<? extends IXdmNodeItem> getMatchingChildInstances(IExpressionEvaluationVisitor visitor,
-      IExpression<?> expr, boolean recurse) {
-
-    // check the current node
-    @SuppressWarnings("unchecked") Stream<? extends IXdmNodeItem> retval
-        = (Stream<? extends IXdmNodeItem>) expr.accept(visitor, this).asStream();
-
-    // {
-    // List<? extends IXdmNodeItem> list = retval.collect(Collectors.toList());
-    // retval = list.stream();
-    // }
-
-    // get matching model instances
-    if (recurse) {
-      Stream<? extends IXdmModelNodeItem> instances = modelItems();
-
-      Stream<? extends IXdmNodeItem> childMatches = instances.flatMap(instance -> {
-        return instance.getMatchingChildInstances(visitor, expr, recurse);
-      });
-      retval = Stream.concat(retval, childMatches);
-    }
-
-    return retval;
-  }
-
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitAssembly(this, context);
   }
 }

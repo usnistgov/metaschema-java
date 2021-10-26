@@ -23,30 +23,33 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.AssemblyDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmAssemblyNodeItem;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
+import org.jetbrains.annotations.NotNull;
 
 public interface IBoundXdmAssemblyNodeItem extends IBoundXdmModelNodeItem, IXdmAssemblyNodeItem {
 
   @Override
-  IBoundXdmAssemblyNodeItem getNodeItem();
+  default IBoundXdmAssemblyNodeItem getContextNodeItem() {
+    return this;
+  }
 
   @Override
-  IBoundXdmAssemblyNodeItem getParentNodeItem();
-
-  @Override
-  IBoundXdmAssemblyNodeItem getPathSegment();
+  IBoundXdmAssemblyNodeItem getParentContentNodeItem();
 
   @Override
   AssemblyDefinition getDefinition();
 
   @Override
   AssemblyProperty getInstance();
+
+  @Override
+  default <RESULT, CONTEXT> RESULT accept(@NotNull IBoundXdmNodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitAssembly(this, context);
+  }
 }

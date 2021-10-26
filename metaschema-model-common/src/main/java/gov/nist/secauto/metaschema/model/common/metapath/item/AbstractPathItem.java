@@ -27,14 +27,14 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IContentPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFormatterFactory;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IDefinitionPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public abstract class AbstractPathItem<SEGMENT extends IContentPathSegment> implements IContentPathItem {
+public abstract class AbstractPathItem<SEGMENT extends IDefinitionPathSegment> implements IDefinitionPathItem {
   @NotNull
   private final SEGMENT segment;
 
@@ -65,6 +65,6 @@ public abstract class AbstractPathItem<SEGMENT extends IContentPathSegment> impl
 
   @Override
   public String toString() {
-    return IFormatterFactory.METAPATH_FORMATTER.format(getPathSegment());
+    return IPathFormatter.METAPATH_PATH_FORMATER.format(getPathSegment());
   }
 }

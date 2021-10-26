@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.format;
 
+import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmNodeItem;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -36,7 +38,6 @@ import java.util.stream.Stream;
  * A named segment of a path that can be formatted.
  */
 public interface IPathSegment {
-
   /**
    * Apply formatting for the path segment. This is a visitor pattern that will be called to format
    * each segment in a larger path.
@@ -62,5 +63,6 @@ public interface IPathSegment {
    * Get a stream of path segments, starting at the root and descending.
    * @return a stream of path segments in descending order
    */
+  @NotNull
   Stream<IPathSegment> getPathStream();
 }

@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.secauto.metaschema.model.IXmlMetaschema;
-import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.ModelConstants;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
@@ -234,7 +234,7 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
   @Override
   public boolean isCollapsible() {
     // default value
-    boolean retval = Defaults.DEFAULT_FIELD_COLLAPSIBLE;
+    boolean retval = ModelConstants.DEFAULT_FIELD_COLLAPSIBLE;
     if (getXmlField().isSetCollapsible()) {
       retval = getXmlField().getCollapsible();
     }

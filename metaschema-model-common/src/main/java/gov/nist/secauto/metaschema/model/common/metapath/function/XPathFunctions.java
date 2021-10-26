@@ -34,10 +34,10 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAtomicValuedItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IValueItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -77,8 +77,8 @@ public class XPathFunctions {
     IAnyAtomicItem retval;
     if (item instanceof IAnyAtomicItem) {
       retval = (IAnyAtomicItem) item;
-    } else if (item instanceof IValueItem) {
-      retval = ((IValueItem)item).toAtomicItem();
+    } else if (item instanceof IAtomicValuedItem) {
+      retval = ((IAtomicValuedItem)item).toAtomicItem();
     } else {
       throw new InvalidTypeFunctionMetapathException(InvalidTypeFunctionMetapathException.NODE_HAS_NO_TYPED_VALUE,
           String.format("Item '%s' has no typed value", item.getClass().getName()));

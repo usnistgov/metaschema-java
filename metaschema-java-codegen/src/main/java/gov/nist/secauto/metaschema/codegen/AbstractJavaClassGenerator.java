@@ -108,6 +108,11 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
     return getTypeResolver().getClassName(getDefinition());
   }
 
+  @Override
+  public ClassName getBaseClassName() {
+    return getTypeResolver().getBaseClassName(getDefinition());
+  }
+
   /**
    * Gets the resolver which can be used to lookup Java type information for Metaschema objects.
    * 
@@ -163,6 +168,11 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
       builder.addModifiers(Modifier.STATIC);
     }
 
+    ClassName baseClassName = getBaseClassName();
+    if (baseClassName != null) {
+      builder.superclass(baseClassName);
+    }
+    
     Set<INamedModelDefinition> additionalChildClasses = buildClass(builder);
 
     for (INamedModelDefinition definition : additionalChildClasses) {

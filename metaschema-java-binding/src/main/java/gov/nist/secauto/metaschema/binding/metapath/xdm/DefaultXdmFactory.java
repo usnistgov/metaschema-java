@@ -41,25 +41,27 @@ import java.net.URI;
 public class DefaultXdmFactory implements IXdmFactory {
 
   @Override
-  public IBoundXdmAssemblyNodeItem newAssemblyNodeItem(AssemblyProperty instance, Object value, int position,
-      IBoundXdmAssemblyNodeItem parentNodeItem) {
-    return new XdmAssemblyNodeItemImpl(instance, value, position, parentNodeItem);
+  public IBoundXdmAssemblyNodeItem newAssemblyNodeItem(@NotNull AssemblyProperty instance, @NotNull Object value,
+      int position,
+      @NotNull IBoundXdmAssemblyNodeItem parentNodeItem) {
+    return new IntermediateXdmAssemblyNodeItemImpl(instance, value, position, parentNodeItem);
   }
 
   @Override
-  public IBoundXdmFieldNodeItem newFieldNodeItem(@NotNull FieldProperty instance, Object value, int position,
+  public IBoundXdmFieldNodeItem newFieldNodeItem(@NotNull FieldProperty instance, @NotNull Object value, int position,
       IBoundXdmAssemblyNodeItem parentNodeItem) {
     return new XdmFieldNodeItemImpl(instance, value, position, parentNodeItem);
   }
 
   @Override
-  public IBoundXdmFlagNodeItem newFlagNodeItem(FlagProperty instance, Object value,
+  public IBoundXdmFlagNodeItem newFlagNodeItem(@NotNull FlagProperty instance, @NotNull Object value,
       IBoundXdmModelNodeItem parentNodeItem) {
     return new XdmFlagNodeItemImpl(instance, value, parentNodeItem);
   }
 
   @Override
-  public IBoundXdmDocumentNodeItem newDocumentNodeItem(RootDefinitionAssemblyProperty instance, Object value,URI documentUri) {
+  public IBoundXdmDocumentNodeItem newDocumentNodeItem(@NotNull RootDefinitionAssemblyProperty instance,
+      @NotNull Object value, @NotNull URI documentUri) {
     return new XdmDocumentNodeItemImpl(instance, value, documentUri);
   }
 
@@ -71,7 +73,7 @@ public class DefaultXdmFactory implements IXdmFactory {
   }
 
   @Override
-  public IBoundXdmDocumentNodeItem newDocumentNodeItem(AssemblyClassBinding definition, Object value,URI documentUri) {
+  public IBoundXdmDocumentNodeItem newDocumentNodeItem(AssemblyClassBinding definition, Object value, URI documentUri) {
     return newDocumentNodeItem(new RootDefinitionAssemblyProperty(definition), value, documentUri);
   }
 

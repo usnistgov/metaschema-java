@@ -24,67 +24,32 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.format;
+package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
+import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IValuedNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
+public abstract class AbstractBoundXdmValuedNodeItem<INSTANCE extends NamedProperty>
+    implements IBoundXdmNodeItem, IValuedNodeItem {
 
-import javax.xml.namespace.QName;
-
-/**
- * This abstract implementation represents a path segment that is part of an assembly's model.
- */
-public abstract class AbstractModelPositionalPathSegment<INSTANCE extends INamedModelInstance>
-    implements IModelPositionalPathSegment {
-
-  private final IAssemblyPathSegment parent;
   @NotNull
   private final INSTANCE instance;
-  private final int position;
+  @NotNull
+  private final Object value;
 
-  /**
-   * Construct a new model path segment for the provided instance. The position denotes which instance
-   * this is in a collection of instances. A singleton instance will have a position value of
-   * {@code 1}.
-   * 
-   * @param instance
-   *          the model instance
-   * @param position
-   *          a positive integer value designating this instance's position within a collection
-   */
-  protected AbstractModelPositionalPathSegment(IAssemblyPathSegment parent, INSTANCE instance, int position) {
-    Objects.requireNonNull(instance, "instance");
-    this.parent = parent;
+  public AbstractBoundXdmValuedNodeItem(@NotNull INSTANCE instance, @NotNull Object value) {
     this.instance = instance;
-    this.position = position;
+    this.value = value;
   }
 
-  @Override
-  @NotNull
   public INSTANCE getInstance() {
     return instance;
   }
 
   @Override
-  public int getPosition() {
-    return position;
-  }
-
-  @Override
-  public String getName() {
-    return getInstance().getEffectiveName();
-  }
-
-  @Override
-  public QName getQName() {
-    return getInstance().getXmlQName();
-  }
-
-  @Override
-  public IModelPositionalPathSegment getParentSegment() {
-    return parent;
+  public Object getValue() {
+    return value;
   }
 }

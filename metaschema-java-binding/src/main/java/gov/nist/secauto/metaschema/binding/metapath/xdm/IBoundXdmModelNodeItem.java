@@ -28,22 +28,14 @@ package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.IBoundNamedModelDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
 
-import java.util.Map;
-import java.util.stream.Stream;
-
-public interface IBoundXdmModelNodeItem extends IBoundXdmContentNodeItem, IXdmModelNodeItem {
+public interface IBoundXdmModelNodeItem extends IBoundXdmValuedNodeItem, IXdmModelNodeItem {
   @Override
-  IBoundXdmModelNodeItem getNodeItem();
+  IBoundXdmModelNodeItem getContextNodeItem();
 
   @Override
-  IXdmAssemblyNodeItem getParentNodeItem();
-
-  @Override
-  IBoundXdmModelNodeItem getPathSegment();
+  IBoundXdmAssemblyNodeItem getParentContentNodeItem();
 
   @Override
   NamedModelProperty getInstance();

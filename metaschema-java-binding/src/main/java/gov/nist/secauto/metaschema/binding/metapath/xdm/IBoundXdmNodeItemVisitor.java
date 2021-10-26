@@ -23,21 +23,15 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 
-import gov.nist.secauto.metaschema.model.common.metapath.format.IContentPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IContentNodeItem;
+package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-public interface IXdmContentNodeItem extends IXdmNodeItem, IContentNodeItem, IContentPathSegment {
-  @Override
-  IXdmContentNodeItem getNodeItem();
+public interface IBoundXdmNodeItemVisitor<RESULT, CONTEXT> {
+  RESULT visitDocument(IBoundXdmDocumentNodeItem item, CONTEXT context);
 
-  @Override
-  IXdmModelNodeItem getParentNodeItem();
+  RESULT visitFlag(IBoundXdmFlagNodeItem item, CONTEXT context);
 
-  @Override
-  default String toPath(IPathFormatter formatter) {
-    return formatter.format(this);
-  }
+  RESULT visitField(IBoundXdmFieldNodeItem item, CONTEXT context);
+
+  RESULT visitAssembly(IBoundXdmAssemblyNodeItem item, CONTEXT context);
 }

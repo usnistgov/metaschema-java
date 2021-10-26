@@ -24,40 +24,22 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.format;
+package gov.nist.secauto.metaschema.binding.util;
 
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+import java.util.Iterator;
 
-import org.jetbrains.annotations.NotNull;
+public class CollectionUtil {
 
-public interface IFormatterFactory {
-  @NotNull
-  public static final IPathFormatter METAPATH_FORMATTER = new MetapathFormatter();
-  public static final IFormatterFactory INSTANCE = new DefaultFormatterFactory();
+  private CollectionUtil() {
+    // disable construction
+  }
 
-  @NotNull
-  IFlagPathSegment newFlagPathSegment(IModelPositionalPathSegment parentPathSegment, @NotNull IFlagInstance instance);
-
-  @NotNull
-  IFieldPathSegment newFieldPathSegment(IAssemblyPathSegment parentPathSegment, @NotNull IFieldInstance instance,
-      int position);
-
-  @NotNull
-  IAssemblyPathSegment newAssemblyPathSegment(IAssemblyPathSegment parentPathSegment,
-      @NotNull IAssemblyInstance instance,
-      int position);
-
-  @NotNull
-  IRootAssemblyPathSegment newRootAssemblyPathSegment(@NotNull IDocumentPathSegment parentPathSegment,
-      @NotNull IAssemblyInstance instance);
-
-  @NotNull
-  IRootAssemblyPathSegment newRootAssemblyPathSegment(@NotNull IDocumentPathSegment parentPathSegment,
-      @NotNull IAssemblyDefinition definition);
-
-  @NotNull
-  IDocumentPathSegment newDocumentPathSegment(@NotNull IRootAssemblyPathSegment rootSegment);
+  public static <T> Iterable<T> toIterable(Iterator<T> iterator) {
+    return new Iterable<T>() {
+      @Override
+      public Iterator<T> iterator() {
+        return iterator;
+      }
+    };
+  }
 }

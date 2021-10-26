@@ -69,6 +69,21 @@ public class DefaultBindingConfiguration implements BindingConfiguration {
     return getPackageNameForNamespace(namespace.toASCIIString());
   }
 
+  public DefinitionBindingConfiguration getBindingConfigurationForDefinition(INamedModelDefinition definition) {
+    return getDefinitionBindingConfiguration(definition);
+  }
+
+  @Override
+  public String getQualifiedBaseClassName(INamedModelDefinition definition) {
+    DefinitionBindingConfiguration config = getDefinitionBindingConfiguration(definition);
+
+    String retval = null;
+    if (config != null) {
+      retval = config.getQualifiedBaseClassName();
+    }
+    return retval;
+  }
+  
   @Override
   public String getClassName(INamedModelDefinition definition) {
     DefinitionBindingConfiguration config = getDefinitionBindingConfiguration(definition);

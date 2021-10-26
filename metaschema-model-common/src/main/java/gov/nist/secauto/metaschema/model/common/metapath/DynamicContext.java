@@ -26,22 +26,40 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import gov.nist.secauto.metaschema.model.common.metapath.function.DocumentFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.Clock;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class DynamicContext {
+  @NotNull 
   private final StaticContext staticContext;
+  @NotNull 
   private final ZoneId implicitTimeZone;
+  @NotNull 
   private final ZonedDateTime currentDateTime;
-  private final Map<String, INodeItem> availableDocuments;
+  @NotNull 
+  private final Map<@NotNull URI, INodeItem> availableDocuments;
+  private IDocumentLoader documentLoader;
 
-  public DynamicContext(StaticContext staticContext) {
-    super();
+  @SuppressWarnings("null")
+  public DynamicContext(@NotNull StaticContext staticContext) {
     this.staticContext = staticContext;
 
     Clock clock = Clock.systemDefaultZone();
@@ -51,20 +69,78 @@ public class DynamicContext {
     this.availableDocuments = new HashMap<>();
   }
 
+  @NotNull 
   public StaticContext getStaticContext() {
     return staticContext;
   }
 
+  @NotNull 
   public ZoneId getImplicitTimeZone() {
     return implicitTimeZone;
   }
 
+  @NotNull 
   public ZonedDateTime getCurrentDateTime() {
     return currentDateTime;
   }
 
-  public Map<String, INodeItem> getAvailableDocuments() {
-    return availableDocuments;
+  @SuppressWarnings("null")
+  @NotNull 
+  public Map<@NotNull URI, INodeItem> getAvailableDocuments() {
+    return Collections.unmodifiableMap(availableDocuments);
   }
 
+  public IDocumentLoader getDocumentLoader() {
+    return documentLoader;
+  }
+
+  public void setDocumentLoader(@NotNull IDocumentLoader documentLoader) {
+    this.documentLoader = new CachingLoader(documentLoader);
+  }
+
+  private class CachingLoader implements IDocumentLoader {
+    @NotNull
+    private final IDocumentLoader proxy;
+
+    public CachingLoader(@NotNull IDocumentLoader proxy) {
+      this.proxy = proxy;
+    }
+
+    protected IDocumentLoader getDocumentLoader() {
+      return proxy;
+    }
+
+    @Override
+    public synchronized INodeItem loadAsNodeItem(@NotNull URL url) throws IOException {
+      INodeItem retval;
+      try {
+        retval = availableDocuments.get(url.toURI());
+      } catch (URISyntaxException ex) {
+        throw new IOException(ex);
+      }
+      if (retval == null) {
+        retval = getDocumentLoader().loadAsNodeItem(url);
+      }
+      return retval;
+    }
+
+    @Override
+    public synchronized INodeItem loadAsNodeItem(File file) throws FileNotFoundException, IOException {
+      INodeItem retval = availableDocuments.get(file.getCanonicalFile().toURI());
+      if (retval == null) {
+        retval = getDocumentLoader().loadAsNodeItem(file);
+      }
+      return retval;
+    }
+
+    @Override
+    public synchronized INodeItem loadAsNodeItem(InputStream is, URI documentUri) throws IOException {
+      INodeItem retval = availableDocuments.get(documentUri);
+      if (retval == null) {
+        retval = getDocumentLoader().loadAsNodeItem(is, documentUri);
+        availableDocuments.put(documentUri, retval);
+      }
+      return retval;
+    }
+  }
 }

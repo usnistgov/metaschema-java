@@ -25,12 +25,9 @@
  */
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IContentPathSegment;
-
-public interface IContentPathItem extends IPathItem {
-  @Override
-  IContentPathSegment getPathSegment();
-  
-  INamedDefinition getDefinition();
+public enum NodeItemType {
+  DOCUMENT,
+  ASSEMBLY,
+  FIELD,
+  FLAG;
 }

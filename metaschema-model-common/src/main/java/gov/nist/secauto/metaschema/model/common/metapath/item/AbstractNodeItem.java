@@ -24,23 +24,28 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.xdm;
+package gov.nist.secauto.metaschema.model.common.metapath.item;
+
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractIntermediateContentXdmNodeItem<PARENT extends IXdmModelNodeItem> extends AbstractContentXdmNodeItem {
+public abstract class AbstractNodeItem<SEGMENT extends @NotNull IPathSegment> implements INodeItem {
 
-  @Nullable
-  private final PARENT parentNodeItem;
-
-  public AbstractIntermediateContentXdmNodeItem(@NotNull Object value, @Nullable PARENT parentNodeItem) {
-    super(value);
-    this.parentNodeItem = parentNodeItem;
+  @Override
+  public abstract SEGMENT getPathSegment();
+  
+  public String getAnnotatedPath() {
+    StringBuilder builder = new StringBuilder();
+    builder.append(getNodeItemType().toString().toLowerCase());
+    builder.append('(');
+    builder.append(getMetapath());
+    builder.append(')');
+    return builder.toString();
   }
 
   @Override
-  public PARENT getParentNodeItem() {
-    return parentNodeItem;
+  public String toString() {
+    return getAnnotatedPath();
   }
 }

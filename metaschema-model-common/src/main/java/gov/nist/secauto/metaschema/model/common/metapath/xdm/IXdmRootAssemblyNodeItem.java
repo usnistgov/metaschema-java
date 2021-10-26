@@ -26,18 +26,28 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IRootAssemblyPathSegment;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.stream.Stream;
 
 public interface IXdmRootAssemblyNodeItem extends IXdmAssemblyNodeItem, IRootAssemblyPathSegment {
 
   @Override
-  default IXdmRootAssemblyNodeItem getNodeItem() {
+  default IXdmRootAssemblyNodeItem getContextNodeItem() {
     return this;
   }
 
   @Override
   default IRootAssemblyPathSegment getPathSegment() {
     return this;
+  }
+
+  @Override
+  default @NotNull Stream<IPathSegment> getPathStream() {
+    return IRootAssemblyPathSegment.super.getPathStream();
   }
 
 }

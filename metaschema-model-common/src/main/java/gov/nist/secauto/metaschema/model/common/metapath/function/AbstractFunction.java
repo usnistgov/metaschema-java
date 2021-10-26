@@ -288,7 +288,7 @@ public abstract class AbstractFunction implements IFunction {
 
       // logger.info(String.format("Executing function '%s' with arguments '%s'.", toSignature(),
       // convertedArguments.toString()));
-      ISequence<?> result = handler.execute(this, convertedArguments, dynamicContext, focus.getNodeItem());
+      ISequence<?> result = handler.execute(this, convertedArguments, dynamicContext, focus.getContextNodeItem());
 
       // logger.info(String.format("Executed function '%s' with arguments '%s' producing result '%s'",
       // toSignature(), convertedArguments.toString(), result.asList().toString()));

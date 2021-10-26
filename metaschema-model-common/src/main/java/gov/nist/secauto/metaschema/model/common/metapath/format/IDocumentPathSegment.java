@@ -39,8 +39,14 @@ public interface IDocumentPathSegment extends IPathSegment {
   @NotNull
   IRootAssemblyPathSegment getRootAssemblyPathSegment();
 
+  @SuppressWarnings("null")
   @Override
   default Stream<IPathSegment> getPathStream() {
     return Stream.of(this);
+  }
+  
+  @Override
+  default String format(IPathFormatter formatter) {
+    return formatter.formatPathSegment(this);
   }
 }

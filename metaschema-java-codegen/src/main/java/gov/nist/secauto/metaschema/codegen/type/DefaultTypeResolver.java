@@ -99,4 +99,14 @@ public class DefaultTypeResolver implements TypeResolver {
     classNames.add(className);
     return className;
   }
+
+  @Override
+  public ClassName getBaseClassName(INamedModelDefinition definition) {
+    String className = bindingConfiguration.getQualifiedBaseClassName(definition);
+    ClassName retval = null;
+    if (className != null) {
+      retval = ClassName.bestGuess(className);
+    }
+    return retval;
+  }
 }

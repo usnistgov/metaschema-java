@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
-public interface IFlagPathSegment extends IContentPathSegment {
+public interface IFlagPathSegment extends IDefinitionPathSegment {
   @Override
   IFlagInstance getInstance();
 

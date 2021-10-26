@@ -38,13 +38,13 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmDocumentNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
-import gov.nist.secauto.metaschema.binding.util.Util;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.binding.util.CollectionUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -64,13 +64,18 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
-public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
+public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
   public static final int LOOK_AHEAD_BYTES = 32768;
+  @NotNull
   private static final JsonFactory jsonFactory = new JsonFactory();
+  @NotNull
   private static final XmlFactory xmlFactory = new XmlFactory();
+  @NotNull
   private static final YAMLFactory yamlFactory = new YAMLFactory();
 
+  @NotNull
   private final BindingContext bindingContext;
+  @NotNull
   private final MutableConfiguration configuration;
 
   /**
@@ -104,6 +109,7 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
     return configuration.getFeatureSettings();
   }
 
+  @NotNull
   protected Configuration getConfiguration() {
     return configuration;
   }
@@ -137,24 +143,24 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
   }
 
   @Override
-  public INodeItem loadAsNodeItem(URL url) throws IOException {
-    try {
-      return loadAsNodeItem(url.openStream(), url.toURI());
+  public IBoundXdmDocumentNodeItem loadAsNodeItem(URL url) throws IOException {
+    try (InputStream is = url.openStream()) {
+      return loadAsNodeItem(is, url.toURI());
     } catch (URISyntaxException ex) {
       throw new IOException(ex);
     }
   }
 
   @Override
-  public INodeItem loadAsNodeItem(File file) throws FileNotFoundException, IOException {
+  public IBoundXdmDocumentNodeItem loadAsNodeItem(File file) throws FileNotFoundException, IOException {
     try (FileInputStream fis = new FileInputStream(file)) {
-      return loadAsNodeItem(fis,file.getCanonicalFile().toURI());
+      return loadAsNodeItem(fis, file.getCanonicalFile().toURI());
     }
   }
 
   // TODO: consolidate this with the similar load class
   @Override
-  public IBoundXdmNodeItem loadAsNodeItem(InputStream is, @Nullable URI documentUri) throws IOException {
+  public IBoundXdmDocumentNodeItem loadAsNodeItem(InputStream is, URI documentUri) throws IOException {
     BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES);
     bis.mark(LOOK_AHEAD_BYTES);
 
@@ -191,6 +197,13 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
     }
   }
 
+  @NotNull
+  protected <CLASS> IBoundXdmDocumentNodeItem loadAsNodeItem(@NotNull Deserializer<CLASS> deserializer, @NotNull InputStream is,
+      @NotNull URI documentUri)
+      throws BindingException {
+    return (IBoundXdmDocumentNodeItem)deserializer.deserializeToNodeItem(is, documentUri);
+  }
+
   @Override
   public <CLASS> CLASS load(URL url) throws IOException {
     try {
@@ -209,8 +222,8 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
   }
 
   @Override
-  public <CLASS> CLASS load(InputStream is, @Nullable URI documentUri) throws IOException {
-    return Util.toClass(loadAsNodeItem(is, documentUri));
+  public <CLASS> CLASS load(InputStream is, URI documentUri) throws IOException {
+    return IBoundLoader.toClass(loadAsNodeItem(is, documentUri));
   }
 
   @Override
@@ -231,7 +244,7 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
   }
 
   @Override
-  public <CLASS> CLASS load(Class<CLASS> clazz, InputStream is, @Nullable URI documentUri) throws IOException {
+  public <CLASS> CLASS load(Class<CLASS> clazz, InputStream is, URI documentUri) throws IOException {
     BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES);
     bis.mark(LOOK_AHEAD_BYTES);
 
@@ -252,18 +265,16 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
     }
   }
 
-  protected <CLASS> IBoundXdmNodeItem loadAsNodeItem(Deserializer<CLASS> deserializer, InputStream is, URI documentUri)
-      throws BindingException {
-    return deserializer.deserializeToNodeItem(is, documentUri);
-  }
-
-  protected <CLASS> CLASS loadAsObject(Deserializer<CLASS> deserializer, InputStream is, URI documentUri)
+  @NotNull
+  protected <CLASS> CLASS loadAsObject(@NotNull Deserializer<CLASS> deserializer, @NotNull InputStream is,
+      @NotNull URI documentUri)
       throws BindingException {
     IBoundXdmNodeItem nodeItem = loadAsNodeItem(deserializer, is, documentUri);
-    return Util.toClass(nodeItem);
+    return IBoundLoader.toClass(nodeItem);
   }
 
-  protected Format formatFromMatcher(DataFormatMatcher matcher) {
+  @NotNull
+  protected Format formatFromMatcher(@NotNull DataFormatMatcher matcher) {
     Format retval;
     String formatName = matcher.getMatchedFormatName();
     if (YAMLFactory.FORMAT_NAME_YAML.equals(formatName)) {
@@ -278,11 +289,13 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
     return retval;
   }
 
-  protected DataFormatMatcher matchFormat(InputStream is) throws IOException {
+  @NotNull
+  protected DataFormatMatcher matchFormat(@NotNull InputStream is) throws IOException {
     return matchFormat(is, LOOK_AHEAD_BYTES);
   }
 
-  protected DataFormatMatcher matchFormat(InputStream is, int lookAheadBytes) throws IOException {
+  @NotNull
+  protected DataFormatMatcher matchFormat(@NotNull InputStream is, int lookAheadBytes) throws IOException {
 
     DataFormatDetector det = new DataFormatDetector(new JsonFactory[] { yamlFactory, jsonFactory, xmlFactory });
     det = det.withMinimalMatch(MatchStrength.INCONCLUSIVE).withOptimalMatch(MatchStrength.SOLID_MATCH)
@@ -301,18 +314,21 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
     }
   }
 
-  protected Deserializer<?> detectModelXml(InputStream is) throws IOException {
+  @NotNull 
+  protected Deserializer<?> detectModelXml(@NotNull InputStream is) throws IOException {
     Class<?> clazz = detectModelXmlClass(is);
 
     return getDeserializer(clazz, Format.XML, getConfiguration());
   }
 
-  private Deserializer<?> detectModelJson(JsonParser parser, Format format) throws IOException {
+  @NotNull 
+  protected Deserializer<?> detectModelJson(@NotNull JsonParser parser, @NotNull Format format) throws IOException {
     Class<?> clazz = detectModelJsonClass(parser);
     return getDeserializer(clazz, format, getConfiguration());
   }
 
-  protected Class<?> detectModelXmlClass(InputStream is) throws IOException {
+  @NotNull 
+  protected Class<?> detectModelXmlClass(@NotNull InputStream is) throws IOException {
 
     QName startElementQName;
     try {
@@ -346,15 +362,15 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
     return clazz;
   }
 
-  protected Class<?> getBoundClassForXmlQName(QName rootQName) {
+  protected Class<?> getBoundClassForXmlQName(@NotNull QName rootQName) {
     return getBindingContext().getBoundClassForXmlQName(rootQName);
   }
 
-  protected Class<?> getBoundClassForJsonName(String rootName) {
+  protected Class<?> getBoundClassForJsonName(@NotNull String rootName) {
     return getBindingContext().getBoundClassForJsonName(rootName);
   }
 
-  protected Class<?> detectModelJsonClass(JsonParser parser) throws IOException {
+  protected Class<?> detectModelJsonClass(@NotNull JsonParser parser) throws IOException {
     Class<?> retval = null;
     JsonUtil.consumeAndAssert(parser, JsonToken.START_OBJECT);
     outer: while (JsonToken.FIELD_NAME.equals(parser.nextToken())) {
@@ -371,7 +387,7 @@ public class DefaultBoundLoader implements BoundLoader, MutableConfiguration {
     return retval;
   }
 
-  protected <CLASS> Deserializer<CLASS> getDeserializer(Class<CLASS> clazz, Format format, Configuration config) {
+  protected <CLASS> Deserializer<CLASS> getDeserializer(@NotNull Class<CLASS> clazz, @NotNull Format format, @NotNull Configuration config) {
     Deserializer<CLASS> retval = getBindingContext().newDeserializer(format, clazz);
     for (Map.Entry<Feature, Boolean> entry : config.getFeatureSettings().entrySet()) {
       if (Boolean.TRUE.equals(entry.getValue())) {

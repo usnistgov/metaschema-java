@@ -23,44 +23,27 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 
-package gov.nist.secauto.metaschema.binding.util;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IValuedNodeItem;
 
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IContentNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+import java.util.stream.Stream;
 
-import org.jetbrains.annotations.NotNull;
+public interface IXdmValuedNodeItem extends IXdmNodeItem, IValuedNodeItem {
 
-import java.util.Iterator;
+  @Override
+  IXdmNodeItem getParentNodeItem();
 
-public class Util {
+  @Override
+  IXdmModelNodeItem getParentContentNodeItem();
 
-  private Util() {
-    // disable construction
-  }
-
-  public static <T> Iterable<T> toIterable(Iterator<T> iterator) {
-    return new Iterable<T>() {
-      @Override
-      public Iterator<T> iterator() {
-        return iterator;
-      }
-    };
-  }
-
-  @NotNull
-  public static <CLASS> CLASS toClass(@NotNull IBoundXdmNodeItem nodeItem) {
-    CLASS retval;
-    if (nodeItem instanceof IDocumentNodeItem) {
-      @SuppressWarnings("unchecked") CLASS value
-          = (CLASS) ((IDocumentNodeItem) nodeItem).getRootAssemblyNodeItem().getValue();
-      retval = value;
-    } else {
-      @SuppressWarnings("unchecked") CLASS value = (CLASS) ((IContentNodeItem) nodeItem).getValue();
-      retval = value;
-    }
+  @SuppressWarnings("null")
+  @Override
+  default Stream<IPathSegment> getPathStream() {
+    Stream<IPathSegment> retval = Stream.of(this);
+    IXdmNodeItem parent = getParentNodeItem();
+    retval = parent == null ? retval : Stream.concat(parent.getPathStream(), retval);
     return retval;
   }
-
 }
