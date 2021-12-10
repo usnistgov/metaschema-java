@@ -121,7 +121,7 @@
 		<dependency.jaxb.version>3.0.0</dependency.jaxb.version>
 		<dependency.junit5.version>5.7.2</dependency.junit5.version>
 		<dependency.junit5-platform-launcher.version>1.7.2</dependency.junit5-platform-launcher.version>
-		<dependency.log4j2.version>2.14.0</dependency.log4j2.version>
+		<dependency.log4j2.version>2.15.0</dependency.log4j2.version>
 		<dependency.moxy.version>3.0.0</dependency.moxy.version>
 		<dependency.woodstox.version>6.2.3</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.0.1</dependency.xmlbeans.version>
