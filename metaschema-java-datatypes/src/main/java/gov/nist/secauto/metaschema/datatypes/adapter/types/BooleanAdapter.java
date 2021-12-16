@@ -46,7 +46,10 @@ public class BooleanAdapter
 
   @Override
   public Boolean parse(JsonParser parser) throws IOException {
-    return parser.getBooleanValue();
+    Boolean value = parser.getBooleanValue();
+    // skip over value
+    parser.nextToken();
+    return value;
   }
 
   @Override
