@@ -68,9 +68,9 @@ public class IPv6AddressAdapter extends AbstractJavaTypeAdapter<IPv6Address, IIP
   }
 
   @Override
-  public IPv6Address copy(IPv6Address obj) {
+  public IPv6Address copy(Object obj) {
     // value is immutable
-    return obj;
+    return (IPv6Address)obj;
   }
 
   @SuppressWarnings("null")

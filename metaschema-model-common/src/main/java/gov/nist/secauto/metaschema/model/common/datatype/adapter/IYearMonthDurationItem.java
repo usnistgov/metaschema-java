@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +53,7 @@ public interface IYearMonthDurationItem extends IDurationItem {
   }
 
   @NotNull
-  public static IYearMonthDurationItem cast(@NotNull IAnyAtomicItem item) {
+  public static IYearMonthDurationItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.YEAR_MONTH_DURATION.cast(item);
   }
 

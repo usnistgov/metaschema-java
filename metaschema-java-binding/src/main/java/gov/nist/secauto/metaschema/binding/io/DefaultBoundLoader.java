@@ -40,7 +40,6 @@ import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmDocumentNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
-import gov.nist.secauto.metaschema.binding.util.CollectionUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
@@ -223,7 +222,7 @@ public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
 
   @Override
   public <CLASS> CLASS load(InputStream is, URI documentUri) throws IOException {
-    return IBoundLoader.toClass(loadAsNodeItem(is, documentUri));
+    return IBoundLoader.toBoundObject(loadAsNodeItem(is, documentUri));
   }
 
   @Override
@@ -270,7 +269,7 @@ public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
       @NotNull URI documentUri)
       throws BindingException {
     IBoundXdmNodeItem nodeItem = loadAsNodeItem(deserializer, is, documentUri);
-    return IBoundLoader.toClass(nodeItem);
+    return IBoundLoader.toBoundObject(nodeItem);
   }
 
   @NotNull

@@ -28,14 +28,41 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.stream.Stream;
 
 public interface IFunctionLibrary {
 
-  Stream<IFunction> getFunctionsAsStream();
+  /**
+   * Retrieve the collection of function signatures in this library as a stream.
+   * 
+   * @return a stream of function signatures
+   */
+  Stream<@NotNull IFunction> getFunctionsAsStream();
 
-  boolean hasFunction(String name, List<IExpression<?>> args);
+  /**
+   * Determine if there is a function with the provided name that supports the signature of the
+   * provided methods.
+   * 
+   * @param name
+   *          the name of a group of functions
+   * @param arguments
+   *          a list of argument expressions for use in determining an argument signature match
+   * @return {@code true} if a function signature matches or {@code false} otherwise
+   */
+  boolean hasFunction(@NotNull String name, @NotNull List<@NotNull IExpression<?>> arguments);
 
-  IFunction getFunction(String name, List<IExpression<?>> args);
+  /**
+   * Retrieve the function with the provided name that supports the signature of the provided methods,
+   * if such a function exists.
+   * 
+   * @param name
+   *          the name of a group of functions
+   * @param arguments
+   *          a list of argument expressions for use in determining an argument signature match
+   * @return the matching function or {@code null} if no match exists
+   */
+  IFunction getFunction(@NotNull String name, @NotNull List<@NotNull IExpression<?>> arguments);
 }

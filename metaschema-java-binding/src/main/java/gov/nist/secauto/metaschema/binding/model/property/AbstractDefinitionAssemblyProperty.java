@@ -34,6 +34,8 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
+import org.jetbrains.annotations.NotNull;
+
 public abstract class AbstractDefinitionAssemblyProperty extends AbstractAssemblyProperty {
 
   public AbstractDefinitionAssemblyProperty(AssemblyClassBinding rootAssemblyDefinition) {

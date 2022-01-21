@@ -28,31 +28,70 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public interface IFunction {
+  public enum FunctionProperty {
+    /**
+     * Indicates that the function will produce identical results for the same arguments (see XPath 3.1
+     * <a href="https://www.w3.org/TR/xpath-functions-31/#dt-deterministic">deterministic</a>). If not
+     * assigned to a function definition, a function call with the same arguments is not guaranteed to
+     * produce the same results in the same order for subsequent calls within the same execution
+     * context.
+     */
+    DETERMINISTIC,
+    /**
+     * Indicates that the result of the function depends on property values within the static or dynamic
+     * context and the provided arguments (see XPath 3.1
+     * <a href="https://www.w3.org/TR/xpath-functions-31/#dt-context-dependent">context-dependent</a>).
+     * If not assigned to a function definition, a call will not be affected by the property values
+     * within the static or dynamic context and will not have any arguments.
+     */
+    CONTEXT_DEPENDENT,
+    /**
+     * Indicates that the result of the function depends on the current focus (see XPath 3.1
+     * <a href="https://www.w3.org/TR/xpath-functions-31/#dt-focus-independent">focus-dependent</a>). If
+     * not assigned to a function definition, a call will not be affected by the current focus.
+     */
+    FOCUS_DEPENDENT,
+    /**
+     * The function allows the last argument to be repeated any number of times.
+     */
+    UNBOUNDED_ARITY;
+  }
 
   /**
    * Retrieve the name of the function.
    * 
    * @return the function's name
    */
+  @NotNull
   String getName();
+
+  /**
+   * Retrieve the set of assigned function properties.
+   * 
+   * @return the set of properties or an empty set
+   */
+  @NotNull
+  Set<FunctionProperty> getProperties();
 
   /**
    * Retrieve the list of function arguments.
    * 
    * @return the function arguments or an empty list if there are none
    */
+  @NotNull
   List<IArgument> getArguments();
 
   /**
@@ -63,27 +102,63 @@ public interface IFunction {
   int arity();
 
   /**
+   * Determines if the result of the function call will produce identical results when provided the
+   * same implicit or explicit arguments.
+   * 
+   * @return {@code true} if function is deterministic or {@code false} otherwise
+   * @see FunctionProperty#DETERMINISTIC
+   */
+  default boolean isDeterministic() {
+    return getProperties().contains(FunctionProperty.DETERMINISTIC);
+  }
+
+  /**
+   * Determines if the result of the function call depends on property values within the static or
+   * dynamic context and the provided arguments.
+   * 
+   * @return {@code true} if function is context dependent or {@code false} otherwise
+   * @see FunctionProperty#CONTEXT_DEPENDENT
+   */
+  default boolean isContextDepenent() {
+    return getProperties().contains(FunctionProperty.CONTEXT_DEPENDENT);
+  }
+
+  /**
+   * Determines if the result of the function call depends on the current focus.
+   * 
+   * @return {@code true} if function is focus dependent or {@code false} otherwise
+   * @see FunctionProperty#FOCUS_DEPENDENT
+   */
+  default boolean isFocusDepenent() {
+    return getProperties().contains(FunctionProperty.FOCUS_DEPENDENT);
+  }
+
+  /**
    * Determines if the final argument can be repeated.
    * 
    * @return {@code true} if the final argument can be repeated or {@code false} otherwise
+   * @see FunctionProperty#UNBOUNDED_ARITY
    */
-  boolean isArityUnbounded();
+  default boolean isArityUnbounded() {
+    return getProperties().contains(FunctionProperty.UNBOUNDED_ARITY);
+  }
 
   /**
    * Retrieve the function result sequence type.
    * 
    * @return the function result sequence type
    */
+  @NotNull
   ISequenceType getResult();
 
-  /**
-   * Determines by static analysis if the function supports the expression arguments provided.
-   * 
-   * @param arguments
-   *          the expression arguments to evaluate
-   * @return {@code true} if the arguments are supported or {@code false} otherwise
-   */
-  boolean isSupported(List<IExpression<?>> arguments);
+//  /**
+//   * Determines by static analysis if the function supports the expression arguments provided.
+//   * 
+//   * @param arguments
+//   *          the expression arguments to evaluate
+//   * @return {@code true} if the arguments are supported or {@code false} otherwise
+//   */
+//  boolean isSupported(List<IExpression<?>> arguments);
 
   @NotNull
   ISequence<?> execute(@NotNull List<@NotNull ISequence<?>> arguments, @NotNull DynamicContext dynamicContext,
@@ -102,8 +177,11 @@ public interface IFunction {
 
   public static class Builder {
     private String name;
-    private List<IArgument> arguments = new LinkedList<>();
-    private boolean allowUnboundedArity = false;
+    @SuppressWarnings("null")
+    @NotNull
+    private final EnumSet<FunctionProperty> properties = EnumSet.noneOf(FunctionProperty.class);
+    @NotNull
+    private final List<@NotNull IArgument> arguments = new LinkedList<>();
     private Class<? extends IItem> returnType = IItem.class;
     private Occurrence returnOccurrence = Occurrence.ONE;
     private FunctionExecutor functionHandler = null;
@@ -122,6 +200,45 @@ public interface IFunction {
         throw new IllegalArgumentException("the name must be non-blank");
       }
       this.name = name.trim();
+      return this;
+    }
+
+    public Builder deterministic() {
+      properties.add(FunctionProperty.DETERMINISTIC);
+      return this;
+    }
+
+    public Builder nonDeterministic() {
+      properties.remove(FunctionProperty.DETERMINISTIC);
+      return this;
+    }
+
+    public Builder contextDependent() {
+      properties.add(FunctionProperty.CONTEXT_DEPENDENT);
+      return this;
+    }
+
+    public Builder contextIndependent() {
+      properties.remove(FunctionProperty.CONTEXT_DEPENDENT);
+      return this;
+    }
+
+    public Builder focusDependent() {
+      properties.add(FunctionProperty.FOCUS_DEPENDENT);
+      return this;
+    }
+
+    public Builder focusIndependent() {
+      properties.remove(FunctionProperty.FOCUS_DEPENDENT);
+      return this;
+    }
+
+    public Builder allowUnboundedArity(boolean allow) {
+      if (allow) {
+        properties.add(FunctionProperty.UNBOUNDED_ARITY);
+      } else {
+        properties.remove(FunctionProperty.UNBOUNDED_ARITY);
+      }
       return this;
     }
 
@@ -163,11 +280,6 @@ public interface IFunction {
       return this;
     }
 
-    public Builder allowUnboundedArity(boolean allow) {
-      this.allowUnboundedArity = allow;
-      return this;
-    }
-
     public Builder functionHandler(@NotNull FunctionExecutor handler) {
       Objects.requireNonNull(handler, "handler");
       this.functionHandler = handler;
@@ -178,15 +290,6 @@ public interface IFunction {
       if (name == null) {
         throw new IllegalStateException("the name must not be null");
       }
-      //
-      // if (returnType == null && returnOccurrence != null) {
-      // throw new IllegalStateException("if the return type is null, the return occurrence must also be
-      // null");
-      // } else if (returnType != null && returnOccurrence == null) {
-      // throw new IllegalStateException("if the return occurrence is null, the return type must also be
-      // null");
-      // }
-      //
 
       if (returnType == null) {
         throw new IllegalStateException("the return type must not be null");
@@ -196,7 +299,7 @@ public interface IFunction {
         throw new IllegalStateException("the return occurrence must not be null");
       }
 
-      if (allowUnboundedArity && arguments.isEmpty()) {
+      if (properties.contains(FunctionProperty.UNBOUNDED_ARITY) && arguments.isEmpty()) {
         throw new IllegalStateException("to allow unbounded arity, at least one argument must be provided");
       }
 
@@ -213,7 +316,10 @@ public interface IFunction {
       } else {
         sequenceType = new SequenceTypeImpl(returnType, returnOccurrence);
       }
-      return new StaticFunction(name, new ArrayList<>(arguments), allowUnboundedArity, sequenceType, functionHandler);
+
+      @SuppressWarnings("null")
+      IFunction retval = new DefaultFunction(name, properties, new ArrayList<>(arguments), sequenceType, functionHandler);
+      return retval;
     }
 
   }

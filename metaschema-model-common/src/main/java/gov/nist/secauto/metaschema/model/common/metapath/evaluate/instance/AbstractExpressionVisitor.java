@@ -57,9 +57,14 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Wildcard;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 public class AbstractExpressionVisitor<RESULT, CONTEXT> implements ExpressionVisitor<RESULT, CONTEXT> {
 
-  protected RESULT visitChildren(IExpression<?> expr, CONTEXT context) {
+  @Nullable
+  protected RESULT visitChildren(@NotNull IExpression<?> expr, CONTEXT context) {
+    @Nullable
     RESULT result = defaultResult();
     int numChildren = expr.getChildCount();
     for (int idx = 0; idx < numChildren; idx++) {
@@ -75,14 +80,16 @@ public class AbstractExpressionVisitor<RESULT, CONTEXT> implements ExpressionVis
     return result;
   }
 
-  protected boolean shouldVisitNextChild(IExpression<?> expr, RESULT result, CONTEXT context) {
+  protected boolean shouldVisitNextChild(@NotNull IExpression<?> expr, @Nullable RESULT result, CONTEXT context) {
     return true;
   }
 
-  protected RESULT aggregateResult(RESULT result, RESULT nextResult) {
+  @Nullable
+  protected RESULT aggregateResult(@Nullable RESULT result, @Nullable RESULT nextResult) {
     return nextResult;
   }
 
+  @Nullable
   protected RESULT defaultResult() {
     return null;
   }

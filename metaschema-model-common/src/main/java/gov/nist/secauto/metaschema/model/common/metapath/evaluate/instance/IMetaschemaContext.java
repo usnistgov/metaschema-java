@@ -29,13 +29,16 @@ package gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Predicate;
 
 public interface IMetaschemaContext {
 
   IInstanceSet getInstanceSet();
 
-  IMetaschemaContext newInstanceMetaschemaContext(IInstanceSet leftResult);
+  @NotNull 
+  IMetaschemaContext newInstanceMetaschemaContext(@NotNull IInstanceSet leftResult);
 
   IInstanceSet getChildFlag(Predicate<IInstance> filter);
 

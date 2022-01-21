@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding;
 
+import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.Deserializer;
 import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.io.IBoundLoader;
@@ -104,7 +105,8 @@ public interface BindingContext {
 
   // boolean hasClassBinding(Class<?> clazz) throws BindingException;
 
-//  <TYPE> void registerSubclassType(@NotNull Class<TYPE> originalClass, @NotNull Class<? extends TYPE> replacementClass);
+  // <TYPE> void registerSubclassType(@NotNull Class<TYPE> originalClass, @NotNull Class<? extends
+  // TYPE> replacementClass);
 
   /**
    * Get the {@link ClassBinding} instance for a {@link MetaschemaAssembly} or {@link MetaschemaField}
@@ -118,7 +120,7 @@ public interface BindingContext {
    * @throws IllegalArgumentException
    *           if the provided class is not bound to a Metaschema assembly or field
    */
-  ClassBinding getClassBinding(@NotNull Class<?> clazz);
+  ClassBinding getClassBinding(@NotNull Class<?> clazz) throws IllegalArgumentException, NullPointerException;
 
   /**
    * Gets a data {@link Serializer} which can be used to write Java instance data for the provided
@@ -175,4 +177,22 @@ public interface BindingContext {
    */
   @NotNull
   IBoundLoader newBoundLoader();
+
+  /**
+   * Create a deep copy of the provided bound object.
+   * 
+   * @param <CLASS>
+   *          the bound object type
+   * @param other the object to copy
+   * @param parentInstance the object's parent or {@code null}
+   * @return
+   * @throws BindingException
+   *           if an error occurred copying content between java instances
+   * @throws NullPointerException
+   *           if the provided object is {@code null}
+   * @throws IllegalArgumentException
+   *           if the provided class is not bound to a Metaschema assembly or field
+   */
+  @NotNull
+  <CLASS> CLASS copyBoundObject(@NotNull CLASS other, Object parentInstance) throws BindingException;
 }

@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +38,7 @@ public interface ITokenItem extends IStringItem {
   }
 
   @NotNull
-  public static ITokenItem cast(@NotNull IAnyAtomicItem item) {
+  public static ITokenItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.TOKEN.cast(item);
   }
 

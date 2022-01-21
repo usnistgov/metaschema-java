@@ -59,10 +59,19 @@ public enum Occurrence {
     this.optional = optional;
   }
 
+  /**
+   * Get the occurrence indicator to use in the signature string for the argument.
+   * 
+   * @return the occurrence indicator
+   */
   public String getIndicator() {
     return indicator;
   }
 
+  /**
+   * Determine if providing a value is optional based on the occurrence.
+   * @return {@code true} if providing a value is optional or {@code false} if required
+   */
   public boolean isOptional() {
     return optional;
   }

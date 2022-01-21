@@ -50,9 +50,9 @@ public class UuidAdapter extends AbstractJavaTypeAdapter<UUID, IUuidItem> implem
   }
 
   @Override
-  public UUID copy(UUID obj) {
+  public UUID copy(Object obj) {
     // a UUID is immutable
-    return obj;
+    return (UUID)obj;
   }
 
   @SuppressWarnings("null")

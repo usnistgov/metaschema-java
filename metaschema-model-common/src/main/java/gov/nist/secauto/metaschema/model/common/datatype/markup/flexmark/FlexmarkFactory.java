@@ -125,9 +125,9 @@ public class FlexmarkFactory {
     builder.set(TablesExtension.APPEND_MISSING_COLUMNS, true);
     builder.set(TablesExtension.DISCARD_EXTRA_COLUMNS, true);
     builder.set(TablesExtension.HEADER_SEPARATOR_COLUMN_MATCH, true);
-    builder.set(TypographicExtension.SINGLE_QUOTE_UNMATCHED, null);
+    builder.set(TypographicExtension.SINGLE_QUOTE_UNMATCHED, "'");
     builder.set(TypographicExtension.ENABLE_QUOTES, true);
-    builder.set(TypographicExtension.ENABLE_SMARTS, true);
+    builder.set(TypographicExtension.ENABLE_SMARTS, false);
     builder.set(TypographicExtension.DOUBLE_QUOTE_OPEN, "\"");
     builder.set(TypographicExtension.DOUBLE_QUOTE_CLOSE, "\"");
     builder.set(FlexmarkHtmlConverter.TYPOGRAPHIC_REPLACEMENT_MAP, TYPOGRAPHIC_REPLACEMENT_MAP);

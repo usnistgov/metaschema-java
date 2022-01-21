@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IDateType;
 
@@ -51,7 +52,7 @@ public interface IDateItem extends IAnyAtomicItem {
   }
 
   @NotNull
-  public static IDateItem cast(@NotNull IAnyAtomicItem item) {
+  public static IDateItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.DATE.cast(item);
   }
 

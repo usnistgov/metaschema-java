@@ -47,6 +47,9 @@ public class FnDocFunction {
 
   static final IFunction SIGNATURE = IFunction.newBuilder()
       .name("doc")
+      .deterministic()
+      .contextDependent()
+      .focusIndependent()
       .argument(IArgument.newBuilder()
           .name("arg1")
           .type(IStringItem.class)

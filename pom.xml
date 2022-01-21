@@ -117,6 +117,7 @@
 
 		<dependency.antlr4.version>4.9.2</dependency.antlr4.version>
 		<dependency.commons-lang3.version>3.11</dependency.commons-lang3.version>
+		<dependency.eclipse-jdt-annotation.version>2.2.600</dependency.eclipse-jdt-annotation.version>
 		<dependency.flexmark.version>0.62.2</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.30</dependency.freemarker.version>
 		<dependency.jackson.version>2.12.1</dependency.jackson.version>
@@ -317,8 +318,16 @@
 				<groupId>org.jetbrains</groupId>
 				<artifactId>annotations</artifactId>
 				<version>${dependency.jetbrains-annotation.version}</version>
+				<scope>provided</scope>
 			</dependency>
-
+			<!--
+			<dependency>
+				<groupId>org.eclipse.jdt</groupId>
+				<artifactId>org.eclipse.jdt.annotation</artifactId>
+				<version>>${dependency.eclipse-jdt-annotation.version}</version>
+				<scope>provided</scope>
+			</dependency>
+		-->
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-api</artifactId>

@@ -41,11 +41,11 @@ import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -79,14 +79,14 @@ public class ListPropertyInfo
   }
 
   @Override
-  public Stream<?> getItemsFromParentInstance(Object parentInstance) {
+  public List<? extends Object> getItemsFromParentInstance(Object parentInstance) {
     Object value = getProperty().getValue(parentInstance);
     return getItemsFromValue(value);
   }
 
   @Override
-  public Stream<?> getItemsFromValue(Object value) {
-    return value == null ? Stream.empty() : ((List<?>) value).stream();
+  public List<?> getItemsFromValue(Object value) {
+    return value == null ? List.of() : (List<?>) value;
   }
 
   @Override
@@ -177,8 +177,7 @@ public class ListPropertyInfo
   public boolean writeValue(Object parentInstance, QName parentName, XmlWritingContext context)
       throws XMLStreamException, IOException {
     NamedModelProperty property = getProperty();
-    @SuppressWarnings("unchecked")
-    List<? extends Object> items = (List<? extends Object>) property.getValue(parentInstance);
+    List<? extends Object> items = getItemsFromParentInstance(parentInstance);
     for (Object item : items) {
       property.writeItem(item, parentName, context);
     }
@@ -187,14 +186,7 @@ public class ListPropertyInfo
 
   @Override
   public void writeValue(Object parentInstance, JsonWritingContext context) throws IOException {
-    NamedModelProperty property = getProperty();
-    @SuppressWarnings("unchecked")
-    List<? extends Object> items = (List<? extends Object>) property.getValue(parentInstance);
-
-    // if (items.isEmpty()) {
-    // // nothing to write
-    // return;
-    // }
+    List<? extends Object> items = getItemsFromParentInstance(parentInstance);
 
     JsonGenerator writer = context.getWriter();
 
@@ -215,9 +207,16 @@ public class ListPropertyInfo
 
   @Override
   public boolean isValueSet(Object parentInstance) throws IOException {
+    List<? extends Object> items = getItemsFromParentInstance(parentInstance);
+    return !items.isEmpty();
+  }
+
+  @Override
+  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector) throws BindingException {
     NamedModelProperty property = getProperty();
-    @SuppressWarnings("unchecked")
-    List<? extends Object> items = (List<? extends Object>) property.getValue(parentInstance);
-    return items != null && !items.isEmpty();
+
+    for (Object item : getItemsFromParentInstance(fromInstance)) {
+      collector.add(property.copyItem(item, toInstance));
+    }
   }
 }

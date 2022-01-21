@@ -48,9 +48,9 @@ public class DayTimeAdapter extends AbstractJavaTypeAdapter<Duration, IDayTimeDu
   }
 
   @Override
-  public Duration copy(Duration obj) {
+  public Duration copy(Object obj) {
     // value in immutable
-    return obj;
+    return (Duration)obj;
   }
 
   @SuppressWarnings("null")

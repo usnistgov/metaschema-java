@@ -27,17 +27,39 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function.library;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IAnyUriItem;
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.net.URI;
+import java.util.List;
 
 /**
  * Since a node doesn't have a base URI in Metaschema, this is an alias for the document-uri
  * function.
  */
 public class FnBaseUriFunction {
+
+  static final IFunction SIGNATURE_NO_ARG = IFunction.newBuilder()
+      .name("base-uri")
+      .deterministic()
+      .contextDependent()
+      .focusDependent()
+      .returnType(IAnyUriItem.class)
+      .returnOne()
+      .functionHandler(FnBaseUriFunction::executeNoArg)
+      .build();
+
   static final IFunction SIGNATURE_ONE_ARG = IFunction.newBuilder()
       .name("base-uri")
+      .deterministic()
+      .contextIndependent()
+      .focusIndependent()
       .argument(IArgument.newBuilder()
           .name("arg1")
           .type(INodeItem.class)
@@ -45,17 +67,51 @@ public class FnBaseUriFunction {
           .build())
       .returnType(IAnyUriItem.class)
       .returnOne()
-      .functionHandler(FnDocumentUriFunction::executeOneArg)
+      .functionHandler(FnBaseUriFunction::executeOneArg)
       .build();
 
-  static final IFunction SIGNATURE_NO_ARG = IFunction.newBuilder()
-      .name("base-uri")
-      .returnType(IAnyUriItem.class)
-      .returnOne()
-      .functionHandler(FnDocumentUriFunction::executeNoArg)
-      .build();
+  @NotNull
+  public static ISequence<IAnyUriItem> executeNoArg(@NotNull IFunction function,
+      @NotNull List<@NotNull ISequence<?>> arguments,
+      @NotNull DynamicContext dynamicContext,
+      INodeItem focus) {
+
+    INodeItem item = focus;
+    if (item == null) {
+      return ISequence.empty();
+    }
+
+    IAnyUriItem uri = fnBaseUri(item);
+    return ISequence.of(uri);
+  }
+
+  @NotNull
+  public static ISequence<IAnyUriItem> executeOneArg(@NotNull IFunction function,
+      @NotNull List<@NotNull ISequence<?>> arguments,
+      @NotNull DynamicContext dynamicContext,
+      INodeItem focus) {
+
+    ISequence<? extends INodeItem> arg = FunctionUtils.asType(arguments.get(0));
+
+    INodeItem item = FunctionUtils.getFirstItem(arg, true);
+    if (item == null) {
+      return ISequence.empty();
+    }
+
+    IAnyUriItem uri = fnBaseUri(item);
+    return ISequence.of(uri);
+  }
 
   public static IAnyUriItem fnBaseUri(INodeItem arg) {
-    return FnDocumentUriFunction.fnDocumentUri(arg);
+    if (arg == null) {
+      return null;
+    }
+
+    // this behavior is different from XPath
+    URI baseUri = arg.getBaseUri();
+    if (baseUri == null) {
+      return null;
+    }
+    return IAnyUriItem.valueOf(baseUri);
   }
 }

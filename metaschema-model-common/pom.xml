@@ -23,16 +23,16 @@
 
 	<description>A simple metaschema-model-common.</description>
 
-	<repositories>
-		<repository>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>central</id>
-			<name>bintray</name>
-			<url>https://jcenter.bintray.com</url>
-		</repository>
-	</repositories>
+<!-- 	<repositories> -->
+<!-- 		<repository> -->
+<!-- 			<snapshots> -->
+<!-- 				<enabled>false</enabled> -->
+<!-- 			</snapshots> -->
+<!-- 			<id>central</id> -->
+<!-- 			<name>bintray</name> -->
+<!-- 			<url>https://jcenter.bintray.com</url> -->
+<!-- 		</repository> -->
+<!-- 	</repositories> -->
 
 	<dependencies>
 		<dependency>
@@ -110,6 +110,11 @@
 			<groupId>org.jetbrains</groupId>
 			<artifactId>annotations</artifactId>
 		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.eclipse.jdt</groupId> -->
+<!-- 			<artifactId>org.eclipse.jdt.annotation</artifactId> -->
+<!-- 			<scope>provided</scope> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>com.adelean</groupId>

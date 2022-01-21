@@ -31,41 +31,56 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnDocFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.type.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.type.TypeMetapathException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class AbstractFunction implements IFunction {
-  private static final Logger logger = LogManager.getLogger(AbstractFunction.class);
+public class DefaultFunction implements IFunction {
+  // private static final Logger logger = LogManager.getLogger(AbstractFunction.class);
+
+  @NotNull
+  private final Set<FunctionProperty> properties;
+  @NotNull
   private final String name;
+  @NotNull
   private final List<IArgument> arguments;
-  private final boolean unboundedArity;
+  @NotNull
   private final ISequenceType result;
+  @NotNull
   private final FunctionExecutor handler;
 
-  protected AbstractFunction(
-      String name,
-      List<IArgument> arguments,
-      boolean unboundedArity,
-      ISequenceType result,
-      FunctionExecutor handler) {
+  /**
+   * Construct a new function signature.
+   * 
+   * @param name the name of the function
+   * @param properties the characteristics of the function
+   * @param arguments the argument signatures or an empty list
+   * @param result the type of the result
+   * @param handler the handler to call to execute the function
+   */
+  @SuppressWarnings("null")
+  DefaultFunction(
+      @NotNull String name,
+      @NotNull EnumSet<FunctionProperty> properties,
+      @NotNull List<IArgument> arguments,
+      @NotNull ISequenceType result,
+      @NotNull FunctionExecutor handler) {
     this.name = name;
+    this.properties = Collections.unmodifiableSet(properties);
     this.arguments = arguments;
-    this.unboundedArity = unboundedArity;
     this.result = result;
     this.handler = handler;
   }
@@ -76,8 +91,8 @@ public abstract class AbstractFunction implements IFunction {
   }
 
   @Override
-  public boolean isArityUnbounded() {
-    return unboundedArity;
+  public Set<FunctionProperty> getProperties() {
+    return properties;
   }
 
   @Override
@@ -94,70 +109,81 @@ public abstract class AbstractFunction implements IFunction {
   public ISequenceType getResult() {
     return result;
   }
+  //
+  // @Override
+  // public boolean isSupported(List<IExpression<?>> expressionArguments) {
+  // boolean retval;
+  // if (expressionArguments.isEmpty() && getArguments().isEmpty()) {
+  // // no arguments
+  // retval = true;
+  // // } else if (arity() == 1 && expressionArguments.isEmpty()) {
+  // // // the context item will be the argument
+  // // // TODO: check the context item for type compatibility
+  // // retval = true;
+  // } else if ((expressionArguments.size() == getArguments().size())
+  // || (isArityUnbounded() && expressionArguments.size() > getArguments().size())) {
+  // retval = true;
+  // // check that argument requirements are satisfied
+  // Iterator<IArgument> argumentIterator = getArguments().iterator();
+  // Iterator<IExpression<?>> expressionIterator = expressionArguments.iterator();
+  //
+  // IArgument argument = null;
+  // while (argumentIterator.hasNext()) {
+  // argument = argumentIterator.next();
+  // IExpression<?> expression = expressionIterator.hasNext() ? expressionIterator.next() : null;
+  //
+  // if (expression != null) {
+  // // is the expression supported by the argument?
+  // retval = argument.isSupported(expression);
+  // if (!retval) {
+  // break;
+  // }
+  // } else {
+  // // there are no more expression arguments. Make sure that the remaining arguments are optional
+  // if (!argument.getSequenceType().getOccurrence().isOptional()) {
+  // retval = false;
+  // break;
+  // }
+  // }
+  // }
+  //
+  // if (retval && expressionIterator.hasNext()) {
+  // if (isArityUnbounded()) {
+  // // check remaining expressions against the last argument
+  // while (expressionIterator.hasNext()) {
+  // IExpression<?> expression = expressionIterator.next();
+  // @SuppressWarnings("null")
+  // boolean result = argument.isSupported(expression);
+  // if (!result) {
+  // retval = result;
+  // break;
+  // }
+  // }
+  // } else {
+  // // there are extra expressions, which do not match the arguments
+  // retval = false;
+  // }
+  // }
+  // } else {
+  // retval = false;
+  // }
+  // return retval;
+  // }
 
-  @Override
-  public boolean isSupported(List<IExpression<?>> expressionArguments) {
-    boolean retval;
-    if (expressionArguments.isEmpty() && getArguments().isEmpty()) {
-      // no arguments
-      retval = true;
-      // } else if (arity() == 1 && expressionArguments.isEmpty()) {
-      // // the context item will be the argument
-      // // TODO: check the context item for type compatibility
-      // retval = true;
-    } else if ((expressionArguments.size() == getArguments().size())
-        || (isArityUnbounded() && expressionArguments.size() > getArguments().size())) {
-      retval = true;
-      // check that argument requirements are satisfied
-      Iterator<IArgument> argumentIterator = getArguments().iterator();
-      Iterator<IExpression<?>> expressionIterator = expressionArguments.iterator();
-
-      IArgument argument = null;
-      while (argumentIterator.hasNext()) {
-        argument = argumentIterator.next();
-        IExpression<?> expression = expressionIterator.hasNext() ? expressionIterator.next() : null;
-
-        if (expression != null) {
-          // is the expression supported by the argument?
-          retval = argument.isSupported(expression);
-          if (!retval) {
-            break;
-          }
-        } else {
-          // there are no more expression arguments. Make sure that the remaining arguments are optional
-          if (!argument.getSequenceType().getOccurrence().isOptional()) {
-            retval = false;
-            break;
-          }
-        }
-      }
-
-      if (retval && expressionIterator.hasNext()) {
-        if (isArityUnbounded()) {
-          // check remaining expressions against the last argument
-          while (expressionIterator.hasNext()) {
-            IExpression<?> expression = expressionIterator.next();
-            @SuppressWarnings("null") boolean result = argument.isSupported(expression);
-            if (!result) {
-              retval = result;
-              break;
-            }
-          }
-        } else {
-          // there are extra expressions, which do not match the arguments
-          retval = false;
-        }
-      }
-    } else {
-      retval = false;
-    }
-    return retval;
-  }
-
+  /**
+   * Converts arguments in an attempt to align with the function's signature.
+   * 
+   * @param function
+   *          the function
+   * @param parameters
+   *          the argument parameters
+   * @return the converted argument list
+   */
   @NotNull
   public static List<@NotNull ISequence<?>> convertArguments(@NotNull IFunction function,
       @NotNull List<@NotNull ISequence<?>> parameters) {
-    @NotNull List<@NotNull ISequence<?>> retval = new ArrayList<>(parameters.size());
+    @NotNull
+    List<@NotNull ISequence<?>> retval = new ArrayList<>(parameters.size());
 
     Iterator<IArgument> argumentIterator = function.getArguments().iterator();
     Iterator<@NotNull ISequence<?>> parametersIterator = parameters.iterator();
@@ -171,7 +197,8 @@ public abstract class AbstractFunction implements IFunction {
             String.format("argument signature doesn't match '%d'", function.toSignature()));
       }
 
-      @SuppressWarnings("null") ISequence<?> parameter = parametersIterator.next();
+      @SuppressWarnings("null")
+      ISequence<?> parameter = parametersIterator.next();
 
       int size = parameter.size();
       Occurrence occurrence = argument.getSequenceType().getOccurrence();
@@ -244,7 +271,8 @@ public abstract class AbstractFunction implements IFunction {
    */
   @NotNull
   protected static ISequence<?> convertSequence(@NotNull IArgument argument, @NotNull ISequence<?> sequence) {
-    @NotNull ISequence<?> retval;
+    @NotNull
+    ISequence<?> retval;
     if (sequence.isEmpty()) {
       retval = ISequence.empty();
     } else {

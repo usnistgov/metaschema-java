@@ -52,7 +52,7 @@ import com.vladsch.flexmark.util.sequence.BasedSequence;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.insertanchor.InsertAnchorNode;
-import gov.nist.secauto.metaschema.model.common.util.IteratorUtil;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.apache.logging.log4j.LogManager;
@@ -170,7 +170,7 @@ public class MarkupParser {
     QName name = start.getName();
     buffer.append('<');
     buffer.append(name.getLocalPart());
-    for (Attribute attribute : IteratorUtil.toIterable(start.getAttributes())) {
+    for (Attribute attribute : CollectionUtil.toIterable(start.getAttributes())) {
       buffer.append(' ');
       buffer.append(attribute.getName().getLocalPart());
       buffer.append("=\"");

@@ -68,9 +68,9 @@ public class IPv4AddressAdapter extends AbstractJavaTypeAdapter<IPv4Address, IIP
   }
 
   @Override
-  public IPv4Address copy(IPv4Address obj) {
+  public IPv4Address copy(Object obj) {
     // value is immutable
-    return obj;
+    return (IPv4Address)obj;
   }
 
   @SuppressWarnings("null")

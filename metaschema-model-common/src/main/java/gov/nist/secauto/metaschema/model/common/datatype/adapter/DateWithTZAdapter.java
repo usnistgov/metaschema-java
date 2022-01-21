@@ -64,8 +64,8 @@ public class DateWithTZAdapter extends AbstractJavaTypeAdapter<ZonedDateTime, ID
 
   @SuppressWarnings("null")
   @Override
-  public ZonedDateTime copy(ZonedDateTime obj) {
-    return ZonedDateTime.from(obj);
+  public ZonedDateTime copy(Object obj) {
+    return ZonedDateTime.from((ZonedDateTime)obj);
   }
 
   @SuppressWarnings("null")

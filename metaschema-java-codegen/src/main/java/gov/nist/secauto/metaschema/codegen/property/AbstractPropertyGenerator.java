@@ -189,4 +189,10 @@ public abstract class AbstractPropertyGenerator<CLASS_GENERATOR extends JavaClas
   private void buildSetter(MethodSpec.Builder builder, ParameterSpec valueParam, FieldSpec valueField) {
     builder.addStatement("$N = $N", valueField, valueParam);
   }
+
+  // @Override
+  // public Collection<? extends INamedModelDefinition> buildCopyStatements(Builder copyBuilder,
+  // @NotNull TypeResolver typeResolver) {
+  // return Collections.emptySet();
+  // }
 }

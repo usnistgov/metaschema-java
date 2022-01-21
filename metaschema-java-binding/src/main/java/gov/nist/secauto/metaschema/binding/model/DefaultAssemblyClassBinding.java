@@ -65,6 +65,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -616,4 +617,15 @@ public class DefaultAssemblyClassBinding
       writeInternal(item, writeObjectWrapper, context);
     }
   }
+
+  @Override
+  protected void copyBoundObjectInternal(@NotNull Object fromInstance, @NotNull Object toInstance) throws BindingException {
+    super.copyBoundObjectInternal(fromInstance, toInstance);
+    
+    for (NamedModelProperty property : getModelInstances()) {
+      property.copyBoundObject(fromInstance, toInstance);
+    }
+  }
+
+  
 }

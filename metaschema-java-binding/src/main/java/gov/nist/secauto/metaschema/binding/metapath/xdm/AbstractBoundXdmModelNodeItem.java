@@ -28,12 +28,9 @@ package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Name;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public abstract class AbstractBoundXdmModelNodeItem<INSTANCE extends NamedModelProperty>
     extends AbstractBoundXdmValuedNodeItem<INSTANCE> implements IBoundXdmModelNodeItem {

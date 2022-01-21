@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIPAddressItem;
 
@@ -41,7 +42,7 @@ public interface IIPv4AddressItem extends IIPAddressItem {
   }
 
   @NotNull
-  public static IIPv4AddressItem cast(@NotNull IAnyAtomicItem item) {
+  public static IIPv4AddressItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.IP_V4_ADDRESS.cast(item);
   }
 }

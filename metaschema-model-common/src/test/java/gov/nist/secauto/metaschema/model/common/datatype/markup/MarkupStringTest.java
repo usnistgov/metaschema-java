@@ -46,7 +46,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupXmlStreamWriter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstCollectingVisitor;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.insertanchor.InsertAnchorNode;
-import gov.nist.secauto.metaschema.model.common.util.IteratorUtil;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -101,7 +101,7 @@ class MarkupStringTest {
     System.out.println(ms.toMarkdown());
 
     // Document[0, 49]
-    List<Node> documentChildren = IteratorUtil.toList(document.getChildren());
+    List<Node> documentChildren = CollectionUtil.toList(document.getChildren());
     {
       // Paragraph[0, 49]
       // ensure there is a single paragraph
@@ -109,11 +109,11 @@ class MarkupStringTest {
       Node paragraph = documentChildren.get(0);
       assertTrue(paragraph instanceof Paragraph);
 
-      List<Node> paragraphChildren = IteratorUtil.toList(paragraph.getChildren());
+      List<Node> paragraphChildren = CollectionUtil.toList(paragraph.getChildren());
       // TextBase[0, 7] chars:[0, 7, "Some \*"]
       {
         TextBase textBase = (TextBase) paragraphChildren.get(0);
-        List<Node> textBaseChildren = IteratorUtil.toList(textBase.getChildren());
+        List<Node> textBaseChildren = CollectionUtil.toList(textBase.getChildren());
         // Text[0, 5] chars:[0, 5, "Some "]
         {
           Text text = (Text) textBaseChildren.get(0);
@@ -128,7 +128,7 @@ class MarkupStringTest {
       // Emphasis[7, 13] textOpen:[7, 8, "*"] text:[8, 12, "more"] textClose:[12, 13, "*"]
       {
         Emphasis emphasis = (Emphasis) paragraphChildren.get(1);
-        List<Node> emphasisChildren = IteratorUtil.toList(emphasis.getChildren());
+        List<Node> emphasisChildren = CollectionUtil.toList(emphasis.getChildren());
         // Text[8, 12] chars:[8, 12, "more"]
         {
           Text text = (Text) emphasisChildren.get(0);
@@ -143,7 +143,7 @@ class MarkupStringTest {
       // StrongEmphasis[14, 22] textOpen:[14, 16, "**"] text:[16, 20, "text"] textClose:[20, 22, "**"]
       {
         StrongEmphasis strongEmphasis = (StrongEmphasis) paragraphChildren.get(3);
-        List<Node> strongEmphasisChildren = IteratorUtil.toList(strongEmphasis.getChildren());
+        List<Node> strongEmphasisChildren = CollectionUtil.toList(strongEmphasis.getChildren());
         // Text[16, 20] chars:[16, 20, "text"]
         {
           Text text = (Text) strongEmphasisChildren.get(0);

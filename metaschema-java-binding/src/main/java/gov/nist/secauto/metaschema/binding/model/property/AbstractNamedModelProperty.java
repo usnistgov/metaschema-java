@@ -50,14 +50,15 @@ import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -164,7 +165,7 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
   }
 
   @Override
-  public Stream<? extends Object> getItemValues(Object value) {
+  public Collection<? extends Object> getItemValues(Object value) {
     return getPropertyInfo().getItemsFromValue(value);
   }
 
@@ -351,6 +352,25 @@ public abstract class AbstractNamedModelProperty extends AbstractNamedProperty<A
       // dispatch to the property info implementation to address cardinality
       getPropertyInfo().writeValue(parentInstance, context);
     }
+  }
+
+  @Override
+  public void copyBoundObject(@NotNull Object fromInstance, @NotNull Object toInstance) throws BindingException {
+    Object value = getValue(fromInstance);
+    if (value != null) {
+      ModelPropertyInfo propertyInfo = getPropertyInfo();
+      PropertyCollector collector = newPropertyCollector();
+
+      propertyInfo.copy(fromInstance, toInstance, collector);
+
+      value = collector.getValue();
+      setValue(toInstance, value);
+    }
+  }
+
+  @Override
+  public Object copyItem(@NotNull Object fromItem, @NotNull Object toInstance) throws BindingException {
+    return getDataTypeHandler().copyItem(fromItem, toInstance);
   }
 
 }

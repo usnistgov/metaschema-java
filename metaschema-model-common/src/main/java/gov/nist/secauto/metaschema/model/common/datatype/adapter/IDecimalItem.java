@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +61,7 @@ public interface IDecimalItem extends INumericItem {
     return valueOf(new BigDecimal(value, MathContext.DECIMAL64));
   }
 
-  public static @NotNull IDecimalItem cast(@NotNull IAnyAtomicItem item) {
+  public static @NotNull IDecimalItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.DECIMAL.cast(item);
   }
 }

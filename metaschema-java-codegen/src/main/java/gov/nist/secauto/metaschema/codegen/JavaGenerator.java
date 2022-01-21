@@ -125,8 +125,9 @@ public class JavaGenerator {
         } else if (definition instanceof IFieldDefinition) {
           IFieldDefinition fieldDefinition = (IFieldDefinition) definition;
 
-          // if field is just a simple data value, then no class is needed
-          if (!fieldDefinition.getFlagInstances().isEmpty()) {
+          if (fieldDefinition.getFlagInstances().isEmpty()) {
+            // if field is just a simple data value, then no class is needed
+          } else {
             classGenerator = new FieldJavaClassGenerator(fieldDefinition, typeResolver);
           }
         } else {

@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValidatingXdmVisitor;
-import gov.nist.secauto.metaschema.binding.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
@@ -110,7 +109,7 @@ public abstract class AbstractDeserializer<CLASS> extends AbstractSerializationB
       validator.finalizeValidation();
     }
 
-    return IBoundLoader.toClass(nodeItem);
+    return IBoundLoader.toBoundObject(nodeItem);
   }
 
   @Override

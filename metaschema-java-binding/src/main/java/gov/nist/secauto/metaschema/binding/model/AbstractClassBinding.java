@@ -69,8 +69,8 @@ public abstract class AbstractClassBinding implements ClassBinding {
 
   private final BindingContext bindingContext;
   private final Class<?> clazz;
-  private final List<Method> beforeDeserializeMethods;
-  private final List<Method> afterDeserializeMethods;
+  private final Method beforeDeserializeMethod;
+  private final Method afterDeserializeMethod;
   private Map<String, FlagProperty> flagInstances;
   private FlagProperty jsonKeyFlag;
 
@@ -87,8 +87,8 @@ public abstract class AbstractClassBinding implements ClassBinding {
     Objects.requireNonNull(clazz, "clazz");
     this.bindingContext = bindingContext;
     this.clazz = clazz;
-    this.beforeDeserializeMethods = ClassIntrospector.getMatchingMethods(clazz, "beforeDeserialize", Object.class);
-    this.afterDeserializeMethods = ClassIntrospector.getMatchingMethods(clazz, "afterDeserialize", Object.class);
+    this.beforeDeserializeMethod = ClassIntrospector.getMatchingMethod(clazz, "beforeDeserialize", Object.class);
+    this.afterDeserializeMethod = ClassIntrospector.getMatchingMethod(clazz, "afterDeserialize", Object.class);
   }
 
   @Override
@@ -294,13 +294,11 @@ public abstract class AbstractClassBinding implements ClassBinding {
    *           if an error occurs while calling a deserialization method
    */
   protected void callBeforeDeserialize(Object objectInstance, Object parentInstance) throws BindingException {
-    if (!beforeDeserializeMethods.isEmpty()) {
-      for (Method method : beforeDeserializeMethods) {
-        try {
-          method.invoke(objectInstance, parentInstance);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-          throw new BindingException(ex);
-        }
+    if (beforeDeserializeMethod != null) {
+      try {
+        beforeDeserializeMethod.invoke(objectInstance, parentInstance);
+      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+        throw new BindingException(ex);
       }
     }
   }
@@ -318,13 +316,11 @@ public abstract class AbstractClassBinding implements ClassBinding {
    *           if an error occurs while calling a deserialization method
    */
   protected void callAfterDeserialize(Object objectInstance, Object parentInstance) throws BindingException {
-    if (!afterDeserializeMethods.isEmpty()) {
-      for (Method method : afterDeserializeMethods) {
-        try {
-          method.invoke(objectInstance, parentInstance);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-          throw new BindingException(ex);
-        }
+    if (afterDeserializeMethod != null) {
+      try {
+        afterDeserializeMethod.invoke(objectInstance, parentInstance);
+      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+        throw new BindingException(ex);
       }
     }
   }
@@ -373,4 +369,25 @@ public abstract class AbstractClassBinding implements ClassBinding {
 
   protected abstract void writeBody(Object instance, QName parentName, XmlWritingContext context)
       throws XMLStreamException, IOException;
+  
+
+  @Override
+  public Object copyBoundObject(@NotNull Object item, Object parentInstance) throws BindingException {
+    Object instance = newInstance();
+
+    callBeforeDeserialize(instance, parentInstance);
+
+    copyBoundObjectInternal(item, instance);
+
+    callAfterDeserialize(instance, parentInstance);
+
+    return instance;
+  }
+
+  protected void copyBoundObjectInternal(@NotNull Object fromInstance, @NotNull Object toInstance) throws BindingException {
+    for (FlagProperty property : getFlagInstances()) {
+      property.copyBoundObject(fromInstance, toInstance);
+    }
+  }
+
 }

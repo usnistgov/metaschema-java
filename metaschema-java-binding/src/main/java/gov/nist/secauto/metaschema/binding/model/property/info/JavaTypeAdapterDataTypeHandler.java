@@ -35,6 +35,8 @@ import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -103,5 +105,10 @@ public class JavaTypeAdapterDataTypeHandler implements DataTypeHandler {
     for (Object item : items) {
       adapter.writeJsonValue(item, context.getWriter());
     }
+  }
+
+  @Override
+  public Object copyItem(@NotNull Object fromItem, Object parentInstance) throws BindingException {
+    return adapter.copy(fromItem);
   }
 }

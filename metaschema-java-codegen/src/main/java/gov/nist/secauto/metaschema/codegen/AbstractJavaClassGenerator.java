@@ -151,7 +151,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
   }
 
   /**
-   * Supports the building of Java lasses.
+   * Supports the building of Java classes.
    * 
    * @param className
    *          the type info for the class
@@ -162,7 +162,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
    *           if a building error occurred while generating the Java class
    */
   protected TypeSpec.Builder generateClass(ClassName className, boolean isChild) throws IOException {
-
+    // create the class
     TypeSpec.Builder builder = TypeSpec.classBuilder(className).addModifiers(Modifier.PUBLIC);
     if (isChild) {
       builder.addModifiers(Modifier.STATIC);
@@ -173,7 +173,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
       builder.superclass(baseClassName);
     }
     
-    Set<INamedModelDefinition> additionalChildClasses = buildClass(builder);
+    Set<INamedModelDefinition> additionalChildClasses = buildClass(builder, className);
 
     for (INamedModelDefinition definition : additionalChildClasses) {
       TypeSpec.Builder childBuilder;
@@ -267,14 +267,23 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
    * @throws IOException
    *           if an error occurred while building the class
    */
-  protected Set<INamedModelDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
+  protected Set<INamedModelDefinition> buildClass(TypeSpec.Builder builder, ClassName className) throws IOException {
     builder.addJavadoc(getDefinition().getDescription().toHtml());
+
+    Set<INamedModelDefinition> additionalChildClasses = new HashSet<>();
 
     // generate a no-arg constructor
     builder.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC).build());
 
+//    // generate a copy constructor
+//    MethodSpec.Builder copyBuilder = MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC);
+//    copyBuilder.addParameter(className, "that", Modifier.FINAL);
+//    for (PropertyGenerator property : getPropertyGenerators()) {
+//      additionalChildClasses.addAll(property.buildCopyStatements(copyBuilder, getTypeResolver()));
+//    }
+//    builder.addMethod(copyBuilder.build());
+
     // generate all the properties and access methods
-    Set<INamedModelDefinition> additionalChildClasses = new HashSet<>();
     for (PropertyGenerator property : getPropertyGenerators()) {
       additionalChildClasses.addAll(property.build(builder, getTypeResolver()));
     }

@@ -43,6 +43,9 @@ import java.util.List;
 public class FnExistsFunction {
   static final IFunction SIGNATURE = IFunction.newBuilder()
       .name("exists")
+      .deterministic()
+      .contextIndependent()
+      .focusIndependent()
       .argument(IArgument.newBuilder()
           .name("arg")
           .type(IItem.class)

@@ -53,12 +53,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
-public class ModelInstancePropertyGenerator extends AbstractPropertyGenerator<AssemblyJavaClassGenerator> {
+public class ModelInstancePropertyGenerator
+    extends AbstractPropertyGenerator<AssemblyJavaClassGenerator> {
   private static final Logger logger = LogManager.getLogger(ModelInstancePropertyGenerator.class);
 
   private final INamedModelInstance modelInstance;
@@ -108,7 +109,7 @@ public class ModelInstancePropertyGenerator extends AbstractPropertyGenerator<As
     // instances will only need a description if the instance has a simple structure, without flags or a
     // model. In such a case, the description will need to appear on the instance. Otherwise, the
     // description will appear on the resulting object.
-    if (modelInstance instanceof IFieldInstance && ((IFieldInstance)modelInstance).isSimple()) {
+    if (modelInstance instanceof IFieldInstance && ((IFieldInstance) modelInstance).isSimple()) {
       retval = modelInstance.getDefinition().getDescription();
     }
     return retval;
@@ -134,8 +135,10 @@ public class ModelInstancePropertyGenerator extends AbstractPropertyGenerator<As
     fieldAnnoation.addMember("useName", "$S", modelInstance.getEffectiveName());
 
     INamedModelDefinition definition = modelInstance.getDefinition();
-    if (!definition.isGlobal()) {
-      // this is a local definition that must be build as a child class
+    if (definition instanceof IFieldDefinition && ((IFieldDefinition) definition).isSimple()) {
+      // do not generate a child class
+    } else if (!definition.isGlobal()) {
+      // this is a local definition that must be built as a child class
       retval.add(definition);
     }
 
@@ -209,13 +212,13 @@ public class ModelInstancePropertyGenerator extends AbstractPropertyGenerator<As
     } else if (instance instanceof IAssemblyInstance) {
       IAssemblyInstance assemblyInstance = (IAssemblyInstance) instance;
       IAssemblyDefinition assemblyDefinition = assemblyInstance.getDefinition();
-      if (assemblyDefinition.isSimple() && assemblyDefinition.getModelInstances().isEmpty()) {
-        // make this a boolean type, since this is a marker without any contents
-        // TODO: make sure global definitions of this type are suppressed
-        item = ClassName.get(MetaschemaDataTypeProvider.BOOLEAN.getJavaClass());
-      } else {
-        item = getClassGenerator().getTypeResolver().getClassName(assemblyInstance.getDefinition());
-      }
+      // if (assemblyDefinition.isSimple() && assemblyDefinition.getModelInstances().isEmpty()) {
+      // // make this a boolean type, since this is a marker without any contents
+      // // TODO: make sure global definitions of this type are suppressed
+      // item = ClassName.get(MetaschemaDataTypeProvider.BOOLEAN.getJavaClass());
+      // } else {
+      item = getClassGenerator().getTypeResolver().getClassName(assemblyInstance.getDefinition());
+      // }
     } else {
       String msg = String.format("Unknown model instance type: %s", instance.getClass().getCanonicalName());
       logger.error(msg);
@@ -226,9 +229,9 @@ public class ModelInstancePropertyGenerator extends AbstractPropertyGenerator<As
     int maxOccurance = instance.getMaxOccurs();
     if (maxOccurance == -1 || maxOccurance > 1) {
       if (JsonGroupAsBehavior.KEYED.equals(instance.getJsonGroupAsBehavior())) {
-        retval = ParameterizedTypeName.get(ClassName.get(LinkedHashMap.class), ClassName.get(String.class), item);
+        retval = ParameterizedTypeName.get(ClassName.get(HashMap.class), ClassName.get(String.class), item);
       } else {
-        retval = ParameterizedTypeName.get(ClassName.get(LinkedList.class), item);
+        retval = ParameterizedTypeName.get(ClassName.get(List.class), item);
       }
     } else {
       retval = item;

@@ -41,6 +41,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.RootSlashPath;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Step;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -58,7 +60,7 @@ public class MetaschemaInstanceEvaluationVisitor
     this.allowedRoot = allowedRoot;
   }
 
-  public IInstanceSet visit(IExpression<?> expr, IMetaschemaContext context) {
+  public IInstanceSet visit(@NotNull IExpression<?> expr, @NotNull IMetaschemaContext context) {
     return expr.accept(this, context);
   }
 
@@ -153,7 +155,7 @@ public class MetaschemaInstanceEvaluationVisitor
   }
 
   @SuppressWarnings("null")
-  protected IInstanceSet buildUnion(List<? extends IExpression<?>> children, IMetaschemaContext context) {
+  protected IInstanceSet buildUnion(@NotNull List<@NotNull ? extends IExpression<?>> children, @NotNull IMetaschemaContext context) {
     IInstanceSet retval;
     if (children.isEmpty()) {
       retval = IInstanceSet.EMPTY_INSTANCE_SET;

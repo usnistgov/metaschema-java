@@ -33,7 +33,10 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
+import java.util.Collection;
 import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
@@ -87,7 +90,12 @@ public interface ModelPropertyInfo {
 
   boolean isValueSet(Object parentInstance) throws IOException;
 
-  Stream<? extends Object> getItemsFromParentInstance(Object value);
+  default Collection<? extends Object> getItemsFromParentInstance(Object parentInstance) {
+    Object value = getProperty().getValue(parentInstance);
+    return getItemsFromValue(value);
+  }
 
-  Stream<? extends Object> getItemsFromValue(Object value);
+  Collection<? extends Object> getItemsFromValue(Object value);
+
+  void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector) throws BindingException;
 }

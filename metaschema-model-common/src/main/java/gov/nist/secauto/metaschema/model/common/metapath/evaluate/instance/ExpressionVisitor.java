@@ -56,63 +56,96 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Wildcard;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 public interface ExpressionVisitor<RESULT, CONTEXT> {
 
-  RESULT visitAddition(Addition expr, CONTEXT context);
+  @Nullable
+  RESULT visitAddition(@NotNull Addition expr, @NotNull CONTEXT context);
 
-  RESULT visitAnd(And expr, CONTEXT context);
+  @Nullable
+  RESULT visitAnd(@NotNull And expr, @NotNull CONTEXT context);
 
-  RESULT visitStep(Step expr, CONTEXT context);
+  @Nullable
+  RESULT visitStep(@NotNull Step expr, @NotNull CONTEXT context);
 
-  RESULT visitComparison(Comparison expr, CONTEXT context);
+  @Nullable
+  RESULT visitComparison(@NotNull Comparison expr, @NotNull CONTEXT context);
 
-  RESULT visitContextItem(ContextItem expr, CONTEXT context);
+  @Nullable
+  RESULT visitContextItem(@NotNull ContextItem expr, @NotNull CONTEXT context);
 
-  RESULT visitDecimalLiteral(DecimalLiteral expr, CONTEXT context);
+  @Nullable
+  RESULT visitDecimalLiteral(@NotNull DecimalLiteral expr, @NotNull CONTEXT context);
 
-  RESULT visitDivision(Division expr, CONTEXT context);
+  @Nullable
+  RESULT visitDivision(@NotNull Division expr, @NotNull CONTEXT context);
 
-  RESULT visitFlag(Flag expr, CONTEXT context);
+  @Nullable
+  RESULT visitFlag(@NotNull Flag expr, @NotNull CONTEXT context);
 
-  RESULT visitFunctionCall(FunctionCall expr, CONTEXT context);
+  @Nullable
+  RESULT visitFunctionCall(@NotNull FunctionCall expr, @NotNull CONTEXT context);
 
-  RESULT visitIntegerDivision(IntegerDivision expr, CONTEXT context);
+  @Nullable
+  RESULT visitIntegerDivision(@NotNull IntegerDivision expr, @NotNull CONTEXT context);
 
-  RESULT visitIntegerLiteral(IntegerLiteral expr, CONTEXT context);
+  @Nullable
+  RESULT visitIntegerLiteral(@NotNull IntegerLiteral expr, @NotNull CONTEXT context);
 
-  RESULT visitMetapath(Metapath expr, CONTEXT context);
+  @Nullable
+  RESULT visitMetapath(@NotNull Metapath expr, @NotNull CONTEXT context);
 
-  RESULT visitMod(Mod expr, CONTEXT context);
+  @Nullable
+  RESULT visitMod(@NotNull Mod expr, @NotNull CONTEXT context);
 
-  RESULT visitModelInstance(ModelInstance modelInstance, CONTEXT context);
+  @Nullable
+  RESULT visitModelInstance(@NotNull ModelInstance modelInstance, @NotNull CONTEXT context);
 
-  RESULT visitMultiplication(Multiplication expr, CONTEXT context);
+  @Nullable
+  RESULT visitMultiplication(@NotNull Multiplication expr, @NotNull CONTEXT context);
 
-  RESULT visitName(Name expr, CONTEXT context);
+  @Nullable
+  RESULT visitName(@NotNull Name expr, @NotNull CONTEXT context);
 
-  RESULT visitNegate(Negate expr, CONTEXT context);
+  @Nullable
+  RESULT visitNegate(@NotNull Negate expr, @NotNull CONTEXT context);
 
-  RESULT visitOr(Or expr, CONTEXT context);
+  @Nullable
+  RESULT visitOr(@NotNull Or expr, @NotNull CONTEXT context);
 
-  RESULT visitParenthesizedExpression(ParenthesizedExpression expr, CONTEXT context);
+  @Nullable
+  RESULT visitParenthesizedExpression(@NotNull ParenthesizedExpression expr, @NotNull CONTEXT context);
 
-  RESULT visitRelativeDoubleSlashPath(RelativeDoubleSlashPath relativeDoubleSlashPath, CONTEXT context);
+  @Nullable
+  RESULT visitRelativeDoubleSlashPath(@NotNull RelativeDoubleSlashPath relativeDoubleSlashPath,
+      @NotNull CONTEXT context);
 
-  RESULT visitRelativeSlashPath(RelativeSlashPath relativeSlashPath, CONTEXT context);
+  @Nullable
+  RESULT visitRelativeSlashPath(@NotNull RelativeSlashPath relativeSlashPath, @NotNull CONTEXT context);
 
-  RESULT visitRootDoubleSlashPath(RootDoubleSlashPath rootDoubleSlashPath, CONTEXT context);
+  @Nullable
+  RESULT visitRootDoubleSlashPath(@NotNull RootDoubleSlashPath rootDoubleSlashPath, @NotNull CONTEXT context);
 
-  RESULT visitRootSlashOnlyPath(RootSlashOnlyPath rootSlashOnlyPath, CONTEXT context);
+  @Nullable
+  RESULT visitRootSlashOnlyPath(@NotNull RootSlashOnlyPath rootSlashOnlyPath, @NotNull CONTEXT context);
 
-  RESULT visitRootSlashPath(RootSlashPath rootSlashPath, CONTEXT context);
+  @Nullable
+  RESULT visitRootSlashPath(@NotNull RootSlashPath rootSlashPath, @NotNull CONTEXT context);
 
-  RESULT visitStringConcat(StringConcat expr, CONTEXT context);
+  @Nullable
+  RESULT visitStringConcat(@NotNull StringConcat expr, @NotNull CONTEXT context);
 
-  RESULT visitStringLiteral(StringLiteral expr, CONTEXT context);
+  @Nullable
+  RESULT visitStringLiteral(@NotNull StringLiteral expr, @NotNull CONTEXT context);
 
-  RESULT visitSubtraction(Subtraction expr, CONTEXT context);
+  @Nullable
+  RESULT visitSubtraction(@NotNull Subtraction expr, @NotNull CONTEXT context);
 
-  RESULT visitUnion(Union expr, CONTEXT context);
+  @Nullable
+  RESULT visitUnion(@NotNull Union expr, @NotNull CONTEXT context);
 
-  RESULT visitWildcard(Wildcard expr, CONTEXT context);
+  @Nullable
+  RESULT visitWildcard(@NotNull Wildcard expr, @NotNull CONTEXT context);
 }

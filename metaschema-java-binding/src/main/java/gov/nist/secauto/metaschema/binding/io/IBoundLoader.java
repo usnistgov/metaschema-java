@@ -85,7 +85,7 @@ public interface IBoundLoader extends IDocumentLoader, MutableConfiguration {
   <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull InputStream is, @NotNull URI documentUri) throws IOException;
 
   @NotNull
-  public static <CLASS> CLASS toClass(@NotNull INodeItem nodeItem) {
+  public static <CLASS> CLASS toBoundObject(@NotNull INodeItem nodeItem) {
     IAssemblyNodeItem result = toAssemblyNodeItem(nodeItem);
     @SuppressWarnings("unchecked") CLASS retval = (CLASS) result.getValue();
     return retval;

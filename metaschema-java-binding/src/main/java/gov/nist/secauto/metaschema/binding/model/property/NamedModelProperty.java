@@ -32,11 +32,14 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.IBoundNamedModelDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
+import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -57,7 +60,7 @@ public interface NamedModelProperty extends NamedProperty, INamedModelInstance {
    * @param value the value which may be a singleton or a collection
    * @return the ordered collection of values
    */
-  Stream<? extends Object> getItemValues(Object value);
+  Collection<? extends Object> getItemValues(Object value);
 
   /**
    * Reads an individual XML item from the XML stream.
@@ -95,6 +98,8 @@ public interface NamedModelProperty extends NamedProperty, INamedModelInstance {
   List<Object> readItem(Object parentInstance, JsonParsingContext context) throws BindingException, IOException;
 
   boolean writeItem(Object item, QName parentName, XmlWritingContext context) throws XMLStreamException, IOException;
+
+  Object copyItem(@NotNull Object fromItem, Object toInstance) throws BindingException;
 
   // void writeItems(List<? extends WritableItem> items, JsonWritingContext context);
 

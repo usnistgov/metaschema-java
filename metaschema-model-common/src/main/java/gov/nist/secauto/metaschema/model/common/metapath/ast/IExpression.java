@@ -58,5 +58,5 @@ public interface IExpression<RESULT_TYPE extends IItem> {
   @NotNull
   ISequence<? extends RESULT_TYPE> accept(@NotNull IExpressionEvaluationVisitor visitor, @NotNull INodeContext context);
 
-  <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
+  <RESULT, CONTEXT> RESULT accept(@NotNull ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
 }

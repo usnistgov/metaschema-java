@@ -26,50 +26,32 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.AbstractCodedMetapathException;
 
-import org.jetbrains.annotations.NotNull;
+public class UriFunctionException extends AbstractCodedMetapathException {
+  public static final int NO_NAMESPACE_FOUND_FOR_PREFIX = 4;
+  public static final int BASE_URI_NOT_DEFINED_IN_STATIC_CONTEXT = 5;
 
-class ArgumentImpl implements IArgument {
-  @NotNull
-  private final String name;
-  @NotNull
-  private final ISequenceType sequenceType;
+  /**
+   * the serial version UID.
+   */
+  private static final long serialVersionUID = 2L;
 
-  protected ArgumentImpl(@NotNull String name, @NotNull ISequenceType sequenceType) {
-    this.name = name;
-    this.sequenceType = sequenceType;
+  public UriFunctionException(int code, String message) {
+    super(code, message);
+  }
+
+  public UriFunctionException(int code, String message, Throwable cause) {
+    super(code, message, cause);
+  }
+
+  public UriFunctionException(int code, Throwable cause) {
+    super(code, cause);
   }
 
   @Override
-  public String getName() {
-    return name;
+  protected String getCodePrefix() {
+    return "FONS";
   }
 
-  @Override
-  public ISequenceType getSequenceType() {
-    return sequenceType;
-  }
-
-  @Override
-  public boolean isSupported(IExpression<?> expression) {
-    // Class<? extends IItem> itemType = expression.getItemType();
-    // TODO: implement this test
-    return true;
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public String toSignature() {
-    StringBuilder builder = new StringBuilder();
-
-    // name
-    builder.append(getName());
-
-    builder.append(" as ");
-
-    builder.append(getSequenceType().toSignature());
-
-    return builder.toString();
-  }
 }

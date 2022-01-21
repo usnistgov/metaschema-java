@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -37,6 +39,11 @@ import java.util.stream.Stream;
 public class FunctionService {
   private static FunctionService functionService;
 
+  /**
+   * Get the singleton instance of the function service.
+   * 
+   * @return the service instance
+   */
   public static synchronized FunctionService getInstance() {
     if (functionService == null) {
       functionService = new FunctionService();
@@ -44,40 +51,73 @@ public class FunctionService {
     return functionService;
   }
 
-  private final ServiceLoader<IFunctionLibrary> loader;
+  @NotNull
+  private final ServiceLoader<@NotNull IFunctionLibrary> loader;
+  @NotNull
   private LoadedFunctionsLibrary library;
 
+  /**
+   * Construct a new function service.
+   */
+  @SuppressWarnings("null")
   public FunctionService() {
     this.loader = ServiceLoader.load(IFunctionLibrary.class);
-    load();
+    this.library = load();
   }
 
-  public synchronized void load() {
-    ServiceLoader<IFunctionLibrary> loader = getLoader();
-    Stream<IFunctionLibrary> libraryStream = loader.stream().map(Provider<IFunctionLibrary>::get);
-    Stream<IFunction> functions = libraryStream.flatMap(library -> {
+  /**
+   * Load all known functions registered with this function service.
+   */
+  @NotNull
+  public synchronized LoadedFunctionsLibrary load() {
+    ServiceLoader<@NotNull IFunctionLibrary> loader = getLoader();
+    @SuppressWarnings("null")
+    Stream<@NotNull IFunctionLibrary> libraryStream = loader.stream().map(Provider<IFunctionLibrary>::get);
+    Stream<@NotNull IFunction> functions = libraryStream.flatMap(library -> {
       return library.getFunctionsAsStream();
     });
 
-    library = new LoadedFunctionsLibrary();
-    functions.forEachOrdered(function -> library.registerFunction(function));
+    this.library = new LoadedFunctionsLibrary();
+    functions.forEachOrdered(function -> this.library.registerFunction(function));
+    return this.library;
   }
 
-  protected ServiceLoader<IFunctionLibrary> getLoader() {
+  /**
+   * Get the function service loader instance.
+   * 
+   * @return the service loader instance.
+   */
+  @NotNull
+  protected ServiceLoader<@NotNull IFunctionLibrary> getLoader() {
     return loader;
   }
 
-  public IFunction getFunction(String name, IExpression<?>... args) {
-    return getFunction(name, Arrays.asList(args));
+  /**
+   * Retrieve the function with the provided name that supports the signature of the provided methods,
+   * if such a function exists.
+   * 
+   * @param name
+   *          the name of a group of functions
+   * @param arguments
+   *          a list of argument expressions for use in determining an argument signature match
+   * @return the matching function or {@code null} if no match exists
+   */
+  @SuppressWarnings("null")
+  public IFunction getFunction(@NotNull String name, @NotNull IExpression<?>... arguments) {
+    return getFunction(name, Arrays.asList(arguments));
   }
 
-  public synchronized IFunction getFunction(String name, List<IExpression<?>> args) {
-    // Stream<Provider<IFunctionLibrary>> providerStream = getLoader().stream();
-    // Stream<IFunctionLibrary> functionLibraryStream =
-    // providerStream.map(Provider<IFunctionLibrary>::get);
-    // Optional<IFunctionLibrary> functionLibrary
-    // = functionLibraryStream.filter(x -> x.hasFunction(name, args)).findFirst();
-    // return functionLibrary.map(x -> x.getFunction(name, args)).orElse(null);
-    return library.getFunction(name, args);
+  /**
+   * Retrieve the function with the provided name that supports the signature of the provided methods,
+   * if such a function exists.
+   * 
+   * @param name
+   *          the name of a group of functions
+   * @param arguments
+   *          a list of argument expressions for use in determining an argument signature match
+   * @return the matching function or {@code null} if no match exists
+   */
+  public synchronized IFunction getFunction(@NotNull String name, @NotNull List<IExpression<?>> arguments) {
+    return library.getFunction(name, arguments);
   }
 }

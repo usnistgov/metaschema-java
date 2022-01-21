@@ -64,8 +64,10 @@ public interface IFieldInstance extends INamedModelInstance, Field {
   default String getJsonName() {
     @NotNull String retval;
     if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      @SuppressWarnings("null")
-      @NotNull String groupAsName = getGroupAsName();
+      String groupAsName = getGroupAsName();
+      if (groupAsName == null) {
+        throw new NullPointerException("null group-as name");
+      }
       retval = groupAsName;
     } else {
       retval = getEffectiveName();

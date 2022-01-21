@@ -26,12 +26,16 @@
 
 package gov.nist.secauto.metaschema.codegen.property;
 
+import com.squareup.javapoet.MethodSpec.Builder;
 import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 import java.util.Set;
 
 public interface PropertyGenerator {
@@ -47,5 +51,8 @@ public interface PropertyGenerator {
    * @return the set of additional child definitions that need to be built
    */
   Set<INamedModelDefinition> build(TypeSpec.Builder builder, TypeResolver typeResolver);
-
+//
+//  Collection<? extends INamedModelDefinition> buildCopyStatements(Builder copyBuilder,
+//      @NotNull TypeResolver typeResolver);
+//
 }

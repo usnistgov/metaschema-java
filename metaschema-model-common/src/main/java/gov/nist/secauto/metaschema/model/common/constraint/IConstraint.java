@@ -29,12 +29,15 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface IConstraint {
   public static final MetapathExpression DEFAULT_TARGET = MetapathExpression.CONTEXT_NODE;
   public static final String DEFAULT_TARGET_PATH = ".";
 
   String getId();
 
+  @NotNull
   MetapathExpression getTarget();
 
   MarkupMultiline getRemarks();

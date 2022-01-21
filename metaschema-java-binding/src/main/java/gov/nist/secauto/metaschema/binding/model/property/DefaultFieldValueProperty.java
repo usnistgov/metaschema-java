@@ -235,4 +235,14 @@ public class DefaultFieldValueProperty extends AbstractProperty<FieldClassBindin
     // TODO: implement
     return null;
   }
+
+  @Override
+  public void copyBoundObject(@NotNull Object fromInstance, @NotNull Object toInstance) {
+    Object value = getValue(fromInstance);
+
+    IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
+
+    Object copiedValue = adapter.copy(value);
+    setValue(toInstance, copiedValue);
+  }
 }

@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.function.UriFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +44,9 @@ import java.util.List;
 public class FnResolveUriFunction {
   static final IFunction SIGNATURE_ONE_ARG = IFunction.newBuilder()
       .name("resolve-uri")
+      .deterministic()
+      .contextDependent()
+      .focusIndependent()
       .argument(IArgument.newBuilder()
           .name("relative")
           .type(IStringItem.class)
@@ -55,6 +59,9 @@ public class FnResolveUriFunction {
 
   static final IFunction SIGNATURE_TWO_ARG = IFunction.newBuilder()
       .name("resolve-uri")
+      .deterministic()
+      .contextIndependent()
+      .focusIndependent()
       .argument(IArgument.newBuilder()
           .name("relative")
           .type(IStringItem.class)
@@ -81,36 +88,46 @@ public class FnResolveUriFunction {
       return ISequence.empty();
     }
 
-    @SuppressWarnings("null")
-    @NotNull IStringItem relativeString = FunctionUtils.getFirstItem(relativeSequence, true);
+    IStringItem relativeString = FunctionUtils.getFirstItem(relativeSequence, true);
 
     URI staticBaseUri = dynamicContext.getStaticContext().getBaseUri();
     IAnyUriItem base = staticBaseUri == null ? null : IAnyUriItem.valueOf(staticBaseUri);
 
     IAnyUriItem resolvedUri = fnResolveUri(relativeString, base);
-    return ISequence.of(resolvedUri);
+    return resolvedUri == null ? ISequence.empty() : ISequence.of(resolvedUri);
   }
 
+  /**
+   * Implements the two argument version of the XPath 3.1 function <a href="https://www.w3.org/TR/xpath-functions-31/#func-resolve-uri">resolve-uri</a>.
+   * 
+   * @param function the function definition
+   * @param arguments a list of sequence arguments with an expected size of 2
+   * @param dynamicContext the evaluation context
+   * @param focus the current focus item
+   * @return a sequence containing the resolved URI or and empty sequence if either the base or relative URI is {@code null}
+   */
   @NotNull
   public static ISequence<IAnyUriItem> executeTwoArg(@NotNull IFunction function,
       @NotNull List<@NotNull ISequence<?>> arguments,
       @NotNull DynamicContext dynamicContext,
       INodeItem focus) {
 
+    /* there will always be two arguments */
+    assert arguments.size() == 2;
+    
     ISequence<? extends IStringItem> relativeSequence = FunctionUtils.asType(arguments.get(0));
     if (relativeSequence.isEmpty()) {
       return ISequence.empty();
     }
 
-    @SuppressWarnings("null")
-    @NotNull IStringItem relativeString = FunctionUtils.getFirstItem(relativeSequence, true);
+    IStringItem relativeString = FunctionUtils.getFirstItem(relativeSequence, true);
 
     ISequence<? extends IStringItem> baseSequence = FunctionUtils.asType(arguments.get(1));
-    @SuppressWarnings("null")
-    @NotNull IStringItem baseString = FunctionUtils.getFirstItem(baseSequence, true);
+
+    IStringItem baseString = FunctionUtils.getFirstItem(baseSequence, true);
 
     IAnyUriItem resolvedUri = fnResolveUri(relativeString, baseString);
-    return ISequence.of(resolvedUri);
+    return resolvedUri == null ? ISequence.empty() : ISequence.of(resolvedUri);
   }
 
   public static IAnyUriItem fnResolveUri(IStringItem relative, IAnyUriItem baseUri) {
@@ -132,7 +149,7 @@ public class FnResolveUriFunction {
     }
 
     if (baseUri == null) {
-      // FONS0005
+      throw new UriFunctionException(UriFunctionException.BASE_URI_NOT_DEFINED_IN_STATIC_CONTEXT, "Base-uri not defined in the static context");
     }
 
     @SuppressWarnings("null")

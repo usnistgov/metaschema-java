@@ -54,7 +54,7 @@ public class NullJavaTypeAdapter
   }
 
   @Override
-  public Void copy(Void obj) {
+  public @NotNull Void copy(@NotNull Object obj) {
     throw new UnsupportedOperationException("Not a valid type");
   }
 
@@ -100,5 +100,4 @@ public class NullJavaTypeAdapter
       throw new UnsupportedOperationException("Not a valid type");
     }
   }
-
 }

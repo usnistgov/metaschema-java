@@ -42,6 +42,9 @@ import java.util.List;
 public class FnNotFunction {
   static final IFunction SIGNATURE = IFunction.newBuilder()
       .name("not")
+      .deterministic()
+      .contextIndependent()
+      .focusIndependent()
       .argument(IArgument.newBuilder()
           .name("arg")
           .type(IItem.class)

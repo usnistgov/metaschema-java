@@ -65,7 +65,7 @@ public abstract class AbstractBoundXdmAssemblyNodeItem<INSTANCE extends Assembly
       for (NamedModelProperty instance : getDefinition().getNamedModelInstances()) {
 
         Object instanceValue = instance.getValue(parentValue);
-        Stream<? extends Object> itemValues = instance.getItemValues(instanceValue);
+        Stream<? extends Object> itemValues = instance.getItemValues(instanceValue).stream();
         AtomicInteger index = new AtomicInteger();
         List<IBoundXdmModelNodeItem> items = itemValues.map(itemValue -> {
           IBoundXdmModelNodeItem item;

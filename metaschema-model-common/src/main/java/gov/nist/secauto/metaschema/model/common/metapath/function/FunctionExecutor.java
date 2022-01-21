@@ -34,8 +34,24 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * This functional interface provides a dispatch method for executing a function call.
+ */
 @FunctionalInterface
 public interface FunctionExecutor {
+  /**
+   * Execute the provided function using the provided arguments, dynamic context, and focus.
+   * 
+   * @param function
+   *          the signature of the function
+   * @param arguments
+   *          the function arguments
+   * @param dynamicContext
+   *          the dynamic evaluation context
+   * @param focus
+   *          the current focus
+   * @return a sequence containing the result of the execution
+   */
   @NotNull
   ISequence<?> execute(@NotNull IFunction function, @NotNull List<@NotNull ISequence<?>> arguments,
       @NotNull DynamicContext dynamicContext,

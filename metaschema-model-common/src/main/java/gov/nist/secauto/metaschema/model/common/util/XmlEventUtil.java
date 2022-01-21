@@ -237,6 +237,14 @@ public class XmlEventUtil {
     return xmlEvent;
   }
 
+  public static XMLEvent skipProcessingInstructions(XMLEventReader2 reader) throws XMLStreamException {
+    XMLEvent nextEvent;
+    while ((nextEvent = reader.peek()).isProcessingInstruction()) {
+      nextEvent = reader.nextEvent();
+    }
+    return nextEvent;
+  }
+
   public static XMLEvent skipWhitespace(XMLEventReader2 reader) throws XMLStreamException {
     XMLEvent nextEvent;
     while ((nextEvent = reader.peek()).isCharacters()) {

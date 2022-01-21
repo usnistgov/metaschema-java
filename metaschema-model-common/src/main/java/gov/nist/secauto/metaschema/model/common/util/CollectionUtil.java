@@ -26,7 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,7 +40,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
-public class IteratorUtil {
+public class CollectionUtil {
   /**
    * Get an {@link Iterable} for the provided {@link Iterator}.
    * 
@@ -100,5 +103,12 @@ public class IteratorUtil {
       throw new UnsupportedOperationException();
     }
     return retval;
+  }
+
+
+  @SuppressWarnings("null")
+  @NotNull
+  public static <T> List<T> listOrEmpty(List<T> list) {
+    return list == null ? Collections.emptyList() : list;
   }
 }

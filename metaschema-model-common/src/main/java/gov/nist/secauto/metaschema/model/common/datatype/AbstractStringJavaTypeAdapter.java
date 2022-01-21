@@ -43,8 +43,8 @@ public abstract class AbstractStringJavaTypeAdapter<ITEM_TYPE extends IStringIte
   }
 
   @Override
-  public String copy(String obj) {
+  public String copy(Object obj) {
     // a Java string is immutable
-    return obj;
+    return (String)obj;
   }
 }

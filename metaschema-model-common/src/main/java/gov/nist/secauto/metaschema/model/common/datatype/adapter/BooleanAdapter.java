@@ -77,8 +77,9 @@ public class BooleanAdapter
 
   @SuppressWarnings("null")
   @Override
-  public Boolean copy(Boolean obj) {
-    return Boolean.valueOf(obj.booleanValue());
+  public Boolean copy(Object obj) {
+    // the value is immutable
+    return (Boolean)obj;
   }
 
   @SuppressWarnings("null")

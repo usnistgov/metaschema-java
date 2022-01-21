@@ -57,8 +57,8 @@ public abstract class AbstractIntegerAdapter<ITEM_TYPE extends IIntegerItem>
   }
 
   @Override
-  public BigInteger copy(BigInteger obj) {
+  public BigInteger copy(Object obj) {
     // a BigInteger is immutable
-    return obj;
+    return (BigInteger)obj;
   }
 }

@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.model.common.datatype;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Provides a Java type adapter implementation for data types that are based on {@link IDatatype}.
  * 
@@ -43,14 +45,15 @@ public abstract class AbstractDatatypeJavaTypeAdapter<TYPE extends IDatatype<TYP
    * @param clazz
    *          a data type class based on {@link IDatatype}
    */
-  public AbstractDatatypeJavaTypeAdapter(Class<TYPE> clazz) {
+  public AbstractDatatypeJavaTypeAdapter(@NotNull Class<TYPE> clazz) {
     super(clazz);
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public TYPE copy(TYPE obj) {
+  public TYPE copy(Object obj) {
     // Datatype-based types are required to provide a copy method. Delegate to this method.
-    return obj.copy();
+    return ((TYPE)obj).copy();
   }
 
 }

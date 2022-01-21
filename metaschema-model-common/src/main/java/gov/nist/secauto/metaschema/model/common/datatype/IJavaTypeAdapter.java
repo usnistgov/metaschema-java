@@ -98,7 +98,7 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    * @return the copy
    */
   @NotNull
-  TYPE copy(@NotNull TYPE obj);
+  TYPE copy(@NotNull Object obj);
 
   /**
    * Indicates if the adapter will parse the {@link XMLEvent#START_ELEMENT} before parsing the value

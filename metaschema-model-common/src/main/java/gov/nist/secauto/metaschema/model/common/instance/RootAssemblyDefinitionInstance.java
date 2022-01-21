@@ -62,9 +62,12 @@ public class RootAssemblyDefinitionInstance implements IAssemblyInstance {
 
   @Override
   public String getName() {
+    IAssemblyDefinition rootAssembly = getProxy();
     // guaranteed to be not null, since we know the proxy is a root assembly
-    @SuppressWarnings("null")
-    @NotNull String retval = getProxy().getRootName();
+    String retval = rootAssembly.getRootName();
+    if (retval == null) {
+      throw new NullPointerException("root assembly name is null");
+    }
     return retval;
   }
 

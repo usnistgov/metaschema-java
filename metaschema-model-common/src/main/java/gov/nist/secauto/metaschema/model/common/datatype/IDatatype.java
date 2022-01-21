@@ -26,11 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface IDatatype<TYPE extends IDatatype<TYPE>> {
   /**
    * Provides a copy of the data value associated with the Datatype instance.
    * 
    * @return the copy
    */
+  @NotNull
   TYPE copy();
 }

@@ -35,6 +35,8 @@ import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -221,4 +223,6 @@ public interface Property extends IInstance {
       throws XMLStreamException, IOException;
 
   void write(Object parentInstance, JsonWritingContext context) throws IOException;
+
+  void copyBoundObject(@NotNull Object fromInstance, @NotNull Object toInstance) throws BindingException;
 }

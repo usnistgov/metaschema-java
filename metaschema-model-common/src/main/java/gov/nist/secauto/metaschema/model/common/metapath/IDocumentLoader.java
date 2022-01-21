@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,14 +36,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.Stack;
 
 public interface IDocumentLoader {
   @NotNull
-  INodeItem loadAsNodeItem(@NotNull URL url) throws IOException;
+  IDocumentNodeItem loadAsNodeItem(@NotNull URL url) throws IOException;
 
   @NotNull
-  INodeItem loadAsNodeItem(@NotNull File file) throws FileNotFoundException, IOException;
+  IDocumentNodeItem loadAsNodeItem(@NotNull File file) throws FileNotFoundException, IOException;
 
   @NotNull
-  INodeItem loadAsNodeItem(@NotNull InputStream is, @NotNull URI documentUri) throws IOException;
+  IDocumentNodeItem loadAsNodeItem(@NotNull InputStream is, @NotNull URI documentUri) throws IOException;
 }

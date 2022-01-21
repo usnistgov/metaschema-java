@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IUuidType;
 
@@ -41,7 +42,7 @@ public interface IUuidItem extends IAnyAtomicItem {
   }
 
   @NotNull
-  public static IUuidItem cast(@NotNull IAnyAtomicItem item) {
+  public static IUuidItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.UUID.cast(item);
   }
 

@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
@@ -79,9 +80,9 @@ public class FieldJavaClassGenerator
   }
 
   @Override
-  protected Set<INamedModelDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
+  protected Set<INamedModelDefinition> buildClass(TypeSpec.Builder builder, ClassName className) throws IOException {
     Set<INamedModelDefinition> retval = new HashSet<>();
-    retval.addAll(super.buildClass(builder));
+    retval.addAll(super.buildClass(builder, className));
 
     AnnotationSpec.Builder metaschemaField = AnnotationSpec.builder(MetaschemaField.class);
     boolean isCollapsible = false;

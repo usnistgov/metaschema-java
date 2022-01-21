@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,13 +37,29 @@ import java.util.stream.Stream;
 
 public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
 
-  private final HashMap<String, NamedFunctionSet> library = new HashMap<>();
+  @NotNull
+  private final HashMap<@NotNull String, NamedFunctionSet> library = new HashMap<>();
 
-  protected HashMap<String, NamedFunctionSet> getLibrary() {
+  /**
+   * Get the map of function name to function signatures.
+   * 
+   * @return the mapping
+   */
+  @NotNull
+  protected HashMap<@NotNull String, NamedFunctionSet> getLibrary() {
     return library;
   }
 
-  public synchronized void registerFunction(IFunction function) throws IllegalArgumentException {
+  /**
+   * Register the provided function signature.
+   * 
+   * @param function
+   *          the function signature to register
+   * @throws IllegalArgumentException
+   *           if the provided function has the same arity as a previously registered function with
+   *           the same name
+   */
+  public synchronized void registerFunction(@NotNull IFunction function) throws IllegalArgumentException {
     String name = function.getName();
 
     NamedFunctionSet functions = getLibrary().get(name);
@@ -57,7 +75,7 @@ public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
   }
 
   @Override
-  public Stream<IFunction> getFunctionsAsStream() {
+  public Stream<@NotNull IFunction> getFunctionsAsStream() {
     return getLibrary().values().stream().flatMap(set -> {
       return set.getFunctionsAsStream();
     });
@@ -87,7 +105,9 @@ public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
       this.arityToFunctionMap = new HashMap<>();
     }
 
-    public Stream<IFunction> getFunctionsAsStream() {
+    @SuppressWarnings("null")
+    @NotNull 
+    public Stream<@NotNull IFunction> getFunctionsAsStream() {
       return arityToFunctionMap.values().stream();
     }
 
@@ -95,7 +115,7 @@ public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
       return arityToFunctionMap.get(arity);
     }
 
-    public IFunction addFunction(IFunction function) {
+    public IFunction addFunction(@NotNull IFunction function) {
       return arityToFunctionMap.put(function.arity(), function);
     }
   }

@@ -52,10 +52,11 @@ public class Base64Adapter extends AbstractJavaTypeAdapter<ByteBuffer, IBase64Bi
   }
 
   @Override
-  public ByteBuffer copy(ByteBuffer obj) {
+  public ByteBuffer copy(Object obj) {
+    ByteBuffer buffer = (ByteBuffer)obj;
     final ByteBuffer clone
-        = (obj.isDirect()) ? ByteBuffer.allocateDirect(obj.capacity()) : ByteBuffer.allocate(obj.capacity());
-    final ByteBuffer readOnlyCopy = obj.asReadOnlyBuffer();
+        = (buffer.isDirect()) ? ByteBuffer.allocateDirect(buffer.capacity()) : ByteBuffer.allocate(buffer.capacity());
+    final ByteBuffer readOnlyCopy = buffer.asReadOnlyBuffer();
     readOnlyCopy.flip();
     clone.put(readOnlyCopy);
     return clone;

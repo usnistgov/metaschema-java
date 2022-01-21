@@ -121,6 +121,8 @@ public class DefaultXmlDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
         XmlEventUtil.consumeAndAssert(reader, XMLEvent.START_DOCUMENT);
       }
 
+      XmlEventUtil.skipProcessingInstructions(reader);
+
       RootDefinitionAssemblyProperty property = new RootDefinitionAssemblyProperty(classBinding);
       try {
         @SuppressWarnings("unchecked")

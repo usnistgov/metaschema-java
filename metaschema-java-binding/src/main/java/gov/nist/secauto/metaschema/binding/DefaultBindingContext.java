@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding;
 
+import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.DefaultBoundLoader;
 import gov.nist.secauto.metaschema.binding.io.Deserializer;
 import gov.nist.secauto.metaschema.binding.io.Format;
@@ -44,6 +45,8 @@ import gov.nist.secauto.metaschema.binding.model.DefaultFieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -80,7 +83,7 @@ public class DefaultBindingContext implements BindingContext {
   }
 
   @Override
-  public synchronized ClassBinding getClassBinding(Class<?> clazz) {
+  public synchronized ClassBinding getClassBinding(Class<?> clazz) throws IllegalArgumentException {
     ClassBinding retval = classBindingsByClass.get(clazz);
     if (retval == null) {
       if (clazz.isAnnotationPresent(MetaschemaAssembly.class)) {
@@ -180,6 +183,14 @@ public class DefaultBindingContext implements BindingContext {
     return Collections.unmodifiableList(bindingMatchers);
   }
 
+  public synchronized Map<Class<?>, ClassBinding> getClassBindingsByClass() {
+    return Collections.unmodifiableMap(classBindingsByClass);
+  }
+
+  public Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> getJavaTypeAdaptersByClass() {
+    return Collections.unmodifiableMap(javaTypeAdapterMap);
+  }
+
   @Override
   public Class<?> getBoundClassForXmlQName(QName rootQName) {
     Class<?> retval = null;
@@ -208,4 +219,14 @@ public class DefaultBindingContext implements BindingContext {
   public IBoundLoader newBoundLoader() {
     return new DefaultBoundLoader(this);
   }
+
+  @Override
+  public <CLASS> CLASS copyBoundObject(@NotNull CLASS other, Object parentInstance) throws BindingException {
+    ClassBinding classBinding = getClassBinding(other.getClass());
+    @SuppressWarnings("unchecked")
+    CLASS retval = (CLASS) classBinding.copyBoundObject(other, parentInstance);
+    return retval;
+  }
+  
+  
 }

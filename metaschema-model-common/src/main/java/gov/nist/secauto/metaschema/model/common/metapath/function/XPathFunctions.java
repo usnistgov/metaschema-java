@@ -78,7 +78,7 @@ public class XPathFunctions {
     if (item instanceof IAnyAtomicItem) {
       retval = (IAnyAtomicItem) item;
     } else if (item instanceof IAtomicValuedItem) {
-      retval = ((IAtomicValuedItem)item).toAtomicItem();
+      retval = ((IAtomicValuedItem) item).toAtomicItem();
     } else {
       throw new InvalidTypeFunctionMetapathException(InvalidTypeFunctionMetapathException.NODE_HAS_NO_TYPED_VALUE,
           String.format("Item '%s' has no typed value", item.getClass().getName()));
@@ -156,11 +156,14 @@ public class XPathFunctions {
     return IBooleanItem.valueOf(!items.isEmpty());
   }
 
-  public static INumericItem fnRound(INumericItem arg) {
+  @NotNull
+  public static INumericItem fnRound(@NotNull INumericItem arg) {
     return fnRound(arg, IIntegerItem.ZERO);
   }
 
-  public static INumericItem fnRound(INumericItem arg, IIntegerItem precisionItem) throws ArithmeticFunctionException {
+  @NotNull
+  public static INumericItem fnRound(@NotNull INumericItem arg, @NotNull IIntegerItem precisionItem)
+      throws ArithmeticFunctionException {
     int precision;
     try {
       precision = FunctionUtils.asInteger(precisionItem);

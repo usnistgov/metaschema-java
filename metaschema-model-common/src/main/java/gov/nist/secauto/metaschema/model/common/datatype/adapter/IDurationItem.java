@@ -44,7 +44,7 @@ public interface IDurationItem extends IAnyAtomicItem {
   TemporalAmount getValue();
 
   @NotNull
-  public static IDurationItem cast(@NotNull IAnyAtomicItem item) {
+  public static IDurationItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     IDurationItem retval;
     if (item instanceof IDurationItem) {
       retval = (IDurationItem) item;

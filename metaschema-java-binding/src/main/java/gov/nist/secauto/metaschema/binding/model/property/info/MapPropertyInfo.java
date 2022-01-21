@@ -42,6 +42,7 @@ import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -49,7 +50,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -61,14 +61,8 @@ public class MapPropertyInfo
     implements ModelPropertyInfo {
 
   @Override
-  public Stream<?> getItemsFromParentInstance(Object parentInstance) {
-    Object value = getProperty().getValue(parentInstance);
-    return getItemsFromValue(value);
-  }
-
-  @Override
-  public Stream<?> getItemsFromValue(Object value) {
-    return value == null ? Stream.empty() : ((Map<?, ?>) value).values().stream();
+  public Collection<?> getItemsFromValue(Object value) {
+    return value == null ? List.of() : ((Map<?, ?>) value).values();
   }
 
   public MapPropertyInfo(NamedModelProperty property) {
@@ -208,9 +202,7 @@ public class MapPropertyInfo
 
   @Override
   public void writeValue(Object parentInstance, JsonWritingContext context) throws IOException {
-    NamedModelProperty property = getProperty();
-    @SuppressWarnings("unchecked")
-    Map<String, ? extends Object> items = (Map<String, ? extends Object>) property.getValue(parentInstance);
+    Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
 
     if (items.isEmpty()) {
       // nothing to write
@@ -221,17 +213,23 @@ public class MapPropertyInfo
 
     writer.writeStartObject();
 
-    getProperty().getDataTypeHandler().writeItems(items.values(), false, context);
+    getProperty().getDataTypeHandler().writeItems(items, false, context);
 
     writer.writeEndObject();
   }
 
   @Override
   public boolean isValueSet(Object parentInstance) throws IOException {
-    NamedModelProperty property = getProperty();
-    @SuppressWarnings("unchecked")
-    Map<String, ? extends Object> items = (Map<String, ? extends Object>) property.getValue(parentInstance);
-    return items != null && !items.isEmpty();
+    Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
+    return !items.isEmpty();
   }
 
+  @Override
+  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector) throws BindingException {
+    NamedModelProperty property = getProperty();
+
+    for (Object item : getItemsFromParentInstance(fromInstance)) {
+      collector.add(property.copyItem(item, toInstance));
+    }
+  }
 }

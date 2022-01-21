@@ -32,6 +32,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,23 +41,30 @@ import java.net.URI;
 import java.util.List;
 
 public class FnDocumentUriFunction {
+
+  static final IFunction SIGNATURE_NO_ARG = IFunction.newBuilder()
+      .name("document-uri")
+      .deterministic()
+      .contextDependent()
+      .focusDependent()
+      .returnType(IAnyUriItem.class)
+      .returnOne()
+      .functionHandler(FnDocumentUriFunction::executeNoArg)
+      .build();
+
   static final IFunction SIGNATURE_ONE_ARG = IFunction.newBuilder()
       .name("document-uri")
+      .deterministic()
+      .contextIndependent()
+      .focusIndependent()
       .argument(IArgument.newBuilder()
           .name("arg1")
-          .type(INodeItem.class)
+          .type(IDocumentNodeItem.class)
           .zeroOrOne()
           .build())
       .returnType(IAnyUriItem.class)
       .returnOne()
       .functionHandler(FnDocumentUriFunction::executeOneArg)
-      .build();
-
-  static final IFunction SIGNATURE_NO_ARG = IFunction.newBuilder()
-      .name("document-uri")
-      .returnType(IAnyUriItem.class)
-      .returnOne()
-      .functionHandler(FnDocumentUriFunction::executeNoArg)
       .build();
 
   @NotNull
@@ -66,11 +74,11 @@ public class FnDocumentUriFunction {
       INodeItem focus) {
 
     INodeItem item = focus;
-    if (item == null) {
+    if (item == null || !(item instanceof IDocumentNodeItem)) {
       return ISequence.empty();
     }
 
-    IAnyUriItem uri = fnDocumentUri(item);
+    IAnyUriItem uri = fnDocumentUri((IDocumentNodeItem)item);
     return ISequence.of(uri);
   }
 
@@ -83,24 +91,20 @@ public class FnDocumentUriFunction {
     ISequence<? extends INodeItem> arg = FunctionUtils.asType(arguments.get(0));
 
     INodeItem item = FunctionUtils.getFirstItem(arg, true);
-    if (item == null) {
+    if (item == null || !(item instanceof IDocumentNodeItem)) {
       return ISequence.empty();
     }
 
-    IAnyUriItem uri = fnDocumentUri(item);
+    IAnyUriItem uri = fnDocumentUri((IDocumentNodeItem)item);
     return ISequence.of(uri);
   }
 
-  public static IAnyUriItem fnDocumentUri(INodeItem arg) {
+  public static IAnyUriItem fnDocumentUri(IDocumentNodeItem arg) {
     if (arg == null) {
       return null;
     }
 
-    // this behavior is different from XPath
-    URI documentBaseUri = arg.getBaseUri();
-    if (documentBaseUri == null) {
-      return null;
-    }
+    URI documentBaseUri = arg.getDocumentUri();
     return IAnyUriItem.valueOf(documentBaseUri);
   }
 }

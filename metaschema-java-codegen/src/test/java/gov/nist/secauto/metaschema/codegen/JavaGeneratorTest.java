@@ -54,7 +54,6 @@ class JavaGeneratorTest {
   // File generationDir;
   File generationDir = new File("target/generated-sources/metaschema");
 
-  @Disabled
   @Test
   void test() throws IOException, MetaschemaException {
     // Metaschema metaschema = new MetaschemaLoader().loadXmlMetaschema(new URL(
@@ -64,7 +63,7 @@ class JavaGeneratorTest {
       MetaschemaLoader loader = new MetaschemaLoader();
       loader.allowEntityResolution();
       metaschema = loader
-          .loadXmlMetaschema(new File("../../OSCAL/src/metaschema/oscal_complete_metaschema.xml"));
+          .loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_complete_metaschema.xml"));
     } catch (Exception ex) {
       ex.printStackTrace();
       throw ex;

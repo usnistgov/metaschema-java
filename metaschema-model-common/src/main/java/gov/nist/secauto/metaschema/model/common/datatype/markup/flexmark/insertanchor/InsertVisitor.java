@@ -40,9 +40,9 @@ public class InsertVisitor extends NodeVisitorBase {
   @NotNull
   private final List<@NotNull InsertAnchorNode> inserts = new LinkedList<>();
   @NotNull
-  private final Predicate<InsertAnchorNode> filter;
+  private final Predicate<@NotNull InsertAnchorNode> filter;
 
-  public InsertVisitor(@NotNull Predicate<InsertAnchorNode> filter) {
+  public InsertVisitor(@NotNull Predicate<@NotNull InsertAnchorNode> filter) {
     this.filter = filter;
   }
 

@@ -37,11 +37,12 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -54,14 +55,8 @@ public class SingletonPropertyInfo extends AbstractModelPropertyInfo<Type> imple
   }
 
   @Override
-  public Stream<?> getItemsFromParentInstance(Object parentInstance) {
-    Object value = getProperty().getValue(parentInstance);
-    return getItemsFromValue(value);
-  }
-
-  @Override
-  public Stream<?> getItemsFromValue(Object value) {
-    return value == null ? Stream.empty() : Stream.of(value);
+  public List<?> getItemsFromValue(Object value) {
+    return value == null ? List.of() : List.of(value);
   }
 
   @Override
@@ -125,6 +120,17 @@ public class SingletonPropertyInfo extends AbstractModelPropertyInfo<Type> imple
   @Override
   public boolean isValueSet(Object parentInstance) throws IOException {
     return getProperty().getValue(parentInstance) != null;
+  }
+
+  @Override
+  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector) throws BindingException {
+    NamedModelProperty property = getProperty();
+
+    Object value = property.getValue(fromInstance);
+    
+    Object copiedValue = property.copyItem(value, toInstance);
+
+    collector.add(copiedValue);
   }
 
 }

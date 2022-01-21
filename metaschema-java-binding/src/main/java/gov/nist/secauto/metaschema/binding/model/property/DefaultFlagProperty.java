@@ -262,6 +262,16 @@ public class DefaultFlagProperty extends AbstractNamedProperty<ClassBinding> imp
     return null;
   }
 
+  @Override
+  public void copyBoundObject(@NotNull Object fromInstance, @NotNull Object toInstance) {
+    Object value = getValue(fromInstance);
+
+    IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
+
+    Object copiedValue = adapter.copy(value);
+    setValue(toInstance, copiedValue);
+  }
+
   private class InternalFlagDefinition implements FlagDefinition {
     @Override
     public IJavaTypeAdapter<?> getDatatype() {

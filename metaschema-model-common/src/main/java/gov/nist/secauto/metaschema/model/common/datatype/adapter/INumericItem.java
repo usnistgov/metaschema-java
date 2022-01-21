@@ -37,7 +37,7 @@ import java.math.BigInteger;
 public interface INumericItem extends IAnyAtomicItem {
 
   @NotNull
-  public static INumericItem cast(@NotNull IAnyAtomicItem item) {
+  public static INumericItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     INumericItem retval;
     if (item instanceof INumericItem) {
       retval = (INumericItem) item;

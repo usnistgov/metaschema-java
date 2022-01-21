@@ -48,9 +48,9 @@ public class YearMonthAdapter extends AbstractJavaTypeAdapter<Period, IYearMonth
   }
 
   @Override
-  public Period copy(Period obj) {
+  public Period copy(Object obj) {
     // value in immutable
-    return obj;
+    return (Period)obj;
   }
 
   @SuppressWarnings("null")

@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
 import com.vladsch.flexmark.util.ast.Document;
+import com.vladsch.flexmark.util.ast.Node;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.insertanchor.InsertAnchorNode;
 
@@ -57,8 +58,16 @@ public interface MarkupText {
 
   @NotNull
   default List<@NotNull InsertAnchorNode> getInserts() {
-    return getMatchingInserts(insert -> true);
+    return getInserts(insert -> true);
   }
+
+  /**
+   * Retrieve all nodes contained within this markup text as a stream.
+   * 
+   * @return a depth first stream
+   */
+  @NotNull
+  Stream<Node> getNodesAsStream();
 
   /**
    * Retrieve all insert statements that are contained within this markup text that match the provided
@@ -69,5 +78,5 @@ public interface MarkupText {
    * @return the matching insert statements
    */
   @NotNull
-  List<@NotNull InsertAnchorNode> getMatchingInserts(@NotNull Predicate<InsertAnchorNode> filter);
+  List<@NotNull InsertAnchorNode> getInserts(@NotNull Predicate<@NotNull InsertAnchorNode> filter);
 }

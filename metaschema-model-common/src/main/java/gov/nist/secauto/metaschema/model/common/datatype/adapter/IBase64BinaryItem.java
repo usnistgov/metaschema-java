@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IBase64BinaryType;
 
@@ -41,7 +42,7 @@ public interface IBase64BinaryItem extends IAnyAtomicItem {
   }
 
   @NotNull
-  public static IBase64BinaryItem cast(@NotNull IAnyAtomicItem item) {
+  public static IBase64BinaryItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.BASE64.cast(item);
   }
 

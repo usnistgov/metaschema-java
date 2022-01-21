@@ -31,6 +31,7 @@ import com.ctc.wstx.stax.WstxOutputFactory;
 import com.vladsch.flexmark.formatter.Formatter;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.util.ast.Document;
+import com.vladsch.flexmark.util.ast.Node;
 
 import gov.nist.secauto.metaschema.model.common.datatype.IDatatype;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstCollectingVisitor;
@@ -45,12 +46,11 @@ import org.codehaus.stax2.ri.evt.NamespaceEventImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
@@ -104,7 +104,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     return toHTML(FlexmarkFactory.instance().getHtmlRenderer());
   }
 
-  @NotNull 
+  @NotNull
   protected String toHTML(HtmlRenderer renderer) {
     return renderer.render(getDocument());
   }
@@ -114,7 +114,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     return toMarkdown(FlexmarkFactory.instance().getFormatter());
   }
 
-  @NotNull 
+  @NotNull
   protected String toMarkdown(Formatter formatter) {
     return formatter.render(getDocument());
   }
@@ -124,7 +124,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     return toMarkdownYaml(FlexmarkFactory.instance().getFormatter());
   }
 
-  @NotNull 
+  @NotNull
   protected String toMarkdownYaml(Formatter formatter) {
     String markdown = formatter.render(getDocument());
     // markdown = markdown.replaceAll("\\n", "\n");
@@ -132,13 +132,19 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     return markdown;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public List<@NotNull InsertAnchorNode> getMatchingInserts(@NotNull Predicate<InsertAnchorNode> filter) {
+  public Stream<Node> getNodesAsStream() {
+    return Stream.concat(Stream.of(getDocument()),
+        StreamSupport.stream(getDocument().getDescendants().spliterator(), false));
+  }
+
+  @Override
+  public List<@NotNull InsertAnchorNode> getInserts(@NotNull Predicate<@NotNull InsertAnchorNode> filter) {
     InsertVisitor visitor = new InsertVisitor(filter);
     visitor.visitChildren(getDocument());
     return visitor.getInserts();
   }
-
 
   @Override
   public String toString() {

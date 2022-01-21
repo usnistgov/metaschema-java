@@ -35,7 +35,6 @@ import com.vladsch.flexmark.util.data.DataHolder;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.insertanchor.InsertAnchorOptions;
 
-import org.jetbrains.annotations.NotNull;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 
@@ -56,13 +55,15 @@ public class InsertAnchorHtmlNodeRenderer implements HtmlNodeRenderer {
         : Collections.emptySet();
   }
 
+  @SuppressWarnings("null")
   private void processInsert(Element node, HtmlNodeConverterContext context, HtmlMarkdownWriter out) {
-    @SuppressWarnings("null")
-    @NotNull Node currentNode = context.getCurrentNode();
-    @SuppressWarnings("null")
-    @NotNull String type = currentNode.attr("type");
-    @SuppressWarnings("null")
-    @NotNull String idRef = currentNode.attr("id-ref");
+    Node currentNode = context.getCurrentNode();
+    if (currentNode == null) {
+      throw new NullPointerException("null current node");
+    }
+    
+    String type = currentNode.attr("type");
+    String idRef = currentNode.attr("id-ref");
 
     out.append("{{ insert: ");
     out.append(type);

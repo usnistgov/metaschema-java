@@ -49,9 +49,9 @@ public class UriReferenceAdapter extends AbstractJavaTypeAdapter<URI, IUriRefere
   }
 
   @Override
-  public URI copy(URI obj) {
+  public URI copy(Object obj) {
     // a URI is immutable
-    return obj;
+    return (URI)obj;
   }
 
   @SuppressWarnings("null")

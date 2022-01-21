@@ -214,7 +214,7 @@ public abstract class AbstractJavaTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
       TYPE value = parse(itemString);
       return newItem(value);
     } catch (IllegalArgumentException ex) {
-      throw new InvalidValueForCastFunctionMetapathException("textual value is not appropriate for this type", ex);
+      throw new InvalidValueForCastFunctionMetapathException(String.format("The value '%s' is not compatible with the type '%s'", itemString, getItemClass().getName()), ex);
     }
   }
 }

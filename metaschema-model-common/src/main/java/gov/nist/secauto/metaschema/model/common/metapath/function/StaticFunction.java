@@ -26,18 +26,34 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.EnumSet;
 import java.util.List;
 
 public class StaticFunction
-    extends AbstractFunction {
+    extends DefaultFunction {
 
+  /**
+   * Construct a new static function signature.
+   * 
+   * @param name
+   *          the name of the function
+   * @param properties
+   *          the characteristics of the function
+   * @param arguments
+   *          the argument signatures or an empty list
+   * @param result
+   *          the type of the result
+   * @param handler
+   *          the handler to call to execute the function
+   */
   protected StaticFunction(
-      String name,
-      List<IArgument> arguments,
-      boolean unboundedArity,
-      ISequenceType result,
-      FunctionExecutor handler) {
-    super(name, arguments, unboundedArity, result, handler);
+      @NotNull String name,
+      @NotNull EnumSet<FunctionProperty> properties,
+      @NotNull List<IArgument> arguments,
+      @NotNull ISequenceType result,
+      @NotNull FunctionExecutor handler) {
+    super(name, properties, arguments, result, handler);
   }
-
 }

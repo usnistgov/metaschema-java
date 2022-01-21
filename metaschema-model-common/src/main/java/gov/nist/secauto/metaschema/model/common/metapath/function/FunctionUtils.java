@@ -26,11 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.function.library.CastToDecimalFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.metapath.type.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.type.TypeMetapathException;
 
 import org.jetbrains.annotations.NotNull;
@@ -47,19 +48,55 @@ public class FunctionUtils {
 
   public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
 
-  public static int asInteger(INumericItem value) throws ArithmeticException {
+  /**
+   * Converts a {@link INumericItem} value to an integer value.
+   * 
+   * @param value
+   *          the value to convert
+   * @return the integer value
+   * @throws ArithmeticException
+   *           if the provided value will not exactly fit in an {@code int}
+   */
+  public static int asInteger(@NotNull INumericItem value) throws ArithmeticException {
     return asInteger(value.asInteger());
   }
 
-  public static int asInteger(BigInteger value) throws ArithmeticException {
+  /**
+   * Converts a {@link BigInteger} value to an integer value.
+   * 
+   * @param value
+   *          the value to convert
+   * @return the integer value
+   * @throws ArithmeticException
+   *           if the provided value will not exactly fit in an {@code int}
+   */
+  public static int asInteger(@NotNull BigInteger value) throws ArithmeticException {
     return value.intValueExact();
   }
 
-  public static long asLong(INumericItem value) throws ArithmeticException {
+  /**
+   * Converts a {@link INumericItem} value to a long value.
+   * 
+   * @param value
+   *          the value to convert
+   * @return the long value
+   * @throws ArithmeticException
+   *           if the provided value will not exactly fit in an {@code long}
+   */
+  public static long asLong(@NotNull INumericItem value) throws ArithmeticException {
     return asLong(value.asInteger());
   }
 
-  public static long asLong(BigInteger value) throws ArithmeticException {
+  /**
+   * Converts a {@link BigInteger} value to a long value.
+   * 
+   * @param value
+   *          the value to convert
+   * @return the long value
+   * @throws ArithmeticException
+   *           if the provided value will not exactly fit in an {@code long}
+   */
+  public static long asLong(@NotNull BigInteger value) throws ArithmeticException {
     return value.longValueExact();
   }
 
@@ -80,7 +117,8 @@ public class FunctionUtils {
   @Nullable
   public static <ITEM extends IItem> ITEM getFirstItem(@NotNull ISequence<ITEM> sequence, boolean requireSingleton)
       throws TypeMetapathException {
-    @Nullable ITEM retval = null;
+    @Nullable
+    ITEM retval = null;
     if (!sequence.isEmpty()) {
       List<ITEM> items = sequence.asList();
       if (requireSingleton && items.size() != 1) {
@@ -93,48 +131,49 @@ public class FunctionUtils {
   }
 
   /**
-   * Casts a result to a numeric value. If the result is a {@link ISequence}, then the first item is
-   * used. If the sequence is empty, then a {@link TypeMetapathException} is thrown.
+   * Gets the first item of the provided sequence as a {@link INumericItem} value. If the sequence is
+   * empty, then a {@code null} value is returned.
    * 
-   * @param result
-   *          a Metapath result
+   * @param sequence
+   *          a Metapath sequence containing the value to convert
    * @param requireSingleton
-   *          if {@code true} then a {@link TypeMetapathException} is thrown if the provided result is
-   *          sequence that contains more than one item
-   * @return the item as a numeric, or {@code null} if the result is an empty sequence
+   *          if {@code true} then a {@link TypeMetapathException} is thrown if the sequence contains
+   *          more than one item
+   * @return the numeric item value, or {@code null} if the result is an empty sequence
    * @throws TypeMetapathException
-   *           if the sequence contains more than one item, or the item cannot be cast to a decimal
+   *           if the sequence contains more than one item, or the item cannot be cast to a numeric
    *           value
    * 
    */
-  // TODO: replace this with a cast
-  public static INumericItem toNumeric(ISequence<?> result, boolean requireSingleton) {
-    IItem item = getFirstItem(result, requireSingleton);
-    return toNumeric(item);
+  @Nullable
+  public static INumericItem toNumeric(@NotNull ISequence<?> sequence, boolean requireSingleton) {
+    IItem item = getFirstItem(sequence, requireSingleton);
+    return item == null ? null : toNumeric(item);
   }
 
-  // TODO: use a cast instead?
-  public static INumericItem toNumeric(IItem item) throws TypeMetapathException {
-    INumericItem retval;
-    if (item == null) {
-      retval = null;
-    } else {
-      // atomize
-      IAnyAtomicItem atomicItem = XPathFunctions.fnDataItem(item);
+  /**
+   * Gets the provided item value as a {@link INumericItem} value.
+   * 
+   * @param sequence
+   *          a Metapath sequence containing the value to convert
+   * @param requireSingleton
+   *          if {@code true} then a {@link TypeMetapathException} is thrown if the sequence contains
+   *          more than one item
+   * @return the numeric item value
+   * @throws TypeMetapathException
+   *           if the sequence contains more than one item, or the item cannot be cast to a numeric
+   *           value
+   */
+  @NotNull
+  public static INumericItem toNumeric(@NotNull IItem item) throws TypeMetapathException {
+    // atomize
+    IAnyAtomicItem atomicItem = XPathFunctions.fnDataItem(item);
 
-      if (atomicItem instanceof INumericItem) {
-        retval = (INumericItem) atomicItem;
-      } else {
-        String value = atomicItem.asString();
-        try {
-          retval = IDecimalItem.valueOf(value);
-        } catch (NumberFormatException ex) {
-          throw new TypeMetapathException(TypeMetapathException.INVALID_TYPE_ERROR,
-              String.format("The value '%s' is not a valid decimal value", value), ex);
-        }
-      }
+    try {
+      return CastToDecimalFunction.castToDecimal(atomicItem);
+    } catch (InvalidValueForCastFunctionMetapathException ex) {
+      throw new InvalidTypeMetapathException(ex.getLocalizedMessage(), ex);
     }
-    return retval;
   }
 
   @SuppressWarnings("unchecked")

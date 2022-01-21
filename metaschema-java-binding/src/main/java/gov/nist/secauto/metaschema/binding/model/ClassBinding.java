@@ -39,6 +39,7 @@ import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
 
 import org.codehaus.stax2.XMLStreamReader2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -137,4 +138,18 @@ public interface ClassBinding extends IBoundNamedModelDefinition {
   // for JSON, the entire value needs to be processed to deal with collapsable fields
   void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, JsonWritingContext context)
       throws IOException;
+
+  /**
+   * Create a deep copy of the provided bound object.
+   * 
+   * @param item
+   *          the bound object to copy
+   * @param parentInstance
+   *          the new object's parent instance or {@code null}
+   * @return the copy
+   * @throws BindingException
+   *           if an error occurred copying content between java instances
+   */
+  @NotNull 
+  Object copyBoundObject(@NotNull Object item, Object parentInstance) throws BindingException;
 }

@@ -69,9 +69,9 @@ public class DecimalAdapter extends AbstractJavaTypeAdapter<BigDecimal, IDecimal
   }
 
   @Override
-  public BigDecimal copy(BigDecimal obj) {
+  public BigDecimal copy(Object obj) {
     // a BigDecimal is immutable
-    return obj;
+    return (BigDecimal)obj;
   }
 
   @SuppressWarnings("null")

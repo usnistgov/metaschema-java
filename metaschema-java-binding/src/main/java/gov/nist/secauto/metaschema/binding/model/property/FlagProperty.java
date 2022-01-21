@@ -31,6 +31,8 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.model.FlagDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.function.Supplier;
 

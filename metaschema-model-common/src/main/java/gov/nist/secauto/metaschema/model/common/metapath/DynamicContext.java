@@ -26,11 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.metapath.function.DocumentFunctionException;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -55,8 +53,8 @@ public class DynamicContext {
   @NotNull 
   private final ZonedDateTime currentDateTime;
   @NotNull 
-  private final Map<@NotNull URI, INodeItem> availableDocuments;
-  private IDocumentLoader documentLoader;
+  private final Map<@NotNull URI, IDocumentNodeItem> availableDocuments;
+  private CachingLoader documentLoader;
 
   @SuppressWarnings("null")
   public DynamicContext(@NotNull StaticContext staticContext) {
@@ -94,6 +92,10 @@ public class DynamicContext {
     return documentLoader;
   }
 
+  public IDocumentLoader getNonCachedDocumentLoader() {
+    return documentLoader != null ? documentLoader.getProxiedDocumentLoader() : null;
+  }
+
   public void setDocumentLoader(@NotNull IDocumentLoader documentLoader) {
     this.documentLoader = new CachingLoader(documentLoader);
   }
@@ -106,38 +108,38 @@ public class DynamicContext {
       this.proxy = proxy;
     }
 
-    protected IDocumentLoader getDocumentLoader() {
+    protected IDocumentLoader getProxiedDocumentLoader() {
       return proxy;
     }
 
     @Override
-    public synchronized INodeItem loadAsNodeItem(@NotNull URL url) throws IOException {
-      INodeItem retval;
+    public synchronized IDocumentNodeItem loadAsNodeItem(@NotNull URL url) throws IOException {
+      IDocumentNodeItem retval;
       try {
         retval = availableDocuments.get(url.toURI());
       } catch (URISyntaxException ex) {
         throw new IOException(ex);
       }
       if (retval == null) {
-        retval = getDocumentLoader().loadAsNodeItem(url);
+        retval = getProxiedDocumentLoader().loadAsNodeItem(url);
       }
       return retval;
     }
 
     @Override
-    public synchronized INodeItem loadAsNodeItem(File file) throws FileNotFoundException, IOException {
-      INodeItem retval = availableDocuments.get(file.getCanonicalFile().toURI());
+    public synchronized IDocumentNodeItem loadAsNodeItem(File file) throws FileNotFoundException, IOException {
+      IDocumentNodeItem retval = availableDocuments.get(file.getCanonicalFile().toURI());
       if (retval == null) {
-        retval = getDocumentLoader().loadAsNodeItem(file);
+        retval = getProxiedDocumentLoader().loadAsNodeItem(file);
       }
       return retval;
     }
 
     @Override
-    public synchronized INodeItem loadAsNodeItem(InputStream is, URI documentUri) throws IOException {
-      INodeItem retval = availableDocuments.get(documentUri);
+    public synchronized IDocumentNodeItem loadAsNodeItem(InputStream is, URI documentUri) throws IOException {
+      IDocumentNodeItem retval = availableDocuments.get(documentUri);
       if (retval == null) {
-        retval = getDocumentLoader().loadAsNodeItem(is, documentUri);
+        retval = getProxiedDocumentLoader().loadAsNodeItem(is, documentUri);
         availableDocuments.put(documentUri, retval);
       }
       return retval;
