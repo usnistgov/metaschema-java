@@ -37,8 +37,8 @@ public class MarkupMultiline
     return new MarkupMultiline(FlexmarkFactory.instance().fromHtml(html));
   }
 
-  public static MarkupMultiline fromMarkdown(String html) {
-    return new MarkupMultiline(FlexmarkFactory.instance().fromMarkdown(html));
+  public static MarkupMultiline fromMarkdown(String markdown) {
+    return new MarkupMultiline(FlexmarkFactory.instance().fromMarkdown(markdown));
   }
 
   public MarkupMultiline(Document astNode) {

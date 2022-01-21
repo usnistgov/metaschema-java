@@ -52,8 +52,8 @@ public class MarkupLine
     return new MarkupLine(FlexmarkFactory.instance().fromHtml(html, null, markdownParser));
   }
 
-  public static MarkupLine fromMarkdown(String html) {
-    return new MarkupLine(FlexmarkFactory.instance().fromMarkdown(html));
+  public static MarkupLine fromMarkdown(String markdown) {
+    return new MarkupLine(FlexmarkFactory.instance().fromMarkdown(markdown));
   }
 
   protected MarkupLine(Document astNode) {
