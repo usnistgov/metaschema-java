@@ -101,6 +101,7 @@ public interface INodeContext {
   default Stream<? extends IModelNodeItem> modelItems() {
     return getModelItems().values().stream().flatMap(list -> list.stream());
   }
+  
 //
 //  /**
 //   * Searches the node graph for {@link INodeItem} instances that match the provided

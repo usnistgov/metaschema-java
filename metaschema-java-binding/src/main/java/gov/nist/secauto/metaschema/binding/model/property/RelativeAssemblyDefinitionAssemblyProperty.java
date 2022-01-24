@@ -30,28 +30,28 @@ import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 
 import javax.xml.namespace.QName;
 
-public class RootDefinitionAssemblyProperty
+public class RelativeAssemblyDefinitionAssemblyProperty
     extends AbstractAssemblyDefinitionAssemblyProperty {
 
-  public RootDefinitionAssemblyProperty(AssemblyClassBinding rootAssemblyDefinition) {
-    super(rootAssemblyDefinition);
-    if (!rootAssemblyDefinition.isRoot()) {
+  public RelativeAssemblyDefinitionAssemblyProperty(AssemblyClassBinding assemblyDefinition) {
+    super(assemblyDefinition);
+    if (!assemblyDefinition.isRoot()) {
       throw new IllegalArgumentException();
     }
   }
 
   @Override
   public String getName() {
-    return getDefinition().getRootName();
+    return getDefinition().getEffectiveName();
   }
 
   @Override
   public String getXmlNamespace() {
-    return getDefinition().getRootXmlQName().getNamespaceURI();
+    return getDefinition().getXmlNamespace();
   }
 
   @Override
   public QName getXmlQName() {
-    return getDefinition().getRootXmlQName();
+    return getDefinition().getXmlQName();
   }
 }

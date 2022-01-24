@@ -23,35 +23,45 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
+import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Field;
 
 import javax.xml.namespace.QName;
 
-public class RootDefinitionAssemblyProperty
-    extends AbstractAssemblyDefinitionAssemblyProperty {
+public class RelativeFieldDefinitionFieldProperty
+    extends AbstractFieldDefinitionFieldProperty {
 
-  public RootDefinitionAssemblyProperty(AssemblyClassBinding rootAssemblyDefinition) {
-    super(rootAssemblyDefinition);
-    if (!rootAssemblyDefinition.isRoot()) {
-      throw new IllegalArgumentException();
-    }
+  public RelativeFieldDefinitionFieldProperty(@NotNull FieldClassBinding classBinding) {
+    super(classBinding);
+  }
+
+  @Override
+  protected IJavaTypeAdapter<?> getJavaTypeAdapter() {
+    return null;
   }
 
   @Override
   public String getName() {
-    return getDefinition().getRootName();
+    return getDefinition().getEffectiveName();
   }
 
   @Override
-  public String getXmlNamespace() {
-    return getDefinition().getRootXmlQName().getNamespaceURI();
+  public @Nullable String getXmlNamespace() {
+    return getDefinition().getXmlNamespace();
   }
 
   @Override
-  public QName getXmlQName() {
-    return getDefinition().getRootXmlQName();
+  public @Nullable QName getXmlQName() {
+    return getDefinition().getXmlQName();
   }
 }

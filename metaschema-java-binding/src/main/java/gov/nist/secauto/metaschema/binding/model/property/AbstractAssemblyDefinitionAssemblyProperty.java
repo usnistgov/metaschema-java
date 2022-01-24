@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
@@ -36,9 +37,10 @@ import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractDefinitionAssemblyProperty extends AbstractAssemblyProperty {
+public abstract class AbstractAssemblyDefinitionAssemblyProperty
+    extends AbstractAssemblyProperty {
 
-  public AbstractDefinitionAssemblyProperty(AssemblyClassBinding rootAssemblyDefinition) {
+  public AbstractAssemblyDefinitionAssemblyProperty(AssemblyClassBinding rootAssemblyDefinition) {
     super(rootAssemblyDefinition, null);
   }
 

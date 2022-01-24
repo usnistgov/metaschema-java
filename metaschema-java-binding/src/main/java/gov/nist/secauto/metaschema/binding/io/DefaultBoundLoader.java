@@ -222,7 +222,7 @@ public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
 
   @Override
   public <CLASS> CLASS load(InputStream is, URI documentUri) throws IOException {
-    return IBoundLoader.toBoundObject(loadAsNodeItem(is, documentUri));
+    return loadAsNodeItem(is, documentUri).toBoundObject();
   }
 
   @Override
@@ -269,7 +269,7 @@ public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
       @NotNull URI documentUri)
       throws BindingException {
     IBoundXdmNodeItem nodeItem = loadAsNodeItem(deserializer, is, documentUri);
-    return IBoundLoader.toBoundObject(nodeItem);
+    return nodeItem.toBoundObject();
   }
 
   @NotNull

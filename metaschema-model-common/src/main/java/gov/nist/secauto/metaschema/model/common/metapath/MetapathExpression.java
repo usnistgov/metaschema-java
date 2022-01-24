@@ -47,8 +47,8 @@ public class MetapathExpression {
   private final IExpression<?> node;
 
   @SuppressWarnings("null")
-  public MetapathExpression(@NotNull ParseTree tree) {
-    this(tree.getText(), new BuildAstVisitor().visit(tree));
+  public MetapathExpression(@NotNull String path, @NotNull ParseTree tree) {
+    this(path, new BuildAstVisitor().visit(tree));
   }
 
   public MetapathExpression(@NotNull String path, @NotNull IExpression<?> expr) {

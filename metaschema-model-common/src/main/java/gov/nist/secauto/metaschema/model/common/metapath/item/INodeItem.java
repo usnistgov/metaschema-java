@@ -110,4 +110,6 @@ public interface INodeItem extends IPathItem, INodeContext {
     return new MetaschemaPathEvaluationVisitor(context).visit(metapath.getASTNode(), this);
   }
 
+  @NotNull
+  <CLASS> CLASS toBoundObject();
 }

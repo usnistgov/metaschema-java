@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.binding.metapath.xdm;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -38,7 +40,7 @@ public abstract class AbstractBoundXdmModelNodeItem<INSTANCE extends NamedModelP
   private final int position;
   private Map<String, IBoundXdmFlagNodeItem> flags;
 
-  public AbstractBoundXdmModelNodeItem(INSTANCE instance, Object value, int position) {
+  public AbstractBoundXdmModelNodeItem(@NotNull INSTANCE instance, @NotNull Object value, int position) {
     super(instance, value);
     this.position = position;
   }

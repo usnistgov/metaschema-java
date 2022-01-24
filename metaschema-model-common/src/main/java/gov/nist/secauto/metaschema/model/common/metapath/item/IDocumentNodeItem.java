@@ -75,4 +75,10 @@ public interface IDocumentNodeItem extends INodeItem {
   default INamedDefinition getDefinition() {
     return getRootAssemblyNodeItem().getDefinition();
   }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  default <CLASS> @NotNull CLASS toBoundObject() {
+    return (CLASS)getRootAssemblyNodeItem().getValue();
+  }
 }

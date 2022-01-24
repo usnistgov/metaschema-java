@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.binding.io.Deserializer;
 import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.io.IBoundLoader;
 import gov.nist.secauto.metaschema.binding.io.Serializer;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
@@ -39,6 +40,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
+import java.net.URI;
 import java.time.ZonedDateTime;
 
 import javax.xml.namespace.QName;
@@ -183,8 +185,10 @@ public interface BindingContext {
    * 
    * @param <CLASS>
    *          the bound object type
-   * @param other the object to copy
-   * @param parentInstance the object's parent or {@code null}
+   * @param other
+   *          the object to copy
+   * @param parentInstance
+   *          the object's parent or {@code null}
    * @return
    * @throws BindingException
    *           if an error occurred copying content between java instances
@@ -195,4 +199,8 @@ public interface BindingContext {
    */
   @NotNull
   <CLASS> CLASS copyBoundObject(@NotNull CLASS other, Object parentInstance) throws BindingException;
+
+  IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri) throws IllegalArgumentException;
+
+  void validate(@NotNull Object boundObject, URI baseUri) throws IllegalArgumentException;
 }

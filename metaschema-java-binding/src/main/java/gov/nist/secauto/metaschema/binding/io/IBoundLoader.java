@@ -83,26 +83,4 @@ public interface IBoundLoader extends IDocumentLoader, MutableConfiguration {
 
   @NotNull
   <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull InputStream is, @NotNull URI documentUri) throws IOException;
-
-  @NotNull
-  public static <CLASS> CLASS toBoundObject(@NotNull INodeItem nodeItem) {
-    IAssemblyNodeItem result = toAssemblyNodeItem(nodeItem);
-    @SuppressWarnings("unchecked") CLASS retval = (CLASS) result.getValue();
-    return retval;
-  }
-
-  @NotNull
-  public static IAssemblyNodeItem toAssemblyNodeItem(@NotNull INodeItem nodeItem) {
-    IAssemblyNodeItem retval;
-    if (nodeItem instanceof IDocumentNodeItem) {
-      retval = ((IDocumentNodeItem) nodeItem).getRootAssemblyNodeItem();
-    } else if (nodeItem instanceof IAssemblyNodeItem) {
-      retval = (IAssemblyNodeItem) nodeItem;
-    } else {
-      throw new IllegalArgumentException(
-          String.format("The node item type '%s' cannot be cast to an assembly node item.", nodeItem.getItemName()));
-    }
-    return retval;
-  }
-
 }

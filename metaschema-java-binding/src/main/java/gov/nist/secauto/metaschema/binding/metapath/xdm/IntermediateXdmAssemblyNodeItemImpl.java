@@ -30,10 +30,8 @@ import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.net.URI;
-
-public class IntermediateXdmAssemblyNodeItemImpl extends AbstractBoundXdmAssemblyNodeItem<AssemblyProperty>
-    implements IBoundXdmAssemblyNodeItem {
+class IntermediateXdmAssemblyNodeItemImpl
+    extends AbstractBoundXdmAssemblyNodeItem<AssemblyProperty> {
 
   private final @NotNull IBoundXdmAssemblyNodeItem parent;
 
@@ -56,10 +54,5 @@ public class IntermediateXdmAssemblyNodeItemImpl extends AbstractBoundXdmAssembl
   @NotNull
   public IBoundXdmAssemblyNodeItem getParentContentNodeItem() {
     return parent;
-  }
-
-  @Override
-  public URI getBaseUri() {
-    return getParentNodeItem().getBaseUri();
   }
 }

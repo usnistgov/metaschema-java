@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.format.IDefinitionPathS
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractValuedNodeItem<SEGMENT extends @NotNull IDefinitionPathSegment, PARENT extends IModelNodeItem>
-    extends AbstractNodeItem<SEGMENT> implements INodeItem, IValuedNodeItem {
+    extends AbstractNodeItem<SEGMENT> implements IValuedNodeItem {
   /**
    * The current node.
    */

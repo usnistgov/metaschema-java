@@ -109,7 +109,7 @@ public abstract class AbstractDeserializer<CLASS> extends AbstractSerializationB
       validator.finalizeValidation();
     }
 
-    return IBoundLoader.toBoundObject(nodeItem);
+    return nodeItem.toBoundObject();
   }
 
   @Override

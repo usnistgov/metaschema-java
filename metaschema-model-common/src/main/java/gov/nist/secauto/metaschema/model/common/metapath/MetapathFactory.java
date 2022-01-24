@@ -55,7 +55,7 @@ public class MetapathFactory {
       ParseTree tree = parser.expr();
       // CSTPrinter printer = new CSTPrinter();
       // printer.print(tree, Arrays.asList(parser.getRuleNames()));
-      retval = new MetapathExpression(tree);
+      retval = new MetapathExpression(path, tree);
     }
     return retval;
   }

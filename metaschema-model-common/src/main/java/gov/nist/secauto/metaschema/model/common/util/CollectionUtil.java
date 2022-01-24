@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.model.common.util;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -105,6 +106,12 @@ public class CollectionUtil {
     return retval;
   }
 
+  public static <T extends Collection<A>, A> T requireNonEmpty(T collection, String message) {
+    if (collection.isEmpty()) {
+      throw new IllegalStateException(message);
+    }
+    return collection;
+  }
 
   @SuppressWarnings("null")
   @NotNull

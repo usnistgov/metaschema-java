@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
@@ -45,9 +47,16 @@ public interface IXdmFactory {
   IBoundXdmAssemblyNodeItem newAssemblyNodeItem(@NotNull AssemblyProperty instance, @NotNull Object value, int position,
       @NotNull IBoundXdmAssemblyNodeItem parentNodeItem);
 
+  IBoundXdmAssemblyNodeItem newAssemblyNodeItem(@NotNull AssemblyProperty instance, @NotNull Object value, int position,
+      @Nullable URI baseUri);
+
   @NotNull
   IBoundXdmFieldNodeItem newFieldNodeItem(@NotNull FieldProperty instance, @NotNull Object value, int position,
       @NotNull IBoundXdmAssemblyNodeItem parentNodeItem);
+
+  @NotNull
+  IBoundXdmFieldNodeItem newFieldNodeItem(@NotNull FieldProperty instance, @NotNull Object value, int position,
+      @Nullable URI baseUri);
 
   @NotNull
   IBoundXdmFlagNodeItem newFlagNodeItem(@NotNull FlagProperty instance, @NotNull Object value,
@@ -67,5 +76,10 @@ public interface IXdmFactory {
 
   @NotNull
   IBoundXdmAssemblyNodeItem newRelativeAssemblyNodeItem(@NotNull AssemblyClassBinding definition, @NotNull Object value,
-      @Nullable URI documentUri);
+      @Nullable URI baseUri);
+
+  IBoundXdmFieldNodeItem newRelativeFieldNodeItem(@NotNull FieldClassBinding definition, @NotNull Object value,
+      @Nullable URI baseUri);
+
+  IBoundXdmNodeItem newNodeItem(@NotNull ClassBinding definition, @NotNull Object boundObject, @Nullable URI baseUri);
 }

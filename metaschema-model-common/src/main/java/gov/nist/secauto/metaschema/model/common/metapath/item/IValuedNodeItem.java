@@ -25,6 +25,8 @@
  */
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.net.URI;
 
 public interface IValuedNodeItem extends INodeItem, IValuedItem {
@@ -47,4 +49,10 @@ public interface IValuedNodeItem extends INodeItem, IValuedItem {
    * @return the parent content node item, or {@code null} if this node item has no known parent content node item
    */
   IModelNodeItem getParentContentNodeItem();
+
+  @SuppressWarnings("unchecked")
+  @Override
+  default <CLASS> @NotNull CLASS toBoundObject() {
+    return (CLASS)getValue();
+  }
 }

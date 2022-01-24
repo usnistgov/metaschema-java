@@ -96,7 +96,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluationVisitor {
+public class MetaschemaPathEvaluationVisitor
+    extends AbstractExpressionEvaluationVisitor {
 
   private final DynamicContext dynamicContext;
 
@@ -425,7 +426,8 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
   @Override
   public ISequence<? extends INodeItem> visitRootSlashPath(RootSlashPath expr, INodeContext context) {
     if (context.getContextNodeItem() instanceof IDocumentNodeItem) {
-      @SuppressWarnings("unchecked") ISequence<? extends INodeItem> retval
+      @SuppressWarnings("unchecked")
+      ISequence<? extends INodeItem> retval
           = (ISequence<? extends INodeItem>) expr.getNode().accept(this, context);
       return retval;
     } else {
@@ -441,27 +443,35 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
   @Override
   public ISequence<? extends INodeItem> visitRelativeSlashPath(RelativeSlashPath expr, INodeContext context) {
     IExpression<?> left = expr.getLeft();
-    @SuppressWarnings("unchecked") ISequence<? extends INodeItem> leftResult
+    @SuppressWarnings("unchecked")
+    ISequence<? extends INodeItem> leftResult
         = (ISequence<? extends INodeItem>) left.accept(this, context);
-    IExpression<?> right = expr.getRight();
 
-    List<gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem> result = new LinkedList<>();
-    leftResult.asStream().forEachOrdered(item -> {
-      INodeItem node = (INodeItem) item;
+    List<INodeItem> result;
+    if (!leftResult.isEmpty()) {
+      result = new LinkedList<>();
+      IExpression<?> right = expr.getRight();
 
-      // evaluate the right path in the context of the left
-      @SuppressWarnings("unchecked") ISequence<? extends INodeItem> otherResult
-          = (ISequence<? extends INodeItem>) right.accept(this, node);
-      otherResult.asStream().forEachOrdered(otherItem -> {
-        result.add(otherItem);
-      });
-    });
+      // evaluate the right path in the context of the left's children
+      leftResult.asStream()
+          .flatMap(leftNode -> Stream.concat(leftNode.flags(), leftNode.modelItems()))
+          .forEachOrdered(node -> {
+            @SuppressWarnings("unchecked")
+            ISequence<? extends INodeItem> otherResult = (ISequence<? extends INodeItem>) right.accept(this, node);
+            otherResult.asStream().forEachOrdered(otherItem -> {
+              result.add(otherItem);
+            });
+          });
+    } else {
+      result = List.of();
+    }
     return ISequence.of(result);
   }
 
   @Override
   public ISequence<? extends INodeItem> visitStep(Step expr, INodeContext context) {
-    @SuppressWarnings("unchecked") ISequence<? extends INodeItem> stepResult
+    @SuppressWarnings("unchecked")
+    ISequence<? extends INodeItem> stepResult
         = (ISequence<? extends INodeItem>) expr.getStep().accept(this, context);
 
     // evaluate the predicates for this step
@@ -472,7 +482,8 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
       return Map.entry(BigInteger.valueOf(index.incrementAndGet()), item);
     }).filter(entry -> {
       @SuppressWarnings("null")
-      @NotNull INodeItem item = entry.getValue();
+      @NotNull
+      INodeItem item = entry.getValue();
       INodeContext childContext = item;
 
       // return false if any predicate evaluates to false
@@ -495,7 +506,8 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
       }).anyMatch(x -> !x);
       return result;
     }).map(entry -> entry.getValue());
-    @SuppressWarnings("null") ISequence<? extends INodeItem> retval = ISequence.of(stream);
+    @SuppressWarnings("null")
+    ISequence<? extends INodeItem> retval = ISequence.of(stream);
     return retval;
   }
 
@@ -514,7 +526,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
         // wildcard
         match = true;
       }
-      retval = match ? ISequence.empty() : ISequence.of(flag);
+      retval = match ? ISequence.of(flag) : ISequence.empty();
     } else {
       retval = ISequence.empty();
     }
@@ -538,7 +550,7 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
         // wildcard
         match = true;
       }
-      retval = match ? ISequence.empty() : ISequence.of(modelItem);
+      retval = match ? ISequence.of(modelItem) : ISequence.empty();
     } else {
       retval = ISequence.empty();
     }
@@ -549,7 +561,8 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
   public ISequence<? extends INodeItem> visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr,
       INodeContext context) {
     IExpression<?> left = expr.getLeft();
-    @SuppressWarnings("unchecked") ISequence<? extends INodeItem> leftResult
+    @SuppressWarnings("unchecked")
+    ISequence<? extends INodeItem> leftResult
         = (ISequence<? extends INodeItem>) left.accept(this, context);
 
     Stream<? extends INodeItem> result = leftResult.asStream().flatMap(item -> {
@@ -557,7 +570,8 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
       return search(expr.getRight(), item);
     });
 
-    @SuppressWarnings("null") ISequence<? extends INodeItem> retval = ISequence.of(result);
+    @SuppressWarnings("null")
+    ISequence<? extends INodeItem> retval = ISequence.of(result);
     return retval;
   }
 
@@ -569,29 +583,37 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
   @NotNull
   protected Stream<? extends INodeItem> search(@NotNull IExpression<?> expr, @NotNull INodeContext context) {
     Stream<? extends INodeItem> retval;
-    if (expr instanceof Flag) {
-      // check instances as a flag
-      retval = searchFlags((Flag) expr, context);
-    } else if (expr instanceof ModelInstance) {
-      // check instances as a ModelInstance
-      retval = searchModelInstances((ModelInstance) expr, context);
-    } else {
-      // recurse tree
-      searchExpression(expr, context);
-      retval = searchExpression(expr, context);;
-    }
+    // if (expr instanceof Flag) {
+    // // check instances as a flag
+    // retval = searchFlags((Flag) expr, context);
+    // } else if (expr instanceof ModelInstance) {
+    // // check instances as a ModelInstance
+    // retval = searchModelInstances((ModelInstance) expr, context);
+    // } else {
+    // recurse tree
+    // searchExpression(expr, context);
+    retval = searchExpression(expr, context);
+    ;
+    // }
     return retval;
   }
 
   @NotNull
   protected Stream<? extends INodeItem> searchExpression(@NotNull IExpression<?> expr, @NotNull INodeContext context) {
+
     // check the current node
-    @SuppressWarnings("unchecked") Stream<? extends INodeItem> nodeMatches
+    @SuppressWarnings("unchecked")
+    Stream<? extends INodeItem> nodeMatches
         = (Stream<? extends INodeItem>) expr.accept(this, context).asStream();
 
-    Stream<? extends INodeItem> childMatches = context.modelItems().flatMap(instance -> {
+    // create a stream of flags and model elements to check
+    Stream<? extends IFlagNodeItem> flags = context.flags();
+    Stream<? extends INodeItem> modelItems = context.modelItems();
+
+    Stream<? extends INodeItem> childMatches = Stream.concat(flags, modelItems).flatMap(instance -> {
       return searchExpression(expr, instance);
     });
+
     return Stream.concat(nodeMatches, childMatches);
   }
 
@@ -621,7 +643,8 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
     }
 
     // next iterate over the child model instances, if the context item is an assembly
-    @SuppressWarnings("null") Stream<? extends IModelNodeItem> childMatches
+    @SuppressWarnings("null")
+    Stream<? extends IModelNodeItem> childMatches
         = context.modelItems().flatMap(modelItem -> {
           // apply the search criteria to these node items
           return searchModelInstances(modelInstance, modelItem);
@@ -629,7 +652,8 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
 
     // combine the results
     @SuppressWarnings("null")
-    @NotNull Stream<? extends IModelNodeItem> retval = Stream.concat(nodeMatches, childMatches);
+    @NotNull
+    Stream<? extends IModelNodeItem> retval = Stream.concat(nodeMatches, childMatches);
     return retval;
   }
 
@@ -646,22 +670,23 @@ public class MetaschemaPathEvaluationVisitor extends AbstractExpressionEvaluatio
   @NotNull
   private Stream<? extends IFlagNodeItem> searchFlags(Flag expr, INodeContext context) {
 
-//    // check if any flags on the the current node context matches the expression
-//    Stream<? extends IFlagNodeItem> retval = context.getMatchingChildFlags(expr);
-//
-//    // next iterate over the child model instances, if the context item is an assembly
-//    INodeItem contextItem = context.getContextNodeItem();
-//
-//    if (contextItem instanceof IAssemblyNodeItem) {
-//      IAssemblyNodeItem assemblyContextItem = (IAssemblyNodeItem) contextItem;
-//
-//      Stream<? extends IFlagNodeItem> childFlagInstances = assemblyContextItem.modelItems().flatMap(modelItem -> {
-//        // apply the search criteria to these node items
-//        return searchFlags(expr, modelItem);
-//      });
-//      retval = Stream.concat(retval, childFlagInstances);
-//    }
-//    return retval;
+    // // check if any flags on the the current node context matches the expression
+    // Stream<? extends IFlagNodeItem> retval = context.getMatchingChildFlags(expr);
+    //
+    // // next iterate over the child model instances, if the context item is an assembly
+    // INodeItem contextItem = context.getContextNodeItem();
+    //
+    // if (contextItem instanceof IAssemblyNodeItem) {
+    // IAssemblyNodeItem assemblyContextItem = (IAssemblyNodeItem) contextItem;
+    //
+    // Stream<? extends IFlagNodeItem> childFlagInstances =
+    // assemblyContextItem.modelItems().flatMap(modelItem -> {
+    // // apply the search criteria to these node items
+    // return searchFlags(expr, modelItem);
+    // });
+    // retval = Stream.concat(retval, childFlagInstances);
+    // }
+    // return retval;
     return Stream.empty();
   }
 

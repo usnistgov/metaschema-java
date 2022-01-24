@@ -627,5 +627,8 @@ public class DefaultAssemblyClassBinding
     }
   }
 
-  
+  @Override
+  public String getName() {
+    return isRoot() ? getRootName() : super.getName();
+  }
 }

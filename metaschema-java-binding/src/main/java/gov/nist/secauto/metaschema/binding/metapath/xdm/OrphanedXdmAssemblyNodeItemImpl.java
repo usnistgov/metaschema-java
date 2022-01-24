@@ -23,35 +23,40 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-package gov.nist.secauto.metaschema.binding.model.property;
+import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import org.jetbrains.annotations.NotNull;
 
-import javax.xml.namespace.QName;
+import java.net.URI;
 
-public class RootDefinitionAssemblyProperty
-    extends AbstractAssemblyDefinitionAssemblyProperty {
+class OrphanedXdmAssemblyNodeItemImpl
+    extends AbstractBoundXdmAssemblyNodeItem<AssemblyProperty> {
+  private final URI baseUri;
 
-  public RootDefinitionAssemblyProperty(AssemblyClassBinding rootAssemblyDefinition) {
-    super(rootAssemblyDefinition);
-    if (!rootAssemblyDefinition.isRoot()) {
-      throw new IllegalArgumentException();
-    }
+
+  public OrphanedXdmAssemblyNodeItemImpl(
+      @NotNull AssemblyProperty instance,
+      @NotNull Object value,
+      int position,
+      URI baseUri) {
+    super(instance, value, position);
+    this.baseUri = baseUri;
   }
 
   @Override
-  public String getName() {
-    return getDefinition().getRootName();
+  public IBoundXdmAssemblyNodeItem getParentNodeItem() {
+    return null;
   }
 
   @Override
-  public String getXmlNamespace() {
-    return getDefinition().getRootXmlQName().getNamespaceURI();
+  public IBoundXdmAssemblyNodeItem getParentContentNodeItem() {
+    return null;
   }
 
   @Override
-  public QName getXmlQName() {
-    return getDefinition().getRootXmlQName();
+  public URI getBaseUri() {
+    return baseUri;
   }
 }
