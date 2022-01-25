@@ -26,49 +26,53 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractBinaryExpression<RESULT_TYPE extends IItem>
-    implements IExpression<RESULT_TYPE> {
-  private final IExpression<?> left;
-  private final IExpression<?> right;
+/**
+ * An immutable representation of an {@link IExpression} that has two sub-expression children.
+ */
+public abstract class AbstractBinaryExpression implements IExpression {
+  @NotNull
+  private final IExpression left;
+  @NotNull
+  private final IExpression right;
 
-  public AbstractBinaryExpression(IExpression<?> left, IExpression<?> right) {
-    Objects.requireNonNull(left);
-    Objects.requireNonNull(right);
-    this.left = left;
-    this.right = right;
+  /**
+   * Construct a new binary expression.
+   * @param left the first sub-expression to evaluate
+   * @param right the second sub-expression to evaluate
+   */
+  @SuppressWarnings("null")
+  public AbstractBinaryExpression(@NotNull IExpression left, @NotNull IExpression right) {
+    this.left = Objects.requireNonNull(left);
+    this.right = Objects.requireNonNull(right);
   }
 
-  public IExpression<?> getLeft() {
+  /**
+   * Retrieve the first sub-expression.
+   * @return the first sub-expression
+   */
+  @NotNull
+  public IExpression getLeft() {
     return left;
   }
 
-  public IExpression<?> getRight() {
+  /**
+   * Retrieve the second sub-expression.
+   * @return the second sub-expression
+   */
+  @NotNull
+  public IExpression getRight() {
     return right;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public List<? extends IExpression<?>> getChildren() {
-    List<? extends IExpression<?>> retval;
-    if (left != null) {
-      if (right != null) {
-        retval = List.of(left, right);
-      } else {
-        retval = List.of(left);
-      }
-    } else {
-      if (right != null) {
-        retval = List.of(right);
-      } else {
-        retval = Collections.emptyList();
-      }
-    }
-    return retval;
+  public List<@NotNull ? extends IExpression> getChildren() {
+    return List.of(left, right);
   }
 
   @Override

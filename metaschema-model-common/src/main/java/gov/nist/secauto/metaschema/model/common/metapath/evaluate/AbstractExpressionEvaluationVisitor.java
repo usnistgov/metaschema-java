@@ -61,6 +61,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.StringLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
@@ -68,19 +69,22 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
+
 public class AbstractExpressionEvaluationVisitor implements IExpressionEvaluationVisitor {
 
   @NotNull
-  protected <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> visitChildren(@NotNull IExpression<ITEM_TYPE> expr,
+  protected <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> visitChildren(@NotNull IExpression expr,
       @NotNull INodeContext context) {
     ISequence<ITEM_TYPE> result = defaultResult();
-    int numChildren = expr.getChildCount();
-    for (int idx = 0; idx < numChildren; idx++) {
+
+    for (Iterator<@NotNull ? extends IExpression> itr = expr.getChildren().iterator(); itr.hasNext();) {
       if (!shouldVisitNextChild(expr, result, context)) {
         break;
       }
 
-      IExpression<?> childExpr = expr.getChild(idx);
+      @SuppressWarnings("null")
+      IExpression childExpr = itr.next();
       ISequence<?> childResult = childExpr.accept(this, context);
       result = aggregateResult(result, childResult);
     }
@@ -88,8 +92,8 @@ public class AbstractExpressionEvaluationVisitor implements IExpressionEvaluatio
     return result;
   }
 
-  protected <ITEM_TYPE extends IItem> boolean shouldVisitNextChild(IExpression<ITEM_TYPE> expr,
-      ISequence<ITEM_TYPE> result, INodeContext context) {
+  protected <ITEM_TYPE extends IItem> boolean shouldVisitNextChild(IExpression expr, ISequence<ITEM_TYPE> result,
+      INodeContext context) {
     return true;
   }
 
@@ -105,7 +109,7 @@ public class AbstractExpressionEvaluationVisitor implements IExpressionEvaluatio
   }
 
   @Override
-  public ISequence<?> visit(IExpression<?> expr, INodeContext context) {
+  public ISequence<?> visit(IExpression expr, INodeContext context) {
     ISequence<?> retval = expr.accept(this, context);
     return retval;
   }
@@ -196,33 +200,33 @@ public class AbstractExpressionEvaluationVisitor implements IExpressionEvaluatio
   }
 
   @Override
-  public ISequence<? extends INodeItem> visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr,
+  public ISequence<?> visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr,
       INodeContext context) {
     return visitChildren(expr, context);
   }
 
   @Override
-  public ISequence<? extends INodeItem> visitRelativeSlashPath(RelativeSlashPath expr, INodeContext context) {
+  public ISequence<?> visitRelativeSlashPath(RelativeSlashPath expr, INodeContext context) {
     return visitChildren(expr, context);
   }
 
   @Override
-  public ISequence<? extends INodeItem> visitRootDoubleSlashPath(RootDoubleSlashPath expr, INodeContext context) {
+  public ISequence<?> visitRootDoubleSlashPath(RootDoubleSlashPath expr, INodeContext context) {
     return visitChildren(expr, context);
   }
 
   @Override
-  public ISequence<? extends INodeItem> visitRootSlashOnlyPath(RootSlashOnlyPath expr, INodeContext context) {
+  public ISequence<? extends IDocumentNodeItem> visitRootSlashOnlyPath(RootSlashOnlyPath expr, INodeContext context) {
     return defaultResult();
   }
 
   @Override
-  public ISequence<? extends INodeItem> visitRootSlashPath(RootSlashPath expr, INodeContext context) {
+  public ISequence<?> visitRootSlashPath(RootSlashPath expr, INodeContext context) {
     return visitChildren(expr, context);
   }
 
   @Override
-  public ISequence<? extends INodeItem> visitStep(Step expr, INodeContext context) {
+  public ISequence<?> visitStep(Step expr, INodeContext context) {
     return visitChildren(expr, context);
   }
 

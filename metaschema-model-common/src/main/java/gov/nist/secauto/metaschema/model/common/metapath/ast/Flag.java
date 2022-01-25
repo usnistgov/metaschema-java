@@ -32,11 +32,14 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Flag extends AbstractNamedInstanceExpression<IFlagNodeItem> {
-  public Flag(IExpression<?> node) {
+  public Flag(@NotNull IExpression node) {
     super(node);
   }
 
+  @SuppressWarnings("null")
   @Override
   public Class<IFlagNodeItem> getBaseResultType() {
     return IFlagNodeItem.class;

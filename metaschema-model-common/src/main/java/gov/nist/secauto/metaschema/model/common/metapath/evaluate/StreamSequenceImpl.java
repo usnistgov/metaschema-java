@@ -84,4 +84,20 @@ class StreamSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE
     return asList().size();
   }
 
+  public boolean equals(Object other) {
+    if (other == this) {
+        return true;
+    }
+
+    if (!(other instanceof ISequence)) {
+        return false;
+    }
+    
+    return asList().equals(((ISequence<?>)other).asList());
+  }
+
+  @Override
+  public int hashCode() {
+    return asList().hashCode();
+  }
 }

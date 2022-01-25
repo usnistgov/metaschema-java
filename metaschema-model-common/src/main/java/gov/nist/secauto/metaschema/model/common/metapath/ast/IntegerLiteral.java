@@ -32,14 +32,17 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEva
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.math.BigInteger;
 
 public class IntegerLiteral extends AbstractLiteralExpression<IIntegerItem, BigInteger> {
 
-  public IntegerLiteral(BigInteger value) {
+  public IntegerLiteral(@NotNull BigInteger value) {
     super(value);
   }
 
+  @SuppressWarnings("null")
   @Override
   public Class<IIntegerItem> getBaseResultType() {
     return IIntegerItem.class;

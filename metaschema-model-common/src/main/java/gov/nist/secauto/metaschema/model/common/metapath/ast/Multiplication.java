@@ -26,19 +26,22 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Multiplication extends AbstractArithmeticExpression<IAnyAtomicItem> {
 
-  public Multiplication(IExpression<?> left, IExpression<?> right) {
-    super(left, right, INumericItem.class);
+  @SuppressWarnings("null")
+  public Multiplication(@NotNull IExpression left, @NotNull IExpression right) {
+    super(left, right, IAnyAtomicItem.class);
   }
 
+  @SuppressWarnings("null")
   @Override
   public Class<IAnyAtomicItem> getBaseResultType() {
     return IAnyAtomicItem.class;

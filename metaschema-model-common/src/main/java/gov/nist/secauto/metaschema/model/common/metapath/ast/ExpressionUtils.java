@@ -38,7 +38,7 @@ public class ExpressionUtils {
 
   @NotNull
   public static <RESULT_TYPE> Class<? extends RESULT_TYPE> analyzeStaticResultType(@NotNull Class<RESULT_TYPE> baseType,
-      @NotNull List<@NotNull IExpression<?>> expressions) {
+      @NotNull List<@NotNull IExpression> expressions) {
 
     Class<? extends RESULT_TYPE> retval;
     if (expressions.isEmpty()) {

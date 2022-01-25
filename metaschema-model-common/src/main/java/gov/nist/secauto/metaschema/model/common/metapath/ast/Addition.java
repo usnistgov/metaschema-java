@@ -26,20 +26,23 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Addition
     extends AbstractArithmeticExpression<IAnyAtomicItem> {
 
-  public Addition(IExpression<?> left, IExpression<?> right) {
-    super(left, right, INumericItem.class);
+  @SuppressWarnings("null")
+  public Addition(@NotNull IExpression left, @NotNull IExpression right) {
+    super(left, right, IAnyAtomicItem.class);
   }
 
+  @SuppressWarnings("null")
   @Override
   public Class<IAnyAtomicItem> getBaseResultType() {
     return IAnyAtomicItem.class;
@@ -52,7 +55,7 @@ public class Addition
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+  public <RESULT, CONTEXT> RESULT accept(@NotNull ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitAddition(this, context);
   }
 

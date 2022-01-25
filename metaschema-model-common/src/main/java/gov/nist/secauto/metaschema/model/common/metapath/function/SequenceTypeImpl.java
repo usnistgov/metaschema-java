@@ -74,4 +74,20 @@ class SequenceTypeImpl implements ISequenceType {
     return builder.toString();
   }
 
+  @Override
+  public int hashCode() {
+    return Objects.hash(occurrence, type);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    SequenceTypeImpl other = (SequenceTypeImpl) obj;
+    return occurrence == other.occurrence && Objects.equals(type, other.type);
+  }
 }

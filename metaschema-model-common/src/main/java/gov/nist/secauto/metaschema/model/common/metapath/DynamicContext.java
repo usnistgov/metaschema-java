@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.function.DefaultFunction.CallingContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
@@ -54,6 +56,7 @@ public class DynamicContext {
   private final ZonedDateTime currentDateTime;
   @NotNull 
   private final Map<@NotNull URI, IDocumentNodeItem> availableDocuments;
+  private final Map<@NotNull CallingContext, ISequence<?>> functionResultCache;
   private CachingLoader documentLoader;
 
   @SuppressWarnings("null")
@@ -65,6 +68,7 @@ public class DynamicContext {
     this.implicitTimeZone = clock.getZone();
     this.currentDateTime = ZonedDateTime.now(clock);
     this.availableDocuments = new HashMap<>();
+    this.functionResultCache = new HashMap<>();
   }
 
   @NotNull 
@@ -92,12 +96,17 @@ public class DynamicContext {
     return documentLoader;
   }
 
-  public IDocumentLoader getNonCachedDocumentLoader() {
-    return documentLoader != null ? documentLoader.getProxiedDocumentLoader() : null;
-  }
-
   public void setDocumentLoader(@NotNull IDocumentLoader documentLoader) {
     this.documentLoader = new CachingLoader(documentLoader);
+  }
+
+  public ISequence<?> getCachedResult(@NotNull CallingContext callingContext) {
+    return functionResultCache.get(callingContext);
+  }
+
+  public void cacheResult(@NotNull CallingContext callingContext, @NotNull ISequence<?> result) {
+    ISequence<?> old = functionResultCache.put(callingContext, result);
+    assert old == null;
   }
 
   private class CachingLoader implements IDocumentLoader {

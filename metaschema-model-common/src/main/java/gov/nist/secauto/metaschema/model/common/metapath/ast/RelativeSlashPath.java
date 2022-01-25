@@ -30,16 +30,17 @@ import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+
+import org.jetbrains.annotations.NotNull;
 
 public class RelativeSlashPath extends AbstractRelativePathExpression {
 
-  public RelativeSlashPath(IExpression<?> left, IExpression<?> right) {
+  public RelativeSlashPath(@NotNull IExpression left, @NotNull IExpression right) {
     super(left, right);
   }
 
   @Override
-  public ISequence<? extends INodeItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+  public ISequence<?> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
     return visitor.visitRelativeSlashPath(this, context);
   }
 

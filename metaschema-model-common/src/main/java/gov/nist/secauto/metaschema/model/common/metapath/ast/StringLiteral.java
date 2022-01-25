@@ -32,22 +32,26 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEva
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StringLiteral extends AbstractLiteralExpression<IStringItem, String> {
   private static final Pattern pattern = Pattern.compile("^'(.*)'$|^\"(.*)\"$");
 
-  public StringLiteral(String value) {
+  public StringLiteral(@NotNull String value) {
     super(removeQuotes(value));
   }
 
+  @SuppressWarnings("null")
   @Override
   public Class<IStringItem> getBaseResultType() {
     return IStringItem.class;
   }
 
-  private static String removeQuotes(String value) {
+  @NotNull
+  private static String removeQuotes(@NotNull String value) {
     Matcher matcher = pattern.matcher(value);
     if (matcher.matches()) {
       if (matcher.group(1) != null) {

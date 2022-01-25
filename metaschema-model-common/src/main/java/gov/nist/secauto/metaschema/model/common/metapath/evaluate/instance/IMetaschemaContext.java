@@ -44,7 +44,7 @@ public interface IMetaschemaContext {
 
   IInstanceSet getChildModelInstance(Predicate<IInstance> filter);
 
-  IInstanceSet search(MetaschemaInstanceEvaluationVisitor visitor, IExpression<?> right,
+  IInstanceSet search(MetaschemaInstanceEvaluationVisitor visitor, IExpression right,
       IMetaschemaContext newInstanceMetaschemaContext);
 
 }

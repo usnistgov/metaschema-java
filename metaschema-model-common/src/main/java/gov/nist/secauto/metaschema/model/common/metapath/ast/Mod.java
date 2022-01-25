@@ -32,12 +32,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEva
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Mod extends AbstractArithmeticExpression<INumericItem> {
 
-  public Mod(IExpression<?> left, IExpression<?> right) {
+  @SuppressWarnings("null")
+  public Mod(@NotNull IExpression left, @NotNull IExpression right) {
     super(left, right, INumericItem.class);
   }
 
+  @SuppressWarnings("null")
   @Override
   public Class<INumericItem> getBaseResultType() {
     return INumericItem.class;

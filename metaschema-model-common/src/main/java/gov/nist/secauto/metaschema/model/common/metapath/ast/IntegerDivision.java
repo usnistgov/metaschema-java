@@ -32,12 +32,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEva
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 
+import org.jetbrains.annotations.NotNull;
+
 public class IntegerDivision extends AbstractArithmeticExpression<IIntegerItem> {
 
-  public IntegerDivision(IExpression<?> left, IExpression<?> right) {
+  @SuppressWarnings("null")
+  public IntegerDivision(@NotNull IExpression left, @NotNull IExpression right) {
     super(left, right, IIntegerItem.class);
   }
 
+  @SuppressWarnings("null")
   @Override
   public Class<IIntegerItem> getBaseResultType() {
     return IIntegerItem.class;

@@ -32,19 +32,18 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
-public class ParenthesizedExpression extends AbstractUnaryExpression<IItem> implements IExpression<IItem> {
+public class ParenthesizedExpression extends AbstractUnaryExpression {
+  @NotNull
   private final Class<? extends IItem> staticResultType;
 
-  public ParenthesizedExpression(IExpression<?> expr) {
+  @SuppressWarnings("null")
+  public ParenthesizedExpression(@NotNull IExpression expr) {
     super(expr);
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, List.of(expr));
-  }
-
-  @Override
-  public Class<IItem> getBaseResultType() {
-    return IItem.class;
   }
 
   @Override
@@ -53,7 +52,7 @@ public class ParenthesizedExpression extends AbstractUnaryExpression<IItem> impl
   }
 
   @Override
-  public ISequence<? extends IItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+  public ISequence<?> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
     return visitor.visitParenthesizedExpression(this, context);
   }
 

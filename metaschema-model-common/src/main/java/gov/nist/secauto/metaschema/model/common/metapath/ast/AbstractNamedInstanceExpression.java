@@ -30,7 +30,8 @@ import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import java.util.Collections;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -38,13 +39,15 @@ public abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeI
     extends AbstractPathExpression<RESULT_TYPE> {
   private static final WildcardMatcher WILDCARD = new WildcardMatcher();
 
-  private final IExpression<?> node;
+  @NotNull
+  private final IExpression node;
 
-  public AbstractNamedInstanceExpression(IExpression<?> node) {
+  public AbstractNamedInstanceExpression(@NotNull IExpression node) {
     this.node = node;
   }
 
-  public IExpression<?> getNode() {
+  @NotNull
+  public IExpression getNode() {
     return node;
   }
 
@@ -52,16 +55,8 @@ public abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeI
     return getNode() instanceof Name;
   }
 
-  @Override
-  public abstract Class<RESULT_TYPE> getBaseResultType();
-
-  @Override
-  public Class<RESULT_TYPE> getStaticResultType() {
-    return getBaseResultType();
-  }
-
   public Predicate<IInstance> getInstanceMatcher() {
-    IExpression<?> node = getNode();
+    IExpression node = getNode();
 
     Predicate<IInstance> retval;
     if (node instanceof Name) {
@@ -74,18 +69,21 @@ public abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeI
     return retval;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public List<? extends IExpression<?>> getChildren() {
-    return node != null ? List.of(node) : Collections.emptyList();
+  public List<@NotNull ? extends IExpression> getChildren() {
+    return List.of(node);
   }
 
   private static class NameMatcher implements Predicate<IInstance> {
+    @NotNull
     private final String name;
 
-    public NameMatcher(String name) {
+    public NameMatcher(@NotNull String name) {
       this.name = name;
     }
 
+    @NotNull
     protected String getName() {
       return name;
     }
@@ -103,10 +101,10 @@ public abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeI
 
   }
 
-  private static class WildcardMatcher implements Predicate<IInstance> {
+  private static class WildcardMatcher implements Predicate<@NotNull IInstance> {
 
     @Override
-    public boolean test(IInstance instance) {
+    public boolean test(@NotNull IInstance instance) {
       boolean retval = false;
       if (instance instanceof INamedInstance) {
         retval = true;

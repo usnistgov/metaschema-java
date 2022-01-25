@@ -32,11 +32,11 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEva
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
-public class Comparison
-    extends AbstractBinaryExpression<IBooleanItem>
-    implements IBooleanLogicExpression {
+public class Comparison extends AbstractBinaryExpression implements IBooleanLogicExpression {
   public enum Operator {
     EQ,
     NE,
@@ -46,28 +46,21 @@ public class Comparison
     GE;
   }
 
+  @NotNull
   private final Operator operator;
 
-  public Comparison(IExpression<?> left, Operator operator, IExpression<?> right) {
+  @SuppressWarnings("null")
+  public Comparison(@NotNull IExpression left, @NotNull Operator operator, @NotNull IExpression right) {
     super(left, right);
-    Objects.requireNonNull(operator, "operator");
-    this.operator = operator;
+    this.operator = Objects.requireNonNull(operator, "operator");
   }
 
+  @NotNull
   public Operator getOperator() {
     return operator;
   }
 
-  @Override
-  public Class<IBooleanItem> getBaseResultType() {
-    return IBooleanItem.class;
-  }
-
-  @Override
-  public Class<IBooleanItem> getStaticResultType() {
-    return getBaseResultType();
-  }
-
+  @SuppressWarnings("null")
   @Override
   public String toASTString() {
     return String.format("%s[operator=%s]", getClass().getName(), operator);

@@ -28,5 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
-public interface IArithmeticExpression<RESULT_TYPE extends IAnyAtomicItem> extends IExpression<RESULT_TYPE> {
+public interface IArithmeticExpression<RESULT_TYPE extends IAnyAtomicItem> extends IExpression {
+  @Override
+  Class<RESULT_TYPE> getBaseResultType();
 }

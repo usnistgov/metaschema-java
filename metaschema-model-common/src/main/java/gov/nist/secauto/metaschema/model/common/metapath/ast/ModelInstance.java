@@ -32,9 +32,12 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 
-public class ModelInstance extends AbstractNamedInstanceExpression<IModelNodeItem> {
+import org.jetbrains.annotations.NotNull;
 
-  public ModelInstance(IExpression<?> node) {
+public class ModelInstance
+    extends AbstractNamedInstanceExpression<IModelNodeItem> {
+
+  public ModelInstance(@NotNull IExpression node) {
     super(node);
   }
 

@@ -32,24 +32,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEva
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class And
-    extends AbstractNAryExpression<IBooleanItem>
+    extends AbstractNAryExpression
     implements IBooleanLogicExpression {
 
-  public And(List<IExpression<?>> chidren) {
+  public And(@NotNull List<@NotNull IExpression> chidren) {
     super(chidren);
-  }
-
-  @Override
-  public Class<IBooleanItem> getBaseResultType() {
-    return IBooleanItem.class;
-  }
-
-  @Override
-  public Class<IBooleanItem> getStaticResultType() {
-    return getBaseResultType();
   }
 
   @Override

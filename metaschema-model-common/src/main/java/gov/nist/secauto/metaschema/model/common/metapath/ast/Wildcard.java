@@ -32,16 +32,20 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEva
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.List;
 
 public class Wildcard implements INameExpression<IStringItem> {
 
+  @SuppressWarnings("null")
   @Override
-  public List<? extends IExpression<?>> getChildren() {
+  public List<@NotNull ? extends IExpression> getChildren() {
     return Collections.emptyList();
   }
 
+  @SuppressWarnings("null")
   @Override
   public Class<IStringItem> getBaseResultType() {
     return IStringItem.class;

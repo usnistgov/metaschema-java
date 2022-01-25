@@ -37,8 +37,6 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IYearMonthDurationItem;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Addition;
@@ -76,19 +74,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunct
 import gov.nist.secauto.metaschema.model.common.metapath.function.XPathFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnNotFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.NodeItemType;
 import gov.nist.secauto.metaschema.model.common.metapath.type.InvalidTypeMetapathException;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -118,7 +113,7 @@ public class MetaschemaPathEvaluationVisitor
   @Override
   public ISequence<? extends IBooleanItem> visitAnd(And expr, INodeContext context) {
     boolean retval = true;
-    for (IExpression<?> child : expr.getChildren()) {
+    for (IExpression child : expr.getChildren()) {
       ISequence<?> result = child.accept(this, context);
       if (!XPathFunctions.fnBooleanAsPrimative(result)) {
         retval = false;
@@ -131,7 +126,7 @@ public class MetaschemaPathEvaluationVisitor
   @Override
   public ISequence<? extends IBooleanItem> visitOr(Or expr, INodeContext context) {
     boolean retval = false;
-    for (IExpression<?> child : expr.getChildren()) {
+    for (IExpression child : expr.getChildren()) {
       ISequence<?> result = child.accept(this, context);
       if (XPathFunctions.fnBooleanAsPrimative(result)) {
         retval = true;
@@ -419,17 +414,15 @@ public class MetaschemaPathEvaluationVisitor
   }
 
   @Override
-  public ISequence<? extends INodeItem> visitRootSlashOnlyPath(RootSlashOnlyPath expr, INodeContext context) {
+  public ISequence<? extends IDocumentNodeItem> visitRootSlashOnlyPath(RootSlashOnlyPath expr, INodeContext context) {
     return context instanceof IDocumentNodeItem ? ISequence.of((IDocumentNodeItem) context) : ISequence.empty();
   }
 
   @Override
-  public ISequence<? extends INodeItem> visitRootSlashPath(RootSlashPath expr, INodeContext context) {
+  public ISequence<?> visitRootSlashPath(RootSlashPath expr, INodeContext context) {
     if (context.getContextNodeItem() instanceof IDocumentNodeItem) {
-      @SuppressWarnings("unchecked")
-      ISequence<? extends INodeItem> retval
-          = (ISequence<? extends INodeItem>) expr.getNode().accept(this, context);
-      return retval;
+
+      return expr.getNode().accept(this, context);
     } else {
       throw new UnsupportedOperationException("root searching is not supported on non-document nodes");
     }
@@ -441,50 +434,49 @@ public class MetaschemaPathEvaluationVisitor
   }
 
   @Override
-  public ISequence<? extends INodeItem> visitRelativeSlashPath(RelativeSlashPath expr, INodeContext context) {
-    IExpression<?> left = expr.getLeft();
+  public ISequence<?> visitRelativeSlashPath(RelativeSlashPath expr, INodeContext context) {
     @SuppressWarnings("unchecked")
-    ISequence<? extends INodeItem> leftResult
-        = (ISequence<? extends INodeItem>) left.accept(this, context);
+    IExpression left = expr.getLeft();
 
-    List<INodeItem> result;
-    if (!leftResult.isEmpty()) {
-      result = new LinkedList<>();
-      IExpression<?> right = expr.getRight();
+    @SuppressWarnings("unchecked")
+    @NotNull
+    ISequence<? extends INodeItem> leftResult = (ISequence<? extends INodeItem>) left.accept(this, context);
 
-      // evaluate the right path in the context of the left's children
-      leftResult.asStream()
-          .flatMap(leftNode -> Stream.concat(leftNode.flags(), leftNode.modelItems()))
-          .forEachOrdered(node -> {
-            @SuppressWarnings("unchecked")
-            ISequence<? extends INodeItem> otherResult = (ISequence<? extends INodeItem>) right.accept(this, node);
-            otherResult.asStream().forEachOrdered(otherItem -> {
-              result.add(otherItem);
-            });
-          });
+    return evaluateInNodeContext(leftResult, expr.getRight());
+  }
+
+  @SuppressWarnings("null")
+  @NotNull
+  protected ISequence<?> evaluateInNodeContext(@NotNull ISequence<? extends INodeItem> contextItems,
+      @NotNull IExpression expr) {
+    ISequence<?> retval;
+    if (contextItems.isEmpty()) {
+      retval = ISequence.empty();
     } else {
-      result = List.of();
+      // evaluate the right path in the context of the left's children
+      Stream<? extends IItem> result = contextItems.asStream()
+          // .flatMap(node -> Stream.concat(node.flags(), node.modelItems()))
+          .flatMap(node -> expr.accept(this, node).asStream());
+      retval = ISequence.of(result);
     }
-    return ISequence.of(result);
+    return retval;
   }
 
   @Override
-  public ISequence<? extends INodeItem> visitStep(Step expr, INodeContext context) {
-    @SuppressWarnings("unchecked")
-    ISequence<? extends INodeItem> stepResult
-        = (ISequence<? extends INodeItem>) expr.getStep().accept(this, context);
+  public ISequence<?> visitStep(Step expr, INodeContext context) {
+
+    ISequence<?> stepResult = expr.getStep().accept(this, context);
 
     // evaluate the predicates for this step
     AtomicInteger index = new AtomicInteger();
 
-    Stream<? extends INodeItem> stream = stepResult.asStream().map(item -> {
+    Stream<? extends IItem> stream = stepResult.asStream().map(item -> {
       // build a positional index of the items
       return Map.entry(BigInteger.valueOf(index.incrementAndGet()), item);
     }).filter(entry -> {
       @SuppressWarnings("null")
       @NotNull
-      INodeItem item = entry.getValue();
-      INodeContext childContext = item;
+      IItem item = entry.getValue();
 
       // return false if any predicate evaluates to false
       boolean result = !expr.getPredicates().stream().map(predicateExpr -> {
@@ -499,6 +491,7 @@ public class MetaschemaPathEvaluationVisitor
           // it is a match if the position matches
           bool = position.equals(predicateIndex);
         } else {
+          INodeContext childContext = (INodeContext) item;
           ISequence<?> predicateResult = predicateExpr.accept(this, childContext);
           bool = XPathFunctions.fnBoolean(predicateResult).toBoolean();
         }
@@ -507,68 +500,63 @@ public class MetaschemaPathEvaluationVisitor
       return result;
     }).map(entry -> entry.getValue());
     @SuppressWarnings("null")
-    ISequence<? extends INodeItem> retval = ISequence.of(stream);
+    ISequence<?> retval = ISequence.of(stream);
     return retval;
   }
 
-  @Override
-  public ISequence<? extends IFlagNodeItem> visitFlag(Flag expr, INodeContext context) {
-    INodeItem contextNodeItem = context.getContextNodeItem();
-    ISequence<? extends IFlagNodeItem> retval;
-    if (NodeItemType.FLAG.equals(contextNodeItem.getNodeItemType())) {
-      boolean match;
-      IFlagNodeItem flag = (IFlagNodeItem) contextNodeItem;
-      if (expr.isName()) {
-        String name = ((Name) expr.getNode()).getValue();
-        IFlagInstance flagInstance = flag.getPathSegment().getInstance();
-        match = flagInstance.getEffectiveName().equals(name);
-      } else {
-        // wildcard
-        match = true;
-      }
-      retval = match ? ISequence.of(flag) : ISequence.empty();
+  @SuppressWarnings("null")
+  @NotNull
+  private static Stream<? extends IFlagNodeItem> matchFlags(@NotNull Flag expr, @NotNull INodeContext context) {
+    Stream<? extends IFlagNodeItem> retval;
+    if (expr.isName()) {
+      String name = ((Name) expr.getNode()).getValue();
+      IFlagNodeItem item = context.getFlagByName(name);
+      retval = item == null ? Stream.empty() : Stream.of(item);
     } else {
-      retval = ISequence.empty();
+      // wildcard
+      retval = context.flags();
+    }
+    return retval;
+  }
+  
+  @Override
+  public ISequence<? extends IFlagNodeItem> visitFlag(@NotNull Flag expr, @NotNull INodeContext context) {
+    return ISequence.of(matchFlags(expr, context));
+  }
+
+  @SuppressWarnings("null")
+  @NotNull
+  private static Stream<? extends IModelNodeItem> matchModelInstance(@NotNull ModelInstance expr, @NotNull INodeContext context) {
+    Stream<? extends IModelNodeItem> retval;
+    if (expr.isName()) {
+      String name = ((Name) expr.getNode()).getValue();
+      List<? extends IModelNodeItem> items = context.getModelItemsByName(name);
+      retval = items.stream();
+    } else {
+      // wildcard
+      retval = context.modelItems();
     }
     return retval;
   }
 
   @Override
   public ISequence<? extends IModelNodeItem> visitModelInstance(ModelInstance expr, INodeContext context) {
-    INodeItem contextNodeItem = context.getContextNodeItem();
-    ISequence<? extends IModelNodeItem> retval;
-    NodeItemType nodeItemType = contextNodeItem.getNodeItemType();
-    if (NodeItemType.ASSEMBLY.equals(nodeItemType)
-        || NodeItemType.FIELD.equals(nodeItemType)) {
-      boolean match;
-      IModelNodeItem modelItem = (IModelNodeItem) contextNodeItem;
-      if (expr.isName()) {
-        String name = ((Name) expr.getNode()).getValue();
-        INamedModelInstance instance = modelItem.getPathSegment().getInstance();
-        match = instance.getEffectiveName().equals(name);
-      } else {
-        // wildcard
-        match = true;
-      }
-      retval = match ? ISequence.of(modelItem) : ISequence.empty();
-    } else {
-      retval = ISequence.empty();
-    }
-    return retval;
+    return ISequence.of(matchModelInstance(expr, context));
   }
 
   @Override
   public ISequence<? extends INodeItem> visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr,
       INodeContext context) {
-    IExpression<?> left = expr.getLeft();
+    IExpression left = expr.getLeft();
     @SuppressWarnings("unchecked")
     ISequence<? extends INodeItem> leftResult
         = (ISequence<? extends INodeItem>) left.accept(this, context);
 
-    Stream<? extends INodeItem> result = leftResult.asStream().flatMap(item -> {
-      // evaluate the right path in the context of the left
-      return search(expr.getRight(), item);
-    });
+    Stream<? extends INodeItem> result = (Stream<? extends INodeItem>) leftResult.asStream()
+        .flatMap(item -> {
+          // evaluate the right path in the context of the left
+          return search(expr.getRight(), item);
+        });
 
     @SuppressWarnings("null")
     ISequence<? extends INodeItem> retval = ISequence.of(result);
@@ -581,7 +569,7 @@ public class MetaschemaPathEvaluationVisitor
   }
 
   @NotNull
-  protected Stream<? extends INodeItem> search(@NotNull IExpression<?> expr, @NotNull INodeContext context) {
+  protected Stream<? extends INodeItem> search(@NotNull IExpression expr, @NotNull INodeContext context) {
     Stream<? extends INodeItem> retval;
     // if (expr instanceof Flag) {
     // // check instances as a flag
@@ -599,7 +587,7 @@ public class MetaschemaPathEvaluationVisitor
   }
 
   @NotNull
-  protected Stream<? extends INodeItem> searchExpression(@NotNull IExpression<?> expr, @NotNull INodeContext context) {
+  protected Stream<? extends INodeItem> searchExpression(@NotNull IExpression expr, @NotNull INodeContext context) {
 
     // check the current node
     @SuppressWarnings("unchecked")
@@ -610,11 +598,16 @@ public class MetaschemaPathEvaluationVisitor
     Stream<? extends IFlagNodeItem> flags = context.flags();
     Stream<? extends INodeItem> modelItems = context.modelItems();
 
-    Stream<? extends INodeItem> childMatches = Stream.concat(flags, modelItems).flatMap(instance -> {
-      return searchExpression(expr, instance);
-    });
+    @SuppressWarnings("null")
+    Stream<? extends INodeItem> childMatches = Stream.concat(flags, modelItems)
+        .flatMap(instance -> {
+          return searchExpression(expr, instance);
+        });
 
-    return Stream.concat(nodeMatches, childMatches);
+    @SuppressWarnings("null")
+    @NotNull
+    Stream<? extends INodeItem> result = Stream.concat(nodeMatches, childMatches);
+    return result;
   }
 
   /**
@@ -632,15 +625,7 @@ public class MetaschemaPathEvaluationVisitor
       @NotNull INodeContext context) {
 
     // check if the current node context matches the expression
-    Stream<? extends IModelNodeItem> nodeMatches = Stream.empty();
-    if (modelInstance.isName()) {
-      String name = ((Name) modelInstance.getNode()).getValue();
-      List<? extends IModelNodeItem> items = context.getModelItemsByName(name);
-      nodeMatches = items == null ? Stream.empty() : items.stream();
-    } else {
-      // wildcard
-      nodeMatches = context.modelItems();
-    }
+    Stream<? extends IModelNodeItem> nodeMatches = matchModelInstance(modelInstance, context);
 
     // next iterate over the child model instances, if the context item is an assembly
     @SuppressWarnings("null")
@@ -999,20 +984,23 @@ public class MetaschemaPathEvaluationVisitor
     return resultOrEmptySequence(OperationFunctions.opNumericMod(left, right));
   }
 
+  @SuppressWarnings("null")
   @Override
   public ISequence<IIntegerItem> visitIntegerLiteral(IntegerLiteral expr, INodeContext context) {
     return ISequence.of(IIntegerItem.valueOf(expr.getValue()));
   }
 
+  @SuppressWarnings("null")
   @Override
   public ISequence<IDecimalItem> visitDecimalLiteral(DecimalLiteral expr, INodeContext context) {
     return ISequence.of(IDecimalItem.valueOf(expr.getValue()));
   }
 
+  @SuppressWarnings("null")
   @Override
   public ISequence<IStringItem> visitStringConcat(StringConcat expr, INodeContext context) {
     StringBuilder builder = new StringBuilder();
-    for (IExpression<?> child : expr.getChildren()) {
+    for (IExpression child : expr.getChildren()) {
       ISequence<?> result = child.accept(this, context);
       XPathFunctions.fnData(result).asStream().forEachOrdered(item -> {
         // TODO: is this right to concat all sequence members?
@@ -1022,11 +1010,13 @@ public class MetaschemaPathEvaluationVisitor
     return ISequence.of(IStringItem.valueOf(builder.toString()));
   }
 
+  @SuppressWarnings("null")
   @Override
   public ISequence<IStringItem> visitStringLiteral(StringLiteral expr, INodeContext context) {
     return ISequence.of(IStringItem.valueOf(expr.getValue()));
   }
 
+  @SuppressWarnings("null")
   @Override
   public ISequence<?> visitFunctionCall(FunctionCall expr, INodeContext context) {
     List<ISequence<?>> arguments = expr.getChildren().stream().map(expression -> {
@@ -1048,7 +1038,7 @@ public class MetaschemaPathEvaluationVisitor
 
   @Override
   public ISequence<?> visitParenthesizedExpression(ParenthesizedExpression expr, INodeContext context) {
-    IExpression<?> childExpr = expr.getChild();
+    IExpression childExpr = expr.getChild();
     return childExpr.accept(this, context);
   }
 

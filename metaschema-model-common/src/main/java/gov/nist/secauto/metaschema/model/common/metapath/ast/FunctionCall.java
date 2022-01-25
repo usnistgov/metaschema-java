@@ -34,14 +34,25 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionServic
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Objects;
 
-public class FunctionCall implements IExpression<IItem> {
+public class FunctionCall implements IExpression {
   private final IFunction function;
-  private final List<IExpression<?>> arguments;
+  @NotNull
+  private final List<@NotNull IExpression> arguments;
 
-  public FunctionCall(String name, List<IExpression<?>> arguments) {
+  /**
+   * Construct a new function call expression.
+   * 
+   * @param name
+   *          the function name
+   * @param arguments
+   *          the expressions used to provide arguments to the function call
+   */
+  public FunctionCall(@NotNull String name, @NotNull List<@NotNull IExpression> arguments) {
     Objects.requireNonNull(name);
     Objects.requireNonNull(arguments);
     this.function = FunctionService.getInstance().getFunction(name, arguments);
@@ -52,28 +63,33 @@ public class FunctionCall implements IExpression<IItem> {
     this.arguments = arguments;
   }
 
+  /**
+   * Retrieve the associated function.
+   * 
+   * @return the function or {@code null} if no function matched the defined name and arguments
+   */
   public IFunction getFunction() {
     return function;
   }
 
   @Override
-  public Class<? extends IItem> getBaseResultType() {
-    return function.getResult().getType();
+  public List<@NotNull IExpression> getChildren() {
+    return arguments;
   }
 
   @Override
-  public Class<? extends IItem> getStaticResultType() {
-    return getBaseResultType();
+  public Class<? extends IItem> getBaseResultType() {
+    Class<? extends IItem> retval = function.getResult().getType();
+    if (retval == null) {
+      retval = IItem.class;
+    }
+    return retval;
   }
 
+  @SuppressWarnings("null")
   @Override
   public String toASTString() {
     return String.format("%s[name=%s]", getClass().getName(), getFunction().getName());
-  }
-
-  @Override
-  public List<? extends IExpression<?>> getChildren() {
-    return arguments;
   }
 
   @Override

@@ -32,17 +32,17 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.List;
 
 public class ContextItem extends AbstractPathExpression<INodeItem> {
 
-  private final Class<? extends INodeItem> staticResultType;
-
   public ContextItem() {
-    this.staticResultType = ExpressionUtils.analyzeStaticResultType(INodeItem.class, Collections.emptyList());
   }
 
+  @SuppressWarnings("null")
   @Override
   public Class<INodeItem> getBaseResultType() {
     return INodeItem.class;
@@ -50,11 +50,12 @@ public class ContextItem extends AbstractPathExpression<INodeItem> {
 
   @Override
   public Class<? extends INodeItem> getStaticResultType() {
-    return staticResultType;
+    return getBaseResultType();
   }
 
+  @SuppressWarnings("null")
   @Override
-  public List<? extends IExpression<?>> getChildren() {
+  public List<@NotNull ? extends IExpression> getChildren() {
     return Collections.emptyList();
   }
 

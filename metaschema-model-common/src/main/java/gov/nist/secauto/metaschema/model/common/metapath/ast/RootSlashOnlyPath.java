@@ -31,39 +31,37 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEva
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
 
-public class RootSlashOnlyPath implements IRootPathExpression {
+public class RootSlashOnlyPath extends AbstractPathExpression<IDocumentNodeItem> {
 
   public RootSlashOnlyPath() {
   }
 
+  @SuppressWarnings("null")
   @Override
-  public List<? extends IPathExpression<?>> getChildren() {
+  public List<@NotNull ? extends IExpression> getChildren() {
     return Collections.emptyList();
   }
 
+  @SuppressWarnings("null")
   @Override
-  public ISequence<? extends INodeItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+  public Class<IDocumentNodeItem> getBaseResultType() {
+    return IDocumentNodeItem.class;
+  }
+
+  @Override
+  public ISequence<? extends IDocumentNodeItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
     return visitor.visitRootSlashOnlyPath(this, context);
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitRootSlashOnlyPath(this, context);
-  }
-
-  @Override
-  public Class<? extends INodeItem> getBaseResultType() {
-    return IDocumentNodeItem.class;
-  }
-
-  @Override
-  public Class<? extends INodeItem> getStaticResultType() {
-    return IDocumentNodeItem.class;
   }
 
 }

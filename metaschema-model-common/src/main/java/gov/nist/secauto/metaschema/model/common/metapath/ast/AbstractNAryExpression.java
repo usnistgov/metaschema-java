@@ -26,21 +26,31 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractNAryExpression<RESULT_TYPE extends IItem> implements IExpression<RESULT_TYPE> {
-  private final List<IExpression<?>> children;
+/**
+ * An immutable expression that has a number of sub-expression children.
+ */
+public abstract class AbstractNAryExpression implements IExpression {
+  @NotNull
+  private final List<@NotNull IExpression> children;
 
-  public AbstractNAryExpression(List<IExpression<?>> children) {
-    Objects.requireNonNull(children);
-    this.children = children;
+  /**
+   * Construct a new n-ary expression.
+   * 
+   * @param children
+   *          the sub-expression children
+   */
+  @SuppressWarnings("null")
+  public AbstractNAryExpression(@NotNull List<@NotNull IExpression> children) {
+    this.children = Objects.requireNonNull(children);
   }
 
   @Override
-  public List<IExpression<?>> getChildren() {
+  public List<@NotNull IExpression> getChildren() {
     return children;
   }
 

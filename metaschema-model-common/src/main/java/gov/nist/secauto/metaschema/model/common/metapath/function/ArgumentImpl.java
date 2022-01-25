@@ -30,6 +30,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 class ArgumentImpl implements IArgument {
   @NotNull
   private final String name;
@@ -52,7 +54,7 @@ class ArgumentImpl implements IArgument {
   }
 
   @Override
-  public boolean isSupported(IExpression<?> expression) {
+  public boolean isSupported(IExpression expression) {
     // Class<? extends IItem> itemType = expression.getItemType();
     // TODO: implement this test
     return true;
@@ -71,5 +73,22 @@ class ArgumentImpl implements IArgument {
     builder.append(getSequenceType().toSignature());
 
     return builder.toString();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, sequenceType);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    ArgumentImpl other = (ArgumentImpl) obj;
+    return Objects.equals(name, other.name) && Objects.equals(sequenceType, other.sequenceType);
   }
 }

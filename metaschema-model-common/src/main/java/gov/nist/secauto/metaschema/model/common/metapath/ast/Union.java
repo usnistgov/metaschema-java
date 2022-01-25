@@ -32,20 +32,18 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
-public class Union extends AbstractNAryExpression<IItem> implements IExpression<IItem> {
+public class Union extends AbstractNAryExpression {
 
+  @NotNull
   private final Class<? extends IItem> staticResultType;
 
-  public Union(List<IExpression<?>> children) {
+  public Union(@NotNull List<@NotNull IExpression> children) {
     super(children);
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, children);
-  }
-
-  @Override
-  public Class<IItem> getBaseResultType() {
-    return IItem.class;
   }
 
   @Override
@@ -61,10 +59,5 @@ public class Union extends AbstractNAryExpression<IItem> implements IExpression<
   @Override
   public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitUnion(this, context);
-  }
-
-  @Override
-  public String toString() {
-    return new ASTPrinter().visit(this);
   }
 }

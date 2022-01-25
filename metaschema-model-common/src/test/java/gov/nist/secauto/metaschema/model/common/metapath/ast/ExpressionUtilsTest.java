@@ -55,13 +55,13 @@ class ExpressionUtilsTest {
   private IFlagNodeItem flagNodeItem2;
 
   @Mock
-  private IExpression<IFlagNodeItem> basicFlagExpr1;
+  private IExpression basicFlagExpr1;
   @Mock
-  private IExpression<IFlagNodeItem> basicFlagExpr2;
+  private IExpression basicFlagExpr2;
   @Mock
-  private IExpression<IAssemblyNodeItem> basicAssemblyExpr;
+  private IExpression basicAssemblyExpr;
   @Mock
-  private IExpression<IAssemblyNodeItem> basicFieldExpr;
+  private IExpression basicFieldExpr;
 
 
   @Test

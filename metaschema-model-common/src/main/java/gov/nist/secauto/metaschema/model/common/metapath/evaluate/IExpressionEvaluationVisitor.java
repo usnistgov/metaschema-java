@@ -61,6 +61,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.StringLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
@@ -78,7 +79,7 @@ public interface IExpressionEvaluationVisitor {
    * @return the matching sequence of nodes or an empty sequence if no nodes match
    */
   @NotNull
-  ISequence<?> visit(@NotNull IExpression<?> expr, @NotNull INodeContext context);
+  ISequence<?> visit(@NotNull IExpression expr, @NotNull INodeContext context);
 
   @NotNull
   ISequence<? extends IAnyAtomicItem> visitAddition(@NotNull Addition expr, @NotNull INodeContext context);
@@ -87,7 +88,7 @@ public interface IExpressionEvaluationVisitor {
   ISequence<? extends IBooleanItem> visitAnd(@NotNull And expr, @NotNull INodeContext context);
 
   @NotNull
-  ISequence<? extends INodeItem> visitStep(@NotNull Step expr, @NotNull INodeContext context);
+  ISequence<?> visitStep(@NotNull Step expr, @NotNull INodeContext context);
 
   @NotNull
   ISequence<? extends IBooleanItem> visitComparison(@NotNull Comparison expr, @NotNull INodeContext context);
@@ -136,23 +137,23 @@ public interface IExpressionEvaluationVisitor {
   ISequence<?> visitParenthesizedExpression(@NotNull ParenthesizedExpression expr, @NotNull INodeContext context);
 
   @NotNull
-  ISequence<? extends INodeItem> visitRelativeDoubleSlashPath(@NotNull RelativeDoubleSlashPath relativeDoubleSlashPath,
+  ISequence<?> visitRelativeDoubleSlashPath(@NotNull RelativeDoubleSlashPath relativeDoubleSlashPath,
       @NotNull INodeContext context);
 
   @NotNull
-  ISequence<? extends INodeItem> visitRelativeSlashPath(@NotNull RelativeSlashPath relativeSlashPath,
+  ISequence<?> visitRelativeSlashPath(@NotNull RelativeSlashPath relativeSlashPath,
       @NotNull INodeContext context);
 
   @NotNull
-  ISequence<? extends INodeItem> visitRootDoubleSlashPath(@NotNull RootDoubleSlashPath rootDoubleSlashPath,
+  ISequence<?> visitRootDoubleSlashPath(@NotNull RootDoubleSlashPath rootDoubleSlashPath,
       @NotNull INodeContext context);
 
   @NotNull
-  ISequence<? extends INodeItem> visitRootSlashOnlyPath(@NotNull RootSlashOnlyPath rootSlashOnlyPath,
+  ISequence<? extends IDocumentNodeItem> visitRootSlashOnlyPath(@NotNull RootSlashOnlyPath rootSlashOnlyPath,
       @NotNull INodeContext context);
 
   @NotNull
-  ISequence<? extends INodeItem> visitRootSlashPath(@NotNull RootSlashPath rootSlashPath,
+  ISequence<?> visitRootSlashPath(@NotNull RootSlashPath rootSlashPath,
       @NotNull INodeContext context);
 
   @NotNull

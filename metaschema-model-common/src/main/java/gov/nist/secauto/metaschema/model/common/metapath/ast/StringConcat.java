@@ -32,14 +32,17 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEva
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
-public class StringConcat extends AbstractNAryExpression<IStringItem> {
+public class StringConcat extends AbstractNAryExpression {
 
-  public StringConcat(List<IExpression<?>> chidren) {
+  public StringConcat(@NotNull List<@NotNull IExpression> chidren) {
     super(chidren);
   }
 
+  @SuppressWarnings("null")
   @Override
   public Class<IStringItem> getBaseResultType() {
     return IStringItem.class;

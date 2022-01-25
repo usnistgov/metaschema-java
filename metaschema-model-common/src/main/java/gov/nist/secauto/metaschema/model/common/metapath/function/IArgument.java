@@ -40,7 +40,7 @@ public interface IArgument {
   @NotNull
   ISequenceType getSequenceType();
 
-  boolean isSupported(IExpression<?> expression);
+  boolean isSupported(IExpression expression);
 
   @NotNull
   String toSignature();

@@ -28,24 +28,47 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
-public abstract class AbstractArithmeticExpression<ITEM_TYPE extends IAnyAtomicItem>
-    extends AbstractBinaryExpression<ITEM_TYPE>
-    implements IArithmeticExpression<ITEM_TYPE> {
+/**
+ * An immutable binary expression that supports arithmetic evaluation. The result type is determined
+ * through static analysis of the sub-expressions, which may result in a more specific type that is
+ * a sub-class of the base result type.
+ * 
+ * @param <RESULT_TYPE>
+ *          the base result of evaluating the arithmetic expression
+ */
+public abstract class AbstractArithmeticExpression<RESULT_TYPE extends IAnyAtomicItem>
+    extends AbstractBinaryExpression
+    implements IArithmeticExpression<RESULT_TYPE> {
 
-  private final Class<? extends ITEM_TYPE> staticResultType;
+  @NotNull
+  private final Class<? extends RESULT_TYPE> staticResultType;
 
-  public AbstractArithmeticExpression(IExpression<?> left, IExpression<?> right, Class<? extends ITEM_TYPE> baseType) {
+  /**
+   * Construct a new arithmetic expression.
+   * 
+   * @param left
+   *          the left side of the arithmetic operation
+   * @param right
+   *          the right side of the arithmetic operation
+   * @param baseType
+   *          the base result type of the expression result
+   */
+  @SuppressWarnings("null")
+  public AbstractArithmeticExpression(@NotNull IExpression left, @NotNull IExpression right,
+      @NotNull Class<RESULT_TYPE> baseType) {
     super(left, right);
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(baseType, List.of(left, right));
   }
 
   @Override
-  public abstract Class<? extends ITEM_TYPE> getBaseResultType();
+  public abstract Class<RESULT_TYPE> getBaseResultType();
 
   @Override
-  public Class<? extends ITEM_TYPE> getStaticResultType() {
+  public Class<? extends RESULT_TYPE> getStaticResultType() {
     return staticResultType;
   }
 }

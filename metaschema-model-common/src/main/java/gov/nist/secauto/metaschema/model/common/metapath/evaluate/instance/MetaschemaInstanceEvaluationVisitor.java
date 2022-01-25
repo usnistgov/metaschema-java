@@ -60,7 +60,7 @@ public class MetaschemaInstanceEvaluationVisitor
     this.allowedRoot = allowedRoot;
   }
 
-  public IInstanceSet visit(@NotNull IExpression<?> expr, @NotNull IMetaschemaContext context) {
+  public IInstanceSet visit(@NotNull IExpression expr, @NotNull IMetaschemaContext context) {
     return expr.accept(this, context);
   }
 
@@ -101,10 +101,10 @@ public class MetaschemaInstanceEvaluationVisitor
 
   @Override
   public IInstanceSet visitRelativeSlashPath(RelativeSlashPath expr, IMetaschemaContext context) {
-    IExpression<?> left = expr.getLeft();
+    IExpression left = expr.getLeft();
     IInstanceSet leftResult = left.accept(this, context);
 
-    IExpression<?> right = expr.getRight();
+    IExpression right = expr.getRight();
     return right.accept(this, context.newInstanceMetaschemaContext(leftResult));
   }
 
@@ -130,7 +130,7 @@ public class MetaschemaInstanceEvaluationVisitor
     return context.getChildModelInstance(expr.getInstanceMatcher());
   }
 
-  private IInstanceSet filter(IInstanceSet result, List<IExpression<?>> predicates) {
+  private IInstanceSet filter(IInstanceSet result, List<IExpression> predicates) {
     IInstanceSet retval = result;
     if (!predicates.isEmpty()) {
       // TODO: implement
@@ -155,7 +155,7 @@ public class MetaschemaInstanceEvaluationVisitor
   }
 
   @SuppressWarnings("null")
-  protected IInstanceSet buildUnion(@NotNull List<@NotNull ? extends IExpression<?>> children, @NotNull IMetaschemaContext context) {
+  protected IInstanceSet buildUnion(@NotNull List<@NotNull ? extends IExpression> children, @NotNull IMetaschemaContext context) {
     IInstanceSet retval;
     if (children.isEmpty()) {
       retval = IInstanceSet.EMPTY_INSTANCE_SET;
@@ -163,7 +163,7 @@ public class MetaschemaInstanceEvaluationVisitor
       retval = children.iterator().next().accept(this, context);
     } else {
       LinkedHashSet<IInstance> result = new LinkedHashSet<>();
-      for (IExpression<?> expression : children) {
+      for (IExpression expression : children) {
         IInstanceSet instanceSet = expression.accept(this, context);
         result.addAll(instanceSet.getInstances());
       }

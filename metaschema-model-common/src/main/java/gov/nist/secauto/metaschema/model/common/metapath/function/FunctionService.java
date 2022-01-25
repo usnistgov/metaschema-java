@@ -103,7 +103,7 @@ public class FunctionService {
    * @return the matching function or {@code null} if no match exists
    */
   @SuppressWarnings("null")
-  public IFunction getFunction(@NotNull String name, @NotNull IExpression<?>... arguments) {
+  public IFunction getFunction(@NotNull String name, @NotNull IExpression... arguments) {
     return getFunction(name, Arrays.asList(arguments));
   }
 
@@ -117,7 +117,7 @@ public class FunctionService {
    *          a list of argument expressions for use in determining an argument signature match
    * @return the matching function or {@code null} if no match exists
    */
-  public synchronized IFunction getFunction(@NotNull String name, @NotNull List<IExpression<?>> arguments) {
+  public synchronized IFunction getFunction(@NotNull String name, @NotNull List<@NotNull IExpression> arguments) {
     return library.getFunction(name, arguments);
   }
 }

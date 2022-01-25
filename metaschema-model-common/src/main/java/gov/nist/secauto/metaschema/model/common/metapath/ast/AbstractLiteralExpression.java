@@ -28,37 +28,26 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
-import java.util.Collections;
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractLiteralExpression<RESULT_TYPE extends IAnyAtomicItem, VALUE>
-    implements ILiteralExpression<RESULT_TYPE> {
+    implements ILiteralExpression<RESULT_TYPE, VALUE> {
+  @NotNull
   private final VALUE value;
 
-  public AbstractLiteralExpression(VALUE value) {
+  public AbstractLiteralExpression(@NotNull VALUE value) {
     this.value = value;
   }
 
+  @Override
   public VALUE getValue() {
     return value;
   }
 
-  @Override
-  public abstract Class<RESULT_TYPE> getBaseResultType();
-
-  @Override
-  public Class<RESULT_TYPE> getStaticResultType() {
-    return getBaseResultType();
-  }
-
+  @SuppressWarnings("null")
   @Override
   public String toASTString() {
     return String.format("%s[value=%s]", getClass().getName(), getValue().toString());
-  }
-
-  @Override
-  public List<? extends IExpression<?>> getChildren() {
-    return Collections.emptyList();
   }
 
   @Override

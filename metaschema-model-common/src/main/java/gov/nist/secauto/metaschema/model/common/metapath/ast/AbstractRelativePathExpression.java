@@ -33,41 +33,40 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public abstract class AbstractRelativePathExpression
-    extends AbstractPathExpression<INodeItem>
-    implements IRelativePathExpression {
+    extends AbstractPathExpression<INodeItem> {
   @NotNull
-  private final IExpression<?> left;
+  private final IExpression left;
   @NotNull
-  private final IExpression<?> right;
+  private final IExpression right;
+  @NotNull
   private final Class<? extends INodeItem> staticResultType;
 
-  public AbstractRelativePathExpression(@NotNull IExpression<?> left, @NotNull IExpression<?> right) {
+  @SuppressWarnings("null")
+  public AbstractRelativePathExpression(@NotNull IExpression left, @NotNull IExpression right) {
     this.left = left;
     this.right = right;
-    @SuppressWarnings("null")
-    @NotNull
-    List<@NotNull IExpression<?>> testedChildren= List.of(left, right);
-    this.staticResultType = ExpressionUtils.analyzeStaticResultType(INodeItem.class, testedChildren);
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(getBaseResultType(), List.of(left, right));
   }
 
   @NotNull
-  public IExpression<?> getLeft() {
+  public IExpression getLeft() {
     return left;
   }
 
   @NotNull
-  public IExpression<?> getRight() {
+  public IExpression getRight() {
     return right;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public List<? extends IExpression<?>> getChildren() {
+  public List<@NotNull ? extends IExpression> getChildren() {
     return List.of(left, right);
   }
 
   @SuppressWarnings("null")
   @Override
-  public Class<INodeItem> getBaseResultType() {
+  public @NotNull Class<INodeItem> getBaseResultType() {
     return INodeItem.class;
   }
 

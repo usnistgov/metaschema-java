@@ -52,7 +52,7 @@ public interface IFunctionLibrary {
    *          a list of argument expressions for use in determining an argument signature match
    * @return {@code true} if a function signature matches or {@code false} otherwise
    */
-  boolean hasFunction(@NotNull String name, @NotNull List<@NotNull IExpression<?>> arguments);
+  boolean hasFunction(@NotNull String name, @NotNull List<@NotNull IExpression> arguments);
 
   /**
    * Retrieve the function with the provided name that supports the signature of the provided methods,
@@ -64,5 +64,5 @@ public interface IFunctionLibrary {
    *          a list of argument expressions for use in determining an argument signature match
    * @return the matching function or {@code null} if no match exists
    */
-  IFunction getFunction(@NotNull String name, @NotNull List<@NotNull IExpression<?>> arguments);
+  IFunction getFunction(@NotNull String name, @NotNull List<@NotNull IExpression> arguments);
 }

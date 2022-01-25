@@ -82,12 +82,12 @@ public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
   }
 
   @Override
-  public synchronized boolean hasFunction(String name, List<IExpression<?>> args) {
+  public synchronized boolean hasFunction(@NotNull String name, @NotNull List<@NotNull IExpression> args) {
     return getFunction(name, args) != null;
   }
 
   @Override
-  public synchronized IFunction getFunction(String name, List<IExpression<?>> args) {
+  public synchronized IFunction getFunction(@NotNull String name, @NotNull List<@NotNull IExpression> args) {
     NamedFunctionSet functions = getLibrary().get(name);
     IFunction retval;
     if (functions == null) {

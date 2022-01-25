@@ -34,17 +34,22 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.type.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.type.TypeMetapathException;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Equator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,11 +70,16 @@ public class DefaultFunction implements IFunction {
   /**
    * Construct a new function signature.
    * 
-   * @param name the name of the function
-   * @param properties the characteristics of the function
-   * @param arguments the argument signatures or an empty list
-   * @param result the type of the result
-   * @param handler the handler to call to execute the function
+   * @param name
+   *          the name of the function
+   * @param properties
+   *          the characteristics of the function
+   * @param arguments
+   *          the argument signatures or an empty list
+   * @param result
+   *          the type of the result
+   * @param handler
+   *          the handler to call to execute the function
    */
   @SuppressWarnings("null")
   DefaultFunction(
@@ -309,14 +319,34 @@ public class DefaultFunction implements IFunction {
   }
 
   @Override
-  public ISequence<?> execute(List<@NotNull ISequence<?>> arguments, DynamicContext dynamicContext,
+  public ISequence<?> execute(@NotNull List<@NotNull ISequence<?>> arguments, @NotNull DynamicContext dynamicContext,
       INodeContext focus) {
     try {
       List<@NotNull ISequence<?>> convertedArguments = convertArguments(this, arguments);
 
-      // logger.info(String.format("Executing function '%s' with arguments '%s'.", toSignature(),
-      // convertedArguments.toString()));
-      ISequence<?> result = handler.execute(this, convertedArguments, dynamicContext, focus.getContextNodeItem());
+      new HashMap<>();
+      CallingContext callingContext;
+      ISequence<?> result;
+      if (isDeterministic()) {
+        // check cache
+        callingContext = newCallingContext(arguments, focus);
+        // attempt to get the result from the cache
+        result = dynamicContext.getCachedResult(callingContext);
+      } else {
+        callingContext = null;
+        result = null;
+      }
+
+      if (result == null) {
+        // logger.info(String.format("Executing function '%s' with arguments '%s'.", toSignature(),
+        // convertedArguments.toString()));
+        result = handler.execute(this, convertedArguments, dynamicContext, focus.getContextNodeItem());
+
+        if (callingContext != null) {
+          // add result to cache
+          dynamicContext.cacheResult(callingContext, result);
+        }
+      }
 
       // logger.info(String.format("Executed function '%s' with arguments '%s' producing result '%s'",
       // toSignature(), convertedArguments.toString(), result.asList().toString()));
@@ -324,6 +354,25 @@ public class DefaultFunction implements IFunction {
     } catch (MetapathException ex) {
       throw new MetapathException(String.format("Unable to execute function '%s'", toSignature()), ex);
     }
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(arguments, handler, name, properties, result);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    DefaultFunction other = (DefaultFunction) obj;
+    return Objects.equals(arguments, other.arguments) && Objects.equals(handler, other.handler)
+        && Objects.equals(name, other.name) && Objects.equals(properties, other.properties)
+        && Objects.equals(result, other.result);
   }
 
   @Override
@@ -357,5 +406,60 @@ public class DefaultFunction implements IFunction {
     builder.append(getResult().toSignature());
 
     return builder.toString();
+  }
+
+  public CallingContext newCallingContext(@NotNull List<@NotNull ISequence<?>> arguments, @NotNull INodeContext focus) {
+    return new CallingContext(arguments, focus);
+  }
+
+  public class CallingContext {
+    private final INodeItem contextNodeItem;
+    @NotNull
+    private final List<@NotNull ISequence<?>> arguments;
+
+    private CallingContext(@NotNull List<@NotNull ISequence<?>> arguments, @NotNull INodeContext focus) {
+      if (isFocusDepenent()) {
+        contextNodeItem = focus.getContextNodeItem();
+      } else {
+        contextNodeItem = null;
+      }
+      this.arguments = arguments;
+    }
+
+    protected DefaultFunction getFunction() {
+      return DefaultFunction.this;
+    }
+
+    public INodeItem getContextNodeItem() {
+      return contextNodeItem;
+    }
+
+    @NotNull
+    public List<@NotNull ISequence<?>> getArguments() {
+      return arguments;
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + getFunction().hashCode();
+      result = prime * result + Objects.hash(contextNodeItem, arguments);
+      return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      CallingContext other = (CallingContext) obj;
+      if (!getFunction().equals(other.getFunction()))
+        return false;
+      return Objects.equals(arguments, other.arguments) && Objects.equals(contextNodeItem, other.contextNodeItem);
+    }
   }
 }

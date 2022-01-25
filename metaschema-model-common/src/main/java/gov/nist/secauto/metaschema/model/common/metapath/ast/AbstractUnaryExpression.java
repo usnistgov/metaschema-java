@@ -26,24 +26,42 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
-public abstract class AbstractUnaryExpression<RESULT_TYPE extends IItem> implements IExpression<RESULT_TYPE> {
-  private IExpression<?> expr;
+/**
+ * An immutable expression with a single sub-expression.
+ */
+public abstract class AbstractUnaryExpression implements IExpression {
+  @NotNull
+  private IExpression expr;
 
-  public AbstractUnaryExpression(IExpression<?> expr) {
-    // Objects.requireNonNull(expr);
-    this.expr = expr;
+  /**
+   * Construct a new unary expression.
+   * 
+   * @param expr
+   *          the single sub-expression
+   */
+  @SuppressWarnings("null")
+  public AbstractUnaryExpression(@NotNull IExpression expr) {
+    this.expr = Objects.requireNonNull(expr, "expr");
   }
 
-  public IExpression<?> getChild() {
+  /**
+   * Retrieve the single child sub-expression.
+   * 
+   * @return the sub-expression
+   */
+  @NotNull
+  public IExpression getChild() {
     return expr;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public List<? extends IExpression<?>> getChildren() {
+  public List<@NotNull ? extends IExpression> getChildren() {
     return List.of(expr);
   }
 

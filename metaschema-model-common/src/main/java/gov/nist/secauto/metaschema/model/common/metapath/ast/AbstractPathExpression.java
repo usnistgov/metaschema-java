@@ -26,9 +26,17 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
-public abstract class AbstractPathExpression<RESULT_TYPE extends INodeItem> implements IPathExpression<RESULT_TYPE> {
+public abstract class AbstractPathExpression<RESULT_TYPE extends IItem> implements IPathExpression<RESULT_TYPE> {
+  @Override
+  public abstract Class<RESULT_TYPE> getBaseResultType();
+
+  
+  @Override
+  public Class<? extends RESULT_TYPE> getStaticResultType() {
+    return getBaseResultType();
+  }
 
   @Override
   public String toString() {

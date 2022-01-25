@@ -32,17 +32,22 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEva
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
-public class Negate extends AbstractUnaryExpression<INumericItem> implements IArithmeticExpression<INumericItem> {
+public class Negate extends AbstractUnaryExpression implements IArithmeticExpression<INumericItem> {
 
+  @NotNull
   private final Class<? extends INumericItem> staticResultType;
 
-  public Negate(IExpression<?> expr) {
+  @SuppressWarnings("null")
+  public Negate(@NotNull IExpression expr) {
     super(expr);
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(INumericItem.class, List.of(expr));
   }
 
+  @SuppressWarnings("null")
   @Override
   public Class<INumericItem> getBaseResultType() {
     return INumericItem.class;

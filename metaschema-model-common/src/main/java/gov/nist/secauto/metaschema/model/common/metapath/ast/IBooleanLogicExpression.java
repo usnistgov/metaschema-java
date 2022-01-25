@@ -28,5 +28,15 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBooleanItem;
 
-public interface IBooleanLogicExpression extends IExpression<IBooleanItem> {
+public interface IBooleanLogicExpression extends IExpression {
+  @Override
+  @SuppressWarnings("null")
+  default Class<IBooleanItem> getBaseResultType() {
+    return IBooleanItem.class;
+  }
+
+  @Override
+  default Class<IBooleanItem> getStaticResultType() {
+    return getBaseResultType();
+  }
 }

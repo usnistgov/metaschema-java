@@ -32,11 +32,14 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEva
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Name extends AbstractLiteralExpression<IStringItem, String> implements INameExpression<IStringItem> {
-  public Name(String value) {
+  public Name(@NotNull String value) {
     super(value);
   }
 
+  @SuppressWarnings("null")
   @Override
   public Class<IStringItem> getBaseResultType() {
     return IStringItem.class;

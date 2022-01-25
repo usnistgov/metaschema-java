@@ -34,21 +34,20 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractRootPathExpression
-    extends AbstractPathExpression<INodeItem>
-    implements IRootPathExpression {
+    extends AbstractPathExpression<INodeItem> {
   @NotNull
-  private final IExpression<?> node;
+  private final IExpression node;
+  @NotNull
   private final Class<? extends INodeItem> staticResultType;
 
-  public AbstractRootPathExpression(@NotNull IExpression<?> node) {
+  @SuppressWarnings("null")
+  public AbstractRootPathExpression(@NotNull IExpression node) {
     this.node = node;
-    @SuppressWarnings("null")
-    @NotNull List<@NotNull IExpression<?>> testedChildren = List.of(node);
-    this.staticResultType = ExpressionUtils.analyzeStaticResultType(INodeItem.class, testedChildren);
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(INodeItem.class, List.of(node));
   }
 
   @NotNull
-  public IExpression<?> getNode() {
+  public IExpression getNode() {
     return node;
   }
 
@@ -63,8 +62,9 @@ public abstract class AbstractRootPathExpression
     return staticResultType;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public List<? extends IExpression<?>> getChildren() {
-    return node != null ? List.of(node) : Collections.emptyList();
+  public List<? extends IExpression> getChildren() {
+    return List.of(node);
   }
 }
