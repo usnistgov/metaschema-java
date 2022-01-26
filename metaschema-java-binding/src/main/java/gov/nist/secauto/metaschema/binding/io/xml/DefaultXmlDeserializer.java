@@ -97,7 +97,7 @@ public class DefaultXmlDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
   }
 
   @Override
-  public IBoundXdmNodeItem deserializeToNodeItem(Reader reader, URI documentUri) throws BindingException {
+  protected IBoundXdmNodeItem deserializeToNodeItemInternal(Reader reader, URI documentUri) throws BindingException {
     XMLEventReader2 eventReader = newXMLEventReader2(reader);
     try {
       return parseXmlInternal(eventReader, documentUri);

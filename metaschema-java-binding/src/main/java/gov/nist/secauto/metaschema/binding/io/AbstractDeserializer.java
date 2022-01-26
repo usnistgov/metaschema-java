@@ -100,15 +100,6 @@ public abstract class AbstractDeserializer<CLASS> extends AbstractSerializationB
   public CLASS deserialize(Reader reader, URI documentUri) throws BindingException {
     IBoundXdmNodeItem nodeItem = deserializeToNodeItem(reader, documentUri);
 
-    if (isValidating()) {
-      StaticContext staticContext = new StaticContext();
-      DynamicContext dynamicContext = staticContext.newDynamicContext();
-      dynamicContext.setDocumentLoader(getBindingContext().newBoundLoader());
-      DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext);
-      new ValidatingXdmVisitor().visit(nodeItem, validator);
-      validator.finalizeValidation();
-    }
-
     return nodeItem.toBoundObject();
   }
 
@@ -117,4 +108,20 @@ public abstract class AbstractDeserializer<CLASS> extends AbstractSerializationB
     return deserializeToNodeItem(new InputStreamReader(is), documentUri);
   }
 
+  @Override
+  public IBoundXdmNodeItem deserializeToNodeItem(Reader reader, @Nullable URI documentUri) throws BindingException {
+    IBoundXdmNodeItem nodeItem = deserializeToNodeItemInternal(reader, documentUri);
+
+    if (isValidating()) {
+      StaticContext staticContext = new StaticContext();
+      DynamicContext dynamicContext = staticContext.newDynamicContext();
+      dynamicContext.setDocumentLoader(getBindingContext().newBoundLoader());
+      DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext);
+      new ValidatingXdmVisitor().visit(nodeItem, validator);
+      validator.finalizeValidation();
+    }
+    return nodeItem;
+  }
+
+  protected abstract IBoundXdmNodeItem deserializeToNodeItemInternal(Reader reader, @Nullable URI documentUri) throws BindingException;
 }

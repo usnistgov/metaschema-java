@@ -96,7 +96,7 @@ public class DefaultJsonDeserializer<CLASS> extends AbstractDeserializer<CLASS> 
   }
 
   @Override
-  public IBoundXdmNodeItem deserializeToNodeItem(Reader reader, @Nullable URI documentUri) throws BindingException {
+  protected IBoundXdmNodeItem deserializeToNodeItemInternal(Reader reader, @Nullable URI documentUri) throws BindingException {
     JsonParser parser = newJsonParser(reader);
 
     DefaultJsonParsingContext parsingContext = new DefaultJsonParsingContext(parser, new DefaultJsonProblemHandler());

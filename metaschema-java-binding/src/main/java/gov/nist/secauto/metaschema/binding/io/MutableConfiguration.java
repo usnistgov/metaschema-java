@@ -23,9 +23,11 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.io;
 
 public interface MutableConfiguration extends Configuration {
   MutableConfiguration enableFeature(Feature feature);
+
   MutableConfiguration disableFeature(Feature feature);
 }
