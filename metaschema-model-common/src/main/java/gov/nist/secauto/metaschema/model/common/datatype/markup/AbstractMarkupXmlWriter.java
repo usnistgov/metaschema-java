@@ -31,6 +31,7 @@ import com.vladsch.flexmark.ast.BulletList;
 import com.vladsch.flexmark.ast.Code;
 import com.vladsch.flexmark.ast.Emphasis;
 import com.vladsch.flexmark.ast.Heading;
+import com.vladsch.flexmark.ast.HtmlBlock;
 import com.vladsch.flexmark.ast.HtmlEntity;
 import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.ast.Image;
@@ -47,6 +48,10 @@ import com.vladsch.flexmark.ext.escaped.character.EscapedCharacter;
 import com.vladsch.flexmark.ext.gfm.strikethrough.Subscript;
 import com.vladsch.flexmark.ext.superscript.Superscript;
 import com.vladsch.flexmark.ext.tables.TableBlock;
+import com.vladsch.flexmark.ext.tables.TableBody;
+import com.vladsch.flexmark.ext.tables.TableCell;
+import com.vladsch.flexmark.ext.tables.TableHead;
+import com.vladsch.flexmark.ext.tables.TableRow;
 import com.vladsch.flexmark.ext.typographic.TypographicQuotes;
 import com.vladsch.flexmark.ext.typographic.TypographicSmarts;
 import com.vladsch.flexmark.util.ast.Block;
@@ -205,6 +210,9 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
     } else if (node instanceof TableBlock) {
       handleTable((TableBlock) node, writer);
       retval = true;
+    } else if (node instanceof HtmlBlock) {
+      handleHtmlBlock((HtmlBlock)node, writer);
+      retval = true;
     }
     return retval;
   }
@@ -218,23 +226,58 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
       throws XMLStreamException;
 
   protected void handleTable(TableBlock node, WRITER writer) throws XMLStreamException {
-    // TODO: implement tables
-    // QName name = new QName(getNamespace(), "table");
-    //
-    // StartElement start = eventFactory.createStartElement(name, null, null);
-    // writer.add(start);
-    //
-    // // TODO: handle head and body
-    // TableHead head = (TableHead) node.getChildOfType(TableHead.class);
-    //
-    // TableBody body = (TableBody) node.getChildOfType(TableBody.class);
-    //
-    // EndElement end = eventFactory.createEndElement(name, null);
-    // writer.add(end);
+    QName tableQName = new QName(getNamespace(), "table");
+    handleBasicElementStart(node, writer, tableQName);
+    
+    TableHead head = (TableHead) node.getChildOfType(TableHead.class);
+
+    if (head != null) {
+      for (Node childNode : head.getChildren()) {
+        if (childNode instanceof TableRow) {
+          handleTableRow((TableRow)childNode, writer);
+        }
+      }
+    }
+    
+    TableBody body = (TableBody) node.getChildOfType(TableBody.class);
+
+    if (body != null) {
+      for (Node childNode : body.getChildren()) {
+        if (childNode instanceof TableRow) {
+          handleTableRow((TableRow)childNode, writer);
+        }
+      }
+    }
+
+    handleBasicElementEnd(node, writer, tableQName);
+  }
+
+  private void handleTableRow(TableRow node, WRITER writer) throws XMLStreamException {
+    QName trQName = new QName(getNamespace(), "tr");
+    handleBasicElementStart(node, writer, trQName);
+
+    for (Node childNode : node.getChildren()) {
+      if (childNode instanceof TableCell) {
+        handleTableCell((TableCell)childNode, writer);
+      }
+    }
+
+    handleBasicElementEnd(node, writer, trQName);
+  }
+
+  private void handleTableCell(TableCell node, WRITER writer) throws XMLStreamException {
+    QName cellQName;
+    if (node.isHeader()) {
+      cellQName = new QName(getNamespace(), "th");
+    } else {
+      cellQName = new QName(getNamespace(), "td");
+    }
+    handleBasicElementStart(node, writer, cellQName);
+    visitChildren(node, writer);
+    handleBasicElementEnd(node, writer, cellQName);
   }
 
   protected void handleInsertAnchor(InsertAnchorNode node, WRITER writer) throws XMLStreamException {
-    // TODO: update OSCAL to add an insert type attribute
     QName name = new QName(getNamespace(), "insert");
     handleInsertAnchor(node, writer, name);
   }
@@ -310,18 +353,21 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
     writeText(writer, " ");
   }
 
-  private void handleHtmlInline(HtmlInline node, WRITER writer) throws XMLStreamException {
-    throw new UnsupportedOperationException(
-        String.format("Unable to process inline HTML characters: %s", node.getChars().toString()));
-    // String htmlText = node.getChars().toString();
-    //
-    // QName name = new QName(getNamespace(), "name");
-    // handleBasicElementStart(node, writer, name);
-    //
-    // if (node.hasChildren()) {
-    // visitChildren(node, writer);
-    // }
-    //
-    // handleBasicElementEnd(node, writer, name);
-  }
+  protected abstract void handleHtmlBlock(HtmlBlock node, WRITER writer) throws XMLStreamException;
+
+  protected abstract void handleHtmlInline(HtmlInline node, WRITER writer) throws XMLStreamException;
+//  {
+//    throw new UnsupportedOperationException(
+//        String.format("Unable to process inline HTML characters: %s", node.getChars().toString()));
+//    // String htmlText = node.getChars().toString();
+//    //
+//    // QName name = new QName(getNamespace(), "name");
+//    // handleBasicElementStart(node, writer, name);
+//    //
+//    // if (node.hasChildren()) {
+//    // visitChildren(node, writer);
+//    // }
+//    //
+//    // handleBasicElementEnd(node, writer, name);
+//  }
 }

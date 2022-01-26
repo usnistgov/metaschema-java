@@ -55,8 +55,8 @@ class MarkupXmlStreamWriterTest {
         + "<tr><th>Heading 1</th></tr>\n"
         + "</thead>\n"
         + "<tbody>\n"
-        + "<tr><td><q>data1</q> <insert param-id=\"insert\" /></td></tr>\n"
-        + "<tr><td><q>data2</q> <first a=\"1\"> <insert param-id=\"insert\" /></td></tr>\n"
+        + "<tr><td><q>data1</q> <insert type=\"param\" id-ref=\"insert\" /></td></tr>\n"
+        + "<tr><td><q>data2</q> <first a=\"1\"> <insert type=\"param\" id-ref=\"insert\" /></td></tr>\n"
         + "</tbody>\n"
         + "</table>\n"
         + "<p>Some <q><em>more</em></q> <strong>text</strong> <img src=\"src\" alt=\"alt\" /></p>\n";

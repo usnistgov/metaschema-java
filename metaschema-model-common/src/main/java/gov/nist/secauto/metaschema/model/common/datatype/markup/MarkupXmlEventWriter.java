@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
+import com.vladsch.flexmark.ast.HtmlBlock;
+import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.ast.Image;
 import com.vladsch.flexmark.ast.LinkNode;
 import com.vladsch.flexmark.util.ast.Node;
@@ -33,6 +35,9 @@ import com.vladsch.flexmark.util.ast.Node;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.insertanchor.InsertAnchorNode;
 
 import org.codehaus.stax2.evt.XMLEventFactory2;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.NodeVisitor;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -138,5 +143,65 @@ public class MarkupXmlEventWriter
   protected void handleLinkEnd(LinkNode node, XMLEventWriter writer, QName name) throws XMLStreamException {
     EndElement end = eventFactory.createEndElement(name, null);
     writer.add(end);
+  }
+
+  @Override
+  protected void handleHtmlBlock(HtmlBlock node, XMLEventWriter writer) throws XMLStreamException {
+    Document doc = Jsoup.parse(node.getChars().toString());
+    doc.getElementsByTag("html").first().getElementsByTag("body").first().traverse(new StreamNodeVisitor(writer));
+  }
+
+  @Override
+  protected void handleHtmlInline(HtmlInline node, XMLEventWriter writer) throws XMLStreamException {
+    Document doc = Jsoup.parse(node.getChars().toString());
+    doc.getElementsByTag("html").first().getElementsByTag("body").first().traverse(new StreamNodeVisitor(writer));
+  }
+
+  private class StreamNodeVisitor implements NodeVisitor {
+    private final XMLEventWriter writer;
+
+    public StreamNodeVisitor(XMLEventWriter writer) {
+      this.writer = writer;
+    }
+
+    @Override
+    public void head(org.jsoup.nodes.Node node, int depth) {
+      if (depth > 0) {
+        try {
+          if (node instanceof org.jsoup.nodes.Element) {
+            org.jsoup.nodes.Element element = (org.jsoup.nodes.Element) node;
+            if (element.childNodes().isEmpty()) {
+              writer.add(eventFactory.createStartElement(new QName(getNamespace(), element.tagName()), null, null));
+            } else {
+              List<Attribute> attributes = new LinkedList<>();
+              for (org.jsoup.nodes.Attribute attr : element.attributes()) {
+                attributes.add(eventFactory.createAttribute(attr.getKey(), attr.getValue()));
+              }
+              
+              writer.add(eventFactory.createStartElement(new QName(getNamespace(), element.tagName()), attributes.iterator(), null));
+            }
+          } else if (node instanceof org.jsoup.nodes.TextNode) {
+            org.jsoup.nodes.TextNode text = (org.jsoup.nodes.TextNode) node;
+            writer.add(eventFactory.createCharacters(text.text()));
+          }
+        } catch (XMLStreamException ex) {
+          throw new RuntimeException(ex);
+        }
+      }
+    }
+
+    @Override
+    public void tail(org.jsoup.nodes.Node node, int depth) {
+      if (depth > 0) {
+        if (node instanceof org.jsoup.nodes.Element) {
+          org.jsoup.nodes.Element element = (org.jsoup.nodes.Element) node;
+          try {
+            writer.add(eventFactory.createEndElement(new QName(getNamespace(), element.tagName()), null));
+          } catch (XMLStreamException ex) {
+            throw new RuntimeException(ex);
+          }
+        }
+      }
+    }
   }
 }
