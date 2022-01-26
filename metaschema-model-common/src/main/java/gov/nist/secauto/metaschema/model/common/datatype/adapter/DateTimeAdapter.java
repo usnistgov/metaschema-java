@@ -34,6 +34,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.type.IDateTimeType;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 
@@ -56,7 +59,8 @@ public class DateTimeAdapter extends AbstractDatatypeJavaTypeAdapter<DateTime, I
       return new DateTime(ZonedDateTime.from(DateFormats.dateTimeWithTZ.parse(value)), true);
     } catch (DateTimeParseException e) {
       try {
-        return new DateTime(ZonedDateTime.from(DateFormats.dateTimeWithoutTZ.parse(value)), false);
+        LocalDateTime dateTime = LocalDateTime.from(DateFormats.dateTimeWithoutTZ.parse(value));
+        return new DateTime(ZonedDateTime.of(dateTime, ZoneOffset.UTC), false);
       } catch (DateTimeParseException ex) {
         throw new IllegalArgumentException(ex);
       }

@@ -34,8 +34,12 @@ import gov.nist.secauto.metaschema.model.common.metapath.type.IDateType;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalAccessor;
 
 public class DateAdapter extends AbstractDatatypeJavaTypeAdapter<Date, IDateItem> implements IDateType {
   @SuppressWarnings("null")
@@ -54,7 +58,9 @@ public class DateAdapter extends AbstractDatatypeJavaTypeAdapter<Date, IDateItem
       return new Date(ZonedDateTime.from(DateFormats.dateWithTZ.parse(value)), true);
     } catch (DateTimeParseException e) {
       try {
-        return new Date(ZonedDateTime.from(DateFormats.dateWithoutTZ.parse(value)), false);
+        TemporalAccessor accessor = DateFormats.dateWithoutTZ.parse(value);
+        LocalDate date = LocalDate.from(accessor);
+        return new Date(ZonedDateTime.of(date, LocalTime.MIN, ZoneOffset.UTC), false);
       } catch (DateTimeParseException ex) {
         throw new IllegalArgumentException(ex);
       }
