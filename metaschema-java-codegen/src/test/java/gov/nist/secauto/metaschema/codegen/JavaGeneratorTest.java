@@ -54,6 +54,7 @@ class JavaGeneratorTest {
   // File generationDir;
   File generationDir = new File("target/generated-sources/metaschema");
 
+  @Disabled
   @Test
   void test() throws IOException, MetaschemaException {
     // Metaschema metaschema = new MetaschemaLoader().loadXmlMetaschema(new URL(

@@ -356,7 +356,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
         if (constraint.isAllowedOther()) {
           updateValueStatus((IAtomicValuedNodeItem) item, false);
         } else {
-          logger.error(String.format("Value '%s' did not match on of the required allowed values at path '%s'", value,
+          logger.error(String.format("Value '%s' did not match one of the required allowed values at path '%s'", value,
               item.getMetapath()));
         }
       } else {
