@@ -23,37 +23,37 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.EnumSet;
 import java.util.List;
 
-public class StaticFunction
-    extends DefaultFunction {
+public abstract class AbstractFunction implements IFunction {
+  @NotNull
+  private final String name;
+  @NotNull
+  private final List<IArgument> arguments;
 
-  /**
-   * Construct a new static function signature.
-   * 
-   * @param name
-   *          the name of the function
-   * @param properties
-   *          the characteristics of the function
-   * @param arguments
-   *          the argument signatures or an empty list
-   * @param result
-   *          the type of the result
-   * @param handler
-   *          the handler to call to execute the function
-   */
-  protected StaticFunction(
+  AbstractFunction(
       @NotNull String name,
-      @NotNull EnumSet<FunctionProperty> properties,
-      @NotNull List<IArgument> arguments,
-      @NotNull ISequenceType result,
-      @NotNull FunctionExecutor handler) {
-    super(name, properties, arguments, result, handler);
+      @NotNull List<IArgument> arguments) {
+    this.name = name;
+    this.arguments = arguments;
+  }
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
+  public int arity() {
+    return arguments.size();
+  }
+
+  @Override
+  public List<IArgument> getArguments() {
+    return arguments;
   }
 }

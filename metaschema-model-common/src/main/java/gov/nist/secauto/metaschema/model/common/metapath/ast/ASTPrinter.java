@@ -103,8 +103,13 @@ public class ASTPrinter
   }
 
   @Override
-  public String visitComparison(Comparison expr, Void context) {
-    return appendNode(expr, super.visitComparison(expr, context));
+  public String visitValueComparison(ValueComparison expr, Void context) {
+    return appendNode(expr, super.visitValueComparison(expr, context));
+  }
+
+  @Override
+  public String visitGeneralComparison(GeneralComparison expr, Void context) {
+    return appendNode(expr, super.visitGeneralComparison(expr, context));
   }
 
   @Override

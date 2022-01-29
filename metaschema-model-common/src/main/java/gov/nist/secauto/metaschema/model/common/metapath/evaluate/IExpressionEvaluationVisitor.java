@@ -34,12 +34,12 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Addition;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.And;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Comparison;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ContextItem;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.DecimalLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Division;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.FunctionCall;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.GeneralComparison;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IntegerDivision;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IntegerLiteral;
@@ -60,6 +60,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.StringConcat;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.StringLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.ValueComparison;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
@@ -91,7 +92,11 @@ public interface IExpressionEvaluationVisitor {
   ISequence<?> visitStep(@NotNull Step expr, @NotNull INodeContext context);
 
   @NotNull
-  ISequence<? extends IBooleanItem> visitComparison(@NotNull Comparison expr, @NotNull INodeContext context);
+  ISequence<? extends IBooleanItem> visitValueComparison(@NotNull ValueComparison expr, @NotNull INodeContext context);
+
+  @NotNull
+  ISequence<? extends IBooleanItem> visitGeneralComparison(@NotNull GeneralComparison generalComparison,
+      @NotNull INodeContext context);
 
   @NotNull
   ISequence<? extends INodeItem> visitContextItem(@NotNull ContextItem expr, @NotNull INodeContext context);

@@ -28,12 +28,12 @@ package gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Addition;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.And;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Comparison;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ContextItem;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.DecimalLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Division;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.FunctionCall;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.GeneralComparison;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IntegerDivision;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IntegerLiteral;
@@ -55,13 +55,13 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.StringConcat;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.StringLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.ValueComparison;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Wildcard;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
-import java.util.List;
 
 public class AbstractExpressionVisitor<RESULT, CONTEXT> implements ExpressionVisitor<RESULT, CONTEXT> {
 
@@ -114,7 +114,12 @@ public class AbstractExpressionVisitor<RESULT, CONTEXT> implements ExpressionVis
   }
 
   @Override
-  public RESULT visitComparison(Comparison expr, CONTEXT context) {
+  public RESULT visitValueComparison(ValueComparison expr, CONTEXT context) {
+    return visitChildren(expr, context);
+  }
+
+  @Override
+  public RESULT visitGeneralComparison(GeneralComparison expr, CONTEXT context) {
     return visitChildren(expr, context);
   }
 

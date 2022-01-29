@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Comparison.Operator;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.IComparison.Operator;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
@@ -181,6 +181,8 @@ public class BuildAstVisitor
     ParseTree operatorTree = ctx.getChild(1);
     Object payload = operatorTree.getPayload();
     Operator operator;
+    
+    IComparison retval;
     if (payload instanceof GeneralcompContext) {
       GeneralcompContext compContext = (GeneralcompContext) payload;
       int type = ((TerminalNode) compContext.getChild(0)).getSymbol().getType();
@@ -206,35 +208,37 @@ public class BuildAstVisitor
       default:
         throw new UnsupportedOperationException(((TerminalNode) compContext.getChild(0)).getSymbol().getText());
       }
+      retval = new GeneralComparison(left, operator, right);
     } else if (payload instanceof ValuecompContext) {
       ValuecompContext compContext = (ValuecompContext) payload;
       int type = ((TerminalNode) compContext.getChild(0)).getSymbol().getType();
       switch (type) {
       case metapath10Lexer.KW_EQ:
-        operator = Comparison.Operator.EQ;
+        operator = Operator.EQ;
         break;
       case metapath10Lexer.KW_NE:
-        operator = Comparison.Operator.NE;
+        operator = Operator.NE;
         break;
       case metapath10Lexer.KW_LT:
-        operator = Comparison.Operator.LT;
+        operator = Operator.LT;
         break;
       case metapath10Lexer.KW_LE:
-        operator = Comparison.Operator.LE;
+        operator = Operator.LE;
         break;
       case metapath10Lexer.KW_GT:
-        operator = Comparison.Operator.GT;
+        operator = Operator.GT;
         break;
       case metapath10Lexer.KW_GE:
-        operator = Comparison.Operator.GE;
+        operator = Operator.GE;
         break;
       default:
         throw new UnsupportedOperationException(((TerminalNode) compContext.getChild(0)).getSymbol().getText());
       }
+      retval = new ValueComparison(left, operator, right);
     } else {
       throw new UnsupportedOperationException();
     }
-    return new Comparison(left, operator, right);
+    return retval;
   }
 
   @Override

@@ -26,7 +26,6 @@
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 
-import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
 
 import org.jetbrains.annotations.NotNull;

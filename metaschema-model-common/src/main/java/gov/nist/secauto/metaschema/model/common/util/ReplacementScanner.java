@@ -23,27 +23,28 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.model.common.metapath.xdm;
+package gov.nist.secauto.metaschema.model.common.util;
 
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IValuedNodeItem;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.stream.Stream;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public interface IXdmValuedNodeItem extends IXdmNodeItem, IValuedNodeItem {
+public class ReplacementScanner {
+  public static CharSequence replaceTokens(@NotNull String text, @NotNull Pattern pattern, Function<Matcher, CharSequence> replacementFunction) {
+    int lastIndex = 0;
+    StringBuilder retval = new StringBuilder();
+    Matcher matcher = pattern.matcher(text);
+    while (matcher.find()) {
+        retval.append(text, lastIndex, matcher.start())
+          .append(replacementFunction.apply(matcher));
 
-  @Override
-  IXdmNodeItem getParentNodeItem();
-
-  @Override
-  IXdmModelNodeItem getParentContentNodeItem();
-
-  @SuppressWarnings("null")
-  @Override
-  default Stream<IPathSegment> getPathStream() {
-    Stream<IPathSegment> retval = Stream.of(this);
-    IXdmNodeItem parent = getParentNodeItem();
-    retval = parent == null ? retval : Stream.concat(parent.getPathStream(), retval);
+        lastIndex = matcher.end();
+    }
+    if (lastIndex < text.length()) {
+        retval.append(text, lastIndex, text.length());
+    }
     return retval;
   }
 }

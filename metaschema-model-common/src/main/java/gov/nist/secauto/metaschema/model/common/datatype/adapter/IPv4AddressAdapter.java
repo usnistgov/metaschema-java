@@ -63,7 +63,7 @@ public class IPv4AddressAdapter extends AbstractJavaTypeAdapter<IPv4Address, IIP
     try {
       return (IPv4Address) new IPAddressString(value, IPv4).toAddress();
     } catch (AddressStringException | IncompatibleAddressException ex) {
-      throw new IllegalArgumentException(ex);
+      throw new IllegalArgumentException(ex.getLocalizedMessage(), ex);
     }
   }
 

@@ -31,24 +31,11 @@ import java.net.URI;
 
 public interface IValuedNodeItem extends INodeItem, IValuedItem {
 
-  /**
-   * Retrieve the parent node item if it exists.
-   * 
-   * @return the parent node item, or {@code null} if this node item has no known parent
-   */
-  INodeItem getParentNodeItem();
-
   @Override
   default URI getBaseUri() {
     INodeItem parent = getParentNodeItem();
     return parent == null ? null : parent.getBaseUri();
   }
-  /**
-   * Retrieve the parent content node item if it exists. A content node is a non-document node.
-   * 
-   * @return the parent content node item, or {@code null} if this node item has no known parent content node item
-   */
-  IModelNodeItem getParentContentNodeItem();
 
   @SuppressWarnings("unchecked")
   @Override

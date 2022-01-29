@@ -30,10 +30,6 @@ import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.stream.Stream;
-
-import javax.xml.namespace.QName;
-
 public interface IDefinitionPathSegment extends IPathSegment {
 
 //  /**

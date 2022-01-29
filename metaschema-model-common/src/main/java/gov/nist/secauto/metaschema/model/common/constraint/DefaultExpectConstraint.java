@@ -28,14 +28,23 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.ReplacementScanner;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.regex.Pattern;
 
-public class DefaultExpectConstraint extends AbstractConstraint implements IExpectConstraint {
+public class DefaultExpectConstraint
+    extends AbstractConstraint
+    implements IExpectConstraint {
+  @NotNull
+  private static final Pattern METAPATH_VALUE_TEMPLATE_PATTERN
+      = Pattern.compile("(?<!\\\\)(\\{\\s*((?:(?:\\\\})|[^}])*)\\s*\\})");
   @NotNull
   private final MetapathExpression test;
 
@@ -55,10 +64,12 @@ public class DefaultExpectConstraint extends AbstractConstraint implements IExpe
    */
   public DefaultExpectConstraint(
       @Nullable String id,
+      @NotNull Level level,
+      String message,
       @NotNull MetapathExpression target,
       @NotNull MetapathExpression test,
       MarkupMultiline remarks) {
-    super(id, target, remarks);
+    super(id, level, message, target, remarks);
     Objects.requireNonNull(test);
     this.test = test;
   }
@@ -66,6 +77,20 @@ public class DefaultExpectConstraint extends AbstractConstraint implements IExpe
   @Override
   public MetapathExpression getTest() {
     return test;
+  }
+
+  @Override
+  public CharSequence generateMessage(@NotNull INodeItem item, @NotNull DynamicContext context) {
+    String message = getMessage();
+    if (message == null) {
+      return null;
+    }
+
+    return ReplacementScanner.replaceTokens(message, METAPATH_VALUE_TEMPLATE_PATTERN, match -> {
+      String metapath = match.group(2);
+      MetapathExpression expr = MetapathExpression.compile(metapath);
+      return expr.evaluateAs(item, context, MetapathExpression.ResultType.STRING);
+    });
   }
 
 }

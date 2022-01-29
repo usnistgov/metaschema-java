@@ -26,16 +26,12 @@
 
 package gov.nist.secauto.metaschema.codegen.property;
 
-import com.squareup.javapoet.MethodSpec.Builder;
 import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
 import java.util.Set;
 
 public interface PropertyGenerator {

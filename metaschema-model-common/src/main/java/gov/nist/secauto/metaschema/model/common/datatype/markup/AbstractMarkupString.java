@@ -46,7 +46,6 @@ import org.codehaus.stax2.ri.evt.NamespaceEventImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.OutputStream;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;

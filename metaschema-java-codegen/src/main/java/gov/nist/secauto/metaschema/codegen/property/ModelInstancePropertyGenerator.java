@@ -38,7 +38,6 @@ import gov.nist.secauto.metaschema.codegen.AssemblyJavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
 import gov.nist.secauto.metaschema.model.common.ModelConstants;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;

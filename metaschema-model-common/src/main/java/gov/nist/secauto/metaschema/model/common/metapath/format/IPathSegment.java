@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.format;
 
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -64,5 +64,11 @@ public interface IPathSegment {
    * @return a stream of path segments in descending order
    */
   @NotNull
-  Stream<IPathSegment> getPathStream();
+  Stream<? extends IPathSegment> getPathStream();
+
+  /**
+   * Get the value associated with the path segment
+   * @return the value or {@code} if no value is associated with this path segment
+   */
+  INodeItem getNodeItem();
 }

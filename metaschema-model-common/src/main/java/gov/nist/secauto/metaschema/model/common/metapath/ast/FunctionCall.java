@@ -40,9 +40,11 @@ import java.util.List;
 import java.util.Objects;
 
 public class FunctionCall implements IExpression {
-  private final IFunction function;
+  @NotNull
+  private final String name;
   @NotNull
   private final List<@NotNull IExpression> arguments;
+  private IFunction function;
 
   /**
    * Construct a new function call expression.
@@ -52,23 +54,22 @@ public class FunctionCall implements IExpression {
    * @param arguments
    *          the expressions used to provide arguments to the function call
    */
+  @SuppressWarnings("null")
   public FunctionCall(@NotNull String name, @NotNull List<@NotNull IExpression> arguments) {
-    Objects.requireNonNull(name);
-    Objects.requireNonNull(arguments);
-    this.function = FunctionService.getInstance().getFunction(name, arguments);
-    if (this.function == null) {
-      throw new IllegalArgumentException(
-          String.format("unable to find function with name '%s' having arity '%d'", name, arguments.size()));
-    }
-    this.arguments = arguments;
+    this.name = Objects.requireNonNull(name, "name");
+    this.arguments = Objects.requireNonNull(arguments, "arguments");
   }
 
   /**
    * Retrieve the associated function.
    * 
    * @return the function or {@code null} if no function matched the defined name and arguments
+   * @throws UnsupportedOperationException if the function was not found
    */
-  public IFunction getFunction() {
+  public synchronized IFunction getFunction() {
+    if (function == null) {
+      function = FunctionService.getInstance().getFunction(name, arguments);
+    }
     return function;
   }
 
@@ -79,7 +80,7 @@ public class FunctionCall implements IExpression {
 
   @Override
   public Class<? extends IItem> getBaseResultType() {
-    Class<? extends IItem> retval = function.getResult().getType();
+    Class<? extends IItem> retval = getFunction().getResult().getType();
     if (retval == null) {
       retval = IItem.class;
     }

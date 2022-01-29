@@ -29,8 +29,6 @@ package gov.nist.secauto.metaschema.model.common.datatype.markup;
 import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupXmlStreamWriter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstCollectingVisitor;
 
 import org.codehaus.stax2.XMLOutputFactory2;

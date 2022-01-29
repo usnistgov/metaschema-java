@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 
@@ -42,6 +43,14 @@ public interface IPathItem extends IItem {
   // */
   // List<IPathSegment> getPath();
 
+  /**
+   * Get the Metaschema definition associated with this node.
+   * 
+   * @return the definition
+   */
+  @NotNull
+  INamedDefinition getDefinition();
+  
   /**
    * Get the path segment for this item.
    * 

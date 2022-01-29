@@ -62,14 +62,12 @@ public class XmlFlagInstance extends AbstractFlagInstance {
     return xmlFlag;
   }
 
-  @SuppressWarnings("null")
   @Override
   public IFlagDefinition getDefinition() {
     return getContainingDefinition().getContainingMetaschema()
         .getScopedFlagDefinitionByName(getName());
   }
 
-  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlFlag().getRef();

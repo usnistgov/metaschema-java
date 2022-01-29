@@ -41,12 +41,13 @@ import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Addition;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.And;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Comparison;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ContextItem;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.DecimalLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Division;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.FunctionCall;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.GeneralComparison;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.IComparison;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IntegerDivision;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IntegerLiteral;
@@ -68,6 +69,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.StringConcat;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.StringLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.ValueComparison;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
@@ -79,6 +81,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.type.InvalidTypeMetapathException;
 
 import org.jetbrains.annotations.NotNull;
@@ -137,7 +140,7 @@ public class MetaschemaPathEvaluationVisitor
   }
 
   @Override
-  public ISequence<? extends IBooleanItem> visitComparison(Comparison expr, INodeContext context) {
+  public ISequence<? extends IBooleanItem> visitValueComparison(ValueComparison expr, INodeContext context) {
     IItem leftItem = FunctionUtils.getFirstItem(expr.getLeft().accept(this, context), false);
     if (leftItem == null) {
       return ISequence.empty();
@@ -149,10 +152,19 @@ public class MetaschemaPathEvaluationVisitor
 
     IAnyAtomicItem left = XPathFunctions.fnDataItem(leftItem);
     IAnyAtomicItem right = XPathFunctions.fnDataItem(rightItem);
+    IComparison.Operator operator = expr.getOperator();
 
-    Comparison.Operator operator = expr.getOperator();
+    try {
+      return resultOrEmptySequence(compare(left, operator, right));
+    } catch (IllegalArgumentException ex) {
+      throw new UnsupportedOperationException(String.format("The value expression '%s %s %s' is not supported",
+          leftItem.getItemName(), operator.name().toLowerCase(), rightItem.getItemName()));
+    }
+  }
+
+  protected IBooleanItem compare(@NotNull IAnyAtomicItem left, @NotNull IComparison.Operator operator,
+      @NotNull IAnyAtomicItem right) {
     IBooleanItem retval = null;
-    boolean supported = true;
     if (left instanceof IStringItem || right instanceof IStringItem) {
       switch (operator) {
       case EQ:
@@ -180,7 +192,7 @@ public class MetaschemaPathEvaluationVisitor
             .opNumericEqual(XPathFunctions.fnCompare((IStringItem) left, (IStringItem) right), IIntegerItem.ZERO));
         break;
       default:
-        supported = false;
+        throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
       }
     } else if (left instanceof INumericItem && right instanceof INumericItem) {
       switch (operator) {
@@ -209,7 +221,7 @@ public class MetaschemaPathEvaluationVisitor
         retval = FnNotFunction.fnNot(OperationFunctions.opNumericEqual((INumericItem) left, (INumericItem) right));
         break;
       default:
-        supported = false;
+        throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
       }
     } else if (left instanceof IBooleanItem && right instanceof IBooleanItem) {
       switch (operator) {
@@ -238,7 +250,7 @@ public class MetaschemaPathEvaluationVisitor
         retval = FnNotFunction.fnNot(OperationFunctions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right));
         break;
       default:
-        supported = false;
+        throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
       }
     } else if (left instanceof IDateTimeItem && right instanceof IDateTimeItem) {
       switch (operator) {
@@ -267,7 +279,7 @@ public class MetaschemaPathEvaluationVisitor
         retval = FnNotFunction.fnNot(OperationFunctions.opDateTimeEqual((IDateTimeItem) left, (IDateTimeItem) right));
         break;
       default:
-        supported = false;
+        throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
       }
     } else if (left instanceof IDateItem && right instanceof IDateItem) {
       switch (operator) {
@@ -296,7 +308,7 @@ public class MetaschemaPathEvaluationVisitor
         retval = FnNotFunction.fnNot(OperationFunctions.opDateEqual((IDateItem) left, (IDateItem) right));
         break;
       default:
-        supported = false;
+        throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
       }
     } else if (left instanceof IDurationItem && right instanceof IDurationItem) {
       switch (operator) {
@@ -317,7 +329,7 @@ public class MetaschemaPathEvaluationVisitor
               = OperationFunctions.opDurationEqual((IDayTimeDurationItem) left, (IDayTimeDurationItem) right);
           retval = IBooleanItem.valueOf(gt.toBoolean() || eq.toBoolean());
         } else {
-          supported = false;
+          throw new IllegalArgumentException("the item types are not comparable");
         }
         break;
       }
@@ -329,7 +341,7 @@ public class MetaschemaPathEvaluationVisitor
           retval = OperationFunctions.opDayTimeDurationGreaterThan((IDayTimeDurationItem) left,
               (IDayTimeDurationItem) right);
         } else {
-          supported = false;
+          throw new IllegalArgumentException("the item types are not comparable");
         }
         break;
       case LE: {
@@ -346,7 +358,7 @@ public class MetaschemaPathEvaluationVisitor
               = OperationFunctions.opDurationEqual((IDayTimeDurationItem) left, (IDayTimeDurationItem) right);
           retval = IBooleanItem.valueOf(lt.toBoolean() || eq.toBoolean());
         } else {
-          supported = false;
+          throw new IllegalArgumentException("the item types are not comparable");
         }
         break;
       }
@@ -358,7 +370,7 @@ public class MetaschemaPathEvaluationVisitor
           retval
               = OperationFunctions.opDayTimeDurationLessThan((IDayTimeDurationItem) left, (IDayTimeDurationItem) right);
         } else {
-          supported = false;
+          throw new IllegalArgumentException("the item types are not comparable");
         }
         break;
       }
@@ -366,7 +378,7 @@ public class MetaschemaPathEvaluationVisitor
         retval = FnNotFunction.fnNot(OperationFunctions.opDurationEqual((IDurationItem) left, (IDurationItem) right));
         break;
       default:
-        supported = false;
+        throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
       }
     } else if (left instanceof IBase64BinaryItem && right instanceof IBase64BinaryItem) {
       switch (operator) {
@@ -398,19 +410,73 @@ public class MetaschemaPathEvaluationVisitor
             .fnNot(OperationFunctions.opBase64BinaryEqual((IBase64BinaryItem) left, (IBase64BinaryItem) right));
         break;
       default:
-        supported = false;
+        throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
       }
     } else {
       throw new InvalidTypeMetapathException(String.format("invalid types for comparison: %s %s %s", left.getItemName(),
           operator.name().toLowerCase(), right.getItemName()));
     }
 
-    if (!supported) {
-      throw new UnsupportedOperationException(String.format("The expression '%s %s %s' is not supported",
-          leftItem.getItemName(), operator.name().toLowerCase(), rightItem.getItemName()));
-    }
+    return retval;
+  }
 
-    return resultOrEmptySequence(retval);
+  @Override
+  public @NotNull ISequence<? extends IBooleanItem> visitGeneralComparison(@NotNull GeneralComparison expr,
+      @NotNull INodeContext context) {
+    ISequence<? extends IAnyAtomicItem> leftItems = XPathFunctions.fnData(expr.getLeft().accept(this, context));
+    ISequence<? extends IAnyAtomicItem> rightItems = XPathFunctions.fnData(expr.getRight().accept(this, context));
+    IComparison.Operator operator = expr.getOperator();
+
+    IBooleanItem retval = IBooleanItem.FALSE;
+    // TODO: apply data on each iteration
+    for (IAnyAtomicItem left : leftItems.asList()) {
+      for (IAnyAtomicItem right : rightItems.asList()) {
+        @NotNull
+        IAnyAtomicItem leftCast;
+        IAnyAtomicItem rightCast;
+        if (left instanceof IUntypedAtomicItem) {
+          if (right instanceof IUntypedAtomicItem) {
+            leftCast = IStringItem.cast(left);
+            rightCast = IStringItem.cast(right);
+          } else {
+            leftCast = applyGeneralComparisonCast(right, left);
+            rightCast = right;
+          }
+        } else if (right instanceof IUntypedAtomicItem) {
+          leftCast = left;
+          rightCast = applyGeneralComparisonCast(left, right);
+        } else {
+          leftCast = left;
+          rightCast = right;
+        }
+
+        try {
+          IBooleanItem result = compare(leftCast, operator, rightCast);
+          if (IBooleanItem.TRUE.equals(result)) {
+            retval = IBooleanItem.TRUE;
+          }
+        } catch (IllegalArgumentException ex) {
+          throw new UnsupportedOperationException(String.format("The value expression '%s %s %s' is not supported",
+              left.getItemName(), operator.name().toLowerCase(), right.getItemName()));
+        }
+      }
+    }
+    return ISequence.of(retval);
+  }
+
+  @NotNull
+  protected IAnyAtomicItem applyGeneralComparisonCast(@NotNull IAnyAtomicItem item, @NotNull IAnyAtomicItem other) {
+    IAnyAtomicItem retval = other;
+    if (item instanceof INumericItem) {
+      retval = IDecimalItem.cast(other);
+    } else if (item instanceof IDayTimeDurationItem) {
+      retval = IDayTimeDurationItem.cast(other);
+    } else if (item instanceof IDayTimeDurationItem) {
+      retval = IYearMonthDurationItem.cast(other);
+    } else {
+      retval = item.getItemType().cast(other);
+    }
+    return retval;
   }
 
   @Override
@@ -518,7 +584,7 @@ public class MetaschemaPathEvaluationVisitor
     }
     return retval;
   }
-  
+
   @Override
   public ISequence<? extends IFlagNodeItem> visitFlag(@NotNull Flag expr, @NotNull INodeContext context) {
     return ISequence.of(matchFlags(expr, context));
@@ -526,7 +592,8 @@ public class MetaschemaPathEvaluationVisitor
 
   @SuppressWarnings("null")
   @NotNull
-  private static Stream<? extends IModelNodeItem> matchModelInstance(@NotNull ModelInstance expr, @NotNull INodeContext context) {
+  private static Stream<? extends IModelNodeItem> matchModelInstance(@NotNull ModelInstance expr,
+      @NotNull INodeContext context) {
     Stream<? extends IModelNodeItem> retval;
     if (expr.isName()) {
       String name = ((Name) expr.getNode()).getValue();

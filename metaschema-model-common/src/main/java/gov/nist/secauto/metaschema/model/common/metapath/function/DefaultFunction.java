@@ -39,8 +39,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem
 import gov.nist.secauto.metaschema.model.common.metapath.type.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.type.TypeMetapathException;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.Equator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -53,15 +51,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DefaultFunction implements IFunction {
+public class DefaultFunction extends AbstractFunction {
   // private static final Logger logger = LogManager.getLogger(AbstractFunction.class);
 
   @NotNull
   private final Set<FunctionProperty> properties;
-  @NotNull
-  private final String name;
-  @NotNull
-  private final List<IArgument> arguments;
   @NotNull
   private final ISequenceType result;
   @NotNull
@@ -88,31 +82,15 @@ public class DefaultFunction implements IFunction {
       @NotNull List<IArgument> arguments,
       @NotNull ISequenceType result,
       @NotNull FunctionExecutor handler) {
-    this.name = name;
+    super(name, arguments);
     this.properties = Collections.unmodifiableSet(properties);
-    this.arguments = arguments;
     this.result = result;
     this.handler = handler;
   }
 
   @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
   public Set<FunctionProperty> getProperties() {
     return properties;
-  }
-
-  @Override
-  public int arity() {
-    return arguments.size();
-  }
-
-  @Override
-  public List<IArgument> getArguments() {
-    return arguments;
   }
 
   @Override
@@ -286,30 +264,33 @@ public class DefaultFunction implements IFunction {
     if (sequence.isEmpty()) {
       retval = ISequence.empty();
     } else {
-      Class<? extends IItem> sequenceType = argument.getSequenceType().getType();
+      ISequenceType requiredSequenceType = argument.getSequenceType();
+      Class<? extends IItem> requiredSequenceTypeClass = requiredSequenceType.getType();
+
 
       List<@NotNull IItem> result = new ArrayList<>(sequence.size());
 
-      boolean atomize = IAnyAtomicItem.class.isAssignableFrom(sequenceType);
+      boolean atomize = IAnyAtomicItem.class.isAssignableFrom(requiredSequenceTypeClass);
 
       for (IItem item : sequence.asList()) {
         if (atomize) {
           item = XPathFunctions.fnDataItem(item);
+
+          if (IUntypedAtomicItem.class.isInstance(item)) {
+            // TODO: apply cast to atomic type
+          }
+
+          // promote URIs to strings if a string is required
+          if (IStringItem.class.equals(requiredSequenceTypeClass) && IAnyUriItem.class.isInstance(item)) {
+            item = IStringItem.cast((IAnyUriItem) item);
+          }
         }
 
-        if (IUntypedAtomicItem.class.isInstance(item)) {
-          // TODO: apply cast to atomic type
-        }
-
-        // promote URIs to strings if a string is required
-        if (IStringItem.class.equals(sequenceType) && IAnyUriItem.class.isInstance(item)) {
-          item = IStringItem.cast((IAnyUriItem) item);
-        }
-
-        if (!sequenceType.isInstance(item)) {
+//        item = requiredSequenceType.
+        if (!requiredSequenceTypeClass.isInstance(item)) {
           throw new InvalidTypeMetapathException(
               String.format("The type '%s' is not a subtype of '%s'", item.getClass().getName(),
-                  sequenceType.getName()));
+                  requiredSequenceTypeClass.getName()));
         }
         result.add(item);
       }
@@ -358,7 +339,7 @@ public class DefaultFunction implements IFunction {
 
   @Override
   public int hashCode() {
-    return Objects.hash(arguments, handler, name, properties, result);
+    return Objects.hash(getArguments(), handler, getName(), properties, result);
   }
 
   @Override
@@ -370,8 +351,8 @@ public class DefaultFunction implements IFunction {
     if (getClass() != obj.getClass())
       return false;
     DefaultFunction other = (DefaultFunction) obj;
-    return Objects.equals(arguments, other.arguments) && Objects.equals(handler, other.handler)
-        && Objects.equals(name, other.name) && Objects.equals(properties, other.properties)
+    return Objects.equals(getArguments(), other.getArguments()) && Objects.equals(handler, other.handler)
+        && Objects.equals(getName(), other.getName()) && Objects.equals(properties, other.properties)
         && Objects.equals(result, other.result);
   }
 

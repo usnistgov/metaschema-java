@@ -32,12 +32,29 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public interface IBoundXdmNodeItem extends IXdmNodeItem {
 
   @Override
   @NotNull
   IBoundXdmNodeItem getContextNodeItem();
+
+  @Override
+  IBoundXdmNodeItem getParentNodeItem();
+
+  @Override
+  IBoundXdmModelNodeItem getParentContentNodeItem();
+
+  @Override
+  default Stream<? extends IBoundXdmNodeItem> getPathStream() {
+    Stream<IBoundXdmNodeItem> retval = Stream.of(this);
+    IBoundXdmNodeItem parent = getParentNodeItem();
+    if (parent != null) {
+      retval = Stream.concat(parent.getPathStream(), retval);
+    }
+    return retval;
+  }
 
   @Override
   Map<@NotNull String, ? extends IBoundXdmFlagNodeItem> getFlags();

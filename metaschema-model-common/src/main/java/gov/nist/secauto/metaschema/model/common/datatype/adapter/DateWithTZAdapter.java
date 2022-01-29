@@ -52,7 +52,7 @@ public class DateWithTZAdapter extends AbstractJavaTypeAdapter<ZonedDateTime, ID
     try {
       return ZonedDateTime.from(DateFormats.dateWithOptionalTZ.parse(value));
     } catch (DateTimeParseException ex) {
-      throw new IllegalArgumentException(ex);
+      throw new IllegalArgumentException(ex.getLocalizedMessage(), ex);
     }
   }
 

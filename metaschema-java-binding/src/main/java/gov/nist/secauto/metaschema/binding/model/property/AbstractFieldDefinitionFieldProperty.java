@@ -40,7 +40,6 @@ import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Field;
 import java.util.Objects;
 
 public abstract class AbstractFieldDefinitionFieldProperty

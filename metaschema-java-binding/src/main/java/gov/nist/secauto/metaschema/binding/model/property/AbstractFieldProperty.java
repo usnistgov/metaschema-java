@@ -30,8 +30,6 @@ import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.annotations.Field;
-import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.XmlBindingSupplier;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;

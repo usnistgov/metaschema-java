@@ -59,7 +59,7 @@ public class DayTimeAdapter extends AbstractJavaTypeAdapter<Duration, IDayTimeDu
     try {
       return Duration.parse(value);
     } catch (DateTimeParseException ex) {
-      throw new IllegalArgumentException(ex);
+      throw new IllegalArgumentException(ex.getLocalizedMessage(), ex);
     }
   }
 

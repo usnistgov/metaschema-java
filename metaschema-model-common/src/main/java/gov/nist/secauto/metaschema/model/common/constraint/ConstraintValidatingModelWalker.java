@@ -24,19 +24,8 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.util;
+package gov.nist.secauto.metaschema.model.common.constraint;
 
-import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValue;
-import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IKeyConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IKeyField;
-import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;

@@ -28,12 +28,12 @@ package gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Addition;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.And;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Comparison;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ContextItem;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.DecimalLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Division;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.FunctionCall;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.GeneralComparison;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IntegerDivision;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IntegerLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Metapath;
@@ -54,10 +54,10 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.StringConcat;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.StringLiteral;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.ValueComparison;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Wildcard;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public interface ExpressionVisitor<RESULT, CONTEXT> {
 
@@ -67,7 +67,9 @@ public interface ExpressionVisitor<RESULT, CONTEXT> {
 
   RESULT visitStep(@NotNull Step expr,CONTEXT context);
 
-  RESULT visitComparison(@NotNull Comparison expr,CONTEXT context);
+  RESULT visitValueComparison(@NotNull ValueComparison expr,CONTEXT context);
+
+  RESULT visitGeneralComparison(@NotNull GeneralComparison generalComparison, CONTEXT context);
 
   RESULT visitContextItem(@NotNull ContextItem expr,CONTEXT context);
 

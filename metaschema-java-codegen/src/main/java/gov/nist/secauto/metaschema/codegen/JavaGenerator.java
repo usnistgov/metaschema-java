@@ -38,7 +38,6 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -136,7 +135,12 @@ public class JavaGenerator {
         }
 
         if (classGenerator != null) {
-          GeneratedClass generatedClass = classGenerator.generateClass(targetDirectory);
+          GeneratedClass generatedClass;
+          try {
+            generatedClass = classGenerator.generateClass(targetDirectory);
+          } catch (RuntimeException ex) {
+            throw new IllegalStateException(String.format("Unable to generate class for definition '%s' in Metaschema '%s'", definition.getName(), metaschema.getLocation()), ex);
+          }
           String className = generatedClass.getClassName().canonicalName();
           if (classNames.contains(className)) {
             throw new IllegalStateException(String.format(

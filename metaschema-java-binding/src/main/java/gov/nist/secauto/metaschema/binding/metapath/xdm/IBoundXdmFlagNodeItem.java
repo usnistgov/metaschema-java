@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmFlagNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface IBoundXdmFlagNodeItem extends IBoundXdmValuedNodeItem, IXdmFlagNodeItem {
+public interface IBoundXdmFlagNodeItem extends IBoundXdmNodeItem, IXdmFlagNodeItem {
 
   @Override
   default IBoundXdmFlagNodeItem getContextNodeItem() {

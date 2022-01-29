@@ -101,6 +101,7 @@ public class FunctionService {
    * @param arguments
    *          a list of argument expressions for use in determining an argument signature match
    * @return the matching function or {@code null} if no match exists
+   * @throws UnsupportedOperationException if a matching function was not found
    */
   @SuppressWarnings("null")
   public IFunction getFunction(@NotNull String name, @NotNull IExpression... arguments) {
@@ -115,9 +116,15 @@ public class FunctionService {
    *          the name of a group of functions
    * @param arguments
    *          a list of argument expressions for use in determining an argument signature match
-   * @return the matching function or {@code null} if no match exists
+   * @return the matching function
+   * @throws UnsupportedOperationException if a matching function was not found
    */
   public synchronized IFunction getFunction(@NotNull String name, @NotNull List<@NotNull IExpression> arguments) {
-    return library.getFunction(name, arguments);
+    IFunction retval = library.getFunction(name, arguments);
+    if (retval == null) {
+      throw new UnsupportedOperationException(
+          String.format("unable to find function with name '%s' having arity '%d'", name, arguments.size()));
+    }
+    return retval;
   }
 }

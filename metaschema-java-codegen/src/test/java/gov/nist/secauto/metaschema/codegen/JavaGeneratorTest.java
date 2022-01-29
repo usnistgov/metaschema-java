@@ -30,15 +30,14 @@ import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfigur
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.model.common.constraint.ConstraintValidatingModelWalker;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ASTPrinter;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
-import gov.nist.secauto.metaschema.model.common.util.ConstraintValidatingModelWalker;
 import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;
 
 import org.junit.jupiter.api.Disabled;
@@ -87,7 +86,7 @@ class JavaGeneratorTest {
     }
     // AssemblyDefinition definition = metaschema.getAssemblyDefinitionByName("system-component");
     //
-    MetapathExpression exp = MetapathFactory.parseMetapathString("*/*/@name");
+    MetapathExpression exp = MetapathExpression.compile("*/*/@name");
     // MetapathExpression exp = Metapath.parseMetapathString("//test/@flag = 1+1+1");
     // MetapathExpression exp = Metapath.parseMetapathString("//test[@flag='value']/@flag = 0.1");
     System.out.println(new ASTPrinter().visit(exp.getASTNode()));

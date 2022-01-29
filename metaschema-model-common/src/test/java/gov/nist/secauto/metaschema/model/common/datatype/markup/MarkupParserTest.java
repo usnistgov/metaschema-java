@@ -28,8 +28,6 @@ package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
 import com.ctc.wstx.stax.WstxInputFactory;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupParser;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstCollectingVisitor;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 

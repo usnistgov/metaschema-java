@@ -136,6 +136,10 @@ public class MarkupParser {
         case "ol":
         case "pre":
         case "table":
+        case "tr":
+        case "th":
+        case "td":
+        case "br":
           parseStartElement(reader, start, buffer);
 
           // the next event should be the event after the start's END_ELEMENT

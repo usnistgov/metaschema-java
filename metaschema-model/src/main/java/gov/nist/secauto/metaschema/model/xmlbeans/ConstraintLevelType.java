@@ -23,13 +23,67 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmValuedNodeItem;
+package gov.nist.secauto.metaschema.model.xmlbeans;
 
-public interface IBoundXdmValuedNodeItem extends IBoundXdmNodeItem, IXdmValuedNodeItem {
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 
-  @Override
-  IBoundXdmModelNodeItem getParentContentNodeItem();
+public class ConstraintLevelType {
+  /**
+   * Sets the value of obj onto the given simple value target.
+   * 
+   * @param obj
+   *          the boolean value to set
+   * @param target
+   *          the XML value to cast to a boolean
+   */
+  public static void encodeLevelType(IConstraint.Level obj, org.apache.xmlbeans.SimpleValue target) {
+    if (obj != null) {
+      switch (obj) {
+      case CRITICAL:
+        target.setStringValue("CRITICAL");
+        break;
+      case ERROR:
+        target.setStringValue("ERROR");
+        break;
+      case WARNING:
+        target.setStringValue("WARNING");
+        break;
+      case INFORMATIONAL:
+        target.setStringValue("INFORMATIONAL");
+        break;
+      default:
+        throw new UnsupportedOperationException(obj.name());
+      }
+    }
+  }
 
+  /**
+   * Returns an appropriate Java object from the given simple value.
+   * 
+   * @param obj
+   *          the XML value to cast to a boolean
+   * @return the associated boolean value
+   */
+  public static IConstraint.Level decodeLevelType(org.apache.xmlbeans.SimpleValue obj) {
+    String value = obj.getStringValue();
+    IConstraint.Level retval;
+    switch (value) {
+    case "CRITICAL":
+      retval = IConstraint.Level.CRITICAL;
+      break;
+    case "ERROR":
+      retval = IConstraint.Level.ERROR;
+      break;
+    case "WARNING":
+      retval = IConstraint.Level.WARNING;
+      break;
+    case "INFORMATIONAL":
+      retval = IConstraint.Level.INFORMATIONAL;
+      break;
+    default:
+      throw new UnsupportedOperationException(value);
+    }
+    return retval;
+  }
 }

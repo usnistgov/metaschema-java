@@ -56,13 +56,13 @@ public class DateAdapter extends AbstractDatatypeJavaTypeAdapter<Date, IDateItem
   public Date parse(String value) throws IllegalArgumentException {
     try {
       return new Date(ZonedDateTime.from(DateFormats.dateWithTZ.parse(value)), true);
-    } catch (DateTimeParseException e) {
+    } catch (DateTimeParseException ex) {
       try {
         TemporalAccessor accessor = DateFormats.dateWithoutTZ.parse(value);
         LocalDate date = LocalDate.from(accessor);
         return new Date(ZonedDateTime.of(date, LocalTime.MIN, ZoneOffset.UTC), false);
-      } catch (DateTimeParseException ex) {
-        throw new IllegalArgumentException(ex);
+      } catch (DateTimeParseException ex2) {
+        throw new IllegalArgumentException(ex2.getLocalizedMessage(), ex2);
       }
     }
   }

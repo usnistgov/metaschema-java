@@ -27,14 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
 public interface IModelNodeItem extends IValuedNodeItem {
 

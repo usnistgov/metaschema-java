@@ -32,6 +32,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -47,6 +49,13 @@ public @interface HasCardinality {
    * @return the identifier if provided or an empty string otherwise
    */
   String id() default "";
+
+  /**
+   * The significance of a violation of this constraint.
+   * 
+   * @return the level
+   */
+  Level level() default IConstraint.Level.ERROR;
 
   /**
    * An optional metapath that points to the target flag or field value that the constraint applies
@@ -75,6 +84,13 @@ public @interface HasCardinality {
    * @return a non-negative integer or {@code -1} if not defined
    */
   int maxOccurs() default -1;
+
+  /**
+   * The message to emit when the constraint is violated.
+   * 
+   * @return the message or an empty string otherwise
+   */
+  String message() default "";
 
   /**
    * Any remarks about the constraint, encoded as an escaped Markdown string.

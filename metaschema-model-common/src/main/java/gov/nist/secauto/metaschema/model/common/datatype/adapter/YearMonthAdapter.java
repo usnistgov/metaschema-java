@@ -59,7 +59,7 @@ public class YearMonthAdapter extends AbstractJavaTypeAdapter<Period, IYearMonth
     try {
       return Period.parse(value);
     } catch (DateTimeParseException ex) {
-      throw new IllegalArgumentException(ex);
+      throw new IllegalArgumentException(ex.getLocalizedMessage(), ex);
     }
   }
 

@@ -81,6 +81,7 @@ public abstract class AbstractXdmNodeItemVisitor<RESULT, CONTEXT> implements IBo
     return item.accept(this, context);
   }
 
+  @Override
   public RESULT visitDocument(IBoundXdmDocumentNodeItem item, CONTEXT context) {
     return visitAssembly(item.getRootAssemblyNodeItem(), context);
   }

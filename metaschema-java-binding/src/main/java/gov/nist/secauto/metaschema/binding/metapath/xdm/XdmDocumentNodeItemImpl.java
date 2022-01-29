@@ -27,10 +27,6 @@
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
-import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
-import gov.nist.secauto.metaschema.model.common.metapath.item.NodeItemType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +34,6 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class XdmDocumentNodeItemImpl implements IBoundXdmDocumentNodeItem {
   @NotNull

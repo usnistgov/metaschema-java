@@ -69,7 +69,6 @@ public class XmlFieldInstance extends AbstractFieldInstance {
     return xmlField;
   }
 
-  @SuppressWarnings("null")
   @Override
   public IFieldDefinition getDefinition() {
     return getContainingDefinition().getContainingMetaschema().getScopedFieldDefinitionByName(getName());
@@ -91,7 +90,6 @@ public class XmlFieldInstance extends AbstractFieldInstance {
     return retval;
   }
 
-  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlField().getRef();

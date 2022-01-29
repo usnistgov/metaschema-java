@@ -56,11 +56,13 @@ public class DefaultCardinalityConstraint extends AbstractConstraint implements 
    */
   public DefaultCardinalityConstraint(
       @Nullable String id,
+      @NotNull Level level,
+      String message,
       @NotNull MetapathExpression target,
       @Nullable Integer minOccurs,
       @Nullable Integer maxOccurs,
       MarkupMultiline remarks) {
-    super(id, target, remarks);
+    super(id, level, message, target, remarks);
     if (minOccurs == null && maxOccurs == null) {
       throw new IllegalArgumentException("at least one of minOccurs or maxOccurs must be provided");
     }

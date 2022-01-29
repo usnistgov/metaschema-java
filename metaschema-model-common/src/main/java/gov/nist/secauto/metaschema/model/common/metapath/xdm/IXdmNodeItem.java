@@ -26,18 +26,36 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
-public interface IXdmNodeItem extends INodeItem, IPathSegment {
+public interface IXdmNodeItem extends INodeItem, IXdmPathSegment {
+
   @Override
   IXdmNodeItem getContextNodeItem();
-  
+
+  @Override
+  IXdmNodeItem getParentNodeItem();
+
+  @Override
+  IXdmModelNodeItem getParentContentNodeItem();
+
+  @SuppressWarnings("null")
+  @Override
+  default Stream<? extends IXdmNodeItem> getPathStream() {
+    Stream<IXdmNodeItem> retval = Stream.of(this);
+    IXdmNodeItem parent = getParentNodeItem();
+    if (parent != null) {
+      retval = Stream.concat(parent.getPathStream(), retval);
+    }
+    return retval;
+  }
+
   @Override
   Map<@NotNull String, ? extends IXdmFlagNodeItem> getFlags();
 

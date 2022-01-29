@@ -63,7 +63,7 @@ public class IPv6AddressAdapter extends AbstractJavaTypeAdapter<IPv6Address, IIP
     try {
       return (IPv6Address) new IPAddressString(value, IPv6).toAddress();
     } catch (AddressStringException | IncompatibleAddressException ex) {
-      throw new IllegalArgumentException(ex);
+      throw new IllegalArgumentException(ex.getLocalizedMessage(), ex);
     }
   }
 

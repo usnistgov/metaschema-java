@@ -92,6 +92,8 @@ public class AnnotationUtils {
       annotation.addMember("id", "$S", id);
     }
 
+    annotation.addMember("level", "$T.$L", IConstraint.Level.class, constraint.getLevel());
+
     MetapathExpression target = constraint.getTarget();
     String path = target.getPath();
     if (!path.equals(getDefaultValue(annotationType, "target"))) {

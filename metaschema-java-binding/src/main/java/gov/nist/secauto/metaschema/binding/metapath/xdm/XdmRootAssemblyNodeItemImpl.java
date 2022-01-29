@@ -30,31 +30,28 @@ import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssembly
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmDocumentNodeItem;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.net.URI;
 
 public class XdmRootAssemblyNodeItemImpl extends
     AbstractBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty> implements IBoundXdmRootAssemblyNodeItem {
 
   @NotNull
-  private final IXdmDocumentNodeItem parent;
+  private final IBoundXdmDocumentNodeItem parent;
 
   public XdmRootAssemblyNodeItemImpl(
       @NotNull RootDefinitionAssemblyProperty instance,
       @NotNull Object value,
-      @NotNull IXdmDocumentNodeItem parent) {
+      @NotNull IBoundXdmDocumentNodeItem parent) {
     super(instance, value, 1);
     this.parent = parent;
   }
 
   @Override
-  public IXdmDocumentNodeItem getDocumentNodeItem() {
+  public IBoundXdmDocumentNodeItem getDocumentNodeItem() {
     return parent;
   }
 
   @Override
-  public IXdmDocumentNodeItem getParentNodeItem() {
+  public IBoundXdmDocumentNodeItem getParentNodeItem() {
     return parent;
   }
 

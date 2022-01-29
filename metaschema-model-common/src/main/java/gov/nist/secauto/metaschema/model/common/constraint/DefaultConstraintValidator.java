@@ -70,10 +70,22 @@ public class DefaultConstraintValidator implements ConstraintValidator {
       = new LinkedHashMap<>();
   @NotNull
   private final DynamicContext metapathContext;
+  @NotNull
+  private IConstraintValidationHandler handler = new LoggingConstraintValidationHandler();
 
   public DefaultConstraintValidator(@NotNull DynamicContext metapathContext) {
     Objects.requireNonNull(metapathContext, "metapathContext");
     this.metapathContext = metapathContext;
+  }
+
+  @NotNull
+  public IConstraintValidationHandler getConstraintValidationHandler() {
+    return handler;
+  }
+
+  @SuppressWarnings("null")
+  public void setConstraintValidationHandler(@NotNull IConstraintValidationHandler handler) {
+    this.handler = Objects.requireNonNull(handler, "handler");
   }
 
   @NotNull
@@ -82,7 +94,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   }
 
   @Override
-  public void validate(@NotNull IFlagNodeItem item) {
+  public void validate(@NotNull IFlagNodeItem item) throws MetapathException {
     IFlagDefinition definition = item.getDefinition();
 
     validateExpect(definition.getExpectConstraints(), item);
@@ -92,7 +104,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   }
 
   @Override
-  public void validate(@NotNull IFieldNodeItem item) {
+  public void validate(@NotNull IFieldNodeItem item) throws MetapathException {
     IFieldDefinition definition = item.getDefinition();
 
     validateExpect(definition.getExpectConstraints(), item);
@@ -102,7 +114,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   }
 
   @Override
-  public void validate(@NotNull IAssemblyNodeItem item) {
+  public void validate(@NotNull IAssemblyNodeItem item) throws MetapathException {
     IAssemblyDefinition definition = item.getDefinition();
 
     validateExpect(definition.getExpectConstraints(), item);
@@ -115,7 +127,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   }
 
   protected void validateHasCardinality(@NotNull List<@NotNull ? extends ICardinalityConstraint> constraints,
-      @NotNull List<@NotNull ? extends IAssemblyNodeItem> items) {
+      @NotNull List<@NotNull ? extends IAssemblyNodeItem> items) throws MetapathException {
 
     items.stream().forEachOrdered(item -> {
       validateHasCardinality(constraints, item);
@@ -123,7 +135,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   }
 
   protected void validateHasCardinality(@NotNull List<@NotNull ? extends ICardinalityConstraint> constraints,
-      @NotNull IAssemblyNodeItem item) {
+      @NotNull IAssemblyNodeItem item) throws MetapathException {
     for (ICardinalityConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
       @SuppressWarnings("unchecked")
@@ -135,32 +147,28 @@ public class DefaultConstraintValidator implements ConstraintValidator {
 
   protected void validateHasCardinality(@NotNull ICardinalityConstraint constraint, @NotNull IAssemblyNodeItem node,
       ISequence<? extends INodeItem> targets) {
-    List<@NotNull ? extends INodeItem> items = targets.asList();
-    int itemCount = items.size();
+    int itemCount = targets.size();
 
     Integer minOccurs = constraint.getMinOccurs();
     if (minOccurs != null && itemCount < minOccurs) {
-      logger.error(String.format("Expected minimum cardinality '%d' for path '%s', but found '%d' at path '%s'",
-          minOccurs, constraint.getTarget().getPath(), itemCount, node.getMetapath()));
+      getConstraintValidationHandler().handleCardinalityMinimumViolation(constraint, node, targets);
     }
 
     Integer maxOccurs = constraint.getMaxOccurs();
     if (maxOccurs != null && itemCount > maxOccurs) {
-      logger.error(String.format("Expected maximum cardinality '%d' for path '%s', but found '%d' at path '%s'",
-          maxOccurs, constraint.getTarget().getPath(), itemCount, node.getMetapath()));
+      getConstraintValidationHandler().handleCardinalityMaximumViolation(constraint, node, targets);
     }
   }
 
   protected void validateIndex(@NotNull List<@NotNull ? extends IIndexConstraint> constraints,
-      @NotNull List<@NotNull ? extends IAssemblyNodeItem> items) {
-
+      @NotNull List<@NotNull ? extends IAssemblyNodeItem> items) throws MetapathException {
     items.stream().forEachOrdered(item -> {
       validateIndex(constraints, item);
     });
   }
 
   protected void validateIndex(@NotNull List<@NotNull ? extends IIndexConstraint> constraints,
-      @NotNull IAssemblyNodeItem item) {
+      @NotNull IAssemblyNodeItem item) throws MetapathException {
     for (@NotNull
     IIndexConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
@@ -174,33 +182,38 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   }
 
   protected void validateIndex(@NotNull IIndexConstraint constraint, @NotNull IAssemblyNodeItem node,
-      @NotNull ISequence<? extends INodeItem> targets) {
+      @NotNull ISequence<? extends INodeItem> targets) throws MetapathException {
     String indexName = constraint.getName();
     if (indexToKeyToItemMap.containsKey(indexName)) {
-      throw new MetapathException(String.format("Duplicate index named '%s' found at path '%s'", indexName,
-          node.getMetapath()));
+      String msg = String.format("Duplicate index named '%s' found at path '%s'", indexName,
+          node.getMetapath());
+      logger.atError().log(msg);
+      throw new MetapathException(msg);
     }
 
     Map<@NotNull String, INodeItem> indexItems = new HashMap<>();
     targets.asStream().map(item -> (INodeItem) item)
         .forEachOrdered(item -> {
-          @SuppressWarnings("null")
           @NotNull
-          String key = buildKey(constraint.getKeyFields(), item);
+          String key;
+          try {
+            key = buildKey(constraint.getKeyFields(), item);
+          } catch (MetapathException ex) {
+            getConstraintValidationHandler().handleKeyMatchError(constraint, node, item, ex);
+            throw ex;
+          }
 
           // logger.info("key: {} {}", key, item);
-          //
           INodeItem oldItem = indexItems.put(key, item);
           if (oldItem != null) {
-            throw new MetapathException(String.format("Index '%s' has duplicate key for item at path '%s'", indexName,
-                item.getMetapath()));
+            getConstraintValidationHandler().handleIndexDuplicateKeyViolation(constraint, node, oldItem, item);
           }
         });
     indexToKeyToItemMap.put(indexName, indexItems);
   }
 
   protected void validateUnique(@NotNull List<@NotNull ? extends IUniqueConstraint> constraints,
-      @NotNull List<@NotNull ? extends IAssemblyNodeItem> items) {
+      @NotNull List<@NotNull ? extends IAssemblyNodeItem> items) throws MetapathException {
 
     items.stream().forEachOrdered(item -> {
       validateUnique(constraints, item);
@@ -208,7 +221,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   }
 
   protected void validateUnique(@NotNull List<@NotNull ? extends IUniqueConstraint> constraints,
-      @NotNull IAssemblyNodeItem item) {
+      @NotNull IAssemblyNodeItem item) throws MetapathException {
     for (IUniqueConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
       @SuppressWarnings("unchecked")
@@ -220,24 +233,30 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   }
 
   protected void validateUnique(@NotNull IUniqueConstraint constraint,
-      @SuppressWarnings("unused") @NotNull IAssemblyNodeItem node, @NotNull ISequence<?> targets) {
+      @NotNull IAssemblyNodeItem node, @NotNull ISequence<?> targets) throws MetapathException {
     Map<String, INodeItem> keyToItemMap = new HashMap<>();
 
     targets.asStream().map(item -> (INodeItem) item).forEachOrdered(item -> {
-      @SuppressWarnings("null")
-      String key = buildKey(constraint.getKeyFields(), item);
+      @NotNull
+      String key;
+      try {
+        key = buildKey(constraint.getKeyFields(), item);
+      } catch (MetapathException ex) {
+        getConstraintValidationHandler().handleKeyMatchError(constraint, node, item, ex);
+        throw ex;
+      }
 
       if (keyToItemMap.containsKey(key)) {
         INodeItem oldItem = keyToItemMap.get(key);
-        logger.error(String.format("Unique constraint violation at path '%s' and '%s'",
-            item.getMetapath(), oldItem.getMetapath()));
+        getConstraintValidationHandler().handleUniqueKeyViolation(constraint, node, oldItem, item);
       } else {
         keyToItemMap.put(key, item);
       }
     });
   }
 
-  protected void validateMatches(List<@NotNull ? extends IMatchesConstraint> constraints, INodeItem item) {
+  protected void validateMatches(List<@NotNull ? extends IMatchesConstraint> constraints, INodeItem item)
+      throws MetapathException {
 
     for (IMatchesConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
@@ -249,7 +268,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   }
 
   protected void validateMatches(IMatchesConstraint constraint, INodeItem node,
-      ISequence<?> targets) {
+      ISequence<?> targets) throws MetapathException {
     targets.asStream().map(item -> (INodeItem) item).forEachOrdered(item -> {
       @SuppressWarnings("null")
       String value = XPathFunctions.fnDataItem(item).asString();
@@ -259,8 +278,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
         // validate pattern
         Predicate<String> predicate = pattern.asMatchPredicate();
         if (!predicate.test(value)) {
-          logger.error(String.format("Value '%s' did not match the pattern '%s' at path '%s'", value, pattern.pattern(),
-              item.getMetapath()));
+          getConstraintValidationHandler().handleMatchPatternViolation(constraint, node, item, value);
         }
       }
 
@@ -268,13 +286,13 @@ public class DefaultConstraintValidator implements ConstraintValidator {
       try {
         adapter.parse(value);
       } catch (IllegalArgumentException ex) {
-        logger.error(String.format("Value '%s' did not conform to the data type '%s' at path '%s'", value,
-            adapter.getName(), item.getMetapath()), ex);
+        getConstraintValidationHandler().handleMatchDatatypeViolation(constraint, node, item, value, ex);
       }
     });
   }
 
-  protected void validateIndexHasKey(List<@NotNull ? extends IIndexHasKeyConstraint> constraints, INodeItem item) {
+  protected void validateIndexHasKey(List<@NotNull ? extends IIndexHasKeyConstraint> constraints, INodeItem item)
+      throws MetapathException {
 
     for (IIndexHasKeyConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
@@ -286,7 +304,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   }
 
   protected void validateIndexHasKey(IIndexHasKeyConstraint constraint, INodeItem node,
-      ISequence<?> targets) {
+      ISequence<?> targets) throws MetapathException {
     String indexName = constraint.getIndexName();
 
     Map<@NotNull String, List<@NotNull INodeItem>> keyRefItems = indexToKeyRefToItemMap.get(indexName);
@@ -311,7 +329,8 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     }
   }
 
-  protected void validateExpect(List<@NotNull ? extends IExpectConstraint> constraints, INodeItem item) {
+  protected void validateExpect(List<@NotNull ? extends IExpectConstraint> constraints, INodeItem item)
+      throws MetapathException {
     for (IExpectConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
       @SuppressWarnings("unchecked")
@@ -321,24 +340,26 @@ public class DefaultConstraintValidator implements ConstraintValidator {
     }
   }
 
-  protected void validateExpect(IExpectConstraint constraint, @SuppressWarnings("unused") INodeItem node,
-      ISequence<?> targets) {
+  protected void validateExpect(IExpectConstraint constraint, INodeItem node, ISequence<?> targets)
+      throws MetapathException {
     targets.asStream().map(item -> (INodeItem) item).forEachOrdered(item -> {
       MetapathExpression metapath = constraint.getTest();
       try {
         ISequence<?> result = item.evaluateMetapath(metapath, getMetapathContext());
         if (!XPathFunctions.fnBoolean(result).toBoolean()) {
-          logger.error(String.format("Expect constraint '%s' did not match the data at path '%s'", metapath.getPath(),
-              item.getMetapath()));
+          getConstraintValidationHandler().handleExpectViolation(constraint, node, item, getMetapathContext());
         }
       } catch (Exception ex) {
-        logger.error(String.format("Unable to evaluate expect constraint '%s' at path '%s'", metapath.getPath(),
-            item.getMetapath()), ex);
+        String msg = String.format("Unable to evaluate expect constraint '%s' at path '%s'", metapath.getPath(),
+            item.getMetapath());
+        logger.atError().withThrowable(ex).log(msg);
+        throw new MetapathException(msg, ex);
       }
     });
   }
 
-  protected void validateAllowedValues(List<@NotNull ? extends IAllowedValuesConstraint> constraints, INodeItem item) {
+  protected void validateAllowedValues(List<@NotNull ? extends IAllowedValuesConstraint> constraints, INodeItem item)
+      throws MetapathException {
     for (IAllowedValuesConstraint constraint : constraints) {
       MetapathExpression metapath = constraint.getTarget();
       @SuppressWarnings("unchecked")
@@ -349,16 +370,17 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   }
 
   protected void validateAllowedValues(IAllowedValuesConstraint constraint, INodeItem node,
-      ISequence<? extends INodeItem> targets) {
+      ISequence<? extends INodeItem> targets) throws MetapathException {
     targets.asStream().forEachOrdered(item -> {
       String value = XPathFunctions.fnDataItem(item).asString();
       if (!constraint.getAllowedValues().containsKey(value)) {
-        if (constraint.isAllowedOther()) {
-          updateValueStatus((IAtomicValuedNodeItem) item, false);
-        } else {
-          logger.error(String.format("Value '%s' did not match one of the required allowed values at path '%s'", value,
-              item.getMetapath()));
-        }
+        // if (constraint.isAllowedOther()) {
+        updateValueStatus((IAtomicValuedNodeItem) item, false);
+        // } else {
+        // logger.atError().log(String.format("Value '%s' did not match one of the required allowed values
+        // at path '%s'", value,
+        // toPath(item)));
+        // }
       } else {
         updateValueStatus((IAtomicValuedNodeItem) item, true);
       }
@@ -380,7 +402,8 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   }
 
   @NotNull
-  protected String buildKey(@NotNull List<@NotNull ? extends IKeyField> keyFields, @NotNull INodeItem item) {
+  protected String buildKey(@NotNull List<@NotNull ? extends IKeyField> keyFields, @NotNull INodeItem item)
+      throws MetapathException {
     StringBuilder key = new StringBuilder();
     for (IKeyField keyField : keyFields) {
       MetapathExpression keyPath = keyField.getTarget();
@@ -402,11 +425,15 @@ public class DefaultConstraintValidator implements ConstraintValidator {
         if (pattern != null) {
           Matcher matcher = pattern.matcher(keyValue);
           if (!matcher.matches()) {
-            throw new MetapathException("Key field declares a pattern which does not match");
+            throw new MetapathException(
+                String.format("Key field declares the pattern '%s' which does not match the value '%s' of node '%s'",
+                    pattern.pattern(), keyValue, keyItem.getMetapath()));
           }
 
           if (matcher.groupCount() != 1) {
-            throw new MetapathException("Key field declares a pattern for which the first group was not a match");
+            throw new MetapathException(String.format(
+                "Key field declares a pattern '%s' for which the first group was not a match for value '%s' of node '%s'",
+                pattern.pattern(), keyValue, keyItem.getMetapath()));
           }
           keyValue = matcher.group(1);
         }
@@ -427,11 +454,11 @@ public class DefaultConstraintValidator implements ConstraintValidator {
   }
 
   @Override
-  public void finalizeValidation() {
+  public void finalizeValidation() throws MetapathException {
     for (Map.Entry<@NotNull INodeItem, ValueStatus> entry : valueMap.entrySet()) {
       ValueStatus status = entry.getValue();
       if (status != null && !status.isValid()) {
-        logger.warn(String.format("Value '%s' did not match one of the required allowed values at path '%s'",
+        logger.atWarn().log(String.format("Value '%s' did not match one of the required allowed values at path '%s'",
             status.getValue(), status.getItem().getMetapath()));
       }
     }
@@ -456,7 +483,7 @@ public class DefaultConstraintValidator implements ConstraintValidator {
 
         if (!indexItems.containsKey(key)) {
           for (INodeItem item : items) {
-            logger.error(String.format("Key reference not found in index '%s' for item at path '%s'", indexName,
+            logger.atError().log(String.format("Key reference not found in index '%s' for item at path '%s'", indexName,
                 item.getMetapath()));
           }
         }

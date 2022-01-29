@@ -47,7 +47,7 @@ public interface IRootAssemblyPathSegment extends IAssemblyPathSegment {
 
   @SuppressWarnings("null")
   @Override
-  default Stream<IPathSegment> getPathStream() {
+  default Stream<? extends IPathSegment> getPathStream() {
     return Stream.of(getDocumentPathSegment(), this);
   }
 

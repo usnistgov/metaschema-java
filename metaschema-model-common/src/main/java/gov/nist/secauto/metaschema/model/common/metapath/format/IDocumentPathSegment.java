@@ -41,7 +41,7 @@ public interface IDocumentPathSegment extends IPathSegment {
 
   @SuppressWarnings("null")
   @Override
-  default Stream<IPathSegment> getPathStream() {
+  default Stream<? extends IDocumentPathSegment> getPathStream() {
     return Stream.of(this);
   }
   

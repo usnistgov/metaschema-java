@@ -50,7 +50,7 @@ class MetapathTest {
         continue;
       }
 //      System.out.println(line);
-      MetapathFactory.parseMetapathString(line);
+      MetapathExpression.compile(line);
     }
   }
 
@@ -63,7 +63,7 @@ class MetapathTest {
       }
 //      System.out.println(line);
       try {
-        MetapathFactory.parseMetapathString(line);
+        MetapathExpression.compile(line);
       } catch (ParseCancellationException ex) {
         // ex.printStackTrace();
       }

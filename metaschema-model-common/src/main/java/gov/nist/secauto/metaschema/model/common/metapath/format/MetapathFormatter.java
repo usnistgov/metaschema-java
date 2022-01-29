@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 class MetapathFormatter implements IPathFormatter {
 
@@ -43,14 +42,15 @@ class MetapathFormatter implements IPathFormatter {
   @SuppressWarnings("null")
   @Override
   public String format(IPathSegment segment) {
-    return segment.getPathStream().flatMap(pathSegment -> {
-      return Stream.of(pathSegment.format(this));
+    return segment.getPathStream().map(pathSegment -> {
+      return pathSegment.format(this);
     }).collect(Collectors.joining("/"));
   }
 
   @Override
   public @NotNull String formatPathSegment(@NotNull IDocumentPathSegment segment) {
-    return "/";
+    // this will result in a slash being generated using the join
+    return "";
   }
 
   @Override

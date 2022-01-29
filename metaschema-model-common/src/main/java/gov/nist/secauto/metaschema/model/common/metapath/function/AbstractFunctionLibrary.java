@@ -106,7 +106,7 @@ public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
     }
 
     @SuppressWarnings("null")
-    @NotNull 
+    @NotNull
     public Stream<@NotNull IFunction> getFunctionsAsStream() {
       return arityToFunctionMap.values().stream();
     }

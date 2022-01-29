@@ -46,4 +46,9 @@ public interface IXdmFieldNodeItem extends IXdmModelNodeItem, IFieldNodeItem, IF
   default IFieldPathSegment getPathSegment() {
     return this;
   }
+
+  @Override
+  default IFieldNodeItem getNodeItem() {
+    return this;
+  }
 }

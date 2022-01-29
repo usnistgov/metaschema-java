@@ -38,6 +38,10 @@ public abstract class AbstractConstraint implements IConstraint {
   @Nullable
   private final String id;
   @NotNull
+  private final Level level;
+  @NotNull
+  private final String message;
+  @NotNull
   private final MetapathExpression target;
   @Nullable
   private final MarkupMultiline remarks;
@@ -47,24 +51,40 @@ public abstract class AbstractConstraint implements IConstraint {
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param level the significance of a violation of this constraint
+   * @param message the message to emit when the constraint is violated.
    * @param target
    *          the Metapath expression identifying the nodes the constraint targets
    * @param remarks
    *          optional remarks describing the intent of the constraint
    */
+  @SuppressWarnings("null")
   public AbstractConstraint(
       @Nullable String id,
+      @NotNull Level level,
+      String message,
       @NotNull MetapathExpression target,
       @Nullable MarkupMultiline remarks) {
     Objects.requireNonNull(target);
     this.id = id;
-    this.target = target;
+    this.level = Objects.requireNonNull(level, "level");
+    this.message = message;
+    this.target = Objects.requireNonNull(target, "target");
     this.remarks = remarks;
   }
 
   @Override
   public String getId() {
     return id;
+  }
+
+  @NotNull
+  public Level getLevel() {
+    return level;
+  }
+
+  public String getMessage() {
+    return message;
   }
 
   @Override

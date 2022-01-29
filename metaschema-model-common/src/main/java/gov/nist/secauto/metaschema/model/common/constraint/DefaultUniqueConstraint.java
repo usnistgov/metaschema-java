@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class DefaultUniqueConstraint
@@ -37,9 +39,11 @@ public class DefaultUniqueConstraint
 
   public DefaultUniqueConstraint(
       String id,
-      MetapathExpression target,
-      List<DefaultKeyField> keyFields,
+      @NotNull Level level,
+      String message,
+      @NotNull MetapathExpression target,
+      @NotNull List<@NotNull DefaultKeyField> keyFields,
       MarkupMultiline remarks) {
-    super(id, target, keyFields, remarks);
+    super(id, level, message, target, keyFields, remarks);
   }
 }

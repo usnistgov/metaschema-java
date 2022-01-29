@@ -30,6 +30,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmDocumentNodeIte
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.stream.Stream;
+
 public interface IBoundXdmDocumentNodeItem extends IXdmDocumentNodeItem, IBoundXdmNodeItem {
 
   @Override
@@ -42,5 +44,22 @@ public interface IBoundXdmDocumentNodeItem extends IXdmDocumentNodeItem, IBoundX
   @Override
   default <RESULT, CONTEXT> RESULT accept(@NotNull IBoundXdmNodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitDocument(this, context);
+  }
+
+  @Override
+  default IBoundXdmNodeItem getParentNodeItem() {
+    // no parent
+    return null;
+  }
+
+  @Override
+  default IBoundXdmModelNodeItem getParentContentNodeItem() {
+    // no parent
+    return null;
+  }
+
+  @Override
+  default Stream<? extends IBoundXdmDocumentNodeItem> getPathStream() {
+    return Stream.of(this);
   }
 }

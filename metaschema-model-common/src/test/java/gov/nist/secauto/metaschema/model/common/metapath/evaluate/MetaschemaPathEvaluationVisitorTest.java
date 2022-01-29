@@ -35,14 +35,14 @@ import gov.nist.secauto.metaschema.model.common.metapath.IDocumentLoader;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.And;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Comparison;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Comparison.Operator;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.IComparison.Operator;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Name;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Or;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.RootSlashOnlyPath;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Step;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.ValueComparison;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
@@ -156,7 +156,7 @@ class MetaschemaPathEvaluationVisitorTest {
     assertEquals(ISequence.of(expectedResult), result);
   }
 
-  private static Stream<Arguments> testComparison() {
+  private static Stream<Arguments> testValueComparison() {
     return Stream.of(
         // boolean
         Arguments.of(IBooleanItem.TRUE, Operator.EQ, IBooleanItem.TRUE, IBooleanItem.TRUE),
@@ -177,7 +177,7 @@ class MetaschemaPathEvaluationVisitorTest {
   @SuppressWarnings("null")
   @ParameterizedTest
   @MethodSource
-  void testComparison(IItem leftItem, Operator operator, IItem rightItem, IBooleanItem expectedResult) {
+  void testValueComparison(IItem leftItem, Operator operator, IItem rightItem, IBooleanItem expectedResult) {
     MetaschemaPathEvaluationVisitor visitor = newMetaschemaPathEvaluationVisitor();
 
     INodeContext nodeContext = context.mock(INodeContext.class);
@@ -194,9 +194,9 @@ class MetaschemaPathEvaluationVisitorTest {
       }
     });
 
-    Comparison expr = new Comparison(exp1, operator, exp2);
+    ValueComparison expr = new ValueComparison(exp1, operator, exp2);
 
-    ISequence<?> result = visitor.visitComparison(expr, nodeContext);
+    ISequence<?> result = visitor.visitValueComparison(expr, nodeContext);
     assertEquals(ISequence.of(expectedResult), result);
   }
 

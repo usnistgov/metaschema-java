@@ -23,47 +23,17 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 
-package gov.nist.secauto.metaschema.model.common.metapath;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ASTPrinter;
-
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.jetbrains.annotations.NotNull;
 
-import src.main.antlr4.metapath10Lexer;
-import src.main.antlr4.metapath10Parser;
+import java.util.stream.Stream;
 
-public class MetapathFactory {
+public interface IXdmPathSegment extends IPathSegment {
+
+  @Override
   @NotNull
-  public static MetapathExpression parseMetapathString(@NotNull String path) throws RecognitionException {
-    @NotNull
-    MetapathExpression retval;
-    if (".".equals(path)) {
-      retval = MetapathExpression.CONTEXT_NODE;
-    } else {
-      metapath10Lexer lexer = new metapath10Lexer(CharStreams.fromString(path));
-      CommonTokenStream tokens = new CommonTokenStream(lexer);
-      metapath10Parser parser = new metapath10Parser(tokens);
-      parser.addErrorListener(new FailingErrorListener());
-      
-      @SuppressWarnings("null")
-      @NotNull
-      ParseTree tree = parser.expr();
-      // CSTPrinter printer = new CSTPrinter();
-      // printer.print(tree, Arrays.asList(parser.getRuleNames()));
-      retval = new MetapathExpression(path, tree);
-    }
-    return retval;
-  }
-
-  public static void main(String[] args) {
-    MetapathExpression exp = MetapathFactory.parseMetapathString("./test/@flag");
-    // MetapathExpression exp = Metapath.parseMetapathString("//test/@flag = 1+1+1");
-    // MetapathExpression exp = Metapath.parseMetapathString("//test[@flag='value']/@flag = 0.1");
-    System.out.println(new ASTPrinter().visit(exp.getASTNode()));
-  }
+  Stream<? extends IXdmPathSegment> getPathStream();
 }

@@ -62,11 +62,13 @@ public class DefaultAllowedValuesConstraint extends AbstractConstraint implement
    */
   public DefaultAllowedValuesConstraint(
       @Nullable String id,
+      @NotNull Level level,
+      String message,
       @NotNull MetapathExpression target,
       @NotNull Map<@NotNull String, @NotNull DefaultAllowedValue> allowedValues,
       boolean allowedOther,
       @Nullable MarkupMultiline remarks) {
-    super(id, target, remarks);
+    super(id, level, message, target, remarks);
     this.allowedValues = allowedValues;
     this.allowedOther = allowedOther;
   }

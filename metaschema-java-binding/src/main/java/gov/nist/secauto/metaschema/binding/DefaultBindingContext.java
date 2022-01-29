@@ -48,6 +48,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValidatingXdmVisitor;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
@@ -242,13 +243,16 @@ public class DefaultBindingContext implements BindingContext {
   }
 
   @Override
-  public void validate(@NotNull Object boundObject, URI baseUri) throws IllegalArgumentException {
+  public void validate(@NotNull Object boundObject, URI baseUri, IConstraintValidationHandler handler) throws IllegalArgumentException {
     IBoundXdmNodeItem nodeItem = toNodeItem(boundObject, baseUri);
     
     StaticContext staticContext = new StaticContext();
     DynamicContext dynamicContext = staticContext.newDynamicContext();
     dynamicContext.setDocumentLoader(newBoundLoader());
     DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext);
+    if (handler != null) {
+      validator.setConstraintValidationHandler(handler);
+    }
     new ValidatingXdmVisitor().visit(nodeItem, validator);
     validator.finalizeValidation();
   }

@@ -43,4 +43,9 @@ public interface IXdmAssemblyNodeItem extends IXdmModelNodeItem, IAssemblyNodeIt
   default IAssemblyPathSegment getPathSegment() {
     return this;
   }
+
+  @Override
+  default IAssemblyNodeItem getNodeItem() {
+    return this;
+  }
 }

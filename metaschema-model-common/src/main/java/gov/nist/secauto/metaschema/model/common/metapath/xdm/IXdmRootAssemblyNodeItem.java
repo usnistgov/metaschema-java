@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IRootAssemblyPathSegment;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +33,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.stream.Stream;
 
 public interface IXdmRootAssemblyNodeItem extends IXdmAssemblyNodeItem, IRootAssemblyPathSegment {
+  @NotNull
+  IXdmDocumentNodeItem getDocumentNodeItem();
 
   @Override
   default IXdmRootAssemblyNodeItem getContextNodeItem() {
@@ -45,9 +46,14 @@ public interface IXdmRootAssemblyNodeItem extends IXdmAssemblyNodeItem, IRootAss
     return this;
   }
 
+  @NotNull
   @Override
-  default @NotNull Stream<IPathSegment> getPathStream() {
-    return IRootAssemblyPathSegment.super.getPathStream();
+  IXdmDocumentNodeItem getDocumentPathSegment();
+
+  @SuppressWarnings("null")
+  @Override
+  default @NotNull Stream<? extends IXdmNodeItem> getPathStream() {
+    return Stream.of(getDocumentNodeItem(), this);
   }
 
 }

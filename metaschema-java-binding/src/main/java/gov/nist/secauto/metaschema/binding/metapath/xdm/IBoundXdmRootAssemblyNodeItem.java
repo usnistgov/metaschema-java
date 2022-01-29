@@ -26,16 +26,17 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmRootAssemblyNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
+import java.util.stream.Stream;
 
 public interface IBoundXdmRootAssemblyNodeItem extends IBoundXdmAssemblyNodeItem, IXdmRootAssemblyNodeItem {
+  @Override
   @NotNull
-  IXdmDocumentNodeItem getDocumentNodeItem();
+  IBoundXdmDocumentNodeItem getDocumentNodeItem();
 
   @Override
   default IBoundXdmRootAssemblyNodeItem getContextNodeItem() {
@@ -53,5 +54,10 @@ public interface IBoundXdmRootAssemblyNodeItem extends IBoundXdmAssemblyNodeItem
     // to follow XPath, this should be null
     return null;
 //    return getDocumentNodeItem().getBaseUri();
+  }
+
+  @Override
+  default @NotNull Stream<? extends IBoundXdmNodeItem> getPathStream() {
+    return Stream.of(getDocumentNodeItem(), this);
   }
 }

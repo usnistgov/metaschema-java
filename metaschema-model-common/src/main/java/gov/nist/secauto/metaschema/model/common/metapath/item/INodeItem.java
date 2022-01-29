@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
@@ -40,8 +40,10 @@ import org.jetbrains.annotations.NotNull;
 import java.net.URI;
 
 public interface INodeItem extends IPathItem, INodeContext {
+
   /**
    * Get the type of node item this is.
+   * 
    * @return the node item's type
    */
   @NotNull
@@ -61,14 +63,6 @@ public interface INodeItem extends IPathItem, INodeContext {
    * @return the base URI or {@code null} if it is unknown
    */
   URI getBaseUri();
-
-  /**
-   * Get the Metaschema definition associated with this node.
-   * 
-   * @return the definition
-   */
-  @NotNull
-  INamedDefinition getDefinition();
 
   /**
    * Get the path for this node item as a Metapath.
@@ -104,11 +98,27 @@ public interface INodeItem extends IPathItem, INodeContext {
    * @param context
    *          the dynamic Metapath context
    * @return the result items
+   * @throws MetapathException if an error occured while evaluating the expression
    */
   @NotNull
-  default ISequence<?> evaluateMetapath(MetapathExpression metapath, DynamicContext context) {
+  default ISequence<?> evaluateMetapath(@NotNull MetapathExpression metapath, @NotNull DynamicContext context) throws MetapathException {
     return new MetaschemaPathEvaluationVisitor(context).visit(metapath.getASTNode(), this);
   }
+
+  /**
+   * Retrieve the parent node item if it exists.
+   * 
+   * @return the parent node item, or {@code null} if this node item has no known parent
+   */
+  INodeItem getParentNodeItem();
+
+  /**
+   * Retrieve the parent content node item if it exists. A content node is a non-document node.
+   * 
+   * @return the parent content node item, or {@code null} if this node item has no known parent
+   *         content node item
+   */
+  IModelNodeItem getParentContentNodeItem();
 
   @NotNull
   <CLASS> CLASS toBoundObject();

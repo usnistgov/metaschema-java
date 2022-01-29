@@ -26,10 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
@@ -43,6 +39,11 @@ import java.util.stream.Stream;
 
 public interface INodeContext {
 
+  /**
+   * Get the current node in this context.
+   * 
+   * @return the context node
+   */
   @NotNull
   INodeItem getContextNodeItem();
 
@@ -101,44 +102,47 @@ public interface INodeContext {
   default Stream<? extends IModelNodeItem> modelItems() {
     return getModelItems().values().stream().flatMap(list -> list.stream());
   }
-  
-//
-//  /**
-//   * Searches the node graph for {@link INodeItem} instances that match the provided
-//   * {@link IExpression}. The resulting nodes are returned in document order.
-//   * 
-//   * @param expr
-//   *          the search expression
-//   * @param recurse
-//   *          if the search should recurse over the child model instances
-//   * @return a stream of matching flag node items
-//   */
-//  @NotNull
-//  Stream<? extends INodeItem> getMatchingChildInstances(@NotNull IExpressionEvaluationVisitor visitor,
-//      @NotNull IExpression<?> expr,
-//      boolean recurse);
-//
-//  /**
-//   * Searches the child flags for {@link IFlagNodeItem} instances that match the provided {@link Flag}
-//   * expression. The resulting nodes are returned in document order.
-//   * 
-//   * @param flag
-//   *          the search expression
-//   * @return a stream of matching flag node items
-//   */
-//  @NotNull
-//  Stream<? extends IFlagNodeItem> getMatchingChildFlags(@NotNull Flag flag);
-//
-//  /**
-//   * Searches the child model nodes for {@link IModelNodeItem} instances that match the provided
-//   * {@link ModelInstance} expression. The resulting nodes are returned in document order.
-//   * 
-//   * @param modelInstance
-//   *          the search expression
-//   * @return a stream of matching model node items
-//   */
-//  @NotNull
-//  Stream<? extends IModelNodeItem> getMatchingChildModelInstances(@NotNull ModelInstance modelInstance);
+
+  //
+  // /**
+  // * Searches the node graph for {@link INodeItem} instances that match the provided
+  // * {@link IExpression}. The resulting nodes are returned in document order.
+  // *
+  // * @param expr
+  // * the search expression
+  // * @param recurse
+  // * if the search should recurse over the child model instances
+  // * @return a stream of matching flag node items
+  // */
+  // @NotNull
+  // Stream<? extends INodeItem> getMatchingChildInstances(@NotNull IExpressionEvaluationVisitor
+  // visitor,
+  // @NotNull IExpression<?> expr,
+  // boolean recurse);
+  //
+  // /**
+  // * Searches the child flags for {@link IFlagNodeItem} instances that match the provided {@link
+  // Flag}
+  // * expression. The resulting nodes are returned in document order.
+  // *
+  // * @param flag
+  // * the search expression
+  // * @return a stream of matching flag node items
+  // */
+  // @NotNull
+  // Stream<? extends IFlagNodeItem> getMatchingChildFlags(@NotNull Flag flag);
+  //
+  // /**
+  // * Searches the child model nodes for {@link IModelNodeItem} instances that match the provided
+  // * {@link ModelInstance} expression. The resulting nodes are returned in document order.
+  // *
+  // * @param modelInstance
+  // * the search expression
+  // * @return a stream of matching model node items
+  // */
+  // @NotNull
+  // Stream<? extends IModelNodeItem> getMatchingChildModelInstances(@NotNull ModelInstance
+  // modelInstance);
 
   // default IMetapathResult evaluateMetapath(MetapathExpression metapath) {
   // MetaschemaPathEvaluationVisitor visitor = new MetaschemaPathEvaluationVisitor();

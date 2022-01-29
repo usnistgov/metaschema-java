@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IDocumentPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 
+import java.util.stream.Stream;
+
 public interface IXdmDocumentNodeItem extends IXdmNodeItem, IDocumentPathSegment, IDocumentNodeItem {
 
   @Override
@@ -38,7 +40,7 @@ public interface IXdmDocumentNodeItem extends IXdmNodeItem, IDocumentPathSegment
   IXdmRootAssemblyNodeItem getRootAssemblyNodeItem();
 
   @Override
-  default IDocumentPathSegment getPathSegment() {
+  default IXdmDocumentNodeItem getPathSegment() {
     return this;
   }
 
@@ -46,4 +48,15 @@ public interface IXdmDocumentNodeItem extends IXdmNodeItem, IDocumentPathSegment
 //  default @NotNull Stream<IPathSegment> getPathStream() {
 //    return IDocumentPathSegment.super.getPathStream();
 //  }
+
+  @Override
+  default IDocumentNodeItem getNodeItem() {
+    return this;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default Stream<? extends IXdmDocumentNodeItem> getPathStream() {
+    return Stream.of(this);
+  }
 }

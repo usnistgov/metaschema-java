@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.xdm;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 
-public interface IXdmFlagNodeItem extends IXdmValuedNodeItem, IFlagNodeItem, IFlagPathSegment {
+public interface IXdmFlagNodeItem extends IXdmNodeItem, IFlagNodeItem, IFlagPathSegment {
 
   @Override
   default IXdmFlagNodeItem getContextNodeItem() {
@@ -46,4 +46,9 @@ public interface IXdmFlagNodeItem extends IXdmValuedNodeItem, IFlagNodeItem, IFl
 
   @Override
   IXdmModelNodeItem getParentContentNodeItem();
+
+  @Override
+  default IFlagNodeItem getNodeItem() {
+    return this;
+  }
 }

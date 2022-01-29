@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
@@ -202,5 +203,5 @@ public interface BindingContext {
 
   IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri) throws IllegalArgumentException;
 
-  void validate(@NotNull Object boundObject, URI baseUri) throws IllegalArgumentException;
+  void validate(@NotNull Object boundObject, URI baseUri, IConstraintValidationHandler handler) throws IllegalArgumentException;
 }

@@ -26,17 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
-
-public class Comparison extends AbstractBinaryExpression implements IBooleanLogicExpression {
+public interface IComparison extends IBooleanLogicExpression {
   public enum Operator {
     EQ,
     NE,
@@ -46,34 +36,4 @@ public class Comparison extends AbstractBinaryExpression implements IBooleanLogi
     GE;
   }
 
-  @NotNull
-  private final Operator operator;
-
-  @SuppressWarnings("null")
-  public Comparison(@NotNull IExpression left, @NotNull Operator operator, @NotNull IExpression right) {
-    super(left, right);
-    this.operator = Objects.requireNonNull(operator, "operator");
-  }
-
-  @NotNull
-  public Operator getOperator() {
-    return operator;
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public String toASTString() {
-    return String.format("%s[operator=%s]", getClass().getName(), operator);
-  }
-
-  @Override
-  public ISequence<? extends IBooleanItem> accept(IExpressionEvaluationVisitor visitor,
-      INodeContext context) {
-    return visitor.visitComparison(this, context);
-  }
-
-  @Override
-  public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitComparison(this, context);
-  }
 }

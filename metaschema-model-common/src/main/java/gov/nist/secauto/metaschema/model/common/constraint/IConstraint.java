@@ -32,10 +32,56 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import org.jetbrains.annotations.NotNull;
 
 public interface IConstraint {
+  /**
+   * The degree to which a constraint violation is significant.
+   * <p>
+   * These values are ordered from least significant to most significant.
+   */
+  public enum Level {
+    /**
+     * A violation of the constraint represents a point of interest.
+     */
+    INFORMATIONAL,
+    /**
+     * A violation of the constraint represents a potential issue with the content.
+     */
+    WARNING,
+    /**
+     * A violation of the constraint represents a fault in the content. This may include issues around
+     * compatibility, integrity, consistency, etc.
+     */
+    ERROR,
+    /**
+     * A violation of the constraint represents a serious fault in the content that will prevent typical
+     * use of the content.
+     */
+    CRITICAL;
+  }
+
+  @NotNull
+  public static final Level DEFAULT_LEVEL = Level.ERROR;
+  @NotNull
   public static final MetapathExpression DEFAULT_TARGET = MetapathExpression.CONTEXT_NODE;
+  @NotNull
   public static final String DEFAULT_TARGET_PATH = ".";
 
   String getId();
+
+  /**
+   * The significance of a violation of this constraint.
+   * 
+   * @return the level
+   */
+  @NotNull
+  Level getLevel();
+
+  /**
+   * A message to emit when the constraint is violated. Allows embedded Metapath expressions using the
+   * syntax {@code \{path\}}.
+   * 
+   * @return the message if defined or {@code null} otherwise
+   */
+  String getMessage();
 
   @NotNull
   MetapathExpression getTarget();
