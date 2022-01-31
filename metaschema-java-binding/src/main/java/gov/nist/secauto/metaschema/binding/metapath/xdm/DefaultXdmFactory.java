@@ -109,13 +109,17 @@ public class DefaultXdmFactory implements IXdmFactory {
   }
 
   @Override
-  public IBoundXdmNodeItem newNodeItem(@NotNull ClassBinding definition, @NotNull Object boundObject,
-      @Nullable URI baseUri) {
+  public IBoundXdmNodeItem newNodeItem(@NotNull ClassBinding definition, @NotNull Object value,
+      @Nullable URI baseUri, boolean rootNode) {
     IBoundXdmNodeItem retval;
     if (definition instanceof AssemblyClassBinding) {
-      retval = newRelativeAssemblyNodeItem((AssemblyClassBinding)definition, boundObject, baseUri);
+      if (rootNode) {
+        retval = newDocumentNodeItem((AssemblyClassBinding)definition, value, baseUri);
+      } else {
+        retval = newRelativeAssemblyNodeItem((AssemblyClassBinding)definition, value, baseUri);
+      }
     } else if (definition instanceof FieldClassBinding) {
-      retval = newRelativeFieldNodeItem((FieldClassBinding)definition, boundObject, baseUri);
+      retval = newRelativeFieldNodeItem((FieldClassBinding)definition, value, baseUri);
     } else {
       throw new UnsupportedOperationException("must be a bound assembly or field");
     }

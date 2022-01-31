@@ -81,5 +81,5 @@ public interface IXdmFactory {
   IBoundXdmFieldNodeItem newRelativeFieldNodeItem(@NotNull FieldClassBinding definition, @NotNull Object value,
       @Nullable URI baseUri);
 
-  IBoundXdmNodeItem newNodeItem(@NotNull ClassBinding definition, @NotNull Object boundObject, @Nullable URI baseUri);
+  IBoundXdmNodeItem newNodeItem(@NotNull ClassBinding definition, @NotNull Object boundObject, @Nullable URI baseUri, boolean rootNode);
 }

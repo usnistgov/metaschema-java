@@ -237,14 +237,14 @@ public class DefaultBindingContext implements BindingContext {
   }
   
   @Override
-  public IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri) throws IllegalArgumentException {
+  public IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode) throws IllegalArgumentException {
     ClassBinding binding = getClassBinding(boundObject.getClass());
-    return IXdmFactory.INSTANCE.newNodeItem(binding, boundObject, baseUri);
+    return IXdmFactory.INSTANCE.newNodeItem(binding, boundObject, baseUri, rootNode);
   }
 
   @Override
-  public void validate(@NotNull Object boundObject, URI baseUri, IConstraintValidationHandler handler) throws IllegalArgumentException {
-    IBoundXdmNodeItem nodeItem = toNodeItem(boundObject, baseUri);
+  public void validate(@NotNull Object boundObject, URI baseUri, boolean rootNode, IConstraintValidationHandler handler) throws IllegalArgumentException {
+    IBoundXdmNodeItem nodeItem = toNodeItem(boundObject, baseUri, rootNode);
     
     StaticContext staticContext = new StaticContext();
     DynamicContext dynamicContext = staticContext.newDynamicContext();
