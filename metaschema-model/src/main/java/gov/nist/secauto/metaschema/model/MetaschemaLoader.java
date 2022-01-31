@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model;
 
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.xml.XmlMetaschema;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.ImportDocument;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.METASCHEMADocument;
@@ -34,6 +36,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.jetbrains.annotations.NotNull;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -61,8 +64,8 @@ import javax.xml.parsers.SAXParserFactory;
 public class MetaschemaLoader {
   private static final Logger logger = LogManager.getLogger(MetaschemaLoader.class);
 
-  private final Set<XmlMetaschema> loadedMetaschema = new LinkedHashSet<>();
-  private final Map<URI, XmlMetaschema> metaschemaCache = new LinkedHashMap<>();
+  private final Set<IXmlMetaschema> loadedMetaschema = new LinkedHashSet<>();
+  private final Map<URI, IXmlMetaschema> metaschemaCache = new LinkedHashMap<>();
   private boolean resolveEntities = false;
 
   /**
@@ -80,7 +83,7 @@ public class MetaschemaLoader {
    * 
    * @return a set of loaded Metaschema
    */
-  public Set<XmlMetaschema> getLoadedMetaschema() {
+  public Set<IXmlMetaschema> getLoadedMetaschema() {
     return loadedMetaschema.isEmpty() ? Collections.emptySet() : Collections.unmodifiableSet(loadedMetaschema);
   }
 
@@ -89,7 +92,7 @@ public class MetaschemaLoader {
    * 
    * @return the mapping
    */
-  protected Map<URI, XmlMetaschema> getMetaschemaCache() {
+  protected Map<URI, IXmlMetaschema> getMetaschemaCache() {
     return metaschemaCache;
   }
 
@@ -104,7 +107,7 @@ public class MetaschemaLoader {
    * @throws IOException
    *           if an error occurred parsing the Metaschema
    */
-  public XmlMetaschema loadMetaschema(URI resource) throws MetaschemaException, IOException {
+  public IXmlMetaschema loadMetaschema(URI resource) throws MetaschemaException, IOException {
     return loadXmlMetaschema(resource, new Stack<>(), new LinkedHashMap<>());
   }
 
@@ -119,7 +122,7 @@ public class MetaschemaLoader {
    * @throws IOException
    *           if an error occurred parsing the Metaschema
    */
-  public XmlMetaschema loadXmlMetaschema(File file) throws MetaschemaException, IOException {
+  public IXmlMetaschema loadXmlMetaschema(File file) throws MetaschemaException, IOException {
     return loadXmlMetaschema(file.toURI());
   }
 
@@ -134,14 +137,15 @@ public class MetaschemaLoader {
    * @throws IOException
    *           if an error occurred parsing the Metaschema
    */
-  public XmlMetaschema loadXmlMetaschema(URL url) throws MetaschemaException, IOException {
+  @NotNull
+  public IXmlMetaschema loadXmlMetaschema(URL url) throws MetaschemaException, IOException {
     try {
       URI resource = url.toURI();
       return loadXmlMetaschema(resource);
     } catch (URISyntaxException ex) {
       // this should not happen
       logger.error("Invalid url", ex);
-      return null;
+      throw new IOException(ex);
     }
   }
 
@@ -158,7 +162,8 @@ public class MetaschemaLoader {
    * @throws IllegalArgumentException
    *           if the provided URI is not absolute
    */
-  protected XmlMetaschema loadXmlMetaschema(URI resource) throws MetaschemaException, IOException {
+  @NotNull
+  protected IXmlMetaschema loadXmlMetaschema(URI resource) throws MetaschemaException, IOException {
     if (!resource.isAbsolute()) {
       throw new IllegalArgumentException(String.format("The URI '%s' must be absolute.", resource.toString()));
     }
@@ -188,15 +193,16 @@ public class MetaschemaLoader {
    * @throws IOException
    *           if an error occurred parsing the Metaschema
    */
-  protected XmlMetaschema loadXmlMetaschema(URI resource, Stack<URI> visitedMetaschema,
-      Map<URI, XmlMetaschema> metaschemaCache) throws MetaschemaException, MalformedURLException, IOException {
+  @NotNull
+  protected IXmlMetaschema loadXmlMetaschema(URI resource, Stack<URI> visitedMetaschema,
+      Map<URI, IXmlMetaschema> metaschemaCache) throws MetaschemaException, MalformedURLException, IOException {
     // first check if the current Metaschema has been visited to prevent cycles
     if (visitedMetaschema.contains(resource)) {
       throw new MetaschemaException("Cycle detected in metaschema includes for '" + resource + "'. Call stack: '"
           + visitedMetaschema.stream().map(n -> n.toString()).collect(Collectors.joining(",")));
     }
 
-    XmlMetaschema retval = metaschemaCache.get(resource);
+    IXmlMetaschema retval = metaschemaCache.get(resource);
     if (retval == null) {
       logger.info("Loading metaschema '{}'", resource);
       // parse this metaschema
@@ -252,7 +258,8 @@ public class MetaschemaLoader {
 
       // now check if this Metaschema imports other metaschema
       int size = metaschemaXml.getMETASCHEMA().sizeOfImportArray();
-      Map<URI, Metaschema> importedMetaschema;
+      @NotNull
+      Map<@NotNull URI, IMetaschema> importedMetaschema;
       if (size == 0) {
         importedMetaschema = Collections.emptyMap();
       } else {

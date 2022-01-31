@@ -33,8 +33,8 @@ import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedV
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.ModelConstants;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
@@ -73,14 +73,14 @@ public @interface Field {
    * 
    * @return {@code true} if the field must be wrapped, or {@code false} otherwise
    */
-  boolean inXmlWrapped() default Defaults.DEFAULT_FIELD_IN_XML_WRAPPED;
+  boolean inXmlWrapped() default ModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
 
   /**
    * The Metaschema data type adapter for the field's value.
    * 
    * @return the data type adapter
    */
-  Class<? extends JavaTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
+  Class<? extends IJavaTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
 
   /**
    * The name of the JSON property that contains the field's value. If this value is provided, the
@@ -113,14 +113,14 @@ public @interface Field {
    * 
    * @return a non-negative number
    */
-  int minOccurs() default Defaults.DEFAULT_GROUP_AS_MIN_OCCURS;
+  int minOccurs() default ModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
 
   /**
    * A number that indicates the maximum occurrence of the element.
    * 
    * @return a positive number or {@code -1} to indicate "unbounded"
    */
-  int maxOccurs() default Defaults.DEFAULT_GROUP_AS_MAX_OCCURS;
+  int maxOccurs() default ModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
 
   /**
    * Describes how to handle collections in JSON/YAML.

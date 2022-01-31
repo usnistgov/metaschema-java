@@ -27,7 +27,10 @@
 package gov.nist.secauto.metaschema.model.common.instance;
 
 import gov.nist.secauto.metaschema.model.common.Choice;
-import gov.nist.secauto.metaschema.model.common.IModelContainer;
+import gov.nist.secauto.metaschema.model.common.definition.IModelContainer;
 
+/**
+ * This marker interface represents a choice of allowed instances in a Metachema.
+ */
 public interface IChoiceInstance extends IModelInstance, IModelContainer, Choice {
 }

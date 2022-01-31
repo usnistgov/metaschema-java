@@ -42,38 +42,31 @@ public class ConstraintVisitingModelWalker<DATA>
     extends ModelWalker<DATA> {
 
   @Override
-  protected void visit(IFlagDefinition def, DATA data) {
+  protected boolean visit(IAssemblyDefinition def, DATA data) {
+    boolean retval = super.visit(def, data);
     walkConstraints(def, data);
+    return retval;
   }
 
-  protected void walkConstraints(IFlagDefinition def, DATA data) {
-    for (IAllowedValuesConstraint constraint : def.getAllowedValuesContraints()) {
-      visit(def, constraint, data);
-    }
-
-    for (IMatchesConstraint constraint : def.getMatchesConstraints()) {
-      visit(def, constraint, data);
-    }
-
-    for (IExpectConstraint constraint : def.getExpectConstraints()) {
-      visit(def, constraint, data);
-    }
-
-    for (IIndexHasKeyConstraint constraint : def.getIndexHasKeyConstraints()) {
-      visit(def, constraint, data);
-    }
+  protected void visit(IAssemblyDefinition def, IAllowedValuesConstraint constraint, DATA data) {
   }
 
-  protected void visit(IFlagDefinition def, IAllowedValuesConstraint constraint, DATA data) {
+  protected void visit(IAssemblyDefinition def, ICardinalityConstraint constraint, DATA data) {
   }
 
-  protected void visit(IFlagDefinition def, IMatchesConstraint constraint, DATA data) {
+  protected void visit(IAssemblyDefinition def, IExpectConstraint constraint, DATA data) {
   }
 
-  protected void visit(IFlagDefinition def, IExpectConstraint constraint, DATA data) {
+  protected void visit(IAssemblyDefinition def, IIndexConstraint constraint, DATA data) {
   }
 
-  protected void visit(IFlagDefinition def, IIndexHasKeyConstraint constraint, DATA data) {
+  protected void visit(IAssemblyDefinition def, IIndexHasKeyConstraint constraint, DATA data) {
+  }
+
+  protected void visit(IAssemblyDefinition def, IMatchesConstraint constraint, DATA data) {
+  }
+
+  protected void visit(IAssemblyDefinition def, IUniqueConstraint constraint, DATA data) {
   }
 
   @Override
@@ -83,28 +76,7 @@ public class ConstraintVisitingModelWalker<DATA>
     return retval;
   }
 
-  protected void walkConstraints(IFieldDefinition def, DATA data) {
-    for (IAllowedValuesConstraint constraint : def.getAllowedValuesContraints()) {
-      visit(def, constraint, data);
-    }
-
-    for (IMatchesConstraint constraint : def.getMatchesConstraints()) {
-      visit(def, constraint, data);
-    }
-
-    for (IExpectConstraint constraint : def.getExpectConstraints()) {
-      visit(def, constraint, data);
-    }
-
-    for (IIndexHasKeyConstraint constraint : def.getIndexHasKeyConstraints()) {
-      visit(def, constraint, data);
-    }
-  }
-
   protected void visit(IFieldDefinition def, IAllowedValuesConstraint constraint, DATA data) {
-  }
-
-  protected void visit(IFieldDefinition def, IMatchesConstraint constraint, DATA data) {
   }
 
   protected void visit(IFieldDefinition def, IExpectConstraint constraint, DATA data) {
@@ -113,11 +85,24 @@ public class ConstraintVisitingModelWalker<DATA>
   protected void visit(IFieldDefinition def, IIndexHasKeyConstraint constraint, DATA data) {
   }
 
+  protected void visit(IFieldDefinition def, IMatchesConstraint constraint, DATA data) {
+  }
+
   @Override
-  protected boolean visit(IAssemblyDefinition def, DATA data) {
-    boolean retval = super.visit(def, data);
+  protected void visit(IFlagDefinition def, DATA data) {
     walkConstraints(def, data);
-    return retval;
+  }
+
+  protected void visit(IFlagDefinition def, IAllowedValuesConstraint constraint, DATA data) {
+  }
+
+  protected void visit(IFlagDefinition def, IExpectConstraint constraint, DATA data) {
+  }
+
+  protected void visit(IFlagDefinition def, IIndexHasKeyConstraint constraint, DATA data) {
+  }
+
+  protected void visit(IFlagDefinition def, IMatchesConstraint constraint, DATA data) {
   }
 
   protected void walkConstraints(IAssemblyDefinition def, DATA data) {
@@ -150,25 +135,40 @@ public class ConstraintVisitingModelWalker<DATA>
     }
   }
 
-  protected void visit(IAssemblyDefinition def, IAllowedValuesConstraint constraint, DATA data) {
+  protected void walkConstraints(IFieldDefinition def, DATA data) {
+    for (IAllowedValuesConstraint constraint : def.getAllowedValuesContraints()) {
+      visit(def, constraint, data);
+    }
+
+    for (IMatchesConstraint constraint : def.getMatchesConstraints()) {
+      visit(def, constraint, data);
+    }
+
+    for (IExpectConstraint constraint : def.getExpectConstraints()) {
+      visit(def, constraint, data);
+    }
+
+    for (IIndexHasKeyConstraint constraint : def.getIndexHasKeyConstraints()) {
+      visit(def, constraint, data);
+    }
   }
 
-  protected void visit(IAssemblyDefinition def, IMatchesConstraint constraint, DATA data) {
-  }
+  protected void walkConstraints(IFlagDefinition def, DATA data) {
+    for (IAllowedValuesConstraint constraint : def.getAllowedValuesContraints()) {
+      visit(def, constraint, data);
+    }
 
-  protected void visit(IAssemblyDefinition def, IExpectConstraint constraint, DATA data) {
-  }
+    for (IMatchesConstraint constraint : def.getMatchesConstraints()) {
+      visit(def, constraint, data);
+    }
 
-  protected void visit(IAssemblyDefinition def, IUniqueConstraint constraint, DATA data) {
-  }
+    for (IExpectConstraint constraint : def.getExpectConstraints()) {
+      visit(def, constraint, data);
+    }
 
-  protected void visit(IAssemblyDefinition def, IIndexConstraint constraint, DATA data) {
-  }
-
-  protected void visit(IAssemblyDefinition def, IIndexHasKeyConstraint constraint, DATA data) {
-  }
-
-  protected void visit(IAssemblyDefinition def, ICardinalityConstraint constraint, DATA data) {
+    for (IIndexHasKeyConstraint constraint : def.getIndexHasKeyConstraints()) {
+      visit(def, constraint, data);
+    }
   }
 
 }

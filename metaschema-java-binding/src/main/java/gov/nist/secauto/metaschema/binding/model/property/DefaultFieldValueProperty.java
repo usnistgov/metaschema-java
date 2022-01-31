@@ -30,7 +30,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
@@ -40,10 +39,15 @@ import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -58,7 +62,7 @@ public class DefaultFieldValueProperty
   private static final Logger logger = LogManager.getLogger(DefaultFieldValueProperty.class);
 
   private final FieldValue fieldValue;
-  private final JavaTypeAdapter<?> javaTypeAdapter;
+  private final IJavaTypeAdapter<?> javaTypeAdapter;
 
   public DefaultFieldValueProperty(FieldClassBinding fieldClassBinding, Field field) {
     super(field, fieldClassBinding);
@@ -80,49 +84,13 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public JavaTypeAdapter<?> getJavaTypeAdapter() {
+  public IJavaTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
 
   @Override
-  public Object read(XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
-    return readInternal(context);
-  }
-
-  @Override
-  public boolean read(Object parentInstance, StartElement start, XmlParsingContext context)
-      throws IOException, XMLStreamException, BindingException {
-    Object value = readInternal(context);
-    setValue(parentInstance, value);
-    return true;
-  }
-
-  protected Object readInternal(XmlParsingContext context) throws IOException, BindingException {
-    // parse the value
-    Object retval = getJavaTypeAdapter().parse(context.getReader());
-
-    // validate the flag value
-    if (context.isValidating()) {
-      validateValue(retval, context);
-    }
-    return retval;
-  }
-
-  public boolean isNextProperty(JsonParsingContext context) throws IOException {
-    JsonParser parser = context.getReader();
-
-    // the parser's current token should be the JSON field name
-    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
-
-    boolean handled = false;
-    FlagProperty jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
-    if (jsonValueKey != null) {
-      // assume this is the JSON value key case
-      handled = true;
-    } else {
-      handled = getJsonValueKeyName().equals(parser.currentName());
-    }
-    return handled;
+  public PropertyCollector newPropertyCollector() {
+    return new SingletonPropertyCollector();
   }
 
   @Override
@@ -140,11 +108,6 @@ public class DefaultFieldValueProperty
       retval = readInternal(context);
     }
     return retval;
-  }
-
-  protected Object readInternal(JsonParsingContext context) throws IOException, BindingException {
-    // parse the value
-    return getJavaTypeAdapter().parse(context.getReader());
   }
 
   @Override
@@ -171,13 +134,48 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public PropertyCollector newPropertyCollector() {
-    return new SingletonPropertyCollector();
+  public Object read(XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+    return readInternal(context);
+  }
+
+  @Override
+  public boolean read(Object parentInstance, StartElement start, XmlParsingContext context)
+      throws IOException, XMLStreamException, BindingException {
+    Object value = readInternal(context);
+    setValue(parentInstance, value);
+    return true;
   }
 
   @Override
   public Object readValue(Object parentInstance, JsonParsingContext context) throws IOException, BindingException {
     return readInternal(context);
+  }
+
+  public boolean isNextProperty(JsonParsingContext context) throws IOException {
+    JsonParser parser = context.getReader();
+
+    // the parser's current token should be the JSON field name
+    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
+
+    boolean handled = false;
+    FlagProperty jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
+    if (jsonValueKey != null) {
+      // assume this is the JSON value key case
+      handled = true;
+    } else {
+      handled = getJsonValueKeyName().equals(parser.currentName());
+    }
+    return handled;
+  }
+
+  protected Object readInternal(JsonParsingContext context) throws IOException {
+    // parse the value
+    return getJavaTypeAdapter().parse(context.getReader());
+  }
+
+  protected Object readInternal(XmlParsingContext context) throws IOException {
+    // parse the value
+    return getJavaTypeAdapter().parse(context.getReader());
   }
 
   @Override
@@ -218,8 +216,35 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public void validateValue(Object value, ParsingContext<?, ?> context) {
-    // TODO Auto-generated method stub
+  public FieldClassBinding getContainingDefinition() {
+    return getParentClassBinding();
+  }
 
+  @Override
+  public @NotNull ModelType getModelType() {
+    // TODO: is this right? Is there a way to not make this derived from a property?
+    return ModelType.FIELD;
+  }
+
+  @Override
+  public @Nullable MarkupMultiline getRemarks() {
+    // TODO: implement?
+    return null;
+  }
+
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    // TODO: implement
+    return null;
+  }
+
+  @Override
+  public void copyBoundObject(@NotNull Object fromInstance, @NotNull Object toInstance) {
+    Object value = getValue(fromInstance);
+
+    IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
+
+    Object copiedValue = adapter.copy(value);
+    setValue(toInstance, copiedValue);
   }
 }

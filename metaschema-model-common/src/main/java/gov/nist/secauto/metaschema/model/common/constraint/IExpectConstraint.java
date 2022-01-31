@@ -26,9 +26,23 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+
+import org.jetbrains.annotations.NotNull;
 
 public interface IExpectConstraint extends IConstraint {
+  @NotNull
   MetapathExpression getTest();
 
+  /**
+   * A message to emit when the constraint is violated. Allows embedded Metapath expressions using the
+   * syntax {@code \{path\}}.
+   * 
+   * @return the message if defined or {@code null} otherwise
+   */
+  String getMessage();
+
+  CharSequence generateMessage(@NotNull INodeItem item, @NotNull DynamicContext context);
 }

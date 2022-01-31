@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.model;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 
@@ -42,12 +44,12 @@ class MetaschemaLoaderTest {
   @Test
   void test() throws MetaschemaException, IOException {
     MetaschemaLoader loader = new MetaschemaLoader();
-    Metaschema metachema = loader.loadMetaschema(URI.create(
+    IMetaschema metachema = loader.loadMetaschema(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
 
-    Metaschema metadataMetaschema = metachema.getImportedMetaschemaByShortName("oscal-catalog")
+    IMetaschema metadataMetaschema = metachema.getImportedMetaschemaByShortName("oscal-catalog")
         .getImportedMetaschemaByShortName("oscal-metadata");
-    IFlagDefinition flag = metadataMetaschema.getFlagDefinitionByName("location-type");
+    IFlagDefinition flag = metadataMetaschema.getScopedFlagDefinitionByName("location-type");
     List<? extends IConstraint> constraints = flag.getConstraints();
     assertFalse(constraints.isEmpty());
   }

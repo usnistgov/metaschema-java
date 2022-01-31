@@ -26,11 +26,12 @@
 
 package gov.nist.secauto.metaschema.freemarker.support;
 
-import gov.nist.secauto.metaschema.model.Metaschema;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
 import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -84,27 +85,25 @@ public abstract class AbstractFreemarkerGenerator implements FreemarkerGenerator
   }
 
   @Override
-  public void generateFromMetaschemas(Collection<? extends Metaschema> metaschemas, Writer out)
+  public void generateFromMetaschemas(Collection<@NotNull ? extends IMetaschema> metaschemas, Writer out)
       throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException {
     Objects.requireNonNull(metaschemas, "metaschemas");
 
-    Collection<? extends IDefinition> definitions
+    Collection<@NotNull ? extends IDefinition> definitions
         = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschemas);
     generateFromDefinitions(definitions, out);
   }
 
   @Override
-  public void generateFromDefinitions(Collection<? extends IDefinition> definitions, Writer out)
+  public void generateFromDefinitions(Collection<@NotNull ? extends IDefinition> definitions, Writer out)
       throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException {
     Objects.requireNonNull(definitions, "definitions");
-    Set<Metaschema> metaschemas = new LinkedHashSet<>();
+    Set<IMetaschema> metaschemas = new LinkedHashSet<>();
     Set<IAssemblyDefinition> rootAssemblies = new LinkedHashSet<>();
     for (IDefinition definition : definitions) {
-      if (definition instanceof MetaschemaDefinition) {
-        Metaschema metaschema = ((MetaschemaDefinition) definition).getContainingMetaschema();
-        if (!metaschemas.contains(metaschema)) {
-          metaschemas.add(metaschema);
-        }
+      IMetaschema metaschema = definition.getContainingMetaschema();
+      if (!metaschemas.contains(metaschema)) {
+        metaschemas.add(metaschema);
       }
 
       if (definition instanceof IAssemblyDefinition) {

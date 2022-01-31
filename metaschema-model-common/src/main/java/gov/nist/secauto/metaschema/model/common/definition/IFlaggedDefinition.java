@@ -32,6 +32,10 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +44,10 @@ import java.util.Map;
  * value (for a field) or complex model contents (for an assembly).
  */
 public interface IFlaggedDefinition extends IDefinition {
+  default boolean isSimple() {
+    return getFlagInstances().isEmpty();
+  }
+
   /**
    * Retrieves a flag instance, by the flag's effective name, that is defined on the containing
    * definition.
@@ -49,8 +57,9 @@ public interface IFlaggedDefinition extends IDefinition {
    * @return the matching flag instance, or {@code null} if there is no flag matching the specified
    *         name
    */
+  @Nullable
   default IFlagInstance getFlagInstanceByName(String name) {
-    return getFlagInstances().get(name);
+    return getFlagInstanceMap().get(name);
   }
 
   /**
@@ -59,7 +68,19 @@ public interface IFlaggedDefinition extends IDefinition {
    * 
    * @return the mapping
    */
-  Map<String, ? extends IFlagInstance> getFlagInstances();
+  @NotNull
+  Map<@NotNull String, ? extends IFlagInstance> getFlagInstanceMap();
+
+  /**
+   * Retrieves the flag instances for all flags defined on the containing definition.
+   * 
+   * @return the flags
+   */
+  @SuppressWarnings("null")
+  @NotNull
+  default Collection<@NotNull ? extends IFlagInstance> getFlagInstances() {
+    return getFlagInstanceMap().values();
+  }
 
   /**
    * Indicates if a flag's value can be used as a property name in the containing object in JSON who's
@@ -81,6 +102,7 @@ public interface IFlaggedDefinition extends IDefinition {
    * @return the flag instance if a JSON key is configured, or {@code null} otherwise
    * @see #hasJsonKey()
    */
+  @Nullable
   IFlagInstance getJsonKeyFlagInstance();
 
   /**
@@ -89,7 +111,8 @@ public interface IFlaggedDefinition extends IDefinition {
    * 
    * @return the list of allowed value constraints
    */
-  List<? extends IAllowedValuesConstraint> getAllowedValuesContraints();
+  @NotNull
+  List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesContraints();
 
   /**
    * Retrieve the list of matches constraints that apply to this definition's descendant flag or field
@@ -97,7 +120,8 @@ public interface IFlaggedDefinition extends IDefinition {
    * 
    * @return the list of matches constraints
    */
-  List<? extends IMatchesConstraint> getMatchesConstraints();
+  @NotNull
+  List<@NotNull ? extends IMatchesConstraint> getMatchesConstraints();
 
   /**
    * Retrieve the list of key reference constraints that apply to this definition's descendant flag or
@@ -105,7 +129,8 @@ public interface IFlaggedDefinition extends IDefinition {
    * 
    * @return the list of key reference constraints
    */
-  List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints();
+  @NotNull
+  List<@NotNull ? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints();
 
   /**
    * Retrieve the list of expect constraints that apply to this definition's descendant flag or field
@@ -113,5 +138,6 @@ public interface IFlaggedDefinition extends IDefinition {
    * 
    * @return the list of expect constraints
    */
-  List<? extends IExpectConstraint> getExpectConstraints();
+  @NotNull
+  List<@NotNull ? extends IExpectConstraint> getExpectConstraints();
 }

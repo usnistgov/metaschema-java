@@ -26,13 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.instances;
 
+import gov.nist.secauto.metaschema.model.IXmlMetaschema;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
 
-public abstract class AbstractChoiceInstance
-    extends AbstractInfoElementInstance<AssemblyDefinition>
-    implements ChoiceInstance {
+import org.jetbrains.annotations.NotNull;
+
+public abstract class AbstractChoiceInstance implements IXmlChoiceInstance {
+  @NotNull
+  private final IXmlAssemblyDefinition parent;
 
   /**
    * Create a new choice instance.
@@ -40,21 +43,20 @@ public abstract class AbstractChoiceInstance
    * @param parent
    *          the containing assembly definition
    */
-  public AbstractChoiceInstance(AssemblyDefinition parent) {
-    super(parent);
+  public AbstractChoiceInstance(@NotNull IXmlAssemblyDefinition parent) {
+    this.parent = parent;
   }
 
-  /*
-   * @Override public abstract Map<String, ? extends FieldInstance<?>> getFieldInstances();
-   * 
-   * @Override public FieldInstance<?> getFieldInstanceByName(String name) { return
-   * getFieldInstances().get(name); }
-   * 
-   * @Override public abstract Map<String, ? extends AssemblyInstance<?>> getAssemblyInstances();
-   * 
-   * @Override public AssemblyInstance<?> getAssemblyInstanceByName(String name) { return
-   * getAssemblyInstances().get(name); }
-   */
+  @Override
+  public IXmlAssemblyDefinition getContainingDefinition() {
+    return parent;
+  }
+
+  @Override
+  @NotNull
+  public IXmlMetaschema getContainingMetaschema() {
+    return getContainingDefinition().getContainingMetaschema();
+  }
 
   @Override
   public int getMinOccurs() {

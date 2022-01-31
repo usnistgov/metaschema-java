@@ -35,8 +35,6 @@ package gov.nist.secauto.metaschema.binding.io.context;
  *          the format specific problem handler
  */
 public interface ParsingContext<READER, PROBLEM_HANDLER extends ProblemHandler> {
-  boolean isValidating();
-
   /**
    * The parser used for reading data associated with the supported format.
    * 
@@ -50,6 +48,4 @@ public interface ParsingContext<READER, PROBLEM_HANDLER extends ProblemHandler> 
    * @return the configured handler
    */
   PROBLEM_HANDLER getProblemHandler();
-
-  PathBuilder getPathBuilder();
 }

@@ -36,33 +36,32 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.codegen.AssemblyJavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.ModelConstants;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
-import gov.nist.secauto.metaschema.model.instances.AssemblyInstance;
-import gov.nist.secauto.metaschema.model.instances.AssemblyModelInstance;
-import gov.nist.secauto.metaschema.model.instances.FieldInstance;
-import gov.nist.secauto.metaschema.model.instances.ObjectModelInstance;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 public class ModelInstancePropertyGenerator
     extends AbstractPropertyGenerator<AssemblyJavaClassGenerator> {
   private static final Logger logger = LogManager.getLogger(ModelInstancePropertyGenerator.class);
 
-  private final ObjectModelInstance<?> modelInstance;
+  private final INamedModelInstance modelInstance;
 
   /**
    * Constructs a new generator of cardinality information for a property item of a Metaschema
@@ -73,7 +72,8 @@ public class ModelInstancePropertyGenerator
    * @param classGenerator
    *          the containing class to generate
    */
-  public ModelInstancePropertyGenerator(ObjectModelInstance<?> modelInstance,
+  public ModelInstancePropertyGenerator(
+      INamedModelInstance modelInstance,
       AssemblyJavaClassGenerator classGenerator) {
     super(classGenerator);
     this.modelInstance = modelInstance;
@@ -84,22 +84,18 @@ public class ModelInstancePropertyGenerator
    * 
    * @return the name
    */
-  protected ObjectModelInstance<?> getModelInstance() {
+  protected INamedModelInstance getModelInstance() {
     return modelInstance;
   }
 
   @Override
   protected String getInstanceName() {
-    AssemblyModelInstance modelInstance = getModelInstance();
+    INamedModelInstance modelInstance = getModelInstance();
     String retval = null;
     if (modelInstance.getMaxOccurs() == 1) {
       // an instance name only applies to an assembly or field. a choice does not have a name and doesn't
       // result in a generated instance.
-      if (modelInstance instanceof AssemblyInstance) {
-        retval = ((AssemblyInstance<?>) modelInstance).getEffectiveName();
-      } else if (modelInstance instanceof FieldInstance) {
-        retval = ((FieldInstance<?>) modelInstance).getEffectiveName();
-      }
+      retval = modelInstance.getEffectiveName();
     } else if (modelInstance.getMaxOccurs() == -1 || modelInstance.getMaxOccurs() > 1) {
       retval = modelInstance.getGroupAsName();
     }
@@ -112,58 +108,56 @@ public class ModelInstancePropertyGenerator
     // instances will only need a description if the instance has a simple structure, without flags or a
     // model. In such a case, the description will need to appear on the instance. Otherwise, the
     // description will appear on the resulting object.
-    if (modelInstance instanceof ObjectModelInstance) {
-      retval = ((ObjectModelInstance<?>) modelInstance).getDefinition().getDescription();
+    if (modelInstance instanceof IFieldInstance && ((IFieldInstance) modelInstance).isSimple()) {
+      retval = modelInstance.getDefinition().getDescription();
     }
     return retval;
   }
 
   @Override
-  public Set<MetaschemaFlaggedDefinition> buildField(FieldSpec.Builder builder) {
-    Set<MetaschemaFlaggedDefinition> retval = new HashSet<>();
+  public Set<INamedModelDefinition> buildField(FieldSpec.Builder builder) {
+    Set<INamedModelDefinition> retval = new HashSet<>();
     retval.addAll(super.buildField(builder));
 
+    // determine which annotation to apply
     AnnotationSpec.Builder fieldAnnoation;
-    ObjectModelInstance<?> modelInstance = getModelInstance();
-    if (modelInstance instanceof FieldInstance) {
+    INamedModelInstance modelInstance = getModelInstance();
+    if (modelInstance instanceof IFieldInstance) {
       fieldAnnoation = AnnotationSpec.builder(Field.class);
-    } else if (modelInstance instanceof AssemblyInstance) {
+    } else if (modelInstance instanceof IAssemblyInstance) {
       fieldAnnoation = AnnotationSpec.builder(Assembly.class);
     } else {
       throw new UnsupportedOperationException(String.format("Model instance '%s' of type '%s' is not supported.",
           modelInstance.getName(), modelInstance.getClass().getName()));
     }
 
-    MetaschemaFlaggedDefinition definition = getModelInstance().getDefinition();
-    if (!definition.isGlobal()) {
+    fieldAnnoation.addMember("useName", "$S", modelInstance.getEffectiveName());
+
+    INamedModelDefinition definition = modelInstance.getDefinition();
+    if (definition instanceof IFieldDefinition && ((IFieldDefinition) definition).isSimple()) {
+      // do not generate a child class
+    } else if (!definition.isGlobal()) {
+      // this is a local definition that must be built as a child class
       retval.add(definition);
     }
-    fieldAnnoation.addMember("useName", "$S", getModelInstance().getEffectiveName());
 
-    String namespace = definition.getContainingMetaschema().getXmlNamespace().toString();
-    String containingNamespace
-        = getModelInstance().getContainingDefinition().getContainingMetaschema().getXmlNamespace().toString();
-    if (!containingNamespace.equals(namespace)) {
-      fieldAnnoation.addMember("namespace", "$S", namespace);
-    }
+    fieldAnnoation.addMember("namespace", "$S", modelInstance.getXmlNamespace());
 
-    if (modelInstance instanceof FieldInstance) {
-      FieldInstance<?> fieldInstance = (FieldInstance<?>) modelInstance;
-      FieldDefinition fieldDefinition = (FieldDefinition) definition;
-      DataTypes valueDataType = fieldDefinition.getDatatype();
+    if (modelInstance instanceof IFieldInstance) {
+      IFieldInstance fieldInstance = (IFieldInstance) modelInstance;
+      IFieldDefinition fieldDefinition = (IFieldDefinition) definition;
 
-      // a field object always has a single value
-      if (!fieldInstance.isInXmlWrapped()) {
-        fieldAnnoation.addMember("inXmlWrapped", "$L", false);
+      IJavaTypeAdapter<?> valueDataType = fieldDefinition.getDatatype();
+
+      if (ModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
+        fieldAnnoation.addMember("inXmlWrapped", "$L", fieldInstance.isInXmlWrapped());
       }
-      if (fieldDefinition.getFlagInstances().isEmpty()) {
+      if (fieldInstance.isSimple()) {
         // this is a simple field, without flags
         // we need to add the FieldValue annotation to the property
-
         fieldAnnoation.addMember("valueName", "$S", fieldDefinition.getJsonValueKeyName());
 
-        fieldAnnoation.addMember("typeAdapter", "$T.class",
-            valueDataType.getJavaTypeAdapter().getClass());
+        fieldAnnoation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
 
         AnnotationUtils.applyAllowedValuesConstraints(fieldAnnoation, fieldDefinition.getAllowedValuesContraints());
         AnnotationUtils.applyIndexHasKeyConstraints(fieldAnnoation, fieldDefinition.getIndexHasKeyConstraints());
@@ -172,34 +166,29 @@ public class ModelInstancePropertyGenerator
       }
     }
 
-    int maxOccurs = modelInstance.getMaxOccurs();
     int minOccurs = modelInstance.getMinOccurs();
-
-    if (minOccurs != Defaults.DEFAULT_GROUP_AS_MIN_OCCURS) {
+    if (minOccurs != ModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
       fieldAnnoation.addMember("minOccurs", "$L", minOccurs);
     }
-    if (maxOccurs != Defaults.DEFAULT_GROUP_AS_MAX_OCCURS) {
+
+    int maxOccurs = modelInstance.getMaxOccurs();
+    if (maxOccurs != ModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
       fieldAnnoation.addMember("maxOccurs", "$L", maxOccurs);
     }
 
     if (maxOccurs == -1 || maxOccurs > 1) {
       fieldAnnoation.addMember("groupName", "$S", getInstanceName());
-
-      if (!containingNamespace.equals(namespace)) {
-        fieldAnnoation.addMember("groupNamespace", "$S", namespace);
-      }
+      fieldAnnoation.addMember("groupNamespace", "$S", modelInstance.getGroupAsXmlNamespace());
 
       JsonGroupAsBehavior jsonGroupAsBehavior = modelInstance.getJsonGroupAsBehavior();
       assert jsonGroupAsBehavior != null;
       fieldAnnoation.addMember("inJson", "$T.$L",
-          gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior.class,
-          jsonGroupAsBehavior.toString());
+          gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior.class, jsonGroupAsBehavior.toString());
 
       XmlGroupAsBehavior xmlGroupAsBehavior = modelInstance.getXmlGroupAsBehavior();
       assert xmlGroupAsBehavior != null;
       fieldAnnoation.addMember("inXml", "$T.$L",
-          gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior.class,
-          xmlGroupAsBehavior.toString());
+          gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior.class, xmlGroupAsBehavior.toString());
     }
     builder.addAnnotation(fieldAnnoation.build());
     return retval.isEmpty() ? Collections.emptySet() : Collections.unmodifiableSet(retval);
@@ -207,28 +196,21 @@ public class ModelInstancePropertyGenerator
 
   @Override
   protected TypeName getJavaType() {
-    ObjectModelInstance<?> instance = getModelInstance();
+    INamedModelInstance instance = getModelInstance();
 
     TypeName item;
-    if (instance instanceof FieldInstance) {
-      FieldInstance<?> fieldInstance = (FieldInstance<?>) instance;
-      if (fieldInstance.getDefinition().getFlagInstances().isEmpty()) {
-        DataTypes dataType = fieldInstance.getDefinition().getDatatype();
+    if (instance instanceof IFieldInstance) {
+      IFieldInstance fieldInstance = (IFieldInstance) instance;
+      if (fieldInstance.isSimple()) {
+        IJavaTypeAdapter<?> dataType = fieldInstance.getDefinition().getDatatype();
         // this is a simple value
-        item = ClassName.get(dataType.getJavaTypeAdapter().getJavaClass());
+        item = ClassName.get(dataType.getJavaClass());
       } else {
         item = getClassGenerator().getTypeResolver().getClassName(fieldInstance.getDefinition());
       }
-    } else if (instance instanceof AssemblyInstance) {
-      AssemblyInstance<?> assemblyInstance = (AssemblyInstance<?>) instance;
-      AssemblyDefinition assemblyDefinition = assemblyInstance.getDefinition();
-      if (assemblyDefinition.getFlagInstances().isEmpty() && assemblyDefinition.getModelInstances().isEmpty()) {
-        // make this a boolean type, since this is a marker without any contents
-        // TODO: make sure global definitions of this type are suppressed
-        item = ClassName.get(DataTypes.BOOLEAN.getJavaTypeAdapter().getJavaClass());
-      } else {
-        item = getClassGenerator().getTypeResolver().getClassName(assemblyInstance.getDefinition());
-      }
+    } else if (instance instanceof IAssemblyInstance) {
+      IAssemblyInstance assemblyInstance = (IAssemblyInstance) instance;
+      item = getClassGenerator().getTypeResolver().getClassName(assemblyInstance.getDefinition());
     } else {
       String msg = String.format("Unknown model instance type: %s", instance.getClass().getCanonicalName());
       logger.error(msg);
@@ -239,9 +221,9 @@ public class ModelInstancePropertyGenerator
     int maxOccurance = instance.getMaxOccurs();
     if (maxOccurance == -1 || maxOccurance > 1) {
       if (JsonGroupAsBehavior.KEYED.equals(instance.getJsonGroupAsBehavior())) {
-        retval = ParameterizedTypeName.get(ClassName.get(LinkedHashMap.class), ClassName.get(String.class), item);
+        retval = ParameterizedTypeName.get(ClassName.get(HashMap.class), ClassName.get(String.class), item);
       } else {
-        retval = ParameterizedTypeName.get(ClassName.get(LinkedList.class), item);
+        retval = ParameterizedTypeName.get(ClassName.get(List.class), item);
       }
     } else {
       retval = item;

@@ -26,15 +26,20 @@
 
 package gov.nist.secauto.metaschema.model.common.explode;
 
-import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,24 +48,34 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * When exploding a model, this class ensures that a definition that is referenced is localized.
+ *
+ */
 public class ProxiedAssemblyDefinition
-    extends AbstractFlaggedDefinition<IAssemblyDefinition>
+    extends AbstractNamedModelDefinition<IAssemblyDefinition>
     implements AssemblyDefinition {
-  private Map<String, NamedModelInstance> namedModelInstances;
-  private Map<String, FieldInstance> fieldInstances;
-  private Map<String, AssemblyInstance> assemblyInstances;
-  private List<IModelInstance> modelInstances;
+  private Map<@NotNull String, INamedModelInstance> namedModelInstances;
+  private Map<@NotNull String, FieldInstance> fieldInstances;
+  private Map<@NotNull String, AssemblyInstance> assemblyInstances;
+  private List<@NotNull IModelInstance> modelInstances;
 
-  public ProxiedAssemblyDefinition(IAssemblyDefinition delegate) {
+  /**
+   * Create a new assembly definition that delegates to another definition.
+   * 
+   * @param delegate
+   *          the proxied assembly definition
+   */
+  public ProxiedAssemblyDefinition(@NotNull IAssemblyDefinition delegate) {
     super(delegate);
   }
 
   @Override
   public void initializeModel(AssemblyDefinitionResolver resolver) {
-    Map<String, NamedModelInstance> namedModelInstances = new LinkedHashMap<>();
-    Map<String, FieldInstance> fieldInstances = new LinkedHashMap<>();
-    Map<String, AssemblyInstance> assemblyInstances = new LinkedHashMap<>();
-    List<IModelInstance> modelInstances = new ArrayList<>(getDelegate().getModelInstances().size());
+    Map<@NotNull String, INamedModelInstance> namedModelInstances = new LinkedHashMap<>();
+    Map<@NotNull String, FieldInstance> fieldInstances = new LinkedHashMap<>();
+    Map<@NotNull String, AssemblyInstance> assemblyInstances = new LinkedHashMap<>();
+    List<@NotNull IModelInstance> modelInstances = new ArrayList<>(getDelegate().getModelInstances().size());
 
     for (IModelInstance instance : getDelegate().getModelInstances()) {
       if (instance instanceof IFieldInstance) {
@@ -104,44 +119,74 @@ public class ProxiedAssemblyDefinition
     return getDelegate().getRootName();
   }
 
+  @SuppressWarnings("null")
   @Override
-  public Map<String, NamedModelInstance> getNamedModelInstances() {
+  public Map<@NotNull String, INamedModelInstance> getNamedModelInstanceMap() {
     return namedModelInstances;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public Map<String, FieldInstance> getFieldInstances() {
+  public Map<@NotNull String, FieldInstance> getFieldInstanceMap() {
     return fieldInstances;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public Map<String, AssemblyInstance> getAssemblyInstances() {
+  public Map<@NotNull String, AssemblyInstance> getAssemblyInstanceMap() {
     return assemblyInstances;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public List<? extends IChoiceInstance> getChoiceInstances() {
+  public List<@NotNull ? extends IChoiceInstance> getChoiceInstances() {
     // TODO: implement
     return Collections.emptyList();
   }
 
+  @SuppressWarnings("null")
   @Override
-  public Collection<? extends IModelInstance> getModelInstances() {
+  public Collection<@NotNull ? extends IModelInstance> getModelInstances() {
     return modelInstances;
   }
 
   @Override
-  public List<? extends IIndexConstraint> getIndexConstraints() {
+  public List<@NotNull ? extends IIndexConstraint> getIndexConstraints() {
     return getDelegate().getIndexConstraints();
   }
 
   @Override
-  public List<? extends IUniqueConstraint> getUniqueConstraints() {
+  public List<@NotNull ? extends IUniqueConstraint> getUniqueConstraints() {
     return getDelegate().getUniqueConstraints();
   }
 
   @Override
-  public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
+  public List<@NotNull ? extends ICardinalityConstraint> getHasCardinalityConstraints() {
     return getDelegate().getHasCardinalityConstraints();
+  }
+
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    return getDelegate().getContainingMetaschema();
+  }
+
+  @Override
+  public String getFormalName() {
+    return getDelegate().getFormalName();
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+    return getDelegate().getDescription();
+  }
+
+  @Override
+  public ModuleScopeEnum getModuleScope() {
+    return ModuleScopeEnum.LOCAL;
+  }
+
+  @Override
+  public boolean isGlobal() {
+    return false;
   }
 }

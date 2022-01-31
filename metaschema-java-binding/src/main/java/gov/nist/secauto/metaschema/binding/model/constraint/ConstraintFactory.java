@@ -36,10 +36,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHas
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IsUnique;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.KeyField;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValue;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultCardinalityConstraint;
@@ -49,7 +45,10 @@ import gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexHasKeyCon
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultKeyField;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultUniqueConstraint;
-import gov.nist.secauto.metaschema.model.common.metapath.Metapath;
+import gov.nist.secauto.metaschema.model.common.datatype.DataTypeService;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import java.util.ArrayList;
@@ -103,12 +102,22 @@ public class ConstraintFactory {
     return retval;
   }
 
-  static DataTypes toDataType(Class<? extends JavaTypeAdapter<?>> adapterClass) {
-    DataTypes retval;
+  static String toMessage(String message) {
+    String retval;
+    if (message.isBlank()) {
+      retval = null;
+    } else {
+      retval = message;
+    }
+    return retval;
+  }
+
+  static IJavaTypeAdapter<?> toDataType(Class<? extends IJavaTypeAdapter<?>> adapterClass) {
+    IJavaTypeAdapter<?> retval;
     if (adapterClass.isAssignableFrom(NullJavaTypeAdapter.class)) {
       retval = null;
     } else {
-      retval = DataTypes.getDataTypeForAdapter(adapterClass);
+      retval = DataTypeService.getInstance().getJavaTypeAdapterByClass(adapterClass);
     }
     return retval;
   }
@@ -118,19 +127,29 @@ public class ConstraintFactory {
     if (metapath == null || metapath.isBlank()) {
       retval = null;
     } else {
-      retval = Metapath.parseMetapathString(metapath);
+      retval = MetapathExpression.compile(metapath);
     }
     return retval;
   }
 
   static DefaultAllowedValuesConstraint newAllowedValuesConstraint(AllowedValues constraint) {
-    return new DefaultAllowedValuesConstraint(toId(constraint.id()), toMetapath(constraint.target()),
-        toAllowedValues(constraint), constraint.allowOthers(), toRemarks(constraint.remarks()));
+    return new DefaultAllowedValuesConstraint(
+        toId(constraint.id()),
+        constraint.level(),
+        toMetapath(constraint.target()),
+        toAllowedValues(constraint),
+        constraint.allowOthers(),
+        toRemarks(constraint.remarks()));
   }
 
   static DefaultMatchesConstraint newMatchesConstraint(Matches constraint) {
-    return new DefaultMatchesConstraint(toId(constraint.id()), toMetapath(constraint.target()),
-        toPattern(constraint.pattern()), toDataType(constraint.typeAdapter()), toRemarks(constraint.remarks()));
+    return new DefaultMatchesConstraint(
+        toId(constraint.id()),
+        constraint.level(),
+        toMetapath(constraint.target()),
+        toPattern(constraint.pattern()),
+        toDataType(constraint.typeAdapter()),
+        toRemarks(constraint.remarks()));
   }
 
   static List<DefaultKeyField> toKeyFields(KeyField[] keyFields) {
@@ -160,27 +179,49 @@ public class ConstraintFactory {
   }
 
   static DefaultUniqueConstraint newUniqueConstraint(IsUnique constraint) {
-    return new DefaultUniqueConstraint(toId(constraint.id()), toMetapath(constraint.target()),
-        toKeyFields(constraint.keyFields()), toRemarks(constraint.remarks()));
+    return new DefaultUniqueConstraint(
+        toId(constraint.id()),
+        constraint.level(),
+        toMetapath(constraint.target()),
+        toKeyFields(constraint.keyFields()),
+        toRemarks(constraint.remarks()));
   }
 
   static DefaultIndexConstraint newIndexConstraint(Index constraint) {
-    return new DefaultIndexConstraint(toId(constraint.id()), toMetapath(constraint.target()),
-        constraint.name(), toKeyFields(constraint.keyFields()), toRemarks(constraint.remarks()));
+    return new DefaultIndexConstraint(
+        toId(constraint.id()),
+        constraint.level(),
+        toMetapath(constraint.target()),
+        constraint.name(),
+        toKeyFields(constraint.keyFields()),
+        toRemarks(constraint.remarks()));
   }
 
   static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(IndexHasKey constraint) {
-    return new DefaultIndexHasKeyConstraint(toId(constraint.id()), toMetapath(constraint.target()),
-        constraint.indexName(), toKeyFields(constraint.keyFields()), toRemarks(constraint.remarks()));
+    return new DefaultIndexHasKeyConstraint(
+        toId(constraint.id()),
+        constraint.level(),
+        toMetapath(constraint.target()),
+        constraint.indexName(),
+        toKeyFields(constraint.keyFields()),
+        toRemarks(constraint.remarks()));
   }
 
   static DefaultExpectConstraint newExpectConstraint(Expect constraint) {
-    return new DefaultExpectConstraint(toId(constraint.id()), toMetapath(constraint.target()),
-        toMetapath(constraint.test()), toRemarks(constraint.remarks()));
+    return new DefaultExpectConstraint(
+        toId(constraint.id()),
+        constraint.level(),
+        toMessage(constraint.message()),
+        toMetapath(constraint.target()),
+        toMetapath(constraint.test()),
+        toRemarks(constraint.remarks()));
   }
 
   static DefaultCardinalityConstraint newCardinalityConstraint(HasCardinality constraint) {
-    return new DefaultCardinalityConstraint(toId(constraint.id()), Metapath.parseMetapathString(constraint.target()),
+    return new DefaultCardinalityConstraint(
+        toId(constraint.id()),
+        constraint.level(),
+        toMetapath(constraint.target()),
         toCardinality(constraint.minOccurs()),
         toCardinality(constraint.maxOccurs()),
         toRemarks(constraint.remarks()));

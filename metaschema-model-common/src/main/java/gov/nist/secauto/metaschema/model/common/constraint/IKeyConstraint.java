@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public interface IKeyConstraint extends IConstraint {
@@ -34,6 +36,7 @@ public interface IKeyConstraint extends IConstraint {
    * 
    * @return one or more keys
    */
-  List<? extends IKeyField> getKeyFields();
+  @NotNull
+  List<@NotNull ? extends IKeyField> getKeyFields();
 
 }

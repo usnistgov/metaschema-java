@@ -27,7 +27,10 @@
 package gov.nist.secauto.metaschema.model.common;
 
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.xml.namespace.QName;
 
@@ -37,9 +40,12 @@ public interface INamedModelElement extends IModelElement {
    * 
    * @return the XML qualified name
    */
+  @Nullable
   default QName getXmlQName() {
-    QName retval = null;
     String namespace = getXmlNamespace();
+
+    @NotNull
+    QName retval;
     if (namespace != null) {
       retval = new QName(namespace, getEffectiveName());
     } else {
@@ -53,6 +59,7 @@ public interface INamedModelElement extends IModelElement {
    * 
    * @return the JSON property name
    */
+  @NotNull
   default String getJsonName() {
     return getEffectiveName();
   }
@@ -68,12 +75,14 @@ public interface INamedModelElement extends IModelElement {
    * @see #getUseName()
    * @see #getName()
    */
+  @NotNull
   default String getEffectiveName() {
-    String retval = getUseName();
-    if (retval == null) {
-      retval = getName();
+    @Nullable
+    String useName = getUseName();
+    if (useName == null) {
+      return getName();
     }
-    return retval;
+    return useName;
   }
 
   /**
@@ -81,6 +90,7 @@ public interface INamedModelElement extends IModelElement {
    * 
    * @return the name
    */
+  @NotNull
   String getName();
 
   /**
@@ -88,6 +98,7 @@ public interface INamedModelElement extends IModelElement {
    * 
    * @return the use name or {@code null} if no use name is defined
    */
+  @Nullable
   String getUseName();
 
   /**
@@ -95,7 +106,17 @@ public interface INamedModelElement extends IModelElement {
    * 
    * @return the XML namespace or {@code null} if no namespace is defined
    */
+  @Nullable
   String getXmlNamespace();
 
-  IInstanceSet evaluateMetapathInstances(MetapathExpression target);
+  /**
+   * Evaluate the Metapath expression to retrieve the resulting Metaschema instances evaluated by the
+   * expression.
+   * 
+   * @param expression
+   *          the Metapath expression
+   * @return the resulting Metaschema instances
+   */
+  @NotNull
+  IInstanceSet evaluateMetapathInstances(@NotNull MetapathExpression expression);
 }

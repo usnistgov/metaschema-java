@@ -26,84 +26,38 @@
 
 package gov.nist.secauto.metaschema.model.xmlbeans;
 
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
+import gov.nist.secauto.metaschema.model.common.datatype.DataTypeService;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import org.apache.xmlbeans.SimpleValue;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-
 public class DatatypesHandler {
-  private static final EnumMap<DataTypes, String> dataTypeToNameMap;
-  private static final Map<String, DataTypes> nameToDataTypeMap;
 
-  static {
-    dataTypeToNameMap = new EnumMap<DataTypes, String>(DataTypes.class);
-    dataTypeToNameMap.put(DataTypes.BOOLEAN, "boolean");
-    dataTypeToNameMap.put(DataTypes.STRING, "string");
-    dataTypeToNameMap.put(DataTypes.NCNAME, "NCName");
-    dataTypeToNameMap.put(DataTypes.TOKEN, "token");
-    dataTypeToNameMap.put(DataTypes.DECIMAL, "decimal");
-    dataTypeToNameMap.put(DataTypes.INTEGER, "integer");
-    dataTypeToNameMap.put(DataTypes.NON_NEGATIVE_INTEGER, "nonNegativeInteger");
-    dataTypeToNameMap.put(DataTypes.POSITIVE_INTEGER, "positiveInteger");
-    dataTypeToNameMap.put(DataTypes.DATE_TIME, "dateTime");
-    dataTypeToNameMap.put(DataTypes.DATE, "date");
-    dataTypeToNameMap.put(DataTypes.BASE64, "base64Binary");
-    dataTypeToNameMap.put(DataTypes.DATE_TIME_WITH_TZ, "dateTime-with-timezone");
-    dataTypeToNameMap.put(DataTypes.DATE_WITH_TZ, "date-with-timezone");
-    dataTypeToNameMap.put(DataTypes.EMAIL_ADDRESS, "email");
-    dataTypeToNameMap.put(DataTypes.HOSTNAME, "hostname");
-    dataTypeToNameMap.put(DataTypes.IP_V4_ADDRESS, "ip-v4-address");
-    dataTypeToNameMap.put(DataTypes.IP_V6_ADDRESS, "ip-v6-address");
-    dataTypeToNameMap.put(DataTypes.URI, "uri");
-    dataTypeToNameMap.put(DataTypes.URI_REFERENCE, "uri-reference");
-    dataTypeToNameMap.put(DataTypes.UUID, "uuid");
-    dataTypeToNameMap.put(DataTypes.MARKUP_LINE, "markup-line");
-    dataTypeToNameMap.put(DataTypes.MARKUP_MULTILINE, "markup-multiline");
-
-    nameToDataTypeMap = new HashMap<String, DataTypes>();
-    for (Map.Entry<DataTypes, String> entry : dataTypeToNameMap.entrySet()) {
-      DataTypes dataType = entry.getKey();
-      String name = entry.getValue();
-
-      nameToDataTypeMap.put(name, dataType);
-    }
-  }
-
-  public static DataTypes decodeFieldDatatypesType(SimpleValue target) {
+  public static IJavaTypeAdapter<?> decodeFieldDatatypesType(SimpleValue target) {
     return decode(target);
   }
 
-  public static void encodeFieldDatatypesType(DataTypes asType, SimpleValue target) {
-    encode(asType, target);
+  public static void encodeFieldDatatypesType(IJavaTypeAdapter<?> datatype, SimpleValue target) {
+    encode(datatype, target);
   }
 
-  public static DataTypes decodeSimpleDatatypesType(SimpleValue target) {
+  public static IJavaTypeAdapter<?> decodeSimpleDatatypesType(SimpleValue target) {
     return decode(target);
   }
 
-  public static void encodeSimpleDatatypesType(DataTypes asType, SimpleValue target) {
-    encode(asType, target);
+  public static void encodeSimpleDatatypesType(IJavaTypeAdapter<?> datatype, SimpleValue target) {
+    encode(datatype, target);
   }
 
-  private static void encode(DataTypes asType, SimpleValue target) {
-    if (asType != null) {
-      String value = dataTypeToNameMap.get(asType);
-      if (value == null) {
-        throw new RuntimeException(String.format("Unknown data type '%s'", asType.name()));
-      }
-      target.setStringValue(value);
-    }
-  }
-
-  private static DataTypes decode(SimpleValue target) {
+  private static IJavaTypeAdapter<?> decode(SimpleValue target) {
     String name = target.getStringValue();
-    DataTypes retval = nameToDataTypeMap.get(name);
-    if (retval == null) {
-      throw new RuntimeException(String.format("Unknown data type name '%s'", name));
-    }
-    return retval;
+    return DataTypeService.getInstance().getJavaTypeAdapterByName(name);
   }
+
+  private static void encode(IJavaTypeAdapter<?> datatype, SimpleValue target) {
+    if (datatype != null) {
+      target.setStringValue(datatype.getName());
+    }
+  }
+
 }

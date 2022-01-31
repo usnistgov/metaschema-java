@@ -36,7 +36,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Index;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IsUnique;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Require;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -109,6 +108,4 @@ public @interface MetaschemaAssembly {
   IsUnique[] isUnique() default {};
 
   HasCardinality[] hasCardinality() default {};
-
-  Require[] require() default {};
 }

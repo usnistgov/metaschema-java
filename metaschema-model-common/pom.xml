@@ -21,26 +21,85 @@
 
 	<description>A simple metaschema-model-common.</description>
 
-  <repositories>
-    <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>central</id>
-      <name>bintray</name>
-      <url>https://jcenter.bintray.com</url>
-    </repository>
-  </repositories>
+	<!-- 	<repositories> -->
+	<!-- 		<repository> -->
+	<!-- 			<snapshots> -->
+	<!-- 				<enabled>false</enabled> -->
+	<!-- 			</snapshots> -->
+	<!-- 			<id>central</id> -->
+	<!-- 			<name>bintray</name> -->
+	<!-- 			<url>https://jcenter.bintray.com</url> -->
+	<!-- 		</repository> -->
+	<!-- 	</repositories> -->
 
 	<dependencies>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>metaschema-java-datatypes</artifactId>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4-runtime</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.woodstox</groupId>
+			<artifactId>woodstox-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-yaml</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vladsch.flexmark</groupId>
+			<artifactId>flexmark</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vladsch.flexmark</groupId>
+			<artifactId>flexmark-ext-tables</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vladsch.flexmark</groupId>
+			<artifactId>flexmark-ext-escaped-character</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vladsch.flexmark</groupId>
+			<artifactId>flexmark-ext-superscript</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vladsch.flexmark</groupId>
+			<artifactId>flexmark-ext-gfm-strikethrough</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.vladsch.flexmark</groupId>
+			<artifactId>flexmark-ext-typographic</artifactId>
+		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>com.vladsch.flexmark</groupId> -->
+		<!-- <artifactId>flexmark-formatter</artifactId> -->
+		<!-- </dependency> -->
+		<dependency>
+			<groupId>com.vladsch.flexmark</groupId>
+			<artifactId>flexmark-html2md-converter</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>org.antlr</groupId>
-			<artifactId>antlr4-runtime</artifactId>
+			<groupId>com.github.seancfoley</groupId>
+			<artifactId>ipaddress</artifactId>
+			<version>5.3.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-jul</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
 		</dependency>
 
 		<dependency>
@@ -51,12 +110,31 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+		</dependency>
+		<!-- 		<dependency> -->
+		<!-- 			<groupId>org.eclipse.jdt</groupId> -->
+		<!-- 			<artifactId>org.eclipse.jdt.annotation</artifactId> -->
+		<!-- 			<scope>provided</scope> -->
+		<!-- 		</dependency> -->
+
+		<dependency>
 			<groupId>com.adelean</groupId>
 			<artifactId>inject-resources-junit-jupiter</artifactId>
 			<version>0.1.0</version>
 			<scope>test</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock-junit5</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

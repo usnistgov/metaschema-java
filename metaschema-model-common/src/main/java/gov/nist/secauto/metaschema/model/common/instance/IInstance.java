@@ -26,16 +26,48 @@
 
 package gov.nist.secauto.metaschema.model.common.instance;
 
-import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.IModelElement;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
 /**
  * This marker interface indicates that this object is an instance.
  */
-public interface IInstance {
+public interface IInstance extends IModelElement {
   /**
-   * Retrieve the Metaschema definition on which the instance was declared.
+   * Retrieve the Metaschema definition on which the instance was declared. This value will typically
+   * not be {@code null}, except in the case that the instance represents a definition at the root.
    * 
    * @return the Metaschema definition on which the instance was declared
    */
-  IFlaggedDefinition getContainingDefinition();
+  INamedModelDefinition getContainingDefinition();
+
+  /**
+   * Generates a "coordinate" string for the provided information element instance.
+   * 
+   * A coordinate consists of the element's:
+   * <ul>
+   * <li>containing Metaschema's short name</li>
+   * <li>model type</li>
+   * <li>name</li>
+   * <li>hash code</li>
+   * <li>the hash code of the definition</li>
+   * </ul>
+   * 
+   * @return the coordinate
+   */
+  @SuppressWarnings("null")
+  @Override
+  default String toCoordinates() {
+    IMetaschema metaschema = getContainingMetaschema();
+
+    // TODO: revisit this to add more context i.e. the containing definition
+    String retval;
+    if (metaschema == null) {
+      retval = String.format("%s:%s", getModelType());
+    } else {
+      retval = String.format("%s:%s", metaschema.getShortName(), getModelType());
+    }
+    return retval;
+  }
 }

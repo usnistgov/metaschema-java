@@ -26,15 +26,43 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.List;
 
 public class ContextItem
-    extends AbstractPathExpression {
+    extends AbstractPathExpression<INodeItem> {
+
+  public ContextItem() {
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Class<INodeItem> getBaseResultType() {
+    return INodeItem.class;
+  }
 
   @Override
-  public List<? extends IExpression> getChildren() {
+  public Class<? extends INodeItem> getStaticResultType() {
+    return getBaseResultType();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public List<@NotNull ? extends IExpression> getChildren() {
     return Collections.emptyList();
+  }
+
+  @Override
+  public ISequence<? extends INodeItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+    return visitor.visitContextItem(this, context);
   }
 
   @Override

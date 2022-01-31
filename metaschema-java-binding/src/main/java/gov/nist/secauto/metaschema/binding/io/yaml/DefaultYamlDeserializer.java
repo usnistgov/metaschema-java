@@ -29,16 +29,14 @@ package gov.nist.secauto.metaschema.binding.io.yaml;
 import com.fasterxml.jackson.core.JsonFactory;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
-import gov.nist.secauto.metaschema.binding.io.Configuration;
 import gov.nist.secauto.metaschema.binding.io.json.DefaultJsonDeserializer;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 
 public class DefaultYamlDeserializer<CLASS>
     extends DefaultJsonDeserializer<CLASS> {
 
-  public DefaultYamlDeserializer(BindingContext bindingContext, AssemblyClassBinding classBinding,
-      Configuration configuration) {
-    super(bindingContext, classBinding, configuration);
+  public DefaultYamlDeserializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {
+    super(bindingContext, classBinding);
   }
 
   // @Override

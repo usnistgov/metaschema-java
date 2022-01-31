@@ -26,48 +26,86 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.function.Function;
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionService;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
 
 public class FunctionCall implements IExpression {
-  private final Function function;
-  private final List<IExpression> arguments;
+  @NotNull
+  private final String name;
+  @NotNull
+  private final List<@NotNull IExpression> arguments;
+  private IFunction function;
 
-  public FunctionCall(String name, List<IExpression> arguments) {
-    Objects.requireNonNull(name);
-    Objects.requireNonNull(arguments);
-    this.function = FunctionService.getInstance().getFunction(name, arguments);
-    // if (this.function == null) {
-    // throw new UnsupportedOperationException(String.format("unsupported function '%s'",name));
-    // }
-    this.arguments = arguments;
+  /**
+   * Construct a new function call expression.
+   * 
+   * @param name
+   *          the function name
+   * @param arguments
+   *          the expressions used to provide arguments to the function call
+   */
+  @SuppressWarnings("null")
+  public FunctionCall(@NotNull String name, @NotNull List<@NotNull IExpression> arguments) {
+    this.name = Objects.requireNonNull(name, "name");
+    this.arguments = Objects.requireNonNull(arguments, "arguments");
   }
 
-  protected Function getFunction() {
+  /**
+   * Retrieve the associated function.
+   * 
+   * @return the function or {@code null} if no function matched the defined name and arguments
+   * @throws UnsupportedOperationException
+   *           if the function was not found
+   */
+  public synchronized IFunction getFunction() {
+    if (function == null) {
+      function = FunctionService.getInstance().getFunction(name, arguments);
+    }
     return function;
   }
 
+  @Override
+  public List<@NotNull IExpression> getChildren() {
+    return arguments;
+  }
+
+  @Override
+  public Class<? extends IItem> getBaseResultType() {
+    Class<? extends IItem> retval = getFunction().getResult().getType();
+    if (retval == null) {
+      retval = IItem.class;
+    }
+    return retval;
+  }
+
+  @SuppressWarnings("null")
   @Override
   public String toASTString() {
     return String.format("%s[name=%s]", getClass().getName(), getFunction().getName());
   }
 
   @Override
-  public List<? extends IExpression> getChildren() {
-    return arguments;
-  }
-
-  @Override
-  public boolean isNodeExpression() {
-    // TODO: implement this based on what the function returns
-    return true;
+  public ISequence<? extends IItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+    return visitor.visitFunctionCall(this, context);
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitFunctionCall(this, context);
+  }
+
+  @Override
+  public String toString() {
+    return new ASTPrinter().visit(this);
   }
 }

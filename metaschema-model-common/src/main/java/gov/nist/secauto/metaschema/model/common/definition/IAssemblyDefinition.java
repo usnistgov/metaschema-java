@@ -27,19 +27,21 @@
 package gov.nist.secauto.metaschema.model.common.definition;
 
 import gov.nist.secauto.metaschema.model.common.Assembly;
-import gov.nist.secauto.metaschema.model.common.IModelContainer;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.DefaultMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 import javax.xml.namespace.QName;
 
-public interface IAssemblyDefinition extends IFlaggedDefinition, IModelContainer, Assembly {
+public interface IAssemblyDefinition extends INamedModelDefinition, IModelContainer, Assembly {
 
   /**
    * Check if the assembly is a top-level root assembly.
@@ -53,6 +55,7 @@ public interface IAssemblyDefinition extends IFlaggedDefinition, IModelContainer
    * 
    * @return the root name if this assembly is a top-level root, or {@code null} otherwise
    */
+  @Nullable
   String getRootName();
 
   /**
@@ -60,6 +63,7 @@ public interface IAssemblyDefinition extends IFlaggedDefinition, IModelContainer
    * 
    * @return the XML qualified name
    */
+  @Nullable
   default QName getRootXmlQName() {
     QName retval = null;
     String rootName = getRootName();
@@ -79,17 +83,37 @@ public interface IAssemblyDefinition extends IFlaggedDefinition, IModelContainer
    * 
    * @return the JSON property name
    */
+  @Nullable
   default String getRootJsonName() {
     return getRootName();
   }
 
-  List<? extends IIndexConstraint> getIndexConstraints();
+  /**
+   * Get any index constraints associated with this assembly definition.
+   * 
+   * @return the collection of index constraints, which may be empty
+   */
+  @NotNull
+  List<@NotNull ? extends IIndexConstraint> getIndexConstraints();
 
-  List<? extends IUniqueConstraint> getUniqueConstraints();
+  /**
+   * Get any unique constraints associated with this assembly definition.
+   * 
+   * @return the collection of unique constraints, which may be empty
+   */
+  @NotNull
+  List<@NotNull ? extends IUniqueConstraint> getUniqueConstraints();
 
-  List<? extends ICardinalityConstraint> getHasCardinalityConstraints();
+  /**
+   * Get any cardinality constraints associated with this assembly definition.
+   * 
+   * @return the collection of cardinality constraints, which may be empty
+   */
+  @NotNull
+  List<@NotNull ? extends ICardinalityConstraint> getHasCardinalityConstraints();
 
   @Override
+  @NotNull
   default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {
     return metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(IInstanceSet.newInstanceSet(this)));
   }

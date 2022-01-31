@@ -33,7 +33,9 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -61,7 +63,7 @@ public class ClassDataTypeHandler implements DataTypeHandler {
   }
 
   @Override
-  public JavaTypeAdapter<?> getJavaTypeAdapter() {
+  public IJavaTypeAdapter<?> getJavaTypeAdapter() {
     // this is always null
     return null;
   }
@@ -99,5 +101,10 @@ public class ClassDataTypeHandler implements DataTypeHandler {
   public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, JsonWritingContext context)
       throws IOException {
     classBinding.writeItems(items, writeObjectWrapper, context);
+  }
+
+  @Override
+  public Object copyItem(@NotNull Object fromItem, Object parentInstance) throws BindingException {
+    return classBinding.copyBoundObject(fromItem, parentInstance);
   }
 }

@@ -26,10 +26,11 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
+import gov.nist.secauto.metaschema.binding.model.BoundDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
-public interface NamedProperty
-    extends Property, INamedInstance {
+public interface NamedProperty extends Property, INamedInstance {
 
-  // void writeValue(Object parentInstance, JsonParsingContext context);
+  @Override
+  BoundDefinition getDefinition();
 }

@@ -31,32 +31,31 @@ import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
-import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.model.FlagDefinition;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 
 import org.codehaus.stax2.XMLStreamWriter2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -74,7 +73,7 @@ public class DefaultFlagProperty
   // private static final Logger logger = LogManager.getLogger(DefaultFlagProperty.class);
 
   private final Flag flag;
-  private final JavaTypeAdapter<?> javaTypeAdapter;
+  private final IJavaTypeAdapter<?> javaTypeAdapter;
   private InternalFlagDefinition definition;
   private IValueConstraintSupport constraints;
 
@@ -103,7 +102,7 @@ public class DefaultFlagProperty
     return getFlagAnnotation().required();
   }
 
-  public JavaTypeAdapter<?> getJavaTypeAdapter() {
+  public IJavaTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
 
@@ -134,8 +133,6 @@ public class DefaultFlagProperty
 
   @Override
   public boolean read(Object parentInstance, StartElement parent, XmlParsingContext context) throws IOException {
-    PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushInstance(this);
 
     // when reading an attribute:
     // - "parent" will contain the attributes to read
@@ -149,17 +146,9 @@ public class DefaultFlagProperty
         // apply the value to the parentObject
         setValue(parentInstance, value);
 
-        pathBuilder.pushItem();
-
-        // validate the flag value
-        if (context.isValidating()) {
-          validateValue(value, context);
-        }
-        pathBuilder.popItem();
         handled = true;
       }
     }
-    pathBuilder.popInstance();
     return handled;
   }
 
@@ -170,26 +159,13 @@ public class DefaultFlagProperty
 
   @Override
   protected Object readInternal(Object parentInstance, JsonParsingContext context) throws IOException {
-
-    PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushInstance(this);
-
     JsonParser parser = context.getReader();
+
     // advance past the property name
     parser.nextFieldName();
+
     // parse the value
-    Object retval = readValueAndSupply(context).get();
-
-    pathBuilder.pushItem();
-
-    // validate the flag value
-    if (context.isValidating()) {
-      validateValue(retval, context);
-    }
-
-    pathBuilder.popItem();
-    pathBuilder.popInstance();
-    return retval;
+    return readValueAndSupply(context).get();
   }
 
   // TODO: implement collector?
@@ -273,7 +249,7 @@ public class DefaultFlagProperty
   }
 
   @Override
-  public IFlagDefinition getDefinition() {
+  public FlagDefinition getDefinition() {
     synchronized (this) {
       if (definition == null) {
         definition = new InternalFlagDefinition();
@@ -282,10 +258,26 @@ public class DefaultFlagProperty
     return definition;
   }
 
-  private class InternalFlagDefinition implements IFlagDefinition {
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    // TODO: implement
+    return null;
+  }
+
+  @Override
+  public void copyBoundObject(@NotNull Object fromInstance, @NotNull Object toInstance) {
+    Object value = getValue(fromInstance);
+
+    IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
+
+    Object copiedValue = adapter.copy(value);
+    setValue(toInstance, copiedValue);
+  }
+
+  private class InternalFlagDefinition implements FlagDefinition {
     @Override
-    public DataTypes getDatatype() {
-      return DataTypes.getDataTypeForAdapter(getJavaTypeAdapter());
+    public IJavaTypeAdapter<?> getDatatype() {
+      return getJavaTypeAdapter();
     }
 
     @Override
@@ -342,17 +334,40 @@ public class DefaultFlagProperty
       checkModelConstraints();
       return constraints.getExpectConstraints();
     }
+
+    @Override
+    public BindingContext getBindingContext() {
+      return getParentClassBinding().getBindingContext();
+    }
+
+    @Override
+    public String getFormalName() {
+      // TODO: implement
+      return null;
+    }
+
+    @Override
+    public MarkupLine getDescription() {
+      // TODO: implement
+      return null;
+    }
+
+    @Override
+    public @NotNull ModuleScopeEnum getModuleScope() {
+      // TODO: is this the right value?
+      return ModuleScopeEnum.INHERITED;
+    }
+
+    @Override
+    public boolean isGlobal() {
+      return false;
+    }
+
+    @Override
+    public IMetaschema getContainingMetaschema() {
+      // TODO: implement
+      return null;
+    }
   }
 
-  @Override
-  public void validateValue(Object value, ParsingContext<?, ?> context) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public IInstanceSet evaluateMetapathInstances(MetapathExpression target) {
-    // TODO Auto-generated method stub
-    return null;
-  }
 }

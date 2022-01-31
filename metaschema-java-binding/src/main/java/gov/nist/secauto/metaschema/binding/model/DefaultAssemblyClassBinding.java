@@ -49,8 +49,6 @@ import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
-import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
@@ -61,11 +59,13 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -231,11 +231,11 @@ public class DefaultAssemblyClassBinding
 
   @Override
   public Collection<? extends NamedModelProperty> getModelInstances() {
-    return getNamedModelInstances().values();
+    return getNamedModelInstances();
   }
 
   @Override
-  public Map<String, ? extends NamedModelProperty> getNamedModelInstances() {
+  public Map<String, ? extends NamedModelProperty> getNamedModelInstanceMap() {
     initalizeModelInstances();
     return modelInstances;
   }
@@ -247,15 +247,15 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public Map<String, ? extends FieldProperty> getFieldInstances() {
+  public Map<String, ? extends FieldProperty> getFieldInstanceMap() {
     return Collections.unmodifiableMap(
-        getNamedModelInstances().values().stream().filter(x -> x instanceof FieldProperty).map(x -> (FieldProperty) x)
+        getNamedModelInstances().stream().filter(x -> x instanceof FieldProperty).map(x -> (FieldProperty) x)
             .collect(Collectors.toMap(FieldProperty::getEffectiveName, Function.identity())));
   }
 
   @Override
-  public Map<String, ? extends AssemblyProperty> getAssemblyInstances() {
-    return Collections.unmodifiableMap(getNamedModelInstances().values().stream()
+  public Map<String, ? extends AssemblyProperty> getAssemblyInstanceMap() {
+    return Collections.unmodifiableMap(getNamedModelInstances().stream()
         .filter(x -> x instanceof AssemblyProperty).map(x -> (AssemblyProperty) x)
         .collect(Collectors.toMap(AssemblyProperty::getEffectiveName, Function.identity())));
   }
@@ -502,10 +502,6 @@ public class DefaultAssemblyClassBinding
       }
     }
 
-    if (context.isValidating()) {
-      validate(instance);
-    }
-
     if (jsonKey != null) {
       // read the END_OBJECT for the JSON key value
       JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
@@ -622,4 +618,18 @@ public class DefaultAssemblyClassBinding
     }
   }
 
+  @Override
+  protected void copyBoundObjectInternal(@NotNull Object fromInstance, @NotNull Object toInstance)
+      throws BindingException {
+    super.copyBoundObjectInternal(fromInstance, toInstance);
+
+    for (NamedModelProperty property : getModelInstances()) {
+      property.copyBoundObject(fromInstance, toInstance);
+    }
+  }
+
+  @Override
+  public String getName() {
+    return isRoot() ? getRootName() : super.getName();
+  }
 }

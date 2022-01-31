@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 
 @MetaschemaAssembly
 public class FlaggedAssemblyClass {

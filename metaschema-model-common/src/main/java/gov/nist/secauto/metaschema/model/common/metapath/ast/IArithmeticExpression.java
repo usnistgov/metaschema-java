@@ -26,10 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public interface IArithmeticExpression extends IExpression {
-  @Override
-  default boolean isNodeExpression() {
-    return false;
-  }
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
+public interface IArithmeticExpression<RESULT_TYPE extends IAnyAtomicItem> extends IExpression {
+  @Override
+  Class<RESULT_TYPE> getBaseResultType();
 }

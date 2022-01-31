@@ -28,15 +28,22 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
+import java.util.stream.Stream;
 
 public class FunctionService {
   private static FunctionService functionService;
 
+  /**
+   * Get the singleton instance of the function service.
+   * 
+   * @return the service instance
+   */
   public static synchronized FunctionService getInstance() {
     if (functionService == null) {
       functionService = new FunctionService();
@@ -44,22 +51,82 @@ public class FunctionService {
     return functionService;
   }
 
-  private final ServiceLoader<FunctionLibrary> loader;
+  @NotNull
+  private final ServiceLoader<@NotNull IFunctionLibrary> loader;
+  @NotNull
+  private LoadedFunctionsLibrary library;
 
+  /**
+   * Construct a new function service.
+   */
+  @SuppressWarnings("null")
   public FunctionService() {
-    this.loader = ServiceLoader.load(FunctionLibrary.class);
+    this.loader = ServiceLoader.load(IFunctionLibrary.class);
+    this.library = load();
   }
 
-  protected ServiceLoader<FunctionLibrary> getLoader() {
+  /**
+   * Load all known functions registered with this function service.
+   */
+  @NotNull
+  public synchronized LoadedFunctionsLibrary load() {
+    ServiceLoader<@NotNull IFunctionLibrary> loader = getLoader();
+    @SuppressWarnings("null")
+    Stream<@NotNull IFunctionLibrary> libraryStream = loader.stream().map(Provider<IFunctionLibrary>::get);
+    Stream<@NotNull IFunction> functions = libraryStream.flatMap(library -> {
+      return library.getFunctionsAsStream();
+    });
+
+    this.library = new LoadedFunctionsLibrary();
+    functions.forEachOrdered(function -> this.library.registerFunction(function));
+    return this.library;
+  }
+
+  /**
+   * Get the function service loader instance.
+   * 
+   * @return the service loader instance.
+   */
+  @NotNull
+  protected ServiceLoader<@NotNull IFunctionLibrary> getLoader() {
     return loader;
   }
 
-  public Function getFunction(String name, IExpression... args) {
-    return getFunction(name, Arrays.asList(args));
+  /**
+   * Retrieve the function with the provided name that supports the signature of the provided methods,
+   * if such a function exists.
+   * 
+   * @param name
+   *          the name of a group of functions
+   * @param arguments
+   *          a list of argument expressions for use in determining an argument signature match
+   * @return the matching function or {@code null} if no match exists
+   * @throws UnsupportedOperationException
+   *           if a matching function was not found
+   */
+  @SuppressWarnings("null")
+  public IFunction getFunction(@NotNull String name, @NotNull IExpression... arguments) {
+    return getFunction(name, Arrays.asList(arguments));
   }
 
-  public Function getFunction(String name, List<IExpression> args) {
-    return getLoader().stream().map(Provider<FunctionLibrary>::get)
-        .filter(x -> x.hasFunction(name, args)).findFirst().map(x -> x.getFunction(name, args)).orElse(null);
+  /**
+   * Retrieve the function with the provided name that supports the signature of the provided methods,
+   * if such a function exists.
+   * 
+   * @param name
+   *          the name of a group of functions
+   * @param arguments
+   *          a list of argument expressions for use in determining an argument signature match
+   * @return the matching function
+   * @throws UnsupportedOperationException
+   *           if a matching function was not found
+   */
+  public synchronized IFunction getFunction(@NotNull String name, @NotNull List<@NotNull IExpression> arguments) {
+    IFunction retval = library.getFunction(name, arguments);
+    if (retval == null) {
+      throw new UnsupportedOperationException(
+          String.format("unable to find function with name '%s' having arity '%d'", name, arguments.size()));
+    }
+    return retval;
   }
 }

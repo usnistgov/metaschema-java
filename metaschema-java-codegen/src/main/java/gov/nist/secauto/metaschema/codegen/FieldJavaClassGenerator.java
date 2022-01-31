@@ -27,28 +27,28 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.AnnotationSpec.Builder;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.codegen.property.FieldValuePropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.FlagPropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.PropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
-import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
-import gov.nist.secauto.metaschema.model.instances.FlagInstance;
+import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 public class FieldJavaClassGenerator
-    extends AbstractJavaClassGenerator<FieldDefinition> {
+    extends AbstractJavaClassGenerator<IFieldDefinition> {
   private static final Logger logger = LogManager.getLogger(FieldJavaClassGenerator.class);
 
   private final FieldValuePropertyGenerator fieldValueInstance;
@@ -62,14 +62,14 @@ public class FieldJavaClassGenerator
    * @param typeResolver
    *          the resolver to use to lookup Java type information for Metaschema objects
    */
-  public FieldJavaClassGenerator(FieldDefinition definition, TypeResolver typeResolver) {
+  public FieldJavaClassGenerator(@NotNull IFieldDefinition definition, @NotNull TypeResolver typeResolver) {
     super(definition, typeResolver);
     this.fieldValueInstance = newFieldValueInstance();
     this.hasJsonValueKeyFlag = definition.hasJsonValueKeyFlagInstance();
   }
 
   @Override
-  public FlagPropertyGenerator newFlagPropertyGenerator(FlagInstance<?> instance) {
+  public FlagPropertyGenerator newFlagPropertyGenerator(IFlagInstance instance) {
     return super.newFlagPropertyGenerator(instance);
   }
 
@@ -80,9 +80,9 @@ public class FieldJavaClassGenerator
   }
 
   @Override
-  protected Set<MetaschemaFlaggedDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
-    Set<MetaschemaFlaggedDefinition> retval = new HashSet<>();
-    retval.addAll(super.buildClass(builder));
+  protected Set<INamedModelDefinition> buildClass(TypeSpec.Builder builder, ClassName className) throws IOException {
+    Set<INamedModelDefinition> retval = new HashSet<>();
+    retval.addAll(super.buildClass(builder, className));
 
     AnnotationSpec.Builder metaschemaField = AnnotationSpec.builder(MetaschemaField.class);
     boolean isCollapsible = false;

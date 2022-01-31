@@ -26,18 +26,37 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class StringConcat
-    extends AbstractNAryExpression<IExpression> {
+    extends AbstractNAryExpression {
 
-  public StringConcat(List<IExpression> chidren) {
+  public StringConcat(@NotNull List<@NotNull IExpression> chidren) {
     super(chidren);
   }
 
+  @SuppressWarnings("null")
   @Override
-  public boolean isNodeExpression() {
-    return false;
+  public Class<IStringItem> getBaseResultType() {
+    return IStringItem.class;
+  }
+
+  @Override
+  public Class<IStringItem> getStaticResultType() {
+    return getBaseResultType();
+  }
+
+  @Override
+  public ISequence<? extends IStringItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+    return visitor.visitStringConcat(this, context);
   }
 
   @Override

@@ -49,4 +49,19 @@ public class ClassIntrospector {
 
     return retval.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(retval);
   }
+
+  public static Method getMatchingMethod(Class<?> searchClass, String name, Class<?>... parameterTypes) {
+    Method retval = null;
+    do {
+      try {
+        retval = searchClass.getDeclaredMethod(name, parameterTypes);
+        // stop on first found method
+        break;
+      } catch (NoSuchMethodException ex) {
+        // do nothing, no matching method was found
+      }
+    } while ((searchClass = searchClass.getSuperclass()) != null);
+
+    return retval;
+  }
 }

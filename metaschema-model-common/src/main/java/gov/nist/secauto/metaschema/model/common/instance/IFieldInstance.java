@@ -29,8 +29,11 @@ package gov.nist.secauto.metaschema.model.common.instance;
 import gov.nist.secauto.metaschema.model.common.Field;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.DefaultMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 
@@ -45,6 +48,7 @@ public interface IFieldInstance extends INamedModelInstance, Field {
    */
   @Override
   default QName getXmlQName() {
+    @Nullable
     QName retval = null;
     if (isInXmlWrapped()) {
       String namespace = getXmlNamespace();
@@ -59,9 +63,14 @@ public interface IFieldInstance extends INamedModelInstance, Field {
 
   @Override
   default String getJsonName() {
+    @NotNull
     String retval;
     if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      retval = getGroupAsName();
+      String groupAsName = getGroupAsName();
+      if (groupAsName == null) {
+        throw new NullPointerException("null group-as name");
+      }
+      retval = groupAsName;
     } else {
       retval = getEffectiveName();
     }
@@ -77,6 +86,16 @@ public interface IFieldInstance extends INamedModelInstance, Field {
    * @return {@code true} if an XML wrapper is required, or {@code false} otherwise
    */
   boolean isInXmlWrapped();
+
+  /**
+   * Determines if the instance is a simple field value without flags, or if it has a complex
+   * structure (i.e, flags, model).
+   * 
+   * @return {@code true} if the instance contains only a value, or {@code false} otherwise
+   */
+  default boolean isSimple() {
+    return getDefinition().isSimple();
+  }
 
   @Override
   default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {

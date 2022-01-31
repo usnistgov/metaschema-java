@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.explode;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
@@ -36,22 +36,37 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This assembly definition implementation represents a cycle in the Metaschema model where a
+ * sequence of assemblies references the first assembly in the sequence.
+ */
 public class CycleAssemblyDefinition implements AssemblyDefinition {
+  @NotNull
   private final ProxiedAssemblyDefinition cycle;
 
-  public CycleAssemblyDefinition(ProxiedAssemblyDefinition cycle) {
+  /**
+   * Create a new assembly definition that references the assembly that is the head and tail of a
+   * cycle.
+   * 
+   * @param cycle
+   *          the cycled assembly definition
+   */
+  public CycleAssemblyDefinition(@NotNull ProxiedAssemblyDefinition cycle) {
     this.cycle = cycle;
   }
 
@@ -60,13 +75,19 @@ public class CycleAssemblyDefinition implements AssemblyDefinition {
     // do nothing, the proxy is already initialized
   }
 
+  /**
+   * Get the referenced assembly in the cycle.
+   * 
+   * @return the assembly
+   */
+  @NotNull
   protected ProxiedAssemblyDefinition getCycle() {
     return cycle;
   }
 
   @Override
-  public Map<String, ? extends IFlagInstance> getFlagInstances() {
-    return getCycle().getFlagInstances();
+  public Map<@NotNull String, ? extends IFlagInstance> getFlagInstanceMap() {
+    return getCycle().getFlagInstanceMap();
   }
 
   @Override
@@ -105,18 +126,18 @@ public class CycleAssemblyDefinition implements AssemblyDefinition {
   }
 
   @Override
-  public Map<String, ? extends IModelInstance> getNamedModelInstances() {
-    return getCycle().getNamedModelInstances();
+  public Map<@NotNull String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
+    return getCycle().getNamedModelInstanceMap();
   }
 
   @Override
-  public Map<String, ? extends IFieldInstance> getFieldInstances() {
-    return getCycle().getFieldInstances();
+  public Map<@NotNull String, ? extends IFieldInstance> getFieldInstanceMap() {
+    return getCycle().getFieldInstanceMap();
   }
 
   @Override
-  public Map<String, ? extends IAssemblyInstance> getAssemblyInstances() {
-    return getCycle().getAssemblyInstances();
+  public Map<@NotNull String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
+    return getCycle().getAssemblyInstanceMap();
   }
 
   @Override
@@ -177,5 +198,30 @@ public class CycleAssemblyDefinition implements AssemblyDefinition {
   @Override
   public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
     return getCycle().getHasCardinalityConstraints();
+  }
+
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    return getCycle().getContainingMetaschema();
+  }
+
+  @Override
+  public String getFormalName() {
+    return getCycle().getFormalName();
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+    return getCycle().getDescription();
+  }
+
+  @Override
+  public ModuleScopeEnum getModuleScope() {
+    return ModuleScopeEnum.LOCAL;
+  }
+
+  @Override
+  public boolean isGlobal() {
+    return false;
   }
 }

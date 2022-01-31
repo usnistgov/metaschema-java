@@ -26,19 +26,38 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.List;
 
 public class RootSlashOnlyPath
-    extends AbstractRootPathExpression {
+    extends AbstractPathExpression<IDocumentNodeItem> {
 
   public RootSlashOnlyPath() {
-    super(null);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public List<@NotNull ? extends IExpression> getChildren() {
+    return Collections.emptyList();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Class<IDocumentNodeItem> getBaseResultType() {
+    return IDocumentNodeItem.class;
   }
 
   @Override
-  public List<? extends IPathExpression> getChildren() {
-    return Collections.emptyList();
+  public ISequence<? extends IDocumentNodeItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+    return visitor.visitRootSlashOnlyPath(this, context);
   }
 
   @Override

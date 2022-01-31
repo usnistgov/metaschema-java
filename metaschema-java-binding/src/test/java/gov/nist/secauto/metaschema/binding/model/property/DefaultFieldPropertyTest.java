@@ -39,13 +39,12 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-import gov.nist.secauto.metaschema.datatypes.adapter.types.StringAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
@@ -74,7 +73,6 @@ class DefaultFieldPropertyTest {
   private BindingContext bindingContext = context.mock(BindingContext.class);
   private JsonParsingContext jsonParsingContext = context.mock(JsonParsingContext.class);
   private XmlParsingContext xmlParsingContext = context.mock(XmlParsingContext.class);
-  private PathBuilder pathBuilder = context.mock(PathBuilder.class);
 
   @Test
   void testJsonRead()
@@ -96,19 +94,6 @@ class DefaultFieldPropertyTest {
 
         allowing(jsonParsingContext).getReader();
         will(returnValue(jsonParser));
-        allowing(jsonParsingContext).isValidating();
-        will(returnValue(false));
-        allowing(jsonParsingContext).getPathBuilder();
-        will(returnValue(pathBuilder));
-        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
-        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
-        ignoring(pathBuilder).popInstance();
-        ignoring(pathBuilder).pushItem();
-        ignoring(pathBuilder).pushItem(with(any(String.class)));
-        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
-        ignoring(pathBuilder).popItem();
-        ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
-        will(returnValue("xpath"));
       }
     });
 
@@ -157,19 +142,6 @@ class DefaultFieldPropertyTest {
 
         allowing(xmlParsingContext).getReader();
         will(returnValue(eventReader));
-        allowing(xmlParsingContext).isValidating();
-        will(returnValue(false));
-        allowing(xmlParsingContext).getPathBuilder();
-        will(returnValue(pathBuilder));
-        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
-        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
-        ignoring(pathBuilder).popInstance();
-        ignoring(pathBuilder).pushItem();
-        ignoring(pathBuilder).pushItem(with(any(String.class)));
-        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
-        ignoring(pathBuilder).popItem();
-        ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
-        will(returnValue("xpath"));
       }
     });
 
@@ -216,19 +188,6 @@ class DefaultFieldPropertyTest {
 
         allowing(xmlParsingContext).getReader();
         will(returnValue(eventReader));
-        allowing(xmlParsingContext).isValidating();
-        will(returnValue(false));
-        allowing(xmlParsingContext).getPathBuilder();
-        will(returnValue(pathBuilder));
-        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
-        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
-        ignoring(pathBuilder).popInstance();
-        ignoring(pathBuilder).pushItem();
-        ignoring(pathBuilder).pushItem(with(any(String.class)));
-        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
-        ignoring(pathBuilder).popItem();
-        ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
-        will(returnValue("xpath"));
       }
     });
 
@@ -274,19 +233,6 @@ class DefaultFieldPropertyTest {
 
         allowing(jsonParsingContext).getReader();
         will(returnValue(jsonParser));
-        allowing(jsonParsingContext).isValidating();
-        will(returnValue(false));
-        allowing(jsonParsingContext).getPathBuilder();
-        will(returnValue(pathBuilder));
-        ignoring(pathBuilder).pushInstance(with(any(FlagProperty.class)));
-        ignoring(pathBuilder).pushInstance(with(any(NamedModelProperty.class)));
-        ignoring(pathBuilder).popInstance();
-        ignoring(pathBuilder).pushItem();
-        ignoring(pathBuilder).pushItem(with(any(String.class)));
-        ignoring(pathBuilder).pushItem(with(any(Integer.class)));
-        ignoring(pathBuilder).popItem();
-        ignoring(pathBuilder).getPath(with(any(PathBuilder.PathType.class)));
-        will(returnValue("xpath"));
       }
     });
 

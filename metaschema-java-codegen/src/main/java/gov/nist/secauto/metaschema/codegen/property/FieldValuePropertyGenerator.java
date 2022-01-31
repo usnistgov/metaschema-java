@@ -33,44 +33,31 @@ import com.squareup.javapoet.TypeName;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.codegen.FieldJavaClassGenerator;
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Set;
 
 /**
  * Represents the "value" of a field object.
- * 
- * @author davidwal
- *
  */
 public class FieldValuePropertyGenerator
     extends AbstractPropertyGenerator<FieldJavaClassGenerator> {
-  private static final Logger logger = LogManager.getLogger(FieldValuePropertyGenerator.class);
+  // private static final Logger logger = LogManager.getLogger(FieldValuePropertyGenerator.class);
 
-  public static DataTypes getValueDataType(FieldDefinition definition) {
-    DataTypes retval = definition.getDatatype();
-    if (retval == null) {
-      logger.warn("Unsupported datatype '{}', using {} instead", retval, DataTypes.DEFAULT_DATA_TYPE.toString());
-      retval = DataTypes.DEFAULT_DATA_TYPE;
-    }
-    return retval;
-  }
-
-  public FieldValuePropertyGenerator(FieldJavaClassGenerator generator) {
+  public FieldValuePropertyGenerator(@NotNull FieldJavaClassGenerator generator) {
     super(generator);
   }
 
   @Override
   public TypeName getJavaType() {
-    return ClassName.get(FieldValuePropertyGenerator.getValueDataType(getClassGenerator().getDefinition())
-        .getJavaTypeAdapter().getJavaClass());
+    return ClassName
+        .get(getClassGenerator().getDefinition().getDatatype().getJavaClass());
   }
 
   @Override
@@ -84,20 +71,16 @@ public class FieldValuePropertyGenerator
   }
 
   protected String getJsonPropertyName() {
-    String retval = getClassGenerator().getDefinition().getJsonValueKeyName();
-    if (retval == null) {
-      throw new RuntimeException("Unable to determine property name");
-    }
-    return retval;
+    return getClassGenerator().getDefinition().getJsonValueKeyName();
   }
 
   @Override
-  protected Set<MetaschemaFlaggedDefinition> buildField(FieldSpec.Builder builder) {
+  protected Set<INamedModelDefinition> buildField(FieldSpec.Builder builder) {
 
-    FieldDefinition definition = getClassGenerator().getDefinition();
+    IFieldDefinition definition = getClassGenerator().getDefinition();
     AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(FieldValue.class);
 
-    DataTypes valueDataType = getValueDataType(definition);
+    IJavaTypeAdapter<?> valueDataType = definition.getDatatype();
 
     // a field object always has a single value
     if (definition.hasJsonValueKeyFlagInstance()) {
@@ -106,7 +89,7 @@ public class FieldValuePropertyGenerator
       fieldValue.addMember("name", "$S", definition.getJsonValueKeyName());
     }
 
-    fieldValue.addMember("typeAdapter", "$T.class", valueDataType.getJavaTypeAdapter().getClass());
+    fieldValue.addMember("typeAdapter", "$T.class", valueDataType.getClass());
 
     builder.addAnnotation(fieldValue.build());
     return Collections.emptySet();

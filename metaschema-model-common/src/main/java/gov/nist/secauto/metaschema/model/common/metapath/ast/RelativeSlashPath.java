@@ -26,21 +26,27 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.INodeSet;
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
+
+import org.jetbrains.annotations.NotNull;
 
 public class RelativeSlashPath
     extends AbstractRelativePathExpression {
 
-  public RelativeSlashPath(IExpression left, IExpression right) {
+  public RelativeSlashPath(@NotNull IExpression left, @NotNull IExpression right) {
     super(left, right);
+  }
+
+  @Override
+  public ISequence<?> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+    return visitor.visitRelativeSlashPath(this, context);
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitRelativeSlashPath(this, context);
   }
-
 }

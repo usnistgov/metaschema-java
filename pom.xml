@@ -115,10 +115,13 @@
 
 		<dependency.antlr4.version>4.9.2</dependency.antlr4.version>
 		<dependency.commons-lang3.version>3.11</dependency.commons-lang3.version>
+		<dependency.commons-collections4.version>4.4</dependency.commons-collections4.version>
+		<dependency.eclipse-jdt-annotation.version>2.2.600</dependency.eclipse-jdt-annotation.version>
 		<dependency.flexmark.version>0.62.2</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.30</dependency.freemarker.version>
 		<dependency.jackson.version>2.12.1</dependency.jackson.version>
 		<dependency.jaxb.version>3.0.0</dependency.jaxb.version>
+		<dependency.jetbrains-annotation.version>16.0.2</dependency.jetbrains-annotation.version>
 		<dependency.junit5.version>5.7.2</dependency.junit5.version>
 		<dependency.junit5-platform-launcher.version>1.7.2</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.17.1</dependency.log4j2.version>
@@ -309,7 +312,26 @@
 				<artifactId>commons-lang3</artifactId>
 				<version>${dependency.commons-lang3.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-collections4</artifactId>
+				<version>${dependency.commons-collections4.version}</version>
+			</dependency>
 
+			<dependency>
+				<groupId>org.jetbrains</groupId>
+				<artifactId>annotations</artifactId>
+				<version>${dependency.jetbrains-annotation.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<!--
+			<dependency>
+				<groupId>org.eclipse.jdt</groupId>
+				<artifactId>org.eclipse.jdt.annotation</artifactId>
+				<version>>${dependency.eclipse-jdt-annotation.version}</version>
+				<scope>provided</scope>
+			</dependency>
+		-->
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-api</artifactId>
@@ -382,11 +404,11 @@
 					<artifactId>xmlbeans</artifactId>
 					<version>${dependency.xmlbeans.version}</version>
 					<configuration>
-<!-- 						<sourceOnly>true</sourceOnly> -->
-<!-- 						<noUpa>false</noUpa> -->
+						<!-- <sourceOnly>true</sourceOnly> -->
+						<!-- <noUpa>false</noUpa> -->
 						<!-- <javaSource>1.5</javaSource> -->
 						<!-- <javaSource combine.self="override"></javaSource> -->
-<!-- 						<noJavac>true</noJavac> -->
+						<!-- <noJavac>true</noJavac> -->
 					</configuration>
 				</plugin>
 				<!-- <plugin> -->
@@ -461,7 +483,8 @@
 						<topSiteURL>${site.url}</topSiteURL>
 					</configuration>
 				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -613,7 +636,6 @@
 
 	<modules>
 		<module>metaschema-model</module>
-		<module>metaschema-java-datatypes</module>
 		<module>metaschema-java-binding-annotations</module>
 		<module>metaschema-java-codegen</module>
 		<module>metaschema-maven-plugin</module>

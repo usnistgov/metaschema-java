@@ -26,13 +26,32 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.math.BigInteger;
 
 public class IntegerLiteral
-    extends AbstractLiteralExpression<BigInteger> {
+    extends AbstractLiteralExpression<IIntegerItem, BigInteger> {
 
-  public IntegerLiteral(BigInteger value) {
+  public IntegerLiteral(@NotNull BigInteger value) {
     super(value);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Class<IIntegerItem> getBaseResultType() {
+    return IIntegerItem.class;
+  }
+
+  @Override
+  public ISequence<? extends IIntegerItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+    return visitor.visitIntegerLiteral(this, context);
   }
 
   @Override

@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.model.common.util.ModelWalker;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -50,7 +51,8 @@ public abstract class DefinitionCollectingModelWalker
   private static final Logger logger = LogManager.getLogger(DefinitionCollectingModelWalker.class);
 
   private final Function<IDefinition, Boolean> filter;
-  private final Set<IDefinition> definitions = new LinkedHashSet<>();
+  @NotNull
+  private final Set<@NotNull IDefinition> definitions = new LinkedHashSet<>();
 
   /**
    * Construct a new walker using the provided filter.
@@ -77,7 +79,8 @@ public abstract class DefinitionCollectingModelWalker
    * 
    * @return the collection of definitions
    */
-  public Collection<? extends IDefinition> getDefinitions() {
+  @NotNull
+  public Collection<@NotNull ? extends IDefinition> getDefinitions() {
     return definitions;
   }
 

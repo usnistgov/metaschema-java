@@ -26,10 +26,47 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class StringLiteral
-    extends AbstractLiteralExpression<String> {
-  public StringLiteral(String value) {
-    super(value);
+    extends AbstractLiteralExpression<IStringItem, String> {
+  private static final Pattern pattern = Pattern.compile("^'(.*)'$|^\"(.*)\"$");
+
+  public StringLiteral(@NotNull String value) {
+    super(removeQuotes(value));
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Class<IStringItem> getBaseResultType() {
+    return IStringItem.class;
+  }
+
+  @NotNull
+  private static String removeQuotes(@NotNull String value) {
+    Matcher matcher = pattern.matcher(value);
+    if (matcher.matches()) {
+      if (matcher.group(1) != null) {
+        value = matcher.group(1);
+      } else if (matcher.group(2) != null) {
+        value = matcher.group(2);
+      }
+    }
+    return value;
+  }
+
+  @Override
+  public ISequence<? extends IStringItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+    return visitor.visitStringLiteral(this, context);
   }
 
   @Override

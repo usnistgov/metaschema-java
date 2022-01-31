@@ -26,26 +26,49 @@
 
 package gov.nist.secauto.metaschema.model.common.instance;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 
+import org.jetbrains.annotations.NotNull;
+
 public class RootAssemblyDefinitionInstance implements IAssemblyInstance {
+  @NotNull
   private final IAssemblyDefinition rootAssemblyDefinition;
 
-  public RootAssemblyDefinitionInstance(IAssemblyDefinition rootAssemblyDefinition) {
-    if (!rootAssemblyDefinition.isRoot()) {
+  /**
+   * Construct a new root assembly instanced based on the provided definition. The provided definition
+   * must be a root assembly definition.
+   * 
+   * @param definition
+   *          the root assembly definition
+   */
+  public RootAssemblyDefinitionInstance(@NotNull IAssemblyDefinition definition) {
+    if (!definition.isRoot()) {
       throw new IllegalArgumentException();
     }
-    this.rootAssemblyDefinition = rootAssemblyDefinition;
+    this.rootAssemblyDefinition = definition;
   }
 
+  /**
+   * Get the underlying definition used for this root-level instance.
+   * 
+   * @return the proxied definition
+   */
+  @NotNull
   protected IAssemblyDefinition getProxy() {
     return rootAssemblyDefinition;
   }
 
   @Override
   public String getName() {
-    return getProxy().getRootName();
+    IAssemblyDefinition rootAssembly = getProxy();
+    // guaranteed to be not null, since we know the proxy is a root assembly
+    String retval = rootAssembly.getRootName();
+    if (retval == null) {
+      throw new NullPointerException("root assembly name is null");
+    }
+    return retval;
   }
 
   @Override
@@ -108,4 +131,8 @@ public class RootAssemblyDefinitionInstance implements IAssemblyInstance {
     return getProxy();
   }
 
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    return getProxy().getContainingMetaschema();
+  }
 }

@@ -26,12 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.ast.Comparison.Operator;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.IComparison.Operator;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -92,12 +93,15 @@ public class BuildAstVisitor
    *          a supplier that will instantiate an expression based on the provided collection
    * @return the left expression or the supplied expression for a collection
    */
+  @NotNull
   protected <CONTEXT extends ParserRuleContext, NODE extends IExpression> IExpression
-      handleNAiryCollection(CONTEXT context, java.util.function.Function<List<NODE>, IExpression> supplier) {
+      handleNAiryCollection(@NotNull CONTEXT context,
+          @NotNull java.util.function.Function<@NotNull List<NODE>, @NotNull IExpression> supplier) {
     return handleNAiryCollection(context, 2, (ctx, idx) -> {
       // skip operator, since we know what it is
       ParseTree tree = ctx.getChild(idx + 1);
-      @SuppressWarnings("unchecked")
+      @SuppressWarnings({ "unchecked", "null" })
+      @NotNull
       NODE node = (NODE) tree.accept(this);
       return node;
     }, supplier);
@@ -124,17 +128,20 @@ public class BuildAstVisitor
    *          a supplier that will instantiate an expression based on the provided collection
    * @return the left expression or the supplied expression for a collection
    */
+  @NotNull
   protected <CONTEXT extends ParserRuleContext, NODE extends IExpression> IExpression handleNAiryCollection(
-      CONTEXT context, int step, BiFunction<CONTEXT, Integer, NODE> parser,
-      java.util.function.Function<List<NODE>, IExpression> supplier) {
+      @NotNull CONTEXT context, int step, @NotNull BiFunction<@NotNull CONTEXT, @NotNull Integer, @NotNull NODE> parser,
+      @NotNull java.util.function.Function<@NotNull List<NODE>, @NotNull IExpression> supplier) {
     int numChildren = context.getChildCount();
 
+    @NotNull
     IExpression retval;
     if (numChildren == 0) {
-      retval = null;
+      throw new IllegalStateException("there should always be a child expression");
     } else {
       ParseTree leftTree = context.getChild(0);
-      @SuppressWarnings("unchecked")
+      @SuppressWarnings({ "unchecked", "null" })
+      @NotNull
       NODE leftResult = (NODE) leftTree.accept(this);
 
       if (numChildren == 1) {
@@ -143,10 +150,13 @@ public class BuildAstVisitor
         List<NODE> children = new ArrayList<>(numChildren - 1 / step);
         children.add(leftResult);
         for (int i = 1; i < numChildren; i = i + step) {
+          @SuppressWarnings("null")
           NODE result = parser.apply(context, i);
           children.add(result);
         }
-        retval = supplier.apply(children);
+        @SuppressWarnings("null")
+        IExpression result = supplier.apply(children);
+        retval = result;
       }
     }
     return retval;
@@ -159,7 +169,7 @@ public class BuildAstVisitor
 
   @Override
   public IExpression visitOrexpr(OrexprContext context) {
-    return handleNAiryCollection(context, children -> new OrNode(children));
+    return handleNAiryCollection(context, children -> new Or(children));
   }
 
   @Override
@@ -171,18 +181,20 @@ public class BuildAstVisitor
   public IExpression visitComparisonexpr(ComparisonexprContext ctx) {
     int numChildren = ctx.getChildCount();
     if (numChildren == 1) {
-      return (IExpression) super.visitComparisonexpr(ctx);
+      return super.visitComparisonexpr(ctx);
     } else if (numChildren != 3) {
       throw new UnsupportedOperationException();
     }
 
-    IExpression left = (IExpression) visit(ctx.getChild(0));
-    IExpression right = (IExpression) visit(ctx.getChild(2));
+    IExpression left = visit(ctx.getChild(0));
+    IExpression right = visit(ctx.getChild(2));
 
     // the operator
     ParseTree operatorTree = ctx.getChild(1);
     Object payload = operatorTree.getPayload();
     Operator operator;
+
+    IComparison retval;
     if (payload instanceof GeneralcompContext) {
       GeneralcompContext compContext = (GeneralcompContext) payload;
       int type = ((TerminalNode) compContext.getChild(0)).getSymbol().getType();
@@ -208,35 +220,37 @@ public class BuildAstVisitor
       default:
         throw new UnsupportedOperationException(((TerminalNode) compContext.getChild(0)).getSymbol().getText());
       }
+      retval = new GeneralComparison(left, operator, right);
     } else if (payload instanceof ValuecompContext) {
       ValuecompContext compContext = (ValuecompContext) payload;
       int type = ((TerminalNode) compContext.getChild(0)).getSymbol().getType();
       switch (type) {
       case metapath10Lexer.KW_EQ:
-        operator = Comparison.Operator.EQ;
+        operator = Operator.EQ;
         break;
       case metapath10Lexer.KW_NE:
-        operator = Comparison.Operator.NE;
+        operator = Operator.NE;
         break;
       case metapath10Lexer.KW_LT:
-        operator = Comparison.Operator.LT;
+        operator = Operator.LT;
         break;
       case metapath10Lexer.KW_LE:
-        operator = Comparison.Operator.LE;
+        operator = Operator.LE;
         break;
       case metapath10Lexer.KW_GT:
-        operator = Comparison.Operator.GT;
+        operator = Operator.GT;
         break;
       case metapath10Lexer.KW_GE:
-        operator = Comparison.Operator.GE;
+        operator = Operator.GE;
         break;
       default:
         throw new UnsupportedOperationException(((TerminalNode) compContext.getChild(0)).getSymbol().getText());
       }
+      retval = new ValueComparison(left, operator, right);
     } else {
       throw new UnsupportedOperationException();
     }
-    return new Comparison(left, operator, right);
+    return retval;
   }
 
   @Override
@@ -263,8 +277,8 @@ public class BuildAstVisitor
    *          a trinary function used to parse the context children and supply a result
    * @return the left expression or the supplied expression
    */
-  protected <CONTEXT extends ParserRuleContext> IExpression handleGroupedNAiry(CONTEXT context, int step,
-      TriFunction<CONTEXT, Integer, IExpression, IExpression> parser) {
+  protected <CONTEXT extends ParserRuleContext> IExpression handleGroupedNAiry(@NotNull CONTEXT context, int step,
+      @NotNull TriFunction<CONTEXT, Integer, IExpression, IExpression> parser) {
     int numChildren = context.getChildCount();
 
     IExpression retval;
@@ -272,7 +286,7 @@ public class BuildAstVisitor
       retval = null;
     } else {
       ParseTree leftTree = context.getChild(0);
-      retval = (IExpression) leftTree.accept(this);
+      retval = leftTree.accept(this);
 
       for (int i = 1; i < numChildren; i = i + step) {
         retval = parser.apply(context, i, retval);
@@ -286,7 +300,7 @@ public class BuildAstVisitor
     return handleGroupedNAiry(context, 2, (ctx, idx, left) -> {
       ParseTree operatorTree = ctx.getChild(idx);
       ParseTree rightTree = ctx.getChild(idx + 1);
-      IExpression right = (IExpression) rightTree.accept(this);
+      IExpression right = rightTree.accept(this);
 
       int type = ((TerminalNode) operatorTree).getSymbol().getType();
 
@@ -310,7 +324,7 @@ public class BuildAstVisitor
     return handleGroupedNAiry(context, 2, (ctx, idx, left) -> {
       ParseTree operatorTree = ctx.getChild(idx);
       ParseTree rightTree = ctx.getChild(idx + 1);
-      IExpression right = (IExpression) rightTree.accept(this);
+      IExpression right = rightTree.accept(this);
 
       int type = ((TerminalNode) operatorTree).getSymbol().getType();
       IExpression retval;
@@ -360,7 +374,7 @@ public class BuildAstVisitor
     }
 
     ParseTree expr = ctx.getChild(0);
-    IExpression retval = (IExpression) expr.accept(this);
+    IExpression retval = expr.accept(this);
     if (negateCount % 2 == 1) {
       retval = new Negate(retval);
     }
@@ -381,7 +395,7 @@ public class BuildAstVisitor
         if (numChildren == 2) {
           // the optional path
           ParseTree pathTree = ctx.getChild(1);
-          IExpression relativeExpr = (IExpression) pathTree.accept(this);
+          IExpression relativeExpr = pathTree.accept(this);
           retval = new RootSlashPath(relativeExpr);
         } else {
           retval = new RootSlashOnlyPath();
@@ -390,7 +404,7 @@ public class BuildAstVisitor
       case metapath10Lexer.SS:
         // a double slash expression with path
         ParseTree pathTree = ctx.getChild(1);
-        IExpression node = (IExpression) pathTree.accept(this);
+        IExpression node = pathTree.accept(this);
         retval = new RootDoubleSlashPath(node);
         break;
       default:
@@ -398,7 +412,7 @@ public class BuildAstVisitor
       }
     } else {
       // a relative expression or something else
-      retval = (IExpression) tree.accept(this);
+      retval = tree.accept(this);
     }
     return retval;
   }
@@ -408,7 +422,7 @@ public class BuildAstVisitor
     return handleGroupedNAiry(context, 2, (ctx, idx, left) -> {
       ParseTree operatorTree = ctx.getChild(idx);
       ParseTree rightTree = ctx.getChild(idx + 1);
-      IExpression rightResult = (IExpression) rightTree.accept(this);
+      IExpression rightResult = rightTree.accept(this);
 
       int type = ((TerminalNode) operatorTree).getSymbol().getType();
 
@@ -432,7 +446,7 @@ public class BuildAstVisitor
     ParseTree tree = ctx.getChild(0);
     IExpression retval;
     if (tree instanceof NumericliteralContext) {
-      retval = (IExpression) tree.accept(this);
+      retval = tree.accept(this);
     } else {
       // String literal
       retval = new StringLiteral(tree.getText());
@@ -466,7 +480,9 @@ public class BuildAstVisitor
     // if there is an expression, it will be the second node
     if (numChildren == 3) {
       ParseTree tree = context.getChild(1);
-      expr = (IExpression) tree.accept(this);
+      expr = tree.accept(this);
+    } else {
+      throw new IllegalStateException("empty parenthesized expression");
     }
     return new ParenthesizedExpression(expr);
   }
@@ -489,9 +505,9 @@ public class BuildAstVisitor
       arguments = Collections.singletonList(argument);
     } else {
       // more children than the OP CP tokens
-      arguments = new ArrayList<>((numChildren - 3 / 2) + 1);
+      arguments = new ArrayList<>((numChildren - 1 / 2));
       for (int i = 1; i < numChildren - 1; i = i + 2) {
-        IExpression argument = context.getChild(1).accept(this);
+        IExpression argument = context.getChild(i).accept(this);
         arguments.add(argument);
       }
     }
@@ -515,7 +531,7 @@ public class BuildAstVisitor
   protected IExpression parsePredicate(PredicateContext context) {
     // the expression is always the second child
     ParseTree tree = context.getChild(1);
-    IExpression expr = (IExpression) tree.accept(this);
+    IExpression expr = tree.accept(this);
     return expr;
   }
 
@@ -564,7 +580,7 @@ public class BuildAstVisitor
   @Override
   public IExpression visitAxisstep(AxisstepContext context) {
     ParseTree stepTree = context.getChild(0);
-    IExpression retval = (IExpression) stepTree.accept(this);
+    IExpression retval = stepTree.accept(this);
 
     ParseTree predicateTree = context.getChild(1);
     List<IExpression> predicates = parsePredicates(predicateTree, 0);
@@ -581,11 +597,11 @@ public class BuildAstVisitor
     if (numChildren == 1) {
       ParseTree tree = context.getChild(0);
       retval = tree.accept(this);
-      retval = new ModelInstance((IExpression) tree.accept(this));
+      retval = new ModelInstance(tree.accept(this));
     } else {
       // this is an AT test
       ParseTree tree = context.getChild(1);
-      retval = new Flag((IExpression) tree.accept(this));
+      retval = new Flag(tree.accept(this));
 
     }
     return retval;

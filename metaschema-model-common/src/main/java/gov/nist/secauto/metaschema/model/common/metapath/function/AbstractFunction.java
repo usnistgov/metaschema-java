@@ -26,21 +26,21 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedList;
 import java.util.List;
 
-public class AbstractFunction implements Function {
+public abstract class AbstractFunction implements IFunction {
+  @NotNull
   private final String name;
-  private final List<Arguments> argumentPrototypes = new LinkedList<>();
+  @NotNull
+  private final List<IArgument> arguments;
 
-  public AbstractFunction(String name) {
+  AbstractFunction(
+      @NotNull String name,
+      @NotNull List<IArgument> arguments) {
     this.name = name;
-  }
-
-  protected void addArgumentPrototype(List<Argument> arguments) {
-    argumentPrototypes.add(new Arguments(arguments));
+    this.arguments = arguments;
   }
 
   @Override
@@ -49,19 +49,12 @@ public class AbstractFunction implements Function {
   }
 
   @Override
-  public boolean isArgumentsSupported(List<IExpression> arguments) {
-    boolean retval = false;
-    if (arguments.isEmpty() && argumentPrototypes.isEmpty()) {
-      retval = true;
-    } else {
-      for (Arguments argumentPrototype : argumentPrototypes) {
-        if (argumentPrototype.isSupported(arguments)) {
-          retval = true;
-          break;
-        }
-      }
-    }
-    return retval;
+  public int arity() {
+    return arguments.size();
   }
 
+  @Override
+  public List<IArgument> getArguments() {
+    return arguments;
+  }
 }

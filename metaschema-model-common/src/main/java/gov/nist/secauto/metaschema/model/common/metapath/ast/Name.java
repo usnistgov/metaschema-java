@@ -26,16 +26,30 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
+
+import org.jetbrains.annotations.NotNull;
+
 public class Name
-    extends AbstractLiteralExpression<String>
-    implements INameExpression {
-  public Name(String value) {
+    extends AbstractLiteralExpression<IStringItem, String>
+    implements INameExpression<IStringItem> {
+  public Name(@NotNull String value) {
     super(value);
   }
 
+  @SuppressWarnings("null")
   @Override
-  public boolean isNodeExpression() {
-    return true;
+  public Class<IStringItem> getBaseResultType() {
+    return IStringItem.class;
+  }
+
+  @Override
+  public ISequence<? extends IStringItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+    throw new UnsupportedOperationException();
   }
 
   @Override

@@ -26,15 +26,18 @@
 
 package gov.nist.secauto.metaschema.model.common.explode;
 
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 public class AssemblyInstance
     extends AbstractNamedInstance<IAssemblyInstance, AssemblyDefinition, AssemblyDefinition>
-    implements IAssemblyInstance, NamedModelInstance {
+    implements IAssemblyInstance {
 
-  public AssemblyInstance(IAssemblyInstance proxy, AssemblyDefinition definition,
+  public AssemblyInstance(
+      IAssemblyInstance proxy,
+      AssemblyDefinition definition,
       AssemblyDefinition containingDefinition) {
     super(proxy, definition, containingDefinition);
   }
@@ -72,5 +75,10 @@ public class AssemblyInstance
   @Override
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
     return getProxy().getXmlGroupAsBehavior();
+  }
+
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    return getProxy().getContainingMetaschema();
   }
 }

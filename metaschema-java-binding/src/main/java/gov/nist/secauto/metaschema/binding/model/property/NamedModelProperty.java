@@ -27,14 +27,17 @@
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.IBoundNamedModelDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -45,9 +48,20 @@ import javax.xml.stream.events.XMLEvent;
 /**
  * This marker interface TBD.
  */
-public interface NamedModelProperty
-    extends NamedProperty, INamedModelInstance {
+public interface NamedModelProperty extends NamedProperty, INamedModelInstance {
+  @Override
+  IBoundNamedModelDefinition getDefinition();
+
   DataTypeHandler getDataTypeHandler();
+
+  /**
+   * Get the item values associated with the provided value.
+   * 
+   * @param value
+   *          the value which may be a singleton or a collection
+   * @return the ordered collection of values
+   */
+  Collection<? extends Object> getItemValues(Object value);
 
   /**
    * Reads an individual XML item from the XML stream.
@@ -82,10 +96,11 @@ public interface NamedModelProperty
    * @throws IOException
    *           if an error occurred reading the underlying XML file
    */
-  List<Object> readItem(Object parentInstance, JsonParsingContext context)
-      throws BindingException, IOException;
+  List<Object> readItem(Object parentInstance, JsonParsingContext context) throws BindingException, IOException;
 
   boolean writeItem(Object item, QName parentName, XmlWritingContext context) throws XMLStreamException, IOException;
+
+  Object copyItem(@NotNull Object fromItem, Object toInstance) throws BindingException;
 
   // void writeItems(List<? extends WritableItem> items, JsonWritingContext context);
 
@@ -93,13 +108,4 @@ public interface NamedModelProperty
 
   // void writeItem(Object instance, JsonWritingContext context);
 
-  /**
-   * Perform validation of the property's value instance.
-   * 
-   * @param instance
-   *          the instance on which the property is located
-   * @param context
-   *          the parsing context
-   */
-  void validateItem(Object instance, ParsingContext<?, ?> context);
 }

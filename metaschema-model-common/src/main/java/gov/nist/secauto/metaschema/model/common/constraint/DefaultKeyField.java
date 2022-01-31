@@ -26,19 +26,38 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Pattern;
 
-public class DefaultKeyField
-    extends AbstractKeyField {
+public class DefaultKeyField implements IKeyField {
 
+  @Nullable
   private final Pattern pattern;
+  @NotNull
   private final MetapathExpression target;
+  @Nullable
   private final MarkupMultiline remarks;
 
-  public DefaultKeyField(MetapathExpression target, Pattern pattern, MarkupMultiline remarks) {
+  /**
+   * Construct a new key field based on the provided target. An optional pattern can be used to
+   * extract a portion of the resulting key value.
+   * 
+   * @param target
+   *          a Metapath expression identifying the target of the key field
+   * @param pattern
+   *          an optional used to extract a portion of the resulting key value
+   * @param remarks
+   *          optional remarks describing the intent of the constraint
+   */
+  public DefaultKeyField(
+      @NotNull MetapathExpression target,
+      @Nullable Pattern pattern,
+      @Nullable MarkupMultiline remarks) {
     this.pattern = pattern;
     this.target = target;
     this.remarks = remarks;

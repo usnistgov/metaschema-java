@@ -26,14 +26,18 @@
 
 package gov.nist.secauto.metaschema.model.common.explode;
 
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
 public class FlagInstance
-    extends AbstractNamedInstance<IFlagInstance, FlagDefinition, AbstractFlaggedDefinition<?>>
+    extends AbstractNamedInstance<IFlagInstance, FlagDefinition, INamedModelDefinition>
     implements IFlagInstance {
 
-  public FlagInstance(IFlagInstance proxy, FlagDefinition definition,
-      AbstractFlaggedDefinition<?> containingDefinition) {
+  public FlagInstance(
+      IFlagInstance proxy,
+      FlagDefinition definition,
+      INamedModelDefinition containingDefinition) {
     super(proxy, definition, containingDefinition);
   }
 
@@ -47,4 +51,8 @@ public class FlagInstance
     return getProxy().toCoordinates();
   }
 
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    return getProxy().getContainingMetaschema();
+  }
 }

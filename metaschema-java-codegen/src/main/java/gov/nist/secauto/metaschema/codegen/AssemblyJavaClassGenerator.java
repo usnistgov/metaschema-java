@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
@@ -34,20 +35,21 @@ import gov.nist.secauto.metaschema.codegen.property.ModelInstancePropertyGenerat
 import gov.nist.secauto.metaschema.codegen.property.PropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
 import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
-import gov.nist.secauto.metaschema.model.common.IModelContainer;
+import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IModelContainer;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
-import gov.nist.secauto.metaschema.model.instances.AssemblyModelInstance;
-import gov.nist.secauto.metaschema.model.instances.ChoiceInstance;
-import gov.nist.secauto.metaschema.model.instances.ObjectModelInstance;
+import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 public class AssemblyJavaClassGenerator
-    extends AbstractJavaClassGenerator<AssemblyDefinition> {
+    extends AbstractJavaClassGenerator<IAssemblyDefinition> {
 
   /**
    * Constructs a new class generator based on the provided assembly definition.
@@ -57,7 +59,7 @@ public class AssemblyJavaClassGenerator
    * @param typeResolver
    *          the resolver to use to lookup Java type information for Metaschema objects
    */
-  public AssemblyJavaClassGenerator(AssemblyDefinition definition, TypeResolver typeResolver) {
+  public AssemblyJavaClassGenerator(@NotNull IAssemblyDefinition definition, @NotNull TypeResolver typeResolver) {
     super(definition, typeResolver);
 
     // create properties for the model instances
@@ -81,12 +83,12 @@ public class AssemblyJavaClassGenerator
   }
 
   @Override
-  protected Set<MetaschemaFlaggedDefinition> buildClass(TypeSpec.Builder builder) throws IOException {
-    Set<MetaschemaFlaggedDefinition> retval = new HashSet<>();
-    retval.addAll(super.buildClass(builder));
+  protected Set<INamedModelDefinition> buildClass(TypeSpec.Builder builder, ClassName className) throws IOException {
+    Set<INamedModelDefinition> retval = new HashSet<>();
+    retval.addAll(super.buildClass(builder, className));
 
     AnnotationSpec.Builder metaschemaAssembly = AnnotationSpec.builder(MetaschemaAssembly.class);
-    AssemblyDefinition definition = getDefinition();
+    IAssemblyDefinition definition = getDefinition();
     if (definition.isRoot()) {
       metaschemaAssembly.addMember("rootName", "$S", definition.getRootName());
     }
@@ -100,25 +102,25 @@ public class AssemblyJavaClassGenerator
   private void processModel(IModelContainer model) {
     // create model instances for the model
     for (IModelInstance instance : model.getModelInstances()) {
-      if (instance instanceof ChoiceInstance) {
-        processModel((ChoiceInstance) instance);
+      if (instance instanceof IChoiceInstance) {
+        processModel((IChoiceInstance) instance);
         continue;
       }
 
       // else the instance is an object model instance with a name
-      newObjectModelInstance((ObjectModelInstance<?>) instance);
+      newObjectModelInstance((INamedModelInstance) instance);
     }
   }
 
   /**
-   * Creates a new {@link PropertyGenerator} for the provided {@link AssemblyModelInstance} and
+   * Creates a new {@link PropertyGenerator} for the provided {@link INamedModelInstance} and
    * registers it with this class generator.
    * 
    * @param instance
    *          the model instance to generate the property for
    * @return the new property generator
    */
-  public ModelInstancePropertyGenerator newObjectModelInstance(ObjectModelInstance<?> instance) {
+  public ModelInstancePropertyGenerator newObjectModelInstance(INamedModelInstance instance) {
     ModelInstancePropertyGenerator retval = new ModelInstancePropertyGenerator(instance, this);
     addPropertyGenerator(retval);
     return retval;

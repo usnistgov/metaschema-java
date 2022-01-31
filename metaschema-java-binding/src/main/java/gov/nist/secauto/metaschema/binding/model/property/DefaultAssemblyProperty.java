@@ -103,4 +103,5 @@ public class DefaultAssemblyProperty
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
     return getAssemblyAnnotation().inXml();
   }
+
 }

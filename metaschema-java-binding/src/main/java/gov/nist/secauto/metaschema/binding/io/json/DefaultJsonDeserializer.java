@@ -35,34 +35,26 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.Configuration;
 import gov.nist.secauto.metaschema.binding.io.Feature;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
-import gov.nist.secauto.metaschema.binding.model.property.RootAssemblyProperty;
+import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URI;
 
 public class DefaultJsonDeserializer<CLASS>
     extends AbstractDeserializer<CLASS> {
-  private static final Logger logger = LogManager.getLogger(DefaultJsonDeserializer.class);
-
   private JsonFactory jsonFactory;
 
-  public DefaultJsonDeserializer(BindingContext bindingContext, AssemblyClassBinding classBinding,
-      Configuration configuration) {
-    super(bindingContext, classBinding, configuration);
+  public DefaultJsonDeserializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {
+    super(bindingContext, classBinding);
   }
-
-  // @Override
-  // public Format supportedFromat() {
-  // return Format.JSON;
-  // }
 
   protected JsonFactory getJsonFactoryInstance() {
     return JsonFactoryFactory.singletonInstance();
@@ -105,27 +97,17 @@ public class DefaultJsonDeserializer<CLASS>
   }
 
   @Override
-  public CLASS deserialize(Reader reader) throws BindingException {
+  protected IBoundXdmNodeItem deserializeToNodeItemInternal(Reader reader, @Nullable URI documentUri)
+      throws BindingException {
     JsonParser parser = newJsonParser(reader);
 
-    // JsonToken token;
-    // try {
-    // token = parser.nextToken();
-    // } catch (IOException ex) {
-    // throw new BindingException("Unable to read JSON.", ex);
-    // }
-    // if (!parser.isExpectedStartObjectToken()) {
-    // throw new BindingException(String.format("Start object expected. Found '%s'.",
-    // token.toString()));
-    // }
-
-    DefaultJsonParsingContext parsingContext = new DefaultJsonParsingContext(parser);
-    parsingContext.setValidating(isValidating());
+    DefaultJsonParsingContext parsingContext = new DefaultJsonParsingContext(parser, new DefaultJsonProblemHandler());
 
     AssemblyClassBinding classBinding = getClassBinding();
     CLASS retval;
-    if (classBinding.isRoot() && getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT, false)) {
-      AssemblyProperty property = new RootAssemblyProperty(classBinding);
+    IBoundXdmNodeItem parsedNodeItem;
+    if (classBinding.isRoot() && getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT)) {
+      RootDefinitionAssemblyProperty property = new RootDefinitionAssemblyProperty(classBinding);
       try {
         // first read the initial START_OBJECT
         JsonUtil.consumeAndAssert(parser, JsonToken.START_OBJECT);
@@ -140,6 +122,7 @@ public class DefaultJsonDeserializer<CLASS>
       } catch (IOException ex) {
         throw new BindingException(ex);
       }
+      parsedNodeItem = IXdmFactory.INSTANCE.newDocumentNodeItem(property, retval, documentUri);
     } else {
       try {
         @SuppressWarnings("unchecked")
@@ -148,9 +131,9 @@ public class DefaultJsonDeserializer<CLASS>
       } catch (IOException ex) {
         throw new BindingException(ex);
       }
+      parsedNodeItem = IXdmFactory.INSTANCE.newRelativeAssemblyNodeItem(classBinding, retval, documentUri);
     }
-
-    return retval;
+    return parsedNodeItem;
   }
 
 }

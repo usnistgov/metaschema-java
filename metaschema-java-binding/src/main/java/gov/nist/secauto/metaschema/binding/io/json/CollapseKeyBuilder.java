@@ -50,7 +50,7 @@ public class CollapseKeyBuilder {
 
   public CollapseKeyBuilder(FieldClassBinding classBinding) {
     this.classBinding = classBinding;
-    this.flagProperties = new ArrayList<>(classBinding.getFlagInstances().values());
+    this.flagProperties = new ArrayList<>(classBinding.getFlagInstances());
     this.keyToValuesMap = new LinkedHashMap<>();
   }
 

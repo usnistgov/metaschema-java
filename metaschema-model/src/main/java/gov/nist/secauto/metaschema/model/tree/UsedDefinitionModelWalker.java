@@ -26,10 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.tree;
 
-import gov.nist.secauto.metaschema.model.Metaschema;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -49,8 +50,9 @@ public class UsedDefinitionModelWalker
     // ((AssemblyDefinition)def).getRootName() != null);
   };
 
-  public static Collection<? extends IDefinition>
-      collectUsedDefinitions(Collection<? extends IAssemblyDefinition> definitions) {
+  @NotNull
+  public static Collection<@NotNull ? extends IDefinition>
+      collectUsedDefinitions(Collection<@NotNull ? extends IAssemblyDefinition> definitions) {
     UsedDefinitionModelWalker walker = new UsedDefinitionModelWalker();
     for (IAssemblyDefinition definition : definitions) {
       walker.walk(definition);
@@ -66,17 +68,18 @@ public class UsedDefinitionModelWalker
    *          the metaschemas to analyze
    * @return a collection of matching definitions
    */
-  public static Collection<? extends IDefinition>
-      collectUsedDefinitionsFromMetaschema(Collection<? extends Metaschema> metaschemas) {
-    Set<IAssemblyDefinition> definitions = new HashSet<>();
-    for (Metaschema metaschema : metaschemas) {
+  @NotNull
+  public static Collection<@NotNull ? extends IDefinition>
+      collectUsedDefinitionsFromMetaschema(@NotNull Collection<@NotNull ? extends IMetaschema> metaschemas) {
+    Set<@NotNull IAssemblyDefinition> definitions = new HashSet<>();
+    for (IMetaschema metaschema : metaschemas) {
       // get local roots in case they are scope=local
-      for (AssemblyDefinition rootDef : metaschema.getRootAssemblyDefinitions().values()) {
+      for (IAssemblyDefinition rootDef : metaschema.getRootAssemblyDefinitions()) {
         definitions.add(rootDef);
       }
 
       // get roots from exported
-      for (AssemblyDefinition assembly : metaschema.getExportedAssemblyDefinitions().values()) {
+      for (IAssemblyDefinition assembly : metaschema.getExportedAssemblyDefinitions()) {
         if (assembly.isRoot()) {
           definitions.add(assembly);
         }
@@ -93,7 +96,9 @@ public class UsedDefinitionModelWalker
    *          the metaschema to analyze
    * @return a collection of matching definitions
    */
-  public static Collection<? extends IDefinition> collectUsedDefinitionsFromMetaschema(Metaschema metaschema) {
+  @SuppressWarnings("null")
+  public static Collection<@NotNull ? extends IDefinition>
+      collectUsedDefinitionsFromMetaschema(IMetaschema metaschema) {
     return collectUsedDefinitionsFromMetaschema(Collections.singleton(metaschema));
   }
 

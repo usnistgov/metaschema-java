@@ -31,33 +31,12 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
-import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
-import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
-public interface AssemblyClassBinding extends ClassBinding, IAssemblyDefinition {
-  // align the return value with the extended marker interface
-  @Override
-  Map<String, ? extends NamedModelProperty> getNamedModelInstances();
-
-  // align the return value with the extended marker interface
-  @Override
-  Collection<? extends NamedModelProperty> getModelInstances();
-
-  // align the return value with the extended marker interface
-  @Override
-  Map<String, ? extends FieldProperty> getFieldInstances();
-
-  // align the return value with the extended marker interface
-  @Override
-  Map<String, ? extends AssemblyProperty> getAssemblyInstances();
+public interface AssemblyClassBinding extends ClassBinding, AssemblyDefinition {
 
   Object readRoot(JsonParsingContext parsingContext) throws BindingException, IOException;
 

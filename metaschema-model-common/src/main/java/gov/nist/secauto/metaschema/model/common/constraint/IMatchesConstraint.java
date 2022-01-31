@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import java.util.regex.Pattern;
 
 public interface IMatchesConstraint extends IConstraint {
   Pattern getPattern();
 
-  DataTypes getDataType();
+  IJavaTypeAdapter<?> getDataType();
 }

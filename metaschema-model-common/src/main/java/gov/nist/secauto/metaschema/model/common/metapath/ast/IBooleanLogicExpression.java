@@ -26,11 +26,17 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public interface IBooleanLogicExpression extends IExpression {
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBooleanItem;
 
+public interface IBooleanLogicExpression extends IExpression {
   @Override
-  default boolean isNodeExpression() {
-    return false;
+  @SuppressWarnings("null")
+  default Class<IBooleanItem> getBaseResultType() {
+    return IBooleanItem.class;
   }
 
+  @Override
+  default Class<IBooleanItem> getStaticResultType() {
+    return getBaseResultType();
+  }
 }

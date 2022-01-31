@@ -26,12 +26,43 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class Negate
-    extends AbstractUnaryExpr
-    implements IBooleanLogicExpression {
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 
-  public Negate(IExpression expr) {
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+public class Negate
+    extends AbstractUnaryExpression
+    implements IArithmeticExpression<INumericItem> {
+
+  @NotNull
+  private final Class<? extends INumericItem> staticResultType;
+
+  @SuppressWarnings("null")
+  public Negate(@NotNull IExpression expr) {
     super(expr);
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(INumericItem.class, List.of(expr));
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Class<INumericItem> getBaseResultType() {
+    return INumericItem.class;
+  }
+
+  @Override
+  public Class<? extends INumericItem> getStaticResultType() {
+    return staticResultType;
+  }
+
+  @Override
+  public ISequence<? extends INumericItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+    return visitor.visitNegate(this, context);
   }
 
   @Override

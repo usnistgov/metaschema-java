@@ -28,23 +28,31 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import java.util.Collections;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.function.Predicate;
 
-public abstract class AbstractNamedInstanceExpression
-    extends AbstractPathExpression {
+public abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeItem>
+    extends AbstractPathExpression<RESULT_TYPE> {
   private static final WildcardMatcher WILDCARD = new WildcardMatcher();
 
+  @NotNull
   private final IExpression node;
 
-  public AbstractNamedInstanceExpression(IExpression node) {
+  public AbstractNamedInstanceExpression(@NotNull IExpression node) {
     this.node = node;
   }
 
-  protected IExpression getNode() {
+  @NotNull
+  public IExpression getNode() {
     return node;
+  }
+
+  public boolean isName() {
+    return getNode() instanceof Name;
   }
 
   public Predicate<IInstance> getInstanceMatcher() {
@@ -61,18 +69,21 @@ public abstract class AbstractNamedInstanceExpression
     return retval;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public List<? extends IExpression> getChildren() {
-    return node != null ? List.of(node) : Collections.emptyList();
+  public List<@NotNull ? extends IExpression> getChildren() {
+    return List.of(node);
   }
 
   private static class NameMatcher implements Predicate<IInstance> {
+    @NotNull
     private final String name;
 
-    public NameMatcher(String name) {
+    public NameMatcher(@NotNull String name) {
       this.name = name;
     }
 
+    @NotNull
     protected String getName() {
       return name;
     }
@@ -90,10 +101,10 @@ public abstract class AbstractNamedInstanceExpression
 
   }
 
-  private static class WildcardMatcher implements Predicate<IInstance> {
+  private static class WildcardMatcher implements Predicate<@NotNull IInstance> {
 
     @Override
-    public boolean test(IInstance instance) {
+    public boolean test(@NotNull IInstance instance) {
       boolean retval = false;
       if (instance instanceof INamedInstance) {
         retval = true;

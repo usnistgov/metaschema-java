@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.tree;
 
-import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
-import gov.nist.secauto.metaschema.model.instances.FlagInstance;
+import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
-public interface FlagNode extends Node<FlagDefinition, FlagInstance<?>> {
+public interface FlagNode extends Node<IFlagDefinition, IFlagInstance> {
 
 }

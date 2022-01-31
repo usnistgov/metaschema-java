@@ -26,19 +26,29 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.List;
 
-public interface ILiteralExpression extends IExpression {
+public interface ILiteralExpression<RESULT_TYPE extends IAnyAtomicItem, VALUE> extends IExpression {
+  @NotNull
+  VALUE getValue();
 
   @Override
-  default List<? extends IExpression> getChildren() {
-    // a literal never has children
-    return Collections.emptyList();
+  Class<RESULT_TYPE> getBaseResultType();
+
+  @Override
+  default Class<RESULT_TYPE> getStaticResultType() {
+    return getBaseResultType();
   }
 
+  @SuppressWarnings("null")
   @Override
-  default boolean isNodeExpression() {
-    return false;
+  default List<@NotNull ? extends IExpression> getChildren() {
+    // a literal never has children
+    return Collections.emptyList();
   }
 }

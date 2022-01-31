@@ -26,13 +26,32 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.math.BigDecimal;
 
 public class DecimalLiteral
-    extends AbstractLiteralExpression<BigDecimal> {
+    extends AbstractLiteralExpression<IDecimalItem, BigDecimal> {
 
-  public DecimalLiteral(BigDecimal value) {
+  public DecimalLiteral(@NotNull BigDecimal value) {
     super(value);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Class<IDecimalItem> getBaseResultType() {
+    return IDecimalItem.class;
+  }
+
+  @Override
+  public ISequence<? extends IDecimalItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+    return visitor.visitDecimalLiteral(this, context);
   }
 
   @Override

@@ -26,22 +26,27 @@
 
 package gov.nist.secauto.metaschema.model.common.explode;
 
-import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class AbstractInstance<PROXY extends IInstance, PARENT extends IFlaggedDefinition> implements IInstance {
+public abstract class AbstractInstance<PROXY extends IInstance, PARENT extends INamedModelDefinition>
+    implements IInstance {
+  @NotNull
   private final PROXY proxy;
   private final PARENT containingDefinition;
 
-  public AbstractInstance(PROXY proxy, PARENT containingDefinition) {
+  public AbstractInstance(@NotNull PROXY proxy, PARENT containingDefinition) {
     Objects.requireNonNull(proxy);
     Objects.requireNonNull(containingDefinition);
     this.proxy = proxy;
     this.containingDefinition = containingDefinition;
   }
 
+  @NotNull
   protected PROXY getProxy() {
     return proxy;
   }

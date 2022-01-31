@@ -27,18 +27,15 @@
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 
@@ -56,7 +53,7 @@ public abstract class AbstractAssemblyProperty
   }
 
   @Override
-  protected JavaTypeAdapter<?> getJavaTypeAdapter() {
+  protected IJavaTypeAdapter<?> getJavaTypeAdapter() {
     // an assembly property is always associated with a bound class, so there will never be a class
     // binding
     return null;
@@ -120,17 +117,4 @@ public abstract class AbstractAssemblyProperty
   public MarkupMultiline getRemarks() {
     throw new UnsupportedOperationException();
   }
-
-  @Override
-  public void validateValue(Object instance, ParsingContext<?, ?> context) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void validateItem(Object value, ParsingContext<?, ?> context) {
-    // TODO Auto-generated method stub
-
-  }
-
 }

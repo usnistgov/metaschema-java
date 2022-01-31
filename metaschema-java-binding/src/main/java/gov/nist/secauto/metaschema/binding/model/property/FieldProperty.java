@@ -26,8 +26,11 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
+import gov.nist.secauto.metaschema.binding.model.FieldDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 
 public interface FieldProperty extends NamedModelProperty, IFieldInstance {
 
+  @Override
+  FieldDefinition getDefinition();
 }

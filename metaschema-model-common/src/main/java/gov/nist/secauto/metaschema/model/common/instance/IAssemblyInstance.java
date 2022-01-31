@@ -29,19 +29,25 @@ package gov.nist.secauto.metaschema.model.common.instance;
 import gov.nist.secauto.metaschema.model.common.Assembly;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.DefaultMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 
-public interface IAssemblyInstance
-    extends INamedModelInstance, Assembly {
+public interface IAssemblyInstance extends INamedModelInstance, Assembly {
 
   @Override
   default String getJsonName() {
+    @NotNull
     String retval;
     if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      retval = getGroupAsName();
+      String groupName = getGroupAsName();
+      if (groupName == null) {
+        throw new NullPointerException("null group-as name");
+      }
+      retval = groupName;
     } else {
       retval = getEffectiveName();
     }

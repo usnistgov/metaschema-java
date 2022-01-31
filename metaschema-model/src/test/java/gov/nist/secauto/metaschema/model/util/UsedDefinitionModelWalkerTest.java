@@ -26,14 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.util;
 
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -49,10 +50,10 @@ class UsedDefinitionModelWalkerTest {
   void test() throws MetaschemaException, IOException {
     MetaschemaLoader loader = new MetaschemaLoader();
 
-    Metaschema metaschema = loader.loadXmlMetaschema(new URL(
+    IMetaschema metaschema = loader.loadXmlMetaschema(new URL(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
 
-    Collection<? extends IDefinition> definitions
+    Collection<@NotNull ? extends IDefinition> definitions
         = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
 
     for (IDefinition definition : definitions) {

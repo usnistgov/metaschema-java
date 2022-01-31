@@ -34,8 +34,6 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.Configuration;
-import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 
 import java.io.IOException;
@@ -46,14 +44,8 @@ public class DefaultJsonSerializer<CLASS>
     extends AbstractSerializer<CLASS> {
   private JsonFactory jsonFactory;
 
-  public DefaultJsonSerializer(BindingContext bindingContext, AssemblyClassBinding classBinding,
-      Configuration configuration) {
-    super(bindingContext, classBinding, configuration);
-  }
-
-  @Override
-  public Format supportedFromat() {
-    return Format.JSON;
+  public DefaultJsonSerializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {
+    super(bindingContext, classBinding);
   }
 
   protected JsonFactory getJsonFactoryInstance() {

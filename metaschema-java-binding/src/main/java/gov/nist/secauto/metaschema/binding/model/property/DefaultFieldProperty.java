@@ -26,50 +26,38 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.ParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.BindingContext;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
+import gov.nist.secauto.metaschema.binding.model.FieldDefinition;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
-import gov.nist.secauto.metaschema.binding.model.property.info.XmlBindingSupplier;
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
+import org.jetbrains.annotations.NotNull;
 
-import org.codehaus.stax2.XMLEventReader2;
-import org.codehaus.stax2.XMLStreamWriter2;
-
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
-
 public class DefaultFieldProperty
-    extends AbstractNamedModelProperty
-    implements FieldProperty {
+    extends AbstractFieldProperty {
 
   public static DefaultFieldProperty createInstance(AssemblyClassBinding parentClassBinding,
       java.lang.reflect.Field field) {
@@ -78,8 +66,8 @@ public class DefaultFieldProperty
   }
 
   private final Field field;
-  private final JavaTypeAdapter<?> javaTypeAdapter;
-  private IFieldDefinition definition;
+  private final IJavaTypeAdapter<?> javaTypeAdapter;
+  private FieldDefinition definition;
   private IValueConstraintSupport constraints;
 
   public DefaultFieldProperty(AssemblyClassBinding parentClassBinding, java.lang.reflect.Field field) {
@@ -90,13 +78,12 @@ public class DefaultFieldProperty
           field.getName(), parentClassBinding.getBoundClass().getName(), Field.class.getName()));
     }
 
-    Class<? extends JavaTypeAdapter<?>> adapterClass = getFieldAnnotation().typeAdapter();
+    Class<? extends IJavaTypeAdapter<?>> adapterClass = getFieldAnnotation().typeAdapter();
     if (NullJavaTypeAdapter.class.equals(adapterClass)) {
       javaTypeAdapter = null;
     } else {
       javaTypeAdapter = getParentClassBinding().getBindingContext().getJavaTypeAdapterInstance(adapterClass);
     }
-
   }
 
   public Field getFieldAnnotation() {
@@ -104,8 +91,34 @@ public class DefaultFieldProperty
   }
 
   @Override
-  protected JavaTypeAdapter<?> getJavaTypeAdapter() {
+  protected IJavaTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
+  }
+
+  @Override
+  public FieldDefinition getDefinition() {
+    synchronized (this) {
+      if (definition == null) {
+        DataTypeHandler handler = getDataTypeHandler();
+        ClassBinding classBinding = handler.getClassBinding();
+        if (classBinding == null) {
+          definition = new ScalarFieldDefinition();
+        } else {
+          definition = (FieldClassBinding) classBinding;
+        }
+      }
+    }
+    return definition;
+  }
+
+  @Override
+  public String getUseName() {
+    return ModelUtil.resolveLocalName(getFieldAnnotation().useName(), getJavaPropertyName());
+  }
+
+  @Override
+  public String getXmlNamespace() {
+    return ModelUtil.resolveNamespace(getFieldAnnotation().namespace(), getParentClassBinding(), false);
   }
 
   @Override
@@ -143,16 +156,6 @@ public class DefaultFieldProperty
     return getFieldAnnotation().inXml();
   }
 
-  @Override
-  public String getUseName() {
-    return ModelUtil.resolveLocalName(getFieldAnnotation().useName(), getJavaPropertyName());
-  }
-
-  @Override
-  public String getXmlNamespace() {
-    return ModelUtil.resolveNamespace(getFieldAnnotation().namespace(), getParentClassBinding(), false);
-  }
-
   /**
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.
@@ -163,131 +166,16 @@ public class DefaultFieldProperty
     }
   }
 
-  @Override
-  public boolean isNextProperty(XmlParsingContext context) throws IOException, XMLStreamException {
-    boolean retval = super.isNextProperty(context);
-    if (!retval) {
-      XMLEventReader2 eventReader = context.getReader();
-      XMLEvent event = eventReader.peek();
-      if (event.isStartElement()) {
-        QName qname = event.asStartElement().getName();
-        JavaTypeAdapter<?> adapter = getJavaTypeAdapter();
-        retval = !isInXmlWrapped() && adapter.isUnrappedValueAllowedInXml() && adapter.canHandleQName(qname);
-      }
-    }
-    return retval;
-  }
+  //
+  // @Override
+  // public IPathSegment newPathSegment(int position) {
+  // return FormatterFactory.instance().newFieldPathSegment(this, position);
+  // }
 
-  @Override
-  public Object readItem(Object parentInstance, StartElement start,
-      XmlParsingContext context) throws BindingException, XMLStreamException, IOException {
-    // figure out how to parse the item
-    XmlBindingSupplier supplier = getDataTypeHandler();
-
-    // figure out if we need to parse the wrapper or not
-    JavaTypeAdapter<?> adapter = getJavaTypeAdapter();
-    boolean parseWrapper = true;
-    if (adapter != null && !isInXmlWrapped() && adapter.isUnrappedValueAllowedInXml()) {
-      parseWrapper = false;
-    }
-
-    XMLEventReader2 eventReader = context.getReader();
-
-    Object retval = null;
-    StartElement currentStart = start;
-    boolean parse = true; // determines if parsing happened
-    if (parseWrapper) {
-      // TODO: not sure this is needed, since there is a peek just before this
-      // parse any whitespace before the element
-      XmlEventUtil.skipWhitespace(eventReader);
-
-      XMLEvent event = eventReader.peek();
-      if (event.isStartElement() && getXmlQName().equals(event.asStartElement().getName())) {
-        // Consume the start element
-        currentStart
-            = XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.START_ELEMENT, getXmlQName()).asStartElement();
-      } else {
-        parse = false;
-      }
-    }
-
-    if (parse) {
-      // consume the value
-      retval = supplier.get(parentInstance, currentStart, context);
-
-      if (parseWrapper) {
-        // consume the end element
-        XmlEventUtil.consumeAndAssert(context.getReader(), XMLEvent.END_ELEMENT, currentStart.getName());
-      }
-    }
-
-    return retval;
-  }
-
-  @Override
-  public boolean writeItem(Object item, QName parentName, XmlWritingContext context)
-      throws XMLStreamException, IOException {
-    // figure out how to parse the item
-    DataTypeHandler handler = getDataTypeHandler();
-
-    // figure out if we need to parse the wrapper or not
-    boolean writeWrapper = isInXmlWrapped() || !handler.isUnrappedValueAllowedInXml();
-
-    XMLStreamWriter2 writer = context.getWriter();
-
-    QName currentParentName;
-    if (writeWrapper) {
-      currentParentName = getXmlQName();
-      writer.writeStartElement(currentParentName.getNamespaceURI(), currentParentName.getLocalPart());
-    } else {
-      currentParentName = parentName;
-    }
-
-    // write the value
-    handler.accept(item, currentParentName, context);
-
-    if (writeWrapper) {
-      writer.writeEndElement();
-    }
-    return true;
-  }
-
-  @Override
-  public AssemblyClassBinding getContainingDefinition() {
-    return getParentClassBinding();
-  }
-
-  @Override
-  public String toCoordinates() {
-    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(), getName(),
-        getParentClassBinding().getBoundClass().getName(), getField().getName());
-  }
-
-  @Override
-  public MarkupMultiline getRemarks() {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public IFieldDefinition getDefinition() {
-    synchronized (this) {
-      if (definition == null) {
-        DataTypeHandler handler = getDataTypeHandler();
-        ClassBinding classBinding = handler.getClassBinding();
-        if (classBinding == null) {
-          definition = new ScalarFieldDefinition();
-        } else {
-          definition = (FieldClassBinding) classBinding;
-        }
-      }
-    }
-    return definition;
-  }
-
-  private class ScalarFieldDefinition implements IFieldDefinition {
+  private class ScalarFieldDefinition implements FieldDefinition {
     @Override
-    public DataTypes getDatatype() {
-      return DataTypes.getDataTypeForAdapter(getJavaTypeAdapter());
+    public IJavaTypeAdapter<?> getDatatype() {
+      return getJavaTypeAdapter();
     }
 
     @Override
@@ -316,7 +204,7 @@ public class DefaultFieldProperty
     }
 
     @Override
-    public Map<String, ? extends IFlagInstance> getFlagInstances() {
+    public Map<String, ? extends FlagProperty> getFlagInstanceMap() {
       return Collections.emptyMap();
     }
 
@@ -379,17 +267,39 @@ public class DefaultFieldProperty
       checkModelConstraints();
       return constraints.getExpectConstraints();
     }
-  }
 
-  @Override
-  public void validateValue(Object instance, ParsingContext<?, ?> context) {
-    // TODO Auto-generated method stub
+    @Override
+    public BindingContext getBindingContext() {
+      return getContainingDefinition().getBindingContext();
+    }
 
-  }
+    @Override
+    public String getFormalName() {
+      // TODO: implement
+      return null;
+    }
 
-  @Override
-  public void validateItem(Object value, ParsingContext<?, ?> context) {
-    // TODO Auto-generated method stub
+    @Override
+    public MarkupLine getDescription() {
+      // TODO: implement
+      return null;
+    }
 
+    @Override
+    public @NotNull ModuleScopeEnum getModuleScope() {
+      // TODO: is this the right value?
+      return ModuleScopeEnum.INHERITED;
+    }
+
+    @Override
+    public boolean isGlobal() {
+      return false;
+    }
+
+    @Override
+    public IMetaschema getContainingMetaschema() {
+      // TODO: implement
+      return null;
+    }
   }
 }

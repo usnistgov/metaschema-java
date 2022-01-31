@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.tree;
 
-import gov.nist.secauto.metaschema.model.definitions.FieldDefinition;
-import gov.nist.secauto.metaschema.model.instances.FieldInstance;
+import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
 
-public interface FieldNode extends Node<FieldDefinition, FieldInstance<?>> {
+public interface FieldNode extends Node<IFieldDefinition, IFieldInstance> {
 
 }

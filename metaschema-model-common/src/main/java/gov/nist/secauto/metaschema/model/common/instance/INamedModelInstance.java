@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.instance;
 
-public interface INamedModelInstance extends INamedInstance, IModelInstance {
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
+public interface INamedModelInstance extends INamedInstance, IModelInstance {
+  @Override
+  INamedModelDefinition getDefinition();
 }

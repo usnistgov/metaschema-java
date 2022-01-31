@@ -26,29 +26,32 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupLine;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.IXmlMetaschema;
+import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.definitions.AbstractInfoElementDefinition;
-import gov.nist.secauto.metaschema.model.definitions.FlagDefinition;
-import gov.nist.secauto.metaschema.model.definitions.GlobalInfoElementDefinition;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.definitions.IXmlFlagDefinition;
 import gov.nist.secauto.metaschema.model.xml.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalFlagDefinitionType;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
-public class XmlGlobalFlagDefinition
-    extends AbstractInfoElementDefinition
-    implements FlagDefinition, GlobalInfoElementDefinition {
+public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
+  @NotNull
   private final GlobalFlagDefinitionType xmlFlag;
+  @NotNull
+  private final IXmlMetaschema metaschema;
   private IValueConstraintSupport constraints;
 
   /**
@@ -59,9 +62,19 @@ public class XmlGlobalFlagDefinition
    * @param metaschema
    *          the containing Metaschema
    */
-  public XmlGlobalFlagDefinition(GlobalFlagDefinitionType xmlFlag, XmlMetaschema metaschema) {
-    super(metaschema);
+  public XmlGlobalFlagDefinition(@NotNull GlobalFlagDefinitionType xmlFlag, @NotNull IXmlMetaschema metaschema) {
     this.xmlFlag = xmlFlag;
+    this.metaschema = metaschema;
+  }
+
+  @Override
+  public boolean isGlobal() {
+    return true;
+  }
+
+  @Override
+  public IXmlMetaschema getContainingMetaschema() {
+    return metaschema;
   }
 
   /**
@@ -117,15 +130,17 @@ public class XmlGlobalFlagDefinition
     return constraints.getExpectConstraints();
   }
 
+  @SuppressWarnings("null")
   @Override
   public ModuleScopeEnum getModuleScope() {
-    ModuleScopeEnum retval = MetaschemaDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
+    ModuleScopeEnum retval = IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
     if (getXmlFlag().isSetScope()) {
       retval = getXmlFlag().getScope();
     }
     return retval;
   }
 
+  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlFlag().getName();
@@ -142,8 +157,7 @@ public class XmlGlobalFlagDefinition
 
   @Override
   public String getXmlNamespace() {
-    return null;
-    // return getContainingMetaschema().getXmlNamespace().toString();
+    return getContainingMetaschema().getXmlNamespace().toString();
   }
 
   @Override
@@ -156,14 +170,15 @@ public class XmlGlobalFlagDefinition
     return MarkupStringConverter.toMarkupString(getXmlFlag().getDescription());
   }
 
+  @SuppressWarnings("null")
   @Override
-  public DataTypes getDatatype() {
-    DataTypes retval;
+  public IJavaTypeAdapter<?> getDatatype() {
+    IJavaTypeAdapter<?> retval;
     if (getXmlFlag().isSetAsType()) {
       retval = getXmlFlag().getAsType();
     } else {
       // the default
-      retval = DataTypes.DEFAULT_DATA_TYPE;
+      retval = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
     }
     return retval;
   }

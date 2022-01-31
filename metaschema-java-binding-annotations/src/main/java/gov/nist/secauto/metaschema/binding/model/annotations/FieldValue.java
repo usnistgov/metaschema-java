@@ -29,11 +29,7 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValues;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -48,7 +44,7 @@ public @interface FieldValue {
    * 
    * @return the data type adapter
    */
-  Class<? extends JavaTypeAdapter<?>> typeAdapter();
+  Class<? extends IJavaTypeAdapter<?>> typeAdapter();
 
   /**
    * The name of the JSON property that contains the field's value. If this value is provided, the the

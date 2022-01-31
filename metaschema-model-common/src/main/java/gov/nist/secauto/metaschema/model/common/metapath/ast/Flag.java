@@ -26,13 +26,29 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import java.util.Collections;
-import java.util.List;
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+
+import org.jetbrains.annotations.NotNull;
 
 public class Flag
-    extends AbstractNamedInstanceExpression {
-  public Flag(IExpression node) {
+    extends AbstractNamedInstanceExpression<IFlagNodeItem> {
+  public Flag(@NotNull IExpression node) {
     super(node);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Class<IFlagNodeItem> getBaseResultType() {
+    return IFlagNodeItem.class;
+  }
+
+  @Override
+  public ISequence<? extends IFlagNodeItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+    return visitor.visitFlag(this, context);
   }
 
   @Override

@@ -26,30 +26,87 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public interface IExpression {
-  List<? extends IExpression> getChildren();
+  /**
+   * Retrieve the child expressions associated with this expression.
+   * 
+   * @return a list of expressions, which may be empty
+   */
+  @NotNull
+  List<@NotNull ? extends IExpression> getChildren();
 
-  default int getChildCount() {
-    return getChildren().size();
+  /**
+   * The minimum expected result type to be produced when evaluating the expression. The result may be
+   * a sub-class or sub-interface of this value.
+   * 
+   * @return the base result type
+   */
+  @NotNull
+  default Class<? extends IItem> getBaseResultType() {
+    return IItem.class;
   }
 
-  default IExpression getChild(int index) {
-    return getChildren().get(index);
+  /**
+   * The expected result type produced by evaluating the expression. The result must be the same or a
+   * sub-class or sub-interface of the value provided by {@link #getBaseResultType()}.
+   * <p>
+   * This method can be overloaded to provide static analysis of the expression to determine a more
+   * specific result type.
+   * 
+   * @return the result type
+   */
+  @NotNull
+  default Class<? extends IItem> getStaticResultType() {
+    return getBaseResultType();
   }
 
-  boolean isNodeExpression();
-
+  /**
+   * Produce a string representation of this expression including the expression's name.
+   * <p>
+   * This method can be overloaded to provide a more appropriate representation of the expression.
+   * 
+   * @return a string representing the data elements of the expression
+   */
+  @SuppressWarnings("null")
+  @NotNull
   default String toASTString() {
     return String.format("%s[]", getClass().getName());
   }
 
-  <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
+  /**
+   * Provides a double dispatch callback for visitor handling.
+   * 
+   * @param visitor
+   *          the visitor calling this method
+   * @param context
+   *          the visitor context
+   * @return the result of evaluation
+   */
+  @NotNull
+  ISequence<? extends IItem> accept(@NotNull IExpressionEvaluationVisitor visitor, @NotNull INodeContext context);
 
-  default boolean evaluate(INodeContext context) {
-    throw new UnsupportedOperationException();
-  }
+  /**
+   * Provides a double dispatch callback for visitor handling.
+   * 
+   * @param <RESULT>
+   *          the type of the evaluation result
+   * @param <CONTEXT>
+   *          the type of the visitor context
+   * @param visitor
+   *          the visitor calling this method
+   * @param context
+   *          the visitor context
+   * @return the result of evaluation
+   */
+  <RESULT, CONTEXT> RESULT accept(@NotNull ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
 }

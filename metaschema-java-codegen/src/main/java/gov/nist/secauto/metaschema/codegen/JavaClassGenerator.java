@@ -29,13 +29,16 @@ package gov.nist.secauto.metaschema.codegen;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 
 public interface JavaClassGenerator {
-  public static final DataTypes DEFAULT_DATA_TYPE = DataTypes.DEFAULT_DATA_TYPE;
+  @NotNull
+  INamedModelDefinition getDefinition();
 
   /**
    * Generates the associated Java class and saves it using the provided file.
@@ -74,4 +77,6 @@ public interface JavaClassGenerator {
    * @return the associated property or {@code null} if no matching property exists
    */
   boolean hasPropertyWithName(String name);
+
+  ClassName getBaseClassName();
 }

@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.ModelConstants;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
@@ -90,14 +90,14 @@ public @interface Assembly {
    * 
    * @return a non-negative number
    */
-  int minOccurs() default Defaults.DEFAULT_GROUP_AS_MIN_OCCURS;
+  int minOccurs() default ModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
 
   /**
    * A number that indicates the maximum occurrence of the element.
    * 
    * @return a positive number or {@code -1} to indicate "unbounded"
    */
-  int maxOccurs() default Defaults.DEFAULT_GROUP_AS_MAX_OCCURS;
+  int maxOccurs() default ModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
 
   /**
    * Describes how to handle collections in JSON/YAML.

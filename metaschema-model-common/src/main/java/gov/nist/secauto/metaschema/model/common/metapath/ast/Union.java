@@ -26,26 +26,35 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class Union
-    extends AbstractNAryExpression<IExpression>
-    implements IExpression {
+    extends AbstractNAryExpression {
 
-  public Union(List<IExpression> children) {
+  @NotNull
+  private final Class<? extends IItem> staticResultType;
+
+  public Union(@NotNull List<@NotNull IExpression> children) {
     super(children);
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, children);
   }
 
   @Override
-  public boolean isNodeExpression() {
-    boolean retval = true;
-    for (IExpression expr : getChildren()) {
-      if (!expr.isNodeExpression()) {
-        retval = false;
-        break;
-      }
-    }
-    return retval;
+  public Class<? extends IItem> getStaticResultType() {
+    return staticResultType;
+  }
+
+  @Override
+  public ISequence<? extends IItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+    return visitor.visitUnion(this, context);
   }
 
   @Override

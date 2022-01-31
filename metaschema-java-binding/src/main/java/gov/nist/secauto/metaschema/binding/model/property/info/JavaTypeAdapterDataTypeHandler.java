@@ -33,7 +33,9 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -47,10 +49,10 @@ import javax.xml.stream.events.StartElement;
 
 // TODO: implement can handle QName for XML parsing
 public class JavaTypeAdapterDataTypeHandler implements DataTypeHandler {
-  private final JavaTypeAdapter<?> adapter;
+  private final IJavaTypeAdapter<?> adapter;
   private final NamedModelProperty property;
 
-  public JavaTypeAdapterDataTypeHandler(JavaTypeAdapter<?> adapter, NamedModelProperty property) {
+  public JavaTypeAdapterDataTypeHandler(IJavaTypeAdapter<?> adapter, NamedModelProperty property) {
     Objects.requireNonNull(adapter, "adapter");
     Objects.requireNonNull(property, "property");
     this.adapter = adapter;
@@ -63,7 +65,7 @@ public class JavaTypeAdapterDataTypeHandler implements DataTypeHandler {
   }
 
   @Override
-  public JavaTypeAdapter<?> getJavaTypeAdapter() {
+  public IJavaTypeAdapter<?> getJavaTypeAdapter() {
     return adapter;
   }
 
@@ -103,5 +105,10 @@ public class JavaTypeAdapterDataTypeHandler implements DataTypeHandler {
     for (Object item : items) {
       adapter.writeJsonValue(item, context.getWriter());
     }
+  }
+
+  @Override
+  public Object copyItem(@NotNull Object fromItem, Object parentInstance) throws BindingException {
+    return adapter.copy(fromItem);
   }
 }

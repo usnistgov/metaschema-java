@@ -26,21 +26,25 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.Defaults;
+import gov.nist.secauto.metaschema.model.common.ModelConstants;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFieldInstance;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.FieldDocument;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
 public class XmlFieldInstance
-    extends AbstractFieldInstance<XmlGlobalFieldDefinition> {
+    extends AbstractFieldInstance {
   // private static final Logger logger = LogManager.getLogger(XmlFieldInstance.class);
 
+  @NotNull
   private final FieldDocument.Field xmlField;
 
   /**
@@ -52,7 +56,7 @@ public class XmlFieldInstance
    * @param parent
    *          the field definition this object is an instance of
    */
-  public XmlFieldInstance(FieldDocument.Field xmlField, AssemblyDefinition parent) {
+  public XmlFieldInstance(@NotNull FieldDocument.Field xmlField, @NotNull IXmlAssemblyDefinition parent) {
     super(parent);
     this.xmlField = xmlField;
   }
@@ -67,17 +71,16 @@ public class XmlFieldInstance
   }
 
   @Override
-  public XmlGlobalFieldDefinition getDefinition() {
-    return (XmlGlobalFieldDefinition) getContainingDefinition().getContainingMetaschema()
-        .getFieldDefinitionByName(getName());
+  public IFieldDefinition getDefinition() {
+    return getContainingDefinition().getContainingMetaschema().getScopedFieldDefinitionByName(getName());
   }
 
   @Override
   public boolean isInXmlWrapped() {
     boolean retval;
-    if (DataTypes.MARKUP_MULTILINE.equals(getDefinition().getDatatype())) {
+    if (MetaschemaDataTypeProvider.MARKUP_MULTILINE.equals(getDefinition().getDatatype())) {
       // default value
-      retval = Defaults.DEFAULT_FIELD_IN_XML_WRAPPED;
+      retval = ModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
       if (getXmlField().isSetInXml()) {
         retval = getXmlField().getInXml().booleanValue();
       }
@@ -87,11 +90,6 @@ public class XmlFieldInstance
     }
     return retval;
   }
-
-  // @Override
-  // public String getInstanceName() {
-  // return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : getName();
-  // }
 
   @Override
   public String getName() {
@@ -120,7 +118,7 @@ public class XmlFieldInstance
 
   @Override
   public int getMinOccurs() {
-    int retval = Defaults.DEFAULT_GROUP_AS_MIN_OCCURS;
+    int retval = ModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
     if (getXmlField().isSetMinOccurs()) {
       retval = getXmlField().getMinOccurs().intValueExact();
     }
@@ -129,7 +127,7 @@ public class XmlFieldInstance
 
   @Override
   public int getMaxOccurs() {
-    int retval = Defaults.DEFAULT_GROUP_AS_MAX_OCCURS;
+    int retval = ModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
     if (getXmlField().isSetMaxOccurs()) {
       Object value = getXmlField().getMaxOccurs();
       if (value instanceof String) {

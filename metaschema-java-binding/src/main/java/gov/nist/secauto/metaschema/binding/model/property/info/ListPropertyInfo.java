@@ -31,17 +31,17 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -79,6 +79,17 @@ public class ListPropertyInfo
   }
 
   @Override
+  public List<? extends Object> getItemsFromParentInstance(Object parentInstance) {
+    Object value = getProperty().getValue(parentInstance);
+    return getItemsFromValue(value);
+  }
+
+  @Override
+  public List<?> getItemsFromValue(Object value) {
+    return value == null ? List.of() : (List<?>) value;
+  }
+
+  @Override
   public boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start,
       XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
     XMLEventReader2 eventReader = context.getReader();
@@ -92,23 +103,14 @@ public class ListPropertyInfo
     boolean handled = false;
     XMLEvent event;
 
-    PathBuilder pathBuilder = context.getPathBuilder();
-    int position = 0;
     while ((event = eventReader.peek()).isStartElement()
         && expectedFieldItemQName.equals(event.asStartElement().getName())) {
-      pathBuilder.pushItem(position++);
 
       Object value = getProperty().readItem(parentInstance, start, context);
       if (value != null) {
         collector.add(value);
-
-        if (context.isValidating()) {
-          getProperty().validateValue(value, context);
-        }
-
         handled = true;
       }
-      pathBuilder.popItem();
 
       // consume extra whitespace between elements
       XmlEventUtil.skipWhitespace(eventReader);
@@ -129,13 +131,9 @@ public class ListPropertyInfo
       parseArray = false;
     }
 
-    PathBuilder pathBuilder = context.getPathBuilder();
-
     if (parseArray) {
       // advance past the array
       JsonUtil.assertAndAdvance(parser, JsonToken.START_ARRAY);
-
-      int position = 0;
 
       // parse items
       while (!JsonToken.END_ARRAY.equals(parser.currentToken())) {
@@ -146,21 +144,8 @@ public class ListPropertyInfo
           JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
         }
 
-        pathBuilder.pushItem(position++);
-
         List<Object> values = getProperty().readItem(parentInstance, context);
         collector.addAll(values);
-
-        for (Object value : values) {
-          // use the same position, since this refers to the same JSON node for multiple values due to
-          // collapse
-
-          if (context.isValidating()) {
-            getProperty().validateItem(value, context);
-          }
-        }
-
-        pathBuilder.popItem();
 
         if (isObject) {
           // read the object's END_OBJECT
@@ -178,17 +163,8 @@ public class ListPropertyInfo
         JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
       }
 
-      pathBuilder.pushItem();
-
       List<Object> values = getProperty().readItem(parentInstance, context);
       collector.addAll(values);
-
-      for (Object value : values) {
-        if (context.isValidating()) {
-          getProperty().validateItem(value, context);
-        }
-      }
-      pathBuilder.popItem();
 
       if (isObject) {
         // read the object's END_OBJECT
@@ -201,8 +177,7 @@ public class ListPropertyInfo
   public boolean writeValue(Object parentInstance, QName parentName, XmlWritingContext context)
       throws XMLStreamException, IOException {
     NamedModelProperty property = getProperty();
-    @SuppressWarnings("unchecked")
-    List<? extends Object> items = (List<? extends Object>) property.getValue(parentInstance);
+    List<? extends Object> items = getItemsFromParentInstance(parentInstance);
     for (Object item : items) {
       property.writeItem(item, parentName, context);
     }
@@ -211,14 +186,7 @@ public class ListPropertyInfo
 
   @Override
   public void writeValue(Object parentInstance, JsonWritingContext context) throws IOException {
-    NamedModelProperty property = getProperty();
-    @SuppressWarnings("unchecked")
-    List<? extends Object> items = (List<? extends Object>) property.getValue(parentInstance);
-
-    // if (items.isEmpty()) {
-    // // nothing to write
-    // return;
-    // }
+    List<? extends Object> items = getItemsFromParentInstance(parentInstance);
 
     JsonGenerator writer = context.getWriter();
 
@@ -239,9 +207,17 @@ public class ListPropertyInfo
 
   @Override
   public boolean isValueSet(Object parentInstance) throws IOException {
+    List<? extends Object> items = getItemsFromParentInstance(parentInstance);
+    return !items.isEmpty();
+  }
+
+  @Override
+  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector)
+      throws BindingException {
     NamedModelProperty property = getProperty();
-    @SuppressWarnings("unchecked")
-    List<? extends Object> items = (List<? extends Object>) property.getValue(parentInstance);
-    return items != null && !items.isEmpty();
+
+    for (Object item : getItemsFromParentInstance(fromInstance)) {
+      collector.add(property.copyItem(item, toInstance));
+    }
   }
 }

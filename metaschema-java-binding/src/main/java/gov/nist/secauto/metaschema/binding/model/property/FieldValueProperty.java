@@ -29,13 +29,13 @@ package gov.nist.secauto.metaschema.binding.model.property;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
-import gov.nist.secauto.metaschema.datatypes.adapter.JavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import java.io.IOException;
 
 public interface FieldValueProperty extends Property {
 
-  JavaTypeAdapter<?> getJavaTypeAdapter();
+  IJavaTypeAdapter<?> getJavaTypeAdapter();
 
   /**
    * Get the JSON value key name based on either the configured value key name or the default for the

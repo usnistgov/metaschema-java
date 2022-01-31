@@ -28,6 +28,11 @@ package gov.nist.secauto.metaschema.binding.io.context;
 
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
+
+import java.util.List;
 
 public interface PathBuilder {
 
@@ -35,29 +40,17 @@ public interface PathBuilder {
 
   void pushInstance(NamedModelProperty instance);
 
-  InstanceHandler<?> popInstance();
+  INamedInstance popInstance();
 
-  void pushItem();
+  void pushItem(IPathSegment segment);
 
-  void pushItem(String key);
+  IPathSegment popItem();
 
-  void pushItem(int position);
+  String getPath(IPathFormatter formatter);
 
-  IPathInstance popItem();
+  <SEGMENT extends IPathSegment> SEGMENT getContextPathSegment();
 
-  String getPath(PathBuilder.PathType pathType);
+  List<IPathSegment> getPathSegments();
 
-  public enum PathType {
-    METAPATH(new MetapathFormatter());
-
-    private final IPathFormatter formatter;
-
-    PathType(IPathFormatter formatter) {
-      this.formatter = formatter;
-    }
-
-    public IPathFormatter getFormatter() {
-      return formatter;
-    }
-  }
+  List<IPathSegment> getLeadingPathSegments();
 }

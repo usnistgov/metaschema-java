@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.AbstractExpressionVisitor;
+
 public class ASTPrinter
     extends AbstractExpressionVisitor<String, Void> {
   private int indentation = 0;
@@ -101,8 +103,13 @@ public class ASTPrinter
   }
 
   @Override
-  public String visitComparison(Comparison expr, Void context) {
-    return appendNode(expr, super.visitComparison(expr, context));
+  public String visitValueComparison(ValueComparison expr, Void context) {
+    return appendNode(expr, super.visitValueComparison(expr, context));
+  }
+
+  @Override
+  public String visitGeneralComparison(GeneralComparison expr, Void context) {
+    return appendNode(expr, super.visitGeneralComparison(expr, context));
   }
 
   @Override
@@ -171,7 +178,7 @@ public class ASTPrinter
   }
 
   @Override
-  public String visitOr(OrNode expr, Void context) {
+  public String visitOr(Or expr, Void context) {
     return appendNode(expr, super.visitOr(expr, context));
   }
 

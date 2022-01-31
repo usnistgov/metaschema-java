@@ -36,10 +36,13 @@ import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultFlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -66,8 +69,8 @@ public abstract class AbstractClassBinding implements ClassBinding {
 
   private final BindingContext bindingContext;
   private final Class<?> clazz;
-  private final List<Method> beforeDeserializeMethods;
-  private final List<Method> afterDeserializeMethods;
+  private final Method beforeDeserializeMethod;
+  private final Method afterDeserializeMethod;
   private Map<String, FlagProperty> flagInstances;
   private FlagProperty jsonKeyFlag;
 
@@ -84,8 +87,8 @@ public abstract class AbstractClassBinding implements ClassBinding {
     Objects.requireNonNull(clazz, "clazz");
     this.bindingContext = bindingContext;
     this.clazz = clazz;
-    this.beforeDeserializeMethods = ClassIntrospector.getMatchingMethods(clazz, "beforeDeserialize", Object.class);
-    this.afterDeserializeMethods = ClassIntrospector.getMatchingMethods(clazz, "afterDeserialize", Object.class);
+    this.beforeDeserializeMethod = ClassIntrospector.getMatchingMethod(clazz, "beforeDeserialize", Object.class);
+    this.afterDeserializeMethod = ClassIntrospector.getMatchingMethod(clazz, "afterDeserialize", Object.class);
   }
 
   @Override
@@ -121,6 +124,35 @@ public abstract class AbstractClassBinding implements ClassBinding {
   public String toCoordinates() {
     return String.format("%s ClassBinding(%s): %s", getModelType().name().toLowerCase(), getName(),
         getBoundClass().getName());
+  }
+
+  @Override
+  public String getFormalName() {
+    // TODO: implement
+    return null;
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+    // TODO: implement
+    return null;
+  }
+
+  @Override
+  public @NotNull ModuleScopeEnum getModuleScope() {
+    // TODO: is this the right value?
+    return ModuleScopeEnum.INHERITED;
+  }
+
+  @Override
+  public boolean isGlobal() {
+    return getBoundClass().getEnclosingClass() == null;
+  }
+
+  @Override
+  public IMetaschema getContainingMetaschema() {
+    // TODO: implement
+    return null;
   }
 
   @Override
@@ -195,7 +227,7 @@ public abstract class AbstractClassBinding implements ClassBinding {
   }
 
   @Override
-  public synchronized Map<String, FlagProperty> getFlagInstances() {
+  public synchronized Map<String, FlagProperty> getFlagInstanceMap() {
     // check that the flag instances are lazy loaded
     initalizeFlagInstances();
     return flagInstances;
@@ -216,9 +248,9 @@ public abstract class AbstractClassBinding implements ClassBinding {
   public Map<String, ? extends NamedProperty> getNamedInstances(Predicate<FlagProperty> filter) {
     Map<String, ? extends NamedProperty> retval;
     if (filter == null) {
-      retval = getFlagInstances();
+      retval = getFlagInstanceMap();
     } else {
-      retval = getFlagInstances().values().stream().filter(filter)
+      retval = getFlagInstances().stream().filter(filter)
           .collect(Collectors.toMap(IFlagInstance::getJsonName, Function.identity()));
     }
     return retval;
@@ -262,13 +294,11 @@ public abstract class AbstractClassBinding implements ClassBinding {
    *           if an error occurs while calling a deserialization method
    */
   protected void callBeforeDeserialize(Object objectInstance, Object parentInstance) throws BindingException {
-    if (!beforeDeserializeMethods.isEmpty()) {
-      for (Method method : beforeDeserializeMethods) {
-        try {
-          method.invoke(objectInstance, parentInstance);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-          throw new BindingException(ex);
-        }
+    if (beforeDeserializeMethod != null) {
+      try {
+        beforeDeserializeMethod.invoke(objectInstance, parentInstance);
+      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+        throw new BindingException(ex);
       }
     }
   }
@@ -286,13 +316,11 @@ public abstract class AbstractClassBinding implements ClassBinding {
    *           if an error occurs while calling a deserialization method
    */
   protected void callAfterDeserialize(Object objectInstance, Object parentInstance) throws BindingException {
-    if (!afterDeserializeMethods.isEmpty()) {
-      for (Method method : afterDeserializeMethods) {
-        try {
-          method.invoke(objectInstance, parentInstance);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-          throw new BindingException(ex);
-        }
+    if (afterDeserializeMethod != null) {
+      try {
+        afterDeserializeMethod.invoke(objectInstance, parentInstance);
+      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+        throw new BindingException(ex);
       }
     }
   }
@@ -308,48 +336,21 @@ public abstract class AbstractClassBinding implements ClassBinding {
 
     callAfterDeserialize(instance, parentInstance);
 
-    if (context.isValidating()) {
-      validate(instance);
-    }
-
     return instance;
   }
 
   protected void readInternal(@SuppressWarnings("unused") Object parentInstance, Object instance, StartElement start,
       XmlParsingContext context) throws IOException, XMLStreamException, BindingException {
-    for (FlagProperty flag : getFlagInstances().values()) {
+    for (FlagProperty flag : getFlagInstances()) {
       flag.read(instance, start, context);
     }
     readBody(instance, start, context);
 
-    if (context.isValidating()) {
-      validate(instance);
-    }
     // TODO: should I check for the END_ELEMENT here?
   }
 
   protected abstract void readBody(Object instance, StartElement start, XmlParsingContext context)
       throws IOException, XMLStreamException, BindingException;
-
-  @Override
-  public boolean validate(Object instance) {
-    boolean retval = true;
-
-    // validate the constraints on this bound class
-    // TODO: complete
-
-    // // validate flags
-    // for (FlagProperty flag : getFlagInstances().values()) {
-    // Object value = flag.getValue(instance);
-    // if (flag.isRequired() && value == null) {
-    // retval = false;
-    // }
-    // }
-    //
-    // // validate model/field value
-    // // TODO: complete
-    return retval;
-  }
 
   @Override
   public void writeItem(Object instance, QName parentName, XmlWritingContext context)
@@ -360,7 +361,7 @@ public abstract class AbstractClassBinding implements ClassBinding {
   protected void writeInternal(Object instance, QName parentName, XmlWritingContext context)
       throws IOException, XMLStreamException {
     // write flags
-    for (FlagProperty flag : getFlagInstances().values()) {
+    for (FlagProperty flag : getFlagInstances()) {
       flag.write(instance, parentName, context);
     }
     writeBody(instance, parentName, context);
@@ -368,4 +369,25 @@ public abstract class AbstractClassBinding implements ClassBinding {
 
   protected abstract void writeBody(Object instance, QName parentName, XmlWritingContext context)
       throws XMLStreamException, IOException;
+
+  @Override
+  public Object copyBoundObject(@NotNull Object item, Object parentInstance) throws BindingException {
+    Object instance = newInstance();
+
+    callBeforeDeserialize(instance, parentInstance);
+
+    copyBoundObjectInternal(item, instance);
+
+    callAfterDeserialize(instance, parentInstance);
+
+    return instance;
+  }
+
+  protected void copyBoundObjectInternal(@NotNull Object fromInstance, @NotNull Object toInstance)
+      throws BindingException {
+    for (FlagProperty property : getFlagInstances()) {
+      property.copyBoundObject(fromInstance, toInstance);
+    }
+  }
+
 }

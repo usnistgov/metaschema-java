@@ -50,17 +50,18 @@ import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
 import gov.nist.secauto.metaschema.binding.model.property.Property;
 import gov.nist.secauto.metaschema.binding.model.property.info.ListPropertyCollector;
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -543,12 +544,7 @@ public class DefaultFieldClassBinding
       }
     }
 
-    List<? extends Object> instance = collector.getValue();
-    if (context.isValidating()) {
-      validate(instance);
-    }
-
-    return instance;
+    return collector.getValue();
   }
 
   @Override
@@ -651,8 +647,8 @@ public class DefaultFieldClassBinding
   }
 
   @Override
-  public DataTypes getDatatype() {
-    return DataTypes.getDataTypeForAdapter(getFieldValue().getJavaTypeAdapter());
+  public IJavaTypeAdapter<?> getDatatype() {
+    return getFieldValue().getJavaTypeAdapter();
   }
 
   /**
@@ -693,5 +689,13 @@ public class DefaultFieldClassBinding
   public List<? extends IExpectConstraint> getExpectConstraints() {
     checkModelConstraints();
     return constraints.getExpectConstraints();
+  }
+
+  @Override
+  protected void copyBoundObjectInternal(@NotNull Object fromInstance, @NotNull Object toInstance)
+      throws BindingException {
+    super.copyBoundObjectInternal(fromInstance, toInstance);
+
+    getFieldValue().copyBoundObject(fromInstance, toInstance);
   }
 }

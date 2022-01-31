@@ -26,11 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.instances;
 
-import gov.nist.secauto.metaschema.model.definitions.AssemblyDefinition;
+import gov.nist.secauto.metaschema.model.IXmlMetaschema;
+import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
 
-public abstract class AbstractAssemblyInstance<DEFINITION extends AssemblyDefinition>
-    extends AbstractDefinedInfoElementInstance<AssemblyDefinition, DEFINITION>
-    implements AssemblyInstance<DEFINITION> {
+import org.jetbrains.annotations.NotNull;
+
+public abstract class AbstractAssemblyInstance implements IXmlAssemblyInstance {
+  @NotNull
+  private final IXmlAssemblyDefinition parent;
 
   /**
    * Create a new assembly instance.
@@ -38,15 +41,21 @@ public abstract class AbstractAssemblyInstance<DEFINITION extends AssemblyDefini
    * @param parent
    *          the parent assembly definition
    */
-  public AbstractAssemblyInstance(AssemblyDefinition parent) {
-    super(parent);
+  public AbstractAssemblyInstance(@NotNull IXmlAssemblyDefinition parent) {
+    this.parent = parent;
   }
-  //
-  // @Override
-  // public boolean isSimple() {
-  // return getDefinition().getFlagInstances().isEmpty() &&
-  // getDefinition().getModelInstances().isEmpty();
-  // }
+
+  @Override
+  @NotNull
+  public IXmlAssemblyDefinition getContainingDefinition() {
+    return parent;
+  }
+
+  @Override
+  @NotNull
+  public IXmlMetaschema getContainingMetaschema() {
+    return getContainingDefinition().getContainingMetaschema();
+  }
 
   @Override
   public String getXmlNamespace() {
@@ -57,5 +66,4 @@ public abstract class AbstractAssemblyInstance<DEFINITION extends AssemblyDefini
   public String getGroupAsXmlNamespace() {
     return getContainingMetaschema().getXmlNamespace().toString();
   }
-
 }

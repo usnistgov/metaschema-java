@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.maven.plugin;
 
 import gov.nist.secauto.metaschema.codegen.JavaGenerator;
 import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
-import gov.nist.secauto.metaschema.model.Metaschema;
-import gov.nist.secauto.metaschema.model.MetaschemaException;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
@@ -47,6 +47,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -321,9 +322,21 @@ public class MetaschemaMojo
       generate = false;
       // check for staleness
       long staleLastModified = staleFile.lastModified();
-      for (File sourceFile : getSources().collect(Collectors.toList())) {
-        if (sourceFile.lastModified() > staleLastModified) {
-          generate = true;
+
+      BuildContext buildContext = getBuildContext();
+      URI metaschemaDirRelative = getMavenProject().getBasedir().toURI().relativize(metaschemaDir.toURI());
+
+      if (buildContext.isIncremental() && buildContext.hasDelta(metaschemaDirRelative.toString())) {
+        getLog().info("metaschemaDirRelative: " + metaschemaDirRelative.toString());
+        generate = true;
+      }
+
+      if (!generate) {
+        for (File sourceFile : getSources().collect(Collectors.toList())) {
+          getLog().info("Source file: " + sourceFile.getPath());
+          if (sourceFile.lastModified() > staleLastModified) {
+            generate = true;
+          }
         }
       }
     }
@@ -362,10 +375,10 @@ public class MetaschemaMojo
       // generate Java sources based on provided metaschema sources
       final MetaschemaLoader loader = new MetaschemaLoader();
       loader.allowEntityResolution();
-      final Set<Metaschema> metaschemaCollection = new HashSet<>();
+      final Set<IMetaschema> metaschemaCollection = new HashSet<>();
       for (File source : getSources().collect(Collectors.toList())) {
         getLog().info("Using metaschema source: " + source.getPath());
-        Metaschema metaschema;
+        IMetaschema metaschema;
         try {
           metaschema = loader.loadXmlMetaschema(source);
         } catch (MetaschemaException | IOException ex) {
@@ -403,7 +416,7 @@ public class MetaschemaMojo
       }
 
       // for m2e
-      // buildContext.refresh(getOutputDirectory());
+      buildContext.refresh(getOutputDirectory());
     }
 
     // add generated sources to Maven

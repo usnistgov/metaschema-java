@@ -26,11 +26,31 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public class IntegerDivision
-    extends AbstractArithmeticExpr {
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 
-  public IntegerDivision(IExpression left, IExpression right) {
-    super(left, right);
+import org.jetbrains.annotations.NotNull;
+
+public class IntegerDivision
+    extends AbstractArithmeticExpression<IIntegerItem> {
+
+  @SuppressWarnings("null")
+  public IntegerDivision(@NotNull IExpression left, @NotNull IExpression right) {
+    super(left, right, IIntegerItem.class);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Class<IIntegerItem> getBaseResultType() {
+    return IIntegerItem.class;
+  }
+
+  @Override
+  public ISequence<? extends IIntegerItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+    return visitor.visitIntegerDivision(this, context);
   }
 
   @Override

@@ -29,9 +29,9 @@ package gov.nist.secauto.metaschema.freemarker.support;
 import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupText;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupXmlStreamWriter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupText;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupXmlStreamWriter;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -57,7 +57,8 @@ public class MarkupToHtmlMethod implements TemplateMethodModelEx {
 
     if (arguments.isEmpty() || arguments.size() < 2 || arguments.size() > 3) {
       throw new TemplateModelException(String.format(
-          "This method requires a %s typed object argument, a namspace string argument, and may optionally have a prefix string argument.",
+          "This method requires a %s typed object argument, a namspace string argument, and may optionally have a"
+              + " prefix string argument.",
           MarkupText.class.getName()));
     }
 
@@ -77,8 +78,7 @@ public class MarkupToHtmlMethod implements TemplateMethodModelEx {
 
     MarkupText text = (MarkupText) markupObject;
 
-    MarkupXmlStreamWriter writingVisitor
-        = new MarkupXmlStreamWriter(namespace, text instanceof MarkupMultiline);
+    MarkupXmlStreamWriter writingVisitor = new MarkupXmlStreamWriter(namespace, text instanceof MarkupMultiline);
 
     XMLOutputFactory2 factory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
     factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);

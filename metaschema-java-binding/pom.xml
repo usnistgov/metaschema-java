@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
@@ -12,13 +14,13 @@
 	<name>Metaschema XML, JSON, and YAML Data Binding</name>
 	<description>A Metaschema binding-based parser for Java objects supporting serialization of conformant XML, JSON, and YAML data.</description>
 
-  <url>${site.url}${project.artifactId}/</url>
-  <distributionManagement>
-    <site>
-      <id>nist-pages</id>
-      <url>${site.url}${project.artifactId}/</url>
-    </site>
-  </distributionManagement>
+	<url>${site.url}${project.artifactId}/</url>
+	<distributionManagement>
+		<site>
+			<id>nist-pages</id>
+			<url>${site.url}${project.artifactId}/</url>
+		</site>
+	</distributionManagement>
 
 	<dependencies>
 		<dependency>
@@ -45,6 +47,10 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-yaml</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -75,9 +81,19 @@
 			<artifactId>log4j-api</artifactId>
 		</dependency>
 
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+    </dependency>
+
 		<dependency>
 			<groupId>org.jmock</groupId>
 			<artifactId>jmock-junit5</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>

@@ -38,8 +38,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHas
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IsUnique;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.KeyField;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
@@ -50,15 +48,18 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IKeyField;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -91,6 +92,8 @@ public class AnnotationUtils {
       annotation.addMember("id", "$S", id);
     }
 
+    annotation.addMember("level", "$T.$L", IConstraint.Level.class, constraint.getLevel());
+
     MetapathExpression target = constraint.getTarget();
     String path = target.getPath();
     if (!path.equals(getDefaultValue(annotationType, "target"))) {
@@ -99,7 +102,7 @@ public class AnnotationUtils {
   }
 
   public static void applyAllowedValuesConstraints(AnnotationSpec.Builder annotation,
-      List<? extends IAllowedValuesConstraint> constraints) {
+      List<@NotNull ? extends IAllowedValuesConstraint> constraints) {
     for (IAllowedValuesConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(AllowedValues.class);
       buildConstraint(AllowedValues.class, constraintAnnotation, constraint);
@@ -122,7 +125,7 @@ public class AnnotationUtils {
   }
 
   public static void applyIndexHasKeyConstraints(AnnotationSpec.Builder annotation,
-      List<? extends IIndexHasKeyConstraint> constraints) {
+      List<@NotNull ? extends IIndexHasKeyConstraint> constraints) {
     for (IIndexHasKeyConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(IndexHasKey.class);
       buildConstraint(IndexHasKey.class, constraintAnnotation, constraint);
@@ -135,7 +138,8 @@ public class AnnotationUtils {
     }
   }
 
-  private static void buildKeyFields(Builder constraintAnnotation, List<? extends IKeyField> keyFields) {
+  private static void buildKeyFields(@NotNull Builder constraintAnnotation,
+      @NotNull List<@NotNull ? extends IKeyField> keyFields) {
     for (IKeyField key : keyFields) {
       AnnotationSpec.Builder keyAnnotation = AnnotationSpec.builder(KeyField.class);
 
@@ -160,7 +164,7 @@ public class AnnotationUtils {
   }
 
   public static void applyMatchesConstraints(AnnotationSpec.Builder annotation,
-      List<? extends IMatchesConstraint> constraints) {
+      List<@NotNull ? extends IMatchesConstraint> constraints) {
     for (IMatchesConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(Matches.class);
       buildConstraint(Matches.class, constraintAnnotation, constraint);
@@ -170,16 +174,16 @@ public class AnnotationUtils {
         constraintAnnotation.addMember("pattern", "$S", pattern.pattern());
       }
 
-      DataTypes dataType = constraint.getDataType();
+      IJavaTypeAdapter<?> dataType = constraint.getDataType();
       if (dataType != null) {
-        constraintAnnotation.addMember("typeAdapter", "$T.class", dataType.getJavaTypeAdapter().getClass());
+        constraintAnnotation.addMember("typeAdapter", "$T.class", dataType.getClass());
       }
       annotation.addMember("matches", "$L", constraintAnnotation.build());
     }
   }
 
   public static void applyExpectConstraints(AnnotationSpec.Builder annotation,
-      List<? extends IExpectConstraint> constraints) {
+      List<@NotNull ? extends IExpectConstraint> constraints) {
     for (IExpectConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(Expect.class);
 
@@ -193,7 +197,7 @@ public class AnnotationUtils {
   }
 
   public static void applyIndexConstraints(AnnotationSpec.Builder annotation,
-      List<? extends IIndexConstraint> constraints) {
+      List<@NotNull ? extends IIndexConstraint> constraints) {
     for (IIndexConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(Index.class);
 
@@ -208,7 +212,7 @@ public class AnnotationUtils {
   }
 
   public static void applyUniqueConstraints(AnnotationSpec.Builder annotation,
-      List<? extends IUniqueConstraint> constraints) {
+      List<@NotNull ? extends IUniqueConstraint> constraints) {
     for (IUniqueConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(IsUnique.class);
 
@@ -221,10 +225,10 @@ public class AnnotationUtils {
   }
 
   public static void applyHasCardinalityConstraints(IAssemblyDefinition definition, AnnotationSpec.Builder annotation,
-      List<? extends ICardinalityConstraint> constraints) {
+      List<@NotNull ? extends ICardinalityConstraint> constraints) {
     for (ICardinalityConstraint constraint : constraints) {
       Integer minOccurs = constraint.getMinOccurs();
-      Integer maxOccurs = constraint.getMinOccurs();
+      Integer maxOccurs = constraint.getMaxOccurs();
 
       IInstanceSet instanceSet = definition.evaluateMetapathInstances(constraint.getTarget());
       Collection<? extends IInstance> instances = instanceSet.getInstances();

@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+// TODO: rethink how this works and if it is needed
 public class ModelExploder {
   private final AssemblyDefinitionResolver assemblyDefinitionResolver = new Resolver();
 

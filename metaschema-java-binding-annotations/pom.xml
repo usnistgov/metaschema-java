@@ -19,10 +19,6 @@
   </distributionManagement>
 
 	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>metaschema-java-datatypes</artifactId>
-		</dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>metaschema-model-common</artifactId>

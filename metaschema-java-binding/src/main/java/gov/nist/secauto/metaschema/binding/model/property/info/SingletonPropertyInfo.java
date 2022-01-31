@@ -30,13 +30,14 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -56,6 +57,11 @@ public class SingletonPropertyInfo
   }
 
   @Override
+  public List<?> getItemsFromValue(Object value) {
+    return value == null ? List.of() : List.of(value);
+  }
+
+  @Override
   public void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
       throws IOException, BindingException {
     NamedModelProperty property = getProperty();
@@ -67,19 +73,9 @@ public class SingletonPropertyInfo
       // read the object's START_OBJECT
       JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
     }
-    PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushItem();
 
     List<Object> values = property.readItem(parentInstance, context);
     collector.addAll(values);
-
-    for (Object value : values) {
-
-      if (context.isValidating()) {
-        getProperty().validateItem(value, context);
-      }
-    }
-    pathBuilder.popItem();
 
     if (isObject) {
       // read the object's END_OBJECT
@@ -89,23 +85,13 @@ public class SingletonPropertyInfo
 
   @Override
   public boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start,
-      XmlParsingContext context)
-      throws IOException, BindingException, XMLStreamException {
-
-    PathBuilder pathBuilder = context.getPathBuilder();
-    pathBuilder.pushItem();
-
+      XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
     boolean handled = true;
     Object value = getProperty().readItem(parentInstance, start, context);
     if (value != null) {
       collector.add(value);
       handled = true;
-
-      if (context.isValidating()) {
-        getProperty().validateItem(value, context);
-      }
     }
-    pathBuilder.popItem();
     return handled;
   }
 
@@ -136,6 +122,18 @@ public class SingletonPropertyInfo
   @Override
   public boolean isValueSet(Object parentInstance) throws IOException {
     return getProperty().getValue(parentInstance) != null;
+  }
+
+  @Override
+  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector)
+      throws BindingException {
+    NamedModelProperty property = getProperty();
+
+    Object value = property.getValue(fromInstance);
+
+    Object copiedValue = property.copyItem(value, toInstance);
+
+    collector.add(copiedValue);
   }
 
 }

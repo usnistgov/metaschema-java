@@ -28,12 +28,16 @@ package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
+import gov.nist.secauto.metaschema.binding.model.FlagDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
 import java.io.IOException;
 import java.util.function.Supplier;
 
 public interface FlagProperty extends NamedProperty, IFlagInstance {
+
+  @Override
+  FlagDefinition getDefinition();
 
   Object readValueFromString(String value) throws IOException;
 

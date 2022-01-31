@@ -26,35 +26,72 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Step
-    extends AbstractPathExpression {
+/**
+ * An immutable expression that combines the evaluation of a sub-expression, with the evaluation of
+ * a series of predicate expressions that filter the result of the evaluation.
+ */
+public class Step implements IExpression {
+  @NotNull
   private final IExpression step;
-  private final List<IExpression> predicates;
+  @NotNull
+  private final List<@NotNull IExpression> predicates;
+  @NotNull
+  private final Class<? extends IItem> staticResultType;
 
-  public Step(IExpression stepExpr, List<IExpression> predicates) {
+  /**
+   * Construct a new step expression.
+   * 
+   * @param stepExpr
+   *          the sub-expression to evaluate before filtering with the predicates
+   * @param predicates
+   *          the expressions to apply as a filter
+   */
+  @SuppressWarnings("null")
+  public Step(@NotNull IExpression stepExpr, @NotNull List<@NotNull IExpression> predicates) {
     this.step = stepExpr;
     this.predicates = predicates;
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, List.of(step));
   }
 
+  /**
+   * Get the step's sub-expression.
+   * 
+   * @return the sub-expression
+   */
+  @NotNull
   public IExpression getStep() {
     return step;
   }
 
-  public List<IExpression> getPredicates() {
+  /**
+   * Retrieve the list of predicates to filter with.
+   * 
+   * @return the list of predicates
+   */
+  @NotNull
+  public List<@NotNull IExpression> getPredicates() {
     return predicates;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public List<? extends IExpression> getChildren() {
-    List<IExpression> retval;
-    if (predicates != null) {
-      Stream<? extends IExpression> predicateStream = predicates.stream();
-      retval = Stream.concat(Stream.of(step), predicateStream).collect(Collectors.toList());
+  public List<@NotNull ? extends IExpression> getChildren() {
+    List<@NotNull IExpression> retval;
+    if (!predicates.isEmpty()) {
+      retval = Stream.concat(Stream.of(step), predicates.stream()).collect(Collectors.toList());
     } else {
       retval = Collections.singletonList(step);
     }
@@ -62,7 +99,22 @@ public class Step
   }
 
   @Override
+  public Class<? extends IItem> getStaticResultType() {
+    return staticResultType;
+  }
+
+  @Override
+  public ISequence<?> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+    return visitor.visitStep(this, context);
+  }
+
+  @Override
   public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitStep(this, context);
+  }
+
+  @Override
+  public String toString() {
+    return new ASTPrinter().visit(this);
   }
 }

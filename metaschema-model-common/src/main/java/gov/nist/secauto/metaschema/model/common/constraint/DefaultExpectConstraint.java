@@ -26,26 +26,85 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.ReplacementScanner;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class DefaultExpectConstraint
     extends AbstractConstraint
     implements IExpectConstraint {
+  @SuppressWarnings("null")
+  @NotNull
+  private static final Pattern METAPATH_VALUE_TEMPLATE_PATTERN
+      = Pattern.compile("(?<!\\\\)(\\{\\s*((?:(?:\\\\})|[^}])*)\\s*\\})");
+  @NotNull
   private final MetapathExpression test;
+  private final String message;
 
-  public DefaultExpectConstraint(String id, MetapathExpression target, MetapathExpression test,
+  /**
+   * Construct a new expect constraint which requires that the associated test evaluates to
+   * {@link IBooleanItem#TRUE} against the target.
+   * 
+   * @param id
+   *          the optional identifier for the constraint
+   * @param level
+   *          the significance of a violation of this constraint
+   * @param message
+   *          an optional message to emit when the constraint is violated
+   * @param target
+   *          the Metapath expression identifying the nodes the constraint targets
+   * @param test
+   *          a Metapath expression that is evaluated against the target node to determine if the
+   *          constraint passes
+   * @param remarks
+   *          optional remarks describing the intent of the constraint
+   */
+  @SuppressWarnings("null")
+  public DefaultExpectConstraint(
+      @Nullable String id,
+      @NotNull Level level,
+      String message,
+      @NotNull MetapathExpression target,
+      @NotNull MetapathExpression test,
       MarkupMultiline remarks) {
-    super(id, target, remarks);
-    Objects.requireNonNull(test);
-    this.test = test;
+    super(id, level, target, remarks);
+    this.test = Objects.requireNonNull(test);
+    this.message = message;
   }
 
   @Override
   public MetapathExpression getTest() {
     return test;
+  }
+
+  @Override
+  public String getMessage() {
+    return message;
+  }
+
+  @Override
+  public CharSequence generateMessage(@NotNull INodeItem item, @NotNull DynamicContext context) {
+    String message = getMessage();
+    if (message == null) {
+      return null;
+    }
+
+    return ReplacementScanner.replaceTokens(message, METAPATH_VALUE_TEMPLATE_PATTERN, match -> {
+      @SuppressWarnings("null")
+      @NotNull
+      String metapath = match.group(2);
+      MetapathExpression expr = MetapathExpression.compile(metapath);
+      return expr.evaluateAs(item, context, MetapathExpression.ResultType.STRING);
+    });
   }
 
 }

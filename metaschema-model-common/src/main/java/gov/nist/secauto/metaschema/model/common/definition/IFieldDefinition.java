@@ -29,15 +29,19 @@ package gov.nist.secauto.metaschema.model.common.definition;
 import gov.nist.secauto.metaschema.model.common.Field;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.DefaultMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 
-public interface IFieldDefinition extends IValuedDefinition, IFlaggedDefinition, Field {
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+public interface IFieldDefinition extends INamedValuedDefinition, INamedModelDefinition, Field {
   /**
    * Retrieves the key to use as the field name for this field's value in JSON.
    * 
    * @return a string or a FlagInstance value
    */
+  @Nullable
   default Object getJsonValueKey() {
     Object retval = getJsonValueKeyFlagInstance();
     if (retval == null) {
@@ -61,6 +65,7 @@ public interface IFieldDefinition extends IValuedDefinition, IFlaggedDefinition,
    * @return the configured flag instance, or {@code null} if a flag is not configured as the "value
    *         key"
    */
+  @Nullable
   IFlagInstance getJsonValueKeyFlagInstance();
 
   /**
@@ -69,6 +74,7 @@ public interface IFieldDefinition extends IValuedDefinition, IFlaggedDefinition,
    * 
    * @return the value key label
    */
+  @NotNull
   String getJsonValueKeyName();
 
   /**
@@ -82,6 +88,7 @@ public interface IFieldDefinition extends IValuedDefinition, IFlaggedDefinition,
   boolean isCollapsible();
 
   @Override
+  @NotNull
   default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {
     return metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(IInstanceSet.newInstanceSet(this)));
   }

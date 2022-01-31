@@ -33,8 +33,10 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
 
-import java.io.IOException;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.util.Collection;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
@@ -85,4 +87,14 @@ public interface ModelPropertyInfo {
   void writeValue(Object parentInstance, JsonWritingContext context) throws IOException;
 
   boolean isValueSet(Object parentInstance) throws IOException;
+
+  default Collection<? extends Object> getItemsFromParentInstance(Object parentInstance) {
+    Object value = getProperty().getValue(parentInstance);
+    return getItemsFromValue(value);
+  }
+
+  Collection<? extends Object> getItemsFromValue(Object value);
+
+  void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector)
+      throws BindingException;
 }

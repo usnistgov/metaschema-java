@@ -26,14 +26,18 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.Defaults;
-import gov.nist.secauto.metaschema.model.definitions.MetaschemaFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.common.ModelConstants;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.definitions.IXmlNamedModelDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFlagInstance;
 import gov.nist.secauto.metaschema.model.xmlbeans.xml.FlagDocument;
 
+import org.jetbrains.annotations.NotNull;
+
 public class XmlFlagInstance
-    extends AbstractFlagInstance<XmlGlobalFlagDefinition> {
+    extends AbstractFlagInstance {
+  @NotNull
   private final FlagDocument.Flag xmlFlag;
 
   /**
@@ -45,7 +49,7 @@ public class XmlFlagInstance
    * @param parent
    *          the field definition this object is an instance of
    */
-  public XmlFlagInstance(FlagDocument.Flag xmlFlag, MetaschemaFlaggedDefinition parent) {
+  public XmlFlagInstance(@NotNull FlagDocument.Flag xmlFlag, @NotNull IXmlNamedModelDefinition parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
   }
@@ -60,9 +64,9 @@ public class XmlFlagInstance
   }
 
   @Override
-  public XmlGlobalFlagDefinition getDefinition() {
-    return (XmlGlobalFlagDefinition) getContainingDefinition().getContainingMetaschema()
-        .getFlagDefinitionByName(getName());
+  public IFlagDefinition getDefinition() {
+    return getContainingDefinition().getContainingMetaschema()
+        .getScopedFlagDefinitionByName(getName());
   }
 
   @Override
@@ -91,7 +95,7 @@ public class XmlFlagInstance
 
   @Override
   public boolean isRequired() {
-    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : Defaults.DEFAULT_FLAG_REQUIRED;
+    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : ModelConstants.DEFAULT_FLAG_REQUIRED;
   }
 
   @Override

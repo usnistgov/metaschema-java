@@ -84,7 +84,9 @@ public class ConstraintFactory {
 
   static DefaultAllowedValuesConstraint newAllowedValuesConstraint(AllowedValuesType xmlConstraint,
       MetapathExpression target) {
-    return new DefaultAllowedValuesConstraint(xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
+    return new DefaultAllowedValuesConstraint(
+        xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
+        xmlConstraint.isSetLevel() ? xmlConstraint.getLevel() : IConstraint.DEFAULT_LEVEL,
         target == null ? IConstraint.DEFAULT_TARGET : target, toAllowedValues(xmlConstraint),
         xmlConstraint.isSetAllowOther() ? xmlConstraint.getAllowOther() : IAllowedValuesConstraint.DEFAULT_ALLOW_OTHER,
         xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
@@ -100,6 +102,7 @@ public class ConstraintFactory {
 
   static DefaultMatchesConstraint newMatchesConstraint(MatchesConstraintType xmlConstraint, MetapathExpression target) {
     return new DefaultMatchesConstraint(xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
+        xmlConstraint.isSetLevel() ? xmlConstraint.getLevel() : IConstraint.DEFAULT_LEVEL,
         target == null ? IConstraint.DEFAULT_TARGET : target,
         xmlConstraint.isSetRegex() ? xmlConstraint.getRegex() : null,
         xmlConstraint.isSetDatatype() ? xmlConstraint.getDatatype() : null,
@@ -118,14 +121,20 @@ public class ConstraintFactory {
   }
 
   static DefaultUniqueConstraint newUniqueConstraint(ScopedKeyConstraintType xmlConstraint) {
-    return new DefaultUniqueConstraint(xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
+    return new DefaultUniqueConstraint(
+        xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
+        xmlConstraint.isSetLevel() ? xmlConstraint.getLevel() : IConstraint.DEFAULT_LEVEL,
         xmlConstraint.getTarget(), newKeyFields(xmlConstraint),
         xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
   }
 
   static DefaultIndexConstraint newIndexConstraint(ScopedIndexConstraintType xmlConstraint) {
-    return new DefaultIndexConstraint(xmlConstraint.isSetId() ? xmlConstraint.getId() : null, xmlConstraint.getTarget(),
-        xmlConstraint.getName(), newKeyFields(xmlConstraint),
+    return new DefaultIndexConstraint(
+        xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
+        xmlConstraint.isSetLevel() ? xmlConstraint.getLevel() : IConstraint.DEFAULT_LEVEL,
+        xmlConstraint.getTarget(),
+        xmlConstraint.getName(),
+        newKeyFields(xmlConstraint),
         xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
   }
 
@@ -140,8 +149,11 @@ public class ConstraintFactory {
 
   static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(IndexHasKeyConstraintType xmlConstraint,
       MetapathExpression target) {
-    return new DefaultIndexHasKeyConstraint(xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
-        target == null ? IConstraint.DEFAULT_TARGET : target, xmlConstraint.getName(), newKeyFields(xmlConstraint),
+    return new DefaultIndexHasKeyConstraint(
+        xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
+        xmlConstraint.isSetLevel() ? xmlConstraint.getLevel() : IConstraint.DEFAULT_LEVEL,
+        target == null ? IConstraint.DEFAULT_TARGET : target,
+        xmlConstraint.getName(), newKeyFields(xmlConstraint),
         xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
   }
 
@@ -154,14 +166,21 @@ public class ConstraintFactory {
   }
 
   static DefaultExpectConstraint newExpectConstraint(ExpectConstraintType xmlConstraint, MetapathExpression target) {
-    return new DefaultExpectConstraint(xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
-        target == null ? IConstraint.DEFAULT_TARGET : target, xmlConstraint.getTest(),
+    return new DefaultExpectConstraint(
+        xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
+        xmlConstraint.isSetLevel() ? xmlConstraint.getLevel() : IConstraint.DEFAULT_LEVEL,
+        xmlConstraint.isSetMessage() ? xmlConstraint.getMessage() : null,
+        target == null ? IConstraint.DEFAULT_TARGET : target,
+        xmlConstraint.getTest(),
         xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
   }
 
   static DefaultCardinalityConstraint newCardinalityConstraint(HasCardinalityConstraintType xmlConstraint) {
-    return new DefaultCardinalityConstraint(xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
-        xmlConstraint.getTarget(), xmlConstraint.isSetMinOccurs() ? xmlConstraint.getMinOccurs().intValueExact() : null,
+    return new DefaultCardinalityConstraint(
+        xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
+        xmlConstraint.isSetLevel() ? xmlConstraint.getLevel() : IConstraint.DEFAULT_LEVEL,
+        xmlConstraint.getTarget(),
+        xmlConstraint.isSetMinOccurs() ? xmlConstraint.getMinOccurs().intValueExact() : null,
         xmlConstraint.isSetMaxOccurs() ? xmlConstraint.getMaxOccurs().intValueExact() : null,
         xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
   }

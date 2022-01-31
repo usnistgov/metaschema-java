@@ -31,7 +31,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.PathBuilder;
 import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
@@ -40,9 +39,10 @@ import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-import gov.nist.secauto.metaschema.datatypes.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -59,6 +59,11 @@ import javax.xml.stream.events.XMLEvent;
 public class MapPropertyInfo
     extends AbstractModelPropertyInfo<ParameterizedType>
     implements ModelPropertyInfo {
+
+  @Override
+  public Collection<?> getItemsFromValue(Object value) {
+    return value == null ? List.of() : ((Map<?, ?>) value).values();
+  }
 
   public MapPropertyInfo(NamedModelProperty property) {
     super(property);
@@ -105,28 +110,12 @@ public class MapPropertyInfo
     // String.format("Unable to parse type '%s', which is not a known bound class", getItemType()));
     // }
 
-    PathBuilder pathBuilder = context.getPathBuilder();
     NamedModelProperty property = getProperty();
     // process all map items
     while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
-      if (JsonToken.FIELD_NAME.equals(jsonParser.currentToken())) {
-        String name = jsonParser.currentName();
-        pathBuilder.pushItem(name);
-      } else {
-        pathBuilder.pushItem();
-      }
 
       List<Object> values = property.readItem(parentInstance, context);
       collector.addAll(values);
-
-      for (Object value : values) {
-
-        if (context.isValidating()) {
-          getProperty().validateItem(value, context);
-        }
-
-      }
-      pathBuilder.popItem();
     }
 
     // advance to next token
@@ -142,25 +131,16 @@ public class MapPropertyInfo
     // consume extra whitespace between elements
     XmlEventUtil.skipWhitespace(eventReader);
 
-    PathBuilder pathBuilder = context.getPathBuilder();
     boolean handled = false;
     XMLEvent event;
-    int position = 0;
     while ((event = eventReader.peek()).isStartElement() && qname.equals(event.asStartElement().getName())) {
-      pathBuilder.pushItem(position++);
 
       // Consume the start element
       Object value = getProperty().readItem(parentInstance, start, context);
       if (value != null) {
         collector.add(value);
         handled = true;
-
-        if (context.isValidating()) {
-          getProperty().validateItem(value, context);
-        }
       }
-
-      pathBuilder.popItem();
 
       // consume extra whitespace between elements
       XmlEventUtil.skipWhitespace(eventReader);
@@ -222,9 +202,7 @@ public class MapPropertyInfo
 
   @Override
   public void writeValue(Object parentInstance, JsonWritingContext context) throws IOException {
-    NamedModelProperty property = getProperty();
-    @SuppressWarnings("unchecked")
-    Map<String, ? extends Object> items = (Map<String, ? extends Object>) property.getValue(parentInstance);
+    Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
 
     if (items.isEmpty()) {
       // nothing to write
@@ -235,17 +213,24 @@ public class MapPropertyInfo
 
     writer.writeStartObject();
 
-    getProperty().getDataTypeHandler().writeItems(items.values(), false, context);
+    getProperty().getDataTypeHandler().writeItems(items, false, context);
 
     writer.writeEndObject();
   }
 
   @Override
   public boolean isValueSet(Object parentInstance) throws IOException {
-    NamedModelProperty property = getProperty();
-    @SuppressWarnings("unchecked")
-    Map<String, ? extends Object> items = (Map<String, ? extends Object>) property.getValue(parentInstance);
-    return items != null && !items.isEmpty();
+    Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
+    return !items.isEmpty();
   }
 
+  @Override
+  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector)
+      throws BindingException {
+    NamedModelProperty property = getProperty();
+
+    for (Object item : getItemsFromParentInstance(fromInstance)) {
+      collector.add(property.copyItem(item, toInstance));
+    }
+  }
 }

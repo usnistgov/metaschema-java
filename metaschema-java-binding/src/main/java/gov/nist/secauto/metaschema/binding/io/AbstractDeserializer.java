@@ -27,13 +27,23 @@
 package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.binding.BindingContext;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.constraint.ValidatingXdmVisitor;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 
@@ -48,30 +58,26 @@ public abstract class AbstractDeserializer<CLASS>
    *          the binding context used to supply bound Java classes while writing
    * @param classBinding
    *          the bound class information for the Java type this deserializer is operating on
-   * @param configuration
-   *          the deserializer configuration, or {@code null} if the default configuration is to be
-   *          used
    */
-  protected AbstractDeserializer(BindingContext bindingContext, AssemblyClassBinding classBinding,
-      Configuration configuration) {
-    super(bindingContext, classBinding, configuration);
+  protected AbstractDeserializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {
+    super(bindingContext, classBinding);
   }
 
   @Override
   public boolean isValidating() {
-    return getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_VALIDATE, false);
+    return getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_VALIDATE);
   }
 
   @Override
-  public CLASS deserialize(InputStream in) throws BindingException {
-    return deserialize(new InputStreamReader(in));
+  public CLASS deserialize(InputStream in, URI documentUri) throws BindingException {
+    return deserialize(new InputStreamReader(in), documentUri);
   }
 
   @Override
   public CLASS deserialize(File file) throws BindingException {
 
     try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8"))) {
-      CLASS retval = deserialize(reader);
+      CLASS retval = deserialize(reader, file.toURI());
       reader.close();
       return retval;
     } catch (IOException ex) {
@@ -82,11 +88,43 @@ public abstract class AbstractDeserializer<CLASS>
   @Override
   public CLASS deserialize(URL url) throws BindingException {
     try (InputStream in = url.openStream()) {
-      CLASS retval = deserialize(in);
+      CLASS retval = deserialize(in, url.toURI());
       in.close();
       return retval;
     } catch (IOException ex) {
       throw new BindingException("Unable to open url: " + url.toString(), ex);
+    } catch (URISyntaxException ex) {
+      throw new BindingException(ex);
     }
   }
+
+  @Override
+  public CLASS deserialize(Reader reader, URI documentUri) throws BindingException {
+    IBoundXdmNodeItem nodeItem = deserializeToNodeItem(reader, documentUri);
+
+    return nodeItem.toBoundObject();
+  }
+
+  @Override
+  public IBoundXdmNodeItem deserializeToNodeItem(InputStream is, @Nullable URI documentUri) throws BindingException {
+    return deserializeToNodeItem(new InputStreamReader(is), documentUri);
+  }
+
+  @Override
+  public IBoundXdmNodeItem deserializeToNodeItem(Reader reader, @Nullable URI documentUri) throws BindingException {
+    IBoundXdmNodeItem nodeItem = deserializeToNodeItemInternal(reader, documentUri);
+
+    if (isValidating()) {
+      StaticContext staticContext = new StaticContext();
+      DynamicContext dynamicContext = staticContext.newDynamicContext();
+      dynamicContext.setDocumentLoader(getBindingContext().newBoundLoader());
+      DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext);
+      new ValidatingXdmVisitor().visit(nodeItem, validator);
+      validator.finalizeValidation();
+    }
+    return nodeItem;
+  }
+
+  protected abstract IBoundXdmNodeItem deserializeToNodeItemInternal(Reader reader, @Nullable URI documentUri)
+      throws BindingException;
 }

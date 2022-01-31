@@ -26,44 +26,18 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 
 public class AbstractParsingContext<READER, PROBLEM_HANDLER extends ProblemHandler>
     implements ParsingContext<READER, PROBLEM_HANDLER> {
-  private static final Logger logger = LogManager.getLogger(AbstractParsingContext.class);
   private final READER parser;
   private final PROBLEM_HANDLER problemHandler;
-  private boolean validating;
-  private final PathBuilder pathBuilder;
 
-  public AbstractParsingContext(READER parser, PROBLEM_HANDLER problemHandler, boolean validating) {
+  public AbstractParsingContext(READER parser, PROBLEM_HANDLER problemHandler) {
     Objects.requireNonNull(parser, "parser");
     Objects.requireNonNull(problemHandler, "problemHandler");
     this.parser = parser;
     this.problemHandler = problemHandler;
-    this.validating = validating;
-    this.pathBuilder = new DefaultPathBuilder();
-  }
-
-  @Override
-  public boolean isValidating() {
-    return validating;
-  }
-
-  public void setValidating(boolean validating) {
-    this.validating = validating;
   }
 
   @Override
@@ -74,10 +48,5 @@ public class AbstractParsingContext<READER, PROBLEM_HANDLER extends ProblemHandl
   @Override
   public PROBLEM_HANDLER getProblemHandler() {
     return problemHandler;
-  }
-
-  @Override
-  public PathBuilder getPathBuilder() {
-    return pathBuilder;
   }
 }

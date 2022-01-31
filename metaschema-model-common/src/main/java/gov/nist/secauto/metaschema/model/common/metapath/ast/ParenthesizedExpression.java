@@ -26,38 +26,44 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
-public class ParenthesizedExpression implements IExpression {
-  private IExpression expr;
+public class ParenthesizedExpression
+    extends AbstractUnaryExpression {
+  @NotNull
+  private final Class<? extends IItem> staticResultType;
 
-  public ParenthesizedExpression(IExpression expr) {
-    this.expr = expr;
-  }
-
-  public IExpression getNode() {
-    return expr;
-  }
-
-  @Override
-  public List<? extends IExpression> getChildren() {
-    return List.of(expr);
+  @SuppressWarnings("null")
+  public ParenthesizedExpression(@NotNull IExpression expr) {
+    super(expr);
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, List.of(expr));
   }
 
   @Override
-  public boolean isNodeExpression() {
-    boolean retval = true;
-    for (IExpression expr : getChildren()) {
-      if (!expr.isNodeExpression()) {
-        retval = false;
-        break;
-      }
-    }
-    return retval;
+  public Class<? extends IItem> getStaticResultType() {
+    return staticResultType;
+  }
+
+  @Override
+  public ISequence<?> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+    return visitor.visitParenthesizedExpression(this, context);
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitParenthesizedExpression(this, context);
+  }
+
+  @Override
+  public String toString() {
+    return new ASTPrinter().visit(this);
   }
 }

@@ -26,11 +26,19 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-public abstract class AbstractPathExpression implements IPathExpression {
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+
+public abstract class AbstractPathExpression<RESULT_TYPE extends IItem> implements IPathExpression<RESULT_TYPE> {
+  @Override
+  public abstract Class<RESULT_TYPE> getBaseResultType();
 
   @Override
-  public boolean isNodeExpression() {
-    return true;
+  public Class<? extends RESULT_TYPE> getStaticResultType() {
+    return getBaseResultType();
   }
 
+  @Override
+  public String toString() {
+    return new ASTPrinter().visit(this);
+  }
 }

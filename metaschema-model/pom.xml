@@ -85,7 +85,7 @@
 							<outputDirectory>${project.build.directory}/schema/xsd</outputDirectory>
 							<resources>
 								<resource>
-									<directory>../metaschema/toolchains/xslt-M4/validate</directory>
+									<directory>metaschema/toolchains/xslt-M4/validate</directory>
 									<includes>
 										<include>metaschema.xsd</include>
 									</includes>

@@ -26,17 +26,84 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import gov.nist.secauto.metaschema.datatypes.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ContextItem;
 
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * A common interface for all constraint definitions.
+ */
 public interface IConstraint {
-  public static final MetapathExpression DEFAULT_TARGET = MetapathExpression.CONTEXT_NODE;
-  public static final String DEFAULT_TARGET_PATH = ".";
+  /**
+   * The degree to which a constraint violation is significant.
+   * <p>
+   * These values are ordered from least significant to most significant.
+   */
+  public enum Level {
+    /**
+     * A violation of the constraint represents a point of interest.
+     */
+    INFORMATIONAL,
+    /**
+     * A violation of the constraint represents a potential issue with the content.
+     */
+    WARNING,
+    /**
+     * A violation of the constraint represents a fault in the content. This may include issues around
+     * compatibility, integrity, consistency, etc.
+     */
+    ERROR,
+    /**
+     * A violation of the constraint represents a serious fault in the content that will prevent typical
+     * use of the content.
+     */
+    CRITICAL;
+  }
 
+  /**
+   * The default level to use if no level is provided.
+   */
+  @NotNull
+  public static final Level DEFAULT_LEVEL = Level.ERROR;
+  /**
+   * The default target Metapath expression to use if no target is provided.
+   */
+  @NotNull
+  public static final MetapathExpression DEFAULT_TARGET = MetapathExpression.CONTEXT_NODE;
+  /**
+   * The default target Metapath expression to use if no target is provided.
+   */
+  @NotNull
+  public static final String DEFAULT_TARGET_METAPATH = ".";
+
+  /**
+   * Retrieve the unique identifier for the constraint.
+   * 
+   * @return the identifier or {@code null} if no identifier is defined
+   */
   String getId();
 
+  /**
+   * The significance of a violation of this constraint.
+   * 
+   * @return the level
+   */
+  @NotNull
+  Level getLevel();
+
+  /**
+   * Retrieve the Metapath expression to use to query the targets of the constraint.
+   * 
+   * @return a Metapath expression
+   */
+  @NotNull
   MetapathExpression getTarget();
 
+  /**
+   * Retrieve the remarks associated with the constraint.
+   * 
+   * @return the remarks or {@code null} if no remarks are defined
+   */
   MarkupMultiline getRemarks();
 }

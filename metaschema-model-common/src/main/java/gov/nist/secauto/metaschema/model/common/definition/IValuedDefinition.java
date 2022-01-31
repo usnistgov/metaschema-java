@@ -26,51 +26,59 @@
 
 package gov.nist.secauto.metaschema.model.common.definition;
 
-import gov.nist.secauto.metaschema.datatypes.DataTypes;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 /**
- * Identifies Metaschema definition types that have associated values (i.e., field, flag).
+ * This marker interface identifies Metaschema definition types that have associated values (i.e.,
+ * field, flag).
  */
 public interface IValuedDefinition extends IDefinition {
   /**
-   * Retrieves the value data type of the definition.
+   * Retrieves the data type of the definition's value.
    * 
    * @return the data type
    */
-  DataTypes getDatatype();
+  @NotNull
+  IJavaTypeAdapter<?> getDatatype();
 
   /**
    * Retrieve the list of allowed value constraints that apply to this definition's value.
    * 
    * @return the list of allowed value constraints
    */
-  List<? extends IAllowedValuesConstraint> getAllowedValuesContraints();
+  @NotNull
+  List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesContraints();
 
   /**
    * Retrieve the list of matches constraints that apply to this definition's value.
    * 
    * @return the list of matches constraints
    */
-  List<? extends IMatchesConstraint> getMatchesConstraints();
+  @NotNull
+  List<@NotNull ? extends IMatchesConstraint> getMatchesConstraints();
 
   /**
    * Retrieve the list of key reference constraints that apply to this definition's value.
    * 
    * @return the list of key reference constraints
    */
-  List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints();
+  @NotNull
+  List<@NotNull ? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints();
 
   /**
    * Retrieve the list of expect constraints that apply to this definition's value.
    * 
    * @return the list of expect constraints
    */
-  List<? extends IExpectConstraint> getExpectConstraints();
+  @NotNull
+  List<@NotNull ? extends IExpectConstraint> getExpectConstraints();
 
 }
