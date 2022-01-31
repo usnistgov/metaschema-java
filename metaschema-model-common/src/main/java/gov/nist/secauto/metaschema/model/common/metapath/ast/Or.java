@@ -36,7 +36,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class Or extends AbstractNAryExpression implements IBooleanLogicExpression {
+public class Or
+    extends AbstractNAryExpression
+    implements IBooleanLogicExpression {
 
   public Or(@NotNull List<@NotNull IExpression> chidren) {
     super(chidren);

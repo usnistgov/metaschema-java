@@ -32,7 +32,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.type.IBase64BinaryType;
 import java.nio.ByteBuffer;
 import java.util.Base64;
 
-public class Base64Adapter extends AbstractJavaTypeAdapter<ByteBuffer, IBase64BinaryItem> implements IBase64BinaryType {
+public class Base64Adapter
+    extends AbstractJavaTypeAdapter<ByteBuffer, IBase64BinaryItem>
+    implements IBase64BinaryType {
   @SuppressWarnings("null")
   public Base64Adapter() {
     super(ByteBuffer.class);
@@ -53,7 +55,7 @@ public class Base64Adapter extends AbstractJavaTypeAdapter<ByteBuffer, IBase64Bi
 
   @Override
   public ByteBuffer copy(Object obj) {
-    ByteBuffer buffer = (ByteBuffer)obj;
+    ByteBuffer buffer = (ByteBuffer) obj;
     final ByteBuffer clone
         = (buffer.isDirect()) ? ByteBuffer.allocateDirect(buffer.capacity()) : ByteBuffer.allocate(buffer.capacity());
     final ByteBuffer readOnlyCopy = buffer.asReadOnlyBuffer();

@@ -34,7 +34,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 import org.jetbrains.annotations.NotNull;
 
-public class Multiplication extends AbstractArithmeticExpression<IAnyAtomicItem> {
+public class Multiplication
+    extends AbstractArithmeticExpression<IAnyAtomicItem> {
 
   @SuppressWarnings("null")
   public Multiplication(@NotNull IExpression left, @NotNull IExpression right) {

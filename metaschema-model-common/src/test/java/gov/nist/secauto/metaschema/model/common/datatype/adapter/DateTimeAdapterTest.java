@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,10 +32,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 class DateTimeAdapterTest {
 
   @ParameterizedTest
-  @ValueSource(strings = {"2018-01-01T00:00:00"})
+  @ValueSource(strings = { "2018-01-01T00:00:00" })
   void testSimpleDate(String date) {
     new DateTimeAdapter().parse(date);
   }
-
 
 }

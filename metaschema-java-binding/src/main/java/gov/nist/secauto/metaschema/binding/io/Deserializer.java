@@ -52,7 +52,8 @@ public interface Deserializer<CLASS> extends MutableConfiguration {
    * 
    * @param is
    *          the input stream to read from
-   * @param documentUri the URI of the document to read from
+   * @param documentUri
+   *          the URI of the document to read from
    * @return the instance data
    * @throws BindingException
    *           if an error occurred while reading data from the stream
@@ -90,7 +91,8 @@ public interface Deserializer<CLASS> extends MutableConfiguration {
    * 
    * @param reader
    *          the reader to read from
-   * @param documentUri the URI of the document to read from
+   * @param documentUri
+   *          the URI of the document to read from
    * @return the instance data
    * @throws BindingException
    *           if an error occurred while reading data from the stream
@@ -99,9 +101,11 @@ public interface Deserializer<CLASS> extends MutableConfiguration {
 
   /**
    * Read data from the {@link Reader} into a node item instance.
+   * 
    * @param reader
    *          the reader to read from
-   * @param documentUri the URI of the document to read from
+   * @param documentUri
+   *          the URI of the document to read from
    * @return a new node item
    * @throws BindingException
    *           if an error occurred while reading data from the stream
@@ -110,9 +114,11 @@ public interface Deserializer<CLASS> extends MutableConfiguration {
 
   /**
    * Read data from the {@link Reader} into a node item instance.
+   * 
    * @param is
    *          the input stream to read from
-   * @param documentUri the URI of the document to read from
+   * @param documentUri
+   *          the URI of the document to read from
    * @return a new node item
    * @throws BindingException
    *           if an error occurred while reading data from the stream

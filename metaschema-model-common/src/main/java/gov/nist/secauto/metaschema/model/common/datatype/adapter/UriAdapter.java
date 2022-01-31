@@ -33,7 +33,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 
-public class UriAdapter extends AbstractJavaTypeAdapter<URI, IAnyUriItem> implements IAnyUriType {
+public class UriAdapter
+    extends AbstractJavaTypeAdapter<URI, IAnyUriItem>
+    implements IAnyUriType {
   @SuppressWarnings("null")
   public UriAdapter() {
     super(URI.class);
@@ -53,7 +55,7 @@ public class UriAdapter extends AbstractJavaTypeAdapter<URI, IAnyUriItem> implem
   @Override
   public URI copy(Object obj) {
     // a URI is immutable
-    return (URI)obj;
+    return (URI) obj;
   }
 
   @SuppressWarnings("null")

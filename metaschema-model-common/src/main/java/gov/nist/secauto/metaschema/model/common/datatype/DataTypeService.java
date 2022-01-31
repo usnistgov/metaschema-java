@@ -31,6 +31,10 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 
+/**
+ * This class provides a singleton service to allow data types to be discovered within the system
+ * based on an SPI provided by {@link IDataTypeProvider}.
+ */
 public class DataTypeService {
   private static DataTypeService instance;
 
@@ -65,15 +69,19 @@ public class DataTypeService {
    */
   private synchronized void load() throws IllegalStateException {
     Map<String, IJavaTypeAdapter<?>> libraryByName = new HashMap<>();
-    @SuppressWarnings("rawtypes") Map<Class<? extends IJavaTypeAdapter>, IJavaTypeAdapter<?>> libraryByClass
+    @SuppressWarnings("rawtypes")
+    Map<Class<? extends IJavaTypeAdapter>, IJavaTypeAdapter<?>> libraryByClass
         = new HashMap<>();
-    ServiceLoader.load(IDataTypeProvider.class).stream().map(Provider<IDataTypeProvider>::get).flatMap(provider -> {
-      return provider.getJavaTypeAdapters().stream();
-    }).forEach(adapter -> {
-      libraryByName.put(adapter.getName(), adapter);
-      @SuppressWarnings("rawtypes") Class<? extends IJavaTypeAdapter> clazz = adapter.getClass();
-      libraryByClass.put(clazz, adapter);
-    });
+    ServiceLoader.load(IDataTypeProvider.class).stream()
+        .map(Provider<IDataTypeProvider>::get)
+        .flatMap(provider -> {
+          return provider.getJavaTypeAdapters().stream();
+        }).forEach(adapter -> {
+          libraryByName.put(adapter.getName(), adapter);
+          @SuppressWarnings("rawtypes")
+          Class<? extends IJavaTypeAdapter> clazz = adapter.getClass();
+          libraryByClass.put(clazz, adapter);
+        });
     this.libraryByName = libraryByName;
     this.libraryByClass = libraryByClass;
   }

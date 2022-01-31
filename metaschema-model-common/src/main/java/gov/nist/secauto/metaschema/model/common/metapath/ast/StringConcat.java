@@ -36,7 +36,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class StringConcat extends AbstractNAryExpression {
+public class StringConcat
+    extends AbstractNAryExpression {
 
   public StringConcat(@NotNull List<@NotNull IExpression> chidren) {
     super(chidren);

@@ -36,7 +36,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class Metapath extends AbstractNAryExpression {
+public class Metapath
+    extends AbstractNAryExpression {
 
   @NotNull
   private final Class<? extends IItem> staticResultType;

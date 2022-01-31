@@ -56,7 +56,9 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
-public class DefaultFieldValueProperty extends AbstractProperty<FieldClassBinding> implements FieldValueProperty {
+public class DefaultFieldValueProperty
+    extends AbstractProperty<FieldClassBinding>
+    implements FieldValueProperty {
   private static final Logger logger = LogManager.getLogger(DefaultFieldValueProperty.class);
 
   private final FieldValue fieldValue;

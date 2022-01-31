@@ -79,6 +79,6 @@ public interface IDocumentNodeItem extends INodeItem {
   @SuppressWarnings("unchecked")
   @Override
   default <CLASS> @NotNull CLASS toBoundObject() {
-    return (CLASS)getRootAssemblyNodeItem().getValue();
+    return (CLASS) getRootAssemblyNodeItem().getValue();
   }
 }

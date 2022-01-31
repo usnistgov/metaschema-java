@@ -61,7 +61,8 @@ class StreamSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE
   @SuppressWarnings("null")
   @Override
   public synchronized Stream<@NotNull ITEM_TYPE> asStream() {
-    @NotNull Stream<@NotNull ITEM_TYPE> retval;
+    @NotNull
+    Stream<@NotNull ITEM_TYPE> retval;
     if (list == null) {
       if (stream == null) {
         throw new UnsupportedOperationException("stream is already consumed");
@@ -86,14 +87,14 @@ class StreamSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE
 
   public boolean equals(Object other) {
     if (other == this) {
-        return true;
+      return true;
     }
 
     if (!(other instanceof ISequence)) {
-        return false;
+      return false;
     }
-    
-    return asList().equals(((ISequence<?>)other).asList());
+
+    return asList().equals(((ISequence<?>) other).asList());
   }
 
   @Override

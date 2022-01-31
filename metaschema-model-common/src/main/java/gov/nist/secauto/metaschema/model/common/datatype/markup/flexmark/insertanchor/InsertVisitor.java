@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.insertanchor;
 
 import com.vladsch.flexmark.util.ast.Node;
@@ -36,7 +37,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class InsertVisitor extends NodeVisitorBase {
+public class InsertVisitor
+    extends NodeVisitorBase {
   @NotNull
   private final List<@NotNull InsertAnchorNode> inserts = new LinkedList<>();
   @NotNull
@@ -50,20 +52,20 @@ public class InsertVisitor extends NodeVisitorBase {
     visit(markup.getDocument());
     return this;
   }
-  
+
   @Override
   protected void visit(@NotNull Node node) {
     if (node instanceof InsertAnchorNode) {
-      InsertAnchorNode insert = (InsertAnchorNode)node;
+      InsertAnchorNode insert = (InsertAnchorNode) node;
       if (filter.test(insert)) {
-        inserts.add((InsertAnchorNode)node);
+        inserts.add((InsertAnchorNode) node);
       }
     } else {
       visitChildren(node);
     }
   }
 
-  @NotNull 
+  @NotNull
   public List<@NotNull InsertAnchorNode> getInserts() {
     return inserts;
   }

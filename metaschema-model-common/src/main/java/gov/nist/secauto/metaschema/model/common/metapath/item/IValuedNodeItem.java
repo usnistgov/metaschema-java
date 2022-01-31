@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +41,6 @@ public interface IValuedNodeItem extends INodeItem, IValuedItem {
   @SuppressWarnings("unchecked")
   @Override
   default <CLASS> @NotNull CLASS toBoundObject() {
-    return (CLASS)getValue();
+    return (CLASS) getValue();
   }
 }

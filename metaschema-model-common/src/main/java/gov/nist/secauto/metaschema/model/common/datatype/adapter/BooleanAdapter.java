@@ -39,7 +39,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 public class BooleanAdapter
-    extends AbstractJavaTypeAdapter<Boolean, IBooleanItem> implements IBooleanType {
+    extends AbstractJavaTypeAdapter<Boolean, IBooleanItem>
+    implements IBooleanType {
 
   @SuppressWarnings("null")
   public BooleanAdapter() {
@@ -75,11 +76,10 @@ public class BooleanAdapter
     }
   }
 
-  @SuppressWarnings("null")
   @Override
   public Boolean copy(Object obj) {
     // the value is immutable
-    return (Boolean)obj;
+    return (Boolean) obj;
   }
 
   @SuppressWarnings("null")

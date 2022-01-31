@@ -31,16 +31,16 @@ import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
-public abstract class AbstractNamedInstance<
-    PROXY extends INamedInstance,
-    DEFINITION extends INamedDefinition,
-    PARENT extends INamedModelDefinition>
+import org.jetbrains.annotations.NotNull;
+
+public abstract class AbstractNamedInstance<PROXY extends INamedInstance, DEFINITION extends INamedDefinition, PARENT extends INamedModelDefinition>
     extends AbstractInstance<PROXY, PARENT>
     implements INamedInstance {
 
+  @NotNull
   private final DEFINITION definition;
 
-  public AbstractNamedInstance(PROXY proxy, DEFINITION definition, PARENT containingDefinition) {
+  public AbstractNamedInstance(@NotNull PROXY proxy, @NotNull DEFINITION definition, PARENT containingDefinition) {
     super(proxy, containingDefinition);
     this.definition = definition;
   }

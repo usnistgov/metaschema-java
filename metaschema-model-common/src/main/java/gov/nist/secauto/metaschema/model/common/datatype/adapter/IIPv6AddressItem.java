@@ -42,7 +42,8 @@ public interface IIPv6AddressItem extends IIPAddressItem {
   }
 
   @NotNull
-  public static IIPv6AddressItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+  public static IIPv6AddressItem cast(@NotNull IAnyAtomicItem item)
+      throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.IP_V6_ADDRESS.cast(item);
   }
 }

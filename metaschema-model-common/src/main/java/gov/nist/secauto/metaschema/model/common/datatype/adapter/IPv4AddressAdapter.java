@@ -37,7 +37,8 @@ import inet.ipaddr.IPAddressStringParameters;
 import inet.ipaddr.IncompatibleAddressException;
 import inet.ipaddr.ipv4.IPv4Address;
 
-public class IPv4AddressAdapter extends AbstractJavaTypeAdapter<IPv4Address, IIPv4AddressItem>
+public class IPv4AddressAdapter
+    extends AbstractJavaTypeAdapter<IPv4Address, IIPv4AddressItem>
     implements IIPv4AddressType {
   private static final IPAddressStringParameters IPv4;
 
@@ -70,7 +71,7 @@ public class IPv4AddressAdapter extends AbstractJavaTypeAdapter<IPv4Address, IIP
   @Override
   public IPv4Address copy(Object obj) {
     // value is immutable
-    return (IPv4Address)obj;
+    return (IPv4Address) obj;
   }
 
   @SuppressWarnings("null")

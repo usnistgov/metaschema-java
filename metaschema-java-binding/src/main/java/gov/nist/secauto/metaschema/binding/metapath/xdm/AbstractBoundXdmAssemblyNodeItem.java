@@ -39,7 +39,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class AbstractBoundXdmAssemblyNodeItem<INSTANCE extends AssemblyProperty>
-    extends AbstractBoundXdmModelNodeItem<INSTANCE> implements IBoundXdmAssemblyNodeItem {
+    extends AbstractBoundXdmModelNodeItem<INSTANCE>
+    implements IBoundXdmAssemblyNodeItem {
 
   private Map<String, List<IBoundXdmModelNodeItem>> modelItems;
 

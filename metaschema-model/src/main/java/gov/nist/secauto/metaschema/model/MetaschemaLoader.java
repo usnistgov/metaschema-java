@@ -137,7 +137,7 @@ public class MetaschemaLoader {
    * @throws IOException
    *           if an error occurred parsing the Metaschema
    */
-  @NotNull 
+  @NotNull
   public IXmlMetaschema loadXmlMetaschema(URL url) throws MetaschemaException, IOException {
     try {
       URI resource = url.toURI();
@@ -162,7 +162,7 @@ public class MetaschemaLoader {
    * @throws IllegalArgumentException
    *           if the provided URI is not absolute
    */
-  @NotNull 
+  @NotNull
   protected IXmlMetaschema loadXmlMetaschema(URI resource) throws MetaschemaException, IOException {
     if (!resource.isAbsolute()) {
       throw new IllegalArgumentException(String.format("The URI '%s' must be absolute.", resource.toString()));
@@ -193,7 +193,7 @@ public class MetaschemaLoader {
    * @throws IOException
    *           if an error occurred parsing the Metaschema
    */
-  @NotNull 
+  @NotNull
   protected IXmlMetaschema loadXmlMetaschema(URI resource, Stack<URI> visitedMetaschema,
       Map<URI, IXmlMetaschema> metaschemaCache) throws MetaschemaException, MalformedURLException, IOException {
     // first check if the current Metaschema has been visited to prevent cycles
@@ -258,7 +258,7 @@ public class MetaschemaLoader {
 
       // now check if this Metaschema imports other metaschema
       int size = metaschemaXml.getMETASCHEMA().sizeOfImportArray();
-      @NotNull 
+      @NotNull
       Map<@NotNull URI, IMetaschema> importedMetaschema;
       if (size == 0) {
         importedMetaschema = Collections.emptyMap();

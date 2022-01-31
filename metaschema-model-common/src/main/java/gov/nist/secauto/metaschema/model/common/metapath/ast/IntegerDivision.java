@@ -34,7 +34,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.Expre
 
 import org.jetbrains.annotations.NotNull;
 
-public class IntegerDivision extends AbstractArithmeticExpression<IIntegerItem> {
+public class IntegerDivision
+    extends AbstractArithmeticExpression<IIntegerItem> {
 
   @SuppressWarnings("null")
   public IntegerDivision(@NotNull IExpression left, @NotNull IExpression right) {

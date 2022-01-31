@@ -45,7 +45,6 @@ public interface IConstraintValidationHandler {
       @NotNull INodeItem node,
       @NotNull ISequence<? extends INodeItem> targets);
 
-
   void handleIndexDuplicateKeyViolation(
       @NotNull IIndexConstraint constraint,
       @NotNull INodeItem node,

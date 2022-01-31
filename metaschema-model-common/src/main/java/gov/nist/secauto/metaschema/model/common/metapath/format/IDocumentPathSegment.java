@@ -44,7 +44,7 @@ public interface IDocumentPathSegment extends IPathSegment {
   default Stream<? extends IDocumentPathSegment> getPathStream() {
     return Stream.of(this);
   }
-  
+
   @Override
   default String format(IPathFormatter formatter) {
     return formatter.formatPathSegment(this);

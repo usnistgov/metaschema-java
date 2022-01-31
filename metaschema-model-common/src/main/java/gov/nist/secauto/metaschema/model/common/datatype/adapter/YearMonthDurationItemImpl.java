@@ -32,7 +32,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Period;
 
-class YearMonthDurationItemImpl extends AbstractAnyAtomicItem<Period> implements IYearMonthDurationItem {
+class YearMonthDurationItemImpl
+    extends AbstractAnyAtomicItem<Period>
+    implements IYearMonthDurationItem {
 
   public YearMonthDurationItemImpl(@NotNull Period value) {
     super(value);

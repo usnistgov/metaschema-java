@@ -44,7 +44,8 @@ public interface IFlagInstance extends INamedInstance, Flag {
   @NotNull
   default QName getXmlQName() {
     @SuppressWarnings("null")
-    @NotNull QName retval = QName.valueOf(getEffectiveName());
+    @NotNull
+    QName retval = QName.valueOf(getEffectiveName());
     return retval;
   }
 

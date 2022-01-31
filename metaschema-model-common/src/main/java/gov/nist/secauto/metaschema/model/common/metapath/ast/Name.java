@@ -34,7 +34,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.Expre
 
 import org.jetbrains.annotations.NotNull;
 
-public class Name extends AbstractLiteralExpression<IStringItem, String> implements INameExpression<IStringItem> {
+public class Name
+    extends AbstractLiteralExpression<IStringItem, String>
+    implements INameExpression<IStringItem> {
   public Name(@NotNull String value) {
     super(value);
   }

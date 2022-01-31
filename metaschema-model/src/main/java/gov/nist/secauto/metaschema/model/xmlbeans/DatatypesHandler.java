@@ -54,7 +54,6 @@ public class DatatypesHandler {
     return DataTypeService.getInstance().getJavaTypeAdapterByName(name);
   }
 
-
   private static void encode(IJavaTypeAdapter<?> datatype, SimpleValue target) {
     if (datatype != null) {
       target.setStringValue(datatype.getName());

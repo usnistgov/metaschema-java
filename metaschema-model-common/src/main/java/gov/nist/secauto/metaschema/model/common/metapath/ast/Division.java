@@ -34,7 +34,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 import org.jetbrains.annotations.NotNull;
 
-public class Division extends AbstractArithmeticExpression<IAnyAtomicItem> {
+public class Division
+    extends AbstractArithmeticExpression<IAnyAtomicItem> {
 
   @SuppressWarnings("null")
   public Division(@NotNull IExpression left, @NotNull IExpression right) {

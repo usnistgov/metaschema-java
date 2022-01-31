@@ -136,7 +136,6 @@ public class ConstraintFactory {
     return new DefaultAllowedValuesConstraint(
         toId(constraint.id()),
         constraint.level(),
-        toMessage(constraint.message()),
         toMetapath(constraint.target()),
         toAllowedValues(constraint),
         constraint.allowOthers(),
@@ -147,7 +146,6 @@ public class ConstraintFactory {
     return new DefaultMatchesConstraint(
         toId(constraint.id()),
         constraint.level(),
-        toMessage(constraint.message()),
         toMetapath(constraint.target()),
         toPattern(constraint.pattern()),
         toDataType(constraint.typeAdapter()),
@@ -184,7 +182,6 @@ public class ConstraintFactory {
     return new DefaultUniqueConstraint(
         toId(constraint.id()),
         constraint.level(),
-        toMessage(constraint.message()),
         toMetapath(constraint.target()),
         toKeyFields(constraint.keyFields()),
         toRemarks(constraint.remarks()));
@@ -194,7 +191,6 @@ public class ConstraintFactory {
     return new DefaultIndexConstraint(
         toId(constraint.id()),
         constraint.level(),
-        toMessage(constraint.message()),
         toMetapath(constraint.target()),
         constraint.name(),
         toKeyFields(constraint.keyFields()),
@@ -205,7 +201,6 @@ public class ConstraintFactory {
     return new DefaultIndexHasKeyConstraint(
         toId(constraint.id()),
         constraint.level(),
-        toMessage(constraint.message()),
         toMetapath(constraint.target()),
         constraint.indexName(),
         toKeyFields(constraint.keyFields()),
@@ -226,7 +221,6 @@ public class ConstraintFactory {
     return new DefaultCardinalityConstraint(
         toId(constraint.id()),
         constraint.level(),
-        toMessage(constraint.message()),
         toMetapath(constraint.target()),
         toCardinality(constraint.minOccurs()),
         toCardinality(constraint.maxOccurs()),

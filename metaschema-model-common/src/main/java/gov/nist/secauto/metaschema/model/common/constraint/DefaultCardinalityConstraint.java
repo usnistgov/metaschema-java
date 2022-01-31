@@ -32,7 +32,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DefaultCardinalityConstraint extends AbstractConstraint implements ICardinalityConstraint {
+public class DefaultCardinalityConstraint
+    extends AbstractConstraint
+    implements ICardinalityConstraint {
   @Nullable
   private final Integer minOccurs;
   @Nullable
@@ -45,6 +47,8 @@ public class DefaultCardinalityConstraint extends AbstractConstraint implements 
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param level
+   *          the significance of a violation of this constraint
    * @param target
    *          the Metapath expression identifying the nodes the constraint targets
    * @param minOccurs
@@ -57,12 +61,11 @@ public class DefaultCardinalityConstraint extends AbstractConstraint implements 
   public DefaultCardinalityConstraint(
       @Nullable String id,
       @NotNull Level level,
-      String message,
       @NotNull MetapathExpression target,
       @Nullable Integer minOccurs,
       @Nullable Integer maxOccurs,
       MarkupMultiline remarks) {
-    super(id, level, message, target, remarks);
+    super(id, level, target, remarks);
     if (minOccurs == null && maxOccurs == null) {
       throw new IllegalArgumentException("at least one of minOccurs or maxOccurs must be provided");
     }

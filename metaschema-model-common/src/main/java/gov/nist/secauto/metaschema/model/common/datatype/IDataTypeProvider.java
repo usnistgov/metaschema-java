@@ -26,8 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 
 public interface IDataTypeProvider {
-  Collection<? extends IJavaTypeAdapter<?>> getJavaTypeAdapters();
+  @NotNull
+  Collection<@NotNull ? extends IJavaTypeAdapter<?>> getJavaTypeAdapters();
 }

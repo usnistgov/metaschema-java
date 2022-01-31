@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-public abstract class AbstractCodedMetapathException extends MetapathException {
+public abstract class AbstractCodedMetapathException
+    extends MetapathException {
 
   /**
    * the serial version UID.

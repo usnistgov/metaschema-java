@@ -37,7 +37,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringLiteral extends AbstractLiteralExpression<IStringItem, String> {
+public class StringLiteral
+    extends AbstractLiteralExpression<IStringItem, String> {
   private static final Pattern pattern = Pattern.compile("^'(.*)'$|^\"(.*)\"$");
 
   public StringLiteral(@NotNull String value) {

@@ -619,9 +619,10 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  protected void copyBoundObjectInternal(@NotNull Object fromInstance, @NotNull Object toInstance) throws BindingException {
+  protected void copyBoundObjectInternal(@NotNull Object fromInstance, @NotNull Object toInstance)
+      throws BindingException {
     super.copyBoundObjectInternal(fromInstance, toInstance);
-    
+
     for (NamedModelProperty property : getModelInstances()) {
       property.copyBoundObject(fromInstance, toInstance);
     }

@@ -36,7 +36,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
-public class IntegerLiteral extends AbstractLiteralExpression<IIntegerItem, BigInteger> {
+public class IntegerLiteral
+    extends AbstractLiteralExpression<IIntegerItem, BigInteger> {
 
   public IntegerLiteral(@NotNull BigInteger value) {
     super(value);

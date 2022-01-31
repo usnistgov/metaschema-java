@@ -113,7 +113,8 @@ public class DefaultBindingContext implements BindingContext {
   @Override
   public synchronized <TYPE extends IJavaTypeAdapter<?>> IJavaTypeAdapter<TYPE>
       getJavaTypeAdapterInstance(Class<TYPE> clazz) {
-    @SuppressWarnings("unchecked") IJavaTypeAdapter<TYPE> retval
+    @SuppressWarnings("unchecked")
+    IJavaTypeAdapter<TYPE> retval
         = (IJavaTypeAdapter<TYPE>) javaTypeAdapterMap.get(clazz);
     if (retval == null) {
       Constructor<TYPE> constructor;
@@ -124,7 +125,8 @@ public class DefaultBindingContext implements BindingContext {
       }
 
       try {
-        @SuppressWarnings("unchecked") IJavaTypeAdapter<TYPE> instance
+        @SuppressWarnings("unchecked")
+        IJavaTypeAdapter<TYPE> instance
             = (IJavaTypeAdapter<TYPE>) constructor.newInstance();
         retval = instance;
       } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
@@ -235,17 +237,19 @@ public class DefaultBindingContext implements BindingContext {
     CLASS retval = (CLASS) classBinding.copyBoundObject(other, parentInstance);
     return retval;
   }
-  
+
   @Override
-  public IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode) throws IllegalArgumentException {
+  public IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode)
+      throws IllegalArgumentException {
     ClassBinding binding = getClassBinding(boundObject.getClass());
     return IXdmFactory.INSTANCE.newNodeItem(binding, boundObject, baseUri, rootNode);
   }
 
   @Override
-  public void validate(@NotNull Object boundObject, URI baseUri, boolean rootNode, IConstraintValidationHandler handler) throws IllegalArgumentException {
+  public void validate(@NotNull Object boundObject, URI baseUri, boolean rootNode, IConstraintValidationHandler handler)
+      throws IllegalArgumentException {
     IBoundXdmNodeItem nodeItem = toNodeItem(boundObject, baseUri, rootNode);
-    
+
     StaticContext staticContext = new StaticContext();
     DynamicContext dynamicContext = staticContext.newDynamicContext();
     dynamicContext.setDocumentLoader(newBoundLoader());

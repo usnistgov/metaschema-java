@@ -42,7 +42,8 @@ import java.util.Map;
 public interface IXmlModelContainer extends IModelContainer {
 
   @Override
-  @NotNull Map<@NotNull String, ? extends INamedModelInstance> getNamedModelInstanceMap();
+  @NotNull
+  Map<@NotNull String, ? extends INamedModelInstance> getNamedModelInstanceMap();
 
   @Override
   default @Nullable INamedModelInstance getModelInstanceByName(String name) {
@@ -71,7 +72,8 @@ public interface IXmlModelContainer extends IModelContainer {
   }
 
   @Override
-  @NotNull Map<@NotNull String, ? extends IXmlAssemblyInstance> getAssemblyInstanceMap();
+  @NotNull
+  Map<@NotNull String, ? extends IXmlAssemblyInstance> getAssemblyInstanceMap();
 
   @Override
   default @Nullable IXmlAssemblyInstance getAssemblyInstanceByName(String name) {
@@ -85,5 +87,6 @@ public interface IXmlModelContainer extends IModelContainer {
   }
 
   @Override
-  @NotNull List<@NotNull ? extends IXmlChoiceInstance> getChoiceInstances();
+  @NotNull
+  List<@NotNull ? extends IXmlChoiceInstance> getChoiceInstances();
 }

@@ -63,10 +63,10 @@ class ExpressionUtilsTest {
   @Mock
   private IExpression basicFieldExpr;
 
-
   @Test
   void testTwoFlags() {
-    @SuppressWarnings("null") Class<INodeItem> baseType = INodeItem.class;
+    @SuppressWarnings("null")
+    Class<INodeItem> baseType = INodeItem.class;
 
     context.checking(new Expectations() {
       {
@@ -84,7 +84,8 @@ class ExpressionUtilsTest {
 
   @Test
   void testFlagAndAssembly() {
-    @SuppressWarnings("null") Class<INodeItem> baseType = INodeItem.class;
+    @SuppressWarnings("null")
+    Class<INodeItem> baseType = INodeItem.class;
 
     context.checking(new Expectations() {
       {
@@ -102,7 +103,8 @@ class ExpressionUtilsTest {
 
   @Test
   void testFieldAndAssembly() {
-    @SuppressWarnings("null") Class<INodeItem> baseType = INodeItem.class;
+    @SuppressWarnings("null")
+    Class<INodeItem> baseType = INodeItem.class;
 
     context.checking(new Expectations() {
       {

@@ -43,12 +43,11 @@ public class DefaultMatchesConstraint
   public DefaultMatchesConstraint(
       String id,
       @NotNull Level level,
-      String message,
       @NotNull MetapathExpression target,
       Pattern pattern,
       IJavaTypeAdapter<?> dataType,
       MarkupMultiline remarks) {
-    super(id, level, message, target, remarks);
+    super(id, level, target, remarks);
     if (pattern == null && dataType == null) {
       throw new IllegalArgumentException("a pattern or data type must be provided");
     }

@@ -34,7 +34,8 @@ import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 
-public class DateTimeWithTZAdapter extends AbstractJavaTypeAdapter<ZonedDateTime, IDateTimeItem>
+public class DateTimeWithTZAdapter
+    extends AbstractJavaTypeAdapter<ZonedDateTime, IDateTimeItem>
     implements IDateTimeType {
 
   @SuppressWarnings("null")
@@ -66,7 +67,7 @@ public class DateTimeWithTZAdapter extends AbstractJavaTypeAdapter<ZonedDateTime
   @SuppressWarnings("null")
   @Override
   public ZonedDateTime copy(Object obj) {
-    return ZonedDateTime.from((ZonedDateTime)obj);
+    return ZonedDateTime.from((ZonedDateTime) obj);
   }
 
   @SuppressWarnings("null")

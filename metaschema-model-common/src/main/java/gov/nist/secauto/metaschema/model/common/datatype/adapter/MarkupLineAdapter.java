@@ -48,7 +48,8 @@ import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
-public class MarkupLineAdapter extends AbstractMarkupAdapter<MarkupLine> {
+public class MarkupLineAdapter
+    extends AbstractMarkupAdapter<MarkupLine> {
 
   @SuppressWarnings("null")
   public MarkupLineAdapter() {
@@ -78,7 +79,8 @@ public class MarkupLineAdapter extends AbstractMarkupAdapter<MarkupLine> {
 
   @Override
   public MarkupLine parse(JsonParser parser) throws IOException {
-    @SuppressWarnings("null") MarkupLine retval = parse(parser.getValueAsString());
+    @SuppressWarnings("null")
+    MarkupLine retval = parse(parser.getValueAsString());
     // skip past value
     parser.nextToken();
     return retval;

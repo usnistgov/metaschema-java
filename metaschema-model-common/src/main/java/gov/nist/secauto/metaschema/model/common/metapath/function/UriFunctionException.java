@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.AbstractCodedMetapathException;
 
-public class UriFunctionException extends AbstractCodedMetapathException {
+public class UriFunctionException
+    extends AbstractCodedMetapathException {
   public static final int NO_NAMESPACE_FOUND_FOR_PREFIX = 4;
   public static final int BASE_URI_NOT_DEFINED_IN_STATIC_CONTEXT = 5;
 

@@ -32,7 +32,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
-class PositiveIntegerItemImpl extends AbstractIntegerItem implements IPositiveIntegerItem {
+class PositiveIntegerItemImpl
+    extends AbstractIntegerItem
+    implements IPositiveIntegerItem {
 
   protected PositiveIntegerItemImpl(@NotNull BigInteger value) {
     super(value);

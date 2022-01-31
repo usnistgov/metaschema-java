@@ -29,16 +29,16 @@ package gov.nist.secauto.metaschema.binding.io;
 import java.util.Map;
 
 public interface Configuration {
-//  /**
-//   * Determines if a specific serialization/deserialization feature is enabled.
-//   * 
-//   * @param feature
-//   *          the feature to check for
-//   * @param defaultState
-//   *          the default to use if the feature is not specifically configured
-//   * @return {@code true} if the feature is enabled, or {@code false} otherwise
-//   */
-//  boolean isFeatureEnabled(Feature feature, boolean defaultState);
+  // /**
+  // * Determines if a specific serialization/deserialization feature is enabled.
+  // *
+  // * @param feature
+  // * the feature to check for
+  // * @param defaultState
+  // * the default to use if the feature is not specifically configured
+  // * @return {@code true} if the feature is enabled, or {@code false} otherwise
+  // */
+  // boolean isFeatureEnabled(Feature feature, boolean defaultState);
   /**
    * Determines if a specific serialization/deserialization feature is enabled.
    * 

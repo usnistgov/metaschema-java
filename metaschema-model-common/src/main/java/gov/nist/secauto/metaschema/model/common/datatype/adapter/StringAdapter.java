@@ -30,7 +30,8 @@ import gov.nist.secauto.metaschema.model.common.datatype.AbstractStringJavaTypeA
 
 import org.jetbrains.annotations.NotNull;
 
-public class StringAdapter extends AbstractStringJavaTypeAdapter<IStringItem> {
+public class StringAdapter
+    extends AbstractStringJavaTypeAdapter<IStringItem> {
   public StringAdapter() {
   }
 

@@ -83,7 +83,7 @@ public class DefaultBindingConfiguration implements BindingConfiguration {
     }
     return retval;
   }
-  
+
   @Override
   public String getClassName(INamedModelDefinition definition) {
     DefinitionBindingConfiguration config = getDefinitionBindingConfiguration(definition);

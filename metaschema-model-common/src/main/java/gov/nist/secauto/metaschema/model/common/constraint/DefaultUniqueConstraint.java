@@ -40,10 +40,9 @@ public class DefaultUniqueConstraint
   public DefaultUniqueConstraint(
       String id,
       @NotNull Level level,
-      String message,
       @NotNull MetapathExpression target,
       @NotNull List<@NotNull DefaultKeyField> keyFields,
       MarkupMultiline remarks) {
-    super(id, level, message, target, keyFields, remarks);
+    super(id, level, target, keyFields, remarks);
   }
 }

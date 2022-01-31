@@ -57,17 +57,17 @@ class EmptyListImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> {
   public int size() {
     return 0;
   }
-  
+
   public boolean equals(Object other) {
     if (other == this) {
-        return true;
+      return true;
     }
 
     if (!(other instanceof ISequence)) {
-        return false;
+      return false;
     }
-    
-    return ((ISequence<?>)other).isEmpty();
+
+    return ((ISequence<?>) other).isEmpty();
   }
 
   @Override

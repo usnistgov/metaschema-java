@@ -48,7 +48,8 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URI;
 
-public class DefaultJsonDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
+public class DefaultJsonDeserializer<CLASS>
+    extends AbstractDeserializer<CLASS> {
   private JsonFactory jsonFactory;
 
   public DefaultJsonDeserializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {
@@ -96,7 +97,8 @@ public class DefaultJsonDeserializer<CLASS> extends AbstractDeserializer<CLASS> 
   }
 
   @Override
-  protected IBoundXdmNodeItem deserializeToNodeItemInternal(Reader reader, @Nullable URI documentUri) throws BindingException {
+  protected IBoundXdmNodeItem deserializeToNodeItemInternal(Reader reader, @Nullable URI documentUri)
+      throws BindingException {
     JsonParser parser = newJsonParser(reader);
 
     DefaultJsonParsingContext parsingContext = new DefaultJsonParsingContext(parser, new DefaultJsonProblemHandler());

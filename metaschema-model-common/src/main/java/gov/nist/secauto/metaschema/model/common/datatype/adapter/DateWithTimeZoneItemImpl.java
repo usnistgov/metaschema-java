@@ -32,7 +32,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.ZonedDateTime;
 
-class DateWithTimeZoneItemImpl extends AbstractAnyAtomicItem<ZonedDateTime> implements IDateItem {
+class DateWithTimeZoneItemImpl
+    extends AbstractAnyAtomicItem<ZonedDateTime>
+    implements IDateItem {
 
   public DateWithTimeZoneItemImpl(@NotNull ZonedDateTime value) {
     super(value);

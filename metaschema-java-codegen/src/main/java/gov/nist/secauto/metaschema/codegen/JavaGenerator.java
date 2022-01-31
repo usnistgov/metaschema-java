@@ -139,7 +139,10 @@ public class JavaGenerator {
           try {
             generatedClass = classGenerator.generateClass(targetDirectory);
           } catch (RuntimeException ex) {
-            throw new IllegalStateException(String.format("Unable to generate class for definition '%s' in Metaschema '%s'", definition.getName(), metaschema.getLocation()), ex);
+            throw new IllegalStateException(
+                String.format("Unable to generate class for definition '%s' in Metaschema '%s'", definition.getName(),
+                    metaschema.getLocation()),
+                ex);
           }
           String className = generatedClass.getClassName().canonicalName();
           if (classNames.contains(className)) {

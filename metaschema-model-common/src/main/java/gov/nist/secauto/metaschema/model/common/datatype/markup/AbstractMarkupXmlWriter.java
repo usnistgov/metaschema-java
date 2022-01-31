@@ -211,7 +211,7 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
       handleTable((TableBlock) node, writer);
       retval = true;
     } else if (node instanceof HtmlBlock) {
-      handleHtmlBlock((HtmlBlock)node, writer);
+      handleHtmlBlock((HtmlBlock) node, writer);
       retval = true;
     }
     return retval;
@@ -228,23 +228,23 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
   protected void handleTable(TableBlock node, WRITER writer) throws XMLStreamException {
     QName tableQName = new QName(getNamespace(), "table");
     handleBasicElementStart(node, writer, tableQName);
-    
+
     TableHead head = (TableHead) node.getChildOfType(TableHead.class);
 
     if (head != null) {
       for (Node childNode : head.getChildren()) {
         if (childNode instanceof TableRow) {
-          handleTableRow((TableRow)childNode, writer);
+          handleTableRow((TableRow) childNode, writer);
         }
       }
     }
-    
+
     TableBody body = (TableBody) node.getChildOfType(TableBody.class);
 
     if (body != null) {
       for (Node childNode : body.getChildren()) {
         if (childNode instanceof TableRow) {
-          handleTableRow((TableRow)childNode, writer);
+          handleTableRow((TableRow) childNode, writer);
         }
       }
     }
@@ -258,7 +258,7 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
 
     for (Node childNode : node.getChildren()) {
       if (childNode instanceof TableCell) {
-        handleTableCell((TableCell)childNode, writer);
+        handleTableCell((TableCell) childNode, writer);
       }
     }
 
@@ -356,18 +356,18 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
   protected abstract void handleHtmlBlock(HtmlBlock node, WRITER writer) throws XMLStreamException;
 
   protected abstract void handleHtmlInline(HtmlInline node, WRITER writer) throws XMLStreamException;
-//  {
-//    throw new UnsupportedOperationException(
-//        String.format("Unable to process inline HTML characters: %s", node.getChars().toString()));
-//    // String htmlText = node.getChars().toString();
-//    //
-//    // QName name = new QName(getNamespace(), "name");
-//    // handleBasicElementStart(node, writer, name);
-//    //
-//    // if (node.hasChildren()) {
-//    // visitChildren(node, writer);
-//    // }
-//    //
-//    // handleBasicElementEnd(node, writer, name);
-//  }
+  // {
+  // throw new UnsupportedOperationException(
+  // String.format("Unable to process inline HTML characters: %s", node.getChars().toString()));
+  // // String htmlText = node.getChars().toString();
+  // //
+  // // QName name = new QName(getNamespace(), "name");
+  // // handleBasicElementStart(node, writer, name);
+  // //
+  // // if (node.hasChildren()) {
+  // // visitChildren(node, writer);
+  // // }
+  // //
+  // // handleBasicElementEnd(node, writer, name);
+  // }
 }

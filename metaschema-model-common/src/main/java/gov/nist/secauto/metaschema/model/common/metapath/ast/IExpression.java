@@ -98,8 +98,10 @@ public interface IExpression {
   /**
    * Provides a double dispatch callback for visitor handling.
    * 
-   * @param <RESULT> the type of the evaluation result
-   * @param <CONTEXT> the type of the visitor context
+   * @param <RESULT>
+   *          the type of the evaluation result
+   * @param <CONTEXT>
+   *          the type of the visitor context
    * @param visitor
    *          the visitor calling this method
    * @param context

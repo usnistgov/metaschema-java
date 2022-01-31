@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,12 +35,14 @@ import java.util.HashMap;
 public class AbstractDataTypeProvider implements IDataTypeProvider {
   private final HashMap<String, IJavaTypeAdapter<?>> library = new HashMap<>();
 
+  @SuppressWarnings("null")
   @Override
   public synchronized Collection<? extends IJavaTypeAdapter<?>> getJavaTypeAdapters() {
     return Collections.unmodifiableCollection(library.values());
   }
 
-  protected synchronized void registerJavaTypeAdapter(IJavaTypeAdapter<?> adapter) throws IllegalArgumentException {
+  protected synchronized void registerJavaTypeAdapter(@NotNull IJavaTypeAdapter<?> adapter)
+      throws IllegalArgumentException {
     String name = adapter.getName();
 
     IJavaTypeAdapter<?> duplicate = library.put(name, adapter);

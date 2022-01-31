@@ -44,10 +44,10 @@ public interface IXdmDocumentNodeItem extends IXdmNodeItem, IDocumentPathSegment
     return this;
   }
 
-//  @Override
-//  default @NotNull Stream<IPathSegment> getPathStream() {
-//    return IDocumentPathSegment.super.getPathStream();
-//  }
+  // @Override
+  // default @NotNull Stream<IPathSegment> getPathStream() {
+  // return IDocumentPathSegment.super.getPathStream();
+  // }
 
   @Override
   default IDocumentNodeItem getNodeItem() {

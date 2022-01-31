@@ -36,7 +36,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class Union extends AbstractNAryExpression {
+public class Union
+    extends AbstractNAryExpression {
 
   @NotNull
   private final Class<? extends IItem> staticResultType;

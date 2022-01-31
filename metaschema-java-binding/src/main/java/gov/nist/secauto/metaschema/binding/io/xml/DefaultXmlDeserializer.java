@@ -53,7 +53,8 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-public class DefaultXmlDeserializer<CLASS> extends AbstractDeserializer<CLASS> {
+public class DefaultXmlDeserializer<CLASS>
+    extends AbstractDeserializer<CLASS> {
   private static final Logger logger = LogManager.getLogger(DefaultXmlDeserializer.class);
 
   private XMLInputFactory2 xmlInputFactory;

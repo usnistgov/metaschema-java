@@ -61,14 +61,8 @@ public class MarkupXmlStreamWriter
   protected void handleInsertAnchor(InsertAnchorNode node, XMLStreamWriter writer, QName name)
       throws XMLStreamException {
     writer.writeEmptyElement(name.getNamespaceURI(), name.getLocalPart());
-
-    if (node.getType() != null) {
-      writer.writeAttribute("type", node.getType().toString());
-    }
-
-    if (node.getIdReference() != null) {
-      writer.writeAttribute("id-ref", node.getIdReference().toString());
-    }
+    writer.writeAttribute("type", node.getType().toString());
+    writer.writeAttribute("id-ref", node.getIdReference().toString());
   }
 
   @Override
@@ -128,18 +122,18 @@ public class MarkupXmlStreamWriter
       if (depth > 0) {
         try {
           if (node instanceof org.jsoup.nodes.Element) {
-            org.jsoup.nodes.Element element = (org.jsoup.nodes.Element)node;
+            org.jsoup.nodes.Element element = (org.jsoup.nodes.Element) node;
             if (element.childNodes().isEmpty()) {
               writer.writeEmptyElement(getNamespace(), element.tagName());
             } else {
               writer.writeStartElement(getNamespace(), element.tagName());
             }
-            
+
             for (org.jsoup.nodes.Attribute attr : element.attributes()) {
               writer.writeAttribute(attr.getKey(), attr.getValue());
             }
           } else if (node instanceof org.jsoup.nodes.TextNode) {
-            org.jsoup.nodes.TextNode text = (org.jsoup.nodes.TextNode)node;
+            org.jsoup.nodes.TextNode text = (org.jsoup.nodes.TextNode) node;
             writer.writeCharacters(text.text());
           }
         } catch (XMLStreamException ex) {
@@ -152,7 +146,7 @@ public class MarkupXmlStreamWriter
     public void tail(org.jsoup.nodes.Node node, int depth) {
       if (depth > 0) {
         if (node instanceof org.jsoup.nodes.Element) {
-          org.jsoup.nodes.Element element = (org.jsoup.nodes.Element)node;
+          org.jsoup.nodes.Element element = (org.jsoup.nodes.Element) node;
           if (!element.childNodes().isEmpty()) {
             try {
               writer.writeEndElement();

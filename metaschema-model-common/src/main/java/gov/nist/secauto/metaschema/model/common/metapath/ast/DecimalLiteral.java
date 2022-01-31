@@ -36,7 +36,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 
-public class DecimalLiteral extends AbstractLiteralExpression<IDecimalItem, BigDecimal> {
+public class DecimalLiteral
+    extends AbstractLiteralExpression<IDecimalItem, BigDecimal> {
 
   public DecimalLiteral(@NotNull BigDecimal value) {
     super(value);

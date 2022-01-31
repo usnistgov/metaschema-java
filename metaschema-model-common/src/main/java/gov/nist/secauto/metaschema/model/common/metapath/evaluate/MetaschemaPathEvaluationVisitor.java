@@ -501,7 +501,6 @@ public class MetaschemaPathEvaluationVisitor
 
   @Override
   public ISequence<?> visitRelativeSlashPath(RelativeSlashPath expr, INodeContext context) {
-    @SuppressWarnings("unchecked")
     IExpression left = expr.getLeft();
 
     @SuppressWarnings("unchecked")
@@ -709,38 +708,38 @@ public class MetaschemaPathEvaluationVisitor
     return retval;
   }
 
-  /**
-   * Recursively searches the node graph for {@link IFlagNodeItem} instances that match the provided
-   * {@link Flag} expression. The resulting nodes are returned in document order.
-   * 
-   * @param expr
-   *          the search expression
-   * @param context
-   *          the current node context
-   * @return a stream of matching flag node items
-   */
-  @NotNull
-  private Stream<? extends IFlagNodeItem> searchFlags(Flag expr, INodeContext context) {
-
-    // // check if any flags on the the current node context matches the expression
-    // Stream<? extends IFlagNodeItem> retval = context.getMatchingChildFlags(expr);
-    //
-    // // next iterate over the child model instances, if the context item is an assembly
-    // INodeItem contextItem = context.getContextNodeItem();
-    //
-    // if (contextItem instanceof IAssemblyNodeItem) {
-    // IAssemblyNodeItem assemblyContextItem = (IAssemblyNodeItem) contextItem;
-    //
-    // Stream<? extends IFlagNodeItem> childFlagInstances =
-    // assemblyContextItem.modelItems().flatMap(modelItem -> {
-    // // apply the search criteria to these node items
-    // return searchFlags(expr, modelItem);
-    // });
-    // retval = Stream.concat(retval, childFlagInstances);
-    // }
-    // return retval;
-    return Stream.empty();
-  }
+  // /**
+  // * Recursively searches the node graph for {@link IFlagNodeItem} instances that match the provided
+  // * {@link Flag} expression. The resulting nodes are returned in document order.
+  // *
+  // * @param expr
+  // * the search expression
+  // * @param context
+  // * the current node context
+  // * @return a stream of matching flag node items
+  // */
+  // @NotNull
+  // private Stream<? extends IFlagNodeItem> searchFlags(Flag expr, INodeContext context) {
+  //
+  // // check if any flags on the the current node context matches the expression
+  // Stream<? extends IFlagNodeItem> retval = context.getMatchingChildFlags(expr);
+  //
+  // // next iterate over the child model instances, if the context item is an assembly
+  // INodeItem contextItem = context.getContextNodeItem();
+  //
+  // if (contextItem instanceof IAssemblyNodeItem) {
+  // IAssemblyNodeItem assemblyContextItem = (IAssemblyNodeItem) contextItem;
+  //
+  // Stream<? extends IFlagNodeItem> childFlagInstances =
+  // assemblyContextItem.modelItems().flatMap(modelItem -> {
+  // // apply the search criteria to these node items
+  // return searchFlags(expr, modelItem);
+  // });
+  // retval = Stream.concat(retval, childFlagInstances);
+  // }
+  // return retval;
+  // return Stream.empty();
+  // }
 
   @Override
   public ISequence<? extends INumericItem> visitNegate(Negate expr, INodeContext context) {

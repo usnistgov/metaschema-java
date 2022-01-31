@@ -34,7 +34,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.Expre
 
 import org.jetbrains.annotations.NotNull;
 
-public class Mod extends AbstractArithmeticExpression<INumericItem> {
+public class Mod
+    extends AbstractArithmeticExpression<INumericItem> {
 
   @SuppressWarnings("null")
   public Mod(@NotNull IExpression left, @NotNull IExpression right) {

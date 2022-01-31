@@ -59,6 +59,6 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
    */
   @NotNull
   IAnyAtomicType getItemType();
-//
-//  <T extends IValuedItem> T cast(IValuedItem item);
+  //
+  // <T extends IValuedItem> T cast(IValuedItem item);
 }

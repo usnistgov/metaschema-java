@@ -60,7 +60,8 @@ public interface IPositiveIntegerItem extends IIntegerItem {
   }
 
   @NotNull
-  public static IPositiveIntegerItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+  public static IPositiveIntegerItem cast(@NotNull IAnyAtomicItem item)
+      throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.POSITIVE_INTEGER.cast(item);
   }
 }

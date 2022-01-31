@@ -34,7 +34,8 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Period;
 import java.time.format.DateTimeParseException;
 
-public class YearMonthAdapter extends AbstractJavaTypeAdapter<Period, IYearMonthDurationItem>
+public class YearMonthAdapter
+    extends AbstractJavaTypeAdapter<Period, IYearMonthDurationItem>
     implements IYearMonthDurationType {
 
   @SuppressWarnings("null")
@@ -50,7 +51,7 @@ public class YearMonthAdapter extends AbstractJavaTypeAdapter<Period, IYearMonth
   @Override
   public Period copy(Object obj) {
     // value in immutable
-    return (Period)obj;
+    return (Period) obj;
   }
 
   @SuppressWarnings("null")

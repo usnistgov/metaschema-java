@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmFlagNodeItem;
@@ -45,15 +46,16 @@ public abstract class AbstractXdmNodeItemVisitor<RESULT, CONTEXT> implements IBo
     }
     return result;
   }
+
   protected RESULT visitModelChildren(IBoundXdmAssemblyNodeItem item, CONTEXT context) {
     RESULT result = defaultResult();
-    
+
     for (List<? extends IBoundXdmModelNodeItem> childItems : item.getModelItems().values()) {
       for (IBoundXdmModelNodeItem childItem : childItems) {
         if (!shouldVisitNextChild(childItem, result, context)) {
           break;
         }
-  
+
         RESULT childResult = childItem.accept(this, context);
         result = aggregateResult(result, childResult);
       }

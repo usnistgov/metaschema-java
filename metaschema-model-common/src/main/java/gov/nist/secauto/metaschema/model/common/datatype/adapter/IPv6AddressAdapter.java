@@ -37,7 +37,8 @@ import inet.ipaddr.IPAddressStringParameters;
 import inet.ipaddr.IncompatibleAddressException;
 import inet.ipaddr.ipv6.IPv6Address;
 
-public class IPv6AddressAdapter extends AbstractJavaTypeAdapter<IPv6Address, IIPv6AddressItem>
+public class IPv6AddressAdapter
+    extends AbstractJavaTypeAdapter<IPv6Address, IIPv6AddressItem>
     implements IIPv6AddressType {
   private static final IPAddressStringParameters IPv6;
 
@@ -70,7 +71,7 @@ public class IPv6AddressAdapter extends AbstractJavaTypeAdapter<IPv6Address, IIP
   @Override
   public IPv6Address copy(Object obj) {
     // value is immutable
-    return (IPv6Address)obj;
+    return (IPv6Address) obj;
   }
 
   @SuppressWarnings("null")

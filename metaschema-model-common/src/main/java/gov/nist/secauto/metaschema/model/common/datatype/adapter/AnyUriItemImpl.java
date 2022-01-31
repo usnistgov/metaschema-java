@@ -32,7 +32,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 
-class AnyUriItemImpl extends AbstractAnyAtomicItem<URI> implements IAnyUriItem {
+class AnyUriItemImpl
+    extends AbstractAnyAtomicItem<URI>
+    implements IAnyUriItem {
 
   public AnyUriItemImpl(@NotNull URI value) {
     super(value);

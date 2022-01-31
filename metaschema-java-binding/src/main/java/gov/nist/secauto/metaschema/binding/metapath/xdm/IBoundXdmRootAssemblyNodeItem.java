@@ -53,7 +53,7 @@ public interface IBoundXdmRootAssemblyNodeItem extends IBoundXdmAssemblyNodeItem
   default URI getBaseUri() {
     // to follow XPath, this should be null
     return null;
-//    return getDocumentNodeItem().getBaseUri();
+    // return getDocumentNodeItem().getBaseUri();
   }
 
   @Override

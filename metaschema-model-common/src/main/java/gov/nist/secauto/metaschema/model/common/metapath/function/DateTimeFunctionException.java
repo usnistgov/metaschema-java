@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.AbstractCodedMetapathException;
 
-public class DateTimeFunctionException extends AbstractCodedMetapathException {
+public class DateTimeFunctionException
+    extends AbstractCodedMetapathException {
   public static final int DURATION_OVERFLOW_UNDERFLOW_ERROR = 2;
 
   /**

@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import static gov.nist.secauto.metaschema.model.common.metapath.TestUtils.decimal;
@@ -56,10 +57,9 @@ class FunctionsTest {
         Arguments.of(decimal(1.125), integer(2), decimal("1.13")),
         Arguments.of(integer(8452), integer(-2), integer(8500)),
         Arguments.of(decimal("3.1415e0"), integer(2), decimal("3.14")),
-        Arguments.of(decimal(35.425e0d), integer(2), decimal("35.42"))
-      );
+        Arguments.of(decimal(35.425e0d), integer(2), decimal("35.42")));
   }
-  
+
   @ParameterizedTest
   @MethodSource("provideValuesForRound")
   void testRound(INumericItem arg, IIntegerItem precision, INumericItem expected) {

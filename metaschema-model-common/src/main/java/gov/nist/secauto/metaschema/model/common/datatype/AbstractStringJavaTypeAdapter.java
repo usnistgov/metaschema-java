@@ -30,7 +30,8 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IStringType;
 
 public abstract class AbstractStringJavaTypeAdapter<ITEM_TYPE extends IStringItem>
-    extends AbstractJavaTypeAdapter<String, ITEM_TYPE> implements IStringType {
+    extends AbstractJavaTypeAdapter<String, ITEM_TYPE>
+    implements IStringType {
 
   @SuppressWarnings("null")
   protected AbstractStringJavaTypeAdapter() {
@@ -45,6 +46,6 @@ public abstract class AbstractStringJavaTypeAdapter<ITEM_TYPE extends IStringIte
   @Override
   public String copy(Object obj) {
     // a Java string is immutable
-    return (String)obj;
+    return (String) obj;
   }
 }

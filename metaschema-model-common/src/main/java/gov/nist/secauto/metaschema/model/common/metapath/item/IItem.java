@@ -30,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 
 public interface IItem {
 
-
   /**
    * Get a human readable name for the item.
    * 

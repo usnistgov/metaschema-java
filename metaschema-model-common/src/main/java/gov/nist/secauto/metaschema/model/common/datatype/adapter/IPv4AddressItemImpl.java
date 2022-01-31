@@ -32,7 +32,9 @@ import org.jetbrains.annotations.NotNull;
 
 import inet.ipaddr.ipv4.IPv4Address;
 
-class IPv4AddressItemImpl extends AbstractUntypedAtomicItem<IPv4Address> implements IIPv4AddressItem {
+class IPv4AddressItemImpl
+    extends AbstractUntypedAtomicItem<IPv4Address>
+    implements IIPv4AddressItem {
 
   public IPv4AddressItemImpl(@NotNull IPv4Address value) {
     super(value);

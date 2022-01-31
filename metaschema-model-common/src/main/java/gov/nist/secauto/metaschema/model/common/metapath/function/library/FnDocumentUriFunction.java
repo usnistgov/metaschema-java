@@ -78,7 +78,7 @@ public class FnDocumentUriFunction {
       return ISequence.empty();
     }
 
-    IAnyUriItem uri = fnDocumentUri((IDocumentNodeItem)item);
+    IAnyUriItem uri = fnDocumentUri((IDocumentNodeItem) item);
     return ISequence.of(uri);
   }
 
@@ -95,7 +95,7 @@ public class FnDocumentUriFunction {
       return ISequence.empty();
     }
 
-    IAnyUriItem uri = fnDocumentUri((IDocumentNodeItem)item);
+    IAnyUriItem uri = fnDocumentUri((IDocumentNodeItem) item);
     return ISequence.of(uri);
   }
 

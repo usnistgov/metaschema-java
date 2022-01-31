@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-public class InvalidValueForCastFunctionMetapathException extends InvalidArgumentFunctionMetapathException {
+public class InvalidValueForCastFunctionMetapathException
+    extends InvalidArgumentFunctionMetapathException {
 
   /**
    * the serial version UUID.

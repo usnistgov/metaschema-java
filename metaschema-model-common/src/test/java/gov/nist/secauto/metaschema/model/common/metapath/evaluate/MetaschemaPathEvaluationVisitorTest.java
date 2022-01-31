@@ -238,7 +238,7 @@ class MetaschemaPathEvaluationVisitorTest {
         will(returnValue(IAssemblyNodeItem.class));
         oneOf(stepExpr).accept(visitor, item);
         will(returnValue(stepResult));
-        
+
         oneOf(stepResult).asStream();
         will(returnValue(Stream.of(item)));
 

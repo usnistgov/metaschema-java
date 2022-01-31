@@ -33,7 +33,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.Expre
 
 import org.jetbrains.annotations.NotNull;
 
-public class RootSlashPath extends AbstractRootPathExpression {
+public class RootSlashPath
+    extends AbstractRootPathExpression {
 
   public RootSlashPath(@NotNull IExpression node) {
     super(node);

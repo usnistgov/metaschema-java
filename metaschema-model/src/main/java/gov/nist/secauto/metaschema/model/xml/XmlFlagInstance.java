@@ -35,7 +35,8 @@ import gov.nist.secauto.metaschema.model.xmlbeans.xml.FlagDocument;
 
 import org.jetbrains.annotations.NotNull;
 
-public class XmlFlagInstance extends AbstractFlagInstance {
+public class XmlFlagInstance
+    extends AbstractFlagInstance {
   @NotNull
   private final FlagDocument.Flag xmlFlag;
 

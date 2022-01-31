@@ -40,7 +40,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
-public class XmlFieldInstance extends AbstractFieldInstance {
+public class XmlFieldInstance
+    extends AbstractFieldInstance {
   // private static final Logger logger = LogManager.getLogger(XmlFieldInstance.class);
 
   @NotNull

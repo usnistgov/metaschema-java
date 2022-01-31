@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.format;
 
 import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
@@ -32,20 +33,21 @@ import org.jetbrains.annotations.NotNull;
 
 public interface IDefinitionPathSegment extends IPathSegment {
 
-//  /**
-//   * Retrieve the path segment of the containing parent if there is one.
-//   * @return the parent path segment or {@code null} if there isn't one
-//   */
-//  IModelPositionalPathSegment getParentSegment();
-//
-//  @Override
-//  @SuppressWarnings("null")
-//  @NotNull
-//  default Stream<IPathSegment> getPathStream() {
-//    IModelPositionalPathSegment parentSegment = getParentSegment();
-//    return parentSegment == null ? Stream.of(this) : Stream.concat(parentSegment.getPathStream(), Stream.of(this));
-//  }
-  
+  // /**
+  // * Retrieve the path segment of the containing parent if there is one.
+  // * @return the parent path segment or {@code null} if there isn't one
+  // */
+  // IModelPositionalPathSegment getParentSegment();
+  //
+  // @Override
+  // @SuppressWarnings("null")
+  // @NotNull
+  // default Stream<IPathSegment> getPathStream() {
+  // IModelPositionalPathSegment parentSegment = getParentSegment();
+  // return parentSegment == null ? Stream.of(this) : Stream.concat(parentSegment.getPathStream(),
+  // Stream.of(this));
+  // }
+
   /**
    * Retrieve the instance associated with this path segment.
    * 

@@ -32,6 +32,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -92,12 +93,16 @@ public class BuildAstVisitor
    *          a supplier that will instantiate an expression based on the provided collection
    * @return the left expression or the supplied expression for a collection
    */
+  @NotNull
   protected <CONTEXT extends ParserRuleContext, NODE extends IExpression> IExpression
-      handleNAiryCollection(CONTEXT context, java.util.function.Function<List<NODE>, IExpression> supplier) {
+      handleNAiryCollection(@NotNull CONTEXT context,
+          @NotNull java.util.function.Function<@NotNull List<NODE>, @NotNull IExpression> supplier) {
     return handleNAiryCollection(context, 2, (ctx, idx) -> {
       // skip operator, since we know what it is
       ParseTree tree = ctx.getChild(idx + 1);
-      @SuppressWarnings("unchecked") NODE node = (NODE) tree.accept(this);
+      @SuppressWarnings({ "unchecked", "null" })
+      @NotNull
+      NODE node = (NODE) tree.accept(this);
       return node;
     }, supplier);
   }
@@ -123,17 +128,21 @@ public class BuildAstVisitor
    *          a supplier that will instantiate an expression based on the provided collection
    * @return the left expression or the supplied expression for a collection
    */
+  @NotNull
   protected <CONTEXT extends ParserRuleContext, NODE extends IExpression> IExpression handleNAiryCollection(
-      CONTEXT context, int step, BiFunction<CONTEXT, Integer, NODE> parser,
-      java.util.function.Function<List<NODE>, IExpression> supplier) {
+      @NotNull CONTEXT context, int step, @NotNull BiFunction<@NotNull CONTEXT, @NotNull Integer, @NotNull NODE> parser,
+      @NotNull java.util.function.Function<@NotNull List<NODE>, @NotNull IExpression> supplier) {
     int numChildren = context.getChildCount();
 
+    @NotNull
     IExpression retval;
     if (numChildren == 0) {
-      retval = null;
+      throw new IllegalStateException("there should always be a child expression");
     } else {
       ParseTree leftTree = context.getChild(0);
-      @SuppressWarnings("unchecked") NODE leftResult = (NODE) leftTree.accept(this);
+      @SuppressWarnings({ "unchecked", "null" })
+      @NotNull
+      NODE leftResult = (NODE) leftTree.accept(this);
 
       if (numChildren == 1) {
         retval = leftResult;
@@ -141,10 +150,13 @@ public class BuildAstVisitor
         List<NODE> children = new ArrayList<>(numChildren - 1 / step);
         children.add(leftResult);
         for (int i = 1; i < numChildren; i = i + step) {
+          @SuppressWarnings("null")
           NODE result = parser.apply(context, i);
           children.add(result);
         }
-        retval = supplier.apply(children);
+        @SuppressWarnings("null")
+        IExpression result = supplier.apply(children);
+        retval = result;
       }
     }
     return retval;
@@ -181,7 +193,7 @@ public class BuildAstVisitor
     ParseTree operatorTree = ctx.getChild(1);
     Object payload = operatorTree.getPayload();
     Operator operator;
-    
+
     IComparison retval;
     if (payload instanceof GeneralcompContext) {
       GeneralcompContext compContext = (GeneralcompContext) payload;
@@ -265,8 +277,8 @@ public class BuildAstVisitor
    *          a trinary function used to parse the context children and supply a result
    * @return the left expression or the supplied expression
    */
-  protected <CONTEXT extends ParserRuleContext> IExpression handleGroupedNAiry(CONTEXT context, int step,
-      TriFunction<CONTEXT, Integer, IExpression, IExpression> parser) {
+  protected <CONTEXT extends ParserRuleContext> IExpression handleGroupedNAiry(@NotNull CONTEXT context, int step,
+      @NotNull TriFunction<CONTEXT, Integer, IExpression, IExpression> parser) {
     int numChildren = context.getChildCount();
 
     IExpression retval;

@@ -156,7 +156,6 @@ public class DefaultFieldProperty
     return getFieldAnnotation().inXml();
   }
 
-
   /**
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.

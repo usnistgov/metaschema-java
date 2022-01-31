@@ -39,6 +39,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.NodeVisitor;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -86,14 +87,9 @@ public class MarkupXmlEventWriter
   @Override
   protected void handleInsertAnchor(InsertAnchorNode node, XMLEventWriter writer, QName name)
       throws XMLStreamException {
-    List<Attribute> attributes = new LinkedList<>();
-    if (node.getType() != null) {
-      attributes.add(eventFactory.createAttribute("type", node.getType().toString()));
-    }
-
-    if (node.getIdReference() != null) {
-      attributes.add(eventFactory.createAttribute("id-ref", node.getIdReference().toString()));
-    }
+    List<Attribute> attributes = new ArrayList<>(2);
+    attributes.add(eventFactory.createAttribute("type", node.getType().toString()));
+    attributes.add(eventFactory.createAttribute("id-ref", node.getIdReference().toString()));
 
     StartElement start = eventFactory.createStartElement(name, attributes.iterator(), null);
     writer.add(start);
@@ -177,8 +173,9 @@ public class MarkupXmlEventWriter
               for (org.jsoup.nodes.Attribute attr : element.attributes()) {
                 attributes.add(eventFactory.createAttribute(attr.getKey(), attr.getValue()));
               }
-              
-              writer.add(eventFactory.createStartElement(new QName(getNamespace(), element.tagName()), attributes.iterator(), null));
+
+              writer.add(eventFactory.createStartElement(new QName(getNamespace(), element.tagName()),
+                  attributes.iterator(), null));
             }
           } else if (node instanceof org.jsoup.nodes.TextNode) {
             org.jsoup.nodes.TextNode text = (org.jsoup.nodes.TextNode) node;

@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.constraint;
 
 import gov.nist.secauto.metaschema.binding.metapath.xdm.AbstractXdmNodeItemVisitor;
@@ -31,7 +32,8 @@ import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmFieldNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
 
-public class ValidatingXdmVisitor extends AbstractXdmNodeItemVisitor<Boolean, DefaultConstraintValidator> {
+public class ValidatingXdmVisitor
+    extends AbstractXdmNodeItemVisitor<Boolean, DefaultConstraintValidator> {
 
   @Override
   protected Boolean defaultResult() {

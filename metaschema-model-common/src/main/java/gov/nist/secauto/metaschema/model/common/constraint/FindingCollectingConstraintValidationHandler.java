@@ -82,7 +82,7 @@ public class FindingCollectingConstraintValidationHandler
       @NotNull CharSequence message,
       Throwable cause) {
     findings.add(new Finding(constraint, message, cause, node, targets));
-    
+
     if (constraint.getLevel().ordinal() > highestLevel.ordinal()) {
       highestLevel = constraint.getLevel();
     }

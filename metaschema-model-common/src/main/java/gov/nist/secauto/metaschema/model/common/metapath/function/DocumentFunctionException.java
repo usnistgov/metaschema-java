@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.AbstractCodedMetapathException;
 
-public class DocumentFunctionException extends AbstractCodedMetapathException {
+public class DocumentFunctionException
+    extends AbstractCodedMetapathException {
   public static final int ERROR_RETRIEVING_RESOURCE = 2;
   public static final int INVALID_ARGUMENT = 5;
 

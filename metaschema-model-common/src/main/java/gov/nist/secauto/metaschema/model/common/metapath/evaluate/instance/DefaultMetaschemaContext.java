@@ -137,7 +137,7 @@ public class DefaultMetaschemaContext implements IMetaschemaContext {
         modelInstances.addAll(resultingInstances);
       }
 
-      if (modelInstances != null && !modelInstances.isEmpty()) {
+      if (!modelInstances.isEmpty()) {
         // add the matching instances to the result
         retval
             .addAll(visitor.visit(expr, this.newInstanceMetaschemaContext(IInstanceSet.newInstanceSet(modelInstances)))

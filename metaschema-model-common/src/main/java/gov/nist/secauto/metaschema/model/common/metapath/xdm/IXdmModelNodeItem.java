@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositional
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 
 public interface IXdmModelNodeItem extends IXdmNodeItem, IModelNodeItem, IModelPositionalPathSegment {
-  
+
   @Override
   IXdmModelNodeItem getContextNodeItem();
 

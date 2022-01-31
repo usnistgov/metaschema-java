@@ -32,7 +32,8 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 import org.jetbrains.annotations.NotNull;
 
-public class InsertAnchorNode extends Node {
+public class InsertAnchorNode
+    extends Node {
 
   @NotNull
   private BasedSequence type;
@@ -64,7 +65,8 @@ public class InsertAnchorNode extends Node {
   @NotNull
   public BasedSequence[] getSegments() {
     @SuppressWarnings("null")
-    @NotNull BasedSequence[] retval = new BasedSequence[] { getType(), getIdReference() };
+    @NotNull
+    BasedSequence[] retval = new BasedSequence[] { getType(), getIdReference() };
     return retval;
   }
 

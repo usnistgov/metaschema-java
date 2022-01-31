@@ -33,7 +33,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.Expre
 
 import org.jetbrains.annotations.NotNull;
 
-public class RootDoubleSlashPath extends AbstractRootPathExpression {
+public class RootDoubleSlashPath
+    extends AbstractRootPathExpression {
 
   public RootDoubleSlashPath(@NotNull IExpression node) {
     super(node);

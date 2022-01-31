@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 import org.jetbrains.annotations.NotNull;
 
 public interface Node<DEFINITION extends INamedDefinition, INSTANCE extends INamedInstance> {
-  @NotNull 
+  @NotNull
   DEFINITION getDefinition();
 
   INSTANCE getInstance();

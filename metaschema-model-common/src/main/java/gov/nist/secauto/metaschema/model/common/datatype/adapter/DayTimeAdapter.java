@@ -34,7 +34,8 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.time.format.DateTimeParseException;
 
-public class DayTimeAdapter extends AbstractJavaTypeAdapter<Duration, IDayTimeDurationItem>
+public class DayTimeAdapter
+    extends AbstractJavaTypeAdapter<Duration, IDayTimeDurationItem>
     implements IDayTimeDurationType {
 
   @SuppressWarnings("null")
@@ -50,7 +51,7 @@ public class DayTimeAdapter extends AbstractJavaTypeAdapter<Duration, IDayTimeDu
   @Override
   public Duration copy(Object obj) {
     // value in immutable
-    return (Duration)obj;
+    return (Duration) obj;
   }
 
   @SuppressWarnings("null")

@@ -37,7 +37,7 @@ public interface IMetaschemaContext {
 
   IInstanceSet getInstanceSet();
 
-  @NotNull 
+  @NotNull
   IMetaschemaContext newInstanceMetaschemaContext(@NotNull IInstanceSet leftResult);
 
   IInstanceSet getChildFlag(Predicate<IInstance> filter);

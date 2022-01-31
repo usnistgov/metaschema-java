@@ -98,10 +98,12 @@ public interface INodeItem extends IPathItem, INodeContext {
    * @param context
    *          the dynamic Metapath context
    * @return the result items
-   * @throws MetapathException if an error occured while evaluating the expression
+   * @throws MetapathException
+   *           if an error occured while evaluating the expression
    */
   @NotNull
-  default ISequence<?> evaluateMetapath(@NotNull MetapathExpression metapath, @NotNull DynamicContext context) throws MetapathException {
+  default ISequence<?> evaluateMetapath(@NotNull MetapathExpression metapath, @NotNull DynamicContext context)
+      throws MetapathException {
     return new MetaschemaPathEvaluationVisitor(context).visit(metapath.getASTNode(), this);
   }
 

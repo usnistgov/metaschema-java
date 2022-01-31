@@ -169,7 +169,7 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
       flagContainer = new XmlFlagContainerSupport(getXmlField(), this);
     }
   }
-  
+
   @Override
   public Map<@NotNull String, ? extends IXmlFlagInstance> getFlagInstanceMap() {
     initFlagContainer();

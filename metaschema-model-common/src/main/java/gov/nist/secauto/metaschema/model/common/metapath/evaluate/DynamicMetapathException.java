@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.evaluate;
 
 import gov.nist.secauto.metaschema.model.common.metapath.AbstractCodedMetapathException;
 
-public class DynamicMetapathException extends AbstractCodedMetapathException {
+public class DynamicMetapathException
+    extends AbstractCodedMetapathException {
   public static final String CODE_INVALID_VALUE_FOR_CAST = "err:FORG0001";
 
   /**

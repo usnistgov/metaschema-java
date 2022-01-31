@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.AbstractCodedMetapathException;
 
-public class InvalidArgumentFunctionMetapathException extends AbstractCodedMetapathException {
+public class InvalidArgumentFunctionMetapathException
+    extends AbstractCodedMetapathException {
 
   public static final int INVALID_VALUE_FOR_CAST = 1;
   public static final int INVALID_ARGUMENT_TYPE = 6;

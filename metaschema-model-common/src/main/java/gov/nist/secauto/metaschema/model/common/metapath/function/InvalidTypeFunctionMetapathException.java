@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.AbstractCodedMetapathException;
 
-public class InvalidTypeFunctionMetapathException extends AbstractCodedMetapathException {
+public class InvalidTypeFunctionMetapathException
+    extends AbstractCodedMetapathException {
   public static final int NODE_HAS_NO_TYPED_VALUE = 12;
 
   /**

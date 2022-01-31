@@ -64,7 +64,8 @@ public class FunctionCall implements IExpression {
    * Retrieve the associated function.
    * 
    * @return the function or {@code null} if no function matched the defined name and arguments
-   * @throws UnsupportedOperationException if the function was not found
+   * @throws UnsupportedOperationException
+   *           if the function was not found
    */
   public synchronized IFunction getFunction() {
     if (function == null) {

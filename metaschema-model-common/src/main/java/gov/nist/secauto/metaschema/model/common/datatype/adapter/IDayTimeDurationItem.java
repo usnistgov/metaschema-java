@@ -45,7 +45,8 @@ public interface IDayTimeDurationItem extends IDurationItem {
   }
 
   @NotNull
-  public static IDayTimeDurationItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+  public static IDayTimeDurationItem cast(@NotNull IAnyAtomicItem item)
+      throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.DAY_TIME_DURATION.cast(item);
   }
 

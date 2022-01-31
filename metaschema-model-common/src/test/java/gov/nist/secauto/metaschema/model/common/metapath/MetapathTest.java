@@ -49,7 +49,7 @@ class MetapathTest {
       if (line.startsWith("# ")) {
         continue;
       }
-//      System.out.println(line);
+      // System.out.println(line);
       MetapathExpression.compile(line);
     }
   }
@@ -61,7 +61,7 @@ class MetapathTest {
       if (line.startsWith("# ")) {
         continue;
       }
-//      System.out.println(line);
+      // System.out.println(line);
       try {
         MetapathExpression.compile(line);
       } catch (ParseCancellationException ex) {

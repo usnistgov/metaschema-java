@@ -34,7 +34,8 @@ import org.jetbrains.annotations.NotNull;
 import java.math.BigInteger;
 
 public class NonNegativeIntegerAdapter
-    extends AbstractIntegerAdapter<INonNegativeIntegerItem> implements INonNegativeIntegerType {
+    extends AbstractIntegerAdapter<INonNegativeIntegerItem>
+    implements INonNegativeIntegerType {
 
   public NonNegativeIntegerAdapter() {
   }

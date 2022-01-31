@@ -35,7 +35,8 @@ import java.io.IOException;
 import java.math.BigInteger;
 
 public abstract class AbstractIntegerAdapter<ITEM_TYPE extends IIntegerItem>
-    extends AbstractJavaTypeAdapter<BigInteger, ITEM_TYPE> implements IIntegerType {
+    extends AbstractJavaTypeAdapter<BigInteger, ITEM_TYPE>
+    implements IIntegerType {
 
   @SuppressWarnings("null")
   protected AbstractIntegerAdapter() {
@@ -59,6 +60,6 @@ public abstract class AbstractIntegerAdapter<ITEM_TYPE extends IIntegerItem>
   @Override
   public BigInteger copy(Object obj) {
     // a BigInteger is immutable
-    return (BigInteger)obj;
+    return (BigInteger) obj;
   }
 }

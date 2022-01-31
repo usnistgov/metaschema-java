@@ -61,7 +61,8 @@ public interface IDecimalItem extends INumericItem {
     return valueOf(new BigDecimal(value, MathContext.DECIMAL64));
   }
 
-  public static @NotNull IDecimalItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+  public static @NotNull IDecimalItem cast(@NotNull IAnyAtomicItem item)
+      throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.DECIMAL.cast(item);
   }
 }

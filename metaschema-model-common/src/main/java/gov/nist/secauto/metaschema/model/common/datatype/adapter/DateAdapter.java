@@ -41,7 +41,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 
-public class DateAdapter extends AbstractDatatypeJavaTypeAdapter<Date, IDateItem> implements IDateType {
+public class DateAdapter
+    extends AbstractDatatypeJavaTypeAdapter<Date, IDateItem>
+    implements IDateType {
   @SuppressWarnings("null")
   public DateAdapter() {
     super(Date.class);
@@ -73,11 +75,13 @@ public class DateAdapter extends AbstractDatatypeJavaTypeAdapter<Date, IDateItem
     String retval;
     if (value.hasTimeZone()) {
       @SuppressWarnings("null")
-      @NotNull String formatted = DateFormats.dateWithTZ.format(value.getValue());
+      @NotNull
+      String formatted = DateFormats.dateWithTZ.format(value.getValue());
       retval = formatted;
     } else {
       @SuppressWarnings("null")
-      @NotNull String formatted = DateFormats.dateWithoutTZ.format(value.getValue());
+      @NotNull
+      String formatted = DateFormats.dateWithoutTZ.format(value.getValue());
       retval = formatted;
     }
     return retval;

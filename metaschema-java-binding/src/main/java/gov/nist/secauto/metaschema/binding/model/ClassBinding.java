@@ -150,6 +150,6 @@ public interface ClassBinding extends IBoundNamedModelDefinition {
    * @throws BindingException
    *           if an error occurred copying content between java instances
    */
-  @NotNull 
+  @NotNull
   Object copyBoundObject(@NotNull Object item, Object parentInstance) throws BindingException;
 }

@@ -50,7 +50,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class XmlLocalFlagDefinition extends AbstractFlagInstance {
+public class XmlLocalFlagDefinition
+    extends AbstractFlagInstance {
   @NotNull
   private final LocalFlagDefinitionType xmlFlag;
   @NotNull

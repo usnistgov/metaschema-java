@@ -154,11 +154,8 @@ public class FunctionUtils {
   /**
    * Gets the provided item value as a {@link INumericItem} value.
    * 
-   * @param sequence
-   *          a Metapath sequence containing the value to convert
-   * @param requireSingleton
-   *          if {@code true} then a {@link TypeMetapathException} is thrown if the sequence contains
-   *          more than one item
+   * @param item
+   *          the value to convert
    * @return the numeric item value
    * @throws TypeMetapathException
    *           if the sequence contains more than one item, or the item cannot be cast to a numeric

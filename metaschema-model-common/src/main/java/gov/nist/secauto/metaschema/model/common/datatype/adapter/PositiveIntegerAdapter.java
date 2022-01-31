@@ -33,7 +33,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
-public class PositiveIntegerAdapter extends AbstractIntegerAdapter<IPositiveIntegerItem>
+public class PositiveIntegerAdapter
+    extends AbstractIntegerAdapter<IPositiveIntegerItem>
     implements IPositiveIntegerType {
 
   public PositiveIntegerAdapter() {

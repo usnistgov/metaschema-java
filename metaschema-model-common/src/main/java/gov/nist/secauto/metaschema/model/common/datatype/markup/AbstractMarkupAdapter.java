@@ -31,7 +31,8 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.IMarkupItem;
 import gov.nist.secauto.metaschema.model.common.metapath.type.IMarkupType;
 
 public abstract class AbstractMarkupAdapter<TYPE extends AbstractMarkupString<TYPE>>
-    extends AbstractDatatypeJavaTypeAdapter<TYPE, IMarkupItem> implements IMarkupType {
+    extends AbstractDatatypeJavaTypeAdapter<TYPE, IMarkupItem>
+    implements IMarkupType {
 
   private static final MarkupParser markupParser = new MarkupParser();
 

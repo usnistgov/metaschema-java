@@ -95,5 +95,6 @@ public interface ModelPropertyInfo {
 
   Collection<? extends Object> getItemsFromValue(Object value);
 
-  void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector) throws BindingException;
+  void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector)
+      throws BindingException;
 }

@@ -106,7 +106,7 @@ public class CollectionUtil {
     return retval;
   }
 
-  public static <T extends Collection<A>, A> T requireNonEmpty(T collection, String message) {
+  public static <T extends Collection<A>, A> T requireNonEmpty(@NotNull T collection, @NotNull String message) {
     if (collection.isEmpty()) {
       throw new IllegalStateException(message);
     }

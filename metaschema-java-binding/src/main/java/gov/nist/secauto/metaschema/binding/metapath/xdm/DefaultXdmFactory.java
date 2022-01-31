@@ -114,12 +114,12 @@ public class DefaultXdmFactory implements IXdmFactory {
     IBoundXdmNodeItem retval;
     if (definition instanceof AssemblyClassBinding) {
       if (rootNode) {
-        retval = newDocumentNodeItem((AssemblyClassBinding)definition, value, baseUri);
+        retval = newDocumentNodeItem((AssemblyClassBinding) definition, value, baseUri);
       } else {
-        retval = newRelativeAssemblyNodeItem((AssemblyClassBinding)definition, value, baseUri);
+        retval = newRelativeAssemblyNodeItem((AssemblyClassBinding) definition, value, baseUri);
       }
     } else if (definition instanceof FieldClassBinding) {
-      retval = newRelativeFieldNodeItem((FieldClassBinding)definition, value, baseUri);
+      retval = newRelativeFieldNodeItem((FieldClassBinding) definition, value, baseUri);
     } else {
       throw new UnsupportedOperationException("must be a bound assembly or field");
     }

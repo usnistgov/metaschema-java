@@ -50,7 +50,8 @@ public interface IPathSegment {
   String format(@NotNull IPathFormatter formatter);
 
   /**
-   * Get a list of  path segments, starting at the root and descending.
+   * Get a list of path segments, starting at the root and descending.
+   * 
    * @return a list of path segments in descending order
    */
   @SuppressWarnings("null")
@@ -61,6 +62,7 @@ public interface IPathSegment {
 
   /**
    * Get a stream of path segments, starting at the root and descending.
+   * 
    * @return a stream of path segments in descending order
    */
   @NotNull
@@ -68,6 +70,7 @@ public interface IPathSegment {
 
   /**
    * Get the value associated with the path segment
+   * 
    * @return the value or {@code} if no value is associated with this path segment
    */
   INodeItem getNodeItem();

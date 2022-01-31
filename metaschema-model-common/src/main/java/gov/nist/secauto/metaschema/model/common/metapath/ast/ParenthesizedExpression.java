@@ -36,7 +36,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class ParenthesizedExpression extends AbstractUnaryExpression {
+public class ParenthesizedExpression
+    extends AbstractUnaryExpression {
   @NotNull
   private final Class<? extends IItem> staticResultType;
 

@@ -34,7 +34,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
-public class Flag extends AbstractNamedInstanceExpression<IFlagNodeItem> {
+public class Flag
+    extends AbstractNamedInstanceExpression<IFlagNodeItem> {
   public Flag(@NotNull IExpression node) {
     super(node);
   }

@@ -30,35 +30,36 @@ import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
 
 public class ModelUtil {
 
-//  public static <T, R> List<R> deepCopyList(T parent, Class<R> clazz, List<R> parameter, boolean useEmpty) {
-//    List<R> retval;
-//    if (parameter == null) {
-//      retval = null;
-//    } else if (useEmpty && parameter.isEmpty()) {
-//      retval = Collections.emptyList();
-//    } else {
-//      // get the copy constructor
-//      final Constructor<R> constructor;
-//      try {
-//        constructor = clazz.getConstructor(clazz);
-//      } catch (NoSuchMethodException | SecurityException ex) {
-//        throw new RuntimeException(ex);
-//      }
-//
-//      retval = parameter.stream()
-//          .filter(Objects::nonNull)
-//          .map(item -> {
-//            try {
-//              return constructor.newInstance(item);
-//            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-//                | InvocationTargetException ex) {
-//              throw new RuntimeException(ex);
-//            }
-//          })
-//          .collect(Collectors.toCollection(ArrayList::new));
-//    }
-//    return retval;
-//  }
+  // public static <T, R> List<R> deepCopyList(T parent, Class<R> clazz, List<R> parameter, boolean
+  // useEmpty) {
+  // List<R> retval;
+  // if (parameter == null) {
+  // retval = null;
+  // } else if (useEmpty && parameter.isEmpty()) {
+  // retval = Collections.emptyList();
+  // } else {
+  // // get the copy constructor
+  // final Constructor<R> constructor;
+  // try {
+  // constructor = clazz.getConstructor(clazz);
+  // } catch (NoSuchMethodException | SecurityException ex) {
+  // throw new RuntimeException(ex);
+  // }
+  //
+  // retval = parameter.stream()
+  // .filter(Objects::nonNull)
+  // .map(item -> {
+  // try {
+  // return constructor.newInstance(item);
+  // } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+  // | InvocationTargetException ex) {
+  // throw new RuntimeException(ex);
+  // }
+  // })
+  // .collect(Collectors.toCollection(ArrayList::new));
+  // }
+  // return retval;
+  // }
 
   /**
    * Resolves a provided local name value. If the value is {@code null} or "##default", then the

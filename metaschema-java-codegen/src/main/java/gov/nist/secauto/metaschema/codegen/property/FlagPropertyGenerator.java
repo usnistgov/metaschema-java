@@ -49,7 +49,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.Set;
 
-public class FlagPropertyGenerator extends AbstractPropertyGenerator<JavaClassGenerator> {
+public class FlagPropertyGenerator
+    extends AbstractPropertyGenerator<JavaClassGenerator> {
   @NotNull
   private final IFlagInstance instance;
   @NotNull

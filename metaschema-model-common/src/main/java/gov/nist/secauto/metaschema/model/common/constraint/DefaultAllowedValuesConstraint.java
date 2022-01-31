@@ -35,7 +35,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public class DefaultAllowedValuesConstraint extends AbstractConstraint implements IAllowedValuesConstraint {
+public class DefaultAllowedValuesConstraint
+    extends AbstractConstraint
+    implements IAllowedValuesConstraint {
   private final boolean allowedOther;
   @NotNull
   private final Map<@NotNull String, @NotNull DefaultAllowedValue> allowedValues;
@@ -50,6 +52,8 @@ public class DefaultAllowedValuesConstraint extends AbstractConstraint implement
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param level
+   *          the significance of a violation of this constraint
    * @param target
    *          the Metapath expression identifying the nodes the constraint targets
    * @param allowedValues
@@ -63,12 +67,11 @@ public class DefaultAllowedValuesConstraint extends AbstractConstraint implement
   public DefaultAllowedValuesConstraint(
       @Nullable String id,
       @NotNull Level level,
-      String message,
       @NotNull MetapathExpression target,
       @NotNull Map<@NotNull String, @NotNull DefaultAllowedValue> allowedValues,
       boolean allowedOther,
       @Nullable MarkupMultiline remarks) {
-    super(id, level, message, target, remarks);
+    super(id, level, target, remarks);
     this.allowedValues = allowedValues;
     this.allowedOther = allowedOther;
   }

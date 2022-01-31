@@ -42,7 +42,8 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractNamedModelDefinition<DELEGATE extends INamedModelDefinition>
-    extends AbstractDefinition<DELEGATE> implements INamedModelDefinition {
+    extends AbstractDefinition<DELEGATE>
+    implements INamedModelDefinition {
 
   private Map<@NotNull String, FlagInstance> flagInstances;
 
@@ -64,7 +65,8 @@ public abstract class AbstractNamedModelDefinition<DELEGATE extends INamedModelD
       flagInstances = new LinkedHashMap<>();
 
       // duplicate these instances so they have unique hashCode and equals values
-      for (@NotNull IFlagInstance instance : getDelegate().getFlagInstances()) {
+      for (@NotNull
+      IFlagInstance instance : getDelegate().getFlagInstances()) {
         FlagDefinition definition = new FlagDefinition(instance.getDefinition());
         FlagInstance newInstance = new FlagInstance(instance, definition, this);
         flagInstances.put(newInstance.getEffectiveName(), newInstance);

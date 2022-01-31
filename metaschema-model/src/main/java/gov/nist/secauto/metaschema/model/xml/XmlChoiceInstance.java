@@ -41,7 +41,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 
-public class XmlChoiceInstance extends AbstractChoiceInstance {
+public class XmlChoiceInstance
+    extends AbstractChoiceInstance {
   @NotNull
   private final ChoiceDocument.Choice xmlChoice;
   private XmlModelContainerSupport modelContainer;

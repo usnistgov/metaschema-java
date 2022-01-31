@@ -33,7 +33,9 @@ import org.jetbrains.annotations.NotNull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-class DecimalItemImpl extends AbstractNumericItem<BigDecimal> implements IDecimalItem {
+class DecimalItemImpl
+    extends AbstractNumericItem<BigDecimal>
+    implements IDecimalItem {
   public DecimalItemImpl(@NotNull BigDecimal value) {
     super(value);
   }

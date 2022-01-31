@@ -121,7 +121,8 @@ public abstract class AbstractJavaTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
 
       // trim leading and trailing whitespace
       @SuppressWarnings("null")
-      @NotNull String value = builder.toString().trim();
+      @NotNull
+      String value = builder.toString().trim();
       return parse(value);
     } catch (XMLStreamException ex) {
       throw new IOException(ex);
@@ -184,7 +185,8 @@ public abstract class AbstractJavaTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
     if (item == null) {
       throw new InvalidValueForCastFunctionMetapathException("item is null");
     } else if (getItemClass().isAssignableFrom(item.getClass())) {
-      @SuppressWarnings("unchecked") ITEM_TYPE typedItem = (ITEM_TYPE) item;
+      @SuppressWarnings("unchecked")
+      ITEM_TYPE typedItem = (ITEM_TYPE) item;
       retval = typedItem;
     } else {
       retval = castInternal(item);
@@ -214,7 +216,9 @@ public abstract class AbstractJavaTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
       TYPE value = parse(itemString);
       return newItem(value);
     } catch (IllegalArgumentException ex) {
-      throw new InvalidValueForCastFunctionMetapathException(String.format("The value '%s' is not compatible with the type '%s'", itemString, getItemClass().getName()), ex);
+      throw new InvalidValueForCastFunctionMetapathException(
+          String.format("The value '%s' is not compatible with the type '%s'", itemString, getItemClass().getName()),
+          ex);
     }
   }
 }

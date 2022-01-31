@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,7 +37,7 @@ class ReplacementScannerTest {
   @Test
   void test() {
     String string = "Some { first} text \\{ to {second\\}} scan";
-    
+
     Pattern pattern = Pattern.compile("(?<!\\\\)(\\{\\s*((?:(?:\\\\})|[^}])*)\\s*\\})");
     String result = ReplacementScanner.replaceTokens(string, pattern, match -> match.group(2)).toString();
     assertEquals("Some first text \\{ to second\\} scan", result);

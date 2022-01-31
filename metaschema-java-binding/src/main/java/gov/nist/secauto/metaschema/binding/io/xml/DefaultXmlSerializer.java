@@ -42,7 +42,8 @@ import java.io.Writer;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
-public class DefaultXmlSerializer<CLASS> extends AbstractSerializer<CLASS> {
+public class DefaultXmlSerializer<CLASS>
+    extends AbstractSerializer<CLASS> {
   private XMLOutputFactory2 xmlOutputFactory;
 
   public DefaultXmlSerializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {

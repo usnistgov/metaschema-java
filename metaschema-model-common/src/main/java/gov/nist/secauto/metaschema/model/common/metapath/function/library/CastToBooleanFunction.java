@@ -53,7 +53,6 @@ public class CastToBooleanFunction {
       .functionHandler(CastToBooleanFunction::execute)
       .build();
 
-  @SuppressWarnings("null")
   @NotNull
   public static ISequence<IBooleanItem> execute(@NotNull IFunction function,
       @NotNull List<@NotNull ISequence<?>> arguments,

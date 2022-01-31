@@ -31,8 +31,10 @@ import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmDocumentNodeIte
 
 import org.jetbrains.annotations.NotNull;
 
-public class XdmRootAssemblyNodeItemImpl extends
-    AbstractBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty> implements IBoundXdmRootAssemblyNodeItem {
+public class XdmRootAssemblyNodeItemImpl
+    extends
+    AbstractBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty>
+    implements IBoundXdmRootAssemblyNodeItem {
 
   @NotNull
   private final IBoundXdmDocumentNodeItem parent;

@@ -31,7 +31,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.type.IUriReferenceType;
 
 import java.net.URI;
 
-public class UriReferenceAdapter extends AbstractJavaTypeAdapter<URI, IUriReferenceItem> implements IUriReferenceType {
+public class UriReferenceAdapter
+    extends AbstractJavaTypeAdapter<URI, IUriReferenceItem>
+    implements IUriReferenceType {
   @SuppressWarnings("null")
   public UriReferenceAdapter() {
     super(URI.class);
@@ -51,7 +53,7 @@ public class UriReferenceAdapter extends AbstractJavaTypeAdapter<URI, IUriRefere
   @Override
   public URI copy(Object obj) {
     // a URI is immutable
-    return (URI)obj;
+    return (URI) obj;
   }
 
   @SuppressWarnings("null")

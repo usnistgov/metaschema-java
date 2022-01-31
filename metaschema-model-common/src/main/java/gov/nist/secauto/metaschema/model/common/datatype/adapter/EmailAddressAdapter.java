@@ -31,7 +31,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.type.IEmailAddressType;
 
 import org.jetbrains.annotations.NotNull;
 
-public class EmailAddressAdapter extends AbstractStringJavaTypeAdapter<IEmailAddressItem> implements IEmailAddressType {
+public class EmailAddressAdapter
+    extends AbstractStringJavaTypeAdapter<IEmailAddressItem>
+    implements IEmailAddressType {
 
   public EmailAddressAdapter() {
   }

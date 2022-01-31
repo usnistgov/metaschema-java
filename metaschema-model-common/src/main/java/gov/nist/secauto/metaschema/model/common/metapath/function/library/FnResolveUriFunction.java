@@ -98,13 +98,19 @@ public class FnResolveUriFunction {
   }
 
   /**
-   * Implements the two argument version of the XPath 3.1 function <a href="https://www.w3.org/TR/xpath-functions-31/#func-resolve-uri">resolve-uri</a>.
+   * Implements the two argument version of the XPath 3.1 function
+   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-resolve-uri">resolve-uri</a>.
    * 
-   * @param function the function definition
-   * @param arguments a list of sequence arguments with an expected size of 2
-   * @param dynamicContext the evaluation context
-   * @param focus the current focus item
-   * @return a sequence containing the resolved URI or and empty sequence if either the base or relative URI is {@code null}
+   * @param function
+   *          the function definition
+   * @param arguments
+   *          a list of sequence arguments with an expected size of 2
+   * @param dynamicContext
+   *          the evaluation context
+   * @param focus
+   *          the current focus item
+   * @return a sequence containing the resolved URI or and empty sequence if either the base or
+   *         relative URI is {@code null}
    */
   @NotNull
   public static ISequence<IAnyUriItem> executeTwoArg(@NotNull IFunction function,
@@ -114,7 +120,7 @@ public class FnResolveUriFunction {
 
     /* there will always be two arguments */
     assert arguments.size() == 2;
-    
+
     ISequence<? extends IStringItem> relativeSequence = FunctionUtils.asType(arguments.get(0));
     if (relativeSequence.isEmpty()) {
       return ISequence.empty();
@@ -149,11 +155,13 @@ public class FnResolveUriFunction {
     }
 
     if (baseUri == null) {
-      throw new UriFunctionException(UriFunctionException.BASE_URI_NOT_DEFINED_IN_STATIC_CONTEXT, "Base-uri not defined in the static context");
+      throw new UriFunctionException(UriFunctionException.BASE_URI_NOT_DEFINED_IN_STATIC_CONTEXT,
+          "Base-uri not defined in the static context");
     }
 
     @SuppressWarnings("null")
-    @NotNull URI resolvedUri = baseUri.getValue().resolve(relativeUri.getValue());
+    @NotNull
+    URI resolvedUri = baseUri.getValue().resolve(relativeUri.getValue());
     return IAnyUriItem.valueOf(resolvedUri);
   }
 }

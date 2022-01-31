@@ -31,7 +31,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.type.ITokenType;
 
 import org.jetbrains.annotations.NotNull;
 
-public class TokenAdapter extends AbstractStringJavaTypeAdapter<ITokenItem> implements ITokenType {
+public class TokenAdapter
+    extends AbstractStringJavaTypeAdapter<ITokenItem>
+    implements ITokenType {
 
   public TokenAdapter() {
     super();

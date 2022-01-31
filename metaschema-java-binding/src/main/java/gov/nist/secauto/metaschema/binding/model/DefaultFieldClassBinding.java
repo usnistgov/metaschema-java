@@ -692,7 +692,8 @@ public class DefaultFieldClassBinding
   }
 
   @Override
-  protected void copyBoundObjectInternal(@NotNull Object fromInstance, @NotNull Object toInstance) throws BindingException {
+  protected void copyBoundObjectInternal(@NotNull Object fromInstance, @NotNull Object toInstance)
+      throws BindingException {
     super.copyBoundObjectInternal(fromInstance, toInstance);
 
     getFieldValue().copyBoundObject(fromInstance, toInstance);

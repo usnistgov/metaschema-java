@@ -40,7 +40,8 @@ public interface IUriReferenceItem extends IAnyUriItem {
   }
 
   @NotNull
-  public static IUriReferenceItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+  public static IUriReferenceItem cast(@NotNull IAnyAtomicItem item)
+      throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.URI_REFERENCE.cast(item);
   }
 

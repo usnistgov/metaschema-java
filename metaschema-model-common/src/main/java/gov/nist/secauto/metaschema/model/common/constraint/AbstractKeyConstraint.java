@@ -34,7 +34,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public abstract class AbstractKeyConstraint extends AbstractConstraint implements IKeyConstraint {
+public abstract class AbstractKeyConstraint
+    extends AbstractConstraint
+    implements IKeyConstraint {
   @NotNull
   private final List<@NotNull DefaultKeyField> keyFields;
 
@@ -43,6 +45,8 @@ public abstract class AbstractKeyConstraint extends AbstractConstraint implement
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param level
+   *          the significance of a violation of this constraint
    * @param target
    *          the Metapath expression identifying the nodes the constraint targets
    * @param keyFields
@@ -53,11 +57,10 @@ public abstract class AbstractKeyConstraint extends AbstractConstraint implement
   public AbstractKeyConstraint(
       @Nullable String id,
       @NotNull Level level,
-      String message,
       @NotNull MetapathExpression target,
       @NotNull List<@NotNull DefaultKeyField> keyFields,
       MarkupMultiline remarks) {
-    super(id, level, message, target, remarks);
+    super(id, level, target, remarks);
     if (keyFields.isEmpty()) {
       throw new IllegalArgumentException("an empty list of key fields is not allowed");
     }

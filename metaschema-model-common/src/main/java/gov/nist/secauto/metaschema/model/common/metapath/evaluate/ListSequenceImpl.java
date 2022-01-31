@@ -77,14 +77,14 @@ class ListSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> 
 
   public boolean equals(Object other) {
     if (other == this) {
-        return true;
+      return true;
     }
 
     if (!(other instanceof ISequence)) {
-        return false;
+      return false;
     }
-    
-    return asList().equals(((ISequence<?>)other).asList());
+
+    return asList().equals(((ISequence<?>) other).asList());
   }
 
   @Override

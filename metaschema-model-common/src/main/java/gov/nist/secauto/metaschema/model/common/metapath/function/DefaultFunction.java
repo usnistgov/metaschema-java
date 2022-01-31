@@ -51,7 +51,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DefaultFunction extends AbstractFunction {
+public class DefaultFunction
+    extends AbstractFunction {
   // private static final Logger logger = LogManager.getLogger(AbstractFunction.class);
 
   @NotNull
@@ -267,7 +268,6 @@ public class DefaultFunction extends AbstractFunction {
       ISequenceType requiredSequenceType = argument.getSequenceType();
       Class<? extends IItem> requiredSequenceTypeClass = requiredSequenceType.getType();
 
-
       List<@NotNull IItem> result = new ArrayList<>(sequence.size());
 
       boolean atomize = IAnyAtomicItem.class.isAssignableFrom(requiredSequenceTypeClass);
@@ -286,7 +286,7 @@ public class DefaultFunction extends AbstractFunction {
           }
         }
 
-//        item = requiredSequenceType.
+        // item = requiredSequenceType.
         if (!requiredSequenceTypeClass.isInstance(item)) {
           throw new InvalidTypeMetapathException(
               String.format("The type '%s' is not a subtype of '%s'", item.getClass().getName(),

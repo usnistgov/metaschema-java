@@ -46,8 +46,9 @@ import java.util.Set;
 /**
  * Represents the "value" of a field object.
  */
-public class FieldValuePropertyGenerator extends AbstractPropertyGenerator<FieldJavaClassGenerator> {
-//  private static final Logger logger = LogManager.getLogger(FieldValuePropertyGenerator.class);
+public class FieldValuePropertyGenerator
+    extends AbstractPropertyGenerator<FieldJavaClassGenerator> {
+  // private static final Logger logger = LogManager.getLogger(FieldValuePropertyGenerator.class);
 
   public FieldValuePropertyGenerator(@NotNull FieldJavaClassGenerator generator) {
     super(generator);

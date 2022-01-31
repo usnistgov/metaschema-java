@@ -38,7 +38,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-public class DecimalAdapter extends AbstractJavaTypeAdapter<BigDecimal, IDecimalItem> implements IDecimalType {
+public class DecimalAdapter
+    extends AbstractJavaTypeAdapter<BigDecimal, IDecimalItem>
+    implements IDecimalType {
   @NotNull
   private static final BigDecimal DECIMAL_BOOLEAN_TRUE = new BigDecimal("1.0");
   @NotNull
@@ -71,7 +73,7 @@ public class DecimalAdapter extends AbstractJavaTypeAdapter<BigDecimal, IDecimal
   @Override
   public BigDecimal copy(Object obj) {
     // a BigDecimal is immutable
-    return (BigDecimal)obj;
+    return (BigDecimal) obj;
   }
 
   @SuppressWarnings("null")

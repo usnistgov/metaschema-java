@@ -101,7 +101,8 @@ public class FunctionService {
    * @param arguments
    *          a list of argument expressions for use in determining an argument signature match
    * @return the matching function or {@code null} if no match exists
-   * @throws UnsupportedOperationException if a matching function was not found
+   * @throws UnsupportedOperationException
+   *           if a matching function was not found
    */
   @SuppressWarnings("null")
   public IFunction getFunction(@NotNull String name, @NotNull IExpression... arguments) {
@@ -117,7 +118,8 @@ public class FunctionService {
    * @param arguments
    *          a list of argument expressions for use in determining an argument signature match
    * @return the matching function
-   * @throws UnsupportedOperationException if a matching function was not found
+   * @throws UnsupportedOperationException
+   *           if a matching function was not found
    */
   public synchronized IFunction getFunction(@NotNull String name, @NotNull List<@NotNull IExpression> arguments) {
     IFunction retval = library.getFunction(name, arguments);

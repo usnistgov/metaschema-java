@@ -62,9 +62,11 @@ public class FnStartsWithFunction {
       @NotNull List<@NotNull ISequence<?>> arguments,
       @NotNull DynamicContext dynamicContext,
       INodeItem focus) {
-    @SuppressWarnings("unchecked") IStringItem arg1
+    @SuppressWarnings("unchecked")
+    IStringItem arg1
         = FunctionUtils.getFirstItem((ISequence<IStringItem>) arguments.iterator().next(), true);
-    @SuppressWarnings("unchecked") IStringItem arg2
+    @SuppressWarnings("unchecked")
+    IStringItem arg2
         = FunctionUtils.getFirstItem((ISequence<IStringItem>) arguments.iterator().next(), true);
 
     return ISequence.of(fnStartsWith(arg1, arg2));

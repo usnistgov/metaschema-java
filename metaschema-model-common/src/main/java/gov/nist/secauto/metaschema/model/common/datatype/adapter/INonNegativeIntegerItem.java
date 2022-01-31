@@ -63,7 +63,8 @@ public interface INonNegativeIntegerItem extends IIntegerItem {
   }
 
   @NotNull
-  public static INonNegativeIntegerItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+  public static INonNegativeIntegerItem cast(@NotNull IAnyAtomicItem item)
+      throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.NON_NEGATIVE_INTEGER.cast(item);
   }
 }

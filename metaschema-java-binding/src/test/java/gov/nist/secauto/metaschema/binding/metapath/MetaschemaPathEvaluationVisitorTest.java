@@ -38,7 +38,8 @@ class MetaschemaPathEvaluationVisitorTest {
   @Test
   void test() {
     MetapathExpression path = MetapathExpression.compile("2 eq 1 + 1");
-    MetaschemaPathEvaluationVisitor visitor = new MetaschemaPathEvaluationVisitor(new StaticContext().newDynamicContext());
+    MetaschemaPathEvaluationVisitor visitor
+        = new MetaschemaPathEvaluationVisitor(new StaticContext().newDynamicContext());
     ISequence<?> result = visitor.visit(path.getASTNode(), null);
     System.out.println(result.toString());
   }

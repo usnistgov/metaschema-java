@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.AbstractCodedMetapathException;
 
-public class ArithmeticFunctionException extends AbstractCodedMetapathException {
+public class ArithmeticFunctionException
+    extends AbstractCodedMetapathException {
   public static final int DIVISION_BY_ZERO = 1;
   public static final int OVERFLOW_UNDERFLOW_ERROR = 2;
 

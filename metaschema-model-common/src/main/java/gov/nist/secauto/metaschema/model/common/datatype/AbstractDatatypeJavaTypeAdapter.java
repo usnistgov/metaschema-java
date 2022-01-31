@@ -53,7 +53,7 @@ public abstract class AbstractDatatypeJavaTypeAdapter<TYPE extends IDatatype<TYP
   @Override
   public TYPE copy(Object obj) {
     // Datatype-based types are required to provide a copy method. Delegate to this method.
-    return ((TYPE)obj).copy();
+    return ((TYPE) obj).copy();
   }
 
 }

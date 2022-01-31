@@ -369,7 +369,6 @@ public abstract class AbstractClassBinding implements ClassBinding {
 
   protected abstract void writeBody(Object instance, QName parentName, XmlWritingContext context)
       throws XMLStreamException, IOException;
-  
 
   @Override
   public Object copyBoundObject(@NotNull Object item, Object parentInstance) throws BindingException {
@@ -384,7 +383,8 @@ public abstract class AbstractClassBinding implements ClassBinding {
     return instance;
   }
 
-  protected void copyBoundObjectInternal(@NotNull Object fromInstance, @NotNull Object toInstance) throws BindingException {
+  protected void copyBoundObjectInternal(@NotNull Object fromInstance, @NotNull Object toInstance)
+      throws BindingException {
     for (FlagProperty property : getFlagInstances()) {
       property.copyBoundObject(fromInstance, toInstance);
     }

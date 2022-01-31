@@ -37,7 +37,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-public class ContextItem extends AbstractPathExpression<INodeItem> {
+public class ContextItem
+    extends AbstractPathExpression<INodeItem> {
 
   public ContextItem() {
   }

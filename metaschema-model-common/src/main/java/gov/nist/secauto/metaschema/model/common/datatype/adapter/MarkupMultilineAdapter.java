@@ -48,7 +48,8 @@ import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
-public class MarkupMultilineAdapter extends AbstractMarkupAdapter<MarkupMultiline> {
+public class MarkupMultilineAdapter
+    extends AbstractMarkupAdapter<MarkupMultiline> {
 
   @SuppressWarnings("null")
   public MarkupMultilineAdapter() {
@@ -83,7 +84,8 @@ public class MarkupMultilineAdapter extends AbstractMarkupAdapter<MarkupMultilin
 
   @Override
   public MarkupMultiline parse(JsonParser parser) throws IOException {
-    @SuppressWarnings("null") MarkupMultiline retval = parse(parser.getValueAsString());
+    @SuppressWarnings("null")
+    MarkupMultiline retval = parse(parser.getValueAsString());
     // skip past value
     parser.nextToken();
     return retval;

@@ -42,11 +42,13 @@ import java.util.regex.Pattern;
 public class DefaultExpectConstraint
     extends AbstractConstraint
     implements IExpectConstraint {
+  @SuppressWarnings("null")
   @NotNull
   private static final Pattern METAPATH_VALUE_TEMPLATE_PATTERN
       = Pattern.compile("(?<!\\\\)(\\{\\s*((?:(?:\\\\})|[^}])*)\\s*\\})");
   @NotNull
   private final MetapathExpression test;
+  private final String message;
 
   /**
    * Construct a new expect constraint which requires that the associated test evaluates to
@@ -54,6 +56,10 @@ public class DefaultExpectConstraint
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param level
+   *          the significance of a violation of this constraint
+   * @param message
+   *          an optional message to emit when the constraint is violated
    * @param target
    *          the Metapath expression identifying the nodes the constraint targets
    * @param test
@@ -62,6 +68,7 @@ public class DefaultExpectConstraint
    * @param remarks
    *          optional remarks describing the intent of the constraint
    */
+  @SuppressWarnings("null")
   public DefaultExpectConstraint(
       @Nullable String id,
       @NotNull Level level,
@@ -69,14 +76,19 @@ public class DefaultExpectConstraint
       @NotNull MetapathExpression target,
       @NotNull MetapathExpression test,
       MarkupMultiline remarks) {
-    super(id, level, message, target, remarks);
-    Objects.requireNonNull(test);
-    this.test = test;
+    super(id, level, target, remarks);
+    this.test = Objects.requireNonNull(test);
+    this.message = message;
   }
 
   @Override
   public MetapathExpression getTest() {
     return test;
+  }
+
+  @Override
+  public String getMessage() {
+    return message;
   }
 
   @Override
@@ -87,6 +99,8 @@ public class DefaultExpectConstraint
     }
 
     return ReplacementScanner.replaceTokens(message, METAPATH_VALUE_TEMPLATE_PATTERN, match -> {
+      @SuppressWarnings("null")
+      @NotNull
       String metapath = match.group(2);
       MetapathExpression expr = MetapathExpression.compile(metapath);
       return expr.evaluateAs(item, context, MetapathExpression.ResultType.STRING);

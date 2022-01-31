@@ -40,7 +40,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class LoggingConstraintValidationHandler extends AbstractConstraintValidationHandler {
+public class LoggingConstraintValidationHandler
+    extends AbstractConstraintValidationHandler {
   private static final Logger logger = LogManager.getLogger(DefaultConstraintValidator.class);
   @NotNull
   private IPathFormatter pathFormatter = IPathFormatter.METAPATH_PATH_FORMATER;
@@ -94,7 +95,8 @@ public class LoggingConstraintValidationHandler extends AbstractConstraintValida
       @NotNull INodeItem node,
       @NotNull CharSequence message,
       @NotNull Throwable cause) {
-    getLogBuilder(constraint).withThrowable(cause).log("{}: ({}) {}", constraint.getLevel().name(), toPath(node), message);
+    getLogBuilder(constraint).withThrowable(cause).log("{}: ({}) {}", constraint.getLevel().name(), toPath(node),
+        message);
   }
 
   @Override
@@ -130,7 +132,6 @@ public class LoggingConstraintValidationHandler extends AbstractConstraintValida
       @NotNull INodeItem target) {
     log(constraint, target, newUniqueKeyViolationMessage(constraint, node, oldItem, target));
   }
-
 
   @SuppressWarnings("null")
   @Override

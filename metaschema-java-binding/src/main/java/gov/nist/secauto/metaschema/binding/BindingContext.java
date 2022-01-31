@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.io.IBoundLoader;
 import gov.nist.secauto.metaschema.binding.io.Serializer;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
 import gov.nist.secauto.metaschema.binding.model.ClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
@@ -191,7 +190,7 @@ public interface BindingContext {
    *          the object to copy
    * @param parentInstance
    *          the object's parent or {@code null}
-   * @return
+   * @return a deep copy of the provided object
    * @throws BindingException
    *           if an error occurred copying content between java instances
    * @throws NullPointerException
@@ -201,12 +200,14 @@ public interface BindingContext {
    */
   @NotNull
   <CLASS> CLASS copyBoundObject(@NotNull CLASS other, Object parentInstance) throws BindingException;
-  
+
   default IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri) throws IllegalArgumentException {
     return toNodeItem(boundObject, baseUri, false);
   }
 
-  IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode) throws IllegalArgumentException;
+  IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode)
+      throws IllegalArgumentException;
 
-  void validate(@NotNull Object boundObject, URI baseUri, boolean rootNode, IConstraintValidationHandler handler) throws IllegalArgumentException;
+  void validate(@NotNull Object boundObject, URI baseUri, boolean rootNode, IConstraintValidationHandler handler)
+      throws IllegalArgumentException;
 }

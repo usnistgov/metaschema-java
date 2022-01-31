@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.util;
 
 import org.jetbrains.annotations.NotNull;
@@ -46,13 +47,13 @@ public class CustomCollectors {
       int size = list.size();
       if (size < 2) {
         return String.join("", list);
-      } 
+      }
       if (size == 2) {
-        return String.join(" "+conjunction+" ", list);
+        return String.join(" " + conjunction + " ", list);
       }
       // else there are 3 or more
       int last = size - 1;
-      return String.join(", "+conjunction+" ",
+      return String.join(", " + conjunction + " ",
           String.join(", ", list.subList(0, last)),
           list.get(last));
     };

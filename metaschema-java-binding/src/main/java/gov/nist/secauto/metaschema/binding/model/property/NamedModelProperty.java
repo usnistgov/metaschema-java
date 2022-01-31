@@ -56,7 +56,9 @@ public interface NamedModelProperty extends NamedProperty, INamedModelInstance {
 
   /**
    * Get the item values associated with the provided value.
-   * @param value the value which may be a singleton or a collection
+   * 
+   * @param value
+   *          the value which may be a singleton or a collection
    * @return the ordered collection of values
    */
   Collection<? extends Object> getItemValues(Object value);

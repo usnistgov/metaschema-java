@@ -31,6 +31,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A common interface for all constraint definitions.
+ */
 public interface IConstraint {
   /**
    * The degree to which a constraint violation is significant.
@@ -58,13 +61,27 @@ public interface IConstraint {
     CRITICAL;
   }
 
+  /**
+   * The default level to use if no level is provided.
+   */
   @NotNull
   public static final Level DEFAULT_LEVEL = Level.ERROR;
+  /**
+   * The default target Metapath expression to use if no target is provided.
+   */
   @NotNull
   public static final MetapathExpression DEFAULT_TARGET = MetapathExpression.CONTEXT_NODE;
+  /**
+   * The default target Metapath expression to use if no target is provided.
+   */
   @NotNull
-  public static final String DEFAULT_TARGET_PATH = ".";
+  public static final String DEFAULT_TARGET_METAPATH = ".";
 
+  /**
+   * Retrieve the unique identifier for the constraint.
+   * 
+   * @return the identifier or {@code null} if no identifier is defined
+   */
   String getId();
 
   /**
@@ -76,15 +93,17 @@ public interface IConstraint {
   Level getLevel();
 
   /**
-   * A message to emit when the constraint is violated. Allows embedded Metapath expressions using the
-   * syntax {@code \{path\}}.
+   * Retrieve the Metapath expression to use to query the targets of the constraint.
    * 
-   * @return the message if defined or {@code null} otherwise
+   * @return a Metapath expression
    */
-  String getMessage();
-
   @NotNull
   MetapathExpression getTarget();
 
+  /**
+   * Retrieve the remarks associated with the constraint.
+   * 
+   * @return the remarks or {@code null} if no remarks are defined
+   */
   MarkupMultiline getRemarks();
 }

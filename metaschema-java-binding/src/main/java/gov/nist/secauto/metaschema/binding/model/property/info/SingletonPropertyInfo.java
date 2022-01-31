@@ -48,7 +48,9 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
-public class SingletonPropertyInfo extends AbstractModelPropertyInfo<Type> implements ModelPropertyInfo {
+public class SingletonPropertyInfo
+    extends AbstractModelPropertyInfo<Type>
+    implements ModelPropertyInfo {
 
   public SingletonPropertyInfo(NamedModelProperty property) {
     super(property);
@@ -123,11 +125,12 @@ public class SingletonPropertyInfo extends AbstractModelPropertyInfo<Type> imple
   }
 
   @Override
-  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector) throws BindingException {
+  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector)
+      throws BindingException {
     NamedModelProperty property = getProperty();
 
     Object value = property.getValue(fromInstance);
-    
+
     Object copiedValue = property.copyItem(value, toInstance);
 
     collector.add(copiedValue);

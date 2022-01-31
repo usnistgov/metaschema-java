@@ -50,7 +50,7 @@ public abstract class AbstractDatatype<TYPE extends IDatatype<TYPE>, VALUE> impl
 
   @Override
   public int hashCode() {
-    return value == null ? 0 : value.hashCode();
+    return value.hashCode();
   }
 
   @Override

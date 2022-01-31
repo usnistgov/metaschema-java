@@ -117,7 +117,7 @@ public class MetapathExpression {
   @SuppressWarnings("unchecked")
   public <T> T evaluateAs(@NotNull INodeItem item, @NotNull ResultType resultType) {
     ISequence<?> result = item.evaluateMetapath(this);
-    return (T)toResultType(result, resultType);
+    return (T) toResultType(result, resultType);
   }
 
   @SuppressWarnings("unchecked")

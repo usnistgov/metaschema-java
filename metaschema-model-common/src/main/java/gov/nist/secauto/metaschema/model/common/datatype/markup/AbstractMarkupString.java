@@ -92,7 +92,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
     XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
     NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
-        List.of(NamespaceEventImpl.constructNamespace(null, prefix != null ? prefix : "", namespace)));
+        List.of(NamespaceEventImpl.constructNamespace(null, prefix, namespace)));
     xmlStreamWriter.setNamespaceContext(nsContext);
     writingVisitor.visitChildren(getDocument(), xmlStreamWriter);
     xmlStreamWriter.flush();

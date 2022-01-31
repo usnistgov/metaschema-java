@@ -50,7 +50,7 @@ public interface IPathItem extends IItem {
    */
   @NotNull
   INamedDefinition getDefinition();
-  
+
   /**
    * Get the path segment for this item.
    * 

@@ -172,7 +172,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
     if (baseClassName != null) {
       builder.superclass(baseClassName);
     }
-    
+
     Set<INamedModelDefinition> additionalChildClasses = buildClass(builder, className);
 
     for (INamedModelDefinition definition : additionalChildClasses) {
@@ -275,13 +275,13 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
     // generate a no-arg constructor
     builder.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC).build());
 
-//    // generate a copy constructor
-//    MethodSpec.Builder copyBuilder = MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC);
-//    copyBuilder.addParameter(className, "that", Modifier.FINAL);
-//    for (PropertyGenerator property : getPropertyGenerators()) {
-//      additionalChildClasses.addAll(property.buildCopyStatements(copyBuilder, getTypeResolver()));
-//    }
-//    builder.addMethod(copyBuilder.build());
+    // // generate a copy constructor
+    // MethodSpec.Builder copyBuilder = MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC);
+    // copyBuilder.addParameter(className, "that", Modifier.FINAL);
+    // for (PropertyGenerator property : getPropertyGenerators()) {
+    // additionalChildClasses.addAll(property.buildCopyStatements(copyBuilder, getTypeResolver()));
+    // }
+    // builder.addMethod(copyBuilder.build());
 
     // generate all the properties and access methods
     for (PropertyGenerator property : getPropertyGenerators()) {

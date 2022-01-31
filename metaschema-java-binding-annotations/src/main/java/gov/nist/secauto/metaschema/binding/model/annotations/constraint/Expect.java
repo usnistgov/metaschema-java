@@ -66,7 +66,7 @@ public @interface Expect {
    * 
    * @return the target metapath
    */
-  String target() default IConstraint.DEFAULT_TARGET_PATH;
+  String target() default IConstraint.DEFAULT_TARGET_METAPATH;
 
   /**
    * A metapath that is expected to evaluate to {@code true} in this context.

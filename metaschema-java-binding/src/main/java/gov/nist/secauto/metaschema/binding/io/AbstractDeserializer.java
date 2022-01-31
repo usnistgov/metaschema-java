@@ -47,7 +47,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 
-public abstract class AbstractDeserializer<CLASS> extends AbstractSerializationBase implements Deserializer<CLASS> {
+public abstract class AbstractDeserializer<CLASS>
+    extends AbstractSerializationBase
+    implements Deserializer<CLASS> {
 
   /**
    * Construct a new deserializer.
@@ -123,5 +125,6 @@ public abstract class AbstractDeserializer<CLASS> extends AbstractSerializationB
     return nodeItem;
   }
 
-  protected abstract IBoundXdmNodeItem deserializeToNodeItemInternal(Reader reader, @Nullable URI documentUri) throws BindingException;
+  protected abstract IBoundXdmNodeItem deserializeToNodeItemInternal(Reader reader, @Nullable URI documentUri)
+      throws BindingException;
 }

@@ -152,14 +152,14 @@ public interface IFunction {
   @NotNull
   ISequenceType getResult();
 
-//  /**
-//   * Determines by static analysis if the function supports the expression arguments provided.
-//   * 
-//   * @param arguments
-//   *          the expression arguments to evaluate
-//   * @return {@code true} if the arguments are supported or {@code false} otherwise
-//   */
-//  boolean isSupported(List<IExpression<?>> arguments);
+  // /**
+  // * Determines by static analysis if the function supports the expression arguments provided.
+  // *
+  // * @param arguments
+  // * the expression arguments to evaluate
+  // * @return {@code true} if the arguments are supported or {@code false} otherwise
+  // */
+  // boolean isSupported(List<IExpression<?>> arguments);
 
   @NotNull
   ISequence<?> execute(@NotNull List<@NotNull ISequence<?>> arguments, @NotNull DynamicContext dynamicContext,
@@ -319,7 +319,8 @@ public interface IFunction {
       }
 
       @SuppressWarnings("null")
-      IFunction retval = new DefaultFunction(name, properties, new ArrayList<>(arguments), sequenceType, functionHandler);
+      IFunction retval
+          = new DefaultFunction(name, properties, new ArrayList<>(arguments), sequenceType, functionHandler);
       return retval;
     }
   }

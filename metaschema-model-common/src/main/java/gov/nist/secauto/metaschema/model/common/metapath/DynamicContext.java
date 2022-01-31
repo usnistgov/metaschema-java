@@ -48,13 +48,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DynamicContext {
-  @NotNull 
+  @NotNull
   private final StaticContext staticContext;
-  @NotNull 
+  @NotNull
   private final ZoneId implicitTimeZone;
-  @NotNull 
+  @NotNull
   private final ZonedDateTime currentDateTime;
-  @NotNull 
+  @NotNull
   private final Map<@NotNull URI, IDocumentNodeItem> availableDocuments;
   private final Map<@NotNull CallingContext, ISequence<?>> functionResultCache;
   private CachingLoader documentLoader;
@@ -71,23 +71,23 @@ public class DynamicContext {
     this.functionResultCache = new HashMap<>();
   }
 
-  @NotNull 
+  @NotNull
   public StaticContext getStaticContext() {
     return staticContext;
   }
 
-  @NotNull 
+  @NotNull
   public ZoneId getImplicitTimeZone() {
     return implicitTimeZone;
   }
 
-  @NotNull 
+  @NotNull
   public ZonedDateTime getCurrentDateTime() {
     return currentDateTime;
   }
 
   @SuppressWarnings("null")
-  @NotNull 
+  @NotNull
   public Map<@NotNull URI, INodeItem> getAvailableDocuments() {
     return Collections.unmodifiableMap(availableDocuments);
   }

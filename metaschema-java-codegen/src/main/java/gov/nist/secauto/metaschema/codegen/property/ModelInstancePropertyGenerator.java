@@ -210,14 +210,7 @@ public class ModelInstancePropertyGenerator
       }
     } else if (instance instanceof IAssemblyInstance) {
       IAssemblyInstance assemblyInstance = (IAssemblyInstance) instance;
-      IAssemblyDefinition assemblyDefinition = assemblyInstance.getDefinition();
-      // if (assemblyDefinition.isSimple() && assemblyDefinition.getModelInstances().isEmpty()) {
-      // // make this a boolean type, since this is a marker without any contents
-      // // TODO: make sure global definitions of this type are suppressed
-      // item = ClassName.get(MetaschemaDataTypeProvider.BOOLEAN.getJavaClass());
-      // } else {
       item = getClassGenerator().getTypeResolver().getClassName(assemblyInstance.getDefinition());
-      // }
     } else {
       String msg = String.format("Unknown model instance type: %s", instance.getClass().getCanonicalName());
       logger.error(msg);

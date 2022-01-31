@@ -69,12 +69,12 @@ public class AbstractExpressionVisitor<RESULT, CONTEXT> implements ExpressionVis
   protected RESULT visitChildren(@NotNull IExpression expr, CONTEXT context) {
     @Nullable
     RESULT result = defaultResult();
-    
-    for (Iterator<@NotNull ? extends IExpression> itr = expr.getChildren().iterator(); itr.hasNext(); ) {
+
+    for (Iterator<@NotNull ? extends IExpression> itr = expr.getChildren().iterator(); itr.hasNext();) {
       if (!shouldVisitNextChild(expr, result, context)) {
         break;
       }
-      
+
       @SuppressWarnings("null")
       IExpression childExpr = itr.next();
       RESULT childResult = childExpr.accept(this, context);

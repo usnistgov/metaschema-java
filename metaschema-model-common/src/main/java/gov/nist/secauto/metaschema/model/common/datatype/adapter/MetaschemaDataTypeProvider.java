@@ -30,7 +30,8 @@ import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeProvide
 
 import org.jetbrains.annotations.NotNull;
 
-public class MetaschemaDataTypeProvider extends AbstractDataTypeProvider {
+public class MetaschemaDataTypeProvider
+    extends AbstractDataTypeProvider {
   @NotNull
   public static final NcNameAdapter NCNAME = new NcNameAdapter();
   @NotNull

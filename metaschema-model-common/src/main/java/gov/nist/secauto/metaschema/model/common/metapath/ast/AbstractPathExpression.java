@@ -32,7 +32,6 @@ public abstract class AbstractPathExpression<RESULT_TYPE extends IItem> implemen
   @Override
   public abstract Class<RESULT_TYPE> getBaseResultType();
 
-  
   @Override
   public Class<? extends RESULT_TYPE> getStaticResultType() {
     return getBaseResultType();

@@ -63,7 +63,8 @@ import java.util.Map;
 /**
  * Represents a Metaschema assembly definition declared locally as an instance.
  */
-public class XmlLocalAssemblyDefinition extends AbstractAssemblyInstance {
+public class XmlLocalAssemblyDefinition
+    extends AbstractAssemblyInstance {
   @NotNull
   private final LocalAssemblyDefinitionType xmlAssembly;
   @NotNull
@@ -93,7 +94,6 @@ public class XmlLocalAssemblyDefinition extends AbstractAssemblyInstance {
   protected LocalAssemblyDefinitionType getXmlAssembly() {
     return xmlAssembly;
   }
-
 
   @Override
   public InternalAssemblyDefinition getDefinition() {

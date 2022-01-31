@@ -47,8 +47,8 @@ public interface PropertyGenerator {
    * @return the set of additional child definitions that need to be built
    */
   Set<INamedModelDefinition> build(TypeSpec.Builder builder, TypeResolver typeResolver);
-//
-//  Collection<? extends INamedModelDefinition> buildCopyStatements(Builder copyBuilder,
-//      @NotNull TypeResolver typeResolver);
-//
+  //
+  // Collection<? extends INamedModelDefinition> buildCopyStatements(Builder copyBuilder,
+  // @NotNull TypeResolver typeResolver);
+  //
 }

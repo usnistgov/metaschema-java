@@ -61,7 +61,7 @@ public class InsertAnchorHtmlNodeRenderer implements HtmlNodeRenderer {
     if (currentNode == null) {
       throw new NullPointerException("null current node");
     }
-    
+
     String type = currentNode.attr("type");
     String idRef = currentNode.attr("id-ref");
 

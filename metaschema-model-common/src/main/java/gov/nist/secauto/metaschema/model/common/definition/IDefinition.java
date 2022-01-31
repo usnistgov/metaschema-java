@@ -97,7 +97,8 @@ public interface IDefinition extends INamedModelElement {
   default String toCoordinates() {
     IMetaschema metaschema = getContainingMetaschema();
 
-    @NotNull String retval;
+    @NotNull
+    String retval;
     if (metaschema == null) {
       retval = String.format("%s:%s(%d)", getModelType(),
           getName(), hashCode());

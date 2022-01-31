@@ -35,7 +35,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class AbstractBoundXdmModelNodeItem<INSTANCE extends NamedModelProperty>
-    extends AbstractBoundXdmValuedNodeItem<INSTANCE> implements IBoundXdmModelNodeItem {
+    extends AbstractBoundXdmValuedNodeItem<INSTANCE>
+    implements IBoundXdmModelNodeItem {
 
   private final int position;
   private Map<String, IBoundXdmFlagNodeItem> flags;

@@ -31,7 +31,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.type.IHostnameType;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HostnameAdapter extends AbstractStringJavaTypeAdapter<IHostnameItem> implements IHostnameType {
+public class HostnameAdapter
+    extends AbstractStringJavaTypeAdapter<IHostnameItem>
+    implements IHostnameType {
 
   public HostnameAdapter() {
   }

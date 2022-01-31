@@ -197,10 +197,11 @@ public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
   }
 
   @NotNull
-  protected <CLASS> IBoundXdmDocumentNodeItem loadAsNodeItem(@NotNull Deserializer<CLASS> deserializer, @NotNull InputStream is,
+  protected <CLASS> IBoundXdmDocumentNodeItem loadAsNodeItem(@NotNull Deserializer<CLASS> deserializer,
+      @NotNull InputStream is,
       @NotNull URI documentUri)
       throws BindingException {
-    return (IBoundXdmDocumentNodeItem)deserializer.deserializeToNodeItem(is, documentUri);
+    return (IBoundXdmDocumentNodeItem) deserializer.deserializeToNodeItem(is, documentUri);
   }
 
   @Override
@@ -313,20 +314,20 @@ public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
     }
   }
 
-  @NotNull 
+  @NotNull
   protected Deserializer<?> detectModelXml(@NotNull InputStream is) throws IOException {
     Class<?> clazz = detectModelXmlClass(is);
 
     return getDeserializer(clazz, Format.XML, getConfiguration());
   }
 
-  @NotNull 
+  @NotNull
   protected Deserializer<?> detectModelJson(@NotNull JsonParser parser, @NotNull Format format) throws IOException {
     Class<?> clazz = detectModelJsonClass(parser);
     return getDeserializer(clazz, format, getConfiguration());
   }
 
-  @NotNull 
+  @NotNull
   protected Class<?> detectModelXmlClass(@NotNull InputStream is) throws IOException {
 
     QName startElementQName;
@@ -386,7 +387,8 @@ public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
     return retval;
   }
 
-  protected <CLASS> Deserializer<CLASS> getDeserializer(@NotNull Class<CLASS> clazz, @NotNull Format format, @NotNull Configuration config) {
+  protected <CLASS> Deserializer<CLASS> getDeserializer(@NotNull Class<CLASS> clazz, @NotNull Format format,
+      @NotNull Configuration config) {
     Deserializer<CLASS> retval = getBindingContext().newDeserializer(format, clazz);
     for (Map.Entry<Feature, Boolean> entry : config.getFeatureSettings().entrySet()) {
       if (Boolean.TRUE.equals(entry.getValue())) {

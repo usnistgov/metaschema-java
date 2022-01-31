@@ -32,7 +32,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public class RelativeDoubleSlashPath extends AbstractRelativePathExpression {
+public class RelativeDoubleSlashPath
+    extends AbstractRelativePathExpression {
 
   public RelativeDoubleSlashPath(@NotNull IExpression left, @NotNull IExpression right) {
     super(left, right);

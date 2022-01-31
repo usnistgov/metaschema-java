@@ -42,8 +42,11 @@ public abstract class AbstractBinaryExpression implements IExpression {
 
   /**
    * Construct a new binary expression.
-   * @param left the first sub-expression to evaluate
-   * @param right the second sub-expression to evaluate
+   * 
+   * @param left
+   *          the first sub-expression to evaluate
+   * @param right
+   *          the second sub-expression to evaluate
    */
   @SuppressWarnings("null")
   public AbstractBinaryExpression(@NotNull IExpression left, @NotNull IExpression right) {
@@ -53,6 +56,7 @@ public abstract class AbstractBinaryExpression implements IExpression {
 
   /**
    * Retrieve the first sub-expression.
+   * 
    * @return the first sub-expression
    */
   @NotNull
@@ -62,6 +66,7 @@ public abstract class AbstractBinaryExpression implements IExpression {
 
   /**
    * Retrieve the second sub-expression.
+   * 
    * @return the second sub-expression
    */
   @NotNull

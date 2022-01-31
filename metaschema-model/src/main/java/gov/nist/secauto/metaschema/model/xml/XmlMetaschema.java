@@ -53,7 +53,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class XmlMetaschema extends AbstractMetaschema implements IXmlMetaschema {
+public class XmlMetaschema
+    extends AbstractMetaschema
+    implements IXmlMetaschema {
   private static final Logger logger = LogManager.getLogger(XmlMetaschema.class);
 
   private final METASCHEMADocument metaschema;
@@ -92,7 +94,8 @@ public class XmlMetaschema extends AbstractMetaschema implements IXmlMetaschema 
       Map<String, IXmlFlagDefinition> flagDefinitions = new LinkedHashMap<>();
       while (cursor.toNextSelection()) {
         @SuppressWarnings("null")
-        @NotNull GlobalFlagDefinitionType obj = (GlobalFlagDefinitionType) cursor.getObject();
+        @NotNull
+        GlobalFlagDefinitionType obj = (GlobalFlagDefinitionType) cursor.getObject();
         IXmlFlagDefinition flag = new XmlGlobalFlagDefinition(obj, this);
         logger.trace("New flag definition '{}'", flag.toCoordinates());
         flagDefinitions.put(flag.getName(), flag);
@@ -109,7 +112,8 @@ public class XmlMetaschema extends AbstractMetaschema implements IXmlMetaschema 
       Map<String, IXmlFieldDefinition> fieldDefinitions = new LinkedHashMap<>();
       while (cursor.toNextSelection()) {
         @SuppressWarnings("null")
-        @NotNull GlobalFieldDefinitionType obj = (GlobalFieldDefinitionType) cursor.getObject();
+        @NotNull
+        GlobalFieldDefinitionType obj = (GlobalFieldDefinitionType) cursor.getObject();
         XmlGlobalFieldDefinition field = new XmlGlobalFieldDefinition(obj, this);
         logger.trace("New field definition '{}'", field.toCoordinates());
         fieldDefinitions.put(field.getName(), field);
@@ -129,7 +133,8 @@ public class XmlMetaschema extends AbstractMetaschema implements IXmlMetaschema 
 
       while (cursor.toNextSelection()) {
         @SuppressWarnings("null")
-        @NotNull GlobalAssemblyDefinitionType obj = (GlobalAssemblyDefinitionType) cursor.getObject();
+        @NotNull
+        GlobalAssemblyDefinitionType obj = (GlobalAssemblyDefinitionType) cursor.getObject();
         XmlGlobalAssemblyDefinition assembly = new XmlGlobalAssemblyDefinition(obj, this);
         logger.trace("New assembly definition '{}'", assembly.toCoordinates());
         assemblyDefinitions.put(assembly.getName(), assembly);

@@ -40,7 +40,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class XdmFlagNodeItemImpl extends AbstractBoundXdmValuedNodeItem<FlagProperty>
+public class XdmFlagNodeItemImpl
+    extends AbstractBoundXdmValuedNodeItem<FlagProperty>
     implements IBoundXdmFlagNodeItem {
 
   @NotNull

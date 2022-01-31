@@ -31,7 +31,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.type.INcNameType;
 
 import org.jetbrains.annotations.NotNull;
 
-public class NcNameAdapter extends AbstractStringJavaTypeAdapter<INcNameItem> implements INcNameType {
+public class NcNameAdapter
+    extends AbstractStringJavaTypeAdapter<INcNameItem>
+    implements INcNameType {
 
   @Override
   public String getName() {

@@ -32,7 +32,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 
-class DayTimeDurationItemImpl extends AbstractAnyAtomicItem<Duration> implements IDayTimeDurationItem {
+class DayTimeDurationItemImpl
+    extends AbstractAnyAtomicItem<Duration>
+    implements IDayTimeDurationItem {
 
   public DayTimeDurationItemImpl(@NotNull Duration value) {
     super(value);

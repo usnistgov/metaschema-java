@@ -56,7 +56,8 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
-public class XmlLocalFieldDefinition extends AbstractFieldInstance {
+public class XmlLocalFieldDefinition
+    extends AbstractFieldInstance {
   @NotNull
   private final LocalFieldDefinitionType xmlField;
   @NotNull
@@ -269,7 +270,8 @@ public class XmlLocalFieldDefinition extends AbstractFieldInstance {
 
     @Override
     public boolean isCollapsible() {
-      return getXmlField().isSetCollapsible() ? getXmlField().getCollapsible() : ModelConstants.DEFAULT_FIELD_COLLAPSIBLE;
+      return getXmlField().isSetCollapsible() ? getXmlField().getCollapsible()
+          : ModelConstants.DEFAULT_FIELD_COLLAPSIBLE;
     }
 
     @Override

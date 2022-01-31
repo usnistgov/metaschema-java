@@ -225,7 +225,8 @@ public class MapPropertyInfo
   }
 
   @Override
-  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector) throws BindingException {
+  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector)
+      throws BindingException {
     NamedModelProperty property = getProperty();
 
     for (Object item : getItemsFromParentInstance(fromInstance)) {

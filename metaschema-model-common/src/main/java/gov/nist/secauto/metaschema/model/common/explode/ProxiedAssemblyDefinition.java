@@ -52,7 +52,8 @@ import java.util.Map;
  * When exploding a model, this class ensures that a definition that is referenced is localized.
  *
  */
-public class ProxiedAssemblyDefinition extends AbstractNamedModelDefinition<IAssemblyDefinition>
+public class ProxiedAssemblyDefinition
+    extends AbstractNamedModelDefinition<IAssemblyDefinition>
     implements AssemblyDefinition {
   private Map<@NotNull String, INamedModelInstance> namedModelInstances;
   private Map<@NotNull String, FieldInstance> fieldInstances;

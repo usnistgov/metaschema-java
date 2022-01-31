@@ -61,7 +61,8 @@ public class FnNotFunction {
       @NotNull DynamicContext dynamicContext,
       INodeItem focus) {
 
-    @SuppressWarnings("null") ISequence<?> items = arguments.iterator().next();
+    @SuppressWarnings("null")
+    ISequence<?> items = arguments.iterator().next();
 
     return ISequence.of(fnNot(items));
   }

@@ -31,7 +31,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.type.IUuidType;
 
 import java.util.UUID;
 
-public class UuidAdapter extends AbstractJavaTypeAdapter<UUID, IUuidItem> implements IUuidType {
+public class UuidAdapter
+    extends AbstractJavaTypeAdapter<UUID, IUuidItem>
+    implements IUuidType {
 
   @SuppressWarnings("null")
   public UuidAdapter() {
@@ -52,7 +54,7 @@ public class UuidAdapter extends AbstractJavaTypeAdapter<UUID, IUuidItem> implem
   @Override
   public UUID copy(Object obj) {
     // a UUID is immutable
-    return (UUID)obj;
+    return (UUID) obj;
   }
 
   @SuppressWarnings("null")

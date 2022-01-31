@@ -67,7 +67,7 @@ public @interface AllowedValues {
    * 
    * @return the target metapath
    */
-  String target() default IConstraint.DEFAULT_TARGET_PATH;
+  String target() default IConstraint.DEFAULT_TARGET_METAPATH;
 
   AllowedValue[] values();
 

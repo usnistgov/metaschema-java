@@ -47,7 +47,7 @@ class BooleanAdapterTest {
   private void initParser() throws Exception {
     adapter = new BooleanAdapter();
     JsonFactory factory = new JsonFactory();
-    parser  = factory.createParser(TEST_JSON);
+    parser = factory.createParser(TEST_JSON);
   }
 
   @Test
@@ -59,7 +59,7 @@ class BooleanAdapterTest {
 
     Boolean obj = adapter.parse(parser);
     assertTrue(obj);
-    
+
     assertTrue(JsonToken.END_OBJECT.equals(parser.currentToken()));
   }
 }

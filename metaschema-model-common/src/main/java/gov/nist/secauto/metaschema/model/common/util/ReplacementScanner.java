@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.util;
 
 import org.jetbrains.annotations.NotNull;
@@ -32,18 +33,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ReplacementScanner {
-  public static CharSequence replaceTokens(@NotNull String text, @NotNull Pattern pattern, Function<Matcher, CharSequence> replacementFunction) {
+  public static CharSequence replaceTokens(@NotNull String text, @NotNull Pattern pattern,
+      Function<Matcher, CharSequence> replacementFunction) {
     int lastIndex = 0;
     StringBuilder retval = new StringBuilder();
     Matcher matcher = pattern.matcher(text);
     while (matcher.find()) {
-        retval.append(text, lastIndex, matcher.start())
+      retval.append(text, lastIndex, matcher.start())
           .append(replacementFunction.apply(matcher));
 
-        lastIndex = matcher.end();
+      lastIndex = matcher.end();
     }
     if (lastIndex < text.length()) {
-        retval.append(text, lastIndex, text.length());
+      retval.append(text, lastIndex, text.length());
     }
     return retval;
   }

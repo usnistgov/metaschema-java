@@ -38,7 +38,8 @@ public interface IEmailAddressItem extends IStringItem {
   }
 
   @NotNull
-  public static IEmailAddressItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+  public static IEmailAddressItem cast(@NotNull IAnyAtomicItem item)
+      throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.EMAIL_ADDRESS.cast(item);
   }
 

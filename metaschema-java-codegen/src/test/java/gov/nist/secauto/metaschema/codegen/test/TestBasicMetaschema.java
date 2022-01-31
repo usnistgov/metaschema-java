@@ -105,13 +105,14 @@ public class TestBasicMetaschema {
   // }
   //
 
-//  @SuppressWarnings("unused")
-//  private static Object readJson(Reader reader, Class<?> rootClass) throws IOException, BindingException {
-//    BindingContext context = BindingContext.newInstance();
-//    Deserializer<?> deserializer = context.newDeserializer(Format.JSON, rootClass);
-//    deserializer.enableFeature(Feature.DESERIALIZE_ROOT);
-//    return deserializer.deserialize(reader);
-//  }
+  // @SuppressWarnings("unused")
+  // private static Object readJson(Reader reader, Class<?> rootClass) throws IOException,
+  // BindingException {
+  // BindingContext context = BindingContext.newInstance();
+  // Deserializer<?> deserializer = context.newDeserializer(Format.JSON, rootClass);
+  // deserializer.enableFeature(Feature.DESERIALIZE_ROOT);
+  // return deserializer.deserialize(reader);
+  // }
   //
   // private static <CLASS> void writeJson(Writer writer, CLASS rootObject) throws BindingException {
   // BindingContext context = BindingContext.newInstance();

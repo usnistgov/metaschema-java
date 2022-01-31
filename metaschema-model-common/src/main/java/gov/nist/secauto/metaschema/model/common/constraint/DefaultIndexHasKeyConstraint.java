@@ -41,12 +41,11 @@ public class DefaultIndexHasKeyConstraint
   public DefaultIndexHasKeyConstraint(
       String id,
       @NotNull Level level,
-      String message,
       @NotNull MetapathExpression target,
       String indexName,
       @NotNull List<@NotNull DefaultKeyField> keyFields,
       MarkupMultiline remarks) {
-    super(id, level, message, target, keyFields, remarks);
+    super(id, level, target, keyFields, remarks);
     if (indexName.isBlank()) {
       throw new IllegalArgumentException("The index name must be a non-blank string");
     }

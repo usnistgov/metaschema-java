@@ -32,7 +32,9 @@ import org.jetbrains.annotations.NotNull;
 
 import inet.ipaddr.ipv6.IPv6Address;
 
-class IPv6AddressItemImpl extends AbstractUntypedAtomicItem<IPv6Address> implements IIPv6AddressItem {
+class IPv6AddressItemImpl
+    extends AbstractUntypedAtomicItem<IPv6Address>
+    implements IIPv6AddressItem {
 
   public IPv6AddressItemImpl(@NotNull IPv6Address value) {
     super(value);

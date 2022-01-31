@@ -53,7 +53,8 @@ public interface IYearMonthDurationItem extends IDurationItem {
   }
 
   @NotNull
-  public static IYearMonthDurationItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+  public static IYearMonthDurationItem cast(@NotNull IAnyAtomicItem item)
+      throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.YEAR_MONTH_DURATION.cast(item);
   }
 

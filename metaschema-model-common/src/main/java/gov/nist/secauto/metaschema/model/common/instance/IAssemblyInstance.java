@@ -40,7 +40,8 @@ public interface IAssemblyInstance extends INamedModelInstance, Assembly {
 
   @Override
   default String getJsonName() {
-    @NotNull String retval;
+    @NotNull
+    String retval;
     if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
       String groupName = getGroupAsName();
       if (groupName == null) {

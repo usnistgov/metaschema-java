@@ -155,7 +155,8 @@ public class MetaschemaInstanceEvaluationVisitor
   }
 
   @SuppressWarnings("null")
-  protected IInstanceSet buildUnion(@NotNull List<@NotNull ? extends IExpression> children, @NotNull IMetaschemaContext context) {
+  protected IInstanceSet buildUnion(@NotNull List<@NotNull ? extends IExpression> children,
+      @NotNull IMetaschemaContext context) {
     IInstanceSet retval;
     if (children.isEmpty()) {
       retval = IInstanceSet.EMPTY_INSTANCE_SET;

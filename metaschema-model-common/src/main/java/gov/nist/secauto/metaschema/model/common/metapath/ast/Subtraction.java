@@ -34,7 +34,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 import org.jetbrains.annotations.NotNull;
 
-public class Subtraction extends AbstractArithmeticExpression<IAnyAtomicItem> {
+public class Subtraction
+    extends AbstractArithmeticExpression<IAnyAtomicItem> {
 
   @SuppressWarnings("null")
   public Subtraction(@NotNull IExpression left, @NotNull IExpression right) {
