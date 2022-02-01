@@ -2,6 +2,9 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    branches:
+    - main
 name: Deploy Tagged Release
 env:
   # the name of the repo

@@ -1,14 +1,14 @@
 on:
   push:
     branches:
-      - main
-      - develop
+    - main
+    - develop
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
     branches:
-      - main
-      - develop
+    - main
+    - develop
 name: Build and Test Code
 jobs:
   build-artifacts:
@@ -40,8 +40,7 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
       with:
-        languages:
-        - java
+        languages: java
     # -------------------------
     # Maven Build
     - name: Build and run tests
