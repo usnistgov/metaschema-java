@@ -149,7 +149,7 @@ public class XmlMetaschema
           : Collections.unmodifiableMap(rootAssemblyDefinitions);
     }
 
-    parseExportedDefinitions();
+    processExportedDefinitions();
   }
 
   @SuppressWarnings("null")

@@ -67,6 +67,8 @@ public class FunctionService {
 
   /**
    * Load all known functions registered with this function service.
+   * 
+   * @return the function library
    */
   @NotNull
   public synchronized LoadedFunctionsLibrary load() {

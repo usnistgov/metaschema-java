@@ -34,7 +34,7 @@ import com.squareup.javapoet.TypeName;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
-import gov.nist.secauto.metaschema.codegen.JavaClassGenerator;
+import gov.nist.secauto.metaschema.codegen.IJavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
@@ -50,13 +50,13 @@ import java.util.Collections;
 import java.util.Set;
 
 public class FlagPropertyGenerator
-    extends AbstractPropertyGenerator<JavaClassGenerator> {
+    extends AbstractPropertyGenerator<IJavaClassGenerator> {
   @NotNull
   private final IFlagInstance instance;
   @NotNull
   private final IJavaTypeAdapter<?> dataType;
 
-  public FlagPropertyGenerator(@NotNull IFlagInstance instance, @NotNull JavaClassGenerator classGenerator) {
+  public FlagPropertyGenerator(@NotNull IFlagInstance instance, @NotNull IJavaClassGenerator classGenerator) {
     super(classGenerator);
     this.instance = instance;
 

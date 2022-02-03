@@ -27,15 +27,14 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IAnyUriType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 
 public class UriAdapter
-    extends AbstractJavaTypeAdapter<URI, IAnyUriItem>
-    implements IAnyUriType {
+    extends AbstractJavaTypeAdapter<URI, IAnyUriItem> {
   @SuppressWarnings("null")
   public UriAdapter() {
     super(URI.class);
@@ -67,7 +66,7 @@ public class UriAdapter
   @Override
   public IAnyUriItem newItem(Object value) {
     URI item = toValue(value);
-    return new AnyUriItemImpl(item);
+    return IAnyUriItem.valueOf(item);
   }
 
 }

@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Lexer;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ASTPrinter;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.BuildAstVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ContextItem;
@@ -39,14 +40,12 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.XPathFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.jetbrains.annotations.NotNull;
-
-import src.main.antlr4.metapath10Lexer;
-import src.main.antlr4.metapath10Parser;
 
 public class MetapathExpression {
   @NotNull

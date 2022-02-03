@@ -29,10 +29,10 @@ package gov.nist.secauto.metaschema.binding.io.json;
 import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.ClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.Property;
-import gov.nist.secauto.metaschema.binding.model.property.info.JsonBindingSupplier;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundInstance;
+import gov.nist.secauto.metaschema.binding.model.property.info.IJsonBindingSupplier;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -40,7 +40,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class DefaultJsonProblemHandler implements JsonProblemHandler {
+public class DefaultJsonProblemHandler implements IJsonProblemHandler {
   private static final String JSON_SCHEMA_ROOT_FIELD_NAME = "$schema";
   private static final Set<String> ignoredRootFieldNames;
 
@@ -51,8 +51,8 @@ public class DefaultJsonProblemHandler implements JsonProblemHandler {
 
   // TODO: implement this
   @Override
-  public boolean handleUnknownRootProperty(Object instance, AssemblyClassBinding classBinding, String fieldName,
-      JsonParsingContext parsingContext) throws BindingException, IOException {
+  public boolean handleUnknownRootProperty(Object instance, IAssemblyClassBinding classBinding, String fieldName,
+      IJsonParsingContext parsingContext) throws BindingException, IOException {
     if (ignoredRootFieldNames.contains(fieldName)) {
       JsonParser parser = parsingContext.getReader();
       try {
@@ -67,21 +67,21 @@ public class DefaultJsonProblemHandler implements JsonProblemHandler {
 
   // TODO: implement this
   @Override
-  public boolean canHandleUnknownProperty(ClassBinding classBinding, String propertyName,
-      JsonParsingContext parsingContext) throws IOException {
+  public boolean canHandleUnknownProperty(IClassBinding classBinding, String propertyName,
+      IJsonParsingContext parsingContext) throws IOException {
     return false;
   }
 
   @Override
-  public boolean handleUnknownProperty(ClassBinding classBinding, String propertyName,
-      JsonParsingContext parsingContext) throws BindingException, IOException {
+  public boolean handleUnknownProperty(IClassBinding classBinding, String propertyName,
+      IJsonParsingContext parsingContext) throws BindingException, IOException {
     return false;
   }
 
   // TODO: implement this
   @Override
-  public Map<Property, JsonBindingSupplier> handleMissingFields(ClassBinding classBinding,
-      Map<String, Property> missingPropertyBindings, JsonParsingContext context) throws BindingException {
+  public Map<IBoundInstance, IJsonBindingSupplier> handleMissingFields(IClassBinding classBinding,
+      Map<String, IBoundInstance> missingPropertyBindings, IJsonParsingContext context) throws BindingException {
     return Collections.emptyMap();
   }
 

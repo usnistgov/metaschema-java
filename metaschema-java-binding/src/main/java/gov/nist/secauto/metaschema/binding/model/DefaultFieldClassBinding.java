@@ -30,14 +30,14 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
+import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.CollapseKeyBuilder;
-import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
-import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
@@ -45,10 +45,10 @@ import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFl
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultFieldValueProperty;
-import gov.nist.secauto.metaschema.binding.model.property.FieldValueProperty;
-import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
-import gov.nist.secauto.metaschema.binding.model.property.Property;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldValueInstance;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedInstance;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundInstance;
 import gov.nist.secauto.metaschema.binding.model.property.info.ListPropertyCollector;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
@@ -82,11 +82,11 @@ import javax.xml.stream.events.StartElement;
 
 public class DefaultFieldClassBinding
     extends AbstractClassBinding
-    implements FieldClassBinding {
+    implements IFieldClassBinding {
   private static final Logger logger = LogManager.getLogger(DefaultFieldClassBinding.class);
 
   /**
-   * Create a new {@link ClassBinding} for a Java bean annotated with the {@link Field} annotation.
+   * Create a new {@link IClassBinding} for a Java bean annotated with the {@link Field} annotation.
    * 
    * @param clazz
    *          the Java bean class
@@ -94,7 +94,7 @@ public class DefaultFieldClassBinding
    *          the Metaschema binding environment context
    * @return the Metaschema field binding for the class
    */
-  public static DefaultFieldClassBinding createInstance(Class<?> clazz, BindingContext bindingContext) {
+  public static DefaultFieldClassBinding createInstance(Class<?> clazz, IBindingContext bindingContext) {
     Objects.requireNonNull(clazz, "clazz");
     if (!clazz.isAnnotationPresent(MetaschemaField.class)) {
       throw new IllegalArgumentException(
@@ -105,19 +105,20 @@ public class DefaultFieldClassBinding
   }
 
   private final MetaschemaField metaschemaField;
-  private FieldValueProperty fieldValue;
-  private FlagProperty jsonValueKeyFlagInstance;
+  private IBoundFieldValueInstance fieldValue;
+  private IBoundFlagInstance jsonValueKeyFlagInstance;
   private IValueConstraintSupport constraints;
 
   /**
-   * Construct a new {@link ClassBinding} for a Java bean annotated with the {@link Field} annotation.
+   * Construct a new {@link IClassBinding} for a Java bean annotated with the {@link Field}
+   * annotation.
    * 
    * @param clazz
    *          the Java bean class
    * @param bindingContext
    *          the class binding context for which this class is participating
    */
-  protected DefaultFieldClassBinding(Class<?> clazz, BindingContext bindingContext) {
+  protected DefaultFieldClassBinding(Class<?> clazz, IBindingContext bindingContext) {
     super(clazz, bindingContext);
     this.metaschemaField = clazz.getAnnotation(MetaschemaField.class);
   }
@@ -181,13 +182,13 @@ public class DefaultFieldClassBinding
   }
 
   @Override
-  public FieldValueProperty getFieldValue() {
+  public IBoundFieldValueInstance getFieldValue() {
     initalizeFieldValueInstance();
     return fieldValue;
   }
 
   @Override
-  protected void initializeFlagInstance(FlagProperty instance) {
+  protected void initializeFlagInstance(IBoundFlagInstance instance) {
     super.initializeFlagInstance(instance);
 
     java.lang.reflect.Field field = instance.getField();
@@ -197,7 +198,7 @@ public class DefaultFieldClassBinding
   }
 
   @Override
-  public FlagProperty getJsonValueKeyFlagInstance() {
+  public IBoundFlagInstance getJsonValueKeyFlagInstance() {
     initalizeFlagInstances();
     return jsonValueKeyFlagInstance;
   }
@@ -208,17 +209,18 @@ public class DefaultFieldClassBinding
   }
 
   // @Override
-  // public Map<String, ? extends NamedProperty> getNamedInstances(Predicate<FlagProperty> flagFilter)
+  // public Map<String, ? extends IBoundNamedInstance> getNamedInstances(Predicate<IBoundFlagInstance>
+  // flagFilter)
   // {
-  //// FieldValueProperty fieldValue = getFieldValue();
+  //// IBoundFieldValueInstance fieldValue = getFieldValue();
   //// String valuePropertyName = fieldValue.getJsonName();
-  // Map<String, ? extends NamedProperty> retval;
+  // Map<String, ? extends IBoundNamedInstance> retval;
   // if (valuePropertyName != null) {
   //// retval = Stream.concat(super.getNamedInstances(flagFilter).values().stream(),
   // Stream.of(fieldValue))
-  //// .collect(Collectors.toMap(NamedProperty::getJsonName, FunctionCall.identity()));
+  //// .collect(Collectors.toMap(IBoundNamedInstance::getJsonName, FunctionCall.identity()));
   // retval = super.getNamedInstances(flagFilter).values().stream()
-  // .collect(Collectors.toMap(NamedProperty::getJsonName, FunctionCall.identity()));
+  // .collect(Collectors.toMap(IBoundNamedInstance::getJsonName, FunctionCall.identity()));
   // } else {
   // retval = super.getNamedInstances(flagFilter);
   // }
@@ -231,7 +233,7 @@ public class DefaultFieldClassBinding
   }
 
   @Override
-  protected void readBody(Object instance, StartElement start, XmlParsingContext context)
+  protected void readBody(Object instance, StartElement start, IXmlParsingContext context)
       throws IOException, XMLStreamException, BindingException {
     if (!getFieldValue().read(instance, start, context)) {
       throw new IOException(String.format("Missing field value at '%s", XmlEventUtil.toLocation(start)));
@@ -239,7 +241,7 @@ public class DefaultFieldClassBinding
   }
 
   @Override
-  public List<Object> readItem(Object parentInstance, JsonParsingContext context)
+  public List<Object> readItem(Object parentInstance, IJsonParsingContext context)
       throws IOException, BindingException {
     List<Object> retval;
     if (isCollapsible()) {
@@ -251,18 +253,18 @@ public class DefaultFieldClassBinding
     return retval;
   }
 
-  private Object readNormal(Object parentInstance, JsonParsingContext context)
+  private Object readNormal(Object parentInstance, IJsonParsingContext context)
       throws IOException, BindingException {
-    Predicate<FlagProperty> flagFilter = null;
+    Predicate<IBoundFlagInstance> flagFilter = null;
 
-    FlagProperty jsonKey = getJsonKeyFlagInstance();
+    IBoundFlagInstance jsonKey = getJsonKeyFlagInstance();
     if (jsonKey != null) {
       flagFilter = (flag) -> {
         return !jsonKey.equals(flag);
       };
     }
 
-    FlagProperty jsonValueKey = getJsonValueKeyFlagInstance();
+    IBoundFlagInstance jsonValueKey = getJsonValueKeyFlagInstance();
     if (jsonValueKey != null) {
       if (flagFilter == null) {
         flagFilter = (flag) -> {
@@ -275,7 +277,7 @@ public class DefaultFieldClassBinding
       }
     }
 
-    Map<String, ? extends NamedProperty> properties = getNamedInstances(flagFilter);
+    Map<String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
 
     Object instance = newInstance();
 
@@ -298,7 +300,7 @@ public class DefaultFieldClassBinding
       String propertyName = jsonParser.getCurrentName();
       // JsonUtil.assertAndAdvance(jsonParser, JsonToken.FIELD_NAME);
 
-      NamedProperty namedProperty = properties.get(propertyName);
+      IBoundNamedInstance namedProperty = properties.get(propertyName);
 
       boolean handled = false;
       if (namedProperty != null) {
@@ -341,9 +343,9 @@ public class DefaultFieldClassBinding
     }
 
     // set undefined properties
-    for (Map.Entry<String, ? extends NamedProperty> entry : properties.entrySet()) {
+    for (Map.Entry<String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
       if (!handledProperties.contains(entry.getKey())) {
-        NamedProperty property = entry.getValue();
+        IBoundNamedInstance property = entry.getValue();
         // use the default value of the collector
         property.setValue(instance, property.newPropertyCollector().getValue());
       }
@@ -364,19 +366,19 @@ public class DefaultFieldClassBinding
     return instance;
   }
 
-  private List<Object> readCollapsed(Object parentInstance, JsonParsingContext context)
+  private List<Object> readCollapsed(Object parentInstance, IJsonParsingContext context)
       throws IOException, BindingException {
 
-    Predicate<FlagProperty> flagFilter = null;
+    Predicate<IBoundFlagInstance> flagFilter = null;
 
-    FlagProperty jsonKey = getJsonKeyFlagInstance();
+    IBoundFlagInstance jsonKey = getJsonKeyFlagInstance();
     if (jsonKey != null) {
       flagFilter = (flag) -> {
         return !jsonKey.equals(flag);
       };
     }
 
-    FlagProperty jsonValueKey = getJsonValueKeyFlagInstance();
+    IBoundFlagInstance jsonValueKey = getJsonValueKeyFlagInstance();
     if (jsonValueKey != null) {
       if (flagFilter == null) {
         flagFilter = (flag) -> {
@@ -389,9 +391,9 @@ public class DefaultFieldClassBinding
       }
     }
 
-    Map<String, ? extends NamedProperty> properties = getNamedInstances(flagFilter);
+    Map<String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
 
-    Map<Property, Supplier<? extends Object>> parsedProperties = new HashMap<>();
+    Map<IBoundInstance, Supplier<? extends Object>> parsedProperties = new HashMap<>();
     JsonParser jsonParser = context.getReader();
 
     // JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
@@ -416,7 +418,7 @@ public class DefaultFieldClassBinding
       // advance past the field name
       jsonParser.nextToken();
 
-      NamedProperty property = properties.get(propertyName);
+      IBoundNamedInstance property = properties.get(propertyName);
 
       boolean handled = false;
       if (property != null) {
@@ -428,12 +430,12 @@ public class DefaultFieldClassBinding
         }
 
         // Now parse
-        Supplier<? extends Object> supplier = ((FlagProperty) property).readValueAndSupply(context);
+        Supplier<? extends Object> supplier = ((IBoundFlagInstance) property).readValueAndSupply(context);
         parsedProperties.put(property, supplier);
         handled = true;
       } else {
         // this may be a value key value, an unrecognized flag, or the field value
-        FieldValueProperty fieldValue = getFieldValue();
+        IBoundFieldValueInstance fieldValue = getFieldValue();
         if (jsonValueKey != null) {
           // treat this as the value key
           String key = jsonParser.nextFieldName();
@@ -462,10 +464,10 @@ public class DefaultFieldClassBinding
     }
 
     // set undefined properties
-    for (Map.Entry<String, ? extends NamedProperty> entry : properties.entrySet()) {
+    for (Map.Entry<String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
       if (!handledProperties.contains(entry.getKey())) {
         // use the default value of the collector
-        NamedProperty property = entry.getValue();
+        IBoundNamedInstance property = entry.getValue();
         parsedProperties.put(property, () -> {
           return property.newPropertyCollector().getValue();
         });
@@ -488,8 +490,8 @@ public class DefaultFieldClassBinding
 
       callBeforeDeserialize(item, parentInstance);
 
-      for (Map.Entry<Property, Supplier<? extends Object>> entry : parsedProperties.entrySet()) {
-        Property property = entry.getKey();
+      for (Map.Entry<IBoundInstance, Supplier<? extends Object>> entry : parsedProperties.entrySet()) {
+        IBoundInstance property = entry.getKey();
         Supplier<? extends Object> supplier = entry.getValue();
 
         property.setValue(item, supplier.get());
@@ -507,8 +509,8 @@ public class DefaultFieldClassBinding
 
         fieldValue.setValue(item, value);
 
-        for (Map.Entry<Property, Supplier<? extends Object>> entry : parsedProperties.entrySet()) {
-          Property property = entry.getKey();
+        for (Map.Entry<IBoundInstance, Supplier<? extends Object>> entry : parsedProperties.entrySet()) {
+          IBoundInstance property = entry.getKey();
           Supplier<? extends Object> supplier = entry.getValue();
 
           property.setValue(item, supplier.get());
@@ -523,9 +525,9 @@ public class DefaultFieldClassBinding
     return retval;
   }
 
-  private List<? extends Object> handleCollapsedValues(Object parentInstance, JsonParsingContext context)
+  private List<? extends Object> handleCollapsedValues(Object parentInstance, IJsonParsingContext context)
       throws IOException, BindingException {
-    FieldValueProperty fieldValue = getFieldValue();
+    IBoundFieldValueInstance fieldValue = getFieldValue();
 
     JsonParser jsonParser = context.getReader();
 
@@ -548,13 +550,13 @@ public class DefaultFieldClassBinding
   }
 
   @Override
-  protected void writeBody(Object instance, QName parentName, XmlWritingContext context)
+  protected void writeBody(Object instance, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     getFieldValue().write(instance, parentName, context);
   }
 
   @Override
-  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, JsonWritingContext context)
+  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, IJsonWritingContext context)
       throws IOException {
     if (isCollapsible()) {
       writeCollapsed(items, writeObjectWrapper, context);
@@ -564,29 +566,29 @@ public class DefaultFieldClassBinding
   }
 
   private void writeCollapsed(Collection<? extends Object> items, boolean writeObjectWrapper,
-      JsonWritingContext context) throws IOException {
+      IJsonWritingContext context) throws IOException {
     CollapseKeyBuilder builder = new CollapseKeyBuilder(this);
     builder.addAll(items);
 
     builder.write(writeObjectWrapper, context);
   }
 
-  private void writeNormal(Collection<? extends Object> items, boolean writeObjectWrapper, JsonWritingContext context)
+  private void writeNormal(Collection<? extends Object> items, boolean writeObjectWrapper, IJsonWritingContext context)
       throws IOException {
     if (items.isEmpty()) {
       return;
     }
 
-    Predicate<FlagProperty> flagFilter = null;
+    Predicate<IBoundFlagInstance> flagFilter = null;
 
-    FlagProperty jsonKey = getJsonKeyFlagInstance();
+    IBoundFlagInstance jsonKey = getJsonKeyFlagInstance();
     if (jsonKey != null) {
       flagFilter = (flag) -> {
         return !jsonKey.equals(flag);
       };
     }
 
-    FlagProperty jsonValueKey = getJsonValueKeyFlagInstance();
+    IBoundFlagInstance jsonValueKey = getJsonValueKeyFlagInstance();
     if (jsonValueKey != null) {
       if (flagFilter == null) {
         flagFilter = (flag) -> {
@@ -599,7 +601,7 @@ public class DefaultFieldClassBinding
       }
     }
 
-    Map<String, ? extends NamedProperty> properties = getNamedInstances(flagFilter);
+    Map<String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
 
     JsonGenerator writer = context.getWriter();
 
@@ -620,7 +622,7 @@ public class DefaultFieldClassBinding
         writer.writeStartObject();
       }
 
-      for (NamedProperty property : properties.values()) {
+      for (IBoundNamedInstance property : properties.values()) {
         property.write(item, context);
       }
 

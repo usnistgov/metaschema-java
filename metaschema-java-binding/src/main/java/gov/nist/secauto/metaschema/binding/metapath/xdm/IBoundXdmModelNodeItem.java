@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.IBoundNamedModelDefinition;
-import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
 
 public interface IBoundXdmModelNodeItem extends IBoundXdmNodeItem, IXdmModelNodeItem {
@@ -38,7 +38,7 @@ public interface IBoundXdmModelNodeItem extends IBoundXdmNodeItem, IXdmModelNode
   IBoundXdmAssemblyNodeItem getParentContentNodeItem();
 
   @Override
-  NamedModelProperty getInstance();
+  IBoundNamedModelInstance getInstance();
 
   @Override
   IBoundNamedModelDefinition getDefinition();

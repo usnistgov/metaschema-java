@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.definition;
 
-import gov.nist.secauto.metaschema.model.common.Field;
+import gov.nist.secauto.metaschema.model.common.IField;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInst
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface IFieldDefinition extends INamedValuedDefinition, INamedModelDefinition, Field {
+public interface IFieldDefinition extends INamedValuedDefinition, INamedModelDefinition, IField {
   /**
    * Retrieves the key to use as the field name for this field's value in JSON.
    * 

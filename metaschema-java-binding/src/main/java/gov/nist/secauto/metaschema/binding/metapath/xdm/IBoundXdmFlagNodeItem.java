@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.FlagDefinition;
-import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
+import gov.nist.secauto.metaschema.binding.model.IBoundFlagDefinition;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmFlagNodeItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -43,10 +43,10 @@ public interface IBoundXdmFlagNodeItem extends IBoundXdmNodeItem, IXdmFlagNodeIt
   IBoundXdmModelNodeItem getParentNodeItem();
 
   @Override
-  FlagDefinition getDefinition();
+  IBoundFlagDefinition getDefinition();
 
   @Override
-  FlagProperty getInstance();
+  IBoundFlagInstance getInstance();
 
   @Override
   default <RESULT, CONTEXT> RESULT accept(@NotNull IBoundXdmNodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {

@@ -28,6 +28,12 @@ package gov.nist.secauto.metaschema.model.common.datatype;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The common interface of all bound objects supported by a custom data type.
+ *
+ * @param <TYPE>
+ *          the bound object type supported by this data type
+ */
 public interface IDatatype<TYPE extends IDatatype<TYPE>> {
   /**
    * Provides a copy of the data value associated with the Datatype instance.

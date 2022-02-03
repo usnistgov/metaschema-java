@@ -81,8 +81,9 @@
 							<sourceDir>${project.basedir}/src/main/xsd</sourceDir>
 							<javaTargetDir>${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
 							<classTargetDir>${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
+							<xmlConfigs>${project.basedir}/src/main/xsdconfig/metaschema-binding.xsdconfig</xmlConfigs>
 							<name>metaschema.codegen</name>
-							<repackage>gov.nist.secauto.metaschema.codegen.xmlbeans.metadata</repackage>
+							<repackage>gov.nist.secauto.metaschema.codegen.xmlbeans</repackage>
 						</configuration>
 					</execution>
 				</executions>

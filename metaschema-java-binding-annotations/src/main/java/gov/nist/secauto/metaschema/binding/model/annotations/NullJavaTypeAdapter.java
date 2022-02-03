@@ -29,9 +29,7 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter.VoidItem;
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.DataTypeException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IAnyAtomicType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -59,7 +57,7 @@ public class NullJavaTypeAdapter
   }
 
   @Override
-  public Void parse(String value) throws DataTypeException {
+  public Void parse(String value) {
     throw new UnsupportedOperationException("Not a valid type");
   }
 
@@ -96,7 +94,7 @@ public class NullJavaTypeAdapter
     }
 
     @Override
-    public @NotNull IAnyAtomicType getItemType() {
+    public IJavaTypeAdapter<?> getJavaTypeAdapter() {
       throw new UnsupportedOperationException("Not a valid type");
     }
   }

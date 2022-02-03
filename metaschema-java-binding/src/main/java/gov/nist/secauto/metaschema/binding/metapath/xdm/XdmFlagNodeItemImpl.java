@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.FlagDefinition;
-import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
+import gov.nist.secauto.metaschema.binding.model.IBoundFlagDefinition;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IValuedDefinition;
@@ -40,8 +40,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class XdmFlagNodeItemImpl
-    extends AbstractBoundXdmValuedNodeItem<FlagProperty>
+class XdmFlagNodeItemImpl
+    extends AbstractBoundXdmValuedNodeItem<IBoundFlagInstance>
     implements IBoundXdmFlagNodeItem {
 
   @NotNull
@@ -52,7 +52,7 @@ public class XdmFlagNodeItemImpl
   private IAnyAtomicItem atomicItem;
 
   public XdmFlagNodeItemImpl(
-      @NotNull FlagProperty instance,
+      @NotNull IBoundFlagInstance instance,
       @NotNull Object value,
       @NotNull IBoundXdmModelNodeItem parent) {
     super(instance, value);
@@ -79,7 +79,7 @@ public class XdmFlagNodeItemImpl
   }
 
   @Override
-  public FlagDefinition getDefinition() {
+  public IBoundFlagDefinition getDefinition() {
     return getInstance().getDefinition();
   }
 

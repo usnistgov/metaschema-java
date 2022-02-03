@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IIPv4AddressType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIPv4AddressItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -38,8 +38,7 @@ import inet.ipaddr.IncompatibleAddressException;
 import inet.ipaddr.ipv4.IPv4Address;
 
 public class IPv4AddressAdapter
-    extends AbstractJavaTypeAdapter<IPv4Address, IIPv4AddressItem>
-    implements IIPv4AddressType {
+    extends AbstractJavaTypeAdapter<IPv4Address, IIPv4AddressItem> {
   private static final IPAddressStringParameters IPv4;
 
   static {
@@ -83,6 +82,6 @@ public class IPv4AddressAdapter
   @Override
   public IIPv4AddressItem newItem(Object value) {
     IPv4Address item = toValue(value);
-    return new IPv4AddressItemImpl(item);
+    return IIPv4AddressItem.valueOf(item);
   }
 }

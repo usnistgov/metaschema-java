@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.binding.io.context;
 
 import java.util.Objects;
 
-public class AbstractParsingContext<READER, PROBLEM_HANDLER extends ProblemHandler>
-    implements ParsingContext<READER, PROBLEM_HANDLER> {
+public class AbstractParsingContext<READER, PROBLEM_HANDLER extends IProblemHandler>
+    implements IParsingContext<READER, PROBLEM_HANDLER> {
   private final READER parser;
   private final PROBLEM_HANDLER problemHandler;
 

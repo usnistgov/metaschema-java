@@ -26,18 +26,18 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 
 class OrphanedXdmFieldNodeItemImpl
-    extends AbstractBoundXdmFieldNodeItem<FieldProperty> {
+    extends AbstractBoundXdmFieldNodeItem<IBoundFieldInstance> {
   private final URI baseUri;
 
   public OrphanedXdmFieldNodeItemImpl(
-      @NotNull FieldProperty instance,
+      @NotNull IBoundFieldInstance instance,
       @NotNull Object value,
       int position,
       URI baseUri) {

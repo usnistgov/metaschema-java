@@ -33,8 +33,8 @@ import com.squareup.javapoet.TypeSpec;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.codegen.property.FieldValuePropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.FlagPropertyGenerator;
-import gov.nist.secauto.metaschema.codegen.property.PropertyGenerator;
-import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
+import gov.nist.secauto.metaschema.codegen.property.IPropertyGenerator;
+import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
@@ -62,7 +62,7 @@ public class FieldJavaClassGenerator
    * @param typeResolver
    *          the resolver to use to lookup Java type information for Metaschema objects
    */
-  public FieldJavaClassGenerator(@NotNull IFieldDefinition definition, @NotNull TypeResolver typeResolver) {
+  public FieldJavaClassGenerator(@NotNull IFieldDefinition definition, @NotNull ITypeResolver typeResolver) {
     super(definition, typeResolver);
     this.fieldValueInstance = newFieldValueInstance();
     this.hasJsonValueKeyFlag = definition.hasJsonValueKeyFlagInstance();
@@ -123,7 +123,7 @@ public class FieldJavaClassGenerator
   }
 
   /**
-   * Creates a new {@link PropertyGenerator} for the the field's value and registers it with this
+   * Creates a new {@link IPropertyGenerator} for the the field's value and registers it with this
    * class generator.
    * 
    * @return the new property generator

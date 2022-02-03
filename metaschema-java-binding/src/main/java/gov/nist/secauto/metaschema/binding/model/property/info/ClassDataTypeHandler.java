@@ -27,12 +27,12 @@
 package gov.nist.secauto.metaschema.binding.model.property.info;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
-import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.ClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
@@ -46,11 +46,11 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
-public class ClassDataTypeHandler implements DataTypeHandler {
-  private final NamedModelProperty property;
-  private final ClassBinding classBinding;
+public class ClassDataTypeHandler implements IDataTypeHandler {
+  private final IBoundNamedModelInstance property;
+  private final IClassBinding classBinding;
 
-  public ClassDataTypeHandler(ClassBinding classBinding, NamedModelProperty property) {
+  public ClassDataTypeHandler(IClassBinding classBinding, IBoundNamedModelInstance property) {
     Objects.requireNonNull(classBinding, "classBinding");
     Objects.requireNonNull(property, "property");
     this.classBinding = classBinding;
@@ -58,7 +58,7 @@ public class ClassDataTypeHandler implements DataTypeHandler {
   }
 
   @Override
-  public NamedModelProperty getProperty() {
+  public IBoundNamedModelInstance getProperty() {
     return property;
   }
 
@@ -69,7 +69,7 @@ public class ClassDataTypeHandler implements DataTypeHandler {
   }
 
   @Override
-  public ClassBinding getClassBinding() {
+  public IClassBinding getClassBinding() {
     return classBinding;
   }
 
@@ -80,25 +80,25 @@ public class ClassDataTypeHandler implements DataTypeHandler {
   }
 
   @Override
-  public List<Object> get(Object parentInstance, JsonParsingContext context)
+  public List<Object> get(Object parentInstance, IJsonParsingContext context)
       throws BindingException, IOException {
     return classBinding.readItem(parentInstance, context);
   }
 
   @Override
-  public Object get(Object parentInstance, StartElement start, XmlParsingContext context)
+  public Object get(Object parentInstance, StartElement start, IXmlParsingContext context)
       throws BindingException, IOException, XMLStreamException {
     return classBinding.readItem(parentInstance, start, context);
   }
 
   @Override
-  public void accept(Object item, QName currentParentName, XmlWritingContext context)
+  public void accept(Object item, QName currentParentName, IXmlWritingContext context)
       throws IOException, XMLStreamException {
     classBinding.writeItem(item, currentParentName, context);
   }
 
   @Override
-  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, JsonWritingContext context)
+  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, IJsonWritingContext context)
       throws IOException {
     classBinding.writeItems(items, writeObjectWrapper, context);
   }

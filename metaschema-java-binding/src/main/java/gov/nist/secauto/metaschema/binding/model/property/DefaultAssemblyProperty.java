@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
-import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
+import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
@@ -38,14 +38,14 @@ import java.lang.reflect.Field;
 public class DefaultAssemblyProperty
     extends AbstractAssemblyProperty {
 
-  public static DefaultAssemblyProperty createInstance(AssemblyClassBinding parentClassBinding, Field field) {
+  public static DefaultAssemblyProperty createInstance(IAssemblyClassBinding parentClassBinding, Field field) {
     DefaultAssemblyProperty retval = new DefaultAssemblyProperty(parentClassBinding, field);
     return retval;
   }
 
   private final Assembly assembly;
 
-  protected DefaultAssemblyProperty(AssemblyClassBinding parentClassBinding, Field field) {
+  protected DefaultAssemblyProperty(IAssemblyClassBinding parentClassBinding, Field field) {
     super(parentClassBinding, field);
     this.assembly = field.getAnnotation(Assembly.class);
     if (this.assembly == null) {
@@ -59,9 +59,9 @@ public class DefaultAssemblyProperty
   }
 
   @Override
-  public AssemblyClassBinding getDefinition() {
-    DataTypeHandler handler = getDataTypeHandler();
-    return (AssemblyClassBinding) handler.getClassBinding();
+  public IAssemblyClassBinding getDefinition() {
+    IDataTypeHandler handler = getDataTypeHandler();
+    return (IAssemblyClassBinding) handler.getClassBinding();
   }
 
   @Override

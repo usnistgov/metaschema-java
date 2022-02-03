@@ -31,15 +31,15 @@ import gov.nist.secauto.metaschema.binding.io.context.AbstractParsingContext;
 import org.codehaus.stax2.XMLEventReader2;
 
 public class DefaultXmlParsingContext
-    extends AbstractParsingContext<XMLEventReader2, XmlProblemHandler>
-    implements XmlParsingContext {
+    extends AbstractParsingContext<XMLEventReader2, IXmlProblemHandler>
+    implements IXmlParsingContext {
 
   // public DefaultXmlParsingContext(XMLEventReader2 eventReader) {
   // this(eventReader, new DefaultXmlProblemHandler());
   // }
 
   public DefaultXmlParsingContext(XMLEventReader2 eventReader,
-      XmlProblemHandler problemHandler) {
+      IXmlProblemHandler problemHandler) {
     super(eventReader, problemHandler);
   }
 }

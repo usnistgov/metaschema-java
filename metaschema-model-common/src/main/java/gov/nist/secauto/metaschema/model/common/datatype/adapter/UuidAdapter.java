@@ -27,13 +27,12 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IUuidType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IUuidItem;
 
 import java.util.UUID;
 
 public class UuidAdapter
-    extends AbstractJavaTypeAdapter<UUID, IUuidItem>
-    implements IUuidType {
+    extends AbstractJavaTypeAdapter<UUID, IUuidItem> {
 
   @SuppressWarnings("null")
   public UuidAdapter() {
@@ -66,6 +65,6 @@ public class UuidAdapter
   @Override
   public IUuidItem newItem(Object value) {
     UUID item = toValue(value);
-    return new UuidItemImpl(item);
+    return IUuidItem.valueOf(item);
   }
 }

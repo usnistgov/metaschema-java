@@ -58,7 +58,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // TODO: change the name of this class
-public class DefaultConstraintValidator implements ConstraintValidator {
+public class DefaultConstraintValidator implements IConstraintValidator {
   private static final Logger logger = LogManager.getLogger(DefaultConstraintValidator.class);
 
   @NotNull

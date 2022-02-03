@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DefaultDefinitionBindingConfiguration implements MutableDefinitionBindingConfiguration {
+public class DefaultDefinitionBindingConfiguration implements IMutableDefinitionBindingConfiguration {
   private String className;
   private String baseClassName;
   private Set<String> interfacesToImplement = new HashSet<>();
@@ -39,7 +39,7 @@ public class DefaultDefinitionBindingConfiguration implements MutableDefinitionB
   public DefaultDefinitionBindingConfiguration() {
   }
 
-  public DefaultDefinitionBindingConfiguration(DefinitionBindingConfiguration oldConfig) {
+  public DefaultDefinitionBindingConfiguration(IDefinitionBindingConfiguration oldConfig) {
     this.className = oldConfig.getClassName();
     this.baseClassName = oldConfig.getQualifiedBaseClassName();
     this.interfacesToImplement.addAll(oldConfig.getInterfacesToImplement());

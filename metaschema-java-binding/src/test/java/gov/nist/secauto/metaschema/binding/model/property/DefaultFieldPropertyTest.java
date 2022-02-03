@@ -37,11 +37,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
+import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
@@ -69,10 +69,10 @@ class DefaultFieldPropertyTest {
   @RegisterExtension
   JUnit5Mockery context = new JUnit5Mockery();
 
-  private AssemblyClassBinding classBinding = context.mock(AssemblyClassBinding.class);
-  private BindingContext bindingContext = context.mock(BindingContext.class);
-  private JsonParsingContext jsonParsingContext = context.mock(JsonParsingContext.class);
-  private XmlParsingContext xmlParsingContext = context.mock(XmlParsingContext.class);
+  private IAssemblyClassBinding classBinding = context.mock(IAssemblyClassBinding.class);
+  private IBindingContext bindingContext = context.mock(IBindingContext.class);
+  private IJsonParsingContext jsonParsingContext = context.mock(IJsonParsingContext.class);
+  private IXmlParsingContext xmlParsingContext = context.mock(IXmlParsingContext.class);
 
   @Test
   void testJsonRead()

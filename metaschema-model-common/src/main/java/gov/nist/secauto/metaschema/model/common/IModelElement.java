@@ -31,6 +31,10 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * A marker interface for Metaschema constructs that can be members of a Metaschema definition's
+ * model.
+ */
 public interface IModelElement {
 
   /**

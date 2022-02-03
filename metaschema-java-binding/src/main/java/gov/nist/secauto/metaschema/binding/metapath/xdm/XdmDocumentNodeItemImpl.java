@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class XdmDocumentNodeItemImpl implements IBoundXdmDocumentNodeItem {
+class XdmDocumentNodeItemImpl implements IBoundXdmDocumentNodeItem {
   @NotNull
   private final IBoundXdmRootAssemblyNodeItem rootNodeItem;
   @NotNull

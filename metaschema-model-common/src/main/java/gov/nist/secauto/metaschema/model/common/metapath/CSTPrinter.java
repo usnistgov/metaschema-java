@@ -26,13 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.List;
-
-import src.main.antlr4.metapath10Parser;
 
 public class CSTPrinter {
   private boolean ignoringWrappers = true;

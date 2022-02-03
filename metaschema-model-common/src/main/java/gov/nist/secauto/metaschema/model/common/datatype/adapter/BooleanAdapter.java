@@ -32,15 +32,16 @@ import com.fasterxml.jackson.core.JsonParser;
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IBooleanType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
 public class BooleanAdapter
-    extends AbstractJavaTypeAdapter<Boolean, IBooleanItem>
-    implements IBooleanType {
+    extends AbstractJavaTypeAdapter<Boolean, IBooleanItem> {
 
   @SuppressWarnings("null")
   public BooleanAdapter() {

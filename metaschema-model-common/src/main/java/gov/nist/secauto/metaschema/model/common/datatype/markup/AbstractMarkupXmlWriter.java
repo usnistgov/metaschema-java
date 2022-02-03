@@ -57,8 +57,8 @@ import com.vladsch.flexmark.ext.typographic.TypographicSmarts;
 import com.vladsch.flexmark.util.ast.Block;
 import com.vladsch.flexmark.util.ast.Node;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.insertanchor.InsertAnchorNode;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.q.DoubleQuoteNode;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.DoubleQuoteNode;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
 
 import java.util.HashMap;
 import java.util.Map;

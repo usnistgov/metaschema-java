@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.instance;
 
-import gov.nist.secauto.metaschema.model.common.Field;
+import gov.nist.secauto.metaschema.model.common.IField;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
@@ -39,7 +39,7 @@ import java.util.Collections;
 
 import javax.xml.namespace.QName;
 
-public interface IFieldInstance extends INamedModelInstance, Field {
+public interface IFieldInstance extends INamedModelInstance, IField {
   /**
    * Get the XML qualified name to use in XML.
    * 

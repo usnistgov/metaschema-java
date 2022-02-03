@@ -35,6 +35,8 @@ import org.jetbrains.annotations.NotNull;
  * 
  * @param <TYPE>
  *          the Java type this adapter supports, which is based on {@link IDatatype}
+ * @param <ITEM_TYPE>
+ *          the Metapath item type associated with the adapter
  */
 public abstract class AbstractDatatypeJavaTypeAdapter<TYPE extends IDatatype<TYPE>, ITEM_TYPE extends IAnyAtomicItem>
     extends AbstractJavaTypeAdapter<TYPE, ITEM_TYPE> {

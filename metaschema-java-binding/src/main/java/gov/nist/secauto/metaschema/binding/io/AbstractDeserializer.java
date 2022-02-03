@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
+import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValidatingXdmVisitor;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
@@ -49,7 +49,7 @@ import java.nio.charset.Charset;
 
 public abstract class AbstractDeserializer<CLASS>
     extends AbstractSerializationBase
-    implements Deserializer<CLASS> {
+    implements IDeserializer<CLASS> {
 
   /**
    * Construct a new deserializer.
@@ -59,7 +59,7 @@ public abstract class AbstractDeserializer<CLASS>
    * @param classBinding
    *          the bound class information for the Java type this deserializer is operating on
    */
-  protected AbstractDeserializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {
+  protected AbstractDeserializer(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 

@@ -26,13 +26,13 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.ClassBinding;
-import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.info.ClassDataTypeHandler;
-import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
+import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.JavaTypeAdapterDataTypeHandler;
-import gov.nist.secauto.metaschema.binding.model.property.info.ModelPropertyInfo;
+import gov.nist.secauto.metaschema.binding.model.property.info.IModelPropertyInfo;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyInfo;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -47,25 +47,25 @@ public abstract class AbstractFieldDefinitionFieldProperty
     extends AbstractFieldProperty {
 
   @NotNull
-  private final FieldClassBinding classBinding;
+  private final IFieldClassBinding classBinding;
 
-  public AbstractFieldDefinitionFieldProperty(@NotNull FieldClassBinding classBinding) {
+  public AbstractFieldDefinitionFieldProperty(@NotNull IFieldClassBinding classBinding) {
     super(null, null);
     this.classBinding = Objects.requireNonNull(classBinding, "classBinding");
   }
 
   @Override
-  public FieldClassBinding getDefinition() {
+  public IFieldClassBinding getDefinition() {
     return classBinding;
   }
 
   @Override
-  protected DataTypeHandler newDataTypeHandler() {
-    DataTypeHandler retval;
+  protected IDataTypeHandler newDataTypeHandler() {
+    IDataTypeHandler retval;
     // get the binding supplier
     IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
     if (adapter == null) {
-      ClassBinding classBinding
+      IClassBinding classBinding
           = getDefinition().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
       if (classBinding != null) {
         retval = new ClassDataTypeHandler(classBinding, this);
@@ -81,7 +81,7 @@ public abstract class AbstractFieldDefinitionFieldProperty
   }
 
   @Override
-  protected ModelPropertyInfo newPropertyInfo() {
+  protected IModelPropertyInfo newPropertyInfo() {
     return new SingletonPropertyInfo(this);
   }
 
@@ -101,7 +101,7 @@ public abstract class AbstractFieldDefinitionFieldProperty
   }
 
   @Override
-  public AssemblyClassBinding getContainingDefinition() {
+  public IAssemblyClassBinding getContainingDefinition() {
     return getParentClassBinding();
   }
 

@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
-import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
@@ -40,17 +40,17 @@ import java.util.List;
 /**
  * Used to track paths during parsing.
  */
-public class DefaultPathBuilder implements PathBuilder {
+public class DefaultPathBuilder implements IPathBuilder {
   private final LinkedList<INamedInstance> instanceStack = new LinkedList<>();
   private final LinkedList<IPathSegment> pathStack = new LinkedList<>();
 
   @Override
-  public void pushInstance(FlagProperty instance) {
+  public void pushInstance(IBoundFlagInstance instance) {
     instanceStack.push(instance);
   }
 
   @Override
-  public void pushInstance(NamedModelProperty instance) {
+  public void pushInstance(IBoundNamedModelInstance instance) {
     instanceStack.push(instance);
   }
 

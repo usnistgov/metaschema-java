@@ -31,15 +31,15 @@ import com.fasterxml.jackson.core.JsonParser;
 import gov.nist.secauto.metaschema.binding.io.context.AbstractParsingContext;
 
 public class DefaultJsonParsingContext
-    extends AbstractParsingContext<JsonParser, JsonProblemHandler>
-    implements JsonParsingContext {
+    extends AbstractParsingContext<JsonParser, IJsonProblemHandler>
+    implements IJsonParsingContext {
 
   // public DefaultJsonParsingContext(JsonParser parser) {
   // this(parser, new DefaultJsonProblemHandler(), false);
   // }
 
   public DefaultJsonParsingContext(JsonParser parser,
-      JsonProblemHandler problemHandler) {
+      IJsonProblemHandler problemHandler) {
     super(parser, problemHandler);
   }
 }

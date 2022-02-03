@@ -26,13 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.CastToDecimalFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-import gov.nist.secauto.metaschema.model.common.metapath.type.InvalidTypeMetapathException;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -105,6 +103,8 @@ public class FunctionUtils {
    * returned. If requireSingleton is {@code true} and the sequence contains more than one item, a
    * {@link TypeMetapathException} is thrown.
    * 
+   * @param <ITEM>
+   *          the item type to return derived from the provided sequence
    * @param sequence
    *          the sequence to retrieve the first item from
    * @param requireSingleton
@@ -122,7 +122,7 @@ public class FunctionUtils {
     if (!sequence.isEmpty()) {
       List<ITEM> items = sequence.asList();
       if (requireSingleton && items.size() != 1) {
-        throw new TypeMetapathException(TypeMetapathException.INVALID_TYPE_ERROR,
+        throw new InvalidTypeMetapathException(
             String.format("sequence expected to contain one item, but found '%d'", items.size()));
       }
       retval = items.iterator().next();

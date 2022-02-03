@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.binding.io.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.FieldValueProperty;
-import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
+import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldValueInstance;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,21 +44,21 @@ import java.util.Map;
 import java.util.Objects;
 
 public class CollapseKeyBuilder {
-  private final FieldClassBinding classBinding;
-  private final ArrayList<FlagProperty> flagProperties;
+  private final IFieldClassBinding classBinding;
+  private final ArrayList<IBoundFlagInstance> flagProperties;
   private final Map<Key, List<Object>> keyToValuesMap;
 
-  public CollapseKeyBuilder(FieldClassBinding classBinding) {
+  public CollapseKeyBuilder(IFieldClassBinding classBinding) {
     this.classBinding = classBinding;
     this.flagProperties = new ArrayList<>(classBinding.getFlagInstances());
     this.keyToValuesMap = new LinkedHashMap<>();
   }
 
-  protected FieldClassBinding getClassBinding() {
+  protected IFieldClassBinding getClassBinding() {
     return classBinding;
   }
 
-  protected ArrayList<FlagProperty> getFlagProperties() {
+  protected ArrayList<IBoundFlagInstance> getFlagProperties() {
     return flagProperties;
   }
 
@@ -72,7 +72,7 @@ public class CollapseKeyBuilder {
     int size = getFlagProperties().size();
     Object[] flagValues = new Object[size];
     int index = 0;
-    for (FlagProperty flag : getFlagProperties()) {
+    for (IBoundFlagInstance flag : getFlagProperties()) {
       flagValues[index++] = flag.getValue(instance);
     }
 
@@ -87,12 +87,12 @@ public class CollapseKeyBuilder {
     values.add(value);
   }
 
-  public void write(boolean writeObjectWrapper, JsonWritingContext context) throws IOException {
-    FieldClassBinding classBinding = getClassBinding();
-    FlagProperty jsonKey = classBinding.getJsonKeyFlagInstance();
-    FlagProperty jsonValueKey = classBinding.getJsonValueKeyFlagInstance();
-    FieldValueProperty fieldValue = classBinding.getFieldValue();
-    ArrayList<FlagProperty> flagProperties = getFlagProperties();
+  public void write(boolean writeObjectWrapper, IJsonWritingContext context) throws IOException {
+    IFieldClassBinding classBinding = getClassBinding();
+    IBoundFlagInstance jsonKey = classBinding.getJsonKeyFlagInstance();
+    IBoundFlagInstance jsonValueKey = classBinding.getJsonValueKeyFlagInstance();
+    IBoundFieldValueInstance fieldValue = classBinding.getFieldValue();
+    ArrayList<IBoundFlagInstance> flagProperties = getFlagProperties();
 
     // first build an index of the flag properties
     List<Integer> flagIndex;
@@ -103,7 +103,7 @@ public class CollapseKeyBuilder {
     } else {
       flagIndex = new ArrayList<>(flagProperties.size());
       int index = 0;
-      for (FlagProperty flag : flagProperties) {
+      for (IBoundFlagInstance flag : flagProperties) {
         if (jsonKey != null && jsonKey.equals(flag)) {
           jsonKeyIndex = index++;
         } else if (jsonValueKey != null && jsonValueKey.equals(flag)) {
@@ -136,7 +136,7 @@ public class CollapseKeyBuilder {
 
       // next, write the flags
       for (int index : flagIndex) {
-        FlagProperty flag = flagProperties.get(index);
+        IBoundFlagInstance flag = flagProperties.get(index);
         Object flagValue = flagValues[index];
 
         if (flagValue != null) {

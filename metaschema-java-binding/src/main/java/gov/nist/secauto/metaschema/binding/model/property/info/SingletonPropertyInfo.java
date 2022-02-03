@@ -30,12 +30,12 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
-import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -50,9 +50,9 @@ import javax.xml.stream.events.StartElement;
 
 public class SingletonPropertyInfo
     extends AbstractModelPropertyInfo<Type>
-    implements ModelPropertyInfo {
+    implements IModelPropertyInfo {
 
-  public SingletonPropertyInfo(NamedModelProperty property) {
+  public SingletonPropertyInfo(IBoundNamedModelInstance property) {
     super(property);
   }
 
@@ -62,9 +62,9 @@ public class SingletonPropertyInfo
   }
 
   @Override
-  public void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
       throws IOException, BindingException {
-    NamedModelProperty property = getProperty();
+    IBoundNamedModelInstance property = getProperty();
 
     JsonParser parser = context.getReader();
 
@@ -84,8 +84,8 @@ public class SingletonPropertyInfo
   }
 
   @Override
-  public boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start,
-      XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+  public boolean readValue(IPropertyCollector collector, Object parentInstance, StartElement start,
+      IXmlParsingContext context) throws IOException, BindingException, XMLStreamException {
     boolean handled = true;
     Object value = getProperty().readItem(parentInstance, start, context);
     if (value != null) {
@@ -101,20 +101,20 @@ public class SingletonPropertyInfo
   }
 
   @Override
-  public PropertyCollector newPropertyCollector() {
+  public IPropertyCollector newPropertyCollector() {
     return new SingletonPropertyCollector();
   }
 
   @Override
-  public boolean writeValue(Object parentInstance, QName parentName, XmlWritingContext context)
+  public boolean writeValue(Object parentInstance, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
-    NamedModelProperty property = getProperty();
+    IBoundNamedModelInstance property = getProperty();
     return property.writeItem(property.getValue(parentInstance), parentName, context);
   }
 
   @Override
-  public void writeValue(Object parentInstance, JsonWritingContext context) throws IOException {
-    NamedModelProperty property = getProperty();
+  public void writeValue(Object parentInstance, IJsonWritingContext context) throws IOException {
+    IBoundNamedModelInstance property = getProperty();
     getProperty().getDataTypeHandler().writeItems(Collections.singleton(property.getValue(parentInstance)), true,
         context);
   }
@@ -125,9 +125,9 @@ public class SingletonPropertyInfo
   }
 
   @Override
-  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector)
+  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull IPropertyCollector collector)
       throws BindingException {
-    NamedModelProperty property = getProperty();
+    IBoundNamedModelInstance property = getProperty();
 
     Object value = property.getValue(fromInstance);
 

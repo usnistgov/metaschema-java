@@ -26,17 +26,17 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IAnyUriItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IIntegerItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAtomicValuedItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
 
 import org.jetbrains.annotations.NotNull;

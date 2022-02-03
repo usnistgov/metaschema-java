@@ -32,9 +32,9 @@ import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.codegen.JavaClassGenerator;
+import gov.nist.secauto.metaschema.codegen.IJavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.ClassUtils;
-import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
+import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
@@ -53,8 +53,8 @@ import javax.lang.model.element.Modifier;
  * @param <CLASS_GENERATOR>
  *          the containing Java class generator
  */
-public abstract class AbstractPropertyGenerator<CLASS_GENERATOR extends JavaClassGenerator>
-    implements PropertyGenerator {
+public abstract class AbstractPropertyGenerator<CLASS_GENERATOR extends IJavaClassGenerator>
+    implements IPropertyGenerator {
   @NotNull
   private final CLASS_GENERATOR classGenerator;
   private String propertyName;
@@ -146,7 +146,7 @@ public abstract class AbstractPropertyGenerator<CLASS_GENERATOR extends JavaClas
   // }
 
   @Override
-  public Set<INamedModelDefinition> build(TypeSpec.Builder builder, TypeResolver typeResolver) {
+  public Set<INamedModelDefinition> build(TypeSpec.Builder builder, ITypeResolver typeResolver) {
     FieldSpec.Builder field = FieldSpec.builder(getJavaType(), getJavaFieldName())
         .addModifiers(Modifier.PRIVATE);
 
@@ -192,7 +192,7 @@ public abstract class AbstractPropertyGenerator<CLASS_GENERATOR extends JavaClas
 
   // @Override
   // public Collection<? extends INamedModelDefinition> buildCopyStatements(Builder copyBuilder,
-  // @NotNull TypeResolver typeResolver) {
+  // @NotNull ITypeResolver typeResolver) {
   // return Collections.emptySet();
   // }
 }

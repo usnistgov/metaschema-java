@@ -26,16 +26,16 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.ClassBinding;
-import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
-import gov.nist.secauto.metaschema.binding.model.FieldDefinition;
+import gov.nist.secauto.metaschema.binding.IBindingContext;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IBoundFieldDefinition;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
-import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
+import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
@@ -59,7 +59,7 @@ import java.util.Map;
 public class DefaultFieldProperty
     extends AbstractFieldProperty {
 
-  public static DefaultFieldProperty createInstance(AssemblyClassBinding parentClassBinding,
+  public static DefaultFieldProperty createInstance(IAssemblyClassBinding parentClassBinding,
       java.lang.reflect.Field field) {
     DefaultFieldProperty retval = new DefaultFieldProperty(parentClassBinding, field);
     return retval;
@@ -67,10 +67,10 @@ public class DefaultFieldProperty
 
   private final Field field;
   private final IJavaTypeAdapter<?> javaTypeAdapter;
-  private FieldDefinition definition;
+  private IBoundFieldDefinition definition;
   private IValueConstraintSupport constraints;
 
-  public DefaultFieldProperty(AssemblyClassBinding parentClassBinding, java.lang.reflect.Field field) {
+  public DefaultFieldProperty(IAssemblyClassBinding parentClassBinding, java.lang.reflect.Field field) {
     super(parentClassBinding, field);
     this.field = field.getAnnotation(Field.class);
     if (this.field == null) {
@@ -96,15 +96,15 @@ public class DefaultFieldProperty
   }
 
   @Override
-  public FieldDefinition getDefinition() {
+  public IBoundFieldDefinition getDefinition() {
     synchronized (this) {
       if (definition == null) {
-        DataTypeHandler handler = getDataTypeHandler();
-        ClassBinding classBinding = handler.getClassBinding();
+        IDataTypeHandler handler = getDataTypeHandler();
+        IClassBinding classBinding = handler.getClassBinding();
         if (classBinding == null) {
           definition = new ScalarFieldDefinition();
         } else {
-          definition = (FieldClassBinding) classBinding;
+          definition = (IFieldClassBinding) classBinding;
         }
       }
     }
@@ -172,7 +172,7 @@ public class DefaultFieldProperty
   // return FormatterFactory.instance().newFieldPathSegment(this, position);
   // }
 
-  private class ScalarFieldDefinition implements FieldDefinition {
+  private class ScalarFieldDefinition implements IBoundFieldDefinition {
     @Override
     public IJavaTypeAdapter<?> getDatatype() {
       return getJavaTypeAdapter();
@@ -204,7 +204,7 @@ public class DefaultFieldProperty
     }
 
     @Override
-    public Map<String, ? extends FlagProperty> getFlagInstanceMap() {
+    public Map<String, ? extends IBoundFlagInstance> getFlagInstanceMap() {
       return Collections.emptyMap();
     }
 
@@ -269,7 +269,7 @@ public class DefaultFieldProperty
     }
 
     @Override
-    public BindingContext getBindingContext() {
+    public IBindingContext getBindingContext() {
       return getContainingDefinition().getBindingContext();
     }
 

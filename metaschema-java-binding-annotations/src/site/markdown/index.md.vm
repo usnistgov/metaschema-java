@@ -1,0 +1,14 @@
+
+This module provides a set of Java [annotations](apidocs/) that allow Metaschema constructs to be associated with Java classes. These annotations provide the information needed for the [binding parser](../metaschema-java-binding/) to parse XML, JSON, and YAML content.
+
+The [Metaschema Maven Plugin](../metaschema-maven-plugin/) generates Java code with these annotations from a Metaschema definition. 
+
+The following dependency can be added to your POM to use this library.
+
+```xml
+<dependency>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>${project.artifactId}</artifactId>
+  <version>${project.version}</version>
+</dependency>
+```

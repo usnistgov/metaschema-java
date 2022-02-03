@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractStringJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -49,6 +50,6 @@ public class StringAdapter
   @Override
   public @NotNull IStringItem newItem(@NotNull Object value) {
     String item = asString(value);
-    return new StringItemImpl(item);
+    return IStringItem.valueOf(item);
   }
 }

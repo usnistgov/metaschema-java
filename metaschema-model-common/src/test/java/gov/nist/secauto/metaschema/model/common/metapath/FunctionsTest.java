@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IIntegerItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

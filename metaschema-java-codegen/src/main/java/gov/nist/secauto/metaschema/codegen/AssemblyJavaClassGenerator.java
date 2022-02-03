@@ -32,9 +32,9 @@ import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.codegen.property.ModelInstancePropertyGenerator;
-import gov.nist.secauto.metaschema.codegen.property.PropertyGenerator;
+import gov.nist.secauto.metaschema.codegen.property.IPropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
-import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
+import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IModelContainer;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
@@ -59,7 +59,7 @@ public class AssemblyJavaClassGenerator
    * @param typeResolver
    *          the resolver to use to lookup Java type information for Metaschema objects
    */
-  public AssemblyJavaClassGenerator(@NotNull IAssemblyDefinition definition, @NotNull TypeResolver typeResolver) {
+  public AssemblyJavaClassGenerator(@NotNull IAssemblyDefinition definition, @NotNull ITypeResolver typeResolver) {
     super(definition, typeResolver);
 
     // create properties for the model instances
@@ -113,7 +113,7 @@ public class AssemblyJavaClassGenerator
   }
 
   /**
-   * Creates a new {@link PropertyGenerator} for the provided {@link INamedModelInstance} and
+   * Creates a new {@link IPropertyGenerator} for the provided {@link INamedModelInstance} and
    * registers it with this class generator.
    * 
    * @param instance

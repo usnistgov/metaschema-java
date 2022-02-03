@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IValuedNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractBoundXdmValuedNodeItem<INSTANCE extends NamedProperty>
+public abstract class AbstractBoundXdmValuedNodeItem<INSTANCE extends IBoundNamedInstance>
     implements IBoundXdmNodeItem, IValuedNodeItem {
 
   @NotNull

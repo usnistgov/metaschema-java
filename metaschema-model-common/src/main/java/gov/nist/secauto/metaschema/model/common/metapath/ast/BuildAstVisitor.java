@@ -26,6 +26,37 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10BaseVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Lexer;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.AdditiveexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.AndexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ArgumentlistContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ArrowexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ArrowfunctionspecifierContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.AxisstepContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ComparisonexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ContextitemexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.EqnameContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ExprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ForwardstepContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.FunctioncallContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.GeneralcompContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.IntersectexceptexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.LiteralContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.MultiplicativeexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.NumericliteralContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.OrexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ParenthesizedexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.PathexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.PostfixexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.PredicateContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.PredicatelistContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.RelativepathexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.StringconcatexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.UnaryexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.UnionexprContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.ValuecompContext;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser.WildcardContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IComparison.Operator;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -40,38 +71,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
-
-import src.main.antlr4.metapath10BaseVisitor;
-import src.main.antlr4.metapath10Lexer;
-import src.main.antlr4.metapath10Parser.AdditiveexprContext;
-import src.main.antlr4.metapath10Parser.AndexprContext;
-import src.main.antlr4.metapath10Parser.ArgumentlistContext;
-import src.main.antlr4.metapath10Parser.ArrowexprContext;
-import src.main.antlr4.metapath10Parser.ArrowfunctionspecifierContext;
-import src.main.antlr4.metapath10Parser.AxisstepContext;
-import src.main.antlr4.metapath10Parser.ComparisonexprContext;
-import src.main.antlr4.metapath10Parser.ContextitemexprContext;
-import src.main.antlr4.metapath10Parser.EqnameContext;
-import src.main.antlr4.metapath10Parser.ExprContext;
-import src.main.antlr4.metapath10Parser.ForwardstepContext;
-import src.main.antlr4.metapath10Parser.FunctioncallContext;
-import src.main.antlr4.metapath10Parser.GeneralcompContext;
-import src.main.antlr4.metapath10Parser.IntersectexceptexprContext;
-import src.main.antlr4.metapath10Parser.LiteralContext;
-import src.main.antlr4.metapath10Parser.MultiplicativeexprContext;
-import src.main.antlr4.metapath10Parser.NumericliteralContext;
-import src.main.antlr4.metapath10Parser.OrexprContext;
-import src.main.antlr4.metapath10Parser.ParenthesizedexprContext;
-import src.main.antlr4.metapath10Parser.PathexprContext;
-import src.main.antlr4.metapath10Parser.PostfixexprContext;
-import src.main.antlr4.metapath10Parser.PredicateContext;
-import src.main.antlr4.metapath10Parser.PredicatelistContext;
-import src.main.antlr4.metapath10Parser.RelativepathexprContext;
-import src.main.antlr4.metapath10Parser.StringconcatexprContext;
-import src.main.antlr4.metapath10Parser.UnaryexprContext;
-import src.main.antlr4.metapath10Parser.UnionexprContext;
-import src.main.antlr4.metapath10Parser.ValuecompContext;
-import src.main.antlr4.metapath10Parser.WildcardContext;
 
 public class BuildAstVisitor
     extends metapath10BaseVisitor<IExpression> {
@@ -278,7 +277,7 @@ public class BuildAstVisitor
    * @return the left expression or the supplied expression
    */
   protected <CONTEXT extends ParserRuleContext> IExpression handleGroupedNAiry(@NotNull CONTEXT context, int step,
-      @NotNull TriFunction<CONTEXT, Integer, IExpression, IExpression> parser) {
+      @NotNull ITriFunction<CONTEXT, Integer, IExpression, IExpression> parser) {
     int numChildren = context.getChildCount();
 
     IExpression retval;

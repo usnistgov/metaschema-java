@@ -185,7 +185,7 @@ public interface IFunction {
     private final List<@NotNull IArgument> arguments = new LinkedList<>();
     private Class<? extends IItem> returnType = IItem.class;
     private Occurrence returnOccurrence = Occurrence.ONE;
-    private FunctionExecutor functionHandler = null;
+    private IFunctionExecutor functionHandler = null;
 
     public Builder() {
       this(null);
@@ -281,7 +281,7 @@ public interface IFunction {
       return this;
     }
 
-    public Builder functionHandler(@NotNull FunctionExecutor handler) {
+    public Builder functionHandler(@NotNull IFunctionExecutor handler) {
       Objects.requireNonNull(handler, "handler");
       this.functionHandler = handler;
       return this;

@@ -30,7 +30,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import java.util.Objects;
 
-public class DefaultJsonWritingContext implements JsonWritingContext {
+public class DefaultJsonWritingContext implements IJsonWritingContext {
   private final JsonGenerator jsonGenerator;
 
   public DefaultJsonWritingContext(JsonGenerator jsonGenerator) {

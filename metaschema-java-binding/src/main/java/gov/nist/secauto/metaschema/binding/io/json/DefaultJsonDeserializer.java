@@ -32,13 +32,13 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
+import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.Feature;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
 
 import org.jetbrains.annotations.Nullable;
@@ -52,7 +52,7 @@ public class DefaultJsonDeserializer<CLASS>
     extends AbstractDeserializer<CLASS> {
   private JsonFactory jsonFactory;
 
-  public DefaultJsonDeserializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {
+  public DefaultJsonDeserializer(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
@@ -103,7 +103,7 @@ public class DefaultJsonDeserializer<CLASS>
 
     DefaultJsonParsingContext parsingContext = new DefaultJsonParsingContext(parser, new DefaultJsonProblemHandler());
 
-    AssemblyClassBinding classBinding = getClassBinding();
+    IAssemblyClassBinding classBinding = getClassBinding();
     CLASS retval;
     IBoundXdmNodeItem parsedNodeItem;
     if (classBinding.isRoot() && getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT)) {

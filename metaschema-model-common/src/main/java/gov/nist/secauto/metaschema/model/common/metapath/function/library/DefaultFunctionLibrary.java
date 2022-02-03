@@ -34,15 +34,17 @@ public class DefaultFunctionLibrary
   public DefaultFunctionLibrary() {
     // registerFunction(FnBaseUriFunction.SIGNATURE_NO_ARG);
     // registerFunction(FnBaseUriFunction.SIGNATURE_ONE_ARG);
+    registerFunction(FnBaseUriFunction.SIGNATURE_NO_ARG);
+    registerFunction(FnBaseUriFunction.SIGNATURE_ONE_ARG);
     registerFunction(FnDocFunction.SIGNATURE);
     registerFunction(FnDocumentUriFunction.SIGNATURE_NO_ARG);
     registerFunction(FnDocumentUriFunction.SIGNATURE_ONE_ARG);
     registerFunction(FnExistsFunction.SIGNATURE);
     registerFunction(FnNotFunction.SIGNATURE);
-    registerFunction(FnStartsWithFunction.SIGNATURE);
-    registerFunction(FnStaticBaseUriFunction.SIGNATURE);
     registerFunction(FnResolveUriFunction.SIGNATURE_ONE_ARG);
     registerFunction(FnResolveUriFunction.SIGNATURE_TWO_ARG);
+    registerFunction(FnStartsWithFunction.SIGNATURE);
+    registerFunction(FnStaticBaseUriFunction.SIGNATURE);
 
     // casting functions
     registerFunction(CastToBooleanFunction.SIGNATURE);

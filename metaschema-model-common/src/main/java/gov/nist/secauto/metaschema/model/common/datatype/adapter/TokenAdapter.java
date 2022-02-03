@@ -27,13 +27,12 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractStringJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.type.ITokenType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.ITokenItem;
 
 import org.jetbrains.annotations.NotNull;
 
 public class TokenAdapter
-    extends AbstractStringJavaTypeAdapter<ITokenItem>
-    implements ITokenType {
+    extends AbstractStringJavaTypeAdapter<ITokenItem> {
 
   public TokenAdapter() {
     super();
@@ -53,6 +52,6 @@ public class TokenAdapter
   @Override
   public ITokenItem newItem(Object value) {
     String item = asString(value);
-    return new TokenItemImpl(item);
+    return ITokenItem.valueOf(item);
   }
 }

@@ -30,14 +30,14 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
-import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
+import gov.nist.secauto.metaschema.binding.model.property.info.IPropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.ModelType;
@@ -57,14 +57,14 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 public class DefaultFieldValueProperty
-    extends AbstractProperty<FieldClassBinding>
-    implements FieldValueProperty {
+    extends AbstractProperty<IFieldClassBinding>
+    implements IBoundFieldValueInstance {
   private static final Logger logger = LogManager.getLogger(DefaultFieldValueProperty.class);
 
   private final FieldValue fieldValue;
   private final IJavaTypeAdapter<?> javaTypeAdapter;
 
-  public DefaultFieldValueProperty(FieldClassBinding fieldClassBinding, Field field) {
+  public DefaultFieldValueProperty(IFieldClassBinding fieldClassBinding, Field field) {
     super(field, fieldClassBinding);
     this.fieldValue = field.getAnnotation(FieldValue.class);
     this.javaTypeAdapter = fieldClassBinding.getBindingContext().getJavaTypeAdapterInstance(fieldValue.typeAdapter());
@@ -89,14 +89,14 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public PropertyCollector newPropertyCollector() {
+  public IPropertyCollector newPropertyCollector() {
     return new SingletonPropertyCollector();
   }
 
   @Override
-  public Object read(JsonParsingContext context) throws IOException, BindingException {
+  public Object read(IJsonParsingContext context) throws IOException, BindingException {
     if (getParentClassBinding().hasJsonValueKeyFlagInstance()) {
-      throw new UnsupportedOperationException("for a JSON value key, use the read(Object, JsonParsingContext) method");
+      throw new UnsupportedOperationException("for a JSON value key, use the read(Object, IJsonParsingContext) method");
     }
 
     Object retval = null;
@@ -111,14 +111,14 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public boolean read(Object parentInstance, JsonParsingContext context) throws IOException, BindingException {
+  public boolean read(Object parentInstance, IJsonParsingContext context) throws IOException, BindingException {
     boolean handled = isNextProperty(context);
     if (handled) {
       JsonParser parser = context.getReader();
       // There are two modes:
       // 1) use of a JSON value key, or
       // 2) a simple value named "value"
-      FlagProperty jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
+      IBoundFlagInstance jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
       if (jsonValueKey != null) {
         // this is the JSON value key case
         jsonValueKey.setValue(parentInstance, jsonValueKey.readValueFromString(parser.nextFieldName()));
@@ -134,12 +134,12 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public Object read(XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+  public Object read(IXmlParsingContext context) throws IOException, BindingException, XMLStreamException {
     return readInternal(context);
   }
 
   @Override
-  public boolean read(Object parentInstance, StartElement start, XmlParsingContext context)
+  public boolean read(Object parentInstance, StartElement start, IXmlParsingContext context)
       throws IOException, XMLStreamException, BindingException {
     Object value = readInternal(context);
     setValue(parentInstance, value);
@@ -147,18 +147,18 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public Object readValue(Object parentInstance, JsonParsingContext context) throws IOException, BindingException {
+  public Object readValue(Object parentInstance, IJsonParsingContext context) throws IOException, BindingException {
     return readInternal(context);
   }
 
-  public boolean isNextProperty(JsonParsingContext context) throws IOException {
+  public boolean isNextProperty(IJsonParsingContext context) throws IOException {
     JsonParser parser = context.getReader();
 
     // the parser's current token should be the JSON field name
     JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
 
     boolean handled = false;
-    FlagProperty jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
+    IBoundFlagInstance jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
     if (jsonValueKey != null) {
       // assume this is the JSON value key case
       handled = true;
@@ -168,18 +168,18 @@ public class DefaultFieldValueProperty
     return handled;
   }
 
-  protected Object readInternal(JsonParsingContext context) throws IOException {
+  protected Object readInternal(IJsonParsingContext context) throws IOException {
     // parse the value
     return getJavaTypeAdapter().parse(context.getReader());
   }
 
-  protected Object readInternal(XmlParsingContext context) throws IOException {
+  protected Object readInternal(IXmlParsingContext context) throws IOException {
     // parse the value
     return getJavaTypeAdapter().parse(context.getReader());
   }
 
   @Override
-  public boolean write(Object instance, QName parentName, XmlWritingContext context)
+  public boolean write(Object instance, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     Object value = getValue(instance);
     if (value != null) {
@@ -189,13 +189,13 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public void write(Object instance, JsonWritingContext context) throws IOException {
+  public void write(Object instance, IJsonWritingContext context) throws IOException {
     Object value = getValue(instance);
     if (value != null) {
       // There are two modes:
       // 1) use of a JSON value key, or
       // 2) a simple value named "value"
-      FlagProperty jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
+      IBoundFlagInstance jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
 
       String valueKeyName;
       if (jsonValueKey != null) {
@@ -211,12 +211,12 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public void writeValue(Object value, JsonWritingContext context) throws IOException {
+  public void writeValue(Object value, IJsonWritingContext context) throws IOException {
     getJavaTypeAdapter().writeJsonValue(value, context.getWriter());
   }
 
   @Override
-  public FieldClassBinding getContainingDefinition() {
+  public IFieldClassBinding getContainingDefinition() {
     return getParentClassBinding();
   }
 

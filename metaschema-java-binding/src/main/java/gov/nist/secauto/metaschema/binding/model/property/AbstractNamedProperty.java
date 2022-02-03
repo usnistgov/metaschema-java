@@ -30,9 +30,9 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
-import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
 import org.apache.logging.log4j.LogManager;
@@ -41,9 +41,9 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
+public abstract class AbstractNamedProperty<CLASS_BINDING extends IClassBinding>
     extends AbstractProperty<CLASS_BINDING>
-    implements NamedProperty, INamedInstance {
+    implements IBoundNamedInstance, INamedInstance {
   private static final Logger logger = LogManager.getLogger(AbstractNamedProperty.class);
 
   public AbstractNamedProperty(Field field, CLASS_BINDING parentClassBinding) {
@@ -55,7 +55,7 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
     return getJavaPropertyName();
   }
 
-  public boolean isNextProperty(JsonParsingContext context) throws IOException {
+  public boolean isNextProperty(IJsonParsingContext context) throws IOException {
     JsonParser parser = context.getReader();
 
     // the parser's current token should be the JSON field name
@@ -70,7 +70,7 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
   }
 
   @Override
-  public Object read(JsonParsingContext context) throws IOException, BindingException {
+  public Object read(IJsonParsingContext context) throws IOException, BindingException {
     Object retval = null;
     if (isNextProperty(context)) {
       retval = readInternal(null, context);
@@ -79,7 +79,7 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
   }
 
   @Override
-  public boolean read(Object parentInstance, JsonParsingContext context) throws IOException, BindingException {
+  public boolean read(Object parentInstance, IJsonParsingContext context) throws IOException, BindingException {
     boolean handled = isNextProperty(context);
     if (handled) {
       Object value = readInternal(parentInstance, context);
@@ -88,6 +88,6 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends ClassBinding>
     return handled;
   }
 
-  protected abstract Object readInternal(Object parentInstance, JsonParsingContext context)
+  protected abstract Object readInternal(Object parentInstance, IJsonParsingContext context)
       throws IOException, BindingException;
 }

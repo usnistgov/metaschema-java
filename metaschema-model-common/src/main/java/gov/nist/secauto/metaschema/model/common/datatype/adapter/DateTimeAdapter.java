@@ -27,10 +27,13 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractDatatypeJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.object.DateTime;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IDateTimeType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -40,8 +43,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 
 public class DateTimeAdapter
-    extends AbstractDatatypeJavaTypeAdapter<DateTime, IDateTimeItem>
-    implements IDateTimeType {
+    extends AbstractDatatypeJavaTypeAdapter<DateTime, IDateTimeItem> {
 
   @SuppressWarnings("null")
   public DateTimeAdapter() {

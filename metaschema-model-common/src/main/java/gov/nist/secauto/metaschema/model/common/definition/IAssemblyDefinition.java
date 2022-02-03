@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.definition;
 
-import gov.nist.secauto.metaschema.model.common.Assembly;
+import gov.nist.secauto.metaschema.model.common.IAssembly;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
@@ -41,7 +41,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-public interface IAssemblyDefinition extends INamedModelDefinition, IModelContainer, Assembly {
+public interface IAssemblyDefinition extends INamedModelDefinition, IModelContainer, IAssembly {
 
   /**
    * Check if the assembly is a top-level root assembly.

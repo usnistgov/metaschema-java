@@ -30,7 +30,7 @@ import org.codehaus.stax2.XMLStreamWriter2;
 
 import java.util.Objects;
 
-public class DefaultXmlWritingContext implements XmlWritingContext {
+public class DefaultXmlWritingContext implements IXmlWritingContext {
   private final XMLStreamWriter2 writer;
 
   public DefaultXmlWritingContext(XMLStreamWriter2 writer) {

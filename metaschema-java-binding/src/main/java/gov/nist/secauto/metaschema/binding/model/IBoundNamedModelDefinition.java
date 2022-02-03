@@ -26,24 +26,24 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
 import java.util.Collection;
 import java.util.Map;
 
-public interface IBoundNamedModelDefinition extends INamedModelDefinition, BoundDefinition {
+public interface IBoundNamedModelDefinition extends INamedModelDefinition, IBoundNamedDefinition {
 
   @Override
-  default FlagProperty getFlagInstanceByName(String name) {
+  default IBoundFlagInstance getFlagInstanceByName(String name) {
     return getFlagInstanceMap().get(name);
   }
 
   @Override
-  Map<String, ? extends FlagProperty> getFlagInstanceMap();
+  Map<String, ? extends IBoundFlagInstance> getFlagInstanceMap();
 
   @Override
-  default Collection<? extends FlagProperty> getFlagInstances() {
+  default Collection<? extends IBoundFlagInstance> getFlagInstances() {
     return getFlagInstanceMap().values();
   }
 }

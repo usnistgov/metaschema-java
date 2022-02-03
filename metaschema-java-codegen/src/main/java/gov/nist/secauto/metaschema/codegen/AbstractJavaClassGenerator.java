@@ -33,13 +33,12 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.codegen.property.FlagPropertyGenerator;
-import gov.nist.secauto.metaschema.codegen.property.PropertyGenerator;
+import gov.nist.secauto.metaschema.codegen.property.IPropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
-import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
+import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.explode.FlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
 import org.apache.commons.lang3.builder.MultilineRecursiveToStringStyle;
@@ -61,15 +60,15 @@ import java.util.Set;
 import javax.lang.model.element.Modifier;
 
 public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelDefinition>
-    implements JavaClassGenerator {
+    implements IJavaClassGenerator {
   private static final Logger logger = LogManager.getLogger(AbstractJavaClassGenerator.class);
 
   @NotNull
   private final DEFINITION definition;
   @NotNull
-  private final TypeResolver typeResolver;
+  private final ITypeResolver typeResolver;
   @NotNull
-  private final Map<String, PropertyGenerator> propertyNameToPropertyGeneratorMap = new LinkedHashMap<>();
+  private final Map<String, IPropertyGenerator> propertyNameToPropertyGeneratorMap = new LinkedHashMap<>();
   private boolean hasJsonKeyFlag = false;
 
   /**
@@ -80,7 +79,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
    * @param typeResolver
    *          the resolver to use to lookup Java type information for Metaschema objects
    */
-  public AbstractJavaClassGenerator(@NotNull DEFINITION definition, @NotNull TypeResolver typeResolver) {
+  public AbstractJavaClassGenerator(@NotNull DEFINITION definition, @NotNull ITypeResolver typeResolver) {
     Objects.requireNonNull(definition, "definition");
     Objects.requireNonNull(typeResolver, "typeResolver");
     this.definition = definition;
@@ -119,7 +118,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
    * @return the type resolver
    */
   @NotNull
-  public TypeResolver getTypeResolver() {
+  public ITypeResolver getTypeResolver() {
     return typeResolver;
   }
 
@@ -211,9 +210,9 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
    * @param property
    *          the property generator to add
    */
-  protected void addPropertyGenerator(PropertyGenerator property) {
+  protected void addPropertyGenerator(IPropertyGenerator property) {
     String name = property.getPropertyName();
-    PropertyGenerator oldContext = propertyNameToPropertyGeneratorMap.put(name, property);
+    IPropertyGenerator oldContext = propertyNameToPropertyGeneratorMap.put(name, property);
     if (oldContext != null) {
       logger.error("Unexpected duplicate Java property name '{}'", name);
       throw new RuntimeException(String.format("Unexpected duplicate property name '%s'", name));
@@ -221,7 +220,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
   }
 
   /**
-   * Creates a new {@link PropertyGenerator} for the provided {@link FlagInstance} and registers it
+   * Creates a new {@link IPropertyGenerator} for the provided {@link IFlagInstance} and registers it
    * with this class generator.
    * 
    * @param instance
@@ -244,7 +243,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
    * 
    * @return an unmodifiable collection of property generators
    */
-  protected Collection<PropertyGenerator> getPropertyGenerators() {
+  protected Collection<IPropertyGenerator> getPropertyGenerators() {
     return Collections.unmodifiableCollection(propertyNameToPropertyGeneratorMap.values());
   }
 
@@ -263,6 +262,8 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
    * 
    * @param builder
    *          the builder to use for generating the class
+   * @param className
+   *          the name info for the class to build
    * @return the set of additional definitions for which child classes need to be generated
    * @throws IOException
    *           if an error occurred while building the class
@@ -278,13 +279,13 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
     // // generate a copy constructor
     // MethodSpec.Builder copyBuilder = MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC);
     // copyBuilder.addParameter(className, "that", Modifier.FINAL);
-    // for (PropertyGenerator property : getPropertyGenerators()) {
+    // for (IPropertyGenerator property : getPropertyGenerators()) {
     // additionalChildClasses.addAll(property.buildCopyStatements(copyBuilder, getTypeResolver()));
     // }
     // builder.addMethod(copyBuilder.build());
 
     // generate all the properties and access methods
-    for (PropertyGenerator property : getPropertyGenerators()) {
+    for (IPropertyGenerator property : getPropertyGenerators()) {
       additionalChildClasses.addAll(property.build(builder, getTypeResolver()));
     }
 

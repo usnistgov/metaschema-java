@@ -26,8 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IAnyAtomicType;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -53,12 +52,11 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
   }
 
   /**
-   * Get the item's type information.
+   * Get the item's type adapter.
    * 
-   * @return the type information for the item
+   * @return the type adapter for the item
    */
-  @NotNull
-  IAnyAtomicType getItemType();
+  IJavaTypeAdapter<?> getJavaTypeAdapter();
   //
   // <T extends IValuedItem> T cast(IValuedItem item);
 }

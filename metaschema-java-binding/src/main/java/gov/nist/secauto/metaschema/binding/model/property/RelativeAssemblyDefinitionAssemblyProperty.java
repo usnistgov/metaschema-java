@@ -26,14 +26,14 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 
 import javax.xml.namespace.QName;
 
 public class RelativeAssemblyDefinitionAssemblyProperty
     extends AbstractAssemblyDefinitionAssemblyProperty {
 
-  public RelativeAssemblyDefinitionAssemblyProperty(AssemblyClassBinding assemblyDefinition) {
+  public RelativeAssemblyDefinitionAssemblyProperty(IAssemblyClassBinding assemblyDefinition) {
     super(assemblyDefinition);
     if (!assemblyDefinition.isRoot()) {
       throw new IllegalArgumentException();

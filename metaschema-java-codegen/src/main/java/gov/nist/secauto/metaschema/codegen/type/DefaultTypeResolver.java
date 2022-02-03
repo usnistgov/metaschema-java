@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.codegen.type;
 
 import com.squareup.javapoet.ClassName;
 
-import gov.nist.secauto.metaschema.codegen.binding.config.BindingConfiguration;
+import gov.nist.secauto.metaschema.codegen.binding.config.IBindingConfiguration;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ILocalDefinition;
 
@@ -41,15 +41,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class DefaultTypeResolver implements TypeResolver {
+public class DefaultTypeResolver implements ITypeResolver {
   private static final Logger logger = LogManager.getLogger(DefaultTypeResolver.class);
 
   private final Map<String, Set<String>> packageToClassNamesMap = new HashMap<>();
   private final Map<INamedModelDefinition, ClassName> definitionToTypeMap = new HashMap<>();
 
-  private final BindingConfiguration bindingConfiguration;
+  private final IBindingConfiguration bindingConfiguration;
 
-  public DefaultTypeResolver(BindingConfiguration bindingConfiguration) {
+  public DefaultTypeResolver(IBindingConfiguration bindingConfiguration) {
     this.bindingConfiguration = bindingConfiguration;
   }
 

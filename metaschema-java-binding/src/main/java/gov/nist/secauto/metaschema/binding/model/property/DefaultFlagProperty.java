@@ -29,18 +29,18 @@ package gov.nist.secauto.metaschema.binding.model.property;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
+import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
-import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.ClassBinding;
-import gov.nist.secauto.metaschema.binding.model.FlagDefinition;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IBoundFlagDefinition;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
 import gov.nist.secauto.metaschema.binding.model.constraint.ValueConstraintSupport;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
+import gov.nist.secauto.metaschema.binding.model.property.info.IPropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
@@ -68,8 +68,8 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
 public class DefaultFlagProperty
-    extends AbstractNamedProperty<ClassBinding>
-    implements FlagProperty {
+    extends AbstractNamedProperty<IClassBinding>
+    implements IBoundFlagInstance {
   // private static final Logger logger = LogManager.getLogger(DefaultFlagProperty.class);
 
   private final Flag flag;
@@ -77,7 +77,7 @@ public class DefaultFlagProperty
   private InternalFlagDefinition definition;
   private IValueConstraintSupport constraints;
 
-  public DefaultFlagProperty(ClassBinding parentClassBinding, Field field, BindingContext bindingContext) {
+  public DefaultFlagProperty(IClassBinding parentClassBinding, Field field, IBindingContext bindingContext) {
     super(field, parentClassBinding);
     this.flag = field.getAnnotation(Flag.class);
     this.javaTypeAdapter = bindingContext.getJavaTypeAdapterInstance(this.flag.typeAdapter());
@@ -127,12 +127,12 @@ public class DefaultFlagProperty
   }
 
   @Override
-  public Object read(XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
-    throw new UnsupportedOperationException("use read(Object, StartElement, XmlParsingContext) instead");
+  public Object read(IXmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+    throw new UnsupportedOperationException("use read(Object, StartElement, IXmlParsingContext) instead");
   }
 
   @Override
-  public boolean read(Object parentInstance, StartElement parent, XmlParsingContext context) throws IOException {
+  public boolean read(Object parentInstance, StartElement parent, IXmlParsingContext context) throws IOException {
 
     // when reading an attribute:
     // - "parent" will contain the attributes to read
@@ -153,12 +153,12 @@ public class DefaultFlagProperty
   }
 
   @Override
-  public PropertyCollector newPropertyCollector() {
+  public IPropertyCollector newPropertyCollector() {
     return new SingletonPropertyCollector();
   }
 
   @Override
-  protected Object readInternal(Object parentInstance, JsonParsingContext context) throws IOException {
+  protected Object readInternal(Object parentInstance, IJsonParsingContext context) throws IOException {
     JsonParser parser = context.getReader();
 
     // advance past the property name
@@ -180,12 +180,12 @@ public class DefaultFlagProperty
   }
 
   @Override
-  public Supplier<?> readValueAndSupply(JsonParsingContext context) throws IOException {
+  public Supplier<?> readValueAndSupply(IJsonParsingContext context) throws IOException {
     return getJavaTypeAdapter().parseAndSupply(context.getReader());
   }
 
   @Override
-  public boolean write(Object instance, QName parentName, XmlWritingContext context)
+  public boolean write(Object instance, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     QName name = getXmlQName();
     String value;
@@ -209,7 +209,7 @@ public class DefaultFlagProperty
   }
 
   @Override
-  public void write(Object instance, JsonWritingContext context) throws IOException {
+  public void write(Object instance, IJsonWritingContext context) throws IOException {
     JsonGenerator writer = context.getWriter();
 
     Object value = getValue(instance);
@@ -228,12 +228,12 @@ public class DefaultFlagProperty
   }
 
   @Override
-  public void writeValue(Object value, JsonWritingContext context) throws IOException {
+  public void writeValue(Object value, IJsonWritingContext context) throws IOException {
     getJavaTypeAdapter().writeJsonValue(value, context.getWriter());
   }
 
   @Override
-  public ClassBinding getContainingDefinition() {
+  public IClassBinding getContainingDefinition() {
     return getParentClassBinding();
   }
 
@@ -249,7 +249,7 @@ public class DefaultFlagProperty
   }
 
   @Override
-  public FlagDefinition getDefinition() {
+  public IBoundFlagDefinition getDefinition() {
     synchronized (this) {
       if (definition == null) {
         definition = new InternalFlagDefinition();
@@ -274,7 +274,7 @@ public class DefaultFlagProperty
     setValue(toInstance, copiedValue);
   }
 
-  private class InternalFlagDefinition implements FlagDefinition {
+  private class InternalFlagDefinition implements IBoundFlagDefinition {
     @Override
     public IJavaTypeAdapter<?> getDatatype() {
       return getJavaTypeAdapter();
@@ -336,7 +336,7 @@ public class DefaultFlagProperty
     }
 
     @Override
-    public BindingContext getBindingContext() {
+    public IBindingContext getBindingContext() {
       return getParentClassBinding().getBindingContext();
     }
 

@@ -9,7 +9,7 @@
 
 	<artifactId>metaschema-model-common</artifactId>
 
-	<name>Metaschema Common Model</name>
+	<name>Metaschema API</name>
 
 	<url>${site.url}${project.artifactId}/</url>
 	<distributionManagement>
@@ -143,10 +143,14 @@
 				<groupId>org.antlr</groupId>
 				<artifactId>antlr4-maven-plugin</artifactId>
 				<configuration>
-					<sourceDirectory>${basedir}</sourceDirectory>
-					<grammars>metapath10.g4</grammars>
+					<arguments>
+						<argument>-package</argument>
+						<argument>gov.nist.secauto.metaschema.model.common.metapath.antlr</argument>
+						<argument>-o</argument>
+            			<argument>${project.build.directory}/generated-sources/antlr4/gov/nist/secauto/metaschema/model/common/metapath/antlr</argument>
+					</arguments>
 					<visitor>true</visitor>
-					<listener>true</listener>
+					<listener>false</listener>
 				</configuration>
 				<executions>
 					<execution>
@@ -156,6 +160,7 @@
 					</execution>
 				</executions>
 			</plugin>
+<!--
 			<plugin>
 				<groupId>com.khubla.antlr</groupId>
 				<artifactId>antlr4test-maven-plugin</artifactId>
@@ -175,6 +180,7 @@
 					</execution>
 				</executions>
 			</plugin>
+-->
 		</plugins>
 	</build>
 </project>

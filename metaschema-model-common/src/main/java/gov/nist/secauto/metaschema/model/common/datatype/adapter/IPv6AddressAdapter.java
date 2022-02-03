@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IIPv6AddressType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIPv6AddressItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -38,8 +38,7 @@ import inet.ipaddr.IncompatibleAddressException;
 import inet.ipaddr.ipv6.IPv6Address;
 
 public class IPv6AddressAdapter
-    extends AbstractJavaTypeAdapter<IPv6Address, IIPv6AddressItem>
-    implements IIPv6AddressType {
+    extends AbstractJavaTypeAdapter<IPv6Address, IIPv6AddressItem> {
   private static final IPAddressStringParameters IPv6;
 
   static {
@@ -83,6 +82,6 @@ public class IPv6AddressAdapter
   @Override
   public IIPv6AddressItem newItem(Object value) {
     IPv6Address item = toValue(value);
-    return new IPv6AddressItemImpl(item);
+    return IIPv6AddressItem.valueOf(item);
   }
 }

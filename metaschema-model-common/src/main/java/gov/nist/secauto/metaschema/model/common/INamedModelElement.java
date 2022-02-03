@@ -34,6 +34,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.xml.namespace.QName;
 
+/**
+ * A marker interface for Metaschema constructs that can be members of a Metaschema definition's
+ * model that are named.
+ */
 public interface INamedModelElement extends IModelElement {
   /**
    * Get the XML qualified name to use in XML.

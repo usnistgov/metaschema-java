@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.ExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -108,5 +108,5 @@ public interface IExpression {
    *          the visitor context
    * @return the result of evaluation
    */
-  <RESULT, CONTEXT> RESULT accept(@NotNull ExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
+  <RESULT, CONTEXT> RESULT accept(@NotNull IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
 }

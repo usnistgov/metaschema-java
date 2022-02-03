@@ -30,25 +30,25 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
+import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
-import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.constraint.AssemblyConstraintSupport;
-import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultAssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultFieldProperty;
-import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
-import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
-import gov.nist.secauto.metaschema.binding.model.property.NamedProperty;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
@@ -91,11 +91,12 @@ import javax.xml.stream.events.XMLEvent;
 
 public class DefaultAssemblyClassBinding
     extends AbstractClassBinding
-    implements AssemblyClassBinding {
+    implements IAssemblyClassBinding {
   private static final Logger logger = LogManager.getLogger(DefaultAssemblyClassBinding.class);
 
   /**
-   * Create a new {@link ClassBinding} for a Java bean annotated with the {@link Assembly} annotation.
+   * Create a new {@link IClassBinding} for a Java bean annotated with the {@link Assembly}
+   * annotation.
    * 
    * @param clazz
    *          the Java bean class
@@ -103,18 +104,18 @@ public class DefaultAssemblyClassBinding
    *          the Metaschema binding environment context
    * @return the Metaschema assembly binding for the class
    */
-  public static DefaultAssemblyClassBinding createInstance(Class<?> clazz, BindingContext bindingContext) {
+  public static DefaultAssemblyClassBinding createInstance(Class<?> clazz, IBindingContext bindingContext) {
     DefaultAssemblyClassBinding retval = new DefaultAssemblyClassBinding(clazz, bindingContext);
     return retval;
   }
 
   private MetaschemaAssembly metaschemaAssembly;
-  private Map<String, NamedModelProperty> modelInstances;
+  private Map<String, IBoundNamedModelInstance> modelInstances;
   private final QName xmlRootQName;
   private IAssemblyConstraintSupport constraints;
 
   /**
-   * Construct a new {@link ClassBinding} for a Java bean annotated with the {@link Assembly}
+   * Construct a new {@link IClassBinding} for a Java bean annotated with the {@link Assembly}
    * annotation.
    * 
    * @param clazz
@@ -122,7 +123,7 @@ public class DefaultAssemblyClassBinding
    * @param bindingContext
    *          the class binding context for which this class is participating
    */
-  protected DefaultAssemblyClassBinding(Class<?> clazz, BindingContext bindingContext) {
+  protected DefaultAssemblyClassBinding(Class<?> clazz, IBindingContext bindingContext) {
     super(clazz, bindingContext);
     Objects.requireNonNull(clazz, "clazz");
     if (!clazz.isAnnotationPresent(MetaschemaAssembly.class)) {
@@ -209,7 +210,7 @@ public class DefaultAssemblyClassBinding
    */
   protected synchronized void initalizeModelInstances() {
     if (this.modelInstances == null) {
-      Map<String, NamedModelProperty> modelInstances = new LinkedHashMap<>();
+      Map<String, IBoundNamedModelInstance> modelInstances = new LinkedHashMap<>();
       for (java.lang.reflect.Field field : getModelInstanceFields(getBoundClass())) {
 
         Assembly assemblyAnnotation = field.getAnnotation(Assembly.class);
@@ -230,34 +231,35 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public Collection<? extends NamedModelProperty> getModelInstances() {
+  public Collection<? extends IBoundNamedModelInstance> getModelInstances() {
     return getNamedModelInstances();
   }
 
   @Override
-  public Map<String, ? extends NamedModelProperty> getNamedModelInstanceMap() {
+  public Map<String, ? extends IBoundNamedModelInstance> getNamedModelInstanceMap() {
     initalizeModelInstances();
     return modelInstances;
   }
 
   @Override
-  public Map<String, ? extends NamedProperty> getNamedInstances(Predicate<FlagProperty> flagFilter) {
+  public Map<String, ? extends IBoundNamedInstance> getNamedInstances(Predicate<IBoundFlagInstance> flagFilter) {
     return Stream.concat(super.getNamedInstances(flagFilter).values().stream(), getModelInstances().stream())
-        .collect(Collectors.toMap(NamedProperty::getJsonName, Function.identity()));
+        .collect(Collectors.toMap(IBoundNamedInstance::getJsonName, Function.identity()));
   }
 
   @Override
-  public Map<String, ? extends FieldProperty> getFieldInstanceMap() {
+  public Map<String, ? extends IBoundFieldInstance> getFieldInstanceMap() {
     return Collections.unmodifiableMap(
-        getNamedModelInstances().stream().filter(x -> x instanceof FieldProperty).map(x -> (FieldProperty) x)
-            .collect(Collectors.toMap(FieldProperty::getEffectiveName, Function.identity())));
+        getNamedModelInstances().stream().filter(x -> x instanceof IBoundFieldInstance)
+            .map(x -> (IBoundFieldInstance) x)
+            .collect(Collectors.toMap(IBoundFieldInstance::getEffectiveName, Function.identity())));
   }
 
   @Override
-  public Map<String, ? extends AssemblyProperty> getAssemblyInstanceMap() {
+  public Map<String, ? extends IBoundAssemblyInstance> getAssemblyInstanceMap() {
     return Collections.unmodifiableMap(getNamedModelInstances().stream()
-        .filter(x -> x instanceof AssemblyProperty).map(x -> (AssemblyProperty) x)
-        .collect(Collectors.toMap(AssemblyProperty::getEffectiveName, Function.identity())));
+        .filter(x -> x instanceof IBoundAssemblyInstance).map(x -> (IBoundAssemblyInstance) x)
+        .collect(Collectors.toMap(IBoundAssemblyInstance::getEffectiveName, Function.identity())));
   }
 
   @Override
@@ -326,7 +328,7 @@ public class DefaultAssemblyClassBinding
 
   // TODO: this is unused, remove it
   @Override
-  public Object readRoot(XmlParsingContext context) throws XMLStreamException, BindingException, IOException {
+  public Object readRoot(IXmlParsingContext context) throws XMLStreamException, BindingException, IOException {
 
     QName rootQName = getRootXmlQName();
     XMLEventReader2 eventReader = context.getReader();
@@ -354,7 +356,7 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public Object readRoot(JsonParsingContext context) throws BindingException, IOException {
+  public Object readRoot(IJsonParsingContext context) throws BindingException, IOException {
     String[] ignoreFieldsArray = getMetaschemaAssemblyAnnotation().ignoreRootJsonProperties();
 
     Set<String> ignoreRootFields;
@@ -415,17 +417,17 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  protected void readBody(Object instance, StartElement start, XmlParsingContext context)
+  protected void readBody(Object instance, StartElement start, IXmlParsingContext context)
       throws IOException, XMLStreamException, BindingException {
-    Set<NamedModelProperty> unhandledProperties = new HashSet<>();
-    for (NamedModelProperty modelProperty : getModelInstances()) {
+    Set<IBoundNamedModelInstance> unhandledProperties = new HashSet<>();
+    for (IBoundNamedModelInstance modelProperty : getModelInstances()) {
       if (!modelProperty.read(instance, start, context)) {
         unhandledProperties.add(modelProperty);
       }
     }
 
     // process all properties that did not get a value
-    for (NamedModelProperty property : unhandledProperties) {
+    for (IBoundNamedModelInstance property : unhandledProperties) {
       // use the default value of the collector
       property.setValue(instance, property.newPropertyCollector().getValue());
 
@@ -433,7 +435,7 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public List<Object> readItem(Object parentInstance, JsonParsingContext context)
+  public List<Object> readItem(Object parentInstance, IJsonParsingContext context)
       throws IOException, BindingException {
 
     Object instance = newInstance();
@@ -448,13 +450,13 @@ public class DefaultAssemblyClassBinding
   }
 
   protected void readInternal(@SuppressWarnings("unused") Object parentInstance, Object instance,
-      JsonParsingContext context) throws BindingException, IOException {
+      IJsonParsingContext context) throws BindingException, IOException {
     JsonParser jsonParser = context.getReader();
 
     JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME);
 
-    FlagProperty jsonKey = getJsonKeyFlagInstance();
-    Map<String, ? extends NamedProperty> properties;
+    IBoundFlagInstance jsonKey = getJsonKeyFlagInstance();
+    Map<String, ? extends IBoundNamedInstance> properties;
     if (jsonKey != null) {
       properties = getNamedInstances((flag) -> {
         return !jsonKey.equals(flag);
@@ -476,7 +478,7 @@ public class DefaultAssemblyClassBinding
     Set<String> handledProperties = new HashSet<>();
     while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
       String propertyName = jsonParser.getCurrentName();
-      NamedProperty property = properties.get(propertyName);
+      IBoundNamedInstance property = properties.get(propertyName);
 
       boolean handled = false;
       if (property != null) {
@@ -494,10 +496,10 @@ public class DefaultAssemblyClassBinding
     }
 
     // set undefined properties
-    for (Map.Entry<String, ? extends NamedProperty> entry : properties.entrySet()) {
+    for (Map.Entry<String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
       if (!handledProperties.contains(entry.getKey())) {
         // use the default value of the collector
-        NamedProperty property = entry.getValue();
+        IBoundNamedInstance property = entry.getValue();
         property.setValue(instance, property.newPropertyCollector().getValue());
       }
     }
@@ -509,7 +511,7 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public void writeRoot(Object instance, XmlWritingContext context) throws XMLStreamException, IOException {
+  public void writeRoot(Object instance, IXmlWritingContext context) throws XMLStreamException, IOException {
 
     XMLStreamWriter2 writer = context.getWriter();
 
@@ -531,7 +533,7 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public void writeRoot(Object instance, JsonWritingContext context) throws IOException {
+  public void writeRoot(Object instance, IJsonWritingContext context) throws IOException {
 
     JsonGenerator writer = context.getWriter();
 
@@ -560,7 +562,7 @@ public class DefaultAssemblyClassBinding
    * @throws NullPointerException
    *           if there is a JSON key configured and the key property's value is {@code null}
    */
-  protected void writeInternal(Object instance, boolean writeObjectWrapper, JsonWritingContext context)
+  protected void writeInternal(Object instance, boolean writeObjectWrapper, IJsonWritingContext context)
       throws IOException {
     JsonGenerator writer = context.getWriter();
 
@@ -568,8 +570,8 @@ public class DefaultAssemblyClassBinding
       writer.writeStartObject();
     }
 
-    FlagProperty jsonKey = getJsonKeyFlagInstance();
-    Map<String, ? extends NamedProperty> properties;
+    IBoundFlagInstance jsonKey = getJsonKeyFlagInstance();
+    Map<String, ? extends IBoundNamedInstance> properties;
     if (jsonKey != null) {
       properties = getNamedInstances((flag) -> {
         return !jsonKey.equals(flag);
@@ -588,7 +590,7 @@ public class DefaultAssemblyClassBinding
       properties = getNamedInstances(null);
     }
 
-    for (NamedProperty property : properties.values()) {
+    for (IBoundNamedInstance property : properties.values()) {
       property.write(instance, context);
     }
 
@@ -603,15 +605,15 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  protected void writeBody(Object instance, QName parentName, XmlWritingContext context)
+  protected void writeBody(Object instance, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
-    for (NamedModelProperty modelProperty : getModelInstances()) {
+    for (IBoundNamedModelInstance modelProperty : getModelInstances()) {
       modelProperty.write(instance, parentName, context);
     }
   }
 
   @Override
-  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, JsonWritingContext context)
+  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, IJsonWritingContext context)
       throws IOException {
     for (Object item : items) {
       writeInternal(item, writeObjectWrapper, context);
@@ -623,7 +625,7 @@ public class DefaultAssemblyClassBinding
       throws BindingException {
     super.copyBoundObjectInternal(fromInstance, toInstance);
 
-    for (NamedModelProperty property : getModelInstances()) {
+    for (IBoundNamedModelInstance property : getModelInstances()) {
       property.copyBoundObject(fromInstance, toInstance);
     }
   }

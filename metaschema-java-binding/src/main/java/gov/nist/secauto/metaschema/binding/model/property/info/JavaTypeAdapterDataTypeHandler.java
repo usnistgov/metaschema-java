@@ -27,12 +27,12 @@
 package gov.nist.secauto.metaschema.binding.model.property.info;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
-import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.ClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
@@ -48,11 +48,11 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 // TODO: implement can handle QName for XML parsing
-public class JavaTypeAdapterDataTypeHandler implements DataTypeHandler {
+public class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
   private final IJavaTypeAdapter<?> adapter;
-  private final NamedModelProperty property;
+  private final IBoundNamedModelInstance property;
 
-  public JavaTypeAdapterDataTypeHandler(IJavaTypeAdapter<?> adapter, NamedModelProperty property) {
+  public JavaTypeAdapterDataTypeHandler(IJavaTypeAdapter<?> adapter, IBoundNamedModelInstance property) {
     Objects.requireNonNull(adapter, "adapter");
     Objects.requireNonNull(property, "property");
     this.adapter = adapter;
@@ -60,7 +60,7 @@ public class JavaTypeAdapterDataTypeHandler implements DataTypeHandler {
   }
 
   @Override
-  public NamedModelProperty getProperty() {
+  public IBoundNamedModelInstance getProperty() {
     return property;
   }
 
@@ -70,7 +70,7 @@ public class JavaTypeAdapterDataTypeHandler implements DataTypeHandler {
   }
 
   @Override
-  public ClassBinding getClassBinding() {
+  public IClassBinding getClassBinding() {
     // this is always null
     return null;
   }
@@ -81,26 +81,26 @@ public class JavaTypeAdapterDataTypeHandler implements DataTypeHandler {
   }
 
   @Override
-  public List<Object> get(Object parentInstance, JsonParsingContext context)
+  public List<Object> get(Object parentInstance, IJsonParsingContext context)
       throws BindingException, IOException {
     Object value = adapter.parse(context.getReader());
     return value != null ? Collections.singletonList(value) : Collections.emptyList();
   }
 
   @Override
-  public Object get(Object parentInstance, StartElement start, XmlParsingContext context)
+  public Object get(Object parentInstance, StartElement start, IXmlParsingContext context)
       throws BindingException, IOException, XMLStreamException {
     return adapter.parse(context.getReader());
   }
 
   @Override
-  public void accept(Object item, QName currentParentName, XmlWritingContext context)
+  public void accept(Object item, QName currentParentName, IXmlWritingContext context)
       throws IOException, XMLStreamException {
     adapter.writeXmlCharacters(item, currentParentName, context.getWriter());
   }
 
   @Override
-  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, JsonWritingContext context)
+  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, IJsonWritingContext context)
       throws IOException {
     for (Object item : items) {
       adapter.writeJsonValue(item, context.getWriter());

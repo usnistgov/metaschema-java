@@ -26,17 +26,17 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
 
 import org.jetbrains.annotations.NotNull;
 
-public class IntermediateXdmFieldNodeItemImpl
-    extends AbstractBoundXdmFieldNodeItem<FieldProperty> {
+class IntermediateXdmFieldNodeItemImpl
+    extends AbstractBoundXdmFieldNodeItem<IBoundFieldInstance> {
 
   private final IBoundXdmAssemblyNodeItem parent;
 
   public IntermediateXdmFieldNodeItemImpl(
-      @NotNull FieldProperty instance,
+      @NotNull IBoundFieldInstance instance,
       @NotNull Object value,
       int position,
       @NotNull IBoundXdmAssemblyNodeItem parent) {

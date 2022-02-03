@@ -29,19 +29,19 @@ package gov.nist.secauto.metaschema.binding.model.property;
 import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
-import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.info.ClassDataTypeHandler;
-import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
+import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.JavaTypeAdapterDataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.ListPropertyInfo;
 import gov.nist.secauto.metaschema.binding.model.property.info.MapPropertyInfo;
-import gov.nist.secauto.metaschema.binding.model.property.info.ModelPropertyInfo;
-import gov.nist.secauto.metaschema.binding.model.property.info.PropertyCollector;
+import gov.nist.secauto.metaschema.binding.model.property.info.IModelPropertyInfo;
+import gov.nist.secauto.metaschema.binding.model.property.info.IPropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyInfo;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
@@ -66,14 +66,14 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 public abstract class AbstractNamedModelProperty
-    extends AbstractNamedProperty<AssemblyClassBinding>
-    implements NamedModelProperty {
+    extends AbstractNamedProperty<IAssemblyClassBinding>
+    implements IBoundNamedModelInstance {
   // private static final Logger logger = LogManager.getLogger(AbstractNamedModelProperty.class);
 
-  private ModelPropertyInfo propertyInfo;
-  private DataTypeHandler dataTypeHandler;
+  private IModelPropertyInfo propertyInfo;
+  private IDataTypeHandler dataTypeHandler;
 
-  protected AbstractNamedModelProperty(AssemblyClassBinding parentClassBinding, Field field) {
+  protected AbstractNamedModelProperty(IAssemblyClassBinding parentClassBinding, Field field) {
     super(field, parentClassBinding);
   }
 
@@ -89,11 +89,11 @@ public abstract class AbstractNamedModelProperty
     return getPropertyInfo().getItemType();
   }
 
-  protected ModelPropertyInfo newPropertyInfo() {
+  protected IModelPropertyInfo newPropertyInfo() {
     // create the property info
     Type type = getField().getGenericType();
 
-    ModelPropertyInfo retval;
+    IModelPropertyInfo retval;
     if (type instanceof ParameterizedType) {
       if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
         if (JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())) {
@@ -157,7 +157,7 @@ public abstract class AbstractNamedModelProperty
    * 
    * @return the property information for the bound property
    */
-  protected synchronized ModelPropertyInfo getPropertyInfo() {
+  protected synchronized IModelPropertyInfo getPropertyInfo() {
     if (propertyInfo == null) {
       propertyInfo = newPropertyInfo();
       assert this.propertyInfo != null;
@@ -170,12 +170,12 @@ public abstract class AbstractNamedModelProperty
     return getPropertyInfo().getItemsFromValue(value);
   }
 
-  protected DataTypeHandler newDataTypeHandler() {
-    DataTypeHandler retval;
+  protected IDataTypeHandler newDataTypeHandler() {
+    IDataTypeHandler retval;
     // get the binding supplier
     IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
     if (adapter == null) {
-      ClassBinding classBinding
+      IClassBinding classBinding
           = getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
       if (classBinding != null) {
         retval = new ClassDataTypeHandler(classBinding, this);
@@ -191,14 +191,14 @@ public abstract class AbstractNamedModelProperty
   }
 
   @Override
-  public synchronized DataTypeHandler getDataTypeHandler() {
+  public synchronized IDataTypeHandler getDataTypeHandler() {
     if (dataTypeHandler == null) {
       dataTypeHandler = newDataTypeHandler();
     }
     return dataTypeHandler;
   }
 
-  public boolean isNextProperty(XmlParsingContext context) throws XMLStreamException {
+  public boolean isNextProperty(IXmlParsingContext context) throws XMLStreamException {
     XMLEventReader2 eventReader = context.getReader();
 
     XmlEventUtil.skipWhitespace(eventReader);
@@ -224,7 +224,7 @@ public abstract class AbstractNamedModelProperty
   }
 
   @Override
-  public Object read(XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+  public Object read(IXmlParsingContext context) throws IOException, BindingException, XMLStreamException {
     Object retval = null;
     if (isNextProperty(context)) {
       retval = readInternal(null, null, context);
@@ -233,7 +233,7 @@ public abstract class AbstractNamedModelProperty
   }
 
   @Override
-  public boolean read(Object parentInstance, StartElement start, XmlParsingContext context)
+  public boolean read(Object parentInstance, StartElement start, IXmlParsingContext context)
       throws IOException, XMLStreamException, BindingException {
     boolean handled = isNextProperty(context);
     if (handled) {
@@ -244,7 +244,7 @@ public abstract class AbstractNamedModelProperty
   }
 
   @Override
-  protected Object readInternal(Object parentInstance, JsonParsingContext context)
+  protected Object readInternal(Object parentInstance, IJsonParsingContext context)
       throws IOException, BindingException {
     JsonParser parser = context.getReader();
 
@@ -252,14 +252,14 @@ public abstract class AbstractNamedModelProperty
     parser.nextFieldName();
 
     // parse the value
-    PropertyCollector collector = newPropertyCollector();
-    ModelPropertyInfo info = getPropertyInfo();
+    IPropertyCollector collector = newPropertyCollector();
+    IModelPropertyInfo info = getPropertyInfo();
     info.readValue(collector, parentInstance, context);
 
     return collector.getValue();
   }
 
-  protected Object readInternal(Object parentInstance, StartElement start, XmlParsingContext context)
+  protected Object readInternal(Object parentInstance, StartElement start, IXmlParsingContext context)
       throws IOException, XMLStreamException, BindingException {
     XMLEventReader2 eventReader = context.getReader();
 
@@ -274,7 +274,7 @@ public abstract class AbstractNamedModelProperty
       currentStart = groupEvent.asStartElement();
     }
 
-    PropertyCollector collector = newPropertyCollector();
+    IPropertyCollector collector = newPropertyCollector();
     // There are zero or more named values based on cardinality
     getPropertyInfo().readValue(collector, parentInstance, currentStart, context);
 
@@ -292,18 +292,19 @@ public abstract class AbstractNamedModelProperty
   }
 
   @Override
-  public PropertyCollector newPropertyCollector() {
+  public IPropertyCollector newPropertyCollector() {
     return getPropertyInfo().newPropertyCollector();
   }
 
   @Override
-  public List<Object> readItem(Object parentInstance, JsonParsingContext context) throws BindingException, IOException {
-    DataTypeHandler supplier = getDataTypeHandler();
+  public List<Object> readItem(Object parentInstance, IJsonParsingContext context)
+      throws BindingException, IOException {
+    IDataTypeHandler supplier = getDataTypeHandler();
     return supplier.get(parentInstance, context);
   }
 
   @Override
-  public boolean write(Object parentInstance, QName parentName, XmlWritingContext context)
+  public boolean write(Object parentInstance, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     Object value = getValue(parentInstance);
     if (value == null) {
@@ -333,19 +334,19 @@ public abstract class AbstractNamedModelProperty
   }
   //
   // @Override
-  // public void writeItem(Object parentInstance, JsonParsingContext context) {
-  // DataTypeHandler supplier = getBindingSupplier();
+  // public void writeItem(Object parentInstance, IJsonParsingContext context) {
+  // IDataTypeHandler supplier = getBindingSupplier();
   // return supplier.write(parentInstance, context);
   // }
   //
   // @Override
-  // public void writeValue(Object parentInstance, JsonParsingContext context) {
-  // ModelPropertyInfo info = getPropertyInfo();
+  // public void writeValue(Object parentInstance, IJsonParsingContext context) {
+  // IModelPropertyInfo info = getPropertyInfo();
   // return info.writeValue(parentInstance, context);
   // }
 
   @Override
-  public void write(Object parentInstance, JsonWritingContext context) throws IOException {
+  public void write(Object parentInstance, IJsonWritingContext context) throws IOException {
     if (getPropertyInfo().isValueSet(parentInstance)) {
       // write the field name
       context.getWriter().writeFieldName(getJsonName());
@@ -359,8 +360,8 @@ public abstract class AbstractNamedModelProperty
   public void copyBoundObject(@NotNull Object fromInstance, @NotNull Object toInstance) throws BindingException {
     Object value = getValue(fromInstance);
     if (value != null) {
-      ModelPropertyInfo propertyInfo = getPropertyInfo();
-      PropertyCollector collector = newPropertyCollector();
+      IModelPropertyInfo propertyInfo = getPropertyInfo();
+      IPropertyCollector collector = newPropertyCollector();
 
       propertyInfo.copy(fromInstance, toInstance, collector);
 

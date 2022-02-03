@@ -9,3 +9,10 @@
 target/
 /metaschema.xpr
 /metaschema-schema-generator/schema.out.xsd
+pom.xml.releaseBackup
+release.properties
+
+# NodeJS
+node_modules/
+package.json
+package-lock.json

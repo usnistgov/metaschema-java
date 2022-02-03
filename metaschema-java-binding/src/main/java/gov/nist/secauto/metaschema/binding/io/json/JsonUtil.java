@@ -30,8 +30,8 @@ import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import gov.nist.secauto.metaschema.binding.model.ClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.Property;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundInstance;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -157,8 +157,8 @@ public class JsonUtil {
         JsonUtil.toString(location));
   }
 
-  public static String toLocationContext(JsonParser parser, ClassBinding classBinding,
-      Property property) {
+  public static String toLocationContext(JsonParser parser, IClassBinding classBinding,
+      IBoundInstance property) {
     StringBuilder builder = new StringBuilder();
     builder.append("property '");
     builder.append(property.getJavaPropertyName());

@@ -27,15 +27,14 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractIntegerAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IPositiveIntegerType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IPositiveIntegerItem;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
 public class PositiveIntegerAdapter
-    extends AbstractIntegerAdapter<IPositiveIntegerItem>
-    implements IPositiveIntegerType {
+    extends AbstractIntegerAdapter<IPositiveIntegerItem> {
 
   public PositiveIntegerAdapter() {
   }
@@ -54,6 +53,6 @@ public class PositiveIntegerAdapter
   @Override
   public IPositiveIntegerItem newItem(Object value) {
     BigInteger item = toValue(value);
-    return new PositiveIntegerItemImpl(item);
+    return IPositiveIntegerItem.valueOf(item);
   }
 }

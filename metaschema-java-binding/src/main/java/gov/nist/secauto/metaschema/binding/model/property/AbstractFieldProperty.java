@@ -27,11 +27,11 @@
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
-import gov.nist.secauto.metaschema.binding.model.property.info.XmlBindingSupplier;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
+import gov.nist.secauto.metaschema.binding.model.property.info.IXmlBindingSupplier;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
@@ -48,14 +48,14 @@ import javax.xml.stream.events.XMLEvent;
 
 public abstract class AbstractFieldProperty
     extends AbstractNamedModelProperty
-    implements FieldProperty {
+    implements IBoundFieldInstance {
 
-  public AbstractFieldProperty(AssemblyClassBinding parentClassBinding, java.lang.reflect.Field field) {
+  public AbstractFieldProperty(IAssemblyClassBinding parentClassBinding, java.lang.reflect.Field field) {
     super(parentClassBinding, field);
   }
 
   @Override
-  public boolean isNextProperty(XmlParsingContext context) throws XMLStreamException {
+  public boolean isNextProperty(IXmlParsingContext context) throws XMLStreamException {
     boolean retval = super.isNextProperty(context);
     if (!retval) {
       XMLEventReader2 eventReader = context.getReader();
@@ -71,9 +71,9 @@ public abstract class AbstractFieldProperty
 
   @Override
   public Object readItem(Object parentInstance, StartElement start,
-      XmlParsingContext context) throws BindingException, XMLStreamException, IOException {
+      IXmlParsingContext context) throws BindingException, XMLStreamException, IOException {
     // figure out how to parse the item
-    XmlBindingSupplier supplier = getDataTypeHandler();
+    IXmlBindingSupplier supplier = getDataTypeHandler();
 
     // figure out if we need to parse the wrapper or not
     IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
@@ -116,10 +116,10 @@ public abstract class AbstractFieldProperty
   }
 
   @Override
-  public boolean writeItem(Object item, QName parentName, XmlWritingContext context)
+  public boolean writeItem(Object item, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     // figure out how to parse the item
-    DataTypeHandler handler = getDataTypeHandler();
+    IDataTypeHandler handler = getDataTypeHandler();
 
     // figure out if we need to parse the wrapper or not
     boolean writeWrapper = isInXmlWrapped() || !handler.isUnrappedValueAllowedInXml();
@@ -144,7 +144,7 @@ public abstract class AbstractFieldProperty
   }
 
   @Override
-  public AssemblyClassBinding getContainingDefinition() {
+  public IAssemblyClassBinding getContainingDefinition() {
     return getParentClassBinding();
   }
 

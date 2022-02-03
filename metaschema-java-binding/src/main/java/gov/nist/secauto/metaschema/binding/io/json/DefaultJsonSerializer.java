@@ -31,10 +31,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
+import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -44,7 +44,7 @@ public class DefaultJsonSerializer<CLASS>
     extends AbstractSerializer<CLASS> {
   private JsonFactory jsonFactory;
 
-  public DefaultJsonSerializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {
+  public DefaultJsonSerializer(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
@@ -92,8 +92,8 @@ public class DefaultJsonSerializer<CLASS>
   public void serialize(CLASS data, Writer writer) throws BindingException {
     JsonGenerator generator = newJsonGenerator(writer);
     try {
-      AssemblyClassBinding classBinding = getClassBinding();
-      JsonWritingContext writingContext = new DefaultJsonWritingContext(generator);
+      IAssemblyClassBinding classBinding = getClassBinding();
+      IJsonWritingContext writingContext = new DefaultJsonWritingContext(generator);
       classBinding.writeRoot(data, writingContext);
       generator.close();
     } catch (IOException ex) {

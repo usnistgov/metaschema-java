@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.AssemblyDefinition;
-import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
+import gov.nist.secauto.metaschema.binding.model.IBoundAssemblyDefinition;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmAssemblyNodeItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -43,10 +43,10 @@ public interface IBoundXdmAssemblyNodeItem extends IBoundXdmModelNodeItem, IXdmA
   IBoundXdmAssemblyNodeItem getParentContentNodeItem();
 
   @Override
-  AssemblyDefinition getDefinition();
+  IBoundAssemblyDefinition getDefinition();
 
   @Override
-  AssemblyProperty getInstance();
+  IBoundAssemblyInstance getInstance();
 
   @Override
   default <RESULT, CONTEXT> RESULT accept(@NotNull IBoundXdmNodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {

@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.binding.model.property.info;
 
 import java.util.Collection;
 
-public class SingletonPropertyCollector implements PropertyCollector {
+public class SingletonPropertyCollector implements IPropertyCollector {
   private Object object;
 
   public SingletonPropertyCollector() {

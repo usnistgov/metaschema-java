@@ -36,8 +36,7 @@ import com.vladsch.flexmark.util.ast.Node;
 import gov.nist.secauto.metaschema.model.common.datatype.IDatatype;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstCollectingVisitor;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.FlexmarkFactory;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.insertanchor.InsertAnchorNode;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.insertanchor.InsertVisitor;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertVisitor;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -55,7 +54,7 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 
 public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYPE>>
-    implements MarkupText, IDatatype<TYPE> {
+    implements IMarkupText, IDatatype<TYPE> {
   private static final String DEFAULT_HTML_NS = "http://www.w3.org/1999/xhtml";
   private static final String DEFAULT_HTML_PREFIX = "";
   @NotNull
@@ -139,7 +138,8 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   }
 
   @Override
-  public List<@NotNull InsertAnchorNode> getInserts(@NotNull Predicate<@NotNull InsertAnchorNode> filter) {
+  public List<gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode> getInserts(
+      @NotNull Predicate<gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode> filter) {
     InsertVisitor visitor = new InsertVisitor(filter);
     visitor.visitChildren(getDocument());
     return visitor.getInserts();

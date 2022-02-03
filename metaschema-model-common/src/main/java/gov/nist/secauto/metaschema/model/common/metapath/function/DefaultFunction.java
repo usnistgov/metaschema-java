@@ -26,18 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IAnyUriItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.type.InvalidTypeMetapathException;
-import gov.nist.secauto.metaschema.model.common.metapath.type.TypeMetapathException;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -60,7 +58,7 @@ public class DefaultFunction
   @NotNull
   private final ISequenceType result;
   @NotNull
-  private final FunctionExecutor handler;
+  private final IFunctionExecutor handler;
 
   /**
    * Construct a new function signature.
@@ -82,7 +80,7 @@ public class DefaultFunction
       @NotNull EnumSet<FunctionProperty> properties,
       @NotNull List<IArgument> arguments,
       @NotNull ISequenceType result,
-      @NotNull FunctionExecutor handler) {
+      @NotNull IFunctionExecutor handler) {
     super(name, arguments);
     this.properties = Collections.unmodifiableSet(properties);
     this.result = result;
@@ -182,7 +180,7 @@ public class DefaultFunction
       argument = argumentIterator.hasNext() ? argumentIterator.next() : function.isArityUnbounded() ? argument : null;
 
       if (argument == null) {
-        throw new TypeMetapathException(TypeMetapathException.INVALID_TYPE_ERROR,
+        throw new InvalidTypeMetapathException(
             String.format("argument signature doesn't match '%d'", function.toSignature()));
       }
 
@@ -194,7 +192,7 @@ public class DefaultFunction
       switch (occurrence) {
       case ONE: {
         if (size != 1) {
-          throw new TypeMetapathException(TypeMetapathException.INVALID_TYPE_ERROR,
+          throw new InvalidTypeMetapathException(
               String.format("a sequence of one expected, but found '%d'", size));
         }
 
@@ -204,7 +202,7 @@ public class DefaultFunction
       }
       case ZERO_OR_ONE: {
         if (size > 1) {
-          throw new TypeMetapathException(TypeMetapathException.INVALID_TYPE_ERROR,
+          throw new InvalidTypeMetapathException(
               String.format("a sequence of zero or one expected, but found '%d'", size));
         }
 
@@ -214,13 +212,13 @@ public class DefaultFunction
       }
       case ONE_OR_MORE:
         if (size < 1) {
-          throw new TypeMetapathException(TypeMetapathException.INVALID_TYPE_ERROR,
+          throw new InvalidTypeMetapathException(
               String.format("a sequence of zero or more expected, but found '%d'", size));
         }
         break;
       case ZERO:
         if (size != 0) {
-          throw new TypeMetapathException(TypeMetapathException.INVALID_TYPE_ERROR,
+          throw new InvalidTypeMetapathException(
               String.format("an empty sequence expected, but found '%d'", size));
         }
         break;

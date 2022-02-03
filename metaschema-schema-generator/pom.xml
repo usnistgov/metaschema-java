@@ -12,23 +12,23 @@
 
 	<name>Metaschema XML and JSON Schema Generator</name>
 
-  <url>${site.url}${project.artifactId}/</url>
-  <distributionManagement>
-    <site>
-      <id>nist-pages</id>
-      <url>${site.url}${project.artifactId}/</url>
-    </site>
-  </distributionManagement>
+	<url>${site.url}${project.artifactId}/</url>
+	<distributionManagement>
+		<site>
+			<id>nist-pages</id>
+			<url>${site.url}${project.artifactId}/</url>
+		</site>
+	</distributionManagement>
 
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>metaschema-model</artifactId>
 		</dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>metaschema-freemarker-support</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>metaschema-freemarker-support</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
@@ -58,10 +58,13 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
-			<!-- <plugin> -->
-			<!-- <groupId>org.apache.maven.plugins</groupId> -->
-			<!-- <artifactId>maven-checkstyle-plugin</artifactId> -->
-			<!-- </plugin> -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

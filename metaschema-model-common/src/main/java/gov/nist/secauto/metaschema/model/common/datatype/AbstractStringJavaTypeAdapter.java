@@ -26,12 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IStringType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 public abstract class AbstractStringJavaTypeAdapter<ITEM_TYPE extends IStringItem>
-    extends AbstractJavaTypeAdapter<String, ITEM_TYPE>
-    implements IStringType {
+    extends AbstractJavaTypeAdapter<String, ITEM_TYPE> {
 
   @SuppressWarnings("null")
   protected AbstractStringJavaTypeAdapter() {

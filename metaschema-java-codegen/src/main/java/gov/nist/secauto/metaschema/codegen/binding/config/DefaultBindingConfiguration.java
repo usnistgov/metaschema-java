@@ -26,13 +26,13 @@
 
 package gov.nist.secauto.metaschema.codegen.binding.config;
 
-import gov.nist.csrc.ns.metaschemaBinding.x10.JavaModelBindingType;
-import gov.nist.csrc.ns.metaschemaBinding.x10.JavaObjectDefinitionBindingType;
-import gov.nist.csrc.ns.metaschemaBinding.x10.MetaschemaBindingType;
-import gov.nist.csrc.ns.metaschemaBinding.x10.MetaschemaBindingsDocument;
-import gov.nist.csrc.ns.metaschemaBinding.x10.MetaschemaBindingsType;
-import gov.nist.csrc.ns.metaschemaBinding.x10.ModelBindingType;
-import gov.nist.csrc.ns.metaschemaBinding.x10.ObjectDefinitionBindingType;
+import gov.nist.secauto.metaschema.codegen.xmlbeans.JavaModelBindingType;
+import gov.nist.secauto.metaschema.codegen.xmlbeans.JavaObjectDefinitionBindingType;
+import gov.nist.secauto.metaschema.codegen.xmlbeans.MetaschemaBindingType;
+import gov.nist.secauto.metaschema.codegen.xmlbeans.MetaschemaBindingsDocument;
+import gov.nist.secauto.metaschema.codegen.xmlbeans.MetaschemaBindingsType;
+import gov.nist.secauto.metaschema.codegen.xmlbeans.ModelBindingType;
+import gov.nist.secauto.metaschema.codegen.xmlbeans.ObjectDefinitionBindingType;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
@@ -50,9 +50,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class DefaultBindingConfiguration implements BindingConfiguration {
+public class DefaultBindingConfiguration implements IBindingConfiguration {
   private Map<String, String> namespaceToPackageNameMap = new HashMap<>();
-  // metaschema location -> ModelType -> Definition Name -> BindingConfiguration
+  // metaschema location -> ModelType -> Definition Name -> IBindingConfiguration
   private final Map<String, MetaschemaBindingConfiguration> metaschemaUrlToMetaschemaBindingConfigurationMap
       = new HashMap<>();
 
@@ -69,13 +69,13 @@ public class DefaultBindingConfiguration implements BindingConfiguration {
     return getPackageNameForNamespace(namespace.toASCIIString());
   }
 
-  public DefinitionBindingConfiguration getBindingConfigurationForDefinition(INamedModelDefinition definition) {
+  public IDefinitionBindingConfiguration getBindingConfigurationForDefinition(INamedModelDefinition definition) {
     return getDefinitionBindingConfiguration(definition);
   }
 
   @Override
   public String getQualifiedBaseClassName(INamedModelDefinition definition) {
-    DefinitionBindingConfiguration config = getDefinitionBindingConfiguration(definition);
+    IDefinitionBindingConfiguration config = getDefinitionBindingConfiguration(definition);
 
     String retval = null;
     if (config != null) {
@@ -86,7 +86,7 @@ public class DefaultBindingConfiguration implements BindingConfiguration {
 
   @Override
   public String getClassName(INamedModelDefinition definition) {
-    DefinitionBindingConfiguration config = getDefinitionBindingConfiguration(definition);
+    IDefinitionBindingConfiguration config = getDefinitionBindingConfiguration(definition);
 
     String retval = null;
     if (config != null) {
@@ -160,9 +160,9 @@ public class DefaultBindingConfiguration implements BindingConfiguration {
   }
 
   // public void addMManagedObjectBindingConfig(String metaschemaUri, String name,
-  // MutableDefinitionBindingConfiguration managedObjectConfig) {
+  // IMutableDefinitionBindingConfiguration managedObjectConfig) {
   //
-  // Map<String, MutableDefinitionBindingConfiguration> metaschemaConfigs
+  // Map<String, IMutableDefinitionBindingConfiguration> metaschemaConfigs
   // = metaschemaUrlToObjectDefinitionMap.get(metaschemaUri);
   // if (metaschemaConfigs == null) {
   // metaschemaConfigs = new HashMap<>();
@@ -178,13 +178,13 @@ public class DefaultBindingConfiguration implements BindingConfiguration {
   // metaschemaConfigs.put(name, managedObjectConfig);
   // }
 
-  protected DefinitionBindingConfiguration getDefinitionBindingConfiguration(INamedModelDefinition definition) {
+  protected IDefinitionBindingConfiguration getDefinitionBindingConfiguration(INamedModelDefinition definition) {
     String metaschemaUri = definition.getContainingMetaschema().getLocation().toString();
     String definitionName = definition.getName();
 
     MetaschemaBindingConfiguration metaschemaConfig = getMetaschemaBindingConfiguration(metaschemaUri);
 
-    DefinitionBindingConfiguration retval = null;
+    IDefinitionBindingConfiguration retval = null;
     if (metaschemaConfig != null) {
       switch (definition.getModelType()) {
       case ASSEMBLY:
@@ -253,21 +253,21 @@ public class DefaultBindingConfiguration implements BindingConfiguration {
     }
     for (ObjectDefinitionBindingType assemblyBinding : metaschema.getDefineAssemblyBindingList()) {
       String name = assemblyBinding.getName();
-      DefinitionBindingConfiguration config = metaschemaConfig.getAssemblyDefinitionBindingConfig(name);
+      IDefinitionBindingConfiguration config = metaschemaConfig.getAssemblyDefinitionBindingConfig(name);
       config = processDefinitionBindingConfiguration(config, assemblyBinding);
       metaschemaConfig.addAssemblyDefinitionBindingConfig(name, config);
     }
 
     for (ObjectDefinitionBindingType fieldBinding : metaschema.getDefineFieldBindingList()) {
       String name = fieldBinding.getName();
-      DefinitionBindingConfiguration config = metaschemaConfig.getFieldDefinitionBindingConfig(name);
+      IDefinitionBindingConfiguration config = metaschemaConfig.getFieldDefinitionBindingConfig(name);
       config = processDefinitionBindingConfiguration(config, fieldBinding);
     }
   }
 
-  private MutableDefinitionBindingConfiguration processDefinitionBindingConfiguration(
-      DefinitionBindingConfiguration oldConfig, ObjectDefinitionBindingType objectDefinitionBinding) {
-    MutableDefinitionBindingConfiguration config;
+  private IMutableDefinitionBindingConfiguration processDefinitionBindingConfiguration(
+      IDefinitionBindingConfiguration oldConfig, ObjectDefinitionBindingType objectDefinitionBinding) {
+    IMutableDefinitionBindingConfiguration config;
     if (oldConfig != null) {
       config = new DefaultDefinitionBindingConfiguration(oldConfig);
     } else {
@@ -292,27 +292,27 @@ public class DefaultBindingConfiguration implements BindingConfiguration {
   }
 
   public class MetaschemaBindingConfiguration {
-    private final Map<String, DefinitionBindingConfiguration> assemblyBindingConfigs = new HashMap<>();
-    private final Map<String, DefinitionBindingConfiguration> fieldBindingConfigs = new HashMap<>();
+    private final Map<String, IDefinitionBindingConfiguration> assemblyBindingConfigs = new HashMap<>();
+    private final Map<String, IDefinitionBindingConfiguration> fieldBindingConfigs = new HashMap<>();
 
     private MetaschemaBindingConfiguration() {
     }
 
-    public DefinitionBindingConfiguration getAssemblyDefinitionBindingConfig(String name) {
+    public IDefinitionBindingConfiguration getAssemblyDefinitionBindingConfig(String name) {
       return assemblyBindingConfigs.get(name);
     }
 
-    public DefinitionBindingConfiguration getFieldDefinitionBindingConfig(String name) {
+    public IDefinitionBindingConfiguration getFieldDefinitionBindingConfig(String name) {
       return fieldBindingConfigs.get(name);
     }
 
-    public DefinitionBindingConfiguration addAssemblyDefinitionBindingConfig(String name,
-        DefinitionBindingConfiguration managedObjectConfig) {
+    public IDefinitionBindingConfiguration addAssemblyDefinitionBindingConfig(String name,
+        IDefinitionBindingConfiguration managedObjectConfig) {
       return assemblyBindingConfigs.put(name, managedObjectConfig);
     }
 
-    public DefinitionBindingConfiguration addFieldDefinitionBindingConfig(String name,
-        DefinitionBindingConfiguration managedObjectConfig) {
+    public IDefinitionBindingConfiguration addFieldDefinitionBindingConfig(String name,
+        IDefinitionBindingConfiguration managedObjectConfig) {
       return fieldBindingConfigs.put(name, managedObjectConfig);
     }
   }

@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IDateTimeType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -35,8 +35,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 
 public class DateTimeWithTZAdapter
-    extends AbstractJavaTypeAdapter<ZonedDateTime, IDateTimeItem>
-    implements IDateTimeType {
+    extends AbstractJavaTypeAdapter<ZonedDateTime, IDateTimeItem> {
 
   @SuppressWarnings("null")
   public DateTimeWithTZAdapter() {
@@ -79,6 +78,6 @@ public class DateTimeWithTZAdapter
   @Override
   public IDateTimeItem newItem(Object value) {
     ZonedDateTime item = toValue(value);
-    return new DateTimeWithTimeZoneItemImpl(item);
+    return IDateTimeItem.valueOf(item);
   }
 }

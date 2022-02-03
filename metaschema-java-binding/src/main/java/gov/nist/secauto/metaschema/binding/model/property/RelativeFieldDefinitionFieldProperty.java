@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.model.FieldClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +36,7 @@ import javax.xml.namespace.QName;
 public class RelativeFieldDefinitionFieldProperty
     extends AbstractFieldDefinitionFieldProperty {
 
-  public RelativeFieldDefinitionFieldProperty(@NotNull FieldClassBinding classBinding) {
+  public RelativeFieldDefinitionFieldProperty(@NotNull IFieldClassBinding classBinding) {
     super(classBinding);
   }
 

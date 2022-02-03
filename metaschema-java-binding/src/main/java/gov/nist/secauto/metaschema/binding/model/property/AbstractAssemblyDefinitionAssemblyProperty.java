@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.info.ClassDataTypeHandler;
-import gov.nist.secauto.metaschema.binding.model.property.info.DataTypeHandler;
-import gov.nist.secauto.metaschema.binding.model.property.info.ModelPropertyInfo;
+import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
+import gov.nist.secauto.metaschema.binding.model.property.info.IModelPropertyInfo;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyInfo;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
@@ -38,22 +38,22 @@ import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 public abstract class AbstractAssemblyDefinitionAssemblyProperty
     extends AbstractAssemblyProperty {
 
-  public AbstractAssemblyDefinitionAssemblyProperty(AssemblyClassBinding rootAssemblyDefinition) {
+  public AbstractAssemblyDefinitionAssemblyProperty(IAssemblyClassBinding rootAssemblyDefinition) {
     super(rootAssemblyDefinition, null);
   }
 
   @Override
-  public AssemblyClassBinding getDefinition() {
+  public IAssemblyClassBinding getDefinition() {
     return getParentClassBinding();
   }
 
   @Override
-  protected DataTypeHandler newDataTypeHandler() {
+  protected IDataTypeHandler newDataTypeHandler() {
     return new ClassDataTypeHandler(getDefinition(), this);
   }
 
   @Override
-  protected ModelPropertyInfo newPropertyInfo() {
+  protected IModelPropertyInfo newPropertyInfo() {
     return new SingletonPropertyInfo(this);
   }
 
@@ -73,7 +73,7 @@ public abstract class AbstractAssemblyDefinitionAssemblyProperty
   }
 
   @Override
-  public AssemblyClassBinding getContainingDefinition() {
+  public IAssemblyClassBinding getContainingDefinition() {
     return getParentClassBinding();
   }
 

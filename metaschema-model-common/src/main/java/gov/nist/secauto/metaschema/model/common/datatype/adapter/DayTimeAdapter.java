@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IDayTimeDurationType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -35,8 +35,7 @@ import java.time.Duration;
 import java.time.format.DateTimeParseException;
 
 public class DayTimeAdapter
-    extends AbstractJavaTypeAdapter<Duration, IDayTimeDurationItem>
-    implements IDayTimeDurationType {
+    extends AbstractJavaTypeAdapter<Duration, IDayTimeDurationItem> {
 
   @SuppressWarnings("null")
   protected DayTimeAdapter() {
@@ -73,7 +72,7 @@ public class DayTimeAdapter
   @Override
   public IDayTimeDurationItem newItem(Object value) {
     Duration item = toValue(value);
-    return new DayTimeDurationItemImpl(item);
+    return IDayTimeDurationItem.valueOf(item);
   }
 
 }

@@ -31,12 +31,12 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
-import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
@@ -54,9 +54,9 @@ import javax.xml.stream.events.XMLEvent;
 
 public class ListPropertyInfo
     extends AbstractModelPropertyInfo<ParameterizedType>
-    implements ModelPropertyInfo {
+    implements IModelPropertyInfo {
 
-  public ListPropertyInfo(NamedModelProperty property) {
+  public ListPropertyInfo(IBoundNamedModelInstance property) {
     super(property);
     if (!List.class.isAssignableFrom(property.getRawType())) {
       throw new RuntimeException(String.format(
@@ -90,8 +90,8 @@ public class ListPropertyInfo
   }
 
   @Override
-  public boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start,
-      XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+  public boolean readValue(IPropertyCollector collector, Object parentInstance, StartElement start,
+      IXmlParsingContext context) throws IOException, BindingException, XMLStreamException {
     XMLEventReader2 eventReader = context.getReader();
 
     // TODO: is this needed?
@@ -120,7 +120,7 @@ public class ListPropertyInfo
   }
 
   @Override
-  public void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
       throws IOException, BindingException {
     JsonParser parser = context.getReader();
 
@@ -174,9 +174,9 @@ public class ListPropertyInfo
   }
 
   @Override
-  public boolean writeValue(Object parentInstance, QName parentName, XmlWritingContext context)
+  public boolean writeValue(Object parentInstance, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
-    NamedModelProperty property = getProperty();
+    IBoundNamedModelInstance property = getProperty();
     List<? extends Object> items = getItemsFromParentInstance(parentInstance);
     for (Object item : items) {
       property.writeItem(item, parentName, context);
@@ -185,7 +185,7 @@ public class ListPropertyInfo
   }
 
   @Override
-  public void writeValue(Object parentInstance, JsonWritingContext context) throws IOException {
+  public void writeValue(Object parentInstance, IJsonWritingContext context) throws IOException {
     List<? extends Object> items = getItemsFromParentInstance(parentInstance);
 
     JsonGenerator writer = context.getWriter();
@@ -212,9 +212,9 @@ public class ListPropertyInfo
   }
 
   @Override
-  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector)
+  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull IPropertyCollector collector)
       throws BindingException {
-    NamedModelProperty property = getProperty();
+    IBoundNamedModelInstance property = getProperty();
 
     for (Object item : getItemsFromParentInstance(fromInstance)) {
       collector.add(property.copyItem(item, toInstance));

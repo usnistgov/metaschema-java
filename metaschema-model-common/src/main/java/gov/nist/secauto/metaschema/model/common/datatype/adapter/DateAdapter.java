@@ -27,10 +27,13 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractDatatypeJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.object.Date;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IDateType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -42,8 +45,7 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 
 public class DateAdapter
-    extends AbstractDatatypeJavaTypeAdapter<Date, IDateItem>
-    implements IDateType {
+    extends AbstractDatatypeJavaTypeAdapter<Date, IDateItem> {
   @SuppressWarnings("null")
   public DateAdapter() {
     super(Date.class);
@@ -96,7 +98,7 @@ public class DateAdapter
   @Override
   public IDateItem newItem(Object value) {
     Date item = toValue(value);
-    return new DateWithoutTimeZoneItemImpl(item);
+    return IDateItem.valueOf(item);
   }
 
   @Override

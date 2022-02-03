@@ -63,7 +63,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 
-public class AbstractExpressionVisitor<RESULT, CONTEXT> implements ExpressionVisitor<RESULT, CONTEXT> {
+public class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpressionVisitor<RESULT, CONTEXT> {
 
   @Nullable
   protected RESULT visitChildren(@NotNull IExpression expr, CONTEXT context) {

@@ -31,16 +31,19 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IDecimalType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
 
 public class DecimalAdapter
-    extends AbstractJavaTypeAdapter<BigDecimal, IDecimalItem>
-    implements IDecimalType {
+    extends AbstractJavaTypeAdapter<BigDecimal, IDecimalItem> {
   @NotNull
   private static final BigDecimal DECIMAL_BOOLEAN_TRUE = new BigDecimal("1.0");
   @NotNull
@@ -58,7 +61,7 @@ public class DecimalAdapter
 
   @Override
   public BigDecimal parse(String value) throws IllegalArgumentException {
-    return new BigDecimal(value);
+    return new BigDecimal(value, MathContext.DECIMAL64);
   }
 
   @Override
@@ -85,7 +88,7 @@ public class DecimalAdapter
   @Override
   public IDecimalItem newItem(Object value) {
     BigDecimal item = toValue(value);
-    return new DecimalItemImpl(item);
+    return IDecimalItem.valueOf(item);
   }
 
   @Override

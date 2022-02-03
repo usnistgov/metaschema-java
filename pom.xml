@@ -119,14 +119,15 @@
 		<dependency.eclipse-jdt-annotation.version>2.2.600</dependency.eclipse-jdt-annotation.version>
 		<dependency.flexmark.version>0.62.2</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.30</dependency.freemarker.version>
-		<dependency.jackson.version>2.12.1</dependency.jackson.version>
+		<dependency.jackson.version>2.13.1</dependency.jackson.version>
 		<dependency.jaxb.version>3.0.0</dependency.jaxb.version>
 		<dependency.jetbrains-annotation.version>16.0.2</dependency.jetbrains-annotation.version>
 		<dependency.junit5.version>5.7.2</dependency.junit5.version>
 		<dependency.junit5-platform-launcher.version>1.7.2</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.17.1</dependency.log4j2.version>
 		<dependency.moxy.version>3.0.0</dependency.moxy.version>
-		<dependency.woodstox.version>6.2.3</dependency.woodstox.version>
+		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
+		<dependency.woodstox.version>6.2.7</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.0.1</dependency.xmlbeans.version>
 		<!-- <dependency.xmlbeans.version>4.0.0</dependency.xmlbeans.version> -->
 		<plugin.license.version>4.0.rc1</plugin.license.version>
@@ -198,6 +199,12 @@
 				<groupId>com.sun.xml.bind</groupId>
 				<artifactId>jaxb-impl</artifactId>
 				<version>${dependency.jaxb.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.codehaus.woodstox</groupId>
+				<artifactId>stax2-api</artifactId>
+				<version>${dependency.stax2-api.version}</version>
 			</dependency>
 
 			<dependency>
@@ -386,6 +393,12 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<forceJavacCompilerUse>true</forceJavacCompilerUse>
+					</configuration>
+				</plugin>
+				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
 					<version>3.1.2</version>
@@ -556,11 +569,60 @@
 								<goals>
 									<goal>enforce</goal>
 								</goals>
+							</execution>
+							<execution>
+								<id>enforce-dependencies</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>enforce</goal>
+								</goals>
+								<configuration>
+									<fail>false</fail>
+									<rules>
+										<requireUpperBoundDeps>
+											<excludes>
+												<exclude>org.jetbrains:annotations</exclude>
+											</excludes>
+										</requireUpperBoundDeps>
+										<dependencyConvergence>
+											<uniqueVersions>true</uniqueVersions>
+										</dependencyConvergence>
+									</rules>
+								</configuration>
+							</execution>
+							<execution>
+								<id>enforce-classes</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>enforce</goal>
+								</goals>
 								<configuration>
 									<fail>true</fail>
+									<rules>
+										<!--
+										<reactorModuleConvergence>
+											<ignoreModuleDependencies>true</ignoreModuleDependencies>
+										</reactorModuleConvergence>
+-->
+										<banDuplicateClasses>
+											<scopes>
+												<scope>compile</scope>
+												<scope>provided</scope>
+											</scopes>
+											<findAllDuplicates>true</findAllDuplicates>
+											<ignoreWhenIdentical>true</ignoreWhenIdentical>
+										</banDuplicateClasses>
+									</rules>
 								</configuration>
 							</execution>
 						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>org.codehaus.mojo</groupId>
+								<artifactId>extra-enforcer-rules</artifactId>
+								<version>1.3</version>
+							</dependency>
+						</dependencies>
 					</plugin>
 				</plugins>
 			</build>
@@ -569,6 +631,29 @@
 			<id>reporting</id>
 			<reporting>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>3.3.1</version>
+						<configuration>
+							<excludePackageNames>:*.impl</excludePackageNames>
+						</configuration>
+						<reportSets>
+							<reportSet>
+								<id>aggregate</id>
+								<inherited>false</inherited>
+								<reports>
+									<report>aggregate</report>
+								</reports>
+							</reportSet>
+							<reportSet>
+								<id>default</id>
+								<reports>
+									<report>javadoc</report>
+								</reports>
+							</reportSet>
+						</reportSets>
+					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-project-info-reports-plugin</artifactId>
@@ -640,9 +725,11 @@
 		<module>metaschema-java-codegen</module>
 		<module>metaschema-maven-plugin</module>
 		<module>metaschema-java-binding</module>
+		<module>metaschema-model-common</module>
+		<!--
 		<module>metaschema-schema-generator</module>
 		<module>metaschema-documentation-generator</module>
 		<module>metaschema-freemarker-support</module>
-		<module>metaschema-model-common</module>
+-->
 	</modules>
 </project>

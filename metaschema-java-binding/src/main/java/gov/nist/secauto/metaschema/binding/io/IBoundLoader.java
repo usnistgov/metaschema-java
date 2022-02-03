@@ -36,7 +36,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 
-public interface IBoundLoader extends IDocumentLoader, MutableConfiguration {
+public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
   @NotNull
   Format detectFormat(@NotNull URL url) throws IOException;
 

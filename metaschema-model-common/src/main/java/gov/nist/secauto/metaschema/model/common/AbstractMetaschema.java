@@ -45,6 +45,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * Provides a common, abstract implementation of a {@link IMetaschema}.
+ */
 public abstract class AbstractMetaschema implements IMetaschema {
   private static final Logger logger = LogManager.getLogger(AbstractMetaschema.class);
 
@@ -141,7 +144,7 @@ public abstract class AbstractMetaschema implements IMetaschema {
    *           if a parsing error occurs
    */
   @SuppressWarnings("null")
-  protected void parseExportedDefinitions() throws MetaschemaException {
+  protected void processExportedDefinitions() throws MetaschemaException {
     logger.debug("Processing metaschema '{}'", this.getLocation());
 
     this.exportedFlagDefinitions = new LinkedHashMap<>();

@@ -28,15 +28,13 @@ package gov.nist.secauto.metaschema.model.common.datatype;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IIntegerItem;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IIntegerType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 
 import java.io.IOException;
 import java.math.BigInteger;
 
 public abstract class AbstractIntegerAdapter<ITEM_TYPE extends IIntegerItem>
-    extends AbstractJavaTypeAdapter<BigInteger, ITEM_TYPE>
-    implements IIntegerType {
+    extends AbstractJavaTypeAdapter<BigInteger, ITEM_TYPE> {
 
   @SuppressWarnings("null")
   protected AbstractIntegerAdapter() {

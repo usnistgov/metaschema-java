@@ -86,13 +86,13 @@ public class TestBasicMetaschema {
   }
 
   // private static Object readXml(Reader reader, Class<?> rootClass) throws BindingException {
-  // BindingContext context = BindingContext.newInstance();
+  // IBindingContext context = IBindingContext.newInstance();
   // Object value = context.newDeserializer(Format.XML, rootClass, null).deserialize(reader);
   // return value;
   // }
 
   // private static <CLASS> void writeXml(Writer writer, CLASS rootObject) throws BindingException {
-  // BindingContext context = BindingContext.newInstance();
+  // IBindingContext context = IBindingContext.newInstance();
   // @SuppressWarnings("unchecked")
   // Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
   // context.newSerializer(Format.XML, clazz, null).serialize(rootObject, writer);
@@ -108,14 +108,14 @@ public class TestBasicMetaschema {
   // @SuppressWarnings("unused")
   // private static Object readJson(Reader reader, Class<?> rootClass) throws IOException,
   // BindingException {
-  // BindingContext context = BindingContext.newInstance();
-  // Deserializer<?> deserializer = context.newDeserializer(Format.JSON, rootClass);
+  // IBindingContext context = IBindingContext.newInstance();
+  // IDeserializer<?> deserializer = context.newDeserializer(Format.JSON, rootClass);
   // deserializer.enableFeature(Feature.DESERIALIZE_ROOT);
   // return deserializer.deserialize(reader);
   // }
   //
   // private static <CLASS> void writeJson(Writer writer, CLASS rootObject) throws BindingException {
-  // BindingContext context = BindingContext.newInstance();
+  // IBindingContext context = IBindingContext.newInstance();
   // @SuppressWarnings("unchecked")
   // Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
   // context.newSerializer(Format.JSON, clazz, null).serialize(rootObject, writer);
@@ -124,7 +124,7 @@ public class TestBasicMetaschema {
   // @SuppressWarnings("unused")
   // private static <CLASS> void writeYaml(Writer writer, CLASS rootObject) throws IOException,
   // BindingException {
-  // BindingContext context = BindingContext.newInstance();
+  // IBindingContext context = IBindingContext.newInstance();
   // @SuppressWarnings("unchecked")
   // Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
   // context.newSerializer(Format.YAML, clazz, null).serialize(rootObject, writer);

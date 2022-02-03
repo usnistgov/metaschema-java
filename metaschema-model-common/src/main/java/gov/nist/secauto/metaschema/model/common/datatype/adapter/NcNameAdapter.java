@@ -27,13 +27,12 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractStringJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.type.INcNameType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INcNameItem;
 
 import org.jetbrains.annotations.NotNull;
 
 public class NcNameAdapter
-    extends AbstractStringJavaTypeAdapter<INcNameItem>
-    implements INcNameType {
+    extends AbstractStringJavaTypeAdapter<INcNameItem> {
 
   @Override
   public String getName() {
@@ -49,6 +48,6 @@ public class NcNameAdapter
   @Override
   public INcNameItem newItem(Object value) {
     String item = asString(value);
-    return new NcNameItemImpl(item);
+    return INcNameItem.valueOf(item);
   }
 }

@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.binding;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.DefaultBoundLoader;
-import gov.nist.secauto.metaschema.binding.io.Deserializer;
+import gov.nist.secauto.metaschema.binding.io.IDeserializer;
 import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.io.IBoundLoader;
-import gov.nist.secauto.metaschema.binding.io.Serializer;
+import gov.nist.secauto.metaschema.binding.io.ISerializer;
 import gov.nist.secauto.metaschema.binding.io.json.DefaultJsonDeserializer;
 import gov.nist.secauto.metaschema.binding.io.json.DefaultJsonSerializer;
 import gov.nist.secauto.metaschema.binding.io.xml.DefaultXmlDeserializer;
@@ -40,8 +40,8 @@ import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlDeserializer;
 import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlSerializer;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.DefaultAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.DefaultFieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
@@ -68,9 +68,9 @@ import java.util.Objects;
 import javax.xml.namespace.QName;
 
 /**
- * A basic implementation of a {@link BindingContext} used by this implementation.
+ * The implementation of a {@link IBindingContext} provided by this library.
  */
-public class DefaultBindingContext implements BindingContext {
+public class DefaultBindingContext implements IBindingContext {
   private static DefaultBindingContext instance;
 
   public static synchronized DefaultBindingContext instance() {
@@ -80,7 +80,7 @@ public class DefaultBindingContext implements BindingContext {
     return instance;
   }
 
-  private final Map<Class<?>, ClassBinding> classBindingsByClass = new HashMap<>();
+  private final Map<Class<?>, IClassBinding> classBindingsByClass = new HashMap<>();
   private final Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> javaTypeAdapterMap = new HashMap<>();
   private final List<IBindingMatcher> bindingMatchers = new LinkedList<>();
 
@@ -91,8 +91,8 @@ public class DefaultBindingContext implements BindingContext {
   }
 
   @Override
-  public synchronized ClassBinding getClassBinding(Class<?> clazz) throws IllegalArgumentException {
-    ClassBinding retval = classBindingsByClass.get(clazz);
+  public synchronized IClassBinding getClassBinding(@NotNull Class<?> clazz) throws IllegalArgumentException {
+    IClassBinding retval = classBindingsByClass.get(clazz);
     if (retval == null) {
       if (clazz.isAnnotationPresent(MetaschemaAssembly.class)) {
         retval = DefaultAssemblyClassBinding.createInstance(clazz, this);
@@ -112,7 +112,7 @@ public class DefaultBindingContext implements BindingContext {
 
   @Override
   public synchronized <TYPE extends IJavaTypeAdapter<?>> IJavaTypeAdapter<TYPE>
-      getJavaTypeAdapterInstance(Class<TYPE> clazz) {
+      getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz) {
     @SuppressWarnings("unchecked")
     IJavaTypeAdapter<TYPE> retval
         = (IJavaTypeAdapter<TYPE>) javaTypeAdapterMap.get(clazz);
@@ -139,11 +139,11 @@ public class DefaultBindingContext implements BindingContext {
   }
 
   @Override
-  public <CLASS> Serializer<CLASS> newSerializer(Format format, Class<CLASS> clazz) {
+  public <CLASS> ISerializer<CLASS> newSerializer(@NotNull Format format, @NotNull Class<CLASS> clazz) {
     Objects.requireNonNull(format, "format");
-    AssemblyClassBinding classBinding = (AssemblyClassBinding) getClassBinding(clazz);
+    IAssemblyClassBinding classBinding = (IAssemblyClassBinding) getClassBinding(clazz);
 
-    Serializer<CLASS> retval;
+    ISerializer<CLASS> retval;
     switch (format) {
     case JSON:
       retval = new DefaultJsonSerializer<CLASS>(this, classBinding);
@@ -162,11 +162,11 @@ public class DefaultBindingContext implements BindingContext {
   }
 
   @Override
-  public <CLASS> Deserializer<CLASS> newDeserializer(Format format, Class<CLASS> clazz) {
+  public <CLASS> IDeserializer<CLASS> newDeserializer(@NotNull Format format, @NotNull Class<CLASS> clazz) {
     Objects.requireNonNull(format, "format");
-    AssemblyClassBinding classBinding = (AssemblyClassBinding) getClassBinding(clazz);
+    IAssemblyClassBinding classBinding = (IAssemblyClassBinding) getClassBinding(clazz);
 
-    Deserializer<CLASS> retval;
+    IDeserializer<CLASS> retval;
     switch (format) {
     case JSON:
       retval = new DefaultJsonDeserializer<CLASS>(this, classBinding);
@@ -185,7 +185,7 @@ public class DefaultBindingContext implements BindingContext {
   }
 
   @Override
-  public synchronized void registerBindingMatcher(IBindingMatcher matcher) {
+  public synchronized void registerBindingMatcher(@NotNull IBindingMatcher matcher) {
     bindingMatchers.add(matcher);
   }
 
@@ -193,7 +193,7 @@ public class DefaultBindingContext implements BindingContext {
     return Collections.unmodifiableList(bindingMatchers);
   }
 
-  public synchronized Map<Class<?>, ClassBinding> getClassBindingsByClass() {
+  public synchronized Map<Class<?>, IClassBinding> getClassBindingsByClass() {
     return Collections.unmodifiableMap(classBindingsByClass);
   }
 
@@ -202,7 +202,7 @@ public class DefaultBindingContext implements BindingContext {
   }
 
   @Override
-  public Class<?> getBoundClassForXmlQName(QName rootQName) {
+  public Class<?> getBoundClassForXmlQName(@NotNull QName rootQName) {
     Class<?> retval = null;
     for (IBindingMatcher matcher : getBindingMatchers()) {
       retval = matcher.getBoundClassForXmlQName(rootQName);
@@ -214,7 +214,7 @@ public class DefaultBindingContext implements BindingContext {
   }
 
   @Override
-  public Class<?> getBoundClassForJsonName(String rootName) {
+  public Class<?> getBoundClassForJsonName(@NotNull String rootName) {
     Class<?> retval = null;
     for (IBindingMatcher matcher : getBindingMatchers()) {
       retval = matcher.getBoundClassForJsonName(rootName);
@@ -232,7 +232,7 @@ public class DefaultBindingContext implements BindingContext {
 
   @Override
   public <CLASS> CLASS copyBoundObject(@NotNull CLASS other, Object parentInstance) throws BindingException {
-    ClassBinding classBinding = getClassBinding(other.getClass());
+    IClassBinding classBinding = getClassBinding(other.getClass());
     @SuppressWarnings("unchecked")
     CLASS retval = (CLASS) classBinding.copyBoundObject(other, parentInstance);
     return retval;
@@ -241,7 +241,7 @@ public class DefaultBindingContext implements BindingContext {
   @Override
   public IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode)
       throws IllegalArgumentException {
-    ClassBinding binding = getClassBinding(boundObject.getClass());
+    IClassBinding binding = getClassBinding(boundObject.getClass());
     return IXdmFactory.INSTANCE.newNodeItem(binding, boundObject, baseUri, rootNode);
   }
 

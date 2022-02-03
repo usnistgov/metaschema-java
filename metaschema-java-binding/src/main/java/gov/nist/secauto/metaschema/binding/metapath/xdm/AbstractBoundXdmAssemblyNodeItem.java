@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.AssemblyDefinition;
-import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
-import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
-import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+import gov.nist.secauto.metaschema.binding.model.IBoundAssemblyDefinition;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractBoundXdmAssemblyNodeItem<INSTANCE extends AssemblyProperty>
+public abstract class AbstractBoundXdmAssemblyNodeItem<INSTANCE extends IBoundAssemblyInstance>
     extends AbstractBoundXdmModelNodeItem<INSTANCE>
     implements IBoundXdmAssemblyNodeItem {
 
@@ -49,7 +49,7 @@ public abstract class AbstractBoundXdmAssemblyNodeItem<INSTANCE extends Assembly
   }
 
   @Override
-  public AssemblyDefinition getDefinition() {
+  public IBoundAssemblyDefinition getDefinition() {
     return getInstance().getDefinition();
   }
 
@@ -63,18 +63,19 @@ public abstract class AbstractBoundXdmAssemblyNodeItem<INSTANCE extends Assembly
     if (this.modelItems == null) {
       Map<String, List<IBoundXdmModelNodeItem>> modelItems = new LinkedHashMap<>();
       Object parentValue = getValue();
-      for (NamedModelProperty instance : getDefinition().getNamedModelInstances()) {
+      for (IBoundNamedModelInstance instance : getDefinition().getNamedModelInstances()) {
 
         Object instanceValue = instance.getValue(parentValue);
         Stream<? extends Object> itemValues = instance.getItemValues(instanceValue).stream();
         AtomicInteger index = new AtomicInteger();
         List<IBoundXdmModelNodeItem> items = itemValues.map(itemValue -> {
           IBoundXdmModelNodeItem item;
-          if (instance instanceof AssemblyProperty) {
-            item = IXdmFactory.INSTANCE.newAssemblyNodeItem((AssemblyProperty) instance, itemValue,
+          if (instance instanceof IBoundAssemblyInstance) {
+            item = IXdmFactory.INSTANCE.newAssemblyNodeItem((IBoundAssemblyInstance) instance, itemValue,
                 index.incrementAndGet(), this);
-          } else if (instance instanceof FieldProperty) {
-            item = IXdmFactory.INSTANCE.newFieldNodeItem((FieldProperty) instance, itemValue, index.incrementAndGet(),
+          } else if (instance instanceof IBoundFieldInstance) {
+            item = IXdmFactory.INSTANCE.newFieldNodeItem((IBoundFieldInstance) instance, itemValue,
+                index.incrementAndGet(),
                 this);
           } else {
             throw new UnsupportedOperationException("unsupported instance type: " + instance.getClass().getName());

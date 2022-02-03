@@ -84,7 +84,7 @@ class JavaGeneratorTest {
         }
       }
     }
-    // AssemblyDefinition definition = metaschema.getAssemblyDefinitionByName("system-component");
+    // IBoundAssemblyDefinition definition = metaschema.getAssemblyDefinitionByName("system-component");
     //
     MetapathExpression exp = MetapathExpression.compile("*/*/@name");
     // MetapathExpression exp = Metapath.parseMetapathString("//test/@flag = 1+1+1");

@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.definition;
 
-import gov.nist.secauto.metaschema.model.common.Flag;
+import gov.nist.secauto.metaschema.model.common.IFlag;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.xml.namespace.QName;
 
-public interface IFlagDefinition extends INamedValuedDefinition, Flag {
+public interface IFlagDefinition extends INamedValuedDefinition, IFlag {
   @Override
   @NotNull
   default QName getXmlQName() {

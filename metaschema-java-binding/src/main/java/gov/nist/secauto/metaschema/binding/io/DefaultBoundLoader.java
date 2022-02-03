@@ -36,7 +36,7 @@ import com.fasterxml.jackson.core.format.MatchStrength;
 import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
+import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmDocumentNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
@@ -63,7 +63,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
-public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
+public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
   public static final int LOOK_AHEAD_BYTES = 32768;
   @NotNull
   private static final JsonFactory jsonFactory = new JsonFactory();
@@ -73,28 +73,28 @@ public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
   private static final YAMLFactory yamlFactory = new YAMLFactory();
 
   @NotNull
-  private final BindingContext bindingContext;
+  private final IBindingContext bindingContext;
   @NotNull
-  private final MutableConfiguration configuration;
+  private final IMutableConfiguration configuration;
 
   /**
-   * Construct a new OSCAL loader instance, using the provided {@link BindingContext}.
+   * Construct a new OSCAL loader instance, using the provided {@link IBindingContext}.
    * 
    * @param bindingContext
    *          the Metaschema binding context to use to load Java types
    */
-  public DefaultBoundLoader(BindingContext bindingContext) {
+  public DefaultBoundLoader(IBindingContext bindingContext) {
     this.bindingContext = bindingContext;
     this.configuration = new DefaultMutableConfiguration().enableFeature(Feature.DESERIALIZE_ROOT);
   }
 
   @Override
-  public MutableConfiguration enableFeature(Feature feature) {
+  public IMutableConfiguration enableFeature(Feature feature) {
     return configuration.enableFeature(feature);
   }
 
   @Override
-  public MutableConfiguration disableFeature(Feature feature) {
+  public IMutableConfiguration disableFeature(Feature feature) {
     return configuration.disableFeature(feature);
   }
 
@@ -109,7 +109,7 @@ public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
   }
 
   @NotNull
-  protected Configuration getConfiguration() {
+  protected IConfiguration getConfiguration() {
     return configuration;
   }
 
@@ -118,7 +118,7 @@ public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
    * 
    * @return the binding context
    */
-  public BindingContext getBindingContext() {
+  public IBindingContext getBindingContext() {
     return bindingContext;
   }
 
@@ -166,7 +166,7 @@ public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
     DataFormatMatcher matcher = matchFormat(bis, LOOK_AHEAD_BYTES - 1);
     Format format = formatFromMatcher(matcher);
 
-    Deserializer<?> deserializer;
+    IDeserializer<?> deserializer;
     switch (format) {
     case JSON:
       deserializer = detectModelJson(matcher.createParserWithMatch(), Format.JSON);
@@ -197,7 +197,7 @@ public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
   }
 
   @NotNull
-  protected <CLASS> IBoundXdmDocumentNodeItem loadAsNodeItem(@NotNull Deserializer<CLASS> deserializer,
+  protected <CLASS> IBoundXdmDocumentNodeItem loadAsNodeItem(@NotNull IDeserializer<CLASS> deserializer,
       @NotNull InputStream is,
       @NotNull URI documentUri)
       throws BindingException {
@@ -251,7 +251,7 @@ public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
     DataFormatMatcher matcher = matchFormat(bis);
     Format format = formatFromMatcher(matcher);
 
-    Deserializer<CLASS> deserializer = getDeserializer(clazz, format, getConfiguration());
+    IDeserializer<CLASS> deserializer = getDeserializer(clazz, format, getConfiguration());
 
     try {
       bis.reset();
@@ -266,7 +266,7 @@ public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
   }
 
   @NotNull
-  protected <CLASS> CLASS loadAsObject(@NotNull Deserializer<CLASS> deserializer, @NotNull InputStream is,
+  protected <CLASS> CLASS loadAsObject(@NotNull IDeserializer<CLASS> deserializer, @NotNull InputStream is,
       @NotNull URI documentUri)
       throws BindingException {
     IBoundXdmNodeItem nodeItem = loadAsNodeItem(deserializer, is, documentUri);
@@ -315,14 +315,14 @@ public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
   }
 
   @NotNull
-  protected Deserializer<?> detectModelXml(@NotNull InputStream is) throws IOException {
+  protected IDeserializer<?> detectModelXml(@NotNull InputStream is) throws IOException {
     Class<?> clazz = detectModelXmlClass(is);
 
     return getDeserializer(clazz, Format.XML, getConfiguration());
   }
 
   @NotNull
-  protected Deserializer<?> detectModelJson(@NotNull JsonParser parser, @NotNull Format format) throws IOException {
+  protected IDeserializer<?> detectModelJson(@NotNull JsonParser parser, @NotNull Format format) throws IOException {
     Class<?> clazz = detectModelJsonClass(parser);
     return getDeserializer(clazz, format, getConfiguration());
   }
@@ -387,9 +387,9 @@ public class DefaultBoundLoader implements IBoundLoader, MutableConfiguration {
     return retval;
   }
 
-  protected <CLASS> Deserializer<CLASS> getDeserializer(@NotNull Class<CLASS> clazz, @NotNull Format format,
-      @NotNull Configuration config) {
-    Deserializer<CLASS> retval = getBindingContext().newDeserializer(format, clazz);
+  protected <CLASS> IDeserializer<CLASS> getDeserializer(@NotNull Class<CLASS> clazz, @NotNull Format format,
+      @NotNull IConfiguration config) {
+    IDeserializer<CLASS> retval = getBindingContext().newDeserializer(format, clazz);
     for (Map.Entry<Feature, Boolean> entry : config.getFeatureSettings().entrySet()) {
       if (Boolean.TRUE.equals(entry.getValue())) {
         retval.enableFeature(entry.getKey());

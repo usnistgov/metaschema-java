@@ -26,18 +26,18 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.IBindingContext;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 
 import java.util.Map;
 import java.util.Objects;
 
-abstract class AbstractSerializationBase implements MutableConfiguration {
-  private final BindingContext bindingContext;
-  private final AssemblyClassBinding classBinding;
-  private final MutableConfiguration configuration;
+abstract class AbstractSerializationBase implements IMutableConfiguration {
+  private final IBindingContext bindingContext;
+  private final IAssemblyClassBinding classBinding;
+  private final IMutableConfiguration configuration;
 
-  protected AbstractSerializationBase(BindingContext bindingContext, AssemblyClassBinding classBinding) {
+  protected AbstractSerializationBase(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
     Objects.requireNonNull(bindingContext, "bindingContext");
     Objects.requireNonNull(classBinding, "classBinding");
     this.bindingContext = bindingContext;
@@ -45,25 +45,25 @@ abstract class AbstractSerializationBase implements MutableConfiguration {
     this.configuration = new DefaultMutableConfiguration();
   }
 
-  protected BindingContext getBindingContext() {
+  protected IBindingContext getBindingContext() {
     return bindingContext;
   }
 
-  protected AssemblyClassBinding getClassBinding() {
+  protected IAssemblyClassBinding getClassBinding() {
     return classBinding;
   }
 
-  protected Configuration getConfiguration() {
+  protected IConfiguration getConfiguration() {
     return configuration;
   }
 
   @Override
-  public MutableConfiguration enableFeature(Feature feature) {
+  public IMutableConfiguration enableFeature(Feature feature) {
     return configuration.enableFeature(feature);
   }
 
   @Override
-  public MutableConfiguration disableFeature(Feature feature) {
+  public IMutableConfiguration disableFeature(Feature feature) {
     return configuration.disableFeature(feature);
   }
 

@@ -31,7 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ListPropertyCollector
-    implements PropertyCollector {
+    implements IPropertyCollector {
   private List<Object> collection;
 
   public ListPropertyCollector() {

@@ -1,0 +1,31 @@
+This module provides a [Java API](apidocs/index.html) for parsing and accessing Metaschema information. This API allows for the full Metaschema model to be explored in code.
+
+The following dependency can be added to your POM to use this library.
+
+```xml
+<dependency>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>${project.artifactId}</artifactId>
+  <version>${project.version}</version>
+</dependency>
+```
+
+## Loading a Metaschema
+
+Metaschema information can be loaded from files or by URL. The following example illustrates how to load a Metaschema definition from a remote resource.
+
+```java
+MetaschemaLoader loader = new MetaschemaLoader();
+IMetaschema metaschema = loader.loadMetaschema(URI.create(
+    "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.1/src/metaschema/oscal_complete_metaschema.xml"));
+System.out.println(metaschema.getShortName());
+```
+
+## Accessing an assembly definition by name
+
+Building on the previous example, the following shows how to access the global assembly definition named "property".
+
+```java
+IAssemblyDefinition definition = metaschema.getScopedAssemblyDefinitionByName("property");
+System.out.println(definition.getName());
+```

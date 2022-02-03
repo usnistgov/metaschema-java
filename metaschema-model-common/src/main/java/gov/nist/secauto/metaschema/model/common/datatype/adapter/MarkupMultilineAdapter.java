@@ -30,11 +30,11 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.AbstractMarkupAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.AbstractMarkupString;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupXmlEventWriter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupXmlStreamWriter;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IMarkupItem;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -143,6 +143,6 @@ public class MarkupMultilineAdapter
   @Override
   public IMarkupItem newItem(Object value) {
     MarkupMultiline item = toValue(value);
-    return new MarkupMultiLineItemImpl(item);
+    return IMarkupItem.valueOf(item);
   }
 }

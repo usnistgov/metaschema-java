@@ -38,6 +38,26 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The API for accessing information about a given Metaschema.
+ * <p>
+ * A Metaschema may import another Metaschema. This import graph can be accessed using
+ * {@link #getImportedMetaschemas()}.
+ * <p>
+ * Global scoped Metaschema definitions can be accessed using
+ * {@link #getScopedAssemblyDefinitionByName(String)},
+ * {@link #getScopedFieldDefinitionByName(String)}, and
+ * {@link #getScopedFlagDefinitionByName(String)}. These methods take into consideration the import
+ * order to provide the global definitions that are in scope within the given Metschema.
+ * <p>
+ * Global scoped definitions exported by this Metaschema, available for use by importing
+ * Metaschemas, can be accessed using {@link #getExportedAssemblyDefinitions()},
+ * {@link #getExportedFieldDefinitions()}, and {@link #getExportedFlagDefinitions()}.
+ * <p>
+ * Global scoped definitions defined direclty within the given Metaschema can be accessed using
+ * {@link #getAssemblyDefinitions()}, {@link #getFieldDefinitions()}, and
+ * {@link #getFlagDefinitions()}, along with similarly named accessors.
+ */
 public interface IMetaschema {
   /**
    * Retrieves the location where the Metaschema was loaded from.

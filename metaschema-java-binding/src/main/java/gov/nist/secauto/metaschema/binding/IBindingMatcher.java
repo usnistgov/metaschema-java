@@ -28,6 +28,10 @@ package gov.nist.secauto.metaschema.binding;
 
 import javax.xml.namespace.QName;
 
+/**
+ * Implementations of this interface provide a means by which a bound class can be found that
+ * corresponds to an XML element, JSON property, or YAML item name.
+ */
 public interface IBindingMatcher {
   /**
    * Determine the bound class for the provided XML {@link QName}.

@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.binding.io.xml;
 
 import com.ctc.wstx.stax.WstxOutputFactory;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
+import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -46,7 +46,7 @@ public class DefaultXmlSerializer<CLASS>
     extends AbstractSerializer<CLASS> {
   private XMLOutputFactory2 xmlOutputFactory;
 
-  public DefaultXmlSerializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {
+  public DefaultXmlSerializer(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
@@ -81,8 +81,8 @@ public class DefaultXmlSerializer<CLASS>
   public void serialize(CLASS data, Writer writer) throws BindingException {
     XMLStreamWriter2 streamWriter = newXMLStreamWriter(writer);
     try {
-      AssemblyClassBinding classBinding = getClassBinding();
-      XmlWritingContext writingContext = new DefaultXmlWritingContext(streamWriter);
+      IAssemblyClassBinding classBinding = getClassBinding();
+      IXmlWritingContext writingContext = new DefaultXmlWritingContext(streamWriter);
 
       classBinding.writeRoot(data, writingContext);
 

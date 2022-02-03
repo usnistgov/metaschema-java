@@ -97,7 +97,7 @@ public class ModelUtil {
    *          if the "##none" value is honored
    * @return the resolved value
    */
-  public static String resolveNamespace(String value, ClassBinding classBinding, boolean allowNone) {
+  public static String resolveNamespace(String value, IClassBinding classBinding, boolean allowNone) {
     String retval;
     if (value == null || "##default".equals(value)) {
       // get namespace from package-info

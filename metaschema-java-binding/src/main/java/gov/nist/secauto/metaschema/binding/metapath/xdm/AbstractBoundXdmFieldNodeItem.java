@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.FieldDefinition;
-import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
+import gov.nist.secauto.metaschema.binding.model.IBoundFieldDefinition;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IValuedDefinition;
@@ -40,7 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractBoundXdmFieldNodeItem<INSTANCE extends FieldProperty>
+public abstract class AbstractBoundXdmFieldNodeItem<INSTANCE extends IBoundFieldInstance>
     extends AbstractBoundXdmModelNodeItem<INSTANCE>
     implements IBoundXdmFieldNodeItem {
 
@@ -81,7 +81,7 @@ public abstract class AbstractBoundXdmFieldNodeItem<INSTANCE extends FieldProper
   }
 
   @Override
-  public FieldDefinition getDefinition() {
+  public IBoundFieldDefinition getDefinition() {
     return getInstance().getDefinition();
   }
 }

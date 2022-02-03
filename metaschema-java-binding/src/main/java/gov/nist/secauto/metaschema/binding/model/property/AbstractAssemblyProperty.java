@@ -27,9 +27,9 @@
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
@@ -46,9 +46,9 @@ import javax.xml.stream.events.XMLEvent;
 
 public abstract class AbstractAssemblyProperty
     extends AbstractNamedModelProperty
-    implements AssemblyProperty {
+    implements IBoundAssemblyInstance {
 
-  public AbstractAssemblyProperty(AssemblyClassBinding parentClassBinding, Field field) {
+  public AbstractAssemblyProperty(IAssemblyClassBinding parentClassBinding, Field field) {
     super(parentClassBinding, field);
   }
 
@@ -61,7 +61,7 @@ public abstract class AbstractAssemblyProperty
 
   @Override
   public Object readItem(Object parentInstance, StartElement start,
-      XmlParsingContext context) throws BindingException, XMLStreamException, IOException {
+      IXmlParsingContext context) throws BindingException, XMLStreamException, IOException {
     XMLEventReader2 eventReader = context.getReader();
 
     // consume extra whitespace between elements
@@ -84,7 +84,7 @@ public abstract class AbstractAssemblyProperty
   }
 
   @Override
-  public boolean writeItem(Object item, QName parentName, XmlWritingContext context)
+  public boolean writeItem(Object item, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     XMLStreamWriter2 writer = context.getWriter();
 
@@ -103,7 +103,7 @@ public abstract class AbstractAssemblyProperty
   }
 
   @Override
-  public AssemblyClassBinding getContainingDefinition() {
+  public IAssemblyClassBinding getContainingDefinition() {
     return getParentClassBinding();
   }
 

@@ -1,7 +1,7 @@
 
-This module provides a Java code generator [Java API](apidocs/index.html) that generate Java classes for a Metaschema definition. These generated classes can be used to read and write XML, JSON, and YAML content that is valid to the associated Metaschema model.
+This module provides a Java code generator [Java API](apidocs/index.html) that generates Java classes for a Metaschema definition. These generated classes can be used to read and write XML, JSON, and YAML content that is valid to the associated Metaschema model using the [binding parser](../metaschema-java-binding/) library.
 
-The following dependency can be added to your POM to use this library.
+The following plugin can be added to your POM to use this library.
 
 ```xml
 <dependency>

@@ -30,6 +30,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * A common base implementation of a custom Metaschema bound object.
+ * 
+ * @param <TYPE>
+ *          the bound object type supported by this data type
+ * @param <VALUE>
+ *          the inner value of the data type object
+ */
 public abstract class AbstractDatatype<TYPE extends IDatatype<TYPE>, VALUE> implements IDatatype<TYPE> {
   @NotNull
   private final VALUE value;

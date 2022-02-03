@@ -1,5 +1,5 @@
 
-This Maven build plugin that automates generation on Java classes for a set of Metaschema definitions as part of a Maven build.
+This Maven build plugin automates the generation of Java classes for a set of Metaschema definitions as part of a Maven build.
 
 The following is an example of a Maven configuration for this plugin.
 
@@ -41,12 +41,6 @@ The following is an example of a Maven configuration for this plugin.
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
-<dependency>
-  <groupId>${project.groupId}</groupId>
-  <artifactId>${project.actifactId}</artifactId>
-  <version>${project.version}</version>
-</dependency>
 ```
 

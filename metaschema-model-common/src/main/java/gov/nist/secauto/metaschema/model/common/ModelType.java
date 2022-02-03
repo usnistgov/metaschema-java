@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
+/**
+ * An enumeration that identifies the type of a Metaschema construct.
+ */
 public enum ModelType {
   ASSEMBLY,
   FIELD,

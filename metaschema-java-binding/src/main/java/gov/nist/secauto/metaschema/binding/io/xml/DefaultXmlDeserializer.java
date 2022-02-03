@@ -28,13 +28,13 @@ package gov.nist.secauto.metaschema.binding.io.xml;
 
 import com.ctc.wstx.stax.WstxInputFactory;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
+import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.Feature;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
@@ -59,7 +59,7 @@ public class DefaultXmlDeserializer<CLASS>
 
   private XMLInputFactory2 xmlInputFactory;
 
-  public DefaultXmlDeserializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {
+  public DefaultXmlDeserializer(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
@@ -110,7 +110,7 @@ public class DefaultXmlDeserializer<CLASS>
   protected IBoundXdmNodeItem parseXmlInternal(XMLEventReader2 reader, @Nullable URI documentUri)
       throws XMLStreamException, BindingException {
 
-    AssemblyClassBinding classBinding = getClassBinding();
+    IAssemblyClassBinding classBinding = getClassBinding();
 
     DefaultXmlParsingContext parsingContext = new DefaultXmlParsingContext(reader, new DefaultXmlProblemHandler());
 

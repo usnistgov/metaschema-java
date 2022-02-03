@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.FieldDefinition;
-import gov.nist.secauto.metaschema.binding.model.property.FieldProperty;
+import gov.nist.secauto.metaschema.binding.model.IBoundFieldDefinition;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmFieldNodeItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -43,10 +43,10 @@ public interface IBoundXdmFieldNodeItem extends IBoundXdmModelNodeItem, IXdmFiel
   IBoundXdmAssemblyNodeItem getParentNodeItem();
 
   @Override
-  FieldDefinition getDefinition();
+  IBoundFieldDefinition getDefinition();
 
   @Override
-  FieldProperty getInstance();
+  IBoundFieldInstance getInstance();
 
   @Override
   default <RESULT, CONTEXT> RESULT accept(@NotNull IBoundXdmNodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {

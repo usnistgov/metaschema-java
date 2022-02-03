@@ -26,17 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.evaluate;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBase64BinaryItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDateItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDateTimeItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDayTimeDurationItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDurationItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IIntegerItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IStringItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IYearMonthDurationItem;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Addition;
@@ -72,17 +61,28 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.Union;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ValueComparison;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.function.XPathFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnNotFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDurationItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.type.InvalidTypeMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -474,7 +474,7 @@ public class MetaschemaPathEvaluationVisitor
     } else if (item instanceof IDayTimeDurationItem) {
       retval = IYearMonthDurationItem.cast(other);
     } else {
-      retval = item.getItemType().cast(other);
+      retval = item.getJavaTypeAdapter().cast(other);
     }
     return retval;
   }

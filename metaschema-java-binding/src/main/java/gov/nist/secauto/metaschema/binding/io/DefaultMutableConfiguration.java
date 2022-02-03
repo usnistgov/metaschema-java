@@ -30,14 +30,14 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class DefaultMutableConfiguration implements MutableConfiguration {
+public class DefaultMutableConfiguration implements IMutableConfiguration {
   private final EnumMap<Feature, Boolean> features;
 
   public DefaultMutableConfiguration() {
     this.features = new EnumMap<>(Feature.class);
   }
 
-  public DefaultMutableConfiguration(Configuration configuration) {
+  public DefaultMutableConfiguration(IConfiguration configuration) {
     this.features = new EnumMap<>(configuration.getFeatureSettings());
   }
 

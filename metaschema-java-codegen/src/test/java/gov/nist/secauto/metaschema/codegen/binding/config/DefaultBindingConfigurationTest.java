@@ -77,7 +77,7 @@ class DefaultBindingConfigurationTest {
         will(returnValue(DEFINITION_NAME));
       }
     });
-    DefinitionBindingConfiguration defConfig = config.getDefinitionBindingConfiguration(definition);
+    IDefinitionBindingConfiguration defConfig = config.getDefinitionBindingConfiguration(definition);
     assertEquals(DEFINITION__CLASS_NAME, defConfig.getClassName());
   }
 

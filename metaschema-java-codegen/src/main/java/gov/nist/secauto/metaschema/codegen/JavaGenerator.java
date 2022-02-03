@@ -31,9 +31,9 @@ import com.squareup.javapoet.ClassName;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlNs;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlNsForm;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
-import gov.nist.secauto.metaschema.codegen.binding.config.BindingConfiguration;
+import gov.nist.secauto.metaschema.codegen.binding.config.IBindingConfiguration;
 import gov.nist.secauto.metaschema.codegen.type.DefaultTypeResolver;
-import gov.nist.secauto.metaschema.codegen.type.TypeResolver;
+import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
@@ -77,7 +77,7 @@ public class JavaGenerator {
    *           if a build error occurred while generating the class
    */
   public static Map<IMetaschema, List<GeneratedClass>> generate(IMetaschema metaschema, File targetDir,
-      BindingConfiguration bindingConfiguration) throws IOException {
+      IBindingConfiguration bindingConfiguration) throws IOException {
     return generate(Collections.singletonList(metaschema), targetDir, bindingConfiguration);
   }
 
@@ -96,7 +96,7 @@ public class JavaGenerator {
    *           if a build error occurred while generating the class
    */
   public static Map<IMetaschema, List<GeneratedClass>> generate(Collection<? extends IMetaschema> metaschemas,
-      File targetDirectory, BindingConfiguration bindingConfiguration) throws IOException {
+      File targetDirectory, IBindingConfiguration bindingConfiguration) throws IOException {
     Objects.requireNonNull(metaschemas, "metaschemas");
     Objects.requireNonNull(targetDirectory, "generationTargetDirectory");
     Objects.requireNonNull(bindingConfiguration, "bindingConfiguration");
@@ -105,7 +105,7 @@ public class JavaGenerator {
     Map<URI, String> xmlNamespaceToPackageNameMap = new HashMap<>();
     Map<URI, Set<IMetaschema>> xmlNamespaceToMetaschemaMap = new HashMap<>();
 
-    TypeResolver typeResolver = new DefaultTypeResolver(bindingConfiguration);
+    ITypeResolver typeResolver = new DefaultTypeResolver(bindingConfiguration);
 
     Map<IMetaschema, List<? extends IDefinition>> metaschemaToInformationElementsMap
         = buildMetaschemaMap(metaschemas);
@@ -118,7 +118,7 @@ public class JavaGenerator {
       Set<String> classNames = new HashSet<>();
 
       for (IDefinition definition : entry.getValue()) {
-        JavaClassGenerator classGenerator = null;
+        IJavaClassGenerator classGenerator = null;
         if (definition instanceof IAssemblyDefinition) {
           classGenerator = new AssemblyJavaClassGenerator((IAssemblyDefinition) definition, typeResolver);
         } else if (definition instanceof IFieldDefinition) {

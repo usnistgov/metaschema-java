@@ -9,7 +9,7 @@
 
 	<artifactId>metaschema-model</artifactId>
 
-	<name>Metaschema Model</name>
+	<name>Metaschema XML Implementation</name>
 
 	<url>${site.url}${project.artifactId}/</url>
 	<distributionManagement>
@@ -111,7 +111,7 @@
 							<xmlConfigs>${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</xmlConfigs>
 							<classTargetDir>${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
 							<name>metaschema</name>
-							<repackage>gov.nist.secauto.metaschema.model.xmlbeans.metadata</repackage>
+							<repackage>gov.nist.secauto.metaschema.model.xmlbeans</repackage>
 						</configuration>
 					</execution>
 				</executions>

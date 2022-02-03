@@ -26,17 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBase64BinaryItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IBooleanItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDateItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDateTimeItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDayTimeDurationItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDecimalItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDurationItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IIntegerItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.INumericItem;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.IYearMonthDurationItem;
-import gov.nist.secauto.metaschema.model.common.metapath.type.InvalidTypeMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

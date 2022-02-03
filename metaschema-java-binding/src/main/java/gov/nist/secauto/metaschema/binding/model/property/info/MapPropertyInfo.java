@@ -31,14 +31,14 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
-import gov.nist.secauto.metaschema.binding.io.json.JsonWritingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.ClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -58,14 +58,14 @@ import javax.xml.stream.events.XMLEvent;
 
 public class MapPropertyInfo
     extends AbstractModelPropertyInfo<ParameterizedType>
-    implements ModelPropertyInfo {
+    implements IModelPropertyInfo {
 
   @Override
   public Collection<?> getItemsFromValue(Object value) {
     return value == null ? List.of() : ((Map<?, ?>) value).values();
   }
 
-  public MapPropertyInfo(NamedModelProperty property) {
+  public MapPropertyInfo(IBoundNamedModelInstance property) {
     super(property);
     if (!Map.class.isAssignableFrom(property.getRawType())) {
       throw new RuntimeException(String.format(
@@ -93,24 +93,24 @@ public class MapPropertyInfo
   }
 
   @Override
-  public PropertyCollector newPropertyCollector() {
+  public IPropertyCollector newPropertyCollector() {
     return new MapPropertyCollector(getProperty());
   }
 
   @Override
-  public void readValue(PropertyCollector collector, Object parentInstance, JsonParsingContext context)
+  public void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
       throws IOException, BindingException {
     JsonParser jsonParser = context.getReader();
     JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
 
     // parse items
-    // ClassBinding classBinding = getClassBinding();
+    // IClassBinding classBinding = getClassBinding();
     // if (classBinding == null) {
     // throw new BindingException(
     // String.format("Unable to parse type '%s', which is not a known bound class", getItemType()));
     // }
 
-    NamedModelProperty property = getProperty();
+    IBoundNamedModelInstance property = getProperty();
     // process all map items
     while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
 
@@ -123,8 +123,8 @@ public class MapPropertyInfo
   }
 
   @Override
-  public boolean readValue(PropertyCollector collector, Object parentInstance, StartElement start,
-      XmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+  public boolean readValue(IPropertyCollector collector, Object parentInstance, StartElement start,
+      IXmlParsingContext context) throws IOException, BindingException, XMLStreamException {
     QName qname = getProperty().getXmlQName();
     XMLEventReader2 eventReader = context.getReader();
 
@@ -150,9 +150,9 @@ public class MapPropertyInfo
   }
 
   @Override
-  public boolean writeValue(Object parentInstance, QName parentName, XmlWritingContext context)
+  public boolean writeValue(Object parentInstance, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
-    NamedModelProperty property = getProperty();
+    IBoundNamedModelInstance property = getProperty();
     @SuppressWarnings("unchecked")
     Map<String, ? extends Object> items = (Map<String, ? extends Object>) property.getValue(parentInstance);
     for (Object item : items.values()) {
@@ -161,20 +161,20 @@ public class MapPropertyInfo
     return true;
   }
 
-  public static class MapPropertyCollector implements PropertyCollector {
+  public static class MapPropertyCollector implements IPropertyCollector {
 
     private final Map<String, Object> map = new LinkedHashMap<>();
-    private final FlagProperty jsonKey;
+    private final IBoundFlagInstance jsonKey;
 
-    protected MapPropertyCollector(NamedModelProperty property) {
-      ClassBinding classBinding = property.getDataTypeHandler().getClassBinding();
+    protected MapPropertyCollector(IBoundNamedModelInstance property) {
+      IClassBinding classBinding = property.getDataTypeHandler().getClassBinding();
       this.jsonKey = classBinding != null ? classBinding.getJsonKeyFlagInstance() : null;
       if (this.jsonKey == null) {
         throw new IllegalStateException("No JSON key found");
       }
     }
 
-    protected FlagProperty getJsonKey() {
+    protected IBoundFlagInstance getJsonKey() {
       return jsonKey;
     }
 
@@ -201,7 +201,7 @@ public class MapPropertyInfo
   }
 
   @Override
-  public void writeValue(Object parentInstance, JsonWritingContext context) throws IOException {
+  public void writeValue(Object parentInstance, IJsonWritingContext context) throws IOException {
     Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
 
     if (items.isEmpty()) {
@@ -225,9 +225,9 @@ public class MapPropertyInfo
   }
 
   @Override
-  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull PropertyCollector collector)
+  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull IPropertyCollector collector)
       throws BindingException {
-    NamedModelProperty property = getProperty();
+    IBoundNamedModelInstance property = getProperty();
 
     for (Object item : getItemsFromParentInstance(fromInstance)) {
       collector.add(property.copyItem(item, toInstance));

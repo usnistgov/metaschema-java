@@ -26,13 +26,13 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.model.ClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-public abstract class AbstractProperty<CLASS_BINDING extends ClassBinding> implements Property {
+public abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> implements IBoundInstance {
   private final Field field;
   private final CLASS_BINDING parentClassBinding;
 

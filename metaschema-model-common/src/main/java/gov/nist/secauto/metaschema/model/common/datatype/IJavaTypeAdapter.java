@@ -29,7 +29,8 @@ package gov.nist.secauto.metaschema.model.common.datatype;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 
-import gov.nist.secauto.metaschema.model.common.metapath.type.IAnyAtomicType;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -46,7 +47,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
+public interface IJavaTypeAdapter<TYPE> {
 
   /**
    * Get the metaschema type name associated with this adapter. This name must be unique with respect
@@ -99,6 +100,47 @@ public interface IJavaTypeAdapter<TYPE> extends IAnyAtomicType {
    */
   @NotNull
   TYPE copy(@NotNull Object obj);
+
+  /**
+   * Determines if the data type is an atomic, scalar value. Complex structures such as Markup are not
+   * considered atomic.
+   * 
+   * @return {@code true} if the data type is an atomic scalar value, or {@code false} otherwise
+   */
+  default boolean isAtomic() {
+    return true;
+  }
+
+  /**
+   * Get the java type of the associated item.
+   * 
+   * @return the java associated item type
+   */
+  @NotNull
+  Class<? extends IAnyAtomicItem> getItemClass();
+
+  /**
+   * Construct a new item of this type using the provided value.
+   * 
+   * @param value
+   *          the item's value
+   * @return a new item
+   */
+  // TODO: markup types are not atomic values. Figure out a better base type (i.e., IValuedItem)
+  @NotNull
+  IAnyAtomicItem newItem(@NotNull Object value);
+
+  /**
+   * Cast the provided item to an item of this type, if possible.
+   * 
+   * @param item
+   *          the atomic item to cast
+   * @return an atomic item of this type
+   * @throws InvalidValueForCastFunctionMetapathException
+   *           if the provided item type cannot be cast to this item type
+   */
+  @NotNull
+  IAnyAtomicItem cast(IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException;
 
   /**
    * Indicates if the adapter will parse the {@link XMLEvent#START_ELEMENT} before parsing the value

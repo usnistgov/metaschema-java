@@ -27,13 +27,12 @@
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractStringJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.type.IEmailAddressType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IEmailAddressItem;
 
 import org.jetbrains.annotations.NotNull;
 
 public class EmailAddressAdapter
-    extends AbstractStringJavaTypeAdapter<IEmailAddressItem>
-    implements IEmailAddressType {
+    extends AbstractStringJavaTypeAdapter<IEmailAddressItem> {
 
   public EmailAddressAdapter() {
   }
@@ -52,6 +51,6 @@ public class EmailAddressAdapter
   @Override
   public IEmailAddressItem newItem(Object value) {
     String item = asString(value);
-    return new EmailAddressItemImpl(item);
+    return IEmailAddressItem.valueOf(item);
   }
 }

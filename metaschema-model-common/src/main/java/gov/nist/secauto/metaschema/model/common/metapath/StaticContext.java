@@ -26,40 +26,36 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.metapath.type.IItemType;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class StaticContext {
   // private final List<? extends INamedDefinition> knownDefinitions;
-  private final Map<String, IItemType> uriToKnownDocumentTypeMap;
+  // private final Map<String, IItemType> uriToKnownDocumentTypeMap;
   private URI baseUri;
 
   public StaticContext() {
-    this.uriToKnownDocumentTypeMap = new HashMap<>();
+    // this.uriToKnownDocumentTypeMap = new HashMap<>();
   }
 
   public URI getBaseUri() {
     return baseUri;
   }
 
+  @SuppressWarnings("null")
   public void setBaseUri(@NotNull URI baseUri) {
-    Objects.requireNonNull(baseUri, "baseUri");
-    this.baseUri = baseUri;
+    this.baseUri = Objects.requireNonNull(baseUri, "baseUri");
   }
 
-  public IItemType getTypeForDocument(@NotNull URI uri) {
-    return getTypeForDocument(uri.toString());
-  }
-
-  public IItemType getTypeForDocument(@NotNull String uri) {
-    return uriToKnownDocumentTypeMap.get(uri);
-  }
+  // public IItemType getTypeForDocument(@NotNull URI uri) {
+  // return getTypeForDocument(uri.toString());
+  // }
+  //
+  // public IItemType getTypeForDocument(@NotNull String uri) {
+  // return uriToKnownDocumentTypeMap.get(uri);
+  // }
 
   public DynamicContext newDynamicContext() {
     return new DynamicContext(this);

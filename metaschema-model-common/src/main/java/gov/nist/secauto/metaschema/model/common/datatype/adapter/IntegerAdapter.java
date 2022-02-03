@@ -29,6 +29,10 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractIntegerAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -54,7 +58,7 @@ public class IntegerAdapter
   @Override
   public IIntegerItem newItem(Object value) {
     BigInteger item = toValue(value);
-    return new IntegerItemImpl(item);
+    return IIntegerItem.valueOf(item);
   }
 
   @Override

@@ -26,15 +26,15 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.property.FlagProperty;
-import gov.nist.secauto.metaschema.binding.model.property.NamedModelProperty;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public abstract class AbstractBoundXdmModelNodeItem<INSTANCE extends NamedModelProperty>
+public abstract class AbstractBoundXdmModelNodeItem<INSTANCE extends IBoundNamedModelInstance>
     extends AbstractBoundXdmValuedNodeItem<INSTANCE>
     implements IBoundXdmModelNodeItem {
 
@@ -61,7 +61,7 @@ public abstract class AbstractBoundXdmModelNodeItem<INSTANCE extends NamedModelP
     if (this.flags == null) {
       Map<String, IBoundXdmFlagNodeItem> flags = new LinkedHashMap<>();
       Object parentValue = getValue();
-      for (FlagProperty instance : getDefinition().getFlagInstances()) {
+      for (IBoundFlagInstance instance : getDefinition().getFlagInstances()) {
         Object instanceValue = instance.getValue(parentValue);
         if (instanceValue != null) {
           IBoundXdmFlagNodeItem item = IXdmFactory.INSTANCE.newFlagNodeItem(instance, instanceValue, this);

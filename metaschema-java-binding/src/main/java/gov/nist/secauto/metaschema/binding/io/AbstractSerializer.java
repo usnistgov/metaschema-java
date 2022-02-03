@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
-import gov.nist.secauto.metaschema.binding.model.AssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.IBindingContext;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,7 +39,7 @@ import java.nio.charset.Charset;
 
 public abstract class AbstractSerializer<CLASS>
     extends AbstractSerializationBase
-    implements Serializer<CLASS> {
+    implements ISerializer<CLASS> {
 
   /**
    * Construct a new serializer.
@@ -49,7 +49,7 @@ public abstract class AbstractSerializer<CLASS>
    * @param classBinding
    *          the bound class information for the Java type this serializer is operating on
    */
-  public AbstractSerializer(BindingContext bindingContext, AssemblyClassBinding classBinding) {
+  public AbstractSerializer(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 

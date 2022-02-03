@@ -30,7 +30,7 @@ import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupText;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupText;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupXmlStreamWriter;
 
 import org.codehaus.stax2.XMLOutputFactory2;
@@ -59,7 +59,7 @@ public class MarkupToHtmlMethod implements TemplateMethodModelEx {
       throw new TemplateModelException(String.format(
           "This method requires a %s typed object argument, a namspace string argument, and may optionally have a"
               + " prefix string argument.",
-          MarkupText.class.getName()));
+          IMarkupText.class.getName()));
     }
 
     String namespace = DeepUnwrap.unwrap((TemplateModel) arguments.get(1)).toString();
@@ -71,12 +71,12 @@ public class MarkupToHtmlMethod implements TemplateMethodModelEx {
 
     Object markupObject = DeepUnwrap.unwrap((TemplateModel) arguments.get(0));
 
-    if (!(markupObject instanceof MarkupText)) {
+    if (!(markupObject instanceof IMarkupText)) {
       throw new TemplateModelException(String.format("The first argument must be of type %s. The type %s is invalid.",
-          MarkupText.class.getName(), markupObject.getClass().getName()));
+          IMarkupText.class.getName(), markupObject.getClass().getName()));
     }
 
-    MarkupText text = (MarkupText) markupObject;
+    IMarkupText text = (IMarkupText) markupObject;
 
     MarkupXmlStreamWriter writingVisitor = new MarkupXmlStreamWriter(namespace, text instanceof MarkupMultiline);
 

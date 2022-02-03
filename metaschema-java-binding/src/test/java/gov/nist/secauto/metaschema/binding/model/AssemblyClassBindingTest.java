@@ -38,12 +38,12 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import gov.nist.secauto.metaschema.binding.BindingContext;
+import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.json.JsonParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.XmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.model.BoundClass.FlaggedField;
-import gov.nist.secauto.metaschema.binding.model.property.AssemblyProperty;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 
@@ -68,11 +68,11 @@ class AssemblyClassBindingTest {
   @RegisterExtension
   JUnit5Mockery context = new JUnit5Mockery();
 
-  private BindingContext bindingContext = context.mock(BindingContext.class);
-  private JsonParsingContext jsonParsingContext = context.mock(JsonParsingContext.class);
-  private XmlParsingContext xmlParsingContext = context.mock(XmlParsingContext.class);
+  private IBindingContext bindingContext = context.mock(IBindingContext.class);
+  private IJsonParsingContext jsonParsingContext = context.mock(IJsonParsingContext.class);
+  private IXmlParsingContext xmlParsingContext = context.mock(IXmlParsingContext.class);
 
-  private AssemblyClassBinding getAssemblyClassBinding() {
+  private IAssemblyClassBinding getAssemblyClassBinding() {
 
     context.checking(new Expectations() {
       {
@@ -82,7 +82,7 @@ class AssemblyClassBindingTest {
     });
 
     {
-      FieldClassBinding fieldClassBinding
+      IFieldClassBinding fieldClassBinding
           = DefaultFieldClassBinding.createInstance(BoundClass.FlaggedField.class, bindingContext);
 
       context.checking(new Expectations() {
@@ -94,7 +94,7 @@ class AssemblyClassBindingTest {
     }
 
     {
-      FieldClassBinding fieldClassBinding
+      IFieldClassBinding fieldClassBinding
           = DefaultFieldClassBinding.createInstance(BoundClass.KeyedField.class, bindingContext);
 
       context.checking(new Expectations() {
@@ -106,7 +106,7 @@ class AssemblyClassBindingTest {
     }
 
     {
-      AssemblyClassBinding fieldClassBinding
+      IAssemblyClassBinding fieldClassBinding
           = DefaultAssemblyClassBinding.createInstance(FlaggedAssemblyClass.class, bindingContext);
 
       context.checking(new Expectations() {
@@ -156,8 +156,8 @@ class AssemblyClassBindingTest {
     assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
     assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
 
-    AssemblyClassBinding classBinding = getAssemblyClassBinding();
-    AssemblyProperty root = new RootDefinitionAssemblyProperty(classBinding);
+    IAssemblyClassBinding classBinding = getAssemblyClassBinding();
+    IBoundAssemblyInstance root = new RootDefinitionAssemblyProperty(classBinding);
     BoundClass obj = (BoundClass) root.read(jsonParsingContext);
 
     assertEquals(JsonToken.END_OBJECT, jsonParser.currentToken());
@@ -170,7 +170,7 @@ class AssemblyClassBindingTest {
         = new File(getClass().getClassLoader().getResource("test-content/bound-class-simple.xml").getFile());
     XMLEventReader reader = newXmlParser(new FileReader(testContent));
 
-    AssemblyClassBinding classBinding = getAssemblyClassBinding();
+    IAssemblyClassBinding classBinding = getAssemblyClassBinding();
 
     // assertEquals(XMLEvent.START_DOCUMENT, parser.nextEvent().getEventType());
 
@@ -206,8 +206,8 @@ class AssemblyClassBindingTest {
     assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
     assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
 
-    AssemblyClassBinding classBinding = getAssemblyClassBinding();
-    AssemblyProperty root = new RootDefinitionAssemblyProperty(classBinding);
+    IAssemblyClassBinding classBinding = getAssemblyClassBinding();
+    IBoundAssemblyInstance root = new RootDefinitionAssemblyProperty(classBinding);
     BoundClass obj = (BoundClass) root.read(jsonParsingContext);
 
     assertEquals(JsonToken.END_OBJECT, jsonParser.currentToken());
@@ -220,7 +220,7 @@ class AssemblyClassBindingTest {
         = new File(getClass().getClassLoader().getResource("test-content/bound-class-complex.xml").getFile());
     XMLEventReader reader = newXmlParser(new FileReader(testContent));
 
-    AssemblyClassBinding classBinding = getAssemblyClassBinding();
+    IAssemblyClassBinding classBinding = getAssemblyClassBinding();
 
     BoundClass obj = (BoundClass) classBinding.readRoot(xmlParsingContext);
 
