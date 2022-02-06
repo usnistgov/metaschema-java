@@ -32,11 +32,11 @@ import gov.nist.secauto.metaschema.model.instances.IXmlAssemblyInstance;
 import gov.nist.secauto.metaschema.model.instances.IXmlChoiceInstance;
 import gov.nist.secauto.metaschema.model.instances.IXmlFieldInstance;
 import gov.nist.secauto.metaschema.model.instances.IXmlNamedModelInstance;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.AssemblyDocument;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.ChoiceDocument;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.FieldDocument;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalAssemblyDefinitionType;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFieldDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.AssemblyDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.FieldDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;

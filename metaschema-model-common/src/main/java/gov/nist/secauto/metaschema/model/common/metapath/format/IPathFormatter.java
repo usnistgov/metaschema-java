@@ -37,6 +37,9 @@ import org.jetbrains.annotations.NotNull;
  * A path formatter is expected to be stateless and thus thread safe.
  */
 public interface IPathFormatter {
+  /**
+   * A path formatter that produces Metapath-based paths.
+   */
   @NotNull
   public static final IPathFormatter METAPATH_PATH_FORMATER = new MetapathFormatter();
 

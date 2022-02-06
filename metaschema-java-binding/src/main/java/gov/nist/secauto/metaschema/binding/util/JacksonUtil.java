@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.util;
 
-public class JacksonUtil {
+class JacksonUtil {
 
   private JacksonUtil() {
     // disable construction

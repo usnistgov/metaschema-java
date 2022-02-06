@@ -40,6 +40,10 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * This annotation defines a set of values permitted to be used in the context of the containing
+ * annotation.
+ */
 @Documented
 @Retention(RUNTIME)
 @Target(ANNOTATION_TYPE)
@@ -69,8 +73,18 @@ public @interface AllowedValues {
    */
   String target() default IConstraint.DEFAULT_TARGET_METAPATH;
 
+  /**
+   * Get any allowed values for this constraint.
+   * 
+   * @return an array of allowed value enumerations
+   */
   AllowedValue[] values();
 
+  /**
+   * Indicates if the constraint allows other values not included in the enumerated list.
+   * 
+   * @return {@code true} if other values are allowed or {@code false} otherwise
+   */
   boolean allowOthers() default IAllowedValuesConstraint.DEFAULT_ALLOW_OTHER;
 
   /**

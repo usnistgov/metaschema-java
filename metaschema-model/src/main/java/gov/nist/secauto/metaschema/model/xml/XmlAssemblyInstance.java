@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractAssemblyInstance;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.AssemblyDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.AssemblyDocument;
 
 import org.jetbrains.annotations.NotNull;
 

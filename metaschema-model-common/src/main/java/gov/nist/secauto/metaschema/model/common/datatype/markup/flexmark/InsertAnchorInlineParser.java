@@ -34,6 +34,7 @@ import com.vladsch.flexmark.util.sequence.BasedSequence;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -69,8 +70,8 @@ public class InsertAnchorInlineParser implements InlineParserExtension {
 
   public static class Factory implements InlineParserExtensionFactory {
     @Override
-    public @Nullable Set<Class<?>> getAfterDependents() {
-      return null;
+    public Set<Class<?>> getAfterDependents() {
+      return Collections.emptySet();
     }
 
     @Override
@@ -79,8 +80,8 @@ public class InsertAnchorInlineParser implements InlineParserExtension {
     }
 
     @Override
-    public @Nullable Set<Class<?>> getBeforeDependents() {
-      return null;
+    public Set<Class<?>> getBeforeDependents() {
+      return Collections.emptySet();
     }
 
     @Override

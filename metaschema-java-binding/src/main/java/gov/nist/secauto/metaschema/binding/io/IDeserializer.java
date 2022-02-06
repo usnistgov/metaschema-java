@@ -31,21 +31,28 @@ import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 /**
- * Implementations of this interface are able to read structured data into a Java class instance of
- * the parameterized type.
+ * Implementations of this interface are able to read structured data into a bound object instance
+ * of the parameterized type.
  * 
  * @param <CLASS>
  *          the Java type into which data can be read
  */
 public interface IDeserializer<CLASS> extends IMutableConfiguration {
-  boolean isValidating();
+  default boolean isValidating() {
+    return isFeatureEnabled(Feature.DESERIALIZE_VALIDATE);
+  }
 
   /**
    * Read data from the {@link InputStream} into a bound class instance.
@@ -58,7 +65,9 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
    * @throws BindingException
    *           if an error occurred while reading data from the stream
    */
-  CLASS deserialize(InputStream is, @Nullable URI documentUri) throws BindingException;
+  default CLASS deserialize(InputStream is, @Nullable URI documentUri) throws BindingException {
+    return deserialize(new InputStreamReader(is), documentUri);
+  }
 
   /**
    * Read data from the {@link File} into a bound class instance.
@@ -71,7 +80,15 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
    * @throws BindingException
    *           if an error occurred while reading data from the stream
    */
-  CLASS deserialize(File file) throws FileNotFoundException, BindingException;
+  default CLASS deserialize(File file) throws FileNotFoundException, BindingException {
+    try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8"))) {
+      CLASS retval = deserialize(reader, file.toURI());
+      reader.close();
+      return retval;
+    } catch (IOException ex) {
+      throw new BindingException("Unable to open file: " + file.getPath(), ex);
+    }
+  }
 
   /**
    * Read data from the remote resource into a bound class instance.
@@ -83,7 +100,17 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
    * @throws BindingException
    *           if an error occurred while reading data from the stream
    */
-  CLASS deserialize(URL url) throws BindingException;
+  default CLASS deserialize(URL url) throws BindingException {
+    try (InputStream in = url.openStream()) {
+      CLASS retval = deserialize(in, url.toURI());
+      in.close();
+      return retval;
+    } catch (IOException ex) {
+      throw new BindingException("Unable to open url: " + url.toString(), ex);
+    } catch (URISyntaxException ex) {
+      throw new BindingException(ex);
+    }
+  }
 
   /**
    * Read data from the {@link Reader} into a bound class instance.
@@ -97,7 +124,25 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
    * @throws BindingException
    *           if an error occurred while reading data from the stream
    */
-  CLASS deserialize(Reader reader, @Nullable URI documentUri) throws BindingException;
+  default CLASS deserialize(Reader reader, @Nullable URI documentUri) throws BindingException {
+    IBoundXdmNodeItem nodeItem = deserializeToNodeItem(reader, documentUri);
+    return nodeItem.toBoundObject();
+  }
+
+  /**
+   * Read data from the {@link Reader} into a node item instance.
+   * 
+   * @param is
+   *          the input stream to read from
+   * @param documentUri
+   *          the URI of the document to read from
+   * @return a new node item
+   * @throws BindingException
+   *           if an error occurred while reading data from the stream
+   */
+  default IBoundXdmNodeItem deserializeToNodeItem(InputStream is, @Nullable URI documentUri) throws BindingException {
+    return deserializeToNodeItem(new InputStreamReader(is), documentUri);
+  }
 
   /**
    * Read data from the {@link Reader} into a node item instance.
@@ -111,17 +156,4 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
    *           if an error occurred while reading data from the stream
    */
   IBoundXdmNodeItem deserializeToNodeItem(Reader reader, @Nullable URI documentUri) throws BindingException;
-
-  /**
-   * Read data from the {@link Reader} into a node item instance.
-   * 
-   * @param is
-   *          the input stream to read from
-   * @param documentUri
-   *          the URI of the document to read from
-   * @return a new node item
-   * @throws BindingException
-   *           if an error occurred while reading data from the stream
-   */
-  IBoundXdmNodeItem deserializeToNodeItem(InputStream is, @Nullable URI documentUri) throws BindingException;
 }

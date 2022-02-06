@@ -77,21 +77,17 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   @Override
   public void toHtmlAsStream(OutputStream os, String namespace, String prefix) throws XMLStreamException {
 
-    if (namespace == null) {
-      namespace = DEFAULT_HTML_NS;
-    }
-    if (prefix == null) {
-      prefix = DEFAULT_HTML_PREFIX;
-    }
+    String effectiveNamespace = namespace == null ? DEFAULT_HTML_NS : namespace;
+    String effectivePrefix = prefix == null ? DEFAULT_HTML_PREFIX : prefix;
 
     MarkupXmlStreamWriter writingVisitor
-        = new MarkupXmlStreamWriter(namespace, this instanceof MarkupMultiline);
+        = new MarkupXmlStreamWriter(effectiveNamespace, this instanceof MarkupMultiline);
 
     XMLOutputFactory2 factory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
     factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
     XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
     NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
-        List.of(NamespaceEventImpl.constructNamespace(null, prefix, namespace)));
+        List.of(NamespaceEventImpl.constructNamespace(null, effectivePrefix, effectiveNamespace)));
     xmlStreamWriter.setNamespaceContext(nsContext);
     writingVisitor.visitChildren(getDocument(), xmlStreamWriter);
     xmlStreamWriter.flush();

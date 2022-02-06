@@ -33,7 +33,7 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-public class CustomCollectors {
+public final class CustomCollectors {
   private CustomCollectors() {
     // disable
   }

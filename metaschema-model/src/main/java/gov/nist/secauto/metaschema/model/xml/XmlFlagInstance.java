@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlNamedModelDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFlagInstance;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.FlagDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.FlagDocument;
 
 import org.jetbrains.annotations.NotNull;
 

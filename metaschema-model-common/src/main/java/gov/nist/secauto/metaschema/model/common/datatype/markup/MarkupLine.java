@@ -36,7 +36,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.Flexmar
 
 public class MarkupLine
     extends AbstractMarkupString<MarkupLine> {
-  private static final Parser markdownParser;
+  private static final Parser MARKDOWN_PARSER;
 
   static {
     MutableDataSet options = new MutableDataSet();
@@ -45,11 +45,11 @@ public class MarkupLine
     // disable list processing
     options.set(Parser.LIST_BLOCK_PARSER, false);
 
-    markdownParser = FlexmarkFactory.instance().newMarkdownParser(options);
+    MARKDOWN_PARSER = FlexmarkFactory.instance().newMarkdownParser(options);
   }
 
   public static MarkupLine fromHtml(String html) {
-    return new MarkupLine(FlexmarkFactory.instance().fromHtml(html, null, markdownParser));
+    return new MarkupLine(FlexmarkFactory.instance().fromHtml(html, null, MARKDOWN_PARSER));
   }
 
   public static MarkupLine fromMarkdown(String markdown) {
@@ -59,13 +59,9 @@ public class MarkupLine
   protected MarkupLine(Document astNode) {
     super(astNode);
     Node child = astNode.getFirstChild();
-    if (child == null) {
-      // empty markdown
-    } else {
-      if (child instanceof Block && child.getNext() != null) {
-        throw new IllegalStateException("multiple blocks not allowed");
-      }
-    }
+    if (child != null && child instanceof Block && child.getNext() != null) {
+      throw new IllegalStateException("multiple blocks not allowed");
+    } // else empty markdown
   }
 
   @Override

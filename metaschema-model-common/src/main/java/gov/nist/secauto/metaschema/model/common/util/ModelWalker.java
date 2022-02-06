@@ -220,9 +220,7 @@ public abstract class ModelWalker<DATA> {
    * @param data
    *          additional information to operate on
    */
-  protected void visit(@NotNull IFlagDefinition def, DATA data) {
-    // do nothing by default
-  }
+  protected abstract void visit(@NotNull IFlagDefinition def, DATA data);
 
   /**
    * Called when the provided definition is walked. This can be overridden by child classes to enable

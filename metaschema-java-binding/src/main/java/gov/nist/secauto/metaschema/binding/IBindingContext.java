@@ -27,9 +27,9 @@
 package gov.nist.secauto.metaschema.binding;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.IDeserializer;
 import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.io.IBoundLoader;
+import gov.nist.secauto.metaschema.binding.io.IDeserializer;
 import gov.nist.secauto.metaschema.binding.io.ISerializer;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +48,7 @@ import java.time.ZonedDateTime;
 import javax.xml.namespace.QName;
 
 /**
- * Provides information supporting a binding between a set of metaschema models and corresponding
+ * Provides information supporting a binding between a set of Metaschema models and corresponding
  * Java classes.
  */
 public interface IBindingContext {
@@ -202,13 +203,53 @@ public interface IBindingContext {
   @NotNull
   <CLASS> CLASS copyBoundObject(@NotNull CLASS other, Object parentInstance) throws BindingException;
 
+  /**
+   * Wraps a bound object in an {@link IBoundXdmNodeItem} for use in the Metapath engine.
+   * 
+   * @param boundObject
+   *          the bound object to wrap
+   * @param baseUri
+   *          the base URI of the bound object, which may be used to resolve relative URIs
+   * @return the wrapped node item
+   * @throws IllegalArgumentException
+   *           if the provided class is not bound to a Metaschema assembly or field
+   * @see MetapathExpression
+   */
   default IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri) throws IllegalArgumentException {
     return toNodeItem(boundObject, baseUri, false);
   }
 
+  /**
+   * Wraps a bound object in an {@link IBoundXdmNodeItem} for use in the Metapath engine.
+   * 
+   * @param boundObject
+   *          the bound object to wrap
+   * @param baseUri
+   *          the base URI of the bound object, which may be used to resolve relative URIs
+   * @param rootNode
+   *          if {@code true}, the bound object will be considered at the root of a node tree
+   * @return the wrapped node item
+   * @throws IllegalArgumentException
+   *           if the provided class is not bound to a Metaschema assembly or field
+   * @see MetapathExpression
+   */
   IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode)
       throws IllegalArgumentException;
 
+  /**
+   * Perform constraint validation on the provided bound object.
+   * 
+   * @param boundObject
+   *          the bound object to validate
+   * @param baseUri
+   *          the base URI of the bound object, which may be used to resolve relative URIs
+   * @param rootNode
+   *          if {@code true}, the bound object will be considered at the root of a node tree
+   * @param handler
+   *          an optional handler used as a callback to handle constraint violation events
+   * @throws IllegalArgumentException
+   *           if the provided class is not bound to a Metaschema assembly or field
+   */
   void validate(@NotNull Object boundObject, URI baseUri, boolean rootNode, IConstraintValidationHandler handler)
       throws IllegalArgumentException;
 }

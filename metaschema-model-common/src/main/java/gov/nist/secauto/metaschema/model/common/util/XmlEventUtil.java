@@ -44,13 +44,13 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public class XmlEventUtil {
+public final class XmlEventUtil {
   private static final Logger logger = LogManager.getLogger(XmlEventUtil.class);
 
   private static final Pattern WHITESPACE_ONLY = Pattern.compile("^\\s+$");
 
   private XmlEventUtil() {
-    // disbale construction
+    // disable construction
   }
 
   private static Object escape(String data) {

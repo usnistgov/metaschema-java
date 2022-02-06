@@ -59,7 +59,7 @@ import java.util.regex.Pattern;
 
 // TODO: change the name of this class
 public class DefaultConstraintValidator implements IConstraintValidator {
-  private static final Logger logger = LogManager.getLogger(DefaultConstraintValidator.class);
+  private static final Logger LOGGER = LogManager.getLogger(DefaultConstraintValidator.class);
 
   @NotNull
   private final Map<@NotNull INodeItem, ValueStatus> valueMap = new LinkedHashMap<>();
@@ -175,7 +175,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
       @SuppressWarnings("unchecked")
       @NotNull
       ISequence<? extends INodeItem> targets
-          = (gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence<? extends INodeItem>) item
+          = (ISequence<? extends INodeItem>) item
               .evaluateMetapath(metapath, getMetapathContext());
       validateIndex(constraint, item, targets);
     }
@@ -187,7 +187,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
     if (indexToKeyToItemMap.containsKey(indexName)) {
       String msg = String.format("Duplicate index named '%s' found at path '%s'", indexName,
           node.getMetapath());
-      logger.atError().log(msg);
+      LOGGER.atError().log(msg);
       throw new MetapathException(msg);
     }
 
@@ -203,7 +203,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
             throw ex;
           }
 
-          // logger.info("key: {} {}", key, item);
+          // LOGGER.info("key: {} {}", key, item);
           INodeItem oldItem = indexItems.put(key, item);
           if (oldItem != null) {
             getConstraintValidationHandler().handleIndexDuplicateKeyViolation(constraint, node, oldItem, item);
@@ -226,7 +226,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
       MetapathExpression metapath = constraint.getTarget();
       @SuppressWarnings("unchecked")
       ISequence<? extends INodeItem> targets
-          = (gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence<? extends INodeItem>) item
+          = (ISequence<? extends INodeItem>) item
               .evaluateMetapath(metapath, getMetapathContext());
       validateUnique(constraint, item, targets);
     }
@@ -317,7 +317,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
       INodeItem item = (INodeItem) target;
       String key = buildKey(constraint.getKeyFields(), item);
 
-      // logger.info("key-ref: {} {}", key, item);
+      // LOGGER.info("key-ref: {} {}", key, item);
       //
       List<@NotNull INodeItem> items = keyRefItems.get(key);
       if (items == null) {
@@ -352,7 +352,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
       } catch (Exception ex) {
         String msg = String.format("Unable to evaluate expect constraint '%s' at path '%s'", metapath.getPath(),
             item.getMetapath());
-        logger.atError().withThrowable(ex).log(msg);
+        LOGGER.atError().withThrowable(ex).log(msg);
         throw new MetapathException(msg, ex);
       }
     });
@@ -377,7 +377,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
         // if (constraint.isAllowedOther()) {
         updateValueStatus((IAtomicValuedNodeItem) item, false);
         // } else {
-        // logger.atError().log(String.format("Value '%s' did not match one of the required allowed values
+        // LOGGER.atError().log(String.format("Value '%s' did not match one of the required allowed values
         // at path '%s'", value,
         // toPath(item)));
         // }
@@ -458,7 +458,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
     for (Map.Entry<@NotNull INodeItem, ValueStatus> entry : valueMap.entrySet()) {
       ValueStatus status = entry.getValue();
       if (status != null && !status.isValid()) {
-        logger.atWarn().log(String.format("Value '%s' did not match one of the required allowed values at path '%s'",
+        LOGGER.atWarn().log(String.format("Value '%s' did not match one of the required allowed values at path '%s'",
             status.getValue(), status.getItem().getMetapath()));
       }
     }
@@ -483,7 +483,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
 
         if (!indexItems.containsKey(key)) {
           for (INodeItem item : items) {
-            logger.atError().log(String.format("Key reference not found in index '%s' for item at path '%s'", indexName,
+            LOGGER.atError().log(String.format("Key reference not found in index '%s' for item at path '%s'", indexName,
                 item.getMetapath()));
           }
         }

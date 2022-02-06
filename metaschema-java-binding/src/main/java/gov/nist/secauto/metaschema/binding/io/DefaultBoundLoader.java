@@ -46,16 +46,11 @@ import org.codehaus.stax2.XMLInputFactory2;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Map;
 
@@ -63,6 +58,9 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
+/**
+ * A default implementation of a {@link IBoundLoader}.
+ */
 public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
   public static final int LOOK_AHEAD_BYTES = 32768;
   @NotNull
@@ -123,38 +121,9 @@ public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
   }
 
   @Override
-  public Format detectFormat(URL url) throws IOException {
-    return detectFormat(url.openStream());
-  }
-
-  @Override
-  public Format detectFormat(File file) throws FileNotFoundException, IOException {
-    if (!file.exists()) {
-      throw new FileNotFoundException(file.getAbsolutePath());
-    }
-    return detectFormat(new FileInputStream(file));
-  }
-
-  @Override
   public Format detectFormat(InputStream is) throws IOException {
     DataFormatMatcher matcher = matchFormat(is);
     return formatFromMatcher(matcher);
-  }
-
-  @Override
-  public IBoundXdmDocumentNodeItem loadAsNodeItem(URL url) throws IOException {
-    try (InputStream is = url.openStream()) {
-      return loadAsNodeItem(is, url.toURI());
-    } catch (URISyntaxException ex) {
-      throw new IOException(ex);
-    }
-  }
-
-  @Override
-  public IBoundXdmDocumentNodeItem loadAsNodeItem(File file) throws FileNotFoundException, IOException {
-    try (FileInputStream fis = new FileInputStream(file)) {
-      return loadAsNodeItem(fis, file.getCanonicalFile().toURI());
-    }
   }
 
   // TODO: consolidate this with the similar load class
@@ -202,45 +171,6 @@ public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
       @NotNull URI documentUri)
       throws BindingException {
     return (IBoundXdmDocumentNodeItem) deserializer.deserializeToNodeItem(is, documentUri);
-  }
-
-  @Override
-  public <CLASS> CLASS load(URL url) throws IOException {
-    try {
-      return load(url.openStream(), url.toURI());
-    } catch (URISyntaxException ex) {
-      throw new IOException(ex);
-    }
-  }
-
-  @Override
-  public <CLASS> CLASS load(File file) throws FileNotFoundException, IOException {
-    if (!file.exists()) {
-      throw new FileNotFoundException(file.getAbsolutePath());
-    }
-    return load(new FileInputStream(file), file.toURI());
-  }
-
-  @Override
-  public <CLASS> CLASS load(InputStream is, URI documentUri) throws IOException {
-    return loadAsNodeItem(is, documentUri).toBoundObject();
-  }
-
-  @Override
-  public <CLASS> CLASS load(Class<CLASS> clazz, File file) throws FileNotFoundException, IOException {
-    if (!file.exists()) {
-      throw new FileNotFoundException(file.getAbsolutePath());
-    }
-    return load(clazz, new FileInputStream(file), file.getCanonicalFile().toURI());
-  }
-
-  @Override
-  public <CLASS> CLASS load(Class<CLASS> clazz, URL url) throws IOException {
-    try {
-      return load(clazz, url.openStream(), url.toURI());
-    } catch (URISyntaxException ex) {
-      throw new IOException(ex);
-    }
   }
 
   @Override

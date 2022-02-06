@@ -34,7 +34,11 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-//TODO: remove this and move this to MetaschemaField/MetaschemaAssembly
+/**
+ * Indicates that the target of this annotation is a Java property that is to be used as the JSON or
+ * YAML property/item name in for a collection of similar objects/items.
+ */
+// TODO: remove this and move this to MetaschemaField/MetaschemaAssembly
 @Documented
 @Retention(RUNTIME)
 @Target({ FIELD, METHOD })

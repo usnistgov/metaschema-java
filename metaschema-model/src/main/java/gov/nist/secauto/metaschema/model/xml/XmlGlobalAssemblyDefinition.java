@@ -47,8 +47,7 @@ import gov.nist.secauto.metaschema.model.instances.IXmlChoiceInstance;
 import gov.nist.secauto.metaschema.model.instances.IXmlFieldInstance;
 import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
 import gov.nist.secauto.metaschema.model.instances.IXmlNamedModelInstance;
-import gov.nist.secauto.metaschema.model.xml.constraint.AssemblyConstraintSupport;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
 

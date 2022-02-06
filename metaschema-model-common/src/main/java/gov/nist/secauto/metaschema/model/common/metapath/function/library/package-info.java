@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 /**
- * Built-in Metapath functions based on teh XPath 3.1 specification.
+ * Built-in Metapath functions based on the XPath 3.1 specification.
  */
 
 package gov.nist.secauto.metaschema.model.common.metapath.function.library;

@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
+import gov.nist.secauto.metaschema.model.UsedDefinitionModelWalker;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
-import gov.nist.secauto.metaschema.model.common.constraint.ConstraintValidatingModelWalker;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
@@ -38,7 +38,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ASTPrinter;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
-import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

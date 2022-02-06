@@ -59,10 +59,10 @@ public class DateTimeAdapter
   @Override
   public DateTime parse(String value) throws IllegalArgumentException {
     try {
-      return new DateTime(ZonedDateTime.from(DateFormats.dateTimeWithTZ.parse(value)), true);
+      return new DateTime(ZonedDateTime.from(DateFormats.DATE_TIME_WITH_TZ.parse(value)), true);
     } catch (DateTimeParseException ex) {
       try {
-        LocalDateTime dateTime = LocalDateTime.from(DateFormats.dateTimeWithoutTZ.parse(value));
+        LocalDateTime dateTime = LocalDateTime.from(DateFormats.DATE_TIME_WITHOUT_TZ.parse(value));
         return new DateTime(ZonedDateTime.of(dateTime, ZoneOffset.UTC), false);
       } catch (DateTimeParseException ex2) {
         throw new IllegalArgumentException(ex2.getLocalizedMessage(), ex2);
@@ -77,12 +77,12 @@ public class DateTimeAdapter
     if (value.hasTimeZone()) {
       @SuppressWarnings("null")
       @NotNull
-      String formatted = DateFormats.dateTimeWithTZ.format(value.getValue());
+      String formatted = DateFormats.DATE_TIME_WITH_TZ.format(value.getValue());
       retval = formatted;
     } else {
       @SuppressWarnings("null")
       @NotNull
-      String formatted = DateFormats.dateTimeWithoutTZ.format(value.getValue());
+      String formatted = DateFormats.DATE_TIME_WITHOUT_TZ.format(value.getValue());
       retval = formatted;
     }
     return retval;

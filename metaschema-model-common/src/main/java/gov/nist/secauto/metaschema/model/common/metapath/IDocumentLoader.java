@@ -31,18 +31,32 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 public interface IDocumentLoader {
+  @SuppressWarnings("null")
   @NotNull
-  IDocumentNodeItem loadAsNodeItem(@NotNull URL url) throws IOException;
+  default IDocumentNodeItem loadAsNodeItem(@NotNull URL url) throws IOException {
+    try (InputStream is = url.openStream()) {
+      return loadAsNodeItem(is, url.toURI());
+    } catch (URISyntaxException ex) {
+      throw new IOException(ex);
+    }
+  }
 
+  @SuppressWarnings("null")
   @NotNull
-  IDocumentNodeItem loadAsNodeItem(@NotNull File file) throws FileNotFoundException, IOException;
+  default IDocumentNodeItem loadAsNodeItem(@NotNull File file) throws FileNotFoundException, IOException {
+    try (FileInputStream fis = new FileInputStream(file)) {
+      return loadAsNodeItem(fis, file.getCanonicalFile().toURI());
+    }
+  }
 
   @NotNull
   IDocumentNodeItem loadAsNodeItem(@NotNull InputStream is, @NotNull URI documentUri) throws IOException;

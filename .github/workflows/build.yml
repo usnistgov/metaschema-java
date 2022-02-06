@@ -45,7 +45,7 @@ jobs:
     # Maven Build
     - name: Build and run tests
       run: |
-        mvn -Prelease verify
+        mvn -Prelease -Preporting verify
     - name: Gathering JAR files
       run: |
         mkdir staging

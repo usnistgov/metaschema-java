@@ -32,7 +32,11 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ReplacementScanner {
+public final class ReplacementScanner {
+  private ReplacementScanner() {
+    // disable construction
+  }
+
   public static CharSequence replaceTokens(@NotNull String text, @NotNull Pattern pattern,
       Function<Matcher, CharSequence> replacementFunction) {
     int lastIndex = 0;

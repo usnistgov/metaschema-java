@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 public interface IValueConstraintSupport extends IConstraintSupport {
-  public static final IValueConstraintSupport NULL_CONSTRAINT = new IValueConstraintSupport() {
+  static final IValueConstraintSupport NULL_CONSTRAINT = new IValueConstraintSupport() {
 
     @SuppressWarnings("null")
     @Override

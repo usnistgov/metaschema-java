@@ -42,8 +42,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * This marker annotation indicates that a class represents a Metaschema definition (i.e., assembly,
- * field, flag).
+ * This annotation indicates that the target class represents a Metaschema assembly.
  */
 @Documented
 @Retention(RUNTIME)
@@ -73,7 +72,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return an array of JSON field names
    */
-  public String[] ignoreRootJsonProperties() default {};
+  String[] ignoreRootJsonProperties() default {};
 
   /**
    * Get the allowed value constraints for this assembly.
@@ -103,9 +102,24 @@ public @interface MetaschemaAssembly {
    */
   Expect[] expect() default {};
 
+  /**
+   * Get the index constraints for this assembly.
+   * 
+   * @return the index constraints or an empty array if no index constraints are defined
+   */
   Index[] index() default {};
 
+  /**
+   * Get the unique constraints for this assembly.
+   * 
+   * @return the unique constraints or an empty array if no unique constraints are defined
+   */
   IsUnique[] isUnique() default {};
 
+  /**
+   * Get the cardinality constraints for this assembly.
+   * 
+   * @return the cardinality constraints or an empty array if no cardinality constraints are defined
+   */
   HasCardinality[] hasCardinality() default {};
 }

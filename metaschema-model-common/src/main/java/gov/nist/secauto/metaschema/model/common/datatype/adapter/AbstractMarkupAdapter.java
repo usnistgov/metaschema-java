@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IMarkupItem;
 public abstract class AbstractMarkupAdapter<TYPE extends AbstractMarkupString<TYPE>>
     extends AbstractDatatypeJavaTypeAdapter<TYPE, IMarkupItem> {
 
-  private static final MarkupParser markupParser = new MarkupParser();
+  private static final MarkupParser MARKUP_PARSER = new MarkupParser();
 
   /**
    * Gets the markup parser used to read and write markup.
@@ -42,7 +42,7 @@ public abstract class AbstractMarkupAdapter<TYPE extends AbstractMarkupString<TY
    * @return the parser
    */
   protected static MarkupParser getMarkupParser() {
-    return markupParser;
+    return MARKUP_PARSER;
   }
 
   /**

@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFieldInstance;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.FieldDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.FieldDocument;
 
 import org.jetbrains.annotations.NotNull;
 

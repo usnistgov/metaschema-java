@@ -39,7 +39,7 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.util.List;
 
-public class FunctionUtils {
+public final class FunctionUtils {
   private FunctionUtils() {
     // disable
   }

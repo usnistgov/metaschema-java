@@ -38,6 +38,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.regex.Pattern;
 
+/**
+ * Identifies a Metapath expression referencing a value that is used in generating a key as part of
+ * a {@link IsUnique}, {@link Index}, or {@link IndexHasKey} constraint annotation.
+ */
 @Documented
 @Retention(RUNTIME)
 @Target(ANNOTATION_TYPE)

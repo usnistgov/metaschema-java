@@ -6,47 +6,47 @@
                       http://svn.apache.org/viewvc/xmlbeans/trunk/src/main/schema/config/xmlconfig.xsd?view=co">
 	<xb:namespace
 		uri="http://csrc.nist.gov/ns/oscal/metaschema/1.0">
-		<xb:package>gov.nist.secauto.metaschema.model.xmlbeans.xml</xb:package>
+		<xb:package>gov.nist.secauto.metaschema.model.xmlbeans</xb:package>
 	</xb:namespace>
 
 	<xb:usertype name="meta:BooleanType"
 		javaname="java.lang.Boolean">
-		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.BooleanType</xb:staticHandler>
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.BooleanType</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="meta:JsonGroupAsBehaviorType"
 		javaname="gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior">
-		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.JsonGroupAsBehaviorType</xb:staticHandler>
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.JsonGroupAsBehaviorType</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="meta:XmlGroupAsBehaviorType"
 		javaname="gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior">
-		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.XmlGroupAsBehaviorType</xb:staticHandler>
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.XmlGroupAsBehaviorType</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="meta:ScopeType"
 		javaname="gov.nist.secauto.metaschema.model.common.ModuleScopeEnum">
-		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.ScopeType</xb:staticHandler>
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.ScopeType</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="meta:InXmlWrappedType"
 		javaname="java.lang.Boolean">
-		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.InXmlWrappedType</xb:staticHandler>
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.InXmlWrappedType</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="meta:SimpleDatatypesType"
 		javaname="gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter">
-		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.DatatypesHandler</xb:staticHandler>
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.DatatypesHandler</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="meta:FieldDatatypesType"
 		javaname="gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter">
-		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.DatatypesHandler</xb:staticHandler>
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.DatatypesHandler</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="meta:MetaschemaPathType"
 		javaname="gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression">
-		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.MetapathExpressionHandler</xb:staticHandler>
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.MetapathExpressionHandler</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="meta:RegexType"
 		javaname="java.util.regex.Pattern">
-		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.RegexTypeHandler</xb:staticHandler>
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.RegexTypeHandler</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="meta:LevelType"
 		javaname="gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level">
-		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.ConstraintLevelType</xb:staticHandler>
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.ConstraintLevelType</xb:staticHandler>
 	</xb:usertype>
 </xb:config>

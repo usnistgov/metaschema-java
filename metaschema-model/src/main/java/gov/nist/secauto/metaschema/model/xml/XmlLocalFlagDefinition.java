@@ -43,8 +43,7 @@ import gov.nist.secauto.metaschema.model.definitions.ILocalDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlNamedModelDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFlagInstance;
-import gov.nist.secauto.metaschema.model.xml.constraint.ValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFlagDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.LocalFlagDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -105,7 +104,6 @@ public class XmlLocalFlagDefinition
     return getContainingDefinition().getContainingMetaschema();
   }
 
-  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlFlag().getName();
@@ -169,7 +167,6 @@ public class XmlLocalFlagDefinition
       return MarkupStringConverter.toMarkupString(getXmlFlag().getDescription());
     }
 
-    @SuppressWarnings("null")
     @Override
     public IJavaTypeAdapter<?> getDatatype() {
       IJavaTypeAdapter<?> retval;

@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.Objects;
 
 import javax.xml.namespace.QName;
 
@@ -66,10 +67,9 @@ public interface IFieldInstance extends INamedModelInstance, IField {
     @NotNull
     String retval;
     if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      String groupAsName = getGroupAsName();
-      if (groupAsName == null) {
-        throw new NullPointerException("null group-as name");
-      }
+      @SuppressWarnings("null")
+      @NotNull
+      String groupAsName = Objects.requireNonNull(getGroupAsName(), "null group-as name");
       retval = groupAsName;
     } else {
       retval = getEffectiveName();

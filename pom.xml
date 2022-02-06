@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>19</version>
+		<version>20-SNAPSHOT</version>
 	</parent>
 	<groupId>gov.nist.secauto.metaschema</groupId>
 	<artifactId>metaschema-framework</artifactId>
@@ -122,13 +122,13 @@
 		<dependency.jackson.version>2.13.1</dependency.jackson.version>
 		<dependency.jaxb.version>3.0.0</dependency.jaxb.version>
 		<dependency.jetbrains-annotation.version>16.0.2</dependency.jetbrains-annotation.version>
-		<dependency.junit5.version>5.7.2</dependency.junit5.version>
-		<dependency.junit5-platform-launcher.version>1.7.2</dependency.junit5-platform-launcher.version>
+		<dependency.junit5.version>5.8.2</dependency.junit5.version>
+		<dependency.junit5-platform-launcher.version>1.8.2</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.17.1</dependency.log4j2.version>
 		<dependency.moxy.version>3.0.0</dependency.moxy.version>
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
 		<dependency.woodstox.version>6.2.7</dependency.woodstox.version>
-		<dependency.xmlbeans.version>5.0.1</dependency.xmlbeans.version>
+		<dependency.xmlbeans.version>5.0.3</dependency.xmlbeans.version>
 		<!-- <dependency.xmlbeans.version>4.0.0</dependency.xmlbeans.version> -->
 		<plugin.license.version>4.0.rc1</plugin.license.version>
 		<plugin.antlr4test.version>1.17</plugin.antlr4test.version>
@@ -399,20 +399,6 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.1.2</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.2.0</version>
-					<configuration>
-						<!-- this is a hack to fix a javadoc bug -->
-						<detectJavaApiLink>false</detectJavaApiLink>
-					</configuration>
-				</plugin>
-				<plugin>
 					<groupId>org.apache.xmlbeans</groupId>
 					<artifactId>xmlbeans</artifactId>
 					<version>${dependency.xmlbeans.version}</version>
@@ -421,27 +407,10 @@
 						<!-- <noUpa>false</noUpa> -->
 						<!-- <javaSource>1.5</javaSource> -->
 						<!-- <javaSource combine.self="override"></javaSource> -->
-						<!-- <noJavac>true</noJavac> -->
+						<sourceOnly>true</sourceOnly>
+						<repackage>org.apache.xmlbeans.metadata</repackage>
 					</configuration>
 				</plugin>
-				<!-- <plugin> -->
-				<!-- <groupId>org.codehaus.mojo</groupId> -->
-				<!-- <artifactId>xmlbeans-maven-plugin</artifactId> -->
-				<!-- <version>2.3.3</version> -->
-				<!-- <configuration> -->
-				<!-- <noUpa>false</noUpa> -->
-				<!-- <javaSource>1.5</javaSource> -->
-				<!-- <javaSource combine.self="override"></javaSource> -->
-				<!-- <noJavac>true</noJavac> -->
-				<!-- </configuration> -->
-				<!-- <dependencies> -->
-				<!-- <dependency> -->
-				<!-- <groupId>org.apache.xmlbeans</groupId> -->
-				<!-- <artifactId>xmlbeans</artifactId> -->
-				<!-- <version>${dependency.xmlbeans.version}</version> -->
-				<!-- </dependency> -->
-				<!-- </dependencies> -->
-				<!-- </plugin> -->
 				<plugin>
 					<groupId>com.mycila</groupId>
 					<artifactId>license-maven-plugin</artifactId>
@@ -457,27 +426,6 @@
 						</licenseSets>
 						<failIfMissing>true</failIfMissing>
 					</configuration>
-					<!-- <executions> -->
-					<!-- <execution> -->
-					<!-- <id>check-license</id> -->
-					<!-- <phase>verify</phase> -->
-					<!-- <goals> -->
-					<!-- <goal>check</goal> -->
-					<!-- </goals> -->
-					<!-- </execution> -->
-					<!-- </executions> -->
-					<!-- <dependencies> -->
-					<!-- <dependency> -->
-					<!-- <groupId>gov.nist.secauto</groupId> -->
-					<!-- <artifactId>oss-build-support</artifactId> -->
-					<!-- <version>17</version> -->
-					<!-- <scope>compile</scope> -->
-					<!-- </dependency> -->
-					<!-- </dependencies> -->
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-checkstyle-plugin</artifactId>
 				</plugin>
 				<plugin>
 					<groupId>org.antlr</groupId>
@@ -507,15 +455,9 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>
-											org.apache.xmlbeans
-										</groupId>
-										<artifactId>
-											xmlbeans
-										</artifactId>
-										<versionRange>
-											[5.0.1,)
-										</versionRange>
+										<groupId>org.apache.xmlbeans</groupId>
+										<artifactId>xmlbeans</artifactId>
+										<versionRange>[5.0.1,)</versionRange>
 										<goals>
 											<goal>compile</goal>
 										</goals>
@@ -528,6 +470,20 @@
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<forkCount>1.5C</forkCount>
+						<reuseForks>true</reuseForks>
+						<argLine>-Xmx1024m</argLine>
+						<excludedEnvironmentVariables>
+							<excludedEnvironmentVariable>JAVA_TOOL_OPTIONS</excludedEnvironmentVariable>
+						</excludedEnvironmentVariables>
+					</configuration>
+				</plugin>
+
+
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -620,7 +576,7 @@
 							<dependency>
 								<groupId>org.codehaus.mojo</groupId>
 								<artifactId>extra-enforcer-rules</artifactId>
-								<version>1.3</version>
+								<version>1.5.1</version>
 							</dependency>
 						</dependencies>
 					</plugin>
@@ -634,7 +590,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.3.1</version>
 						<configuration>
 							<excludePackageNames>:*.impl</excludePackageNames>
 						</configuration>
@@ -679,12 +634,10 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-jxr-plugin</artifactId>
-						<version>${version.plugin.jxr}</version>
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-pmd-plugin</artifactId>
-						<version>${version.plugin.pmd}</version>
 					</plugin>
 				</plugins>
 			</reporting>
@@ -696,7 +649,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>${version.plugin.gpg}</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>

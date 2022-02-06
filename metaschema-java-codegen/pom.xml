@@ -67,13 +67,27 @@
 		</dependency>
 	</dependencies>
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-checkstyle-plugin</artifactId>
+					<configuration>
+						<sourceDirectories>
+							<sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+							<sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory>
+						</sourceDirectories>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.xmlbeans</groupId>
 				<artifactId>xmlbeans</artifactId>
 				<executions>
 					<execution>
-						<id>metaschema-M4</id>
+						<id>metaschema-codegen</id>
 						<goals>
 							<goal>compile</goal>
 						</goals>
@@ -83,20 +97,13 @@
 							<classTargetDir>${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
 							<xmlConfigs>${project.basedir}/src/main/xsdconfig/metaschema-binding.xsdconfig</xmlConfigs>
 							<name>metaschema.codegen</name>
+							<partialMethods>ALL,-XGET,-XSET,-XGET_ARRAY,-XSET_ARRAY,-XGET_IDX,-XSET_IDX</partialMethods>
+							<!--
 							<repackage>gov.nist.secauto.metaschema.codegen.xmlbeans</repackage>
+-->
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<configuration>
-					<sourceDirectories>
-						<sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
-						<sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory>
-					</sourceDirectories>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

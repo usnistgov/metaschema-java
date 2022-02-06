@@ -39,10 +39,10 @@ import inet.ipaddr.ipv6.IPv6Address;
 
 public class IPv6AddressAdapter
     extends AbstractJavaTypeAdapter<IPv6Address, IIPv6AddressItem> {
-  private static final IPAddressStringParameters IPv6;
+  private static final IPAddressStringParameters IP_V_6;
 
   static {
-    IPv6 = new IPAddressStringParameters.Builder().allowIPv4(false).allowEmpty(false).allowSingleSegment(false)
+    IP_V_6 = new IPAddressStringParameters.Builder().allowIPv4(false).allowEmpty(false).allowSingleSegment(false)
         .allowWildcardedSeparator(false).getIPv6AddressParametersBuilder().allowBinary(false).allowLeadingZeros(false)
         .allowPrefixesBeyondAddressSize(false).getParentBuilder().toParams();
   }
@@ -61,7 +61,7 @@ public class IPv6AddressAdapter
   @Override
   public IPv6Address parse(String value) throws IllegalArgumentException {
     try {
-      return (IPv6Address) new IPAddressString(value, IPv6).toAddress();
+      return (IPv6Address) new IPAddressString(value, IP_V_6).toAddress();
     } catch (AddressStringException | IncompatibleAddressException ex) {
       throw new IllegalArgumentException(ex.getLocalizedMessage(), ex);
     }

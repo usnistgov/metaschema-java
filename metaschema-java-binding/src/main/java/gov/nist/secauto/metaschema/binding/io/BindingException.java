@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
+/**
+ * Used to report exceptional conditions related to processing bound objects.
+ */
 public class BindingException
     extends Exception {
 

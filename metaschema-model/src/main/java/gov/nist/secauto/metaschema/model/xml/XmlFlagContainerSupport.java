@@ -30,12 +30,12 @@ import gov.nist.secauto.metaschema.model.definitions.IXmlNamedModelDefinition;
 import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
 import gov.nist.secauto.metaschema.model.xml.XmlLocalAssemblyDefinition.InternalAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.xml.XmlLocalFieldDefinition.InternalFieldDefinition;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.FlagDocument;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalAssemblyDefinitionType;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalFieldDefinitionType;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalAssemblyDefinitionType;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFieldDefinitionType;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFlagDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.FlagDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFieldDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.LocalFlagDefinitionType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;

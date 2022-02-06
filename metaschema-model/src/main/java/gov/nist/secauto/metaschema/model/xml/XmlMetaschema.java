@@ -34,11 +34,11 @@ import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlNamedModelDefinition;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalAssemblyDefinitionType;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalFieldDefinitionType;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalFlagDefinitionType;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.METASCHEMADocument;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.METASCHEMADocument.METASCHEMA;
+import gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFieldDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFlagDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.METASCHEMADocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.METASCHEMADocument.METASCHEMA;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

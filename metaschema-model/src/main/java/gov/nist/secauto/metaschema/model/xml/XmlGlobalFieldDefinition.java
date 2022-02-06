@@ -43,8 +43,7 @@ import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFieldDefinition;
 import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
-import gov.nist.secauto.metaschema.model.xml.constraint.ValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalFieldDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFieldDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -137,7 +136,6 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
     return constraints.getExpectConstraints();
   }
 
-  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlField().getName();
@@ -163,7 +161,6 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
     return MarkupStringConverter.toMarkupString(getXmlField().getDescription());
   }
 
-  @SuppressWarnings("null")
   protected synchronized void initFlagContainer() {
     if (flagContainer == null) {
       flagContainer = new XmlFlagContainerSupport(getXmlField(), this);
@@ -176,7 +173,6 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
     return flagContainer.getFlagInstanceMap();
   }
 
-  @SuppressWarnings("null")
   @Override
   public IJavaTypeAdapter<?> getDatatype() {
     IJavaTypeAdapter<?> retval;
@@ -241,7 +237,6 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
     return retval;
   }
 
-  @SuppressWarnings("null")
   @Override
   public ModuleScopeEnum getModuleScope() {
     ModuleScopeEnum retval = IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;

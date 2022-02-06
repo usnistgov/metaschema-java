@@ -42,6 +42,7 @@ import com.vladsch.flexmark.util.misc.Extension;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -85,11 +86,11 @@ public class FlexmarkFactory {
   private Formatter formatter;
   private FlexmarkHtmlConverter htmlConverter;
 
-  public Document fromHtml(String html) {
+  public Document fromHtml(@NotNull String html) {
     return fromHtml(html, null, null);
   }
 
-  public Document fromHtml(String html, FlexmarkHtmlConverter htmlParser, Parser markdownParser) {
+  public Document fromHtml(@NotNull String html, FlexmarkHtmlConverter htmlParser, Parser markdownParser) {
     Objects.requireNonNull(html, "html");
     if (htmlParser == null) {
       htmlParser = getFlexmarkHtmlConverter();

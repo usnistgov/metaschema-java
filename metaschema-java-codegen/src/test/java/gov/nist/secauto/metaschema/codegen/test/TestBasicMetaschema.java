@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.codegen.test;
 
-import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.codegen.JavaGenerator;
 import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
@@ -131,13 +130,13 @@ public class TestBasicMetaschema {
   // }
 
   private void runTests(String testPath, String rootClassName, File classDir)
-      throws ClassNotFoundException, IOException, MetaschemaException, BindingException {
+      throws ClassNotFoundException, IOException, MetaschemaException {
     runTests(testPath, rootClassName, classDir, null);
   }
 
   private void runTests(String testPath, String rootClassName, File classDir,
       java.util.function.Consumer<Object> assertions)
-      throws ClassNotFoundException, IOException, MetaschemaException, BindingException {
+      throws ClassNotFoundException, IOException, MetaschemaException {
     @SuppressWarnings("unused")
     Class<?> rootClass
         = compileMetaschema(new File(String.format("src/test/resources/metaschema/%s/metaschema.xml", testPath)),
@@ -174,10 +173,10 @@ public class TestBasicMetaschema {
 
   // @TempDir
   // File generationDir;
-  File generationDir = new File("target/generated-sources/metaschema");
+  File generationDir = new File("target/generated-test-sources/metaschema");
 
   @Test
-  public void testSimpleMetaschema() throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
+  public void testSimpleMetaschema() throws MetaschemaException, IOException, ClassNotFoundException {
     runTests("simple", "gov.nist.csrc.ns.metaschema.testing.simple.TopLevel", generationDir);
     // runTests("simple", "gov.nist.csrc.ns.metaschema.testing.simple.TopLevel", generationDir, (obj) ->
     // {
@@ -191,7 +190,7 @@ public class TestBasicMetaschema {
 
   @Test
   public void testSimpleUuidMetaschema()
-      throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
+      throws MetaschemaException, IOException, ClassNotFoundException {
     runTests("simple_with_uuid", "gov.nist.csrc.ns.metaschema.testing.simple.with.uuid.TopLevel", generationDir,
         (obj) -> {
           try {
@@ -204,7 +203,7 @@ public class TestBasicMetaschema {
 
   @Test
   public void testSimpleWithFieldMetaschema()
-      throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
+      throws MetaschemaException, IOException, ClassNotFoundException {
     runTests("simple_with_field", "gov.nist.csrc.ns.metaschema.testing.simple.with.field.TopLevel", generationDir);
   }
 
@@ -214,7 +213,7 @@ public class TestBasicMetaschema {
 
   @Test
   public void testFieldsWithFlagMetaschema()
-      throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
+      throws MetaschemaException, IOException, ClassNotFoundException {
     runTests("fields_with_flags", "gov.nist.csrc.ns.metaschema.testing.fields.with.flags.TopLevel", generationDir);
     // runTests("fields_with_flags", "gov.nist.csrc.ns.metaschema.testing.fields.with.flags.TopLevel",
     // generationDir,
@@ -285,7 +284,7 @@ public class TestBasicMetaschema {
 
   @Test
   public void testAssemblyMetaschema()
-      throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
+      throws MetaschemaException, IOException, ClassNotFoundException {
     runTests("assembly", "gov.nist.itl.metaschema.codegen.xml.example.assembly.TopLevel", generationDir, (obj) -> {
       try {
         Assertions.assertEquals("test", reflectMethod(obj, "getId"));
@@ -297,7 +296,7 @@ public class TestBasicMetaschema {
 
   @Test
   public void testLocalDefinitionsMetaschema()
-      throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
+      throws MetaschemaException, IOException, ClassNotFoundException {
     runTests("local-definitions", "gov.nist.csrc.ns.metaschema.testing.local.definitions.TopLevel", generationDir);
   }
 }

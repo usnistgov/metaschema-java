@@ -56,7 +56,7 @@ public class Base64Adapter
   public ByteBuffer copy(Object obj) {
     ByteBuffer buffer = (ByteBuffer) obj;
     final ByteBuffer clone
-        = (buffer.isDirect()) ? ByteBuffer.allocateDirect(buffer.capacity()) : ByteBuffer.allocate(buffer.capacity());
+        = buffer.isDirect() ? ByteBuffer.allocateDirect(buffer.capacity()) : ByteBuffer.allocate(buffer.capacity());
     final ByteBuffer readOnlyCopy = buffer.asReadOnlyBuffer();
     readOnlyCopy.flip();
     clone.put(readOnlyCopy);

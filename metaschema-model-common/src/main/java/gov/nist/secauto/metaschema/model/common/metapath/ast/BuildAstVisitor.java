@@ -86,6 +86,8 @@ public class BuildAstVisitor
    * 
    * @param <CONTEXT>
    *          the context type to parse
+   * @param <NODE>
+   *          the type of expression
    * @param context
    *          the context instance
    * @param supplier
@@ -504,7 +506,7 @@ public class BuildAstVisitor
       arguments = Collections.singletonList(argument);
     } else {
       // more children than the OP CP tokens
-      arguments = new ArrayList<>((numChildren - 1 / 2));
+      arguments = new ArrayList<>(numChildren - 1 / 2);
       for (int i = 1; i < numChildren - 1; i = i + 2) {
         IExpression argument = context.getChild(i).accept(this);
         arguments.add(argument);

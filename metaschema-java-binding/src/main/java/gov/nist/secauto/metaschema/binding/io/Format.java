@@ -26,8 +26,20 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
+/**
+ * Selections of serialization formats.
+ */
 public enum Format {
+  /**
+   * The <a href="https://www.w3.org/XML/">Extensible Markup Language</a> format.
+   */
   XML,
+  /**
+   * The <a href="https://www.json.org/">JavaScript Object Notation</a> format.
+   */
   JSON,
+  /**
+   * The <a href="https://yaml.org/">YAML Ain't Markup Language</a> format.
+   */
   YAML;
 }

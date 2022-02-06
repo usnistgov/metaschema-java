@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 /**
- * XMLBeans generated classes for the binding configuration format.
+ * XMLBeans generated classes for the binding configuration XML format.
  */
 
 package gov.nist.secauto.metaschema.codegen.xmlbeans;

@@ -27,43 +27,151 @@
 package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.model.common.metapath.IDocumentLoader;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
+/**
+ * A common interface for loader implementations.
+ */
 public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
+  /**
+   * Determine the format of the provided resource.
+   * 
+   * @param url
+   *          the resource
+   * @return the format of the provided resource
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   */
   @NotNull
-  Format detectFormat(@NotNull URL url) throws IOException;
+  default Format detectFormat(@NotNull URL url) throws IOException {
+    return detectFormat(url.openStream());
+  }
 
+  /**
+   * Determine the format of the provided resource.
+   * 
+   * @param file
+   *          the resource
+   * @return the format of the provided resource
+   * @throws FileNotFoundException
+   *           if the file does not exist
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   */
   @NotNull
-  Format detectFormat(@NotNull File file) throws FileNotFoundException, IOException;
+  default Format detectFormat(@NotNull File file) throws FileNotFoundException, IOException {
+    if (!file.exists()) {
+      throw new FileNotFoundException(file.getAbsolutePath());
+    }
+    return detectFormat(new FileInputStream(file));
+  }
 
+  /**
+   * Determine the format of the provided resource.
+   * <p>
+   * This method will consume data from the provided {@link InputStream}. If the caller of this method
+   * intends to read data from the stream after determining the format, the caller should pass in a
+   * stream that can be reset.
+   * 
+   * @param is
+   *          an input stream for the resource
+   * @return the format of the provided resource
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   */
   @NotNull
   Format detectFormat(@NotNull InputStream is) throws IOException;
 
+  /**
+   * Load data from the provided resource into a bound object.
+   * <p>
+   * This method should auto-detect the format of the provided resource.
+   * 
+   * @param <CLASS>
+   *          the type of the bound object to return
+   * @param url
+   *          the resource
+   * @return a bound object containing the loaded data
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   * @see #detectFormat(URL)
+   */
   @NotNull
-  <CLASS> CLASS load(@NotNull URL url) throws IOException;
-
-  @NotNull
-  <CLASS> CLASS load(@NotNull File file) throws FileNotFoundException, IOException;
-
-  @NotNull
-  <CLASS> CLASS load(@NotNull InputStream is, @NotNull URI documentUri) throws IOException;
+  default <CLASS> CLASS load(@NotNull URL url) throws IOException {
+    try {
+      return load(url.openStream(), url.toURI());
+    } catch (URISyntaxException ex) {
+      throw new IOException(ex);
+    }
+  }
 
   /**
-   * Load the specified data file as the specified Java class.
+   * Load data from the provided resource into a bound object.
+   * <p>
+   * This method should auto-detect the format of the provided resource.
+   * 
+   * @param <CLASS>
+   *          the type of the bound object to return
+   * @param file
+   *          the resource
+   * @return a bound object containing the loaded data
+   * @throws FileNotFoundException
+   *           if the file does not exist
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   * @see #detectFormat(File)
+   */
+  @NotNull
+  default <CLASS> CLASS load(@NotNull File file) throws FileNotFoundException, IOException {
+    if (!file.exists()) {
+      throw new FileNotFoundException(file.getAbsolutePath());
+    }
+    return load(new FileInputStream(file), file.toURI());
+  }
+
+  /**
+   * Load data from the provided resource into a bound object.
+   * <p>
+   * This method should auto-detect the format of the provided resource.
+   * 
+   * @param <CLASS>
+   *          the type of the bound object to return
+   * @param is
+   *          the resource
+   * @param documentUri
+   *          the URI of the resource
+   * @return a bound object containing the loaded data
+   * @throws FileNotFoundException
+   *           if the file does not exist
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   * @see #detectFormat(InputStream)
+   */
+  @NotNull
+  default <CLASS> CLASS load(@NotNull InputStream is, @NotNull URI documentUri) throws IOException {
+    return loadAsNodeItem(is, documentUri).toBoundObject();
+  }
+
+  /**
+   * Load data from the specified resource into a bound object with the type of the specified Java
+   * class.
    * 
    * @param <CLASS>
    *          the Java type to load data into
    * @param clazz
    *          the class for the java type
    * @param file
-   *          the file to load
+   *          the resource to load
    * @return the loaded instance data
    * @throws IOException
    *           if an error occurred while loading the data in the specified file
@@ -71,11 +179,53 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
    *           if the specified file does not exist
    */
   @NotNull
-  <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull File file) throws FileNotFoundException, IOException;
+  default <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull File file)
+      throws FileNotFoundException, IOException {
+    if (!file.exists()) {
+      throw new FileNotFoundException(file.getAbsolutePath());
+    }
+    return load(clazz, new FileInputStream(file), file.getCanonicalFile().toURI());
+  }
 
+  /**
+   * Load data from the specified resource into a bound object with the type of the specified Java
+   * class.
+   * 
+   * @param <CLASS>
+   *          the Java type to load data into
+   * @param clazz
+   *          the class for the java type
+   * @param url
+   *          the resource to load
+   * @return the loaded instance data
+   * @throws IOException
+   *           if an error occurred while loading the data in the specified file
+   */
   @NotNull
-  <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull URL url) throws IOException;
+  default <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull URL url) throws IOException {
+    try {
+      return load(clazz, url.openStream(), url.toURI());
+    } catch (URISyntaxException ex) {
+      throw new IOException(ex);
+    }
+  }
 
+  /**
+   * Load data from the specified resource into a bound object with the type of the specified Java
+   * class.
+   * 
+   * @param <CLASS>
+   *          the Java type to load data into
+   * @param clazz
+   *          the class for the java type
+   * @param is
+   *          the resource to load
+   * @param documentUri
+   *          the URI of the resource
+   * @return the loaded instance data
+   * @throws IOException
+   *           if an error occurred while loading the data in the specified file
+   */
   @NotNull
   <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull InputStream is, @NotNull URI documentUri) throws IOException;
 }

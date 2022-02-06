@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.io.IBoundLoader;
 import gov.nist.secauto.metaschema.binding.io.ISerializer;
-import gov.nist.secauto.metaschema.binding.model.BoundClass;
+import gov.nist.secauto.metaschema.binding.model.test.BoundClass;
 
 import org.junit.jupiter.api.Test;
 

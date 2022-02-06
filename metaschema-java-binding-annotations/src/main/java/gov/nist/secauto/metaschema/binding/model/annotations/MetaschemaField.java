@@ -39,8 +39,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * This marker annotation indicates that a class represents a Metaschema definition (i.e., assembly,
- * field, flag).
+ * This annotation indicates that the target class represents a Metaschema field.
  */
 @Documented
 @Retention(RUNTIME)

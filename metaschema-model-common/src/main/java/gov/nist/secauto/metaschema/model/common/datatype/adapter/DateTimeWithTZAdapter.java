@@ -51,7 +51,7 @@ public class DateTimeWithTZAdapter
   @Override
   public ZonedDateTime parse(String value) throws IllegalArgumentException {
     try {
-      return ZonedDateTime.from(DateFormats.dateTimeWithTZ.parse(value));
+      return ZonedDateTime.from(DateFormats.DATE_TIME_WITH_TZ.parse(value));
     } catch (DateTimeParseException ex) {
       throw new IllegalArgumentException(ex.getLocalizedMessage(), ex);
     }
@@ -60,7 +60,7 @@ public class DateTimeWithTZAdapter
   @SuppressWarnings("null")
   @Override
   public String asString(Object value) {
-    return DateFormats.dateTimeWithTZ.format((ZonedDateTime) value);
+    return DateFormats.DATE_TIME_WITH_TZ.format((ZonedDateTime) value);
   }
 
   @SuppressWarnings("null")

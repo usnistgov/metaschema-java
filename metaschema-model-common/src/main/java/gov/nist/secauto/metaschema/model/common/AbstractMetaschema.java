@@ -39,6 +39,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -49,7 +50,7 @@ import java.util.stream.Collectors;
  * Provides a common, abstract implementation of a {@link IMetaschema}.
  */
 public abstract class AbstractMetaschema implements IMetaschema {
-  private static final Logger logger = LogManager.getLogger(AbstractMetaschema.class);
+  private static final Logger LOGGER = LogManager.getLogger(AbstractMetaschema.class);
 
   @NotNull
   private final URI location;
@@ -79,7 +80,7 @@ public abstract class AbstractMetaschema implements IMetaschema {
     this.importedMetaschemaByUri = Collections.unmodifiableMap(importedMetaschema);
     this.importedMetaschemaByName = Collections.unmodifiableMap(
         importedMetaschema.values().stream().collect(Collectors.toMap(IMetaschema::getShortName, Function.identity())));
-    logger.trace("Creating metaschema '{}'", metaschemaResource);
+    LOGGER.trace("Creating metaschema '{}'", metaschemaResource);
   }
 
   @Override
@@ -128,9 +129,10 @@ public abstract class AbstractMetaschema implements IMetaschema {
       @NotNull Map<@NotNull String, DEF> existingMap) {
     for (DEF item : items) {
       DEF oldItem = existingMap.put(item.getName(), item);
-      if (oldItem != null && oldItem != item && logger.isWarnEnabled()) {
-        logger.warn("The {} '{}' from metaschema '{}' is shadowing '{}' from metaschema '{}'",
-            item.getModelType().name().toLowerCase(), item.getName(), item.getContainingMetaschema().getShortName(),
+      if (oldItem != null && oldItem != item && LOGGER.isWarnEnabled()) {
+        LOGGER.warn("The {} '{}' from metaschema '{}' is shadowing '{}' from metaschema '{}'",
+            item.getModelType().name().toLowerCase(Locale.ROOT), item.getName(),
+            item.getContainingMetaschema().getShortName(),
             oldItem.getName(), oldItem.getContainingMetaschema().getShortName());
       }
     }
@@ -145,7 +147,9 @@ public abstract class AbstractMetaschema implements IMetaschema {
    */
   @SuppressWarnings("null")
   protected void processExportedDefinitions() throws MetaschemaException {
-    logger.debug("Processing metaschema '{}'", this.getLocation());
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Processing metaschema '{}'", this.getLocation());
+    }
 
     this.exportedFlagDefinitions = new LinkedHashMap<>();
     this.exportedFieldDefinitions = new LinkedHashMap<>();

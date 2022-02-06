@@ -40,7 +40,7 @@ public interface IConstraint {
    * <p>
    * These values are ordered from least significant to most significant.
    */
-  public enum Level {
+  enum Level {
     /**
      * A violation of the constraint represents a point of interest.
      */
@@ -65,17 +65,17 @@ public interface IConstraint {
    * The default level to use if no level is provided.
    */
   @NotNull
-  public static final Level DEFAULT_LEVEL = Level.ERROR;
+  static final Level DEFAULT_LEVEL = Level.ERROR;
   /**
    * The default target Metapath expression to use if no target is provided.
    */
   @NotNull
-  public static final MetapathExpression DEFAULT_TARGET = MetapathExpression.CONTEXT_NODE;
+  static final MetapathExpression DEFAULT_TARGET = MetapathExpression.CONTEXT_NODE;
   /**
    * The default target Metapath expression to use if no target is provided.
    */
   @NotNull
-  public static final String DEFAULT_TARGET_METAPATH = ".";
+  static final String DEFAULT_TARGET_METAPATH = ".";
 
   /**
    * Retrieve the unique identifier for the constraint.

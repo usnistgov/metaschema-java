@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.binding;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.DefaultBoundLoader;
-import gov.nist.secauto.metaschema.binding.io.IDeserializer;
 import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.io.IBoundLoader;
+import gov.nist.secauto.metaschema.binding.io.IDeserializer;
 import gov.nist.secauto.metaschema.binding.io.ISerializer;
 import gov.nist.secauto.metaschema.binding.io.json.DefaultJsonDeserializer;
 import gov.nist.secauto.metaschema.binding.io.json.DefaultJsonSerializer;
@@ -40,13 +40,12 @@ import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlDeserializer;
 import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlSerializer;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
-import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.DefaultAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.DefaultFieldClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.binding.model.constraint.ValidatingXdmVisitor;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
@@ -69,6 +68,16 @@ import javax.xml.namespace.QName;
 
 /**
  * The implementation of a {@link IBindingContext} provided by this library.
+ * <p>
+ * This implementation caches Metaschema information, which can dramatically improve read and write
+ * performance at the cost of some memory use. Thus, using the same instance of this class across
+ * multiple I/O operations will improve overall read and write performance when processing the same
+ * types of data.
+ * <p>
+ * Serializers and deserializers provided by this class using the
+ * {@link #newSerializer(Format, Class)} and {@link #newDeserializer(Format, Class)} methods will
+ * <p>
+ * This class is synchronized and is thread-safe.
  */
 public class DefaultBindingContext implements IBindingContext {
   private static DefaultBindingContext instance;
@@ -138,6 +147,11 @@ public class DefaultBindingContext implements IBindingContext {
     return retval;
   }
 
+  /**
+   * {@inheritDoc}
+   * <p>
+   * A serializer returned by this method is thread-safe.
+   */
   @Override
   public <CLASS> ISerializer<CLASS> newSerializer(@NotNull Format format, @NotNull Class<CLASS> clazz) {
     Objects.requireNonNull(format, "format");
@@ -161,6 +175,11 @@ public class DefaultBindingContext implements IBindingContext {
     return retval;
   }
 
+  /**
+   * {@inheritDoc}
+   * <p>
+   * A deserializer returned by this method is thread-safe.
+   */
   @Override
   public <CLASS> IDeserializer<CLASS> newDeserializer(@NotNull Format format, @NotNull Class<CLASS> clazz) {
     Objects.requireNonNull(format, "format");
@@ -189,7 +208,7 @@ public class DefaultBindingContext implements IBindingContext {
     bindingMatchers.add(matcher);
   }
 
-  protected List<IBindingMatcher> getBindingMatchers() {
+  protected synchronized List<IBindingMatcher> getBindingMatchers() {
     return Collections.unmodifiableList(bindingMatchers);
   }
 
@@ -257,7 +276,7 @@ public class DefaultBindingContext implements IBindingContext {
     if (handler != null) {
       validator.setConstraintValidationHandler(handler);
     }
-    new ValidatingXdmVisitor().visit(nodeItem, validator);
+    nodeItem.validate(validator);
     validator.finalizeValidation();
   }
 

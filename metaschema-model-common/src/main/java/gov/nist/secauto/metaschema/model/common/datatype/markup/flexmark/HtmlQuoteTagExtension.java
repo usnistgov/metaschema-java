@@ -55,7 +55,7 @@ public class HtmlQuoteTagExtension
   }
 
   @Override
-  public void extend(com.vladsch.flexmark.parser.Parser.Builder parserBuilder) {
+  public void extend(Parser.Builder parserBuilder) {
     parserBuilder.postProcessorFactory(new QTagDoubleQuoteNodePostProcessor.Factory());
   }
 

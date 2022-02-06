@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInst
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+import java.util.Objects;
 
 public interface IAssemblyInstance extends INamedModelInstance, IAssembly {
 
@@ -43,11 +44,10 @@ public interface IAssemblyInstance extends INamedModelInstance, IAssembly {
     @NotNull
     String retval;
     if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      String groupName = getGroupAsName();
-      if (groupName == null) {
-        throw new NullPointerException("null group-as name");
-      }
-      retval = groupName;
+      @SuppressWarnings("null")
+      @NotNull
+      String groupAsName = Objects.requireNonNull(getGroupAsName(), "null group-as name");
+      retval = groupAsName;
     } else {
       retval = getEffectiveName();
     }

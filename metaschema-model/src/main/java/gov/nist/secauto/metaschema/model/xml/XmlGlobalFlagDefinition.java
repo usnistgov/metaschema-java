@@ -40,8 +40,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFlagDefinition;
-import gov.nist.secauto.metaschema.model.xml.constraint.ValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.GlobalFlagDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFlagDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -130,7 +129,6 @@ public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
     return constraints.getExpectConstraints();
   }
 
-  @SuppressWarnings("null")
   @Override
   public ModuleScopeEnum getModuleScope() {
     ModuleScopeEnum retval = IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
@@ -140,7 +138,6 @@ public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
     return retval;
   }
 
-  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlFlag().getName();
@@ -170,7 +167,6 @@ public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
     return MarkupStringConverter.toMarkupString(getXmlFlag().getDescription());
   }
 
-  @SuppressWarnings("null")
   @Override
   public IJavaTypeAdapter<?> getDatatype() {
     IJavaTypeAdapter<?> retval;

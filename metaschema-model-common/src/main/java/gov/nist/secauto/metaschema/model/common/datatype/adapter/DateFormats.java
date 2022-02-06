@@ -26,52 +26,50 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import static java.time.temporal.ChronoField.NANO_OF_SECOND;
-
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 
-public class DateFormats {
+public final class DateFormats {
   private DateFormats() {
     // disable construction
   }
 
-  public static final DateTimeFormatter dateWithOptionalTZ;
-  public static final DateTimeFormatter dateWithTZ;
-  public static final DateTimeFormatter dateWithoutTZ;
-  public static final DateTimeFormatter dateTimeWithOptionalTZ;
-  public static final DateTimeFormatter dateTimeWithTZ;
-  public static final DateTimeFormatter dateTimeWithoutTZ;
+  // public static final DateTimeFormatter dateWithOptionalTZ;
+  public static final DateTimeFormatter DATE_WITH_TZ;
+  public static final DateTimeFormatter DATE_WITHOUT_TZ;
+  // public static final DateTimeFormatter dateTimeWithOptionalTZ;
+  public static final DateTimeFormatter DATE_TIME_WITH_TZ;
+  public static final DateTimeFormatter DATE_TIME_WITHOUT_TZ;
 
   static {
-    dateWithOptionalTZ = new DateTimeFormatterBuilder()
-        .appendPattern("yyyy-MM-dd")
-        .optionalStart()
-        .appendPattern("XXX")
-        .optionalEnd()
-        .toFormatter();
-    dateWithTZ = new DateTimeFormatterBuilder()
+    // dateWithOptionalTZ = new DateTimeFormatterBuilder()
+    // .appendPattern("yyyy-MM-dd")
+    // .optionalStart()
+    // .appendPattern("XXX")
+    // .optionalEnd()
+    // .toFormatter();
+    DATE_WITH_TZ = new DateTimeFormatterBuilder()
         .appendPattern("yyyy-MM-ddXXX")
         .toFormatter();
-    dateWithoutTZ = new DateTimeFormatterBuilder()
+    DATE_WITHOUT_TZ = new DateTimeFormatterBuilder()
         .appendPattern("yyyy-MM-dd")
         .toFormatter();
-    dateTimeWithOptionalTZ = new DateTimeFormatterBuilder()
-        .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
-        .optionalStart()
-        .appendFraction(NANO_OF_SECOND, 0, 9, true)
-        .appendPattern("XXX")
-        .optionalEnd()
-        .toFormatter();
-    dateTimeWithTZ = new DateTimeFormatterBuilder()
+    // dateTimeWithOptionalTZ = new DateTimeFormatterBuilder()
+    // .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+    // .optionalStart()
+    // .appendFraction(NANO_OF_SECOND, 0, 9, true)
+    // .appendPattern("XXX")
+    // .optionalEnd()
+    // .toFormatter();
+    DATE_TIME_WITH_TZ = new DateTimeFormatterBuilder()
         .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
         .optionalStart()
         .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
         .optionalEnd()
         .appendPattern("XXX")
         .toFormatter();
-    dateTimeWithoutTZ = new DateTimeFormatterBuilder()
+    DATE_TIME_WITHOUT_TZ = new DateTimeFormatterBuilder()
         .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
         .optionalStart()
         .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)

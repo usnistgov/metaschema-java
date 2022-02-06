@@ -42,6 +42,7 @@ public interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSuppl
   IBoundNamedModelInstance getProperty();
 
   /**
+   * Get the class binding associated with this handler.
    * 
    * @return the class binding or {@code null} if the property's item type is not a bound class
    */

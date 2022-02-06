@@ -39,7 +39,8 @@ jobs:
     # Maven Deploy Website
     - name: Build Website
       run: |
-          mvn -Preporting -Prelease package site site:stage
+          mvn -Preporting -Prelease package
+          mvn -Preporting -Prelease site site:stage
     - name: Run deploy script
       run: |
         touch target/staging/.nojekyll

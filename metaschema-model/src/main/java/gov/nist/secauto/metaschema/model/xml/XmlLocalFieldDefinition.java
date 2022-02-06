@@ -47,8 +47,7 @@ import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFieldDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFieldInstance;
 import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
-import gov.nist.secauto.metaschema.model.xml.constraint.ValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.LocalFieldDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
 

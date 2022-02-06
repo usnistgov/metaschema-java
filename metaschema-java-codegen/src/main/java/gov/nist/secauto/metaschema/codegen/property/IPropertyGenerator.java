@@ -41,9 +41,12 @@ public interface IPropertyGenerator {
   MarkupLine getDescription();
 
   /**
+   * Build the Java class data for the property.
    * 
    * @param builder
+   *          the class builder
    * @param typeResolver
+   *          the resolver used to get type information
    * @return the set of additional child definitions that need to be built
    */
   Set<INamedModelDefinition> build(TypeSpec.Builder builder, ITypeResolver typeResolver);

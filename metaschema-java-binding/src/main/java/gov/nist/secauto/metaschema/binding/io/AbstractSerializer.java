@@ -29,14 +29,6 @@ package gov.nist.secauto.metaschema.binding.io;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-
 public abstract class AbstractSerializer<CLASS>
     extends AbstractSerializationBase
     implements ISerializer<CLASS> {
@@ -51,22 +43,5 @@ public abstract class AbstractSerializer<CLASS>
    */
   public AbstractSerializer(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
-  }
-
-  @Override
-  public void serialize(CLASS data, OutputStream out) throws BindingException {
-    serialize(data, new OutputStreamWriter(out));
-  }
-
-  @Override
-  public void serialize(CLASS data, File file) throws FileNotFoundException, BindingException {
-    try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), Charset.forName("UTF-8"))) {
-      serialize(data, writer);
-      writer.close();
-    } catch (FileNotFoundException ex) {
-      throw ex;
-    } catch (IOException ex) {
-      throw new BindingException("Unable to open file: " + file != null ? file.getPath() : "{null}", ex);
-    }
   }
 }

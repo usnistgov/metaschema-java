@@ -42,9 +42,11 @@ import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
-import gov.nist.secauto.metaschema.binding.model.BoundClass.FlaggedField;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
+import gov.nist.secauto.metaschema.binding.model.test.BoundClass;
+import gov.nist.secauto.metaschema.binding.model.test.FlaggedAssemblyClass;
+import gov.nist.secauto.metaschema.binding.model.test.BoundClass.FlaggedField;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 
 import org.codehaus.stax2.XMLEventReader2;

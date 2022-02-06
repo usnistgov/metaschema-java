@@ -147,10 +147,8 @@ public class DefaultXmlDeserializer<CLASS>
       parsedNodeItem = IXdmFactory.INSTANCE.newRelativeAssemblyNodeItem(classBinding, retval, documentUri);
     }
 
-    if (reader.hasNext()) {
-      if (logger.isDebugEnabled()) {
-        logger.debug("After Parse: {}", XmlEventUtil.toString(reader.peek()));
-      }
+    if (reader.hasNext() && logger.isDebugEnabled()) {
+      logger.debug("After Parse: {}", XmlEventUtil.toString(reader.peek()));
     }
 
     return parsedNodeItem;

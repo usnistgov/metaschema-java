@@ -39,6 +39,10 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * This annotation defines cardinality condition(s) to be met in the context of the containing
+ * annotation.
+ */
 @Documented
 @Retention(RUNTIME)
 @Target(ANNOTATION_TYPE)

@@ -28,13 +28,67 @@ package gov.nist.secauto.metaschema.binding.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 
+/**
+ * Implementations of this interface are able to write data in a bound object instance of the
+ * parameterized type to a structured data format.
+ * 
+ * @param <CLASS>
+ *          the Java type from which data can be written
+ */
 public interface ISerializer<CLASS> extends IMutableConfiguration {
-  void serialize(CLASS data, OutputStream os) throws BindingException;
+  /**
+   * Write data from a bound class instance to the {@link OutputStream}.
+   * 
+   * @param data
+   *          the instance data
+   * @param os
+   *          the output stream to write to
+   * @throws BindingException
+   *           if an error occurred while writing data to the stream
+   */
+  default void serialize(CLASS data, OutputStream os) throws BindingException {
+    serialize(data, new OutputStreamWriter(os));
+  }
 
-  void serialize(CLASS data, File file) throws BindingException, FileNotFoundException;
+  /**
+   * Write data from a bound class instance to the {@link File}.
+   * 
+   * @param data
+   *          the instance data
+   * @param file
+   *          the file to write to
+   * @throws BindingException
+   *           if an error occurred while writing data to the stream
+   * @throws FileNotFoundException
+   *           if the provided file is not a regular file or if there was an error creating the file
+   */
+  default void serialize(CLASS data, File file) throws BindingException, FileNotFoundException {
+    try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), Charset.forName("UTF-8"))) {
+      serialize(data, writer);
+      writer.close();
+    } catch (FileNotFoundException ex) {
+      throw ex;
+    } catch (IOException ex) {
+      throw new BindingException("Unable to open file: " + file != null ? file.getPath() : "{null}", ex);
+    }
+  }
 
+  /**
+   * Write data from a bound class instance to the {@link Writer}.
+   * 
+   * @param data
+   *          the instance data
+   * @param writer
+   *          the writer to write to
+   * @throws BindingException
+   *           if an error occurred while writing data to the stream
+   */
   void serialize(CLASS data, Writer writer) throws BindingException;
 }

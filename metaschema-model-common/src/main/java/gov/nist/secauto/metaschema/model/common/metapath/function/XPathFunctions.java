@@ -48,7 +48,7 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class XPathFunctions {
+public final class XPathFunctions {
   private XPathFunctions() {
     // disable
   }

@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public interface IAllowedValuesConstraint extends IConstraint {
-  public static final boolean DEFAULT_ALLOW_OTHER = false;
+  static final boolean DEFAULT_ALLOW_OTHER = false;
 
   /**
    * Get the collection allowed values associated with this constraint.

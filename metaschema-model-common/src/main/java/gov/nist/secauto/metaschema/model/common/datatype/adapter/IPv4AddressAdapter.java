@@ -39,10 +39,10 @@ import inet.ipaddr.ipv4.IPv4Address;
 
 public class IPv4AddressAdapter
     extends AbstractJavaTypeAdapter<IPv4Address, IIPv4AddressItem> {
-  private static final IPAddressStringParameters IPv4;
+  private static final IPAddressStringParameters IP_V_4;
 
   static {
-    IPv4 = new IPAddressStringParameters.Builder().allowIPv6(false).allowEmpty(false).allowSingleSegment(false)
+    IP_V_4 = new IPAddressStringParameters.Builder().allowIPv6(false).allowEmpty(false).allowSingleSegment(false)
         .allowWildcardedSeparator(false).getIPv4AddressParametersBuilder().allowBinary(false).allowLeadingZeros(false)
         .allowPrefixesBeyondAddressSize(false).getParentBuilder().toParams();
   }
@@ -61,7 +61,7 @@ public class IPv4AddressAdapter
   @Override
   public IPv4Address parse(String value) throws IllegalArgumentException {
     try {
-      return (IPv4Address) new IPAddressString(value, IPv4).toAddress();
+      return (IPv4Address) new IPAddressString(value, IP_V_4).toAddress();
     } catch (AddressStringException | IncompatibleAddressException ex) {
       throw new IllegalArgumentException(ex.getLocalizedMessage(), ex);
     }

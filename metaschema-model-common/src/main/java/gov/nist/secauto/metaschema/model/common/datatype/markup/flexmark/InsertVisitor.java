@@ -40,13 +40,13 @@ import java.util.function.Predicate;
 public class InsertVisitor
     extends NodeVisitorBase {
   @NotNull
-  private final List<gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode> inserts
+  private final List<InsertAnchorNode> inserts
       = new LinkedList<>();
   @NotNull
-  private final Predicate<gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode> filter;
+  private final Predicate<InsertAnchorNode> filter;
 
   public InsertVisitor(
-      @NotNull Predicate<gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode> filter) {
+      @NotNull Predicate<InsertAnchorNode> filter) {
     this.filter = filter;
   }
 
@@ -68,7 +68,7 @@ public class InsertVisitor
   }
 
   @NotNull
-  public List<gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode> getInserts() {
+  public List<InsertAnchorNode> getInserts() {
     return inserts;
   }
 }

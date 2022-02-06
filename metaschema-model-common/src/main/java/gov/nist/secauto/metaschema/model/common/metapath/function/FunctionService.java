@@ -71,7 +71,7 @@ public class FunctionService {
    * @return the function library
    */
   @NotNull
-  public synchronized LoadedFunctionsLibrary load() {
+  public final synchronized LoadedFunctionsLibrary load() {
     ServiceLoader<@NotNull IFunctionLibrary> loader = getLoader();
     @SuppressWarnings("null")
     Stream<@NotNull IFunctionLibrary> libraryStream = loader.stream().map(Provider<IFunctionLibrary>::get);

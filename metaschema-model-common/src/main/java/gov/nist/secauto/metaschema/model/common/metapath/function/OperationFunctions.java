@@ -47,7 +47,7 @@ import java.time.Period;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAmount;
 
-public class OperationFunctions {
+public final class OperationFunctions {
   private OperationFunctions() {
     // disable
   }

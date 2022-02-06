@@ -42,7 +42,7 @@ import java.util.Objects;
 
 public class LoggingConstraintValidationHandler
     extends AbstractConstraintValidationHandler {
-  private static final Logger logger = LogManager.getLogger(DefaultConstraintValidator.class);
+  private static final Logger LOGGER = LogManager.getLogger(DefaultConstraintValidator.class);
   @NotNull
   private IPathFormatter pathFormatter = IPathFormatter.METAPATH_PATH_FORMATER;
 
@@ -62,16 +62,16 @@ public class LoggingConstraintValidationHandler
     LogBuilder retval;
     switch (level) {
     case CRITICAL:
-      retval = logger.atFatal();
+      retval = LOGGER.atFatal();
       break;
     case ERROR:
-      retval = logger.atError();
+      retval = LOGGER.atError();
       break;
     case WARNING:
-      retval = logger.atWarn();
+      retval = LOGGER.atWarn();
       break;
     case INFORMATIONAL:
-      retval = logger.atInfo();
+      retval = LOGGER.atInfo();
       break;
     default:
       throw new UnsupportedOperationException(String.format("unsupported level '%s'", level));
@@ -83,14 +83,37 @@ public class LoggingConstraintValidationHandler
     return nodeItem.toPath(getPathFormatter());
   }
 
-  protected void log(
+  protected boolean isLogged(@NotNull IConstraint constraint) {
+    Level level = constraint.getLevel();
+
+    boolean retval;
+    switch (level) {
+    case CRITICAL:
+      retval = LOGGER.isFatalEnabled();
+      break;
+    case ERROR:
+      retval = LOGGER.isErrorEnabled();
+      break;
+    case WARNING:
+      retval = LOGGER.isWarnEnabled();
+      break;
+    case INFORMATIONAL:
+      retval = LOGGER.isInfoEnabled();
+      break;
+    default:
+      throw new UnsupportedOperationException(String.format("unsupported level '%s'", level));
+    }
+    return retval;
+  }
+
+  protected void logConstraint(
       @NotNull IConstraint constraint,
       @NotNull INodeItem node,
       @NotNull CharSequence message) {
     getLogBuilder(constraint).log("{}: ({}) {}", constraint.getLevel().name(), toPath(node), message);
   }
 
-  protected void log(
+  protected void logConstraint(
       @NotNull IConstraint constraint,
       @NotNull INodeItem node,
       @NotNull CharSequence message,
@@ -104,7 +127,9 @@ public class LoggingConstraintValidationHandler
       @NotNull ICardinalityConstraint constraint,
       @NotNull INodeItem node,
       @NotNull ISequence<? extends INodeItem> targets) {
-    log(constraint, node, newCardinalityMinimumViolationMessage(constraint, node, targets));
+    if (isLogged(constraint)) {
+      logConstraint(constraint, node, newCardinalityMinimumViolationMessage(constraint, node, targets));
+    }
   }
 
   @Override
@@ -112,7 +137,9 @@ public class LoggingConstraintValidationHandler
       @NotNull ICardinalityConstraint constraint,
       @NotNull INodeItem node,
       @NotNull ISequence<? extends INodeItem> targets) {
-    log(constraint, node, newCardinalityMaximumViolationMessage(constraint, node, targets));
+    if (isLogged(constraint)) {
+      logConstraint(constraint, node, newCardinalityMaximumViolationMessage(constraint, node, targets));
+    }
   }
 
   @Override
@@ -121,7 +148,9 @@ public class LoggingConstraintValidationHandler
       @NotNull INodeItem node,
       @NotNull INodeItem oldItem,
       @NotNull INodeItem target) {
-    log(constraint, target, newIndexDuplicateKeyViolationMessage(constraint, node, oldItem, target));
+    if (isLogged(constraint)) {
+      logConstraint(constraint, target, newIndexDuplicateKeyViolationMessage(constraint, node, oldItem, target));
+    }
   }
 
   @Override
@@ -130,7 +159,9 @@ public class LoggingConstraintValidationHandler
       @NotNull INodeItem node,
       @NotNull INodeItem oldItem,
       @NotNull INodeItem target) {
-    log(constraint, target, newUniqueKeyViolationMessage(constraint, node, oldItem, target));
+    if (isLogged(constraint)) {
+      logConstraint(constraint, target, newUniqueKeyViolationMessage(constraint, node, oldItem, target));
+    }
   }
 
   @SuppressWarnings("null")
@@ -140,7 +171,9 @@ public class LoggingConstraintValidationHandler
       @NotNull INodeItem node,
       @NotNull INodeItem target,
       @NotNull MetapathException cause) {
-    log(constraint, target, cause.getLocalizedMessage(), cause);
+    if (isLogged(constraint)) {
+      logConstraint(constraint, target, cause.getLocalizedMessage(), cause);
+    }
   }
 
   @Override
@@ -149,7 +182,9 @@ public class LoggingConstraintValidationHandler
       @NotNull INodeItem node,
       @NotNull INodeItem target,
       @NotNull String value) {
-    log(constraint, target, newMatchPatternViolationMessage(constraint, node, target, value));
+    if (isLogged(constraint)) {
+      logConstraint(constraint, target, newMatchPatternViolationMessage(constraint, node, target, value));
+    }
   }
 
   @Override
@@ -159,7 +194,9 @@ public class LoggingConstraintValidationHandler
       @NotNull INodeItem target,
       @NotNull String value,
       @NotNull IllegalArgumentException cause) {
-    log(constraint, target, newMatchDatatypeViolationMessage(constraint, node, target, value), cause);
+    if (isLogged(constraint)) {
+      logConstraint(constraint, target, newMatchDatatypeViolationMessage(constraint, node, target, value), cause);
+    }
   }
 
   @Override
@@ -168,6 +205,8 @@ public class LoggingConstraintValidationHandler
       @NotNull INodeItem node,
       @NotNull INodeItem target,
       @NotNull DynamicContext dynamicContext) {
-    log(constraint, target, newExpectViolationMessage(constraint, node, target, dynamicContext));
+    if (isLogged(constraint)) {
+      logConstraint(constraint, target, newExpectViolationMessage(constraint, node, target, dynamicContext));
+    }
   }
 }

@@ -32,12 +32,19 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+/**
+ * This annotation defines a rule that requires that the target contents of the assembly,
+ * represented by the containing {@link MetaschemaAssembly} annotation, reference items in a name
+ * index defined by the {@link Index} constraint.
+ */
 
 @Documented
 @Retention(RUNTIME)

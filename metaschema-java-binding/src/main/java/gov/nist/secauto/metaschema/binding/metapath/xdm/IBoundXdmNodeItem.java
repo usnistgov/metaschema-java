@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmNodeItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -76,4 +77,14 @@ public interface IBoundXdmNodeItem extends IXdmNodeItem {
    * @return the visitor result
    */
   <RESULT, CONTEXT> RESULT accept(@NotNull IBoundXdmNodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
+
+  /**
+   * Perform constraint validation on this node (and its children) using the provided validator.
+   * 
+   * @param validator
+   *          the validator instance to use for performing validation
+   */
+  default void validate(IConstraintValidator validator) {
+    new ValidatingXdmVisitor().visit(this, validator);
+  }
 }

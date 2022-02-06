@@ -42,6 +42,15 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Identifies that the annotation target is a bound property that references a Metaschema field.
+ * <p>
+ * For XML serialization, the {@link #useName()} identifies the name of the element to use and the
+ * {@link #namespace()} identifies the namespace of this element.
+ * <p>
+ * For JSON and YAML serializations, the {@link #useName()} identifies the property/item name to
+ * use.
+ */
 @Documented
 @Retention(RUNTIME)
 @Target({ FIELD })

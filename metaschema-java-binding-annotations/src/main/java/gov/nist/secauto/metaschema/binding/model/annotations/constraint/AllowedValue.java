@@ -33,6 +33,10 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * This annotation provides an enumerated value that is used as part of an {@link AllowedValues}
+ * annotation.
+ */
 @Documented
 @Retention(RUNTIME)
 @Target(ANNOTATION_TYPE)

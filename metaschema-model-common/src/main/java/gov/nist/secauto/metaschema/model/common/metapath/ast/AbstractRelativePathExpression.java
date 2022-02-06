@@ -66,7 +66,7 @@ public abstract class AbstractRelativePathExpression
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull Class<INodeItem> getBaseResultType() {
+  public final @NotNull Class<INodeItem> getBaseResultType() {
     return INodeItem.class;
   }
 

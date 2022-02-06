@@ -32,13 +32,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Indicates that the property is to be ignored by the Metaschema binding system.
+ */
 @Retention(RUNTIME)
 @Target({ FIELD })
 public @interface Ignore {
-  /**
-   * Determines if the property is to be ignored.
-   * 
-   * @return {@code true} if the property is to be ignore, or {@code false} otherwise
-   */
-  boolean value() default false;
 }

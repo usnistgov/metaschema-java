@@ -31,8 +31,8 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-import gov.nist.secauto.metaschema.codegen.property.ModelInstancePropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.IPropertyGenerator;
+import gov.nist.secauto.metaschema.codegen.property.ModelInstancePropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
 import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;

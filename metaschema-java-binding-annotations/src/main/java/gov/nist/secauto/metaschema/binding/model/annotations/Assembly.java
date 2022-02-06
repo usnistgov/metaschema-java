@@ -38,12 +38,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Identifies that the target is a bound property that references an assembly.
+ * Identifies that the annotation target is a bound property that references a Metaschema assembly.
  * <p>
  * For XML serialization, the {@link #useName()} identifies the name of the element to use and the
  * {@link #namespace()} identifies the namespace of this element.
  * <p>
- * For JSON and YAML serialization, the {@link #useName()} identifies the field name to use.
+ * For JSON and YAML serializations, the {@link #useName()} identifies the property/item name to
+ * use.
  */
 @Documented
 @Retention(RUNTIME)

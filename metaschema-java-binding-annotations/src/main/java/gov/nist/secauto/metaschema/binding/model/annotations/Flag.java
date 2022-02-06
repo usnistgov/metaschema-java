@@ -40,6 +40,9 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Identifies that the annotation target is a bound property that represents a Metaschema flag.
+ */
 @Documented
 @Retention(RUNTIME)
 @Target({ FIELD, METHOD })

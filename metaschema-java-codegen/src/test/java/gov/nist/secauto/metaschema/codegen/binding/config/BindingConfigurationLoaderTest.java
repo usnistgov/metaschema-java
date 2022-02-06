@@ -42,7 +42,7 @@ import java.util.Map;
 class BindingConfigurationLoaderTest {
 
   @Test
-  void testDefault() throws MalformedURLException, IOException, MetaschemaException {
+  void testDefault() {
     DefaultBindingConfiguration config = new DefaultBindingConfiguration();
 
     // test namespaces
@@ -56,7 +56,7 @@ class BindingConfigurationLoaderTest {
   }
 
   @Test
-  void testConfiguredNamespace() throws MalformedURLException, IOException, MetaschemaException {
+  void testConfiguredNamespace() {
     DefaultBindingConfiguration config = new DefaultBindingConfiguration();
 
     // test namespaces

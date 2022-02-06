@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.model.instances.IXmlAssemblyInstance;
 import gov.nist.secauto.metaschema.model.instances.IXmlChoiceInstance;
 import gov.nist.secauto.metaschema.model.instances.IXmlFieldInstance;
 import gov.nist.secauto.metaschema.model.instances.IXmlNamedModelInstance;
-import gov.nist.secauto.metaschema.model.xmlbeans.xml.ChoiceDocument.Choice;
+import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceDocument.Choice;
 
 import org.apache.xmlbeans.XmlObject;
 import org.jetbrains.annotations.NotNull;

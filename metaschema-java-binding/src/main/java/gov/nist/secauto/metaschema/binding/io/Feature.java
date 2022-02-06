@@ -26,8 +26,22 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
+/**
+ * Configuration options for serialization and deserialization of bound objects.
+ */
 public enum Feature {
+  /**
+   * If enabled, perform constraint validation on the deserialized bound objects.
+   */
   DESERIALIZE_VALIDATE,
+  /**
+   * If enabled, process document level constructs in the underlying data format (e.g. XML
+   * declarations).
+   */
   DESERIALIZE_ROOT,
+  /**
+   * If enabled, generate document level constructs in the underlying data format (e.g. XML
+   * declarations).
+   */
   SERIALIZE_ROOT;
 }
