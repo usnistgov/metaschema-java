@@ -108,6 +108,12 @@
 			<version>0.3.0</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>io.hosuaby</groupId>
+			<artifactId>inject-resources-junit-jupiter</artifactId>
+			<version>0.3.0</version>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.jetbrains</groupId>
@@ -118,13 +124,6 @@
 		<!-- 			<artifactId>org.eclipse.jdt.annotation</artifactId> -->
 		<!-- 			<scope>provided</scope> -->
 		<!-- 		</dependency> -->
-
-		<dependency>
-			<groupId>com.adelean</groupId>
-			<artifactId>inject-resources-junit-jupiter</artifactId>
-			<version>0.1.0</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-params</artifactId>
