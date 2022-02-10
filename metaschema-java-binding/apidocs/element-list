@@ -1,0 +1,11 @@
+gov.nist.secauto.metaschema.binding
+gov.nist.secauto.metaschema.binding.io
+gov.nist.secauto.metaschema.binding.io.context
+gov.nist.secauto.metaschema.binding.io.json
+gov.nist.secauto.metaschema.binding.io.xml
+gov.nist.secauto.metaschema.binding.io.yaml
+gov.nist.secauto.metaschema.binding.metapath.xdm
+gov.nist.secauto.metaschema.binding.model
+gov.nist.secauto.metaschema.binding.model.property
+gov.nist.secauto.metaschema.binding.model.property.info
+gov.nist.secauto.metaschema.binding.util

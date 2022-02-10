@@ -1,0 +1,7 @@
+gov.nist.secauto.metaschema.codegen
+gov.nist.secauto.metaschema.codegen.binding.config
+gov.nist.secauto.metaschema.codegen.property
+gov.nist.secauto.metaschema.codegen.support
+gov.nist.secauto.metaschema.codegen.type
+gov.nist.secauto.metaschema.codegen.xmlbeans
+org.apache.xmlbeans.metadata.system.metaschema.codegen
