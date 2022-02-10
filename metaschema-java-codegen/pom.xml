@@ -79,6 +79,14 @@
 						</sourceDirectories>
 					</configuration>
 				</plugin>
+				<plugin>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<configuration>
+						<excludeRoots>
+							<excludeRoot>${project.build.directory}/generated-sources/xmlbeans</excludeRoot>
+						</excludeRoots>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
