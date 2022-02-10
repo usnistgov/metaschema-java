@@ -153,6 +153,7 @@ class DefaultFieldValuePropertyTest {
     assertEquals("theValue", obj.getValue());
   }
 
+  @SuppressWarnings("PMD")
   @MetaschemaField(
       isCollapsible = true)
   public static class SimpleField {
@@ -255,6 +256,7 @@ class DefaultFieldValuePropertyTest {
     assertEquals("theValue", obj.getValue());
   }
 
+  @SuppressWarnings("PMD")
   @MetaschemaField(
       isCollapsible = true)
   public static class SimpleField2 {

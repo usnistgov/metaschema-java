@@ -66,15 +66,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class AnnotationUtils {
-  private static final Logger logger = LogManager.getLogger(AnnotationUtils.class);
+public final class AnnotationUtils {
+  private static final Logger LOGGER = LogManager.getLogger(AnnotationUtils.class);
+
+  private AnnotationUtils() {
+    // disable construction
+  }
 
   public static Object getDefaultValue(Class<?> annotation, String member) {
     Method method;
     try {
       method = annotation.getDeclaredMethod(member);
-    } catch (NoSuchMethodException | SecurityException ex) {
-      throw new RuntimeException(ex);
+    } catch (NoSuchMethodException ex) {
+      throw new IllegalArgumentException(ex);
     }
     Object retval;
     try {
@@ -192,6 +196,10 @@ public class AnnotationUtils {
       MetapathExpression test = constraint.getTest();
       constraintAnnotation.addMember("test", "$S", test.getPath());
 
+      if (constraint.getMessage() != null) {
+        constraintAnnotation.addMember("message", "$S", constraint.getMessage());
+      }
+
       annotation.addMember("expect", "$L", constraintAnnotation.build());
     }
   }
@@ -238,41 +246,49 @@ public class AnnotationUtils {
           IModelInstance modelInstance = (IModelInstance) instance;
           if (minOccurs != null) {
             if (minOccurs == modelInstance.getMinOccurs()) {
-              logger.warn(String.format(
-                  "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that is redundant with a"
-                      + " targeted instance named '%s' that requires min-occurs=%d",
-                  definition.getName(), minOccurs, constraint.getTarget().getPath(),
-                  modelInstance instanceof INamedInstance ? ((INamedInstance) modelInstance).getName() : "no name",
-                  modelInstance.getMinOccurs()));
+              if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn(String.format(
+                    "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that is redundant with a"
+                        + " targeted instance named '%s' that requires min-occurs=%d",
+                    definition.getName(), minOccurs, constraint.getTarget().getPath(),
+                    modelInstance instanceof INamedInstance ? ((INamedInstance) modelInstance).getName() : "no name",
+                    modelInstance.getMinOccurs()));
+              }
             } else if (minOccurs < modelInstance.getMinOccurs()) {
-              logger.warn(String.format(
-                  "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that conflicts with a"
-                      + " targeted instance named '%s' that requires min-occurs=%d",
-                  definition.getName(), minOccurs, constraint.getTarget().getPath(),
-                  modelInstance instanceof INamedInstance ? ((INamedInstance) modelInstance).getName() : "no name",
-                  modelInstance.getMinOccurs()));
+              if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn(String.format(
+                    "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that conflicts with a"
+                        + " targeted instance named '%s' that requires min-occurs=%d",
+                    definition.getName(), minOccurs, constraint.getTarget().getPath(),
+                    modelInstance instanceof INamedInstance ? ((INamedInstance) modelInstance).getName() : "no name",
+                    modelInstance.getMinOccurs()));
+              }
             }
           }
 
           if (maxOccurs != null) {
             if (maxOccurs == modelInstance.getMaxOccurs()) {
-              logger.warn(String.format(
-                  "Definition '%s' has max-occurs=%d cardinality constraint targeting '%s' that is redundant with a"
-                      + " targeted instance named '%s' that requires max-occurs=%d",
-                  definition.getName(), maxOccurs, constraint.getTarget().getPath(),
-                  modelInstance instanceof INamedInstance ? ((INamedInstance) modelInstance).getName() : "no name",
-                  modelInstance.getMaxOccurs()));
+              if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn(String.format(
+                    "Definition '%s' has max-occurs=%d cardinality constraint targeting '%s' that is redundant with a"
+                        + " targeted instance named '%s' that requires max-occurs=%d",
+                    definition.getName(), maxOccurs, constraint.getTarget().getPath(),
+                    modelInstance instanceof INamedInstance ? ((INamedInstance) modelInstance).getName() : "no name",
+                    modelInstance.getMaxOccurs()));
+              }
             } else if (maxOccurs < modelInstance.getMaxOccurs()) {
-              logger.warn(String.format(
-                  "Definition '%s' has max-occurs=%d cardinality constraint targeting '%s' that conflicts with a"
-                      + " targeted instance named '%s' that requires max-occurs=%d",
-                  definition.getName(), maxOccurs, constraint.getTarget().getPath(),
-                  modelInstance instanceof INamedInstance ? ((INamedInstance) modelInstance).getName() : "no name",
-                  modelInstance.getMaxOccurs()));
+              if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn(String.format(
+                    "Definition '%s' has max-occurs=%d cardinality constraint targeting '%s' that conflicts with a"
+                        + " targeted instance named '%s' that requires max-occurs=%d",
+                    definition.getName(), maxOccurs, constraint.getTarget().getPath(),
+                    modelInstance instanceof INamedInstance ? ((INamedInstance) modelInstance).getName() : "no name",
+                    modelInstance.getMaxOccurs()));
+              }
             }
           }
-        } else {
-          logger.warn(String.format(
+        } else if (LOGGER.isWarnEnabled()) {
+          LOGGER.warn(String.format(
               "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that is not a model instance",
               definition.getName(), minOccurs, constraint.getTarget().getPath()));
         }

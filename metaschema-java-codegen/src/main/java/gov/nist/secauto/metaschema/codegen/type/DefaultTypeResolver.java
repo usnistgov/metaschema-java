@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class DefaultTypeResolver implements ITypeResolver {
-  private static final Logger logger = LogManager.getLogger(DefaultTypeResolver.class);
+  private static final Logger LOGGER = LogManager.getLogger(DefaultTypeResolver.class);
 
   private final Map<String, Set<String>> packageToClassNamesMap = new HashMap<>();
   private final Map<INamedModelDefinition, ClassName> definitionToTypeMap = new HashMap<>();
@@ -84,8 +84,10 @@ public class DefaultTypeResolver implements ITypeResolver {
     }
 
     if (classNames.contains(className)) {
-      logger.warn(String.format("Class name '%s' in metaschema '%s' conflicts with a previously used class name.",
-          className, definition.getContainingMetaschema().getLocation()));
+      if (LOGGER.isWarnEnabled()) {
+        LOGGER.warn(String.format("Class name '%s' in metaschema '%s' conflicts with a previously used class name.",
+            className, definition.getContainingMetaschema().getLocation()));
+      }
       // first try to append the metaschema's short name
       String metaschemaShortName = definition.getContainingMetaschema().getShortName();
       className = NameConverter.standard.toClassName(className + metaschemaShortName);

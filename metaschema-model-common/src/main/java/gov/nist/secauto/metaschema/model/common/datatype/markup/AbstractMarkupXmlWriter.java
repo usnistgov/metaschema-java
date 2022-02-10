@@ -71,20 +71,20 @@ import javax.xml.stream.XMLStreamException;
 
 public abstract class AbstractMarkupXmlWriter<WRITER> {
   private static final Pattern ENTITY_PATTERN = Pattern.compile("^&([^;]+);$");
-  private static final Map<String, String> entityMap;
+  private static final Map<String, String> ENTITY_MAP;
 
   static {
-    entityMap = new HashMap<>();
-    entityMap.put("&amp;", "&");
-    entityMap.put("&lsquo;", "‘");
-    entityMap.put("&rsquo;", "’");
-    entityMap.put("&hellip;", "…");
-    entityMap.put("&mdash;", "—");
-    entityMap.put("&ndash;", "–");
-    entityMap.put("&ldquo;", "“");
-    entityMap.put("&rdquo;", "”");
-    entityMap.put("&laquo;", "«");
-    entityMap.put("&raquo;", "»");
+    ENTITY_MAP = new HashMap<>();
+    ENTITY_MAP.put("&amp;", "&");
+    ENTITY_MAP.put("&lsquo;", "‘");
+    ENTITY_MAP.put("&rsquo;", "’");
+    ENTITY_MAP.put("&hellip;", "…");
+    ENTITY_MAP.put("&mdash;", "—");
+    ENTITY_MAP.put("&ndash;", "–");
+    ENTITY_MAP.put("&ldquo;", "“");
+    ENTITY_MAP.put("&rdquo;", "”");
+    ENTITY_MAP.put("&laquo;", "«");
+    ENTITY_MAP.put("&raquo;", "»");
   }
 
   private final String namespace;
@@ -310,7 +310,7 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
   }
 
   protected void handleHtmlEntity(String entityText, WRITER writer) throws XMLStreamException {
-    String replacement = entityMap.get(entityText);
+    String replacement = ENTITY_MAP.get(entityText);
     if (replacement != null) {
       writeText(writer, replacement);
     } else {

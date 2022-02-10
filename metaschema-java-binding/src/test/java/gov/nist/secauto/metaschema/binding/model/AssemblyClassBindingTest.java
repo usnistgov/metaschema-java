@@ -45,8 +45,8 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
 import gov.nist.secauto.metaschema.binding.model.test.BoundClass;
-import gov.nist.secauto.metaschema.binding.model.test.FlaggedAssemblyClass;
 import gov.nist.secauto.metaschema.binding.model.test.BoundClass.FlaggedField;
+import gov.nist.secauto.metaschema.binding.model.test.FlaggedAssemblyClass;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -55,10 +55,12 @@ import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Files;
 import java.util.List;
 
 import javax.xml.stream.XMLEventReader;
@@ -153,33 +155,37 @@ class AssemblyClassBindingTest {
   void testSimpleJson() throws JsonParseException, IOException, BindingException {
     File testContent
         = new File(getClass().getClassLoader().getResource("test-content/bound-class-simple.json").getFile());
-    JsonParser jsonParser = newJsonParser(new FileReader(testContent));
+    try (BufferedReader reader = Files.newBufferedReader(testContent.toPath())) {
+      JsonParser jsonParser = newJsonParser(reader);
 
-    assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
+      assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
+      assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
 
-    IAssemblyClassBinding classBinding = getAssemblyClassBinding();
-    IBoundAssemblyInstance root = new RootDefinitionAssemblyProperty(classBinding);
-    BoundClass obj = (BoundClass) root.read(jsonParsingContext);
+      IAssemblyClassBinding classBinding = getAssemblyClassBinding();
+      IBoundAssemblyInstance root = new RootDefinitionAssemblyProperty(classBinding);
+      BoundClass obj = (BoundClass) root.read(jsonParsingContext);
 
-    assertEquals(JsonToken.END_OBJECT, jsonParser.currentToken());
-    assertSimple(obj);
+      assertEquals(JsonToken.END_OBJECT, jsonParser.currentToken());
+      assertSimple(obj);
+    }
   }
 
   @Test
   void testSimpleXml() throws BindingException, XMLStreamException, IOException {
     File testContent
         = new File(getClass().getClassLoader().getResource("test-content/bound-class-simple.xml").getFile());
-    XMLEventReader reader = newXmlParser(new FileReader(testContent));
+    try (BufferedReader reader = Files.newBufferedReader(testContent.toPath())) {
+      XMLEventReader eventReader = newXmlParser(reader);
 
-    IAssemblyClassBinding classBinding = getAssemblyClassBinding();
+      IAssemblyClassBinding classBinding = getAssemblyClassBinding();
 
-    // assertEquals(XMLEvent.START_DOCUMENT, parser.nextEvent().getEventType());
+      // assertEquals(XMLEvent.START_DOCUMENT, parser.nextEvent().getEventType());
 
-    BoundClass obj = (BoundClass) classBinding.readRoot(xmlParsingContext);
+      BoundClass obj = (BoundClass) classBinding.readRoot(xmlParsingContext);
 
-    assertEquals(XMLEvent.END_DOCUMENT, reader.peek().getEventType());
-    assertSimple(obj);
+      assertEquals(XMLEvent.END_DOCUMENT, eventReader.peek().getEventType());
+      assertSimple(obj);
+    }
   }
 
   private void assertSimple(BoundClass obj) {
@@ -203,31 +209,35 @@ class AssemblyClassBindingTest {
   void testComplexJson() throws BindingException, IOException {
     File testContent
         = new File(getClass().getClassLoader().getResource("test-content/bound-class-complex.json").getFile());
-    JsonParser jsonParser = newJsonParser(new FileReader(testContent));
+    try (BufferedReader reader = Files.newBufferedReader(testContent.toPath())) {
+      JsonParser jsonParser = newJsonParser(reader);
 
-    assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
-    assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
+      assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
+      assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
 
-    IAssemblyClassBinding classBinding = getAssemblyClassBinding();
-    IBoundAssemblyInstance root = new RootDefinitionAssemblyProperty(classBinding);
-    BoundClass obj = (BoundClass) root.read(jsonParsingContext);
+      IAssemblyClassBinding classBinding = getAssemblyClassBinding();
+      IBoundAssemblyInstance root = new RootDefinitionAssemblyProperty(classBinding);
+      BoundClass obj = (BoundClass) root.read(jsonParsingContext);
 
-    assertEquals(JsonToken.END_OBJECT, jsonParser.currentToken());
-    assertComplex(obj);
+      assertEquals(JsonToken.END_OBJECT, jsonParser.currentToken());
+      assertComplex(obj);
+    }
   }
 
   @Test
   void testComplexXml() throws BindingException, XMLStreamException, IOException {
     File testContent
         = new File(getClass().getClassLoader().getResource("test-content/bound-class-complex.xml").getFile());
-    XMLEventReader reader = newXmlParser(new FileReader(testContent));
+    try (BufferedReader reader = Files.newBufferedReader(testContent.toPath())) {
+      XMLEventReader eventReader = newXmlParser(new FileReader(testContent));
 
-    IAssemblyClassBinding classBinding = getAssemblyClassBinding();
+      IAssemblyClassBinding classBinding = getAssemblyClassBinding();
 
-    BoundClass obj = (BoundClass) classBinding.readRoot(xmlParsingContext);
+      BoundClass obj = (BoundClass) classBinding.readRoot(xmlParsingContext);
 
-    assertEquals(XMLEvent.END_DOCUMENT, reader.peek().getEventType());
-    assertComplex(obj);
+      assertEquals(XMLEvent.END_DOCUMENT, eventReader.peek().getEventType());
+      assertComplex(obj);
+    }
   }
 
   private void assertComplex(BoundClass obj) {

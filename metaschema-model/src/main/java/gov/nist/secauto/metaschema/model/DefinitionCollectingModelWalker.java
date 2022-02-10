@@ -48,7 +48,7 @@ import java.util.function.Function;
  */
 public abstract class DefinitionCollectingModelWalker
     extends ModelWalker<Object> {
-  private static final Logger logger = LogManager.getLogger(DefinitionCollectingModelWalker.class);
+  private static final Logger LOGGER = LogManager.getLogger(DefinitionCollectingModelWalker.class);
 
   private final Function<IDefinition, Boolean> filter;
   @NotNull
@@ -86,8 +86,8 @@ public abstract class DefinitionCollectingModelWalker
 
   @Override
   protected void visit(IFlagDefinition def, Object data) {
-    if (logger.isTraceEnabled()) {
-      logger.trace("visiting flag definition '{}'", def.toCoordinates());
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace("visiting flag definition '{}'", def.toCoordinates());
     }
     if (getFilter().apply(def)) {
       definitions.add(def);
@@ -96,8 +96,8 @@ public abstract class DefinitionCollectingModelWalker
 
   @Override
   protected boolean visit(IFieldDefinition def, Object data) {
-    if (logger.isTraceEnabled()) {
-      logger.trace("visiting field definition '{}'", def.toCoordinates());
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace("visiting field definition '{}'", def.toCoordinates());
     }
     if (definitions.contains(def)) {
       // no need to visit, since this has already been seen
@@ -112,8 +112,8 @@ public abstract class DefinitionCollectingModelWalker
 
   @Override
   protected boolean visit(IAssemblyDefinition def, Object data) {
-    if (logger.isTraceEnabled()) {
-      logger.trace("visiting assembly definition '{}'", def.toCoordinates());
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace("visiting assembly definition '{}'", def.toCoordinates());
     }
     if (definitions.contains(def)) {
       // no need to visit, since this has already been seen

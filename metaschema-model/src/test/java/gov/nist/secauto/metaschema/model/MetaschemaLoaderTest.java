@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
@@ -37,21 +38,29 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.List;
 
 class MetaschemaLoaderTest {
 
   @Test
-  void test() throws MetaschemaException, IOException {
+  void testUrl() throws MetaschemaException, IOException {
     MetaschemaLoader loader = new MetaschemaLoader();
-    IMetaschema metachema = loader.loadMetaschema(URI.create(
+    IMetaschema metaschema = loader.loadMetaschema(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
 
-    IMetaschema metadataMetaschema = metachema.getImportedMetaschemaByShortName("oscal-catalog")
+    IMetaschema metadataMetaschema = metaschema.getImportedMetaschemaByShortName("oscal-catalog")
         .getImportedMetaschemaByShortName("oscal-metadata");
     IFlagDefinition flag = metadataMetaschema.getScopedFlagDefinitionByName("location-type");
     List<? extends IConstraint> constraints = flag.getConstraints();
     assertFalse(constraints.isEmpty());
   }
 
+  @Test
+  void testFile() throws MetaschemaException, IOException {
+    MetaschemaLoader loader = new MetaschemaLoader();
+    IMetaschema metaschema
+        = loader.loadMetaschema(Paths.get("metaschema/test-suite/docs-models/models_metaschema.xml").toUri());
+    assertTrue(!metaschema.getRootAssemblyDefinitions().isEmpty());
+  }
 }

@@ -58,7 +58,7 @@ import java.util.Set;
 
 public class ModelInstancePropertyGenerator
     extends AbstractPropertyGenerator<AssemblyJavaClassGenerator> {
-  private static final Logger logger = LogManager.getLogger(ModelInstancePropertyGenerator.class);
+  private static final Logger LOGGER = LogManager.getLogger(ModelInstancePropertyGenerator.class);
 
   private final INamedModelInstance modelInstance;
 
@@ -182,12 +182,12 @@ public class ModelInstancePropertyGenerator
       JsonGroupAsBehavior jsonGroupAsBehavior = modelInstance.getJsonGroupAsBehavior();
       assert jsonGroupAsBehavior != null;
       fieldAnnoation.addMember("inJson", "$T.$L",
-          gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior.class, jsonGroupAsBehavior.toString());
+          JsonGroupAsBehavior.class, jsonGroupAsBehavior.toString());
 
       XmlGroupAsBehavior xmlGroupAsBehavior = modelInstance.getXmlGroupAsBehavior();
       assert xmlGroupAsBehavior != null;
       fieldAnnoation.addMember("inXml", "$T.$L",
-          gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior.class, xmlGroupAsBehavior.toString());
+          XmlGroupAsBehavior.class, xmlGroupAsBehavior.toString());
     }
     builder.addAnnotation(fieldAnnoation.build());
     return retval.isEmpty() ? Collections.emptySet() : Collections.unmodifiableSet(retval);
@@ -212,8 +212,8 @@ public class ModelInstancePropertyGenerator
       item = getClassGenerator().getTypeResolver().getClassName(assemblyInstance.getDefinition());
     } else {
       String msg = String.format("Unknown model instance type: %s", instance.getClass().getCanonicalName());
-      logger.error(msg);
-      throw new RuntimeException(msg);
+      LOGGER.error(msg);
+      throw new IllegalStateException(msg);
     }
 
     TypeName retval;

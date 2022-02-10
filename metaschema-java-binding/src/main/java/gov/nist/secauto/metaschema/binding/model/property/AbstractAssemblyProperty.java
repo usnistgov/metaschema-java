@@ -53,6 +53,7 @@ public abstract class AbstractAssemblyProperty
     super(parentClassBinding, field);
   }
 
+  @SuppressWarnings("PMD")
   @Override
   protected IJavaTypeAdapter<?> getJavaTypeAdapter() {
     // an assembly property is always associated with a bound class, so there will never be a class

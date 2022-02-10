@@ -76,5 +76,5 @@ public @interface XmlSchema {
    * <p>
    * The value "##none" was chosen because ## is not a valid sequence in xs:anyURI.
    */
-  static final String NO_LOCATION = "##none";
+  String NO_LOCATION = "##none";
 }

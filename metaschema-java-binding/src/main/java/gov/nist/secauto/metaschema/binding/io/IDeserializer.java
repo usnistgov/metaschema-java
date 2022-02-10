@@ -31,7 +31,6 @@ import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +39,8 @@ import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 /**
  * Implementations of this interface are able to read structured data into a bound object instance
@@ -81,7 +81,7 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
    *           if an error occurred while reading data from the stream
    */
   default CLASS deserialize(File file) throws FileNotFoundException, BindingException {
-    try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8"))) {
+    try (Reader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
       CLASS retval = deserialize(reader, file.toURI());
       reader.close();
       return retval;

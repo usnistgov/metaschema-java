@@ -610,7 +610,8 @@ public class MarkupParser {
           break;
         }
         default:
-          throw new RuntimeException(String.format("Unrecognized tag '%s'", nextName.getLocalPart()));
+          throw new XMLStreamException(String.format("Unrecognized tag '%s'", nextName.getLocalPart()),
+              event.getLocation());
         }
       }
 

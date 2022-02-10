@@ -37,8 +37,9 @@ import org.jetbrains.annotations.NotNull;
  * Used to mark a Java type that has no configured adapter.
  */
 public class NullJavaTypeAdapter
-    extends AbstractJavaTypeAdapter<Void, VoidItem>
-    implements IJavaTypeAdapter<Void> {
+    extends AbstractJavaTypeAdapter<Void, VoidItem> {
+
+  private static final String NOT_VALID = "not a valid type";
 
   /**
    * Construct a new adapter.
@@ -48,54 +49,54 @@ public class NullJavaTypeAdapter
    */
   public NullJavaTypeAdapter(@NotNull Class<Void> clazz) {
     super(clazz);
-    throw new UnsupportedOperationException("Not a valid type");
+    throw new UnsupportedOperationException(NOT_VALID);
   }
 
   @Override
   public @NotNull Void copy(@NotNull Object obj) {
-    throw new UnsupportedOperationException("Not a valid type");
+    throw new UnsupportedOperationException(NOT_VALID);
   }
 
   @Override
   public Void parse(String value) {
-    throw new UnsupportedOperationException("Not a valid type");
+    throw new UnsupportedOperationException(NOT_VALID);
   }
 
   @Override
   public VoidItem newItem(Object value) {
-    throw new UnsupportedOperationException("Not a valid type");
+    throw new UnsupportedOperationException(NOT_VALID);
   }
 
   @Override
   public String getName() {
-    throw new UnsupportedOperationException("Not a valid type");
+    throw new UnsupportedOperationException(NOT_VALID);
   }
 
   @Override
   public @NotNull Class<VoidItem> getItemClass() {
-    throw new UnsupportedOperationException("Not a valid type");
+    throw new UnsupportedOperationException(NOT_VALID);
   }
 
   public static class VoidItem implements IAnyAtomicItem {
 
     @Override
     public @NotNull Object getValue() {
-      throw new UnsupportedOperationException("Not a valid type");
+      throw new UnsupportedOperationException(NOT_VALID);
     }
 
     @Override
     public @NotNull IAnyAtomicItem toAtomicItem() {
-      throw new UnsupportedOperationException("Not a valid type");
+      throw new UnsupportedOperationException(NOT_VALID);
     }
 
     @Override
     public @NotNull String asString() {
-      throw new UnsupportedOperationException("Not a valid type");
+      throw new UnsupportedOperationException(NOT_VALID);
     }
 
     @Override
     public IJavaTypeAdapter<?> getJavaTypeAdapter() {
-      throw new UnsupportedOperationException("Not a valid type");
+      throw new UnsupportedOperationException(NOT_VALID);
     }
   }
 }

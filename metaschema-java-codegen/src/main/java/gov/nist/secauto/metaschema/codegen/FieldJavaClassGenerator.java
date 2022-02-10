@@ -32,12 +32,10 @@ import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.codegen.property.FieldValuePropertyGenerator;
-import gov.nist.secauto.metaschema.codegen.property.FlagPropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.IPropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,7 +47,7 @@ import java.util.Set;
 
 public class FieldJavaClassGenerator
     extends AbstractJavaClassGenerator<IFieldDefinition> {
-  private static final Logger logger = LogManager.getLogger(FieldJavaClassGenerator.class);
+  private static final Logger LOGGER = LogManager.getLogger(FieldJavaClassGenerator.class);
 
   private final FieldValuePropertyGenerator fieldValueInstance;
   private boolean hasJsonValueKeyFlag = false;
@@ -69,11 +67,6 @@ public class FieldJavaClassGenerator
   }
 
   @Override
-  public FlagPropertyGenerator newFlagPropertyGenerator(IFlagInstance instance) {
-    return super.newFlagPropertyGenerator(instance);
-  }
-
-  @Override
   protected boolean isRootClass() {
     // a field is never eligible to be a root
     return false;
@@ -88,10 +81,12 @@ public class FieldJavaClassGenerator
     boolean isCollapsible = false;
     if (getDefinition().isCollapsible()) {
       if (getDefinition().hasJsonKey()) {
-        logger.warn(
-            "A field binding cannot implement a json-key and be collapsible."
-                + " Ignoring the collapsible for class '{}'.",
-            getTypeResolver().getClassName(getDefinition()).canonicalName());
+        if (LOGGER.isWarnEnabled()) {
+          LOGGER.warn(
+              "A field binding cannot implement a json-key and be collapsible."
+                  + " Ignoring the collapsible for class '{}'.",
+              getTypeResolver().getClassName(getDefinition()).canonicalName());
+        }
       } else {
         isCollapsible = true;
       }
@@ -128,7 +123,7 @@ public class FieldJavaClassGenerator
    * 
    * @return the new property generator
    */
-  public FieldValuePropertyGenerator newFieldValueInstance() {
+  protected final FieldValuePropertyGenerator newFieldValueInstance() {
     FieldValuePropertyGenerator retval = new FieldValuePropertyGenerator(this);
     addPropertyGenerator(retval);
     return retval;

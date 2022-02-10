@@ -46,7 +46,7 @@ import java.util.Objects;
 public class CollapseKeyBuilder {
   private final IFieldClassBinding classBinding;
   private final ArrayList<IBoundFlagInstance> flagProperties;
-  private final Map<Key, List<Object>> keyToValuesMap;
+  private final Map<CollapseKey, List<Object>> keyToValuesMap;
 
   public CollapseKeyBuilder(IFieldClassBinding classBinding) {
     this.classBinding = classBinding;
@@ -76,7 +76,7 @@ public class CollapseKeyBuilder {
       flagValues[index++] = flag.getValue(instance);
     }
 
-    Key key = new Key(flagValues);
+    CollapseKey key = new CollapseKey(flagValues);
     List<Object> values = this.keyToValuesMap.get(key);
     if (values == null) {
       values = new LinkedList<>();
@@ -117,8 +117,8 @@ public class CollapseKeyBuilder {
 
     JsonGenerator writer = context.getWriter();
     // for each key, we need to write the properties
-    for (Map.Entry<Key, List<Object>> entry : keyToValuesMap.entrySet()) {
-      Key key = entry.getKey();
+    for (Map.Entry<CollapseKey, List<Object>> entry : keyToValuesMap.entrySet()) {
+      CollapseKey key = entry.getKey();
 
       Object[] flagValues = key.getFlagValues();
 
@@ -149,10 +149,10 @@ public class CollapseKeyBuilder {
       List<Object> fieldValues = entry.getValue();
       if (!fieldValues.isEmpty()) {
         String valueKeyName;
-        if (jsonValueKey != null && jsonValueKeyIndex != null) {
-          valueKeyName = jsonValueKey.getValueAsString(flagValues[jsonValueKeyIndex]);
-        } else {
+        if (jsonValueKey == null || jsonValueKeyIndex == null) {
           valueKeyName = fieldValue.getJsonValueKeyName();
+        } else {
+          valueKeyName = jsonValueKey.getValueAsString(flagValues[jsonValueKeyIndex]);
         }
         writer.writeFieldName(valueKeyName);
         if (fieldValues.size() > 1) {
@@ -177,11 +177,11 @@ public class CollapseKeyBuilder {
     }
   }
 
-  public class Key {
+  public class CollapseKey {
     private final Object[] flagValues;
     private Integer hashCode;
 
-    public Key(Object[] flagValues) {
+    public CollapseKey(Object... flagValues) {
       this.flagValues = flagValues;
     }
 
@@ -205,10 +205,10 @@ public class CollapseKeyBuilder {
       if (this == obj) {
         return true;
       }
-      if (!(obj instanceof Key)) {
+      if (!(obj instanceof CollapseKey)) {
         return false;
       }
-      Key other = (Key) obj;
+      CollapseKey other = (CollapseKey) obj;
       if (!getEnclosingInstance().equals(other.getEnclosingInstance())) {
         return false;
       }

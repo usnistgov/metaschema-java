@@ -102,13 +102,21 @@ public class MarkupXmlStreamWriter
   @Override
   protected void handleHtmlBlock(HtmlBlock node, XMLStreamWriter writer) throws XMLStreamException {
     Document doc = Jsoup.parse(node.getChars().toString());
-    doc.getElementsByTag("html").first().getElementsByTag("body").first().traverse(new StreamNodeVisitor(writer));
+    try {
+      doc.getElementsByTag("html").first().getElementsByTag("body").first().traverse(new StreamNodeVisitor(writer));
+    } catch (InlineHtmlXmlStreamException ex) {
+      throw (XMLStreamException) ex.getCause();
+    }
   }
 
   @Override
   protected void handleHtmlInline(HtmlInline node, XMLStreamWriter writer) throws XMLStreamException {
     Document doc = Jsoup.parse(node.getChars().toString());
-    doc.getElementsByTag("html").first().getElementsByTag("body").first().traverse(new StreamNodeVisitor(writer));
+    try {
+      doc.getElementsByTag("html").first().getElementsByTag("body").first().traverse(new StreamNodeVisitor(writer));
+    } catch (InlineHtmlXmlStreamException ex) {
+      throw (XMLStreamException) ex.getCause();
+    }
   }
 
   private class StreamNodeVisitor implements NodeVisitor {
@@ -138,7 +146,7 @@ public class MarkupXmlStreamWriter
             writer.writeCharacters(text.text());
           }
         } catch (XMLStreamException ex) {
-          throw new RuntimeException(ex);
+          throw new InlineHtmlXmlStreamException(ex);
         }
       }
     }
@@ -152,11 +160,24 @@ public class MarkupXmlStreamWriter
             try {
               writer.writeEndElement();
             } catch (XMLStreamException ex) {
-              throw new RuntimeException(ex);
+              throw new InlineHtmlXmlStreamException(ex);
             }
           }
         }
       }
+    }
+  }
+
+  private static class InlineHtmlXmlStreamException
+      extends IllegalStateException {
+
+    /**
+     * the serial version uid.
+     */
+    private static final long serialVersionUID = 1L;
+
+    public InlineHtmlXmlStreamException(XMLStreamException cause) {
+      super(cause);
     }
   }
 }

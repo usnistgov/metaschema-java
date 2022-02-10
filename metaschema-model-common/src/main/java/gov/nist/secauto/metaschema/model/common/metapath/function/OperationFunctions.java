@@ -687,37 +687,25 @@ public final class OperationFunctions {
 
   @NotNull
   public static IBooleanItem opBooleanEqual(@Nullable IBooleanItem arg1, @Nullable IBooleanItem arg2) {
-    if (arg1 == null) {
-      arg1 = IBooleanItem.FALSE;
-    }
-    if (arg2 == null) {
-      arg2 = IBooleanItem.FALSE;
-    }
+    boolean left = arg1 == null ? false : arg1.toBoolean();
+    boolean right = arg2 == null ? false : arg2.toBoolean();
 
-    return IBooleanItem.valueOf(arg1.toBoolean() == arg2.toBoolean());
+    return IBooleanItem.valueOf(left == right);
   }
 
   @NotNull
   public static IBooleanItem opBooleanGreaterThan(@Nullable IBooleanItem arg1, @Nullable IBooleanItem arg2) {
-    if (arg1 == null) {
-      arg1 = IBooleanItem.FALSE;
-    }
-    if (arg2 == null) {
-      arg2 = IBooleanItem.FALSE;
-    }
+    boolean left = arg1 == null ? false : arg1.toBoolean();
+    boolean right = arg2 == null ? false : arg2.toBoolean();
 
-    return IBooleanItem.valueOf(arg1.toBoolean() && !arg2.toBoolean());
+    return IBooleanItem.valueOf(left && !right);
   }
 
   @NotNull
   public static IBooleanItem opBooleanLessThan(@Nullable IBooleanItem arg1, @Nullable IBooleanItem arg2) {
-    if (arg1 == null) {
-      arg1 = IBooleanItem.FALSE;
-    }
-    if (arg2 == null) {
-      arg2 = IBooleanItem.FALSE;
-    }
+    boolean left = arg1 == null ? false : arg1.toBoolean();
+    boolean right = arg2 == null ? false : arg2.toBoolean();
 
-    return IBooleanItem.valueOf(!arg1.toBoolean() && arg2.toBoolean());
+    return IBooleanItem.valueOf(!left && right);
   }
 }

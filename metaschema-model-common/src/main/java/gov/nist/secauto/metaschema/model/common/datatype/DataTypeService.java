@@ -63,6 +63,7 @@ public class DataTypeService {
   }
 
   /**
+   * Load available data types registered with the {@link IDataTypeProvider} SPI.
    * 
    * @throws IllegalStateException
    *           if there are two adapters with the same name

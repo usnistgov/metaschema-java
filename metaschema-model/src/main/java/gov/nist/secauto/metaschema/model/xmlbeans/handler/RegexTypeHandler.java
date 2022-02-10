@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.xmlbeans.handler;
 
 import java.util.regex.Pattern;
 
-public class RegexTypeHandler {
+public final class RegexTypeHandler {
   private RegexTypeHandler() {
     // disable
   }

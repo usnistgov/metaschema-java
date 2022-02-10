@@ -70,7 +70,7 @@ import javax.xml.namespace.QName;
  * The implementation of a {@link IBindingContext} provided by this library.
  * <p>
  * This implementation caches Metaschema information, which can dramatically improve read and write
- * performance at the cost of some memory use. Thus, using the same instance of this class across
+ * performance at the cost of some memory use. Thus, using the same singleton of this class across
  * multiple I/O operations will improve overall read and write performance when processing the same
  * types of data.
  * <p>
@@ -80,27 +80,30 @@ import javax.xml.namespace.QName;
  * This class is synchronized and is thread-safe.
  */
 public class DefaultBindingContext implements IBindingContext {
-  private static DefaultBindingContext instance;
-
-  public static synchronized DefaultBindingContext instance() {
-    if (instance == null) {
-      instance = new DefaultBindingContext();
-    }
-    return instance;
-  }
+  private static DefaultBindingContext singleton;
 
   private final Map<Class<?>, IClassBinding> classBindingsByClass = new HashMap<>();
   private final Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> javaTypeAdapterMap = new HashMap<>();
   private final List<IBindingMatcher> bindingMatchers = new LinkedList<>();
 
+  public static DefaultBindingContext instance() {
+    synchronized (DefaultBindingContext.class) {
+      if (singleton == null) {
+        singleton = new DefaultBindingContext();
+      }
+    }
+    return singleton;
+  }
+
   /**
    * Construct a new binding context.
    */
   protected DefaultBindingContext() {
+    // only allow extended classes
   }
 
   @Override
-  public synchronized IClassBinding getClassBinding(@NotNull Class<?> clazz) throws IllegalArgumentException {
+  public synchronized IClassBinding getClassBinding(@NotNull Class<?> clazz) {
     IClassBinding retval = classBindingsByClass.get(clazz);
     if (retval == null) {
       if (clazz.isAnnotationPresent(MetaschemaAssembly.class)) {
@@ -129,8 +132,8 @@ public class DefaultBindingContext implements IBindingContext {
       Constructor<TYPE> constructor;
       try {
         constructor = clazz.getDeclaredConstructor();
-      } catch (NoSuchMethodException | SecurityException e) {
-        throw new RuntimeException(e);
+      } catch (NoSuchMethodException ex) {
+        throw new IllegalArgumentException(ex);
       }
 
       try {
@@ -138,9 +141,8 @@ public class DefaultBindingContext implements IBindingContext {
         IJavaTypeAdapter<TYPE> instance
             = (IJavaTypeAdapter<TYPE>) constructor.newInstance();
         retval = instance;
-      } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-          | InvocationTargetException e) {
-        throw new RuntimeException(e);
+      } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+        throw new IllegalArgumentException(ex);
       }
       javaTypeAdapterMap.put(clazz, retval);
     }
@@ -160,13 +162,13 @@ public class DefaultBindingContext implements IBindingContext {
     ISerializer<CLASS> retval;
     switch (format) {
     case JSON:
-      retval = new DefaultJsonSerializer<CLASS>(this, classBinding);
+      retval = new DefaultJsonSerializer<>(this, classBinding);
       break;
     case XML:
-      retval = new DefaultXmlSerializer<CLASS>(this, classBinding);
+      retval = new DefaultXmlSerializer<>(this, classBinding);
       break;
     case YAML:
-      retval = new DefaultYamlSerializer<CLASS>(this, classBinding);
+      retval = new DefaultYamlSerializer<>(this, classBinding);
       break;
     default:
       throw new UnsupportedOperationException(String.format("Unsupported format '%s'", format));
@@ -188,13 +190,13 @@ public class DefaultBindingContext implements IBindingContext {
     IDeserializer<CLASS> retval;
     switch (format) {
     case JSON:
-      retval = new DefaultJsonDeserializer<CLASS>(this, classBinding);
+      retval = new DefaultJsonDeserializer<>(this, classBinding);
       break;
     case XML:
-      retval = new DefaultXmlDeserializer<CLASS>(this, classBinding);
+      retval = new DefaultXmlDeserializer<>(this, classBinding);
       break;
     case YAML:
-      retval = new DefaultYamlDeserializer<CLASS>(this, classBinding);
+      retval = new DefaultYamlDeserializer<>(this, classBinding);
       break;
     default:
       throw new UnsupportedOperationException(String.format("Unsupported format '%s'", format));
@@ -258,15 +260,14 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode)
-      throws IllegalArgumentException {
+  public IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode) {
     IClassBinding binding = getClassBinding(boundObject.getClass());
     return IXdmFactory.INSTANCE.newNodeItem(binding, boundObject, baseUri, rootNode);
   }
 
   @Override
-  public void validate(@NotNull Object boundObject, URI baseUri, boolean rootNode, IConstraintValidationHandler handler)
-      throws IllegalArgumentException {
+  public void validate(@NotNull Object boundObject, URI baseUri, boolean rootNode,
+      IConstraintValidationHandler handler) {
     IBoundXdmNodeItem nodeItem = toNodeItem(boundObject, baseUri, rootNode);
 
     StaticContext staticContext = new StaticContext();

@@ -82,7 +82,7 @@ import javax.xml.stream.events.StartElement;
 public class DefaultFieldClassBinding
     extends AbstractClassBinding
     implements IFieldClassBinding {
-  private static final Logger logger = LogManager.getLogger(DefaultFieldClassBinding.class);
+  private static final Logger LOGGER = LogManager.getLogger(DefaultFieldClassBinding.class);
 
   /**
    * Create a new {@link IClassBinding} for a Java bean annotated with the {@link Field} annotation.
@@ -335,8 +335,10 @@ public class DefaultFieldClassBinding
       if (handled) {
         handledProperties.add(propertyName);
       } else {
-        logger.warn("Unrecognized property named '{}' at '{}'", propertyName,
-            JsonUtil.toString(jsonParser.getCurrentLocation()));
+        if (LOGGER.isWarnEnabled()) {
+          LOGGER.warn("Unrecognized property named '{}' at '{}'", propertyName,
+              JsonUtil.toString(jsonParser.getCurrentLocation()));
+        }
         JsonUtil.skipNextValue(jsonParser);
       }
     }
@@ -456,8 +458,10 @@ public class DefaultFieldClassBinding
       if (handled) {
         handledProperties.add(propertyName);
       } else {
-        logger.warn("Unrecognized property named '{}' at '{}'", propertyName,
-            JsonUtil.toString(jsonParser.getCurrentLocation()));
+        if (LOGGER.isWarnEnabled()) {
+          LOGGER.warn("Unrecognized property named '{}' at '{}'", propertyName,
+              JsonUtil.toString(jsonParser.getCurrentLocation()));
+        }
         JsonUtil.skipNextValue(jsonParser);
       }
     }
@@ -613,7 +617,7 @@ public class DefaultFieldClassBinding
         // if there is a json key, the first field will be the key
         String key = jsonKey.getValueAsString(item);
         if (key == null) {
-          throw new NullPointerException("Null key value");
+          throw new IOException(new NullPointerException("Null key value"));
         }
         writer.writeFieldName(key);
 

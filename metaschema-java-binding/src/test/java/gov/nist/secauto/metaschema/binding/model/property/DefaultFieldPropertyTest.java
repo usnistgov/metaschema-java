@@ -262,6 +262,7 @@ class DefaultFieldPropertyTest {
     assertIterableEquals(Collections.singleton("field2value"), obj.getField2());
   }
 
+  @SuppressWarnings("PMD")
   @MetaschemaAssembly
   public static class TestField {
     @Field(typeAdapter = StringAdapter.class, inJson = JsonGroupAsBehavior.NONE, inXml = XmlGroupAsBehavior.UNGROUPED)

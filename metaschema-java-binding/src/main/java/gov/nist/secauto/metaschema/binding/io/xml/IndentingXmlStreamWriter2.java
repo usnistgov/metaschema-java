@@ -39,8 +39,8 @@ public class IndentingXmlStreamWriter2
     extends StreamWriter2Delegate {
   private String indentText = DEFAULT_INDENT_TEXT;
   private String lineEndText = DEFAULT_LINE_END_TEXT;
-  private int depth = 0;
-  private final Map<Integer, Boolean> hasChildElement = new HashMap<Integer, Boolean>();
+  private int depth; // = 0;
+  private final Map<Integer, Boolean> depthWithChildMap = new HashMap<>();
   private static final String DEFAULT_INDENT_TEXT = "  ";
   private static final String DEFAULT_LINE_END_TEXT = "\n";
 
@@ -69,10 +69,10 @@ public class IndentingXmlStreamWriter2
   protected void handleStartElement() throws XMLStreamException {
     // update state of parent node
     if (depth > 0) {
-      hasChildElement.put(depth - 1, true);
+      depthWithChildMap.put(depth - 1, true);
     }
     // reset state of current node
-    hasChildElement.put(depth, false);
+    depthWithChildMap.put(depth, false);
     // indent for current depth
     getParent().writeCharacters(getLineEndText());
     getParent().writeCharacters(getIndentText().repeat(depth));
@@ -101,11 +101,10 @@ public class IndentingXmlStreamWriter2
 
   protected void handleEndElement() throws XMLStreamException {
     depth--;
-    if (hasChildElement.get(depth) == true) {
+    if (depthWithChildMap.get(depth)) {
       getParent().writeCharacters(getLineEndText());
       getParent().writeCharacters(getIndentText().repeat(depth));
     }
-
   }
 
   @Override
@@ -123,7 +122,7 @@ public class IndentingXmlStreamWriter2
   protected void handleEmptyElement() throws XMLStreamException {
     // update state of parent node
     if (depth > 0) {
-      hasChildElement.put(depth - 1, true);
+      depthWithChildMap.put(depth - 1, true);
     }
     // indent for current depth
     getParent().writeCharacters(getLineEndText());

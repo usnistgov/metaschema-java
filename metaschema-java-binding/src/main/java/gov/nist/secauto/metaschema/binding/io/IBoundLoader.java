@@ -31,13 +31,13 @@ import gov.nist.secauto.metaschema.model.common.metapath.IDocumentLoader;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 
 /**
  * A common interface for loader implementations.
@@ -73,7 +73,9 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
     if (!file.exists()) {
       throw new FileNotFoundException(file.getAbsolutePath());
     }
-    return detectFormat(new FileInputStream(file));
+    try (InputStream is = Files.newInputStream(file.toPath())) {
+      return detectFormat(is);
+    }
   }
 
   /**
@@ -136,7 +138,9 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
     if (!file.exists()) {
       throw new FileNotFoundException(file.getAbsolutePath());
     }
-    return load(new FileInputStream(file), file.toURI());
+    try (InputStream is = Files.newInputStream(file.toPath())) {
+      return load(is, file.toURI());
+    }
   }
 
   /**
@@ -184,7 +188,9 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
     if (!file.exists()) {
       throw new FileNotFoundException(file.getAbsolutePath());
     }
-    return load(clazz, new FileInputStream(file), file.getCanonicalFile().toURI());
+    try (InputStream is = Files.newInputStream(file.toPath())) {
+      return load(clazz, is, file.getCanonicalFile().toURI());
+    }
   }
 
   /**

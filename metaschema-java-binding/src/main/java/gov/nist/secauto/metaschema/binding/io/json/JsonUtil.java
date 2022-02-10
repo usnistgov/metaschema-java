@@ -38,30 +38,31 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-public class JsonUtil {
-  private static final Logger logger = LogManager.getLogger(JsonUtil.class);
+public final class JsonUtil {
+  private static final Logger LOGGER = LogManager.getLogger(JsonUtil.class);
 
   private JsonUtil() {
     // disable construction
   }
 
   public static String toString(JsonParser parser) throws IOException {
-    StringBuilder builder = new StringBuilder();
-    JsonToken token = parser.currentToken();
-    builder.append(token.name());
-    builder.append(" '").append(parser.getText()).append("'");
-    builder.append("' at location '");
-    JsonLocation location = parser.getCurrentLocation();
-    builder.append(toString(location));
-    builder.append("'");
+    StringBuilder builder = new StringBuilder(32);
+    builder
+        .append(parser.currentToken().name())
+        .append(" '")
+        .append(parser.getText())
+        .append("' at location '")
+        .append(toString(parser.getCurrentLocation()))
+        .append('\'');
     return builder.toString();
   }
 
   public static String toString(JsonLocation location) {
     StringBuilder builder = new StringBuilder();
-    builder.append(location.getLineNr());
-    builder.append(':');
-    builder.append(location.getColumnNr());
+    builder
+        .append(location.getLineNr())
+        .append(':')
+        .append(location.getColumnNr());
     return builder.toString();
   }
 
@@ -69,7 +70,9 @@ public class JsonUtil {
     JsonToken currentToken = null;
     while (parser.hasCurrentToken() && !token.equals(currentToken = parser.currentToken())) {
       currentToken = parser.nextToken();
-      logger.warn("skipping over: {}", toString(parser));
+      if (LOGGER.isWarnEnabled()) {
+        LOGGER.warn("skipping over: {}", toString(parser));
+      }
     }
     return currentToken;
   }
@@ -98,7 +101,7 @@ public class JsonUtil {
     default:
       // error
       String msg = String.format("Unhandled JsonToken %s", toString(parser));
-      logger.error(msg);
+      LOGGER.error(msg);
       throw new UnsupportedOperationException(msg);
     }
 
@@ -159,17 +162,19 @@ public class JsonUtil {
 
   public static String toLocationContext(JsonParser parser, IClassBinding classBinding,
       IBoundInstance property) {
-    StringBuilder builder = new StringBuilder();
-    builder.append("property '");
-    builder.append(property.getJavaPropertyName());
-    builder.append("' on class '");
-    builder.append(classBinding.getBoundClass().getName());
-    builder.append("' at location '");
+    StringBuilder builder = new StringBuilder(64);
+    builder
+        .append("property '")
+        .append(property.getJavaPropertyName())
+        .append("' on class '")
+        .append(classBinding.getBoundClass().getName())
+        .append("' at location '");
     JsonLocation location = parser.getCurrentLocation();
-    builder.append(location.getLineNr());
-    builder.append(':');
-    builder.append(location.getColumnNr());
-    builder.append("'");
+    builder
+        .append(location.getLineNr())
+        .append(':')
+        .append(location.getColumnNr())
+        .append('\'');
     return builder.toString();
   }
 

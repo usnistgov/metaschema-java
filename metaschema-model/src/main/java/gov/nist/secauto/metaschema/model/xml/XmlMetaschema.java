@@ -56,7 +56,7 @@ import java.util.stream.Stream;
 public class XmlMetaschema
     extends AbstractMetaschema
     implements IXmlMetaschema {
-  private static final Logger logger = LogManager.getLogger(XmlMetaschema.class);
+  private static final Logger LOGGER = LogManager.getLogger(XmlMetaschema.class);
 
   private final METASCHEMADocument metaschema;
   private final Map<String, ? extends IXmlFlagDefinition> flagDefinitions;
@@ -97,7 +97,9 @@ public class XmlMetaschema
         @NotNull
         GlobalFlagDefinitionType obj = (GlobalFlagDefinitionType) cursor.getObject();
         IXmlFlagDefinition flag = new XmlGlobalFlagDefinition(obj, this);
-        logger.trace("New flag definition '{}'", flag.toCoordinates());
+        if (LOGGER.isTraceEnabled()) {
+          LOGGER.trace("New flag definition '{}'", flag.toCoordinates());
+        }
         flagDefinitions.put(flag.getName(), flag);
       }
       this.flagDefinitions
@@ -115,7 +117,9 @@ public class XmlMetaschema
         @NotNull
         GlobalFieldDefinitionType obj = (GlobalFieldDefinitionType) cursor.getObject();
         XmlGlobalFieldDefinition field = new XmlGlobalFieldDefinition(obj, this);
-        logger.trace("New field definition '{}'", field.toCoordinates());
+        if (LOGGER.isTraceEnabled()) {
+          LOGGER.trace("New field definition '{}'", field.toCoordinates());
+        }
         fieldDefinitions.put(field.getName(), field);
       }
       this.fieldDefinitions
@@ -136,7 +140,9 @@ public class XmlMetaschema
         @NotNull
         GlobalAssemblyDefinitionType obj = (GlobalAssemblyDefinitionType) cursor.getObject();
         XmlGlobalAssemblyDefinition assembly = new XmlGlobalAssemblyDefinition(obj, this);
-        logger.trace("New assembly definition '{}'", assembly.toCoordinates());
+        if (LOGGER.isTraceEnabled()) {
+          LOGGER.trace("New assembly definition '{}'", assembly.toCoordinates());
+        }
         assemblyDefinitions.put(assembly.getName(), assembly);
         if (assembly.isRoot()) {
           rootAssemblyDefinitions.put(assembly.getRootName(), assembly);

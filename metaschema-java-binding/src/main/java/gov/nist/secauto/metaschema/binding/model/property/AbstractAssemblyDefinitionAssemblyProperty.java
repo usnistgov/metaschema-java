@@ -57,6 +57,7 @@ public abstract class AbstractAssemblyDefinitionAssemblyProperty
     return new SingletonPropertyInfo(this);
   }
 
+  @SuppressWarnings("PMD")
   @Override
   public String getUseName() {
     return null;
@@ -87,11 +88,13 @@ public abstract class AbstractAssemblyDefinitionAssemblyProperty
     return 1;
   }
 
+  @SuppressWarnings("PMD")
   @Override
   public String getGroupAsName() {
     return null;
   }
 
+  @SuppressWarnings("PMD")
   @Override
   public String getGroupAsXmlNamespace() {
     return null;

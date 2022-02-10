@@ -38,7 +38,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 // TODO: is this needed, or can we use methods on the markup implementations?
-public class MarkupStringConverter {
+public final class MarkupStringConverter {
   private MarkupStringConverter() {
     // disable construction
   }
@@ -49,6 +49,8 @@ public class MarkupStringConverter {
    * @param content
    *          the content to convert
    * @return the equivalent formatted text as a MarkupLine
+   * @throws IllegalArgumentException
+   *           if the {@code content} argument contains malformed markup
    */
   public static MarkupLine toMarkupString(MarkupLineType content) {
     String html = processHTML(content);
@@ -61,6 +63,8 @@ public class MarkupStringConverter {
    * @param content
    *          the content to convert
    * @return the equivalent formatted text as a MarkupLine
+   * @throws IllegalArgumentException
+   *           if the {@code content} argument contains malformed markup
    */
   public static MarkupMultiline
       toMarkupString(MarkupMultilineType content) {
@@ -74,6 +78,8 @@ public class MarkupStringConverter {
    * @param content
    *          the content to convert
    * @return an HTML string
+   * @throws IllegalArgumentException
+   *           if the {@code content} argument contains malformed markup
    */
   protected static String processHTML(XmlTokenSource content) {
     XmlOptions options = new XmlOptions();
@@ -83,7 +89,7 @@ public class MarkupStringConverter {
     try {
       content.save(writer, options);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new IllegalArgumentException(e);
     }
     return writer.toString().replaceFirst("^<frag\\:fragment[^>]+>", "").replaceFirst("</frag\\:fragment>$", "");
   }

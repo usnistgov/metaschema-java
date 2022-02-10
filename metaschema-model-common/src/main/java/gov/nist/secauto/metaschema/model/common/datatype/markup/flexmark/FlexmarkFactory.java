@@ -50,10 +50,10 @@ import java.util.Map;
 import java.util.Objects;
 
 public class FlexmarkFactory {
-  private static final Logger logger = LogManager.getLogger(FlexmarkFactory.class);
-  private static final FlexmarkFactory instance = new FlexmarkFactory();
+  private static final Logger LOGGER = LogManager.getLogger(FlexmarkFactory.class);
+  private static final FlexmarkFactory INSTANCE = new FlexmarkFactory();
 
-  static Map<String, String> TYPOGRAPHIC_REPLACEMENT_MAP = new HashMap<>();
+  private static final Map<String, String> TYPOGRAPHIC_REPLACEMENT_MAP = new HashMap<>();
 
   static {
     TYPOGRAPHIC_REPLACEMENT_MAP.put("“", "\"");
@@ -78,7 +78,7 @@ public class FlexmarkFactory {
   }
 
   public static FlexmarkFactory instance() {
-    return instance;
+    return INSTANCE;
   }
 
   private Parser markdownParser;
@@ -92,16 +92,15 @@ public class FlexmarkFactory {
 
   public Document fromHtml(@NotNull String html, FlexmarkHtmlConverter htmlParser, Parser markdownParser) {
     Objects.requireNonNull(html, "html");
-    if (htmlParser == null) {
-      htmlParser = getFlexmarkHtmlConverter();
-    }
-    if (markdownParser == null) {
-      markdownParser = getMarkdownParser();
-    }
 
-    String markdown = htmlParser.convert(html);
-    logger.trace("markdown: {}", markdown);
-    return fromMarkdown(markdown, markdownParser);
+    FlexmarkHtmlConverter effectiveHtmlParser = htmlParser == null ? getFlexmarkHtmlConverter() : htmlParser;
+    Parser effectiveMarkdownParser = markdownParser == null ? getMarkdownParser() : markdownParser;
+
+    String markdown = effectiveHtmlParser.convert(html);
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace("markdown: {}", markdown);
+    }
+    return fromMarkdown(markdown, effectiveMarkdownParser);
   }
 
   public Document fromMarkdown(String markdown) {

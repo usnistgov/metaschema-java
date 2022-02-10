@@ -43,7 +43,7 @@ import java.net.URL;
 import java.util.Collection;
 
 class UsedDefinitionModelWalkerTest {
-  private static final Logger logger = LogManager.getLogger(UsedDefinitionModelWalkerTest.class);
+  private static final Logger LOGGER = LogManager.getLogger(UsedDefinitionModelWalkerTest.class);
 
   @Disabled
   @Test
@@ -56,8 +56,10 @@ class UsedDefinitionModelWalkerTest {
     Collection<@NotNull ? extends IDefinition> definitions
         = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
 
-    for (IDefinition definition : definitions) {
-      logger.info(String.format("%s", definition.toCoordinates()));
+    if (LOGGER.isDebugEnabled()) {
+      for (IDefinition definition : definitions) {
+        LOGGER.debug(definition.toCoordinates());
+      }
     }
   }
 

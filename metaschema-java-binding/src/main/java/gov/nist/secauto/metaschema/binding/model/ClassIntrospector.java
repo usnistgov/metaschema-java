@@ -31,13 +31,15 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ClassIntrospector {
+public final class ClassIntrospector {
   private ClassIntrospector() {
     // disable construction
   }
 
-  public static List<Method> getMatchingMethods(Class<?> searchClass, String name, Class<?>... parameterTypes) {
+  public static List<Method> getMatchingMethods(Class<?> clazz, String name, Class<?>... parameterTypes) {
+
     List<Method> retval = new LinkedList<>();
+    Class<?> searchClass = clazz;
     do {
       try {
         Method method = searchClass.getDeclaredMethod(name, parameterTypes);
@@ -50,8 +52,9 @@ public class ClassIntrospector {
     return retval.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(retval);
   }
 
-  public static Method getMatchingMethod(Class<?> searchClass, String name, Class<?>... parameterTypes) {
+  public static Method getMatchingMethod(Class<?> clazz, String name, Class<?>... parameterTypes) {
     Method retval = null;
+    Class<?> searchClass = clazz;
     do {
       try {
         retval = searchClass.getDeclaredMethod(name, parameterTypes);

@@ -90,7 +90,7 @@ public abstract class AbstractPropertyGenerator<CLASS_GENERATOR extends IJavaCla
     if (this.propertyName == null) {
       String name = ClassUtils.toPropertyName(getInstanceName());
       if (name == null) {
-        throw new NullPointerException("Instance name was null. Perhaps there is a missing group-as?");
+        throw new IllegalStateException("Instance name was null. Perhaps there is a missing group-as?");
       }
       // first check if a property already exists with the same name
       if (classGenerator.hasPropertyWithName(name)) {

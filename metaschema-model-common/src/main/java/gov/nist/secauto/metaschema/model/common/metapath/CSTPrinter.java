@@ -34,6 +34,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.List;
 
+@SuppressWarnings("PMD")
 public class CSTPrinter {
   private boolean ignoringWrappers = true;
 

@@ -79,8 +79,10 @@ public abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> impl
     try {
       field.set(obj, value);
     } catch (IllegalArgumentException | IllegalAccessException ex) {
-      throw new RuntimeException(String.format("Unable to set the value of field '%s' in class '%s'.", field.getName(),
-          field.getDeclaringClass().getName()), ex);
+      throw new IllegalArgumentException(
+          String.format("Unable to set the value of field '%s' in class '%s'.", field.getName(),
+              field.getDeclaringClass().getName()),
+          ex);
     } finally {
       field.setAccessible(accessable);
     }
@@ -95,8 +97,10 @@ public abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> impl
       Object result = field.get(obj);
       retval = result;
     } catch (IllegalArgumentException | IllegalAccessException ex) {
-      throw new RuntimeException(String.format("Unable to get the value of field '%s' in class '%s'.", field.getName(),
-          field.getDeclaringClass().getName()));
+      throw new IllegalArgumentException(
+          String.format("Unable to get the value of field '%s' in class '%s'.", field.getName(),
+              field.getDeclaringClass().getName()),
+          ex);
     } finally {
       field.setAccessible(accessable);
     }

@@ -91,7 +91,7 @@ import javax.xml.stream.events.XMLEvent;
 public class DefaultAssemblyClassBinding
     extends AbstractClassBinding
     implements IAssemblyClassBinding {
-  private static final Logger logger = LogManager.getLogger(DefaultAssemblyClassBinding.class);
+  private static final Logger LOGGER = LogManager.getLogger(DefaultAssemblyClassBinding.class);
 
   /**
    * Create a new {@link IClassBinding} for a Java bean annotated with the {@link Assembly}
@@ -104,11 +104,10 @@ public class DefaultAssemblyClassBinding
    * @return the Metaschema assembly binding for the class
    */
   public static DefaultAssemblyClassBinding createInstance(Class<?> clazz, IBindingContext bindingContext) {
-    DefaultAssemblyClassBinding retval = new DefaultAssemblyClassBinding(clazz, bindingContext);
-    return retval;
+    return new DefaultAssemblyClassBinding(clazz, bindingContext);
   }
 
-  private MetaschemaAssembly metaschemaAssembly;
+  private final MetaschemaAssembly metaschemaAssembly;
   private Map<String, IBoundNamedModelInstance> modelInstances;
   private final QName xmlRootQName;
   private IAssemblyConstraintSupport constraints;
@@ -122,12 +121,14 @@ public class DefaultAssemblyClassBinding
    * @param bindingContext
    *          the class binding context for which this class is participating
    */
+  @SuppressWarnings("PMD")
   protected DefaultAssemblyClassBinding(Class<?> clazz, IBindingContext bindingContext) {
     super(clazz, bindingContext);
     Objects.requireNonNull(clazz, "clazz");
     if (!clazz.isAnnotationPresent(MetaschemaAssembly.class)) {
       throw new IllegalArgumentException(
-          String.format("Class '%s' is missing the '%' annotation.", clazz.getName(), Assembly.class.getName()));
+          String.format("Class '%s' is missing the '%' annotation.", clazz.getName(),
+              MetaschemaAssembly.class.getName()));
     }
     this.metaschemaAssembly = clazz.getAnnotation(MetaschemaAssembly.class);
     String namespace = ModelUtil.resolveNamespace(this.metaschemaAssembly.rootNamespace(), this, false);
@@ -162,7 +163,7 @@ public class DefaultAssemblyClassBinding
   @Override
   public String getRootName() {
     QName qname = getRootXmlQName();
-    return qname != null ? qname.getLocalPart() : null;
+    return qname == null ? null : qname.getLocalPart();
   }
 
   @Override
@@ -213,15 +214,15 @@ public class DefaultAssemblyClassBinding
       for (java.lang.reflect.Field field : getModelInstanceFields(getBoundClass())) {
 
         Assembly assemblyAnnotation = field.getAnnotation(Assembly.class);
-        if (assemblyAnnotation != null) {
-          DefaultAssemblyProperty instance = DefaultAssemblyProperty.createInstance(this, field);
-          modelInstances.put(instance.getEffectiveName(), instance);
-        } else {
+        if (assemblyAnnotation == null) {
           Field fieldAnnotation = field.getAnnotation(Field.class);
           if (fieldAnnotation != null) {
             DefaultFieldProperty instance = DefaultFieldProperty.createInstance(this, field);
             modelInstances.put(instance.getEffectiveName(), instance);
           }
+        } else {
+          DefaultAssemblyProperty instance = DefaultAssemblyProperty.createInstance(this, field);
+          modelInstances.put(instance.getEffectiveName(), instance);
         }
       }
       this.modelInstances
@@ -395,7 +396,7 @@ public class DefaultAssemblyClassBinding
         JsonUtil.skipNextValue(parser);
       } else {
         if (!context.getProblemHandler().handleUnknownRootProperty(instance, this, fieldName, context)) {
-          logger.warn("Skipping unhandled top-level JSON field '{}'.", fieldName);
+          LOGGER.warn("Skipping unhandled top-level JSON field '{}'.", fieldName);
           JsonUtil.skipNextValue(parser);
         }
       }
@@ -456,7 +457,9 @@ public class DefaultAssemblyClassBinding
 
     IBoundFlagInstance jsonKey = getJsonKeyFlagInstance();
     Map<String, ? extends IBoundNamedInstance> properties;
-    if (jsonKey != null) {
+    if (jsonKey == null) {
+      properties = getNamedInstances(null);
+    } else {
       properties = getNamedInstances((flag) -> {
         return !jsonKey.equals(flag);
       });
@@ -470,8 +473,6 @@ public class DefaultAssemblyClassBinding
 
       // next the value will be a start object
       JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
-    } else {
-      properties = getNamedInstances(null);
     }
 
     Set<String> handledProperties = new HashSet<>();
@@ -487,8 +488,10 @@ public class DefaultAssemblyClassBinding
       if (handled) {
         handledProperties.add(propertyName);
       } else {
-        logger.warn("Unrecognized property named '{}' at '{}'", propertyName,
-            JsonUtil.toString(jsonParser.getCurrentLocation()));
+        if (LOGGER.isWarnEnabled()) {
+          LOGGER.warn("Unrecognized property named '{}' at '{}'", propertyName,
+              JsonUtil.toString(jsonParser.getCurrentLocation()));
+        }
         JsonUtil.assertAndAdvance(jsonParser, JsonToken.FIELD_NAME);
         JsonUtil.skipNextValue(jsonParser);
       }
@@ -571,7 +574,9 @@ public class DefaultAssemblyClassBinding
 
     IBoundFlagInstance jsonKey = getJsonKeyFlagInstance();
     Map<String, ? extends IBoundNamedInstance> properties;
-    if (jsonKey != null) {
+    if (jsonKey == null) {
+      properties = getNamedInstances(null);
+    } else {
       properties = getNamedInstances((flag) -> {
         return !jsonKey.equals(flag);
       });
@@ -579,14 +584,12 @@ public class DefaultAssemblyClassBinding
       // if there is a json key, the first field will be the key
       String key = jsonKey.getValueAsString(instance);
       if (key == null) {
-        throw new NullPointerException("Null key value");
+        throw new IOException(new NullPointerException("Null key value"));
       }
       writer.writeFieldName(key);
 
       // next the value will be a start object
       writer.writeStartObject();
-    } else {
-      properties = getNamedInstances(null);
     }
 
     for (IBoundNamedInstance property : properties.values()) {

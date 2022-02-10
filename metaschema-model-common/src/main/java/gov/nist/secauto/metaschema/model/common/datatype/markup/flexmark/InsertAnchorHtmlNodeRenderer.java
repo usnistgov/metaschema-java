@@ -33,6 +33,8 @@ import com.vladsch.flexmark.html2md.converter.HtmlNodeRendererFactory;
 import com.vladsch.flexmark.html2md.converter.HtmlNodeRendererHandler;
 import com.vladsch.flexmark.util.data.DataHolder;
 
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 
@@ -55,10 +57,7 @@ public class InsertAnchorHtmlNodeRenderer implements HtmlNodeRenderer {
 
   @SuppressWarnings("null")
   private void processInsert(Element node, HtmlNodeConverterContext context, HtmlMarkdownWriter out) {
-    Node currentNode = context.getCurrentNode();
-    if (currentNode == null) {
-      throw new NullPointerException("null current node");
-    }
+    Node currentNode = ObjectUtils.requireNonNull(context.getCurrentNode(), "null current node");
 
     String type = currentNode.attr("type");
     String idRef = currentNode.attr("id-ref");

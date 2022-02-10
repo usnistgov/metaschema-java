@@ -62,13 +62,13 @@ import javax.xml.stream.events.StartElement;
  * A default implementation of a {@link IBoundLoader}.
  */
 public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
-  public static final int LOOK_AHEAD_BYTES = 32768;
+  public static final int LOOK_AHEAD_BYTES = 32_768;
   @NotNull
-  private static final JsonFactory jsonFactory = new JsonFactory();
+  private static final JsonFactory JSON_FACTORY = new JsonFactory();
   @NotNull
-  private static final XmlFactory xmlFactory = new XmlFactory();
+  private static final XmlFactory XML_FACTORY = new XmlFactory();
   @NotNull
-  private static final YAMLFactory yamlFactory = new YAMLFactory();
+  private static final YAMLFactory YAML_FACTORY = new YAMLFactory();
 
   @NotNull
   private final IBindingContext bindingContext;
@@ -83,7 +83,8 @@ public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
    */
   public DefaultBoundLoader(IBindingContext bindingContext) {
     this.bindingContext = bindingContext;
-    this.configuration = new DefaultMutableConfiguration().enableFeature(Feature.DESERIALIZE_ROOT);
+    this.configuration = new DefaultMutableConfiguration();
+    this.configuration.enableFeature(Feature.DESERIALIZE_ROOT);
   }
 
   @Override
@@ -179,15 +180,15 @@ public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
     bis.mark(LOOK_AHEAD_BYTES);
 
     DataFormatMatcher matcher = matchFormat(bis);
-    Format format = formatFromMatcher(matcher);
-
-    IDeserializer<CLASS> deserializer = getDeserializer(clazz, format, getConfiguration());
 
     try {
       bis.reset();
     } catch (IOException ex) {
       throw new IOException("Unable to reset input stream before parsing", ex);
     }
+
+    Format format = formatFromMatcher(matcher);
+    IDeserializer<CLASS> deserializer = getDeserializer(clazz, format, getConfiguration());
     try {
       return loadAsObject(deserializer, bis, documentUri);
     } catch (BindingException ex) {
@@ -227,7 +228,7 @@ public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
   @NotNull
   protected DataFormatMatcher matchFormat(@NotNull InputStream is, int lookAheadBytes) throws IOException {
 
-    DataFormatDetector det = new DataFormatDetector(new JsonFactory[] { yamlFactory, jsonFactory, xmlFactory });
+    DataFormatDetector det = new DataFormatDetector(new JsonFactory[] { YAML_FACTORY, JSON_FACTORY, XML_FACTORY });
     det = det.withMinimalMatch(MatchStrength.INCONCLUSIVE).withOptimalMatch(MatchStrength.SOLID_MATCH)
         .withMaxInputLookahead(lookAheadBytes);
 

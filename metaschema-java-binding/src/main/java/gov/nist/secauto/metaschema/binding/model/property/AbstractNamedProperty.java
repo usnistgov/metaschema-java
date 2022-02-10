@@ -44,7 +44,7 @@ import java.lang.reflect.Field;
 public abstract class AbstractNamedProperty<CLASS_BINDING extends IClassBinding>
     extends AbstractProperty<CLASS_BINDING>
     implements IBoundNamedInstance, INamedInstance {
-  private static final Logger logger = LogManager.getLogger(AbstractNamedProperty.class);
+  private static final Logger LOGGER = LogManager.getLogger(AbstractNamedProperty.class);
 
   public AbstractNamedProperty(Field field, CLASS_BINDING parentClassBinding) {
     super(field, parentClassBinding);
@@ -62,8 +62,8 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends IClassBinding>
     JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
 
     String propertyName = parser.currentName();
-    if (logger.isTraceEnabled()) {
-      logger.trace("reading property {}", propertyName);
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace("reading property {}", propertyName);
     }
 
     return getJsonName().equals(propertyName);

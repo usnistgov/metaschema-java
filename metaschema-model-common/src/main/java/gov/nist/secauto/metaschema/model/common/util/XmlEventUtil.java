@@ -45,7 +45,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 public final class XmlEventUtil {
-  private static final Logger logger = LogManager.getLogger(XmlEventUtil.class);
+  // private static final Logger LOGGER = LogManager.getLogger(XmlEventUtil.class);
 
   private static final Pattern WHITESPACE_ONLY = Pattern.compile("^\\s+$");
 
@@ -224,14 +224,16 @@ public final class XmlEventUtil {
     XMLEvent xmlEvent;
     do {
       xmlEvent = reader.nextEvent();
-      logger.warn("skipping over: {}", XmlEventUtil.toString(xmlEvent));
+      // if (LOGGER.isWarnEnabled()) {
+      // LOGGER.warn("skipping over: {}", XmlEventUtil.toString(xmlEvent));
+      // }
       if (xmlEvent.isStartElement()) {
         advanceTo(reader, XMLStreamConstants.END_ELEMENT);
         // skip this end element
         xmlEvent = reader.nextEvent();
-        if (logger.isDebugEnabled()) {
-          logger.debug("skipping over: {}", XmlEventUtil.toString(xmlEvent));
-        }
+        // if (LOGGER.isDebugEnabled()) {
+        // LOGGER.debug("skipping over: {}", XmlEventUtil.toString(xmlEvent));
+        // }
       }
     } while (reader.hasNext() && (xmlEvent = reader.peek()).getEventType() != eventType);
     return xmlEvent;

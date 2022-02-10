@@ -33,9 +33,7 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ASTPrinter;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 
@@ -88,12 +86,12 @@ class JavaGeneratorTest {
     MetapathExpression exp = MetapathExpression.compile("*/*/@name");
     // MetapathExpression exp = Metapath.parseMetapathString("//test/@flag = 1+1+1");
     // MetapathExpression exp = Metapath.parseMetapathString("//test[@flag='value']/@flag = 0.1");
-    System.out.println(new ASTPrinter().visit(exp.getASTNode()));
+    // System.out.println(new ASTPrinter().visit(exp.getASTNode()));
 
     IInstanceSet result = exp.evaluateMetaschemaInstance(new DefaultMetaschemaContext(rootDefinitions));
-    for (IInstance instance : result.getInstances()) {
-      System.out.println(instance);
-    }
+    // for (IInstance instance : result.getInstances()) {
+    // System.out.println(instance);
+    // }
   }
   //
   // private void printDefinition(IDefinition definition, String padding) {

@@ -34,7 +34,7 @@ import org.apache.xmlbeans.XmlCursor.XmlBookmark;
 import org.apache.xmlbeans.XmlLineNumber;
 import org.apache.xmlbeans.impl.values.XmlValueNotSupportedException;
 
-public class MetapathExpressionHandler {
+public final class MetapathExpressionHandler {
   private MetapathExpressionHandler() {
     // disable
   }

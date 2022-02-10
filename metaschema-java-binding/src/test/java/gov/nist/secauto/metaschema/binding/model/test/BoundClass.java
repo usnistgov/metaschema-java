@@ -184,6 +184,7 @@ public class BoundClass {
   /**
    * A complex field with a flag.
    */
+  @SuppressWarnings("PMD")
   @MetaschemaField(isCollapsible = false)
   public static class FlaggedField {
     @Flag(useName = "id", typeAdapter = StringAdapter.class)
@@ -215,6 +216,7 @@ public class BoundClass {
   /**
    * A complex field with multiple flag.
    */
+  @SuppressWarnings("PMD")
   @MetaschemaField(isCollapsible = true)
   public static class KeyedField {
     @JsonKey

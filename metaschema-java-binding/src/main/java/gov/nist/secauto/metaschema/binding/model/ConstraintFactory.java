@@ -58,7 +58,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-class ConstraintFactory {
+final class ConstraintFactory {
   private ConstraintFactory() {
     // disable
   }
@@ -76,60 +76,28 @@ class ConstraintFactory {
   }
 
   static String toId(String id) {
-    if (id.isBlank()) {
-      id = null;
-    }
-    return id;
+    return id.isBlank() ? null : id;
   }
 
   static MarkupMultiline toRemarks(String remarks) {
-    MarkupMultiline retval;
-    if (remarks.isBlank()) {
-      retval = null;
-    } else {
-      retval = MarkupMultiline.fromMarkdown(remarks);
-    }
-    return retval;
+    return remarks.isBlank() ? null : MarkupMultiline.fromMarkdown(remarks);
   }
 
   static Pattern toPattern(String pattern) {
-    Pattern retval;
-    if (pattern.isBlank()) {
-      retval = null;
-    } else {
-      retval = Pattern.compile(pattern);
-    }
-    return retval;
+    return pattern.isBlank() ? null : Pattern.compile(pattern);
   }
 
   static String toMessage(String message) {
-    String retval;
-    if (message.isBlank()) {
-      retval = null;
-    } else {
-      retval = message;
-    }
-    return retval;
+    return message.isBlank() ? null : message;
   }
 
   static IJavaTypeAdapter<?> toDataType(Class<? extends IJavaTypeAdapter<?>> adapterClass) {
-    IJavaTypeAdapter<?> retval;
-    if (adapterClass.isAssignableFrom(NullJavaTypeAdapter.class)) {
-      retval = null;
-    } else {
-      retval = DataTypeService.getInstance().getJavaTypeAdapterByClass(adapterClass);
-    }
-    return retval;
+    return adapterClass.isAssignableFrom(NullJavaTypeAdapter.class) ? null
+        : DataTypeService.getInstance().getJavaTypeAdapterByClass(adapterClass);
   }
 
   static MetapathExpression toMetapath(String metapath) {
-    MetapathExpression retval;
-    if (metapath == null || metapath.isBlank()) {
-      retval = null;
-    } else {
-      retval = MetapathExpression.compile(metapath);
-    }
-    return retval;
+    return metapath == null || metapath.isBlank() ? null : MetapathExpression.compile(metapath);
   }
 
   static DefaultAllowedValuesConstraint newAllowedValuesConstraint(AllowedValues constraint) {
@@ -152,7 +120,7 @@ class ConstraintFactory {
         toRemarks(constraint.remarks()));
   }
 
-  static List<DefaultKeyField> toKeyFields(KeyField[] keyFields) {
+  static List<DefaultKeyField> toKeyFields(KeyField... keyFields) {
     List<DefaultKeyField> retval;
     if (keyFields == null || keyFields.length == 0) {
       retval = Collections.emptyList();
@@ -169,13 +137,7 @@ class ConstraintFactory {
   }
 
   static Integer toCardinality(int value) {
-    Integer retval;
-    if (value < 0) {
-      retval = null;
-    } else {
-      retval = Integer.valueOf(value);
-    }
-    return retval;
+    return value < 0 ? null : Integer.valueOf(value);
   }
 
   static DefaultUniqueConstraint newUniqueConstraint(IsUnique constraint) {

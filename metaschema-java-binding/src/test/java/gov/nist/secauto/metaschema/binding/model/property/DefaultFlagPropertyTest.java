@@ -147,6 +147,7 @@ class DefaultFlagPropertyTest {
     assertEquals("theId", obj.getId());
   }
 
+  @SuppressWarnings("PMD")
   @MetaschemaAssembly(rootName = "test", rootNamespace = "http://example.com/ns")
   private static class SimpleAssembly {
     @Flag(useName = "id", typeAdapter = StringAdapter.class)

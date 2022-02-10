@@ -63,7 +63,7 @@ class MarkupXmlStreamWriterTest {
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
     visitor.collect(ms.getDocument());
-    System.out.println(visitor.getAst());
+    // System.out.println(visitor.getAst());
 
     MarkupXmlStreamWriter writer = new MarkupXmlStreamWriter(namespace, ms instanceof MarkupMultiline);
 

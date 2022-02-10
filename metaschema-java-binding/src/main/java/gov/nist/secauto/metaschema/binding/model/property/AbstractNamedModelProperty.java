@@ -77,6 +77,7 @@ public abstract class AbstractNamedModelProperty
     super(field, parentClassBinding);
   }
 
+  @SuppressWarnings("PMD")
   @Override
   public IMetaschema getContainingMetaschema() {
     return null;
@@ -102,7 +103,7 @@ public abstract class AbstractNamedModelProperty
           retval = new ListPropertyInfo(this);
         }
       } else {
-        throw new RuntimeException(String.format(
+        throw new IllegalStateException(String.format(
             "The field '%s' on class '%s' has a data parmeterized type of '%s',"
                 + " but the occurance is not multi-valued.",
             getField().getName(), getParentClassBinding().getBoundClass().getName(), getField().getType().getName()));
@@ -111,19 +112,19 @@ public abstract class AbstractNamedModelProperty
       if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
         switch (getJsonGroupAsBehavior()) {
         case KEYED:
-          throw new RuntimeException(
+          throw new IllegalStateException(
               String.format("The field '%s' on class '%s' has data type of '%s'," + " but should have a type of '%s'.",
                   getField().getName(), getParentClassBinding().getBoundClass().getName(),
                   getField().getType().getName(), Map.class.getName()));
         case LIST:
         case SINGLETON_OR_LIST:
-          throw new RuntimeException(
+          throw new IllegalStateException(
               String.format("The field '%s' on class '%s' has data type of '%s'," + " but should have a type of '%s'.",
                   getField().getName(), getParentClassBinding().getBoundClass().getName(),
                   getField().getType().getName(), List.class.getName()));
         default:
           // this should not occur
-          throw new RuntimeException(new IllegalStateException());
+          throw new IllegalStateException(getJsonGroupAsBehavior().name());
         }
       }
       retval = new SingletonPropertyInfo(this);
@@ -180,7 +181,7 @@ public abstract class AbstractNamedModelProperty
       if (classBinding != null) {
         retval = new ClassDataTypeHandler(classBinding, this);
       } else {
-        throw new RuntimeException(
+        throw new IllegalStateException(
             String.format("Unable to parse type '%s', which is not a known bound class or data type",
                 getPropertyInfo().getItemType()));
       }

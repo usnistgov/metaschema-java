@@ -57,7 +57,7 @@ public class DefaultJsonDeserializer<CLASS>
   }
 
   protected JsonFactory getJsonFactoryInstance() {
-    return JsonFactoryFactory.singletonInstance();
+    return JsonFactoryFactory.instance();
   }
 
   protected JsonFactory getJsonFactory() {

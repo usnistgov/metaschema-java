@@ -42,17 +42,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 
 public class TestBasicMetaschema {
-  private static final Logger logger = LogManager.getLogger(TestBasicMetaschema.class);
-
-  private static final MetaschemaLoader loader = new MetaschemaLoader();
+  private static final Logger LOGGER = LogManager.getLogger(TestBasicMetaschema.class);
+  private static final MetaschemaLoader LOADER = new MetaschemaLoader();
 
   private static IMetaschema loadMetaschema(File metaschemaFile) throws MetaschemaException, IOException {
-    return loader.loadXmlMetaschema(metaschemaFile);
+    return LOADER.loadXmlMetaschema(metaschemaFile);
   }
 
   public static Class<?> compileMetaschema(File metaschemaFile, File bindingFile, String rootClassName, File classDir)
@@ -75,8 +75,13 @@ public class TestBasicMetaschema {
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 
     if (!compiler.compileGeneratedClasses(classesToCompile, diagnostics)) {
-      logger.error(diagnostics.getDiagnostics().toString());
-      throw new IllegalStateException("failed to compile classes");
+      if (LOGGER.isErrorEnabled()) {
+        LOGGER.error(diagnostics.getDiagnostics().toString());
+      }
+      throw new IllegalStateException(String.format("failed to compile classes: %s",
+          classesToCompile.stream()
+              .map(clazz -> clazz.getClassName().canonicalName())
+              .collect(Collectors.joining(","))));
     }
 
     // Load classes
@@ -144,12 +149,12 @@ public class TestBasicMetaschema {
 
     // File xmlExample = new File(String.format("src/test/resources/metaschema/%s/example.xml",
     // testPath));
-    // logger.info("Testing XML file: {}", xmlExample.getName());
+    // LOGGER.info("Testing XML file: {}", xmlExample.getName());
     // if (xmlExample.exists()) {
     // String xml;
     // {
     // Object root = readXml(new FileReader(xmlExample), rootClass);
-    // logger.info("Read XML: Object: {}", root.toString());
+    // LOGGER.info("Read XML: Object: {}", root.toString());
     // if (assertions != null) {
     // assertAll("Deserialize XML", () -> {
     // assertions.accept(root);
@@ -157,11 +162,11 @@ public class TestBasicMetaschema {
     // }
     //
     // // xml = writeXml(root);
-    // // logger.info("Write XML: Object: {}", xml);
+    // // LOGGER.info("Write XML: Object: {}", xml);
     // //
     // // StringWriter writer = new StringWriter();
     // // writeJson(writer, root);
-    // // logger.info("Write JSON: Object: {}", writer.toString());
+    // // LOGGER.info("Write JSON: Object: {}", writer.toString());
     // }
     //
     // // Object root = readXml(new StringReader(xml), rootClass);

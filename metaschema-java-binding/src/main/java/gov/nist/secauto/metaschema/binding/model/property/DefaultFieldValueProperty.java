@@ -59,7 +59,7 @@ import javax.xml.stream.events.StartElement;
 public class DefaultFieldValueProperty
     extends AbstractProperty<IFieldClassBinding>
     implements IBoundFieldValueInstance {
-  private static final Logger logger = LogManager.getLogger(DefaultFieldValueProperty.class);
+  private static final Logger LOGGER = LogManager.getLogger(DefaultFieldValueProperty.class);
 
   private final FieldValue fieldValue;
   private final IJavaTypeAdapter<?> javaTypeAdapter;
@@ -205,7 +205,7 @@ public class DefaultFieldValueProperty
         valueKeyName = getJsonValueKeyName();
       }
       context.getWriter().writeFieldName(valueKeyName);
-      logger.info("FIELD: {}", valueKeyName);
+      LOGGER.info("FIELD: {}", valueKeyName);
       writeValue(value, context);
     }
   }

@@ -36,7 +36,7 @@ import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.stream.Stream;
 
-public class FunctionService {
+public final class FunctionService {
   private static FunctionService functionService;
 
   /**

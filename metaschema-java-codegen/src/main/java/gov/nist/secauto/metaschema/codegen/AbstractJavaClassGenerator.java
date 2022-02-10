@@ -61,7 +61,7 @@ import javax.lang.model.element.Modifier;
 
 public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelDefinition>
     implements IJavaClassGenerator {
-  private static final Logger logger = LogManager.getLogger(AbstractJavaClassGenerator.class);
+  private static final Logger LOGGER = LogManager.getLogger(AbstractJavaClassGenerator.class);
 
   @NotNull
   private final DEFINITION definition;
@@ -210,12 +210,13 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
    * @param property
    *          the property generator to add
    */
-  protected void addPropertyGenerator(IPropertyGenerator property) {
+  protected final void addPropertyGenerator(IPropertyGenerator property) {
     String name = property.getPropertyName();
     IPropertyGenerator oldContext = propertyNameToPropertyGeneratorMap.put(name, property);
     if (oldContext != null) {
-      logger.error("Unexpected duplicate Java property name '{}'", name);
-      throw new RuntimeException(String.format("Unexpected duplicate property name '%s'", name));
+      String msg = String.format("Unexpected duplicate property name '%s'", name);
+      LOGGER.error(msg);
+      throw new IllegalArgumentException(msg);
     }
   }
 
@@ -227,7 +228,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
    *          the flag instance to generate the property for
    * @return the new property generator
    */
-  public FlagPropertyGenerator newFlagPropertyGenerator(@NotNull IFlagInstance instance) {
+  private final FlagPropertyGenerator newFlagPropertyGenerator(@NotNull IFlagInstance instance) {
     FlagPropertyGenerator context = new FlagPropertyGenerator(instance, this);
     addPropertyGenerator(context);
     return context;

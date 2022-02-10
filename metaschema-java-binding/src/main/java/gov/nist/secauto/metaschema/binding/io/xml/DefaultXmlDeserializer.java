@@ -55,7 +55,7 @@ import javax.xml.stream.events.XMLEvent;
 
 public class DefaultXmlDeserializer<CLASS>
     extends AbstractDeserializer<CLASS> {
-  private static final Logger logger = LogManager.getLogger(DefaultXmlDeserializer.class);
+  private static final Logger LOGGER = LogManager.getLogger(DefaultXmlDeserializer.class);
 
   private XMLInputFactory2 xmlInputFactory;
 
@@ -147,8 +147,8 @@ public class DefaultXmlDeserializer<CLASS>
       parsedNodeItem = IXdmFactory.INSTANCE.newRelativeAssemblyNodeItem(classBinding, retval, documentUri);
     }
 
-    if (reader.hasNext() && logger.isDebugEnabled()) {
-      logger.debug("After Parse: {}", XmlEventUtil.toString(reader.peek()));
+    if (reader.hasNext() && LOGGER.isDebugEnabled()) {
+      LOGGER.debug("After Parse: {}", XmlEventUtil.toString(reader.peek()));
     }
 
     return parsedNodeItem;

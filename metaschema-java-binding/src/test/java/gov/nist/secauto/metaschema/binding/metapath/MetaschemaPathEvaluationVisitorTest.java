@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.binding.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaPathEvaluationVisitor;
 
 import org.junit.jupiter.api.Test;
@@ -40,8 +39,7 @@ class MetaschemaPathEvaluationVisitorTest {
     MetapathExpression path = MetapathExpression.compile("2 eq 1 + 1");
     MetaschemaPathEvaluationVisitor visitor
         = new MetaschemaPathEvaluationVisitor(new StaticContext().newDynamicContext());
-    ISequence<?> result = visitor.visit(path.getASTNode(), null);
-    System.out.println(result.toString());
+    visitor.visit(path.getASTNode(), null);
   }
 
 }

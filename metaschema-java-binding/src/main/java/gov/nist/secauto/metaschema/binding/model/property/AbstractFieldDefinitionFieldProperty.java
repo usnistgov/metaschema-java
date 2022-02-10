@@ -70,7 +70,7 @@ public abstract class AbstractFieldDefinitionFieldProperty
       if (classBinding != null) {
         retval = new ClassDataTypeHandler(classBinding, this);
       } else {
-        throw new RuntimeException(
+        throw new IllegalStateException(
             String.format("Unable to parse type '%s', which is not a known bound class or data type",
                 getPropertyInfo().getItemType()));
       }
@@ -85,6 +85,7 @@ public abstract class AbstractFieldDefinitionFieldProperty
     return new SingletonPropertyInfo(this);
   }
 
+  @SuppressWarnings("PMD")
   @Override
   public String getUseName() {
     return null;
@@ -120,11 +121,13 @@ public abstract class AbstractFieldDefinitionFieldProperty
     return 1;
   }
 
+  @SuppressWarnings("PMD")
   @Override
   public String getGroupAsName() {
     return null;
   }
 
+  @SuppressWarnings("PMD")
   @Override
   public String getGroupAsXmlNamespace() {
     return null;

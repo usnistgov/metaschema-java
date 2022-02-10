@@ -59,7 +59,7 @@ public class ListPropertyInfo
   public ListPropertyInfo(IBoundNamedModelInstance property) {
     super(property);
     if (!List.class.isAssignableFrom(property.getRawType())) {
-      throw new RuntimeException(String.format(
+      throw new IllegalArgumentException(String.format(
           "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
           property.getField().getName(), property.getParentClassBinding().getBoundClass().getName(),
           property.getField().getType().getName(), List.class.getName()));

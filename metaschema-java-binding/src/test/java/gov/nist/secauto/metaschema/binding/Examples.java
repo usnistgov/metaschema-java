@@ -40,6 +40,7 @@ import java.io.IOException;
 
 class Examples {
 
+  @SuppressWarnings("PMD")
   @Test
   void testLoadJson() throws FileNotFoundException, IOException {
     // get the binding context instance, which manages Metaschema-to-object binding information

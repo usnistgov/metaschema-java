@@ -87,15 +87,15 @@ class MarkupStringTest {
 
     assertNotNull(document);
     visitor.collect(document);
-    System.out.println("Markup AST");
-    System.out.println("==========");
-    System.out.println(visitor.getAst());
-    System.out.println("HTML Output");
-    System.out.println("===========");
-    System.out.println(ms.toHtml());
-    System.out.println("Markdown Output");
-    System.out.println("===============");
-    System.out.println(ms.toMarkdown());
+    // System.out.println("Markup AST");
+    // System.out.println("==========");
+    // System.out.println(visitor.getAst());
+    // System.out.println("HTML Output");
+    // System.out.println("===========");
+    // System.out.println(ms.toHtml());
+    // System.out.println("Markdown Output");
+    // System.out.println("===============");
+    // System.out.println(ms.toMarkdown());
 
     // Document[0, 49]
     List<Node> documentChildren = CollectionUtil.toList(document.getChildren());
@@ -178,15 +178,15 @@ class MarkupStringTest {
     MarkupMultiline ms = MarkupMultiline.fromMarkdown(markdown);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
     visitor.collect(ms.getDocument());
-    System.out.println("Markup AST");
-    System.out.println("==========");
-    System.out.println(visitor.getAst());
-    System.out.println("HTML Output");
-    System.out.println("===========");
-    System.out.println(ms.toHtml());
-    System.out.println("Markdown Output");
-    System.out.println("===============");
-    System.out.println(ms.toMarkdown());
+    // System.out.println("Markup AST");
+    // System.out.println("==========");
+    // System.out.println(visitor.getAst());
+    // System.out.println("HTML Output");
+    // System.out.println("===========");
+    // System.out.println(ms.toHtml());
+    // System.out.println("Markdown Output");
+    // System.out.println("===============");
+    // System.out.println(ms.toMarkdown());
 
     assertEquals(markdown, ms.toMarkdown());
     assertEquals(html, ms.toHtml());
@@ -223,18 +223,18 @@ class MarkupStringTest {
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
     visitor.collect(ms.getDocument());
-    System.out.println("Source");
-    System.out.println("======");
-    System.out.println(html);
-    System.out.println("Markup AST");
-    System.out.println("==========");
-    System.out.println(visitor.getAst());
-    System.out.println("HTML Output");
-    System.out.println("===========");
-    System.out.println(ms.toHtml());
-    System.out.println("Markdown Output");
-    System.out.println("===============");
-    System.out.println(ms.toMarkdown());
+    // System.out.println("Source");
+    // System.out.println("======");
+    // System.out.println(html);
+    // System.out.println("Markup AST");
+    // System.out.println("==========");
+    // System.out.println(visitor.getAst());
+    // System.out.println("HTML Output");
+    // System.out.println("===========");
+    // System.out.println(ms.toHtml());
+    // System.out.println("Markdown Output");
+    // System.out.println("===============");
+    // System.out.println(ms.toMarkdown());
 
     assertEquals(markdown, ms.toMarkdown());
     assertEquals(html, ms.toHtml());
@@ -242,34 +242,74 @@ class MarkupStringTest {
 
   @Test
   void preMarkdown() {
-    MarkupMultiline ms = MarkupMultiline.fromHtml("<pre>Example **some** *code*</pre>");
+    String htmlPreOnly = "<pre>Example **some** *code*</pre>";
+    String html = "<pre><code>Example **some** *code*\n"
+        + "</code></pre>";
+    String markdown = "```\n"
+        + "Example **some** *code*\n"
+        + "```";
+
+    MarkupMultiline ms = MarkupMultiline.fromHtml(htmlPreOnly);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
     visitor.collect(ms.getDocument());
-    System.out.println("Markup AST");
-    System.out.println("==========");
-    System.out.println(visitor.getAst());
-    System.out.println("HTML Output");
-    System.out.println("===========");
-    System.out.println(ms.toHtml());
-    System.out.println("Markdown Output");
-    System.out.println("===============");
-    System.out.println(ms.toMarkdown());
+    // System.out.println("Markup AST");
+    // System.out.println("==========");
+    // System.out.println(visitor.getAst());
+    // System.out.println("HTML Output");
+    // System.out.println("===========");
+    // System.out.println(ms.toHtml());
+    // System.out.println("Markdown Output");
+    // System.out.println("===============");
+    // System.out.println(ms.toMarkdown());
+
+    assertEquals(markdown, ms.toMarkdown());
+    assertEquals(html, ms.toHtml());
+  }
+
+  @Test
+  void preCodeMarkdown() {
+    String html = "<pre><code>Example **some** *code*\n"
+        + "nextline\n"
+        + "</code></pre>";
+    String markdown = "    Example **some** *code*\n"
+        + "    nextline\n";
+
+    MarkupMultiline ms = MarkupMultiline.fromHtml(html);
+    AstCollectingVisitor visitor = new AstCollectingVisitor();
+    visitor.collect(ms.getDocument());
+    // System.out.println("Markup AST");
+    // System.out.println("==========");
+    // System.out.println(visitor.getAst());
+    // System.out.println("HTML Output");
+    // System.out.println("===========");
+    // System.out.println(ms.toHtml());
+    // System.out.println("Markdown Output");
+    // System.out.println("===============");
+    // System.out.println(ms.toMarkdown());
+
+    assertEquals(markdown, ms.toMarkdown());
+    assertEquals(html, ms.toHtml());
   }
 
   @Test
   void pCodeMarkdown() {
-    MarkupMultiline ms = MarkupMultiline.fromHtml("<p>Example<code>**some** *code*</code></p>");
+    String html = "<p>Example<code>**some** *code*</code></p>";
+    String markdown = "Example`**some** *code*`";
+    MarkupMultiline ms = MarkupMultiline.fromHtml(html);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
     visitor.collect(ms.getDocument());
-    System.out.println("Markup AST");
-    System.out.println("==========");
-    System.out.println(visitor.getAst());
-    System.out.println("HTML Output");
-    System.out.println("===========");
-    System.out.println(ms.toHtml());
-    System.out.println("Markdown Output");
-    System.out.println("===============");
-    System.out.println(ms.toMarkdown());
+    // System.out.println("Markup AST");
+    // System.out.println("==========");
+    // System.out.println(visitor.getAst());
+    // System.out.println("HTML Output");
+    // System.out.println("===========");
+    // System.out.println(ms.toHtml());
+    // System.out.println("Markdown Output");
+    // System.out.println("===============");
+    // System.out.println(ms.toMarkdown());
+
+    assertEquals(markdown, ms.toMarkdown());
+    assertEquals(html, ms.toHtml());
   }
 
   @Test
@@ -283,15 +323,15 @@ class MarkupStringTest {
 
     assertNotNull(document);
     visitor.collect(document);
-    System.out.println("Markup AST");
-    System.out.println("==========");
-    System.out.println(visitor.getAst());
-    System.out.println("HTML Output");
-    System.out.println("===========");
-    System.out.println(ms.toHtml());
-    System.out.println("Markdown Output");
-    System.out.println("===============");
-    System.out.println(ms.toMarkdown());
+    // System.out.println("Markup AST");
+    // System.out.println("==========");
+    // System.out.println(visitor.getAst());
+    // System.out.println("HTML Output");
+    // System.out.println("===========");
+    // System.out.println(ms.toHtml());
+    // System.out.println("Markdown Output");
+    // System.out.println("===============");
+    // System.out.println(ms.toMarkdown());
 
     assertEquals(markdown, ms.toMarkdown());
     assertEquals(html, ms.toHtml().trim());
@@ -318,15 +358,15 @@ class MarkupStringTest {
 
     assertNotNull(document);
     visitor.collect(document);
-    System.out.println("Markup AST");
-    System.out.println("==========");
-    System.out.println(visitor.getAst());
-    System.out.println("HTML Output");
-    System.out.println("===========");
-    System.out.println(ms.toHtml());
-    System.out.println("Markdown Output");
-    System.out.println("===============");
-    System.out.println(ms.toMarkdown());
+    // System.out.println("Markup AST");
+    // System.out.println("==========");
+    // System.out.println(visitor.getAst());
+    // System.out.println("HTML Output");
+    // System.out.println("===========");
+    // System.out.println(ms.toHtml());
+    // System.out.println("Markdown Output");
+    // System.out.println("===============");
+    // System.out.println(ms.toMarkdown());
 
     assertEquals(markdown, ms.toMarkdown());
     assertEquals(html, ms.toHtml().trim());
@@ -346,15 +386,16 @@ class MarkupStringTest {
 
     assertNotNull(document);
     visitor.collect(document);
-    System.out.println("Markup AST");
-    System.out.println("==========");
-    System.out.println(visitor.getAst());
-    System.out.println("HTML Output");
-    System.out.println("===========");
-    System.out.println(ms.toHtml());
-    System.out.println("Markdown Output");
-    System.out.println("===============");
-    System.out.println(ms.toMarkdown());
-
+    // System.out.println("Markup AST");
+    // System.out.println("==========");
+    // System.out.println(visitor.getAst());
+    // System.out.println("HTML Output");
+    // System.out.println("===========");
+    // System.out.println(ms.toHtml());
+    // System.out.println("Markdown Output");
+    // System.out.println("===============");
+    // System.out.println(ms.toMarkdown());
+    assertEquals(markdown, ms.toMarkdown());
+    assertEquals(html, ms.toHtml().trim());
   }
 }

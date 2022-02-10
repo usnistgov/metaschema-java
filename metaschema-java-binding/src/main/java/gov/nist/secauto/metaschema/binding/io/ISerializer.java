@@ -28,12 +28,13 @@ package gov.nist.secauto.metaschema.binding.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 
 /**
  * Implementations of this interface are able to write data in a bound object instance of the
@@ -70,13 +71,12 @@ public interface ISerializer<CLASS> extends IMutableConfiguration {
    *           if the provided file is not a regular file or if there was an error creating the file
    */
   default void serialize(CLASS data, File file) throws BindingException, FileNotFoundException {
-    try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), Charset.forName("UTF-8"))) {
+    try (Writer writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8, StandardOpenOption.CREATE,
+        StandardOpenOption.WRITE)) {
       serialize(data, writer);
       writer.close();
-    } catch (FileNotFoundException ex) {
-      throw ex;
     } catch (IOException ex) {
-      throw new BindingException("Unable to open file: " + file != null ? file.getPath() : "{null}", ex);
+      throw new BindingException("Unable to open file: " + file == null ? "{null}" : file.getPath(), ex);
     }
   }
 

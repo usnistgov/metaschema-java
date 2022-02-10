@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
@@ -41,6 +42,7 @@ import javax.xml.stream.XMLStreamException;
 
 class MarkupParserTest {
 
+  @Disabled
   @Test
   void test() throws XMLStreamException {
     String html = "<node>\n";
@@ -63,15 +65,15 @@ class MarkupParserTest {
     factory.configureForXmlConformance();
     factory.setProperty(XMLInputFactory2.IS_COALESCING, true);
     XMLEventReader2 reader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(html));
-    System.out.println("Start: " + XmlEventUtil.toString(reader.nextEvent()));
-    System.out.println("Start: " + XmlEventUtil.toString(reader.nextEvent()));
+    // System.out.println("Start: " + XmlEventUtil.toString(reader.nextEvent()));
+    // System.out.println("Start: " + XmlEventUtil.toString(reader.nextEvent()));
     MarkupParser parser = new MarkupParser();
     MarkupMultiline markupString = parser.parseMarkupMultiline(reader);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
     visitor.collect(markupString.getDocument());
-    System.out.println(html);
-    System.out.println(visitor.getAst());
-    System.out.println(markupString.toMarkdown());
+    // System.out.println(html);
+    // System.out.println(visitor.getAst());
+    // System.out.println(markupString.toMarkdown());
   }
 
 }

@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.binding.io.yaml;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 
-public class YamlFactoryFactory {
-  private static final YAMLFactory singletonInstance = newYamlFactoryInstance();
+public final class YamlFactoryFactory {
+  private static final YAMLFactory SINGLETON = newYamlFactoryInstance();
 
   private YamlFactoryFactory() {
     // disable construction
@@ -44,8 +44,8 @@ public class YamlFactoryFactory {
     return retval;
   }
 
-  public static YAMLFactory singletonInstance() {
-    return singletonInstance;
+  public static YAMLFactory instance() {
+    return SINGLETON;
   }
 
 }

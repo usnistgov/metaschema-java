@@ -144,13 +144,21 @@ public class MarkupXmlEventWriter
   @Override
   protected void handleHtmlBlock(HtmlBlock node, XMLEventWriter writer) throws XMLStreamException {
     Document doc = Jsoup.parse(node.getChars().toString());
-    doc.getElementsByTag("html").first().getElementsByTag("body").first().traverse(new StreamNodeVisitor(writer));
+    try {
+      doc.getElementsByTag("html").first().getElementsByTag("body").first().traverse(new StreamNodeVisitor(writer));
+    } catch (InlineHtmlXmlStreamException ex) {
+      throw (XMLStreamException) ex.getCause();
+    }
   }
 
   @Override
   protected void handleHtmlInline(HtmlInline node, XMLEventWriter writer) throws XMLStreamException {
     Document doc = Jsoup.parse(node.getChars().toString());
-    doc.getElementsByTag("html").first().getElementsByTag("body").first().traverse(new StreamNodeVisitor(writer));
+    try {
+      doc.getElementsByTag("html").first().getElementsByTag("body").first().traverse(new StreamNodeVisitor(writer));
+    } catch (InlineHtmlXmlStreamException ex) {
+      throw (XMLStreamException) ex.getCause();
+    }
   }
 
   private class StreamNodeVisitor implements NodeVisitor {
@@ -182,7 +190,7 @@ public class MarkupXmlEventWriter
             writer.add(eventFactory.createCharacters(text.text()));
           }
         } catch (XMLStreamException ex) {
-          throw new RuntimeException(ex);
+          throw new InlineHtmlXmlStreamException(ex);
         }
       }
     }
@@ -195,10 +203,23 @@ public class MarkupXmlEventWriter
           try {
             writer.add(eventFactory.createEndElement(new QName(getNamespace(), element.tagName()), null));
           } catch (XMLStreamException ex) {
-            throw new RuntimeException(ex);
+            throw new InlineHtmlXmlStreamException(ex);
           }
         }
       }
+    }
+  }
+
+  private static class InlineHtmlXmlStreamException
+      extends IllegalStateException {
+
+    /**
+     * the serial version uid.
+     */
+    private static final long serialVersionUID = 1L;
+
+    public InlineHtmlXmlStreamException(XMLStreamException cause) {
+      super(cause);
     }
   }
 }

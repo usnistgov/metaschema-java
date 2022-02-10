@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.xmlbeans.handler;
 
-public class BooleanType {
+public final class BooleanType {
   private BooleanType() {
     // disable
   }

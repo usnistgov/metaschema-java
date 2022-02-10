@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
 
 public class StringLiteral
     extends AbstractLiteralExpression<IStringItem, String> {
-  private static final Pattern pattern = Pattern.compile("^'(.*)'$|^\"(.*)\"$");
+  private static final Pattern QUOTE_PATTERN = Pattern.compile("^'(.*)'$|^\"(.*)\"$");
 
   public StringLiteral(@NotNull String value) {
     super(removeQuotes(value));
@@ -51,17 +51,20 @@ public class StringLiteral
     return IStringItem.class;
   }
 
+  @SuppressWarnings("null")
   @NotNull
   private static String removeQuotes(@NotNull String value) {
-    Matcher matcher = pattern.matcher(value);
+    Matcher matcher = QUOTE_PATTERN.matcher(value);
+
+    String retval = value;
     if (matcher.matches()) {
       if (matcher.group(1) != null) {
-        value = matcher.group(1);
+        retval = matcher.group(1);
       } else if (matcher.group(2) != null) {
-        value = matcher.group(2);
+        retval = matcher.group(2);
       }
     }
-    return value;
+    return retval;
   }
 
   @Override

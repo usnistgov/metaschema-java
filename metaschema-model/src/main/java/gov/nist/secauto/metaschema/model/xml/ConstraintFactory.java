@@ -58,7 +58,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-class ConstraintFactory {
+final class ConstraintFactory {
   private ConstraintFactory() {
     // disable
   }

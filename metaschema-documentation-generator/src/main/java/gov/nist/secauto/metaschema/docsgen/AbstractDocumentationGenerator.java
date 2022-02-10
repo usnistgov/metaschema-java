@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.docsgen;
 
 import gov.nist.secauto.metaschema.freemarker.support.AbstractFreemarkerGenerator;
 
+@SuppressWarnings("PMD")
 public abstract class AbstractDocumentationGenerator
     extends AbstractFreemarkerGenerator
     implements DocumentationGenerator {

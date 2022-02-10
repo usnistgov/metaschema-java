@@ -52,7 +52,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 public class TestDynamicJavaCompiler {
-  private static final Logger logger = LogManager.getLogger(TestDynamicJavaCompiler.class);
+  private static final Logger LOGGER = LogManager.getLogger(TestDynamicJavaCompiler.class);
 
   public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException,
       IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
@@ -71,8 +71,8 @@ public class TestDynamicJavaCompiler {
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 
     TestDynamicJavaCompiler compiler = new TestDynamicJavaCompiler(new File("target/generated-classes/dynamic"));
-    if (!compiler.compile(Collections.singletonList(classCode), diagnostics)) {
-      logger.error(diagnostics.getDiagnostics().toString());
+    if (!compiler.compile(Collections.singletonList(classCode), diagnostics) && LOGGER.isErrorEnabled()) {
+      LOGGER.error(diagnostics.getDiagnostics().toString());
     }
     ClassLoader classLoader = compiler.getClassLoader();
     Class<?> clazz = classLoader.loadClass("test.HelloWorld");
@@ -95,13 +95,13 @@ public class TestDynamicJavaCompiler {
     return compilationLocation;
   }
 
-  protected ClassLoader getClassLoader() {
+  protected ClassLoader getClassLoader() throws ClassNotFoundException {
     synchronized (this) {
       if (classLoader == null) {
         try {
           classLoader = new URLClassLoader(new URL[] { getCompilationLocation().toURI().toURL() });
-        } catch (MalformedURLException e) {
-          throw new RuntimeException(e);
+        } catch (MalformedURLException ex) {
+          throw new ClassNotFoundException("unable to configure class loader", ex);
         }
       }
     }

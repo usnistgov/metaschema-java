@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.binding.io.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
 
-public class JsonFactoryFactory {
-  private static final JsonFactory singletonInstance = newJsonFactoryInstance();
+public final class JsonFactoryFactory {
+  private static final JsonFactory SINGLETON = newJsonFactoryInstance();
 
   private JsonFactoryFactory() {
     // disable construction
@@ -39,8 +39,8 @@ public class JsonFactoryFactory {
     return new JsonFactory();
   }
 
-  public static JsonFactory singletonInstance() {
-    return singletonInstance;
+  public static JsonFactory instance() {
+    return SINGLETON;
   }
 
 }

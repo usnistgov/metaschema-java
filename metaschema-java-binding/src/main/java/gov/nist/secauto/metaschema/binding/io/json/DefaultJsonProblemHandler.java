@@ -42,18 +42,18 @@ import java.util.Set;
 
 public class DefaultJsonProblemHandler implements IJsonProblemHandler {
   private static final String JSON_SCHEMA_ROOT_FIELD_NAME = "$schema";
-  private static final Set<String> ignoredRootFieldNames;
+  private static final Set<String> IGNORED_ROOT_FIELD_NAMES;
 
   static {
-    ignoredRootFieldNames = new HashSet<>();
-    ignoredRootFieldNames.add(JSON_SCHEMA_ROOT_FIELD_NAME);
+    IGNORED_ROOT_FIELD_NAMES = new HashSet<>();
+    IGNORED_ROOT_FIELD_NAMES.add(JSON_SCHEMA_ROOT_FIELD_NAME);
   }
 
   // TODO: implement this
   @Override
   public boolean handleUnknownRootProperty(Object instance, IAssemblyClassBinding classBinding, String fieldName,
       IJsonParsingContext parsingContext) throws BindingException, IOException {
-    if (ignoredRootFieldNames.contains(fieldName)) {
+    if (IGNORED_ROOT_FIELD_NAMES.contains(fieldName)) {
       JsonParser parser = parsingContext.getReader();
       try {
         JsonUtil.skipNextValue(parser);

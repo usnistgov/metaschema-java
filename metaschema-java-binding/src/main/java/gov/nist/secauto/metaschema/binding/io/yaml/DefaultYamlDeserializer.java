@@ -46,7 +46,7 @@ public class DefaultYamlDeserializer<CLASS>
 
   @Override
   protected JsonFactory getJsonFactoryInstance() {
-    return YamlFactoryFactory.singletonInstance();
+    return YamlFactoryFactory.instance();
   }
 
 }

@@ -43,10 +43,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,7 +59,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class JavaGenerator {
-  private static final Logger logger = LogManager.getLogger(JavaGenerator.class);
+  private static final Logger LOGGER = LogManager.getLogger(JavaGenerator.class);
 
   private JavaGenerator() {
     // disable construction
@@ -101,7 +102,9 @@ public class JavaGenerator {
     Objects.requireNonNull(metaschemas, "metaschemas");
     Objects.requireNonNull(targetDirectory, "generationTargetDirectory");
     Objects.requireNonNull(bindingConfiguration, "bindingConfiguration");
-    logger.info("Generating Java classes in: {}", targetDirectory.getPath());
+    if (LOGGER.isInfoEnabled()) {
+      LOGGER.info("Generating Java classes in: {}", targetDirectory.getPath());
+    }
 
     Map<URI, String> xmlNamespaceToPackageNameMap = new HashMap<>();
     Map<URI, Set<IMetaschema>> xmlNamespaceToMetaschemaMap = new HashMap<>();
@@ -151,9 +154,8 @@ public class JavaGenerator {
                 "Found duplicate class name '%s' in metaschema '%s'."
                     + " If multiple metaschema are compiled for the same namespace, all class names must be unique.",
                 className, metaschema.getLocation()));
-          } else {
-            classNames.add(className);
           }
+          classNames.add(className);
 
           if (generatedClasses == null) {
             generatedClasses = new LinkedList<>();
@@ -195,9 +197,8 @@ public class JavaGenerator {
       URI namespace = entry.getKey();
       String namespaceString = namespace.toString();
 
-      try (FileWriter fileWriter = new FileWriter(packageInfo)) {
-        PrintWriter writer = new PrintWriter(fileWriter);
-
+      try (PrintWriter writer = new PrintWriter(
+          Files.newBufferedWriter(packageInfo.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE))) {
         writer.format(
             "@%1$s(namespace = \"%2$s\", xmlns = {@%3$s(prefix = \"\", namespace = \"%2$s\")},"
                 + " xmlElementFormDefault = %4$s.QUALIFIED)%n",

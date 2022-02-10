@@ -60,7 +60,7 @@ import java.util.Set;
 
 public class ConstraintValidatingModelWalker
     extends ConstraintVisitingModelWalker<ConstraintValidatingModelWalker> {
-  private static final Logger logger = LogManager.getLogger(ConstraintValidatingModelWalker.class);
+  private static final Logger LOGGER = LogManager.getLogger(ConstraintValidatingModelWalker.class);
 
   private final Set<IAssemblyDefinition> seenAssemblies = new HashSet<>();
   private final Deque<IAssemblyDefinition> stack = new LinkedList<>();
@@ -95,7 +95,9 @@ public class ConstraintValidatingModelWalker
   public void walk(IAssemblyDefinition assembly, ConstraintValidatingModelWalker data) {
     if (!seenAssemblies.contains(assembly)) {
       if (stack.contains(assembly)) {
-        logger.info(String.format("%sCycle", getPadding()));
+        if (LOGGER.isInfoEnabled()) {
+          LOGGER.info(String.format("%sCycle", getPadding()));
+        }
       } else {
         stack.push(assembly);
         super.walk(assembly, data);
@@ -113,27 +115,33 @@ public class ConstraintValidatingModelWalker
 
   @Override
   protected boolean visit(IAssemblyDefinition def, ConstraintValidatingModelWalker data) {
-    if (def.isRoot()) {
-      logger.debug(String.format("%sRoot(%s)", getPadding(), def.getName()));
+    if (def.isRoot() && LOGGER.isDebugEnabled()) {
+      LOGGER.debug(String.format("%sRoot(%s)", getPadding(), def.getName()));
     }
     return super.visit(def, data);
   }
 
   @Override
   protected boolean visit(IFlagInstance instance, ConstraintValidatingModelWalker data) {
-    logger.debug(String.format("%sFlag(%s)%s", getPadding(), instance.getName(), instance.getEffectiveName()));
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug(String.format("%sFlag(%s)%s", getPadding(), instance.getName(), instance.getEffectiveName()));
+    }
     return false;
   }
 
   @Override
   protected boolean visit(IFieldInstance instance, ConstraintValidatingModelWalker data) {
-    logger.debug(String.format("%sField(%s)%s", getPadding(), instance.getName(), instance.getEffectiveName()));
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug(String.format("%sField(%s)%s", getPadding(), instance.getName(), instance.getEffectiveName()));
+    }
     return true;
   }
 
   @Override
   protected boolean visit(IAssemblyInstance instance, ConstraintValidatingModelWalker data) {
-    logger.debug(String.format("%sAssembly(%s)%s", getPadding(), instance.getName(), instance.getEffectiveName()));
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug(String.format("%sAssembly(%s)%s", getPadding(), instance.getName(), instance.getEffectiveName()));
+    }
     return true;
   }
 
@@ -236,10 +244,15 @@ public class ConstraintValidatingModelWalker
   }
 
   private void logAllowedValuesConstraint(IAllowedValuesConstraint constraint, ConstraintValidatingModelWalker data) {
-    logger.debug(String.format("%s  allowed-values(%s:%s): %s", getPadding(), constraint.getId(),
-        constraint.isAllowedOther(), constraint.getTarget().getPath()));
-    for (IAllowedValue value : constraint.getAllowedValues().values()) {
-      logger.trace(String.format("%s    %s: %s", getPadding(), value.getValue(), value.getDescription().toMarkdown()));
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug(String.format("%s  allowed-values(%s:%s): %s", getPadding(), constraint.getId(),
+          constraint.isAllowedOther(), constraint.getTarget().getPath()));
+    }
+    if (LOGGER.isTraceEnabled()) {
+      for (IAllowedValue value : constraint.getAllowedValues().values()) {
+        LOGGER
+            .trace(String.format("%s    %s: %s", getPadding(), value.getValue(), value.getDescription().toMarkdown()));
+      }
     }
   }
 
@@ -248,14 +261,16 @@ public class ConstraintValidatingModelWalker
     MetapathExpression metapath = constraint.getTarget();
     try {
       IInstanceSet result = metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(instanceSet));
-      if (result.getInstances().isEmpty()) {
-        logger.error(String.format("Path '%s' did not match in %s definition '%s'", metapath.getPath(),
+      if (result.getInstances().isEmpty() && LOGGER.isErrorEnabled()) {
+        LOGGER.error(String.format("Path '%s' did not match in %s definition '%s'", metapath.getPath(),
             definition.getModelType().name().toLowerCase(), definition.getName()));
       }
       return result;
     } catch (RuntimeException ex) {
-      logger.error(String.format("Path '%s' failed to evaluate in %s definition '%s'", metapath.getPath(),
-          definition.getModelType().name().toLowerCase(), definition.getName()), ex);
+      if (LOGGER.isErrorEnabled()) {
+        LOGGER.error(String.format("Path '%s' failed to evaluate in %s definition '%s'", metapath.getPath(),
+            definition.getModelType().name().toLowerCase(), definition.getName()), ex);
+      }
       return IInstanceSet.EMPTY_INSTANCE_SET;
     }
   }
@@ -264,13 +279,15 @@ public class ConstraintValidatingModelWalker
     MetapathExpression test = constraint.getTest();
     try {
       IInstanceSet result = test.evaluateMetaschemaInstance(new DefaultMetaschemaContext(instanceSet));
-      if (result.getInstances().isEmpty()) {
-        logger.error(String.format("Expect test path '%s' did not match in %s definition '%s'", test.getPath(),
+      if (result.getInstances().isEmpty() && LOGGER.isErrorEnabled()) {
+        LOGGER.error(String.format("Expect test path '%s' did not match in %s definition '%s'", test.getPath(),
             definition.getModelType().name().toLowerCase(), definition.getName()));
       }
     } catch (RuntimeException ex) {
-      logger.error(String.format("Expect test path '%s' failed to evaluate in %s definition '%s'", test.getPath(),
-          definition.getModelType().name().toLowerCase(), definition.getName()), ex);
+      if (LOGGER.isErrorEnabled()) {
+        LOGGER.error(String.format("Expect test path '%s' failed to evaluate in %s definition '%s'", test.getPath(),
+            definition.getModelType().name().toLowerCase(), definition.getName()), ex);
+      }
     }
   }
 
@@ -279,13 +296,15 @@ public class ConstraintValidatingModelWalker
       MetapathExpression keyTarget = keyField.getTarget();
       try {
         IInstanceSet result = keyTarget.evaluateMetaschemaInstance(new DefaultMetaschemaContext(targets));
-        if (result.getInstances().isEmpty()) {
-          logger.error(String.format("KeyField path '%s' did not match in %s definition '%s'", keyTarget.getPath(),
+        if (result.getInstances().isEmpty() && LOGGER.isErrorEnabled()) {
+          LOGGER.error(String.format("KeyField path '%s' did not match in %s definition '%s'", keyTarget.getPath(),
               definition.getModelType().name().toLowerCase(), definition.getName()));
         }
       } catch (RuntimeException ex) {
-        logger.error(String.format("KeyField path '%s' failed to evaluate in %s definition '%s'", keyTarget.getPath(),
-            definition.getModelType().name().toLowerCase(), definition.getName()), ex);
+        if (LOGGER.isErrorEnabled()) {
+          LOGGER.error(String.format("KeyField path '%s' failed to evaluate in %s definition '%s'", keyTarget.getPath(),
+              definition.getModelType().name().toLowerCase(), definition.getName()), ex);
+        }
       }
     }
 

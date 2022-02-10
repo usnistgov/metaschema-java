@@ -48,6 +48,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -408,7 +410,8 @@ public class MetaschemaMojo
 
       // create the stale file
       staleFileDirectory.mkdirs();
-      try (OutputStream os = new FileOutputStream(staleFile)) {
+      try (OutputStream os
+          = Files.newOutputStream(staleFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
         os.close();
         getLog().info("Created stale file: " + staleFile);
       } catch (IOException ex) {

@@ -62,7 +62,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 public class MetaschemaLoader {
-  private static final Logger logger = LogManager.getLogger(MetaschemaLoader.class);
+  private static final Logger LOGGER = LogManager.getLogger(MetaschemaLoader.class);
 
   private final Set<IXmlMetaschema> loadedMetaschema = new LinkedHashSet<>();
   private final Map<URI, IXmlMetaschema> metaschemaCache = new LinkedHashMap<>();
@@ -144,7 +144,7 @@ public class MetaschemaLoader {
       return loadXmlMetaschema(resource);
     } catch (URISyntaxException ex) {
       // this should not happen
-      logger.error("Invalid url", ex);
+      LOGGER.error("Invalid url", ex);
       throw new IOException(ex);
     }
   }
@@ -204,7 +204,7 @@ public class MetaschemaLoader {
 
     IXmlMetaschema retval = metaschemaCache.get(resource);
     if (retval == null) {
-      logger.info("Loading metaschema '{}'", resource);
+      LOGGER.info("Loading metaschema '{}'", resource);
       // parse this metaschema
       METASCHEMADocument metaschemaXml;
       try {
@@ -238,11 +238,12 @@ public class MetaschemaLoader {
 
             @Override
             public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-              // It's very odd that the system id looks like this. Need to investigate.
-              if (systemId.startsWith("file://file://")) {
-                systemId = systemId.substring(14);
+              String effectiveSystemId = systemId;
+              // TODO: It's very odd that the system id looks like this. Need to investigate.
+              if (effectiveSystemId.startsWith("file://file://")) {
+                effectiveSystemId = effectiveSystemId.substring(14);
               }
-              URI resolvedSystemId = resource.resolve(systemId);
+              URI resolvedSystemId = resource.resolve(effectiveSystemId);
               return new InputSource(resolvedSystemId.toString());
             }
 
@@ -281,7 +282,9 @@ public class MetaschemaLoader {
       retval = new XmlMetaschema(resource, metaschemaXml, importedMetaschema);
       metaschemaCache.put(resource, retval);
     } else {
-      logger.debug("Found metaschema in cache '{}'", resource);
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("Found metaschema in cache '{}'", resource);
+      }
     }
     return retval;
   }

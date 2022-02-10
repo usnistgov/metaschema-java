@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import java.net.URI;
 
 public interface IXdmFactory {
-  static final IXdmFactory INSTANCE = new DefaultXdmFactory();
+  IXdmFactory INSTANCE = new DefaultXdmFactory();
 
   @NotNull
   IBoundXdmAssemblyNodeItem newAssemblyNodeItem(@NotNull IBoundAssemblyInstance instance, @NotNull Object value,

@@ -125,7 +125,7 @@ public interface IBindingContext {
    * @throws IllegalArgumentException
    *           if the provided class is not bound to a Metaschema assembly or field
    */
-  IClassBinding getClassBinding(@NotNull Class<?> clazz) throws IllegalArgumentException, NullPointerException;
+  IClassBinding getClassBinding(@NotNull Class<?> clazz);
 
   /**
    * Gets a data {@link ISerializer} which can be used to write Java instance data for the provided
@@ -215,7 +215,7 @@ public interface IBindingContext {
    *           if the provided class is not bound to a Metaschema assembly or field
    * @see MetapathExpression
    */
-  default IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri) throws IllegalArgumentException {
+  default IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri) {
     return toNodeItem(boundObject, baseUri, false);
   }
 
@@ -233,8 +233,7 @@ public interface IBindingContext {
    *           if the provided class is not bound to a Metaschema assembly or field
    * @see MetapathExpression
    */
-  IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode)
-      throws IllegalArgumentException;
+  IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode);
 
   /**
    * Perform constraint validation on the provided bound object.
@@ -250,6 +249,5 @@ public interface IBindingContext {
    * @throws IllegalArgumentException
    *           if the provided class is not bound to a Metaschema assembly or field
    */
-  void validate(@NotNull Object boundObject, URI baseUri, boolean rootNode, IConstraintValidationHandler handler)
-      throws IllegalArgumentException;
+  void validate(@NotNull Object boundObject, URI baseUri, boolean rootNode, IConstraintValidationHandler handler);
 }

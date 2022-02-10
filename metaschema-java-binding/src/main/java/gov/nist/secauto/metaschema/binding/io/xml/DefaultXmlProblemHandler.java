@@ -34,19 +34,16 @@ import javax.xml.namespace.QName;
 public class DefaultXmlProblemHandler implements IXmlProblemHandler {
   private static final QName XSI_SCHEMA_LOCATION
       = new QName("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation");
-  private static final Set<QName> ignoredQNames;
+  private static final Set<QName> IGNORED_QNAMES;
 
   static {
-    ignoredQNames = new HashSet<>();
-    ignoredQNames.add(XSI_SCHEMA_LOCATION);
+    IGNORED_QNAMES = new HashSet<>();
+    IGNORED_QNAMES.add(XSI_SCHEMA_LOCATION);
   }
 
   @Override
   public boolean handleUnknownAttribute(Object obj, QName attributeName, IXmlParsingContext parsingContext) {
-    if (ignoredQNames.contains(attributeName)) {
-      return true;
-    }
-    return false;
+    return IGNORED_QNAMES.contains(attributeName);
   }
 
 }

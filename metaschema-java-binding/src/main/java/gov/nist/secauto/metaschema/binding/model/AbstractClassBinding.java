@@ -108,12 +108,14 @@ public abstract class AbstractClassBinding implements IClassBinding {
     return getBoundClass().getName();
   }
 
+  @SuppressWarnings("PMD")
   @Override
   public String getUseName() {
     // a use name is never provided
     return null;
   }
 
+  @SuppressWarnings("PMD")
   @Override
   public String getXmlNamespace() {
     // a namespace is never provided. This will always be defined on the instance side
@@ -126,12 +128,14 @@ public abstract class AbstractClassBinding implements IClassBinding {
         getBoundClass().getName());
   }
 
+  @SuppressWarnings("PMD")
   @Override
   public String getFormalName() {
     // TODO: implement
     return null;
   }
 
+  @SuppressWarnings("PMD")
   @Override
   public MarkupLine getDescription() {
     // TODO: implement
@@ -149,14 +153,17 @@ public abstract class AbstractClassBinding implements IClassBinding {
     return getBoundClass().getEnclosingClass() == null;
   }
 
+  @SuppressWarnings("PMD")
   @Override
   public IMetaschema getContainingMetaschema() {
     // TODO: implement
     return null;
   }
 
+  @SuppressWarnings("PMD")
   @Override
   public MarkupMultiline getRemarks() {
+    // TODO: implement
     return null;
   }
 
@@ -272,11 +279,12 @@ public abstract class AbstractClassBinding implements IClassBinding {
       @SuppressWarnings("unchecked")
       Constructor<CLASS> constructor = (Constructor<CLASS>) clazz.getDeclaredConstructor();
       retval = constructor.newInstance();
-    } catch (NoSuchMethodException e) {
+    } catch (NoSuchMethodException ex) {
       String msg = String.format("Class '%s' does not have a required no-arg constructor.", clazz.getName());
-      throw new BindingException(msg);
-    } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-      throw new BindingException(e);
+      throw new BindingException(msg, ex);
+    } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+        | InvocationTargetException ex) {
+      throw new BindingException(ex);
     }
     return retval;
   }
