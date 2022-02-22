@@ -28,7 +28,11 @@ package gov.nist.secauto.metaschema.model.xmlbeans.handler;
 
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 
-public class ConstraintLevelType {
+public final class ConstraintLevelType {
+  private ConstraintLevelType() {
+    // disable construction
+  }
+
   /**
    * Sets the value of obj onto the given simple value target.
    * 

@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IBoundAssemblyDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmAssemblyNodeItem;
@@ -41,6 +42,9 @@ public interface IBoundXdmAssemblyNodeItem extends IBoundXdmModelNodeItem, IXdmA
 
   @Override
   IBoundXdmAssemblyNodeItem getParentContentNodeItem();
+
+  @Override
+  IAssemblyClassBinding getClassBinding();
 
   @Override
   IBoundAssemblyDefinition getDefinition();

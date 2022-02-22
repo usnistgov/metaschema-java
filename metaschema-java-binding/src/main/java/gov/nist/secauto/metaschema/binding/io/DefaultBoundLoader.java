@@ -159,23 +159,20 @@ public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
       throw new IOException("Unable to reset input stream before parsing", ex);
     }
 
-    try {
-      return loadAsNodeItem(deserializer, bis, documentUri);
-    } catch (BindingException ex) {
-      throw new IOException(ex);
-    }
+    return loadAsNodeItem(deserializer, bis, documentUri);
   }
 
   @NotNull
   protected <CLASS> IBoundXdmDocumentNodeItem loadAsNodeItem(@NotNull IDeserializer<CLASS> deserializer,
       @NotNull InputStream is,
       @NotNull URI documentUri)
-      throws BindingException {
+      throws IOException {
     return (IBoundXdmDocumentNodeItem) deserializer.deserializeToNodeItem(is, documentUri);
   }
 
   @Override
   public <CLASS> CLASS load(Class<CLASS> clazz, InputStream is, URI documentUri) throws IOException {
+    // we cannot close this stream, since it will cause the underlying stream to be closed
     BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES);
     bis.mark(LOOK_AHEAD_BYTES);
 
@@ -189,17 +186,13 @@ public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
 
     Format format = formatFromMatcher(matcher);
     IDeserializer<CLASS> deserializer = getDeserializer(clazz, format, getConfiguration());
-    try {
-      return loadAsObject(deserializer, bis, documentUri);
-    } catch (BindingException ex) {
-      throw new IOException(ex);
-    }
+    return loadAsObject(deserializer, bis, documentUri);
   }
 
   @NotNull
   protected <CLASS> CLASS loadAsObject(@NotNull IDeserializer<CLASS> deserializer, @NotNull InputStream is,
       @NotNull URI documentUri)
-      throws BindingException {
+      throws IOException {
     IBoundXdmNodeItem nodeItem = loadAsNodeItem(deserializer, is, documentUri);
     return nodeItem.toBoundObject();
   }

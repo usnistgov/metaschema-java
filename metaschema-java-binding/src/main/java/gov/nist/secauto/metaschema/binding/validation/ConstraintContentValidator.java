@@ -24,45 +24,84 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.constraint;
+package gov.nist.secauto.metaschema.binding.validation;
 
+import gov.nist.secauto.metaschema.binding.IBindingContext;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmDocumentNodeItem;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
+import gov.nist.secauto.metaschema.model.common.constraint.AbstractFindingCollectingConstraintValidationHandler;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-public class FindingCollectingConstraintValidationHandler
-    extends AbstractFindingCollectingConstraintValidationHandler {
+public class ConstraintContentValidator
+    extends AbstractContentValidator {
   @NotNull
-  private final List<Finding> findings = new LinkedList<>();
-  private IConstraint.Level highestLevel = IConstraint.Level.INFORMATIONAL;
+  private final IBindingContext bindingContext;
 
-  public List<Finding> getFindings() {
-    return Collections.unmodifiableList(findings);
+  public ConstraintContentValidator(@NotNull IBindingContext bindingContext) {
+    this.bindingContext = Objects.requireNonNull(bindingContext, "bindingContext");
   }
 
-  public IConstraint.Level getHighestLevel() {
-    return highestLevel;
+  public IBindingContext getBindingContext() {
+    return bindingContext;
   }
 
-  protected void newFinding(
-      @NotNull IConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull List<? extends INodeItem> targets,
-      @NotNull CharSequence message,
-      Throwable cause) {
-    findings.add(new Finding(constraint, message, cause, node, targets));
+  @Override
+  public @NotNull IValidationResult validate(@NotNull IBoundXdmNodeItem nodeItem) throws IOException {
+    BindingConstraintValidationHandler handler = new BindingConstraintValidationHandler();
 
-    if (constraint.getLevel().ordinal() > highestLevel.ordinal()) {
-      highestLevel = constraint.getLevel();
+    getBindingContext().validate(nodeItem, nodeItem.getBaseUri(), true, handler);
+
+    return null;
+  }
+
+  @Override
+  protected @NotNull IValidationResult validateInternal(@NotNull InputStream is, @NotNull URI documentUri)
+      throws IOException {
+    IBoundXdmDocumentNodeItem nodeItem = getBindingContext().newBoundLoader().loadAsNodeItem(is, documentUri);
+    return validate(nodeItem);
+  }
+
+  public static class BindingConstraintValidationHandler
+      extends AbstractFindingCollectingConstraintValidationHandler {
+    @NotNull
+    private final List<ConstraintValidationFinding> findings = new LinkedList<>();
+    private IConstraint.Level highestLevel = IConstraint.Level.INFORMATIONAL;
+
+    public List<ConstraintValidationFinding> getFindings() {
+      return Collections.unmodifiableList(findings);
+    }
+
+    public IConstraint.Level getHighestLevel() {
+      return highestLevel;
+    }
+
+    @Override
+    protected void newFinding(
+        @NotNull IConstraint constraint,
+        @NotNull INodeItem node,
+        @NotNull List<? extends INodeItem> targets,
+        @NotNull CharSequence message,
+        Throwable cause) {
+      findings.add(new ConstraintValidationFinding(constraint, message, cause, node, targets));
+
+      if (constraint.getLevel().ordinal() > highestLevel.ordinal()) {
+        highestLevel = constraint.getLevel();
+      }
     }
   }
 
-  public static class Finding {
+  public static class ConstraintValidationFinding implements IValidationFinding {
     @NotNull
     private final IConstraint constraint;
     @NotNull
@@ -74,7 +113,7 @@ public class FindingCollectingConstraintValidationHandler
     private final Throwable cause;
 
     @SuppressWarnings("null")
-    public Finding(
+    public ConstraintValidationFinding(
         @NotNull IConstraint constraint,
         @NotNull CharSequence message,
         Throwable cause,
@@ -91,6 +130,7 @@ public class FindingCollectingConstraintValidationHandler
       return constraint;
     }
 
+    @Override
     public CharSequence getMessage() {
       return message;
     }
@@ -103,8 +143,25 @@ public class FindingCollectingConstraintValidationHandler
       return targets;
     }
 
+    @Override
     public Throwable getCause() {
       return cause;
+    }
+
+    @Override
+    public IConstraint.Level getSeverity() {
+      return getConstraint().getLevel();
+    }
+
+    @Override
+    public @NotNull URI getDocumentUri() {
+      return getNode().getBaseUri();
+    }
+
+    @Override
+    public <RESULT, CONTEXT> RESULT visit(@NotNull IValidationFindingVisitor<RESULT, CONTEXT> visitor,
+        CONTEXT context) {
+      return visitor.visit(this, context);
     }
 
   }

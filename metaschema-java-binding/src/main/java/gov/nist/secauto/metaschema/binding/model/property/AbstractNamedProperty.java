@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.binding.model.property;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
@@ -70,7 +69,7 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends IClassBinding>
   }
 
   @Override
-  public Object read(IJsonParsingContext context) throws IOException, BindingException {
+  public Object read(IJsonParsingContext context) throws IOException {
     Object retval = null;
     if (isNextProperty(context)) {
       retval = readInternal(null, context);
@@ -79,7 +78,7 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends IClassBinding>
   }
 
   @Override
-  public boolean read(Object parentInstance, IJsonParsingContext context) throws IOException, BindingException {
+  public boolean read(Object parentInstance, IJsonParsingContext context) throws IOException {
     boolean handled = isNextProperty(context);
     if (handled) {
       Object value = readInternal(parentInstance, context);
@@ -89,5 +88,5 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends IClassBinding>
   }
 
   protected abstract Object readInternal(Object parentInstance, IJsonParsingContext context)
-      throws IOException, BindingException;
+      throws IOException;
 }

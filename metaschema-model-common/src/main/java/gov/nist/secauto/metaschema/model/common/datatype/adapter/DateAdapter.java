@@ -66,7 +66,10 @@ public class DateAdapter
         LocalDate date = LocalDate.from(accessor);
         return new Date(ZonedDateTime.of(date, LocalTime.MIN, ZoneOffset.UTC), false);
       } catch (DateTimeParseException ex2) {
-        throw new IllegalArgumentException(ex2.getLocalizedMessage(), ex2);
+        
+        IllegalArgumentException newEx = new IllegalArgumentException(ex2.getLocalizedMessage(), ex2);
+        newEx.addSuppressed(ex);
+        throw newEx;
       }
     }
   }

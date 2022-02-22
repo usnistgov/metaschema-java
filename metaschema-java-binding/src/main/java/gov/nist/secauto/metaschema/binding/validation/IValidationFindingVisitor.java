@@ -24,17 +24,19 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.model.property;
+package gov.nist.secauto.metaschema.binding.validation;
 
-import gov.nist.secauto.metaschema.binding.model.IBoundFieldDefinition;
-import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
+import gov.nist.secauto.metaschema.binding.validation.ConstraintContentValidator.ConstraintValidationFinding;
+import gov.nist.secauto.metaschema.binding.validation.JsonSchemaContentValidator.JsonValidationFinding;
+import gov.nist.secauto.metaschema.binding.validation.XmlSchemaContentValidator.XmlValidationFinding;
 
-public interface IBoundFieldInstance extends IBoundNamedModelInstance, IFieldInstance {
-  
-  @Override
-  IFieldClassBinding getClassBinding();
+import org.jetbrains.annotations.NotNull;
 
-  @Override
-  IBoundFieldDefinition getDefinition();
+public interface IValidationFindingVisitor<RESULT, CONTEXT> {
+
+  RESULT visit(@NotNull JsonValidationFinding finding, CONTEXT context);
+
+  RESULT visit(@NotNull XmlValidationFinding finding, CONTEXT context);
+
+  RESULT visit(@NotNull ConstraintValidationFinding constraintValidationFinding, CONTEXT context);
 }

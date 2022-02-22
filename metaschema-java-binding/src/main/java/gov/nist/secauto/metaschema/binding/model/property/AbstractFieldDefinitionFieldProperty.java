@@ -55,8 +55,13 @@ public abstract class AbstractFieldDefinitionFieldProperty
   }
 
   @Override
-  public IFieldClassBinding getDefinition() {
+  public IFieldClassBinding getClassBinding() {
     return classBinding;
+  }
+
+  @Override
+  public IFieldClassBinding getDefinition() {
+    return getClassBinding();
   }
 
   @Override

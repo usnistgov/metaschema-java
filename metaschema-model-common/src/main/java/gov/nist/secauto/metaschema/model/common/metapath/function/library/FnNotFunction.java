@@ -39,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class FnNotFunction {
+public final class FnNotFunction {
   static final IFunction SIGNATURE = IFunction.newBuilder()
       .name("not")
       .deterministic()
@@ -54,6 +54,10 @@ public class FnNotFunction {
       .returnOne()
       .functionHandler(FnNotFunction::execute)
       .build();
+
+  private FnNotFunction() {
+    // disable construction
+  }
 
   @NotNull
   public static ISequence<IBooleanItem> execute(@NotNull IFunction function,

@@ -1,3 +1,4 @@
+# eclipse files
 .classpath
 .project
 .settings
@@ -6,11 +7,16 @@
 .pmd
 .pmdruleset.xml
 .eclipse-pmd
+.ruleset
+
+# Maven files
 target/
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+
 /metaschema.xpr
 /metaschema-schema-generator/schema.out.xsd
-pom.xml.releaseBackup
-release.properties
 
 # NodeJS
 node_modules/

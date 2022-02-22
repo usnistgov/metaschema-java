@@ -31,7 +31,10 @@ import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import org.apache.xmlbeans.SimpleValue;
 
-public class DatatypesHandler {
+public final class DatatypesHandler {
+  private DatatypesHandler() {
+    // disable construction
+  }
 
   public static IJavaTypeAdapter<?> decodeFieldDatatypesType(SimpleValue target) {
     return decode(target);

@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding.model.property.info;
 
-import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 
 import java.io.IOException;
@@ -34,6 +33,5 @@ import java.util.List;
 
 @FunctionalInterface
 public interface IJsonBindingSupplier {
-  List<Object> get(Object parentInstance, IJsonParsingContext context)
-      throws BindingException, IOException;
+  List<Object> get(Object parentInstance, IJsonParsingContext context) throws IOException;
 }

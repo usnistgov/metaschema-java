@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
@@ -46,7 +45,7 @@ public interface IBoundFieldValueInstance extends IBoundInstance {
   String getJsonValueKeyName();
 
   Object readValue(Object parentInstance, IJsonParsingContext context)
-      throws IOException, BindingException;
+      throws IOException;
 
   void writeValue(Object value, IJsonWritingContext context) throws IOException;
 }

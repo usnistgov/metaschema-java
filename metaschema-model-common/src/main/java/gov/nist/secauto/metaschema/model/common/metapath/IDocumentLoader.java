@@ -31,13 +31,13 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 public interface IDocumentLoader {
   @SuppressWarnings("null")
@@ -52,10 +52,16 @@ public interface IDocumentLoader {
 
   @SuppressWarnings("null")
   @NotNull
-  default IDocumentNodeItem loadAsNodeItem(@NotNull File file) throws FileNotFoundException, IOException {
-    try (InputStream is = Files.newInputStream(file.toPath())) {
-      return loadAsNodeItem(is, file.getCanonicalFile().toURI());
+  default IDocumentNodeItem loadAsNodeItem(@NotNull Path path) throws IOException {
+    try (InputStream is = Files.newInputStream(path)) {
+      return loadAsNodeItem(is, path.toUri());
     }
+  }
+
+  @SuppressWarnings("null")
+  @NotNull
+  default IDocumentNodeItem loadAsNodeItem(@NotNull File file) throws IOException {
+    return loadAsNodeItem(file.toPath());
   }
 
   @NotNull

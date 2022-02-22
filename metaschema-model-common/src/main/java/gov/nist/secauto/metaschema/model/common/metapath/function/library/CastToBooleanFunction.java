@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class CastToBooleanFunction {
+public final class CastToBooleanFunction {
   static final IFunction SIGNATURE = IFunction.newBuilder()
       .name("boolean")
       .argument(IArgument.newBuilder()
@@ -53,6 +53,10 @@ public class CastToBooleanFunction {
       .functionHandler(CastToBooleanFunction::execute)
       .build();
 
+  private CastToBooleanFunction() {
+    // disable construction
+  }
+  
   @NotNull
   public static ISequence<IBooleanItem> execute(@NotNull IFunction function,
       @NotNull List<@NotNull ISequence<?>> arguments,

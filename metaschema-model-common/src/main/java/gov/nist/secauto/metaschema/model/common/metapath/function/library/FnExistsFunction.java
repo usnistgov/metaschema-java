@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class FnExistsFunction {
+public final class FnExistsFunction {
   static final IFunction SIGNATURE = IFunction.newBuilder()
       .name("exists")
       .deterministic()
@@ -55,6 +55,10 @@ public class FnExistsFunction {
       .returnOne()
       .functionHandler(FnExistsFunction::execute)
       .build();
+
+  private FnExistsFunction() {
+    // disable construction
+  }
 
   @NotNull
   public static ISequence<IBooleanItem> execute(@NotNull IFunction function,

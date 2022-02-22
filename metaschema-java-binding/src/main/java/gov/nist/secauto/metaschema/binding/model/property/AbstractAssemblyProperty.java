@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
@@ -63,7 +62,7 @@ public abstract class AbstractAssemblyProperty
 
   @Override
   public Object readItem(Object parentInstance, StartElement start,
-      IXmlParsingContext context) throws BindingException, XMLStreamException, IOException {
+      IXmlParsingContext context) throws XMLStreamException, IOException {
     XMLEventReader2 eventReader = context.getReader();
 
     // consume extra whitespace between elements

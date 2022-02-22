@@ -144,10 +144,8 @@ public interface IBoundInstance extends IInstance {
    *         information for this property
    * @throws IOException
    *           if there was an error when reading JSON data
-   * @throws BindingException
-   *           if there was an error related to this properties Java class binding
    */
-  boolean read(Object parentInstance, IJsonParsingContext context) throws IOException, BindingException;
+  boolean read(Object parentInstance, IJsonParsingContext context) throws IOException;
 
   /**
    * Read JSON data associated with this property and return it.
@@ -157,10 +155,8 @@ public interface IBoundInstance extends IInstance {
    * @return the instance value
    * @throws IOException
    *           if there was an error when reading JSON data
-   * @throws BindingException
-   *           if there was an error related to this properties Java class binding
    */
-  Object read(IJsonParsingContext context) throws IOException, BindingException;
+  Object read(IJsonParsingContext context) throws IOException;
 
   /**
    * Read the XML data associated with this property and apply it to the provided parent object on
@@ -178,11 +174,9 @@ public interface IBoundInstance extends IInstance {
    *           if there was an error when reading XML data
    * @throws XMLStreamException
    *           if there was an error generating an {@link XMLEvent} from the XML
-   * @throws BindingException
-   *           if there was an error related to this properties Java class binding
    */
   boolean read(Object parentInstance, StartElement parent, IXmlParsingContext context)
-      throws IOException, XMLStreamException, BindingException;
+      throws IOException, XMLStreamException;
 
   /**
    * Read the XML data associated with this property and return it.
@@ -194,10 +188,8 @@ public interface IBoundInstance extends IInstance {
    *           if there was an error when reading XML data
    * @throws XMLStreamException
    *           if there was an error generating an {@link XMLEvent} from the XML
-   * @throws BindingException
-   *           if there was an error related to this properties Java class binding
    */
-  Object read(IXmlParsingContext context) throws IOException, BindingException, XMLStreamException;
+  Object read(IXmlParsingContext context) throws IOException, XMLStreamException;
 
   // /**
   // * Get a supplier that can continually parse the underlying stream loading multiple values.

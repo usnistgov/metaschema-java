@@ -26,7 +26,12 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
+import gov.nist.secauto.metaschema.model.common.metapath.item.NodeItemType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -60,6 +65,11 @@ class XdmDocumentNodeItemImpl implements IBoundXdmDocumentNodeItem {
   }
 
   @Override
+  public IAssemblyClassBinding getClassBinding() {
+    return getRootAssemblyNodeItem().getClassBinding();
+  }
+
+  @Override
   @NotNull
   public IBoundXdmRootAssemblyNodeItem getRootAssemblyNodeItem() {
     return rootNodeItem;
@@ -81,4 +91,5 @@ class XdmDocumentNodeItemImpl implements IBoundXdmDocumentNodeItem {
     IBoundXdmAssemblyNodeItem nodeItem = getRootAssemblyNodeItem();
     return Collections.singletonMap(nodeItem.getInstance().getEffectiveName(), Collections.singletonList(nodeItem));
   }
+
 }

@@ -26,7 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.xmlbeans.handler;
 
-public class InXmlWrappedType {
+public final class InXmlWrappedType {
+  private InXmlWrappedType() {
+    // disable construction
+  }
+
   /**
    * Sets the value of obj onto the given simple value target.
    * 

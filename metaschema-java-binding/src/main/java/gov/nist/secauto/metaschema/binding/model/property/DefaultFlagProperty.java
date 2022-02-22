@@ -30,7 +30,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
-import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
@@ -127,7 +126,7 @@ public class DefaultFlagProperty
   }
 
   @Override
-  public Object read(IXmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+  public Object read(IXmlParsingContext context) throws IOException, XMLStreamException {
     throw new UnsupportedOperationException("use read(Object, StartElement, IXmlParsingContext) instead");
   }
 

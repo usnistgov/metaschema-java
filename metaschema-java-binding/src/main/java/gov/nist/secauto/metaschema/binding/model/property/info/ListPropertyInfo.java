@@ -91,7 +91,7 @@ public class ListPropertyInfo
 
   @Override
   public boolean readValue(IPropertyCollector collector, Object parentInstance, StartElement start,
-      IXmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+      IXmlParsingContext context) throws IOException, XMLStreamException {
     XMLEventReader2 eventReader = context.getReader();
 
     // TODO: is this needed?
@@ -121,7 +121,7 @@ public class ListPropertyInfo
 
   @Override
   public void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
-      throws IOException, BindingException {
+      throws IOException {
     JsonParser parser = context.getReader();
 
     boolean parseArray = true;

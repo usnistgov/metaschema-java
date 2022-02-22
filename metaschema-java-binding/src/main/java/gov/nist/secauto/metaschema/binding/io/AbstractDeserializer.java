@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
 
@@ -55,7 +56,7 @@ public abstract class AbstractDeserializer<CLASS>
   }
 
   @Override
-  public IBoundXdmNodeItem deserializeToNodeItem(Reader reader, @Nullable URI documentUri) throws BindingException {
+  public IBoundXdmNodeItem deserializeToNodeItem(Reader reader, @Nullable URI documentUri) throws IOException {
     IBoundXdmNodeItem nodeItem = deserializeToNodeItemInternal(reader, documentUri);
 
     if (isValidating()) {
@@ -70,5 +71,5 @@ public abstract class AbstractDeserializer<CLASS>
   }
 
   protected abstract IBoundXdmNodeItem deserializeToNodeItemInternal(Reader reader, @Nullable URI documentUri)
-      throws BindingException;
+      throws IOException;
 }

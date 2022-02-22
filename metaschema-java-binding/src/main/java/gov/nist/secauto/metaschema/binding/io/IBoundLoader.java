@@ -26,23 +26,51 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
+import gov.nist.secauto.metaschema.binding.DefaultBindingContext;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.IDocumentLoader;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * A common interface for loader implementations.
  */
 public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
+  @Override
+  default @NotNull IBoundXdmDocumentNodeItem loadAsNodeItem(@NotNull URL url) throws IOException {
+    try (InputStream is = url.openStream()) {
+      return loadAsNodeItem(is, url.toURI());
+    } catch (URISyntaxException ex) {
+      throw new IOException(ex);
+    }
+  }
+
+  @Override
+  default @NotNull IBoundXdmDocumentNodeItem loadAsNodeItem(@NotNull Path path) throws IOException {
+    try (InputStream is = Files.newInputStream(path)) {
+      return loadAsNodeItem(is, path.toUri());
+    }
+  }
+
+  @Override
+  default @NotNull IBoundXdmDocumentNodeItem loadAsNodeItem(@NotNull File file) throws IOException {
+    return loadAsNodeItem(file.toPath());
+  }
+
+  @Override
+  @NotNull
+  IBoundXdmDocumentNodeItem loadAsNodeItem(@NotNull InputStream is, @NotNull URI documentUri) throws IOException;
+
   /**
    * Determine the format of the provided resource.
    * 
@@ -60,22 +88,31 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
   /**
    * Determine the format of the provided resource.
    * 
-   * @param file
+   * @param path
    *          the resource
    * @return the format of the provided resource
-   * @throws FileNotFoundException
-   *           if the file does not exist
    * @throws IOException
    *           if an error occurred while reading the resource
    */
   @NotNull
-  default Format detectFormat(@NotNull File file) throws FileNotFoundException, IOException {
-    if (!file.exists()) {
-      throw new FileNotFoundException(file.getAbsolutePath());
-    }
-    try (InputStream is = Files.newInputStream(file.toPath())) {
+  default Format detectFormat(@NotNull Path path) throws IOException {
+    try (InputStream is = Files.newInputStream(path)) {
       return detectFormat(is);
     }
+  }
+
+  /**
+   * Determine the format of the provided resource.
+   * 
+   * @param file
+   *          the resource
+   * @return the format of the provided resource
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   */
+  @NotNull
+  default Format detectFormat(@NotNull File file) throws IOException {
+    return detectFormat(file.toPath());
   }
 
   /**
@@ -84,6 +121,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
    * This method will consume data from the provided {@link InputStream}. If the caller of this method
    * intends to read data from the stream after determining the format, the caller should pass in a
    * stream that can be reset.
+   * <p>
+   * This method will not close the provided {@link InputStream}, since it does not own the stream.
    * 
    * @param is
    *          an input stream for the resource
@@ -124,22 +163,17 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
    * 
    * @param <CLASS>
    *          the type of the bound object to return
-   * @param file
+   * @param path
    *          the resource
    * @return a bound object containing the loaded data
-   * @throws FileNotFoundException
-   *           if the file does not exist
    * @throws IOException
    *           if an error occurred while reading the resource
    * @see #detectFormat(File)
    */
   @NotNull
-  default <CLASS> CLASS load(@NotNull File file) throws FileNotFoundException, IOException {
-    if (!file.exists()) {
-      throw new FileNotFoundException(file.getAbsolutePath());
-    }
-    try (InputStream is = Files.newInputStream(file.toPath())) {
-      return load(is, file.toURI());
+  default <CLASS> CLASS load(@NotNull Path path) throws IOException {
+    try (InputStream is = Files.newInputStream(path)) {
+      return load(is, path.toUri());
     }
   }
 
@@ -150,13 +184,32 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
    * 
    * @param <CLASS>
    *          the type of the bound object to return
+   * @param file
+   *          the resource
+   * @return a bound object containing the loaded data
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   * @see #detectFormat(File)
+   */
+  @NotNull
+  default <CLASS> CLASS load(@NotNull File file) throws IOException {
+    return load(file.toPath());
+  }
+
+  /**
+   * Load data from the provided resource into a bound object.
+   * <p>
+   * This method should auto-detect the format of the provided resource.
+   * <p>
+   * This method will not close the provided {@link InputStream}, since it does not own the stream.
+   * 
+   * @param <CLASS>
+   *          the type of the bound object to return
    * @param is
    *          the resource
    * @param documentUri
    *          the URI of the resource
    * @return a bound object containing the loaded data
-   * @throws FileNotFoundException
-   *           if the file does not exist
    * @throws IOException
    *           if an error occurred while reading the resource
    * @see #detectFormat(InputStream)
@@ -174,23 +227,36 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
    *          the Java type to load data into
    * @param clazz
    *          the class for the java type
+   * @param path
+   *          the resource to load
+   * @return the loaded instance data
+   * @throws IOException
+   *           if an error occurred while loading the data in the specified file
+   */
+  @NotNull
+  default <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull Path path) throws IOException {
+    try (InputStream is = Files.newInputStream(path)) {
+      return load(clazz, is, path.toUri());
+    }
+  }
+
+  /**
+   * Load data from the specified resource into a bound object with the type of the specified Java
+   * class.
+   * 
+   * @param <CLASS>
+   *          the Java type to load data into
+   * @param clazz
+   *          the class for the java type
    * @param file
    *          the resource to load
    * @return the loaded instance data
    * @throws IOException
    *           if an error occurred while loading the data in the specified file
-   * @throws FileNotFoundException
-   *           if the specified file does not exist
    */
   @NotNull
-  default <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull File file)
-      throws FileNotFoundException, IOException {
-    if (!file.exists()) {
-      throw new FileNotFoundException(file.getAbsolutePath());
-    }
-    try (InputStream is = Files.newInputStream(file.toPath())) {
-      return load(clazz, is, file.getCanonicalFile().toURI());
-    }
+  default <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull File file) throws IOException {
+    return load(clazz, file.toPath());
   }
 
   /**
@@ -219,6 +285,14 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
   /**
    * Load data from the specified resource into a bound object with the type of the specified Java
    * class.
+   * <p>
+   * This method will not close the provided {@link InputStream}, since it does not own the stream.
+   * <p>
+   * Implementations of this method will do format detection. This process might leave the provided
+   * {@link InputStream} at a position beyond the last parsed location. If you want to avoid this
+   * possibility, use and implementation of {@link IDeserializer#deserialize(InputStream, URI)}
+   * instead, such as what is provided by
+   * {@link DefaultBindingContext#newDeserializer(Format, Class)}.
    * 
    * @param <CLASS>
    *          the Java type to load data into

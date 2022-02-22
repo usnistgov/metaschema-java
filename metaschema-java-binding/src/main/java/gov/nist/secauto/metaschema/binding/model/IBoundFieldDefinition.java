@@ -30,4 +30,7 @@ import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 
 public interface IBoundFieldDefinition extends IBoundNamedModelDefinition, IFieldDefinition {
 
+  @Override
+  IFieldClassBinding getClassBinding();
+
 }

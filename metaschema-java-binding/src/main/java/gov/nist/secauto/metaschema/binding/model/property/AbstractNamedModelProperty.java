@@ -225,7 +225,7 @@ public abstract class AbstractNamedModelProperty
   }
 
   @Override
-  public Object read(IXmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+  public Object read(IXmlParsingContext context) throws IOException, XMLStreamException {
     Object retval = null;
     if (isNextProperty(context)) {
       retval = readInternal(null, null, context);
@@ -235,7 +235,7 @@ public abstract class AbstractNamedModelProperty
 
   @Override
   public boolean read(Object parentInstance, StartElement start, IXmlParsingContext context)
-      throws IOException, XMLStreamException, BindingException {
+      throws IOException, XMLStreamException {
     boolean handled = isNextProperty(context);
     if (handled) {
       Object value = readInternal(parentInstance, start, context);
@@ -246,7 +246,7 @@ public abstract class AbstractNamedModelProperty
 
   @Override
   protected Object readInternal(Object parentInstance, IJsonParsingContext context)
-      throws IOException, BindingException {
+      throws IOException {
     JsonParser parser = context.getReader();
 
     // advance past the property name
@@ -261,7 +261,7 @@ public abstract class AbstractNamedModelProperty
   }
 
   protected Object readInternal(Object parentInstance, StartElement start, IXmlParsingContext context)
-      throws IOException, XMLStreamException, BindingException {
+      throws IOException, XMLStreamException {
     XMLEventReader2 eventReader = context.getReader();
 
     XmlEventUtil.skipWhitespace(eventReader);
@@ -298,15 +298,13 @@ public abstract class AbstractNamedModelProperty
   }
 
   @Override
-  public List<Object> readItem(Object parentInstance, IJsonParsingContext context)
-      throws BindingException, IOException {
+  public List<Object> readItem(Object parentInstance, IJsonParsingContext context) throws IOException {
     IDataTypeHandler supplier = getDataTypeHandler();
     return supplier.get(parentInstance, context);
   }
 
   @Override
-  public boolean write(Object parentInstance, QName parentName, IXmlWritingContext context)
-      throws XMLStreamException, IOException {
+  public boolean write(Object parentInstance, QName parentName, IXmlWritingContext context) throws XMLStreamException, IOException {
     Object value = getValue(parentInstance);
     if (value == null) {
       return false;

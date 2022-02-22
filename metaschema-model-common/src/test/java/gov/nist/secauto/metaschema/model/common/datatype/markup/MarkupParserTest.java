@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.model.common.datatype.markup;
 import com.ctc.wstx.stax.WstxInputFactory;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstCollectingVisitor;
-import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;

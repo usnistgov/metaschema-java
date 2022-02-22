@@ -63,7 +63,7 @@ public class SingletonPropertyInfo
 
   @Override
   public void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
-      throws IOException, BindingException {
+      throws IOException {
     IBoundNamedModelInstance property = getProperty();
 
     JsonParser parser = context.getReader();
@@ -85,7 +85,7 @@ public class SingletonPropertyInfo
 
   @Override
   public boolean readValue(IPropertyCollector collector, Object parentInstance, StartElement start,
-      IXmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+      IXmlParsingContext context) throws IOException, XMLStreamException {
     boolean handled = true;
     Object value = getProperty().readItem(parentInstance, start, context);
     if (value != null) {

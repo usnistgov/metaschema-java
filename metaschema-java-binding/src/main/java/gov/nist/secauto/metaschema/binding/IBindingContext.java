@@ -101,12 +101,12 @@ public interface IBindingContext {
    * {@link BigInteger}, {@link ZonedDateTime}, etc).
    * 
    * @param <TYPE>
-   *          the class type bound by the adapter
+   *          the class type of the adapter
    * @param clazz
    *          the Java {@link Class} for the bound type
    * @return the adapter instance or {@code null} if the provided class is not bound
    */
-  <TYPE extends IJavaTypeAdapter<?>> IJavaTypeAdapter<TYPE> getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz);
+  <TYPE extends IJavaTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz);
 
   // boolean hasClassBinding(Class<?> clazz) throws BindingException;
 

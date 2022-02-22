@@ -26,10 +26,13 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IBoundAssemblyDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -44,8 +47,13 @@ public abstract class AbstractBoundXdmAssemblyNodeItem<INSTANCE extends IBoundAs
 
   private Map<String, List<IBoundXdmModelNodeItem>> modelItems;
 
-  public AbstractBoundXdmAssemblyNodeItem(INSTANCE instance, Object value, int position) {
+  public AbstractBoundXdmAssemblyNodeItem(@NotNull INSTANCE instance, @NotNull Object value, int position) {
     super(instance, value, position);
+  }
+
+  @Override
+  public IAssemblyClassBinding getClassBinding() {
+    return getDefinition().getClassBinding();
   }
 
   @Override

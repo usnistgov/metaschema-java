@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class CastToIntegerFunction {
+public final class CastToIntegerFunction {
   static final IFunction SIGNATURE = IFunction.newBuilder()
       .name("integer")
       .argument(IArgument.newBuilder()
@@ -52,6 +52,10 @@ public class CastToIntegerFunction {
       .returnOne()
       .functionHandler(CastToIntegerFunction::execute)
       .build();
+
+  private CastToIntegerFunction() {
+    // disable construction
+  }
 
   @NotNull
   public static ISequence<IIntegerItem> execute(@NotNull IFunction function,

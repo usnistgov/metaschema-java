@@ -33,7 +33,13 @@ import java.util.Collection;
 import java.util.Map;
 
 public interface IBoundNamedModelDefinition extends INamedModelDefinition, IBoundNamedDefinition {
-
+  /**
+   * Retrieve the {@link IClassBinding} associated with the node item.
+   * 
+   * @return the class binding or {@code null} if the node is not a bound class
+   */
+  IClassBinding getClassBinding();
+  
   @Override
   default IBoundFlagInstance getFlagInstanceByName(String name) {
     return getFlagInstanceMap().get(name);

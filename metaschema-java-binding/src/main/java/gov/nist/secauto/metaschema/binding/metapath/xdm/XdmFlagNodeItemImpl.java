@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.IBoundFlagDefinition;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
@@ -76,6 +77,12 @@ class XdmFlagNodeItemImpl
   public IAnyAtomicItem toAtomicItem() {
     initAtomicItem();
     return atomicItem;
+  }
+
+  @Override
+  public IClassBinding getClassBinding() {
+    // Flags do not have a class binding
+    return null;
   }
 
   @Override

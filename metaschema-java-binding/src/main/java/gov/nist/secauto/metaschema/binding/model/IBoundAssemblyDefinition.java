@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Map;
 
 public interface IBoundAssemblyDefinition extends IBoundNamedModelDefinition, IAssemblyDefinition {
+  IAssemblyClassBinding getClassBinding();
 
   @Override
   default IBoundFieldInstance getFieldInstanceByName(String name) {

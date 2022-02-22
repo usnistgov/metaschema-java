@@ -41,7 +41,13 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
-public class CollectionUtil {
+public final class CollectionUtil {
+  
+
+  private CollectionUtil() {
+    // disable construction
+  }
+
   /**
    * Get an {@link Iterable} for the provided {@link Iterator}.
    * 

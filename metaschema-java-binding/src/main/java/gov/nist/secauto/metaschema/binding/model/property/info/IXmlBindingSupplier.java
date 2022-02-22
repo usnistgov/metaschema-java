@@ -37,5 +37,5 @@ import javax.xml.stream.events.StartElement;
 @FunctionalInterface
 public interface IXmlBindingSupplier {
   Object get(Object parentInstance, StartElement start, IXmlParsingContext context)
-      throws BindingException, IOException, XMLStreamException;
+      throws IOException, XMLStreamException;
 }

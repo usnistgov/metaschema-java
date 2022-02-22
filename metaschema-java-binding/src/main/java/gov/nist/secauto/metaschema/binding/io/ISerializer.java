@@ -26,14 +26,17 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 /**
@@ -46,16 +49,38 @@ import java.nio.file.StandardOpenOption;
 public interface ISerializer<CLASS> extends IMutableConfiguration {
   /**
    * Write data from a bound class instance to the {@link OutputStream}.
+   * <p>
+   * This method does not have ownership of the the provided output stream and will not close it.
    * 
    * @param data
    *          the instance data
    * @param os
    *          the output stream to write to
-   * @throws BindingException
+   * @throws IOException
    *           if an error occurred while writing data to the stream
    */
-  default void serialize(CLASS data, OutputStream os) throws BindingException {
-    serialize(data, new OutputStreamWriter(os));
+  default void serialize(@NotNull CLASS data, @NotNull OutputStream os) throws IOException {
+    OutputStreamWriter writer = new OutputStreamWriter(os);
+    serialize(data, writer);
+    writer.flush();
+  }
+
+  /**
+   * Write data from a bound class instance to the {@link File}.
+   * 
+   * @param data
+   *          the instance data
+   * @param path
+   *          the file to write to
+   * @param openOptions
+   *          options specifying how the file is opened
+   * @throws IOException
+   *           if an error occurred while writing data to the file indicated by the {@code path} parameter
+   */
+  default void serialize(@NotNull CLASS data, @NotNull Path path, OpenOption... openOptions) throws IOException {
+    try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, openOptions)) {
+      serialize(data, writer);
+    }
   }
 
   /**
@@ -65,19 +90,11 @@ public interface ISerializer<CLASS> extends IMutableConfiguration {
    *          the instance data
    * @param file
    *          the file to write to
-   * @throws BindingException
+   * @throws IOException
    *           if an error occurred while writing data to the stream
-   * @throws FileNotFoundException
-   *           if the provided file is not a regular file or if there was an error creating the file
    */
-  default void serialize(CLASS data, File file) throws BindingException, FileNotFoundException {
-    try (Writer writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8, StandardOpenOption.CREATE,
-        StandardOpenOption.WRITE)) {
-      serialize(data, writer);
-      writer.close();
-    } catch (IOException ex) {
-      throw new BindingException("Unable to open file: " + file == null ? "{null}" : file.getPath(), ex);
-    }
+  default void serialize(@NotNull CLASS data, @NotNull File file) throws IOException {
+    serialize(data, file.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
   }
 
   /**
@@ -87,8 +104,8 @@ public interface ISerializer<CLASS> extends IMutableConfiguration {
    *          the instance data
    * @param writer
    *          the writer to write to
-   * @throws BindingException
+   * @throws IOException
    *           if an error occurred while writing data to the stream
    */
-  void serialize(CLASS data, Writer writer) throws BindingException;
+  void serialize(CLASS data, Writer writer) throws IOException;
 }

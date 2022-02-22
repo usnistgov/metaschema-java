@@ -30,9 +30,9 @@ import com.ctc.wstx.stax.WstxOutputFactory;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractSerializer;
-import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 
+import org.apache.logging.log4j.core.util.IOUtils;
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
 
@@ -67,29 +67,50 @@ public class DefaultXmlSerializer<CLASS>
     }
   }
 
-  protected XMLStreamWriter2 newXMLStreamWriter(Writer writer) throws BindingException {
+  protected XMLStreamWriter2 newXMLStreamWriter(Writer writer) throws IOException {
     try {
       XMLStreamWriter2 streamWriter = (XMLStreamWriter2) getXMLOutputFactory().createXMLStreamWriter(writer);
       streamWriter = new IndentingXmlStreamWriter2(streamWriter);
       return streamWriter;
     } catch (XMLStreamException ex) {
-      throw new BindingException(ex);
+      throw new IOException(ex);
     }
   }
 
   @Override
-  public void serialize(CLASS data, Writer writer) throws BindingException {
+  public void serialize(CLASS data, Writer writer) throws IOException {
     XMLStreamWriter2 streamWriter = newXMLStreamWriter(writer);
+    IOException caughtException = null;
     try {
       IAssemblyClassBinding classBinding = getClassBinding();
       IXmlWritingContext writingContext = new DefaultXmlWritingContext(streamWriter);
 
       classBinding.writeRoot(data, writingContext);
 
-      streamWriter.flush();
-      streamWriter.close();
-    } catch (XMLStreamException | IOException ex) {
-      throw new BindingException(ex);
+    } catch (XMLStreamException ex) {
+      caughtException = new IOException(ex);
+      throw caughtException;
+    } finally {
+      try {
+        streamWriter.flush();
+      } catch (XMLStreamException ex) {
+        if (caughtException != null) {
+          caughtException.addSuppressed(ex);
+        } else {
+          throw new IOException(ex);
+        }
+      }
+
+      try {
+        streamWriter.close();
+      } catch (XMLStreamException ex) {
+        if (caughtException == null) {
+          throw new IOException(ex);
+        } else {
+          caughtException.addSuppressed(ex);
+          throw caughtException;
+        }
+      }
     }
   }
 }

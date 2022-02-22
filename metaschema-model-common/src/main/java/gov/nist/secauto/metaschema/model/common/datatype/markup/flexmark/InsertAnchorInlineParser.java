@@ -32,8 +32,6 @@ import com.vladsch.flexmark.parser.InlineParserExtensionFactory;
 import com.vladsch.flexmark.parser.LightInlineParser;
 import com.vladsch.flexmark.util.sequence.BasedSequence;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collections;
 import java.util.Set;
 import java.util.regex.Matcher;

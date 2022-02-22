@@ -99,7 +99,7 @@ public class MapPropertyInfo
 
   @Override
   public void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
-      throws IOException, BindingException {
+      throws IOException {
     JsonParser jsonParser = context.getReader();
     JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
 
@@ -124,7 +124,7 @@ public class MapPropertyInfo
 
   @Override
   public boolean readValue(IPropertyCollector collector, Object parentInstance, StartElement start,
-      IXmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+      IXmlParsingContext context) throws IOException, XMLStreamException {
     QName qname = getProperty().getXmlQName();
     XMLEventReader2 eventReader = context.getReader();
 

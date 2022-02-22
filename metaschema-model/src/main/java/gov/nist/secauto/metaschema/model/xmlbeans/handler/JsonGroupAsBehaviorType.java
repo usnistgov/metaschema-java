@@ -28,7 +28,11 @@ package gov.nist.secauto.metaschema.model.xmlbeans.handler;
 
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 
-public class JsonGroupAsBehaviorType {
+public final class JsonGroupAsBehaviorType {
+  private JsonGroupAsBehaviorType() {
+    // disable construction
+  }
+
   /**
    * Sets the value of obj onto the given simple value target.
    * 

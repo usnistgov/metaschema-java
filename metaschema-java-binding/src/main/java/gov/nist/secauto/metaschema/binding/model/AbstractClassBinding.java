@@ -335,20 +335,21 @@ public abstract class AbstractClassBinding implements IClassBinding {
 
   @Override
   public Object readItem(Object parentInstance, StartElement start,
-      IXmlParsingContext context) throws BindingException, IOException, XMLStreamException {
-    Object instance = newInstance();
+      IXmlParsingContext context) throws IOException, XMLStreamException {
 
-    callBeforeDeserialize(instance, parentInstance);
-
-    readInternal(parentInstance, instance, start, context);
-
-    callAfterDeserialize(instance, parentInstance);
-
-    return instance;
+    try {
+      Object instance = newInstance();
+      callBeforeDeserialize(instance, parentInstance);
+      readInternal(parentInstance, instance, start, context);
+      callAfterDeserialize(instance, parentInstance);
+      return instance;
+    } catch (BindingException ex) {
+      throw new IOException(ex);
+    }
   }
 
   protected void readInternal(@SuppressWarnings("unused") Object parentInstance, Object instance, StartElement start,
-      IXmlParsingContext context) throws IOException, XMLStreamException, BindingException {
+      IXmlParsingContext context) throws IOException, XMLStreamException {
     for (IBoundFlagInstance flag : getFlagInstances()) {
       flag.read(instance, start, context);
     }
@@ -358,7 +359,7 @@ public abstract class AbstractClassBinding implements IClassBinding {
   }
 
   protected abstract void readBody(Object instance, StartElement start, IXmlParsingContext context)
-      throws IOException, XMLStreamException, BindingException;
+      throws IOException, XMLStreamException;
 
   @Override
   public void writeItem(Object instance, QName parentName, IXmlWritingContext context)

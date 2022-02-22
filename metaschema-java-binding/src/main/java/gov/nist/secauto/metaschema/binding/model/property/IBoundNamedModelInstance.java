@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.IBoundNamedModelDefinition;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 
@@ -49,6 +50,13 @@ import javax.xml.stream.events.XMLEvent;
  * This marker interface provides common methods for interacting with bound object values.
  */
 public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedModelInstance {
+  /**
+   * Retrieve the {@link IClassBinding} associated with the instance.
+   * 
+   * @return the class binding or {@code null} if the instance is not a bound class
+   */
+  IClassBinding getClassBinding();
+
   @Override
   IBoundNamedModelDefinition getDefinition();
 
@@ -73,15 +81,13 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
    * @param context
    *          the XML parsing context
    * @return the item read, or {@code null} if no item was read
-   * @throws BindingException
-   *           if a Java class binding error occurred
    * @throws XMLStreamException
    *           if an error occurred while generating an {@link XMLEvent}
    * @throws IOException
    *           if an error occurred reading the underlying XML file
    */
   Object readItem(Object parentInstance, StartElement start, IXmlParsingContext context)
-      throws BindingException, XMLStreamException, IOException;
+      throws XMLStreamException, IOException;
 
   /**
    * Reads a set of JSON items from the JSON stream.
@@ -91,12 +97,10 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
    * @param context
    *          the JSON/YAML parsing context
    * @return the items read, or {@code null} if no item was read
-   * @throws BindingException
-   *           if a Java class binding error occurred
    * @throws IOException
    *           if an error occurred reading the underlying XML file
    */
-  List<Object> readItem(Object parentInstance, IJsonParsingContext context) throws BindingException, IOException;
+  List<Object> readItem(Object parentInstance, IJsonParsingContext context) throws IOException;
 
   boolean writeItem(Object item, QName parentName, IXmlWritingContext context) throws XMLStreamException, IOException;
 

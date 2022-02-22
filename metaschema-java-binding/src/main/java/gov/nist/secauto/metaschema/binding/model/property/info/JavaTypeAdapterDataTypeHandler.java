@@ -81,15 +81,14 @@ public class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
   }
 
   @Override
-  public List<Object> get(Object parentInstance, IJsonParsingContext context)
-      throws BindingException, IOException {
+  public List<Object> get(Object parentInstance, IJsonParsingContext context) throws IOException {
     Object value = adapter.parse(context.getReader());
     return value != null ? Collections.singletonList(value) : Collections.emptyList();
   }
 
   @Override
   public Object get(Object parentInstance, StartElement start, IXmlParsingContext context)
-      throws BindingException, IOException, XMLStreamException {
+      throws IOException, XMLStreamException {
     return adapter.parse(context.getReader());
   }
 

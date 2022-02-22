@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class CastToPositiveIntegerFunction {
+public final class CastToPositiveIntegerFunction {
   static final IFunction SIGNATURE = IFunction.newBuilder()
       .name("positiveInteger")
       .argument(IArgument.newBuilder()
@@ -52,6 +52,10 @@ public class CastToPositiveIntegerFunction {
       .returnOne()
       .functionHandler(CastToPositiveIntegerFunction::execute)
       .build();
+
+  private CastToPositiveIntegerFunction() {
+    // disable construction
+  }
 
   @NotNull
   public static ISequence<IPositiveIntegerItem> execute(@NotNull IFunction function,

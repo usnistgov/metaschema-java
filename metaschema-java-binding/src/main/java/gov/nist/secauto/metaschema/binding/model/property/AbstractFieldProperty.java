@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
@@ -71,7 +70,7 @@ public abstract class AbstractFieldProperty
 
   @Override
   public Object readItem(Object parentInstance, StartElement start,
-      IXmlParsingContext context) throws BindingException, XMLStreamException, IOException {
+      IXmlParsingContext context) throws XMLStreamException, IOException {
     // figure out how to parse the item
     IXmlBindingSupplier supplier = getDataTypeHandler();
 

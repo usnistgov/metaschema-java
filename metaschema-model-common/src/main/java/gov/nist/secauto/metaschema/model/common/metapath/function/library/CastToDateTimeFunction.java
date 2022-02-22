@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class CastToDateTimeFunction {
+public final class CastToDateTimeFunction {
   static final IFunction SIGNATURE = IFunction.newBuilder()
       .name("dateTime")
       .argument(IArgument.newBuilder()
@@ -52,6 +52,10 @@ public class CastToDateTimeFunction {
       .returnOne()
       .functionHandler(CastToDateTimeFunction::execute)
       .build();
+
+  private CastToDateTimeFunction() {
+    // disable construction
+  }
 
   @NotNull
   public static ISequence<IDateTimeItem> execute(@NotNull IFunction function,

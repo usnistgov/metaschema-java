@@ -82,8 +82,15 @@ import javax.xml.namespace.QName;
 public class DefaultBindingContext implements IBindingContext {
   private static DefaultBindingContext singleton;
 
-  private final Map<Class<?>, IClassBinding> classBindingsByClass = new HashMap<>();
-  private final Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> javaTypeAdapterMap = new HashMap<>();
+  private final Map<Class<?>, IClassBinding> classBindingsByClass // NOPMD synchronization is handled in the methods
+                                                                  // accessing this field
+      = new HashMap<>();
+  private final Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> javaTypeAdapterMap // NOPMD
+                                                                                                  // synchronization is
+                                                                                                  // handled in the
+                                                                                                  // methods accessing
+                                                                                                  // this field
+      = new HashMap<>();
   private final List<IBindingMatcher> bindingMatchers = new LinkedList<>();
 
   public static DefaultBindingContext instance() {
@@ -103,49 +110,53 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public synchronized IClassBinding getClassBinding(@NotNull Class<?> clazz) {
-    IClassBinding retval = classBindingsByClass.get(clazz);
-    if (retval == null) {
-      if (clazz.isAnnotationPresent(MetaschemaAssembly.class)) {
-        retval = DefaultAssemblyClassBinding.createInstance(clazz, this);
-      } else if (clazz.isAnnotationPresent(MetaschemaField.class)) {
-        retval = DefaultFieldClassBinding.createInstance(clazz, this);
-      } else {
-        throw new IllegalArgumentException(String.format(
-            "Class '%s' does not represent a Metaschema definition" + " since it is missing a '%s' or '%s' annotation.",
-            clazz.getName(), MetaschemaAssembly.class.getName(), MetaschemaField.class.getName()));
-      }
-      if (retval != null) {
-        classBindingsByClass.put(clazz, retval);
+  public IClassBinding getClassBinding(@NotNull Class<?> clazz) {
+    IClassBinding retval;
+    synchronized (this) {
+      retval = classBindingsByClass.get(clazz);
+      if (retval == null) {
+        if (clazz.isAnnotationPresent(MetaschemaAssembly.class)) {
+          retval = DefaultAssemblyClassBinding.createInstance(clazz, this);
+        } else if (clazz.isAnnotationPresent(MetaschemaField.class)) {
+          retval = DefaultFieldClassBinding.createInstance(clazz, this);
+        } else {
+          throw new IllegalArgumentException(String.format(
+              "Class '%s' does not represent a Metaschema definition"
+                  + " since it is missing a '%s' or '%s' annotation.",
+              clazz.getName(), MetaschemaAssembly.class.getName(), MetaschemaField.class.getName()));
+        }
+        if (retval != null) {
+          classBindingsByClass.put(clazz, retval);
+        }
       }
     }
     return retval;
   }
 
   @Override
-  public synchronized <TYPE extends IJavaTypeAdapter<?>> IJavaTypeAdapter<TYPE>
+  public <TYPE extends IJavaTypeAdapter<?>> TYPE
       getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz) {
-    @SuppressWarnings("unchecked")
-    IJavaTypeAdapter<TYPE> retval
-        = (IJavaTypeAdapter<TYPE>) javaTypeAdapterMap.get(clazz);
-    if (retval == null) {
-      Constructor<TYPE> constructor;
-      try {
-        constructor = clazz.getDeclaredConstructor();
-      } catch (NoSuchMethodException ex) {
-        throw new IllegalArgumentException(ex);
-      }
+    IJavaTypeAdapter<?> instance;
+    synchronized (this) {
+      instance =  javaTypeAdapterMap.get(clazz);
+      if (instance == null) {
+        Constructor<TYPE> constructor;
+        try {
+          constructor = clazz.getDeclaredConstructor();
+        } catch (NoSuchMethodException ex) {
+          throw new IllegalArgumentException(ex);
+        }
 
-      try {
-        @SuppressWarnings("unchecked")
-        IJavaTypeAdapter<TYPE> instance
-            = (IJavaTypeAdapter<TYPE>) constructor.newInstance();
-        retval = instance;
-      } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
-        throw new IllegalArgumentException(ex);
+        try {
+          instance = constructor.newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+          throw new IllegalArgumentException(ex);
+        }
+        javaTypeAdapterMap.put(clazz, instance);
       }
-      javaTypeAdapterMap.put(clazz, retval);
     }
+    @SuppressWarnings("unchecked")
+    TYPE retval = (TYPE)instance;
     return retval;
   }
 
@@ -206,8 +217,10 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public synchronized void registerBindingMatcher(@NotNull IBindingMatcher matcher) {
-    bindingMatchers.add(matcher);
+  public void registerBindingMatcher(@NotNull IBindingMatcher matcher) {
+    synchronized (this) {
+      bindingMatchers.add(matcher);
+    }
   }
 
   protected synchronized List<IBindingMatcher> getBindingMatchers() {

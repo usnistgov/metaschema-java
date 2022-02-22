@@ -28,7 +28,11 @@ package gov.nist.secauto.metaschema.model.xmlbeans.handler;
 
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 
-public class ScopeType {
+public final class ScopeType {
+  private ScopeType() {
+    // disable construction
+  }
+
   /**
    * Sets the value of obj onto the given simple value target.
    * 

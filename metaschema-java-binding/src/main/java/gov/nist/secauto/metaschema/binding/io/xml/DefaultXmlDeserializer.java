@@ -30,7 +30,6 @@ import com.ctc.wstx.stax.WstxInputFactory;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
-import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.Feature;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
@@ -86,29 +85,40 @@ public class DefaultXmlDeserializer<CLASS>
     }
   }
 
-  protected XMLEventReader2 newXMLEventReader2(Reader reader) throws BindingException {
-
-    try {
-      XMLEventReader eventReader = getXMLInputFactory().createXMLEventReader(reader);
-      EventFilter filter = new CommentFilter();
-      return (XMLEventReader2) getXMLInputFactory().createFilteredReader(eventReader, filter);
-    } catch (XMLStreamException ex) {
-      throw new BindingException(ex);
-    }
+  protected XMLEventReader2 newXMLEventReader2(Reader reader) throws XMLStreamException {
+    XMLEventReader eventReader = getXMLInputFactory().createXMLEventReader(reader);
+    EventFilter filter = new CommentFilter();
+    return (XMLEventReader2) getXMLInputFactory().createFilteredReader(eventReader, filter);
   }
 
   @Override
-  protected IBoundXdmNodeItem deserializeToNodeItemInternal(Reader reader, URI documentUri) throws BindingException {
-    XMLEventReader2 eventReader = newXMLEventReader2(reader);
+  protected IBoundXdmNodeItem deserializeToNodeItemInternal(Reader reader, URI documentUri) throws IOException {
+    XMLEventReader2 eventReader = null;
+    IOException caughtException = null;
     try {
+      eventReader = newXMLEventReader2(reader);
       return parseXmlInternal(eventReader, documentUri);
     } catch (XMLStreamException ex) {
-      throw new BindingException(ex);
+      caughtException = new IOException(ex);
+      throw caughtException;
+    } finally {
+      if (eventReader != null) {
+        try {
+          eventReader.close();
+        } catch (XMLStreamException ex) {
+          if (caughtException == null) {
+            throw new IOException(ex);
+          } else {
+            caughtException.addSuppressed(ex);
+            throw caughtException;
+          }
+        }
+      }
     }
   }
 
   protected IBoundXdmNodeItem parseXmlInternal(XMLEventReader2 reader, @Nullable URI documentUri)
-      throws XMLStreamException, BindingException {
+      throws XMLStreamException, IOException {
 
     IAssemblyClassBinding classBinding = getClassBinding();
 
@@ -125,25 +135,17 @@ public class DefaultXmlDeserializer<CLASS>
       XmlEventUtil.skipProcessingInstructions(reader);
 
       RootDefinitionAssemblyProperty property = new RootDefinitionAssemblyProperty(classBinding);
-      try {
-        @SuppressWarnings("unchecked")
-        CLASS value = (CLASS) property.read(parsingContext);
-        retval = value;
-      } catch (IOException | XMLStreamException ex) {
-        throw new BindingException(ex);
-      }
+      @SuppressWarnings("unchecked")
+      CLASS value = (CLASS) property.read(parsingContext);
+      retval = value;
 
       // XmlEventUtil.consumeAndAssert(reader, XMLEvent.END_ELEMENT);
       XmlEventUtil.consumeAndAssert(reader, XMLEvent.END_DOCUMENT);
       parsedNodeItem = IXdmFactory.INSTANCE.newDocumentNodeItem(property, retval, documentUri);
     } else {
-      try {
-        @SuppressWarnings("unchecked")
-        CLASS value = (CLASS) classBinding.readItem(null, null, parsingContext);
-        retval = value;
-      } catch (IOException | XMLStreamException ex) {
-        throw new BindingException(ex);
-      }
+      @SuppressWarnings("unchecked")
+      CLASS value = (CLASS) classBinding.readItem(null, null, parsingContext);
+      retval = value;
       parsedNodeItem = IXdmFactory.INSTANCE.newRelativeAssemblyNodeItem(classBinding, retval, documentUri);
     }
 

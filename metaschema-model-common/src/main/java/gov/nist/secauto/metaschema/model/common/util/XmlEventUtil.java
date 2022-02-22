@@ -26,11 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamReader2;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -44,19 +45,43 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public final class XmlEventUtil {
+public final class XmlEventUtil { // NOPMD this is a set of utility methods
   // private static final Logger LOGGER = LogManager.getLogger(XmlEventUtil.class);
 
   private static final Pattern WHITESPACE_ONLY = Pattern.compile("^\\s+$");
+
+  private static final Map<Integer, String> EVENT_NAME_MAP = new HashMap<>(); // NOPMD - this value is immutable
+
+  static {
+    EVENT_NAME_MAP.put(XMLStreamConstants.START_ELEMENT, "START_ELEMENT");
+    EVENT_NAME_MAP.put(XMLStreamConstants.END_ELEMENT, "END_ELEMENT");
+    EVENT_NAME_MAP.put(XMLStreamConstants.PROCESSING_INSTRUCTION, "PROCESSING_INSTRUCTION");
+    EVENT_NAME_MAP.put(XMLStreamConstants.CHARACTERS, "CHARACTERS");
+    EVENT_NAME_MAP.put(XMLStreamConstants.COMMENT, "COMMENT");
+    EVENT_NAME_MAP.put(XMLStreamConstants.SPACE, "SPACE");
+    EVENT_NAME_MAP.put(XMLStreamConstants.START_DOCUMENT, "START_DOCUMENT");
+    EVENT_NAME_MAP.put(XMLStreamConstants.END_DOCUMENT, "END_DOCUMENT");
+    EVENT_NAME_MAP.put(XMLStreamConstants.ENTITY_REFERENCE, "ENTITY_REFERENCE");
+    EVENT_NAME_MAP.put(XMLStreamConstants.ATTRIBUTE, "ATTRIBUTE");
+    EVENT_NAME_MAP.put(XMLStreamConstants.DTD, "DTD");
+    EVENT_NAME_MAP.put(XMLStreamConstants.CDATA, "CDATA");
+    EVENT_NAME_MAP.put(XMLStreamConstants.NAMESPACE, "NAMESPACE");
+    EVENT_NAME_MAP.put(XMLStreamConstants.NOTATION_DECLARATION, "NOTATION_DECLARATION");
+    EVENT_NAME_MAP.put(XMLStreamConstants.ENTITY_DECLARATION, "ENTITY_DECLARATION");
+  }
 
   private XmlEventUtil() {
     // disable construction
   }
 
-  private static Object escape(String data) {
+  @SuppressWarnings("null")
+  @NotNull
+  private static Object escape(@NotNull String data) {
     return data.chars().mapToObj(c -> (char) c).map(c -> escape(c)).collect(Collectors.joining());
   }
 
+  @SuppressWarnings("null")
+  @NotNull
   private static String escape(char ch) {
     String retval;
     switch (ch) {
@@ -68,6 +93,7 @@ public final class XmlEventUtil {
       break;
     default:
       retval = String.valueOf(ch);
+      break;
     }
     return retval;
   }
@@ -79,25 +105,33 @@ public final class XmlEventUtil {
    *          the event to generate the message for
    * @return the message
    */
-  public static String toString(XMLEvent xmlEvent) {
-    int type = xmlEvent.getEventType();
-    StringBuilder builder = new StringBuilder()
-        .append(toEventName(type));
-    QName name = toQName(xmlEvent);
-    if (name != null) {
-      builder.append(": ").append(name.toString());
-    }
-    if (xmlEvent.isCharacters()) {
-      String text = xmlEvent.asCharacters().getData();
-      if (text != null) {
-        builder.append(" '").append(escape(text)).append('\'');
+  @NotNull
+  public static CharSequence toString(XMLEvent xmlEvent) {
+    CharSequence retval;
+    if (xmlEvent == null) {
+      retval = "EOF";
+    } else {
+      @SuppressWarnings("null")
+      @NotNull
+      StringBuilder builder = new StringBuilder()
+          .append(toEventName(xmlEvent));
+      QName name = toQName(xmlEvent);
+      if (name != null) {
+        builder.append(": ").append(name.toString());
       }
+      if (xmlEvent.isCharacters()) {
+        String text = xmlEvent.asCharacters().getData();
+        if (text != null) {
+          builder.append(" '").append(escape(text)).append('\'');
+        }
+      }
+      Location location = toLocation(xmlEvent);
+      if (location != null) {
+        builder.append(" at ").append(toString(location));
+      }
+      retval = builder;
     }
-    Location location = toLocation(xmlEvent);
-    if (location != null) {
-      builder.append(" at ").append(toString(location));
-    }
-    return builder.toString();
+    return retval;
   }
 
   /**
@@ -107,16 +141,28 @@ public final class XmlEventUtil {
    *          the location to generate the message for
    * @return the message
    */
-  public static String toString(Location location) {
-    StringBuilder builder = new StringBuilder();
-    builder.append(location.getLineNumber());
-    builder.append(':');
-    builder.append(location.getColumnNumber());
-    return builder.toString();
+  @SuppressWarnings("null")
+  @NotNull
+  public static CharSequence toString(@NotNull Location location) {
+    return new StringBuilder()
+        .append(location.getLineNumber())
+        .append(':')
+        .append(location.getColumnNumber());
   }
 
-  public static String toString(XMLStreamReader2 reader) {
+  /**
+   * Generates a string containing the current event and location of the stream reader.
+   * 
+   * @param reader
+   *          the stream reader
+   * @return the generated string
+   */
+  @NotNull
+  public static CharSequence toString(@NotNull XMLStreamReader2 reader) { // NO_UCD (unused code)
     int type = reader.getEventType();
+
+    @SuppressWarnings("null")
+    @NotNull
     StringBuilder builder = new StringBuilder().append(toEventName(type));
     QName name = reader.getName();
     if (name != null) {
@@ -132,10 +178,17 @@ public final class XmlEventUtil {
     if (location != null) {
       builder.append(" at ").append(toString(location));
     }
-    return builder.toString();
+    return builder;
   }
 
-  public static Location toLocation(XMLEvent event) {
+  /**
+   * Retrieve the resource location of {@code event}.
+   * 
+   * @param event
+   *          the event to identify the location for
+   * @return the location or {@code null} if the location is unknown
+   */
+  public static Location toLocation(@NotNull XMLEvent event) {
     Location retval = null;
     if (event.isStartElement()) {
       StartElement start = event.asStartElement();
@@ -150,7 +203,14 @@ public final class XmlEventUtil {
     return retval;
   }
 
-  public static QName toQName(XMLEvent event) {
+  /**
+   * Retrieve the name of the node associated with {@code event}.
+   * 
+   * @param event
+   *          the event to get the {@link QName} for
+   * @return the name of the node
+   */
+  public static QName toQName(@NotNull XMLEvent event) {
     QName retval = null;
     if (event.isStartElement()) {
       StartElement start = event.asStartElement();
@@ -162,65 +222,47 @@ public final class XmlEventUtil {
     return retval;
   }
 
-  public static String toEventName(XMLEvent event) {
+  /**
+   * Get the event name of the {@code event}.
+   * 
+   * @param event
+   *          the event to get the event name for
+   * @return the event name
+   */
+  public static String toEventName(@NotNull XMLEvent event) {
     return toEventName(event.getEventType());
   }
 
+  /**
+   * Get the event name of the {@code eventType}, which is one of the types defined by
+   * {@link XMLStreamConstants}.
+   * 
+   * @param eventType
+   *          the event constant to get the event name for as defined by {@link XMLStreamConstants}
+   * @return the event name
+   */
   public static String toEventName(int eventType) {
-    String retval;
-    switch (eventType) {
-    case XMLStreamConstants.START_ELEMENT:
-      retval = "START_ELEMENT";
-      break;
-    case XMLStreamConstants.END_ELEMENT:
-      retval = "END_ELEMENT";
-      break;
-    case XMLStreamConstants.PROCESSING_INSTRUCTION:
-      retval = "PROCESSING_INSTRUCTION";
-      break;
-    case XMLStreamConstants.CHARACTERS:
-      retval = "CHARACTERS";
-      break;
-    case XMLStreamConstants.COMMENT:
-      retval = "COMMENT";
-      break;
-    case XMLStreamConstants.SPACE:
-      retval = "SPACE";
-      break;
-    case XMLStreamConstants.START_DOCUMENT:
-      retval = "START_DOCUMENT";
-      break;
-    case XMLStreamConstants.END_DOCUMENT:
-      retval = "END_DOCUMENT";
-      break;
-    case XMLStreamConstants.ENTITY_REFERENCE:
-      retval = "ENTITY_REFERENCE";
-      break;
-    case XMLStreamConstants.ATTRIBUTE:
-      retval = "ATTRIBUTE";
-      break;
-    case XMLStreamConstants.DTD:
-      retval = "DTD";
-      break;
-    case XMLStreamConstants.CDATA:
-      retval = "CDATA";
-      break;
-    case XMLStreamConstants.NAMESPACE:
-      retval = "NAMESPACE";
-      break;
-    case XMLStreamConstants.NOTATION_DECLARATION:
-      retval = "NOTATION_DECLARATION";
-      break;
-    case XMLStreamConstants.ENTITY_DECLARATION:
-      retval = "ENTITY_DECLARATION";
-      break;
-    default:
+    String retval = EVENT_NAME_MAP.get(eventType);
+    if (retval == null) {
       retval = "unknown event '" + Integer.toString(eventType) + "'";
     }
     return retval;
   }
 
-  public static XMLEvent advanceTo(XMLEventReader2 reader, int eventType) throws XMLStreamException {
+  /**
+   * Advance through XMLEvents until the event type identified by {@code eventType} is reached or the
+   * end of stream is found.
+   * 
+   * @param reader
+   *          the event reader to advance
+   * @param eventType
+   *          the event type to stop on as defined by {@link XMLStreamConstants}
+   * @return the next event of the specified type or {@code null} if the end of stream is reached
+   * @throws XMLStreamException
+   *           if an error occurred while advancing the stream
+   */
+  public static XMLEvent advanceTo(@NotNull XMLEventReader2 reader, int eventType)
+      throws XMLStreamException { // NO_UCD (unused code)
     XMLEvent xmlEvent;
     do {
       xmlEvent = reader.nextEvent();
@@ -239,7 +281,17 @@ public final class XmlEventUtil {
     return xmlEvent;
   }
 
-  public static XMLEvent skipProcessingInstructions(XMLEventReader2 reader) throws XMLStreamException {
+  /**
+   * Skip over any processing instructions.
+   * 
+   * @param reader
+   *          the event reader to advance
+   * @return the last processing instruction event or the reader's next event if no processing
+   *         instruction was found
+   * @throws XMLStreamException
+   *           if an error occurred while advancing the stream
+   */
+  public static XMLEvent skipProcessingInstructions(@NotNull XMLEventReader2 reader) throws XMLStreamException {
     XMLEvent nextEvent;
     while ((nextEvent = reader.peek()).isProcessingInstruction()) {
       nextEvent = reader.nextEvent();
@@ -247,7 +299,17 @@ public final class XmlEventUtil {
     return nextEvent;
   }
 
-  public static XMLEvent skipWhitespace(XMLEventReader2 reader) throws XMLStreamException {
+  /**
+   * Skip over any whitespace.
+   * 
+   * @param reader
+   *          the event reader to advance
+   * @return the last character event containing whitespace or the reader's next event if no character
+   *         event was found
+   * @throws XMLStreamException
+   *           if an error occurred while advancing the stream
+   */
+  public static XMLEvent skipWhitespace(@NotNull XMLEventReader2 reader) throws XMLStreamException {
     XMLEvent nextEvent;
     while ((nextEvent = reader.peek()).isCharacters()) {
       Characters characters = nextEvent.asCharacters();
@@ -261,48 +323,123 @@ public final class XmlEventUtil {
     return nextEvent;
   }
 
-  public static boolean isNextEventEndElement(XMLEventReader2 reader, QName name) throws XMLStreamException {
+  /**
+   * Determine if the next event from {@code reader} is an end element whose name matches the provided
+   * {@code name}.
+   * 
+   * @param reader
+   *          the event reader
+   * @param name
+   *          the expected element name
+   * @return {@code true} if the next event matches the {@code name}
+   * @throws XMLStreamException
+   *           if an error occurred while looking at the next event
+   */
+  @SuppressWarnings("null")
+  public static boolean isNextEventEndElement(@NotNull XMLEventReader2 reader, @NotNull QName name)
+      throws XMLStreamException {
     return isNextEventEndElement(reader, name.getLocalPart(), name.getNamespaceURI());
   }
 
-  public static boolean isNextEventEndElement(XMLEventReader2 reader, String expectedLocalName,
+  /**
+   * Determine if the next event from {@code reader} is an end element whose name matches the provided
+   * {@code expectedLocalName} and {@code expectedNamespace}.
+   * 
+   * @param reader
+   *          the event reader
+   * @param expectedLocalName
+   *          the expected element name
+   * @param expectedNamespace
+   *          the expected element namespace
+   * @return {@code true} if the next event matches the {@code name}
+   * @throws XMLStreamException
+   *           if an error occurred while looking at the next event
+   */
+  public static boolean isNextEventEndElement(@NotNull XMLEventReader2 reader, @NotNull String expectedLocalName,
       String expectedNamespace) throws XMLStreamException {
     Objects.requireNonNull(reader, "reader");
     Objects.requireNonNull(expectedLocalName, "expectedLocalName");
     XMLEvent event = reader.peek();
 
-    boolean retval = true;
-    if (!event.isEndElement()) {
-      retval = false;
-    } else {
+    boolean retval;
+    if (event.isEndElement()) {
       EndElement endElement = event.asEndElement();
       QName name = endElement.getName();
-      if (!expectedLocalName.equals(name.getLocalPart())) {
-        retval = false;
-      } else if (expectedNamespace != null && !expectedNamespace.equals(name.getNamespaceURI())) {
-        retval = false;
-      }
+      retval = expectedLocalName.equals(name.getLocalPart())
+          && (expectedNamespace == null || expectedNamespace.equals(name.getNamespaceURI()));
+    } else {
+      retval = false;
     }
     return retval;
   }
 
-  public static boolean isNextEventStartElement(XMLEventReader2 reader, QName name) throws XMLStreamException {
+  /**
+   * Determine if the next event from {@code reader} is a start element whose name matches the
+   * provided {@code name}.
+   * 
+   * @param reader
+   *          the event reader
+   * @param name
+   *          the expected element name
+   * @return {@code true} if the next event is a start element that matches the {@code name}
+   * @throws XMLStreamException
+   *           if an error occurred while looking at the next event
+   */
+  public static boolean isNextEventStartElement(XMLEventReader2 reader, QName name) throws XMLStreamException { // NO_UCD
+                                                                                                                // (unused
+                                                                                                                // code)
     XMLEvent nextEvent = reader.peek();
     return nextEvent.isStartElement() && name.equals(nextEvent.asStartElement().getName());
   }
 
-  public static boolean isNextEventEndDocument(XMLEventReader2 reader) throws XMLStreamException {
+  /**
+   * Determine if the next event from {@code reader} is an end of document event.
+   * 
+   * @param reader
+   *          the event reader
+   * @return {@code true} if the next event is an end of document event
+   * @throws XMLStreamException
+   *           if an error occurred while looking at the next event
+   */
+  public static boolean isNextEventEndDocument(XMLEventReader2 reader) throws XMLStreamException { // NO_UCD (unused
+                                                                                                   // code)
     return reader.peek().isEndDocument();
   }
 
-  public static XMLEvent consumeAndAssert(XMLEventReader2 eventReader, int presumedEventType)
+  /**
+   * Consume the next event from {@code reader} and assert that this event is of the type identified
+   * by {@code presumedEventType}.
+   * 
+   * @param reader
+   *          the event reader
+   * @param presumedEventType
+   *          the expected event type as defined by {@link XMLStreamConstants}
+   * @return the next event
+   * @throws XMLStreamException
+   *           if an error occurred while looking at the next event
+   */
+  public static XMLEvent consumeAndAssert(XMLEventReader2 reader, int presumedEventType)
       throws XMLStreamException {
-    return consumeAndAssert(eventReader, presumedEventType, null);
+    return consumeAndAssert(reader, presumedEventType, null);
   }
 
-  public static XMLEvent consumeAndAssert(XMLEventReader2 eventReader, int presumedEventType, QName presumedName)
+  /**
+   * Consume the next event from {@code reader} and assert that this event is of the type identified
+   * by {@code presumedEventType} and has the name identified by {@code presumedName}.
+   * 
+   * @param reader
+   *          the event reader
+   * @param presumedEventType
+   *          the expected event type as defined by {@link XMLStreamConstants}
+   * @param presumedName
+   *          the expected name of the node associated with the event
+   * @return the next event
+   * @throws XMLStreamException
+   *           if an error occurred while looking at the next event
+   */
+  public static XMLEvent consumeAndAssert(XMLEventReader2 reader, int presumedEventType, QName presumedName)
       throws XMLStreamException {
-    XMLEvent retval = eventReader.nextEvent();
+    XMLEvent retval = reader.nextEvent();
 
     int eventType = retval.getEventType();
     QName name = toQName(retval);
@@ -315,13 +452,37 @@ public final class XmlEventUtil {
     return retval;
   }
 
-  public static void assertNext(XMLEventReader2 eventReader, int presumedEventType) throws XMLStreamException {
-    assertNext(eventReader, presumedEventType, null);
+  /**
+   * Assert that the next event from {@code reader} is of the type identified by
+   * {@code presumedEventType}.
+   * 
+   * @param reader
+   *          the event reader
+   * @param presumedEventType
+   *          the expected event type as defined by {@link XMLStreamConstants}
+   * @throws XMLStreamException
+   *           if an error occurred while looking at the next event
+   */
+  public static void assertNext(XMLEventReader2 reader, int presumedEventType) throws XMLStreamException { // NO_UCD (unused code)
+    assertNext(reader, presumedEventType, null);
   }
 
-  public static void assertNext(XMLEventReader2 eventReader, int presumedEventType, QName presumedName)
+  /**
+   * Assert that the next event from {@code reader} is of the type identified by
+   * {@code presumedEventType} and has the name identified by {@code presumedName}.
+   * 
+   * @param reader
+   *          the event reader
+   * @param presumedEventType
+   *          the expected event type as defined by {@link XMLStreamConstants}
+   * @param presumedName
+   *          the expected name of the node associated with the event
+   * @throws XMLStreamException
+   *           if an error occurred while looking at the next event
+   */
+  public static void assertNext(XMLEventReader2 reader, int presumedEventType, QName presumedName)
       throws XMLStreamException {
-    XMLEvent nextEvent = eventReader.peek();
+    XMLEvent nextEvent = reader.peek();
 
     int eventType = nextEvent.getEventType();
     QName name = toQName(nextEvent);
@@ -330,8 +491,8 @@ public final class XmlEventUtil {
             presumedName);
   }
 
-  private static String generateAssertMessage(XMLEvent retval, int presumedEventType, QName presumedName) {
-    StringBuilder builder = new StringBuilder();
+  private static CharSequence generateAssertMessage(XMLEvent retval, int presumedEventType, QName presumedName) {
+    StringBuilder builder = new StringBuilder(30);
     builder
         .append("Expected XML ")
         .append(toEventName(presumedEventType));
@@ -342,6 +503,6 @@ public final class XmlEventUtil {
     }
     builder.append("', instead found ")
         .append(toString(retval));
-    return builder.toString();
+    return builder;
   }
 }

@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class CastToDecimalFunction {
+public final class CastToDecimalFunction {
   static final IFunction SIGNATURE = IFunction.newBuilder()
       .name("decimal")
       .argument(IArgument.newBuilder()
@@ -52,6 +52,10 @@ public class CastToDecimalFunction {
       .returnOne()
       .functionHandler(CastToDecimalFunction::execute)
       .build();
+
+  private CastToDecimalFunction() {
+    // disable construction
+  }
 
   @NotNull
   public static ISequence<IDecimalItem> execute(@NotNull IFunction function,

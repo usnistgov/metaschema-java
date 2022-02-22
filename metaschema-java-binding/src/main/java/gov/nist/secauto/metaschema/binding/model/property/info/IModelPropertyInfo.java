@@ -73,14 +73,12 @@ public interface IModelPropertyInfo {
    *          the instance the property is on
    * @throws IOException
    *           if there was an error when reading JSON data
-   * @throws BindingException
-   *           if there was an error related to this properties Java class binding
    */
   void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
-      throws IOException, BindingException;
+      throws IOException;
 
   boolean readValue(IPropertyCollector collector, Object parentInstance, StartElement start, IXmlParsingContext context)
-      throws IOException, BindingException, XMLStreamException;
+      throws IOException, XMLStreamException;
 
   boolean writeValue(Object parentInstance, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException;

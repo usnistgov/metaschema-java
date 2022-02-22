@@ -29,7 +29,11 @@ package gov.nist.secauto.metaschema.model.xmlbeans.handler;
 import gov.nist.secauto.metaschema.model.common.ModelConstants;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
-public class XmlGroupAsBehaviorType {
+public final class XmlGroupAsBehaviorType {
+  private XmlGroupAsBehaviorType() {
+    // disable construction
+  }
+
   /**
    * Sets the value of obj onto the given simple value target.
    * 

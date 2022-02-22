@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class CastToNcNameFunction {
+public final class CastToNcNameFunction {
   static final IFunction SIGNATURE = IFunction.newBuilder()
       .name("NCName")
       .argument(IArgument.newBuilder()
@@ -52,6 +52,10 @@ public class CastToNcNameFunction {
       .returnOne()
       .functionHandler(CastToNcNameFunction::execute)
       .build();
+
+  private CastToNcNameFunction() {
+    // disable construction
+  }
 
   @NotNull
   public static ISequence<INcNameItem> execute(@NotNull IFunction function,

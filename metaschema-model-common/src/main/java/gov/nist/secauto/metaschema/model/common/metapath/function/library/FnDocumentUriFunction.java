@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import java.net.URI;
 import java.util.List;
 
-public class FnDocumentUriFunction {
+public final class FnDocumentUriFunction {
 
   static final IFunction SIGNATURE_NO_ARG = IFunction.newBuilder()
       .name("document-uri")
@@ -67,6 +67,10 @@ public class FnDocumentUriFunction {
       .functionHandler(FnDocumentUriFunction::executeOneArg)
       .build();
 
+  private FnDocumentUriFunction() {
+    // disable construction
+  }
+
   @NotNull
   public static ISequence<IAnyUriItem> executeNoArg(@NotNull IFunction function,
       @NotNull List<@NotNull ISequence<?>> arguments,
@@ -74,7 +78,7 @@ public class FnDocumentUriFunction {
       INodeItem focus) {
 
     INodeItem item = focus;
-    if (item == null || !(item instanceof IDocumentNodeItem)) {
+    if (!(item instanceof IDocumentNodeItem)) {
       return ISequence.empty();
     }
 

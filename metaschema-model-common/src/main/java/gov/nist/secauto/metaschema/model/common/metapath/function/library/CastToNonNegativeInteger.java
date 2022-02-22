@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class CastToNonNegativeInteger {
+public final class CastToNonNegativeInteger {
   static final IFunction SIGNATURE = IFunction.newBuilder()
       .name("nonNegativeInteger")
       .argument(IArgument.newBuilder()
@@ -52,6 +52,10 @@ public class CastToNonNegativeInteger {
       .returnOne()
       .functionHandler(CastToNonNegativeInteger::execute)
       .build();
+
+  private CastToNonNegativeInteger() {
+    // disable construction
+  }
 
   @NotNull
   public static ISequence<INonNegativeIntegerItem> execute(@NotNull IFunction function,

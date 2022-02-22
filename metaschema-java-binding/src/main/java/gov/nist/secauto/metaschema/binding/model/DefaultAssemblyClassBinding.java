@@ -231,6 +231,11 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
+  public DefaultAssemblyClassBinding getClassBinding() {
+    return this;
+  }
+
+  @Override
   public Collection<? extends IBoundNamedModelInstance> getModelInstances() {
     return getNamedModelInstances();
   }
@@ -418,7 +423,7 @@ public class DefaultAssemblyClassBinding
 
   @Override
   protected void readBody(Object instance, StartElement start, IXmlParsingContext context)
-      throws IOException, XMLStreamException, BindingException {
+      throws IOException, XMLStreamException {
     Set<IBoundNamedModelInstance> unhandledProperties = new HashSet<>();
     for (IBoundNamedModelInstance modelProperty : getModelInstances()) {
       if (!modelProperty.read(instance, start, context)) {
@@ -435,22 +440,24 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public List<Object> readItem(Object parentInstance, IJsonParsingContext context)
-      throws IOException, BindingException {
-
-    Object instance = newInstance();
-
-    callBeforeDeserialize(instance, parentInstance);
-
-    readInternal(parentInstance, instance, context);
-
-    callAfterDeserialize(instance, parentInstance);
-
-    return Collections.singletonList(instance);
+  public List<Object> readItem(Object parentInstance, IJsonParsingContext context) throws IOException {
+    try {
+      Object instance = newInstance();
+  
+      callBeforeDeserialize(instance, parentInstance);
+  
+      readInternal(parentInstance, instance, context);
+  
+      callAfterDeserialize(instance, parentInstance);
+  
+      return Collections.singletonList(instance);
+    } catch (BindingException ex) {
+      throw new IOException(ex);
+    }
   }
 
   protected void readInternal(@SuppressWarnings("unused") Object parentInstance, Object instance,
-      IJsonParsingContext context) throws BindingException, IOException {
+      IJsonParsingContext context) throws IOException {
     JsonParser jsonParser = context.getReader();
 
     JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME);

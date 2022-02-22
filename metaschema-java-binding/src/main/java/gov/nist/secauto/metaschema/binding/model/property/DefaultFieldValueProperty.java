@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.binding.model.property;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
@@ -94,7 +93,7 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public Object read(IJsonParsingContext context) throws IOException, BindingException {
+  public Object read(IJsonParsingContext context) throws IOException {
     if (getParentClassBinding().hasJsonValueKeyFlagInstance()) {
       throw new UnsupportedOperationException("for a JSON value key, use the read(Object, IJsonParsingContext) method");
     }
@@ -111,7 +110,7 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public boolean read(Object parentInstance, IJsonParsingContext context) throws IOException, BindingException {
+  public boolean read(Object parentInstance, IJsonParsingContext context) throws IOException {
     boolean handled = isNextProperty(context);
     if (handled) {
       JsonParser parser = context.getReader();
@@ -134,20 +133,20 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public Object read(IXmlParsingContext context) throws IOException, BindingException, XMLStreamException {
+  public Object read(IXmlParsingContext context) throws IOException, XMLStreamException {
     return readInternal(context);
   }
 
   @Override
   public boolean read(Object parentInstance, StartElement start, IXmlParsingContext context)
-      throws IOException, XMLStreamException, BindingException {
+      throws IOException, XMLStreamException {
     Object value = readInternal(context);
     setValue(parentInstance, value);
     return true;
   }
 
   @Override
-  public Object readValue(Object parentInstance, IJsonParsingContext context) throws IOException, BindingException {
+  public Object readValue(Object parentInstance, IJsonParsingContext context) throws IOException {
     return readInternal(context);
   }
 

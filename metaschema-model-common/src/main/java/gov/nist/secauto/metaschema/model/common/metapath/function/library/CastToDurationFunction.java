@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class CastToDurationFunction {
+public final class CastToDurationFunction {
   static final IFunction SIGNATURE = IFunction.newBuilder()
       .name("duration")
       .argument(IArgument.newBuilder()
@@ -52,6 +52,10 @@ public class CastToDurationFunction {
       .returnOne()
       .functionHandler(CastToDurationFunction::execute)
       .build();
+
+  private CastToDurationFunction() {
+    // disable construction
+  }
 
   @NotNull
   public static ISequence<IDurationItem> execute(@NotNull IFunction function,

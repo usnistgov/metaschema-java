@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class CastToStringFunction {
+public final class CastToStringFunction {
   static final IFunction SIGNATURE = IFunction.newBuilder()
       .name("string")
       .argument(IArgument.newBuilder()
@@ -51,6 +51,10 @@ public class CastToStringFunction {
       .returnOne()
       .functionHandler(CastToStringFunction::execute)
       .build();
+
+  private CastToStringFunction() {
+    // disable construction
+  }
 
   @NotNull
   public static ISequence<IStringItem> execute(@NotNull IFunction function,

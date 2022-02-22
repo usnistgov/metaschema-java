@@ -37,7 +37,19 @@ public final class ReplacementScanner {
     // disable construction
   }
 
-  public static CharSequence replaceTokens(@NotNull String text, @NotNull Pattern pattern,
+  /**
+   * Search for instances of {@code pattern} in {@code text}. Replace each matching occurrence using
+   * the {@code replacementFunction}.
+   * 
+   * @param text
+   *          the text to search
+   * @param pattern
+   *          the pattern to search for
+   * @param replacementFunction
+   *          a function that will provided the replacement text
+   * @return the resulting text after replacing matching occurrences in {@code text}
+   */
+  public static CharSequence replaceTokens(@NotNull CharSequence text, @NotNull Pattern pattern,
       Function<Matcher, CharSequence> replacementFunction) {
     int lastIndex = 0;
     StringBuilder retval = new StringBuilder();

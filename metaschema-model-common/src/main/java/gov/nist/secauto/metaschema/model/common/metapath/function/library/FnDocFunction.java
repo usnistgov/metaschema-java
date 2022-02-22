@@ -42,7 +42,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-public class FnDocFunction {
+public final class FnDocFunction {
   // private static final Logger logger = LogManager.getLogger(FnDocFunction.class);
 
   static final IFunction SIGNATURE = IFunction.newBuilder()
@@ -59,6 +59,10 @@ public class FnDocFunction {
       .returnOne()
       .functionHandler(FnDocFunction::execute)
       .build();
+
+  private FnDocFunction() {
+    // disable construction
+  }
 
   @NotNull
   public static ISequence<?> execute(@NotNull IFunction function,

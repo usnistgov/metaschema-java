@@ -95,11 +95,9 @@ public interface IClassBinding extends IBoundNamedModelDefinition {
    * @return the instance or {@code null} if no data was parsed
    * @throws IOException
    *           if an error occurred while reading the parsed content
-   * @throws BindingException
-   *           if an error occurred parsing content into java instances
    */
   // TODO: check if a boolean return value is needed
-  List<Object> readItem(Object parentInstance, IJsonParsingContext context) throws IOException, BindingException;
+  List<Object> readItem(Object parentInstance, IJsonParsingContext context) throws IOException;
 
   /**
    * Reads a XML element storing the associated data in a Java class instance and adds the resulting
@@ -121,13 +119,11 @@ public interface IClassBinding extends IBoundNamedModelDefinition {
    * @return the instance or {@code null} if no data was parsed
    * @throws IOException
    *           if an error occurred while reading the parsed content
-   * @throws BindingException
-   *           if an error occurred parsing content into java instances
    * @throws XMLStreamException
    *           if an error occurred while parsing the content as XML
    */
   Object readItem(Object parentInstance, StartElement start, IXmlParsingContext context)
-      throws BindingException, IOException, XMLStreamException;
+      throws IOException, XMLStreamException;
 
   void writeItem(Object item, QName parentName, IXmlWritingContext context) throws IOException, XMLStreamException;
 

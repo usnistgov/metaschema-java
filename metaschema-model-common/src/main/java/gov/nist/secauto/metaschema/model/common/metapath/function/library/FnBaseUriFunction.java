@@ -43,7 +43,7 @@ import java.util.List;
  * Since a node doesn't have a base URI in Metaschema, this is an alias for the document-uri
  * function.
  */
-public class FnBaseUriFunction {
+public final class FnBaseUriFunction {
 
   static final IFunction SIGNATURE_NO_ARG = IFunction.newBuilder()
       .name("base-uri")
@@ -69,6 +69,10 @@ public class FnBaseUriFunction {
       .returnOne()
       .functionHandler(FnBaseUriFunction::executeOneArg)
       .build();
+
+  private FnBaseUriFunction() {
+    // disable construction
+  }
 
   @NotNull
   public static ISequence<IAnyUriItem> executeNoArg(@NotNull IFunction function,

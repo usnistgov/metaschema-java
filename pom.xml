@@ -8,7 +8,7 @@
 	</parent>
 	<groupId>gov.nist.secauto.metaschema</groupId>
 	<artifactId>metaschema-framework</artifactId>
-	<version>0.6.1-SNAPSHOT</version>
+	<version>0.7.0-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
@@ -116,7 +116,9 @@
 		<dependency.antlr4.version>4.9.2</dependency.antlr4.version>
 		<dependency.commons-lang3.version>3.11</dependency.commons-lang3.version>
 		<dependency.commons-collections4.version>4.4</dependency.commons-collections4.version>
+		<dependency.commons-io.version>2.6</dependency.commons-io.version>
 		<dependency.eclipse-jdt-annotation.version>2.2.600</dependency.eclipse-jdt-annotation.version>
+		<dependency.everit-json.version>1.14.0</dependency.everit-json.version>
 		<dependency.flexmark.version>0.62.2</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.30</dependency.freemarker.version>
 		<dependency.jackson.version>2.13.1</dependency.jackson.version>
@@ -129,6 +131,8 @@
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
 		<dependency.woodstox.version>6.2.7</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.0.3</dependency.xmlbeans.version>
+	
+		
 		<!-- <dependency.xmlbeans.version>4.0.0</dependency.xmlbeans.version> -->
 		<plugin.license.version>4.0.rc1</plugin.license.version>
 		<plugin.antlr4test.version>1.17</plugin.antlr4test.version>
@@ -272,6 +276,13 @@
 				<artifactId>jackson-dataformat-yaml</artifactId>
 				<version>${dependency.jackson.version}</version>
 			</dependency>
+
+			<dependency>
+				<groupId>com.github.erosb</groupId>
+				<artifactId>everit-json-schema</artifactId>
+				<version>${dependency.everit-json.version}</version>
+			</dependency>
+
 			<dependency>
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
@@ -323,6 +334,11 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-collections4</artifactId>
 				<version>${dependency.commons-collections4.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${dependency.commons-io.version}</version>
 			</dependency>
 
 			<dependency>

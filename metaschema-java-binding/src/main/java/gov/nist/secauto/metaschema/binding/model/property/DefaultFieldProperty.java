@@ -92,6 +92,11 @@ public class DefaultFieldProperty
   }
 
   @Override
+  public IFieldClassBinding getClassBinding() {
+    return getDefinition().getClassBinding();
+  }
+
+  @Override
   protected IJavaTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
@@ -300,6 +305,12 @@ public class DefaultFieldProperty
     @Override
     public IMetaschema getContainingMetaschema() {
       // TODO: implement
+      return null;
+    }
+
+    @Override
+    public IFieldClassBinding getClassBinding() {
+      // there is no field class binding, since this is a scalar field
       return null;
     }
   }

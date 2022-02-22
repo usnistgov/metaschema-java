@@ -24,60 +24,24 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.io.json;
+package gov.nist.secauto.metaschema.binding.validation;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 
-import gov.nist.secauto.metaschema.binding.IBindingContext;
-import gov.nist.secauto.metaschema.binding.io.AbstractSerializer;
-import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.io.Writer;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
 
-public class DefaultJsonSerializer<CLASS>
-    extends AbstractSerializer<CLASS> {
-  private JsonFactory jsonFactory;
+public interface IContentValidator {
+  @NotNull
+  IValidationResult validate(@NotNull Path path) throws IOException;
 
-  public DefaultJsonSerializer(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
-    super(bindingContext, classBinding);
-  }
+  @NotNull
+  IValidationResult validate(@NotNull URL url) throws IOException, URISyntaxException;
 
-  protected JsonFactory getJsonFactoryInstance() {
-    return JsonFactoryFactory.instance();
-  }
-
-  protected JsonFactory getJsonFactory() {
-    synchronized (this) {
-      if (jsonFactory == null) {
-        jsonFactory = getJsonFactoryInstance();
-      }
-      return jsonFactory;
-    }
-  }
-
-  protected void setJsonFactory(JsonFactory jsonFactory) {
-    synchronized (this) {
-      this.jsonFactory = jsonFactory;
-    }
-  }
-
-  protected JsonGenerator newJsonGenerator(Writer writer) throws IOException {
-    JsonFactory factory = getJsonFactory();
-    JsonGenerator retval = factory.createGenerator(writer);
-    retval.setPrettyPrinter(new DefaultPrettyPrinter());
-    return retval;
-  }
-
-  @Override
-  public void serialize(CLASS data, Writer writer) throws IOException {
-    try (JsonGenerator generator = newJsonGenerator(writer)) {
-      IAssemblyClassBinding classBinding = getClassBinding();
-      IJsonWritingContext writingContext = new DefaultJsonWritingContext(generator);
-      classBinding.writeRoot(data, writingContext);
-    }
-  }
-
+  @NotNull
+  IValidationResult validate(@NotNull IBoundXdmNodeItem nodeItem) throws IOException;
 }

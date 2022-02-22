@@ -57,7 +57,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -229,7 +228,7 @@ class AssemblyClassBindingTest {
     File testContent
         = new File(getClass().getClassLoader().getResource("test-content/bound-class-complex.xml").getFile());
     try (BufferedReader reader = Files.newBufferedReader(testContent.toPath())) {
-      XMLEventReader eventReader = newXmlParser(new FileReader(testContent));
+      XMLEventReader eventReader = newXmlParser(reader);
 
       IAssemblyClassBinding classBinding = getAssemblyClassBinding();
 
