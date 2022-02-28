@@ -48,6 +48,7 @@ public interface IModelPropertyInfo {
    * 
    * @return the property
    */
+  @NotNull
   IBoundNamedModelInstance getProperty();
 
   /**
@@ -55,8 +56,10 @@ public interface IModelPropertyInfo {
    * 
    * @return the raw type of the bound object
    */
+  @NotNull
   Class<?> getItemType();
 
+  @NotNull
   IPropertyCollector newPropertyCollector();
 
   // TODO is the following needed?
@@ -87,12 +90,12 @@ public interface IModelPropertyInfo {
 
   boolean isValueSet(Object parentInstance) throws IOException;
 
-  default Collection<? extends Object> getItemsFromParentInstance(Object parentInstance) {
+  default Collection<@NotNull ? extends Object> getItemsFromParentInstance(Object parentInstance) {
     Object value = getProperty().getValue(parentInstance);
     return getItemsFromValue(value);
   }
 
-  Collection<? extends Object> getItemsFromValue(Object value);
+  Collection<@NotNull ? extends Object> getItemsFromValue(Object value);
 
   void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull IPropertyCollector collector)
       throws BindingException;

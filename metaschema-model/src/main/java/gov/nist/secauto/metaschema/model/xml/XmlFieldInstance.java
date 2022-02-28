@@ -70,6 +70,7 @@ public class XmlFieldInstance
     return xmlField;
   }
 
+  @SuppressWarnings("null")
   @Override
   public IFieldDefinition getDefinition() {
     return getContainingDefinition().getContainingMetaschema().getScopedFieldDefinitionByName(getName());
@@ -91,6 +92,7 @@ public class XmlFieldInstance
     return retval;
   }
 
+  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlField().getRef();

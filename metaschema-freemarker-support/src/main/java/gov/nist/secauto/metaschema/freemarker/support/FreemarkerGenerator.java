@@ -27,13 +27,11 @@
 package gov.nist.secauto.metaschema.freemarker.support;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collection;
 
 import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
@@ -41,9 +39,6 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateNotFoundException;
 
 public interface FreemarkerGenerator {
-  void generateFromMetaschemas(@NotNull Collection<@NotNull ? extends IMetaschema> metaschemas, @NotNull Writer out)
-      throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException;
-
-  void generateFromDefinitions(@NotNull Collection<@NotNull ? extends IDefinition> definitions, @NotNull Writer out)
+  void generateFromMetaschema(@NotNull IMetaschema metaschema, @NotNull Writer out)
       throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException;
 }

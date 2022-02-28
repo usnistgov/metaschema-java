@@ -137,6 +137,12 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
   }
 
   @Override
+  public boolean isInline() {
+    return false;
+  }
+
+  @SuppressWarnings("null")
+  @Override
   public String getName() {
     return getXmlField().getName();
   }
@@ -173,6 +179,7 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
     return flagContainer.getFlagInstanceMap();
   }
 
+  @SuppressWarnings("null")
   @Override
   public IJavaTypeAdapter<?> getDatatype() {
     IJavaTypeAdapter<?> retval;
@@ -229,21 +236,13 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
 
   @Override
   public boolean isCollapsible() {
-    // default value
-    boolean retval = ModelConstants.DEFAULT_FIELD_COLLAPSIBLE;
-    if (getXmlField().isSetCollapsible()) {
-      retval = getXmlField().getCollapsible();
-    }
-    return retval;
+    return getXmlField().isSetCollapsible() ? getXmlField().getCollapsible() : ModelConstants.DEFAULT_FIELD_COLLAPSIBLE;
   }
 
+  @SuppressWarnings("null")
   @Override
   public ModuleScopeEnum getModuleScope() {
-    ModuleScopeEnum retval = IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
-    if (getXmlField().isSetScope()) {
-      retval = getXmlField().getScope();
-    }
-    return retval;
+    return getXmlField().isSetScope() ? getXmlField().getScope() : IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
   }
 
   @Override

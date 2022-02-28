@@ -74,6 +74,7 @@ public abstract class AbstractConstraint implements IConstraint {
     return id;
   }
 
+  @Override
   @NotNull
   public Level getLevel() {
     return level;

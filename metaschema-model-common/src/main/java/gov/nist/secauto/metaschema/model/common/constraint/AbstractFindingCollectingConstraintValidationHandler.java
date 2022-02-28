@@ -42,6 +42,7 @@ public abstract class AbstractFindingCollectingConstraintValidationHandler
   @NotNull
   private IPathFormatter pathFormatter = IPathFormatter.METAPATH_PATH_FORMATER;
 
+  @Override
   @NotNull
   public IPathFormatter getPathFormatter() {
     return pathFormatter;

@@ -47,7 +47,7 @@ import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFieldDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFieldInstance;
 import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
-import gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -55,10 +55,10 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
-public class XmlLocalFieldDefinition
+public class XmlInlineFieldDefinition
     extends AbstractFieldInstance {
   @NotNull
-  private final LocalFieldDefinitionType xmlField;
+  private final InlineFieldDefinitionType xmlField;
   @NotNull
   private final InternalFieldDefinition fieldDefinition;
 
@@ -70,7 +70,7 @@ public class XmlLocalFieldDefinition
    * @param parent
    *          the parent assembly definition
    */
-  public XmlLocalFieldDefinition(@NotNull LocalFieldDefinitionType xmlField, @NotNull IXmlAssemblyDefinition parent) {
+  public XmlInlineFieldDefinition(@NotNull InlineFieldDefinitionType xmlField, @NotNull IXmlAssemblyDefinition parent) {
     super(parent);
     this.xmlField = xmlField;
     this.fieldDefinition = new InternalFieldDefinition();
@@ -82,7 +82,7 @@ public class XmlLocalFieldDefinition
    * @return the XML model
    */
   @NotNull
-  protected LocalFieldDefinitionType getXmlField() {
+  protected InlineFieldDefinitionType getXmlField() {
     return xmlField;
   }
 
@@ -185,7 +185,7 @@ public class XmlLocalFieldDefinition
     return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
   }
 
-  public class InternalFieldDefinition implements IXmlFieldDefinition, ILocalDefinition<XmlLocalFieldDefinition> {
+  public class InternalFieldDefinition implements IXmlFieldDefinition, ILocalDefinition<XmlInlineFieldDefinition> {
     private XmlFlagContainerSupport flagContainer;
     private IValueConstraintSupport constraints;
 
@@ -194,6 +194,11 @@ public class XmlLocalFieldDefinition
      */
     public InternalFieldDefinition() {
 
+    }
+
+    @Override
+    public boolean isInline() {
+      return true;
     }
 
     @Override
@@ -213,7 +218,7 @@ public class XmlLocalFieldDefinition
 
     @Override
     public String getName() {
-      return XmlLocalFieldDefinition.this.getName();
+      return XmlInlineFieldDefinition.this.getName();
     }
 
     @Override
@@ -223,7 +228,7 @@ public class XmlLocalFieldDefinition
 
     @Override
     public String getXmlNamespace() {
-      return XmlLocalFieldDefinition.this.getXmlNamespace();
+      return XmlInlineFieldDefinition.this.getXmlNamespace();
     }
 
     @SuppressWarnings("null")
@@ -274,11 +279,10 @@ public class XmlLocalFieldDefinition
     }
 
     @Override
-    public XmlLocalFieldDefinition getDefiningInstance() {
-      return XmlLocalFieldDefinition.this;
+    public XmlInlineFieldDefinition getDefiningInstance() {
+      return XmlInlineFieldDefinition.this;
     }
 
-    @SuppressWarnings("null")
     protected synchronized void initFlagContainer() {
       if (flagContainer == null) {
         flagContainer = new XmlFlagContainerSupport(getXmlField(), this);
@@ -358,7 +362,7 @@ public class XmlLocalFieldDefinition
 
     @Override
     public MarkupMultiline getRemarks() {
-      return XmlLocalFieldDefinition.this.getRemarks();
+      return XmlInlineFieldDefinition.this.getRemarks();
     }
 
     @Override

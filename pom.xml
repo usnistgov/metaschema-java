@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>20</version>
+		<version>21-SNAPSHOT</version>
 	</parent>
 	<groupId>gov.nist.secauto.metaschema</groupId>
 	<artifactId>metaschema-framework</artifactId>
@@ -128,11 +130,12 @@
 		<dependency.junit5-platform-launcher.version>1.8.2</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.17.1</dependency.log4j2.version>
 		<dependency.moxy.version>3.0.0</dependency.moxy.version>
+		<dependency.saxon.version>11.2</dependency.saxon.version>
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
 		<dependency.woodstox.version>6.2.7</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.0.3</dependency.xmlbeans.version>
-	
-		
+
+
 		<!-- <dependency.xmlbeans.version>4.0.0</dependency.xmlbeans.version> -->
 		<plugin.license.version>4.0.rc1</plugin.license.version>
 		<plugin.antlr4test.version>1.17</plugin.antlr4test.version>
@@ -209,6 +212,12 @@
 				<groupId>org.codehaus.woodstox</groupId>
 				<artifactId>stax2-api</artifactId>
 				<version>${dependency.stax2-api.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>net.sf.saxon</groupId>
+				<artifactId>Saxon-HE</artifactId>
+				<version>${dependency.saxon.version}</version>
 			</dependency>
 
 			<dependency>
@@ -347,14 +356,9 @@
 				<version>${dependency.jetbrains-annotation.version}</version>
 				<scope>provided</scope>
 			</dependency>
-			<!--
-			<dependency>
-				<groupId>org.eclipse.jdt</groupId>
-				<artifactId>org.eclipse.jdt.annotation</artifactId>
-				<version>>${dependency.eclipse-jdt-annotation.version}</version>
-				<scope>provided</scope>
-			</dependency>
-		-->
+			<!-- <dependency> <groupId>org.eclipse.jdt</groupId> <artifactId>org.eclipse.jdt.annotation</artifactId> 
+				<version>>${dependency.eclipse-jdt-annotation.version}</version> <scope>provided</scope> 
+				</dependency> -->
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-api</artifactId>
@@ -571,11 +575,8 @@
 								<configuration>
 									<fail>true</fail>
 									<rules>
-										<!--
-										<reactorModuleConvergence>
-											<ignoreModuleDependencies>true</ignoreModuleDependencies>
-										</reactorModuleConvergence>
--->
+										<!-- <reactorModuleConvergence> <ignoreModuleDependencies>true</ignoreModuleDependencies> 
+											</reactorModuleConvergence> -->
 										<banDuplicateClasses>
 											<scopes>
 												<scope>compile</scope>
@@ -694,10 +695,8 @@
 		<module>metaschema-maven-plugin</module>
 		<module>metaschema-java-binding</module>
 		<module>metaschema-model-common</module>
-		<!--
 		<module>metaschema-schema-generator</module>
-		<module>metaschema-documentation-generator</module>
 		<module>metaschema-freemarker-support</module>
--->
+		<!-- <module>metaschema-documentation-generator</module> -->
 	</modules>
 </project>

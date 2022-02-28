@@ -58,7 +58,7 @@ public interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSuppl
   //
   // void writeCollapsedWritableItem(CollapsedWritableItem proxy, IJsonWritingContext context);
 
-  void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, IJsonWritingContext context)
+  void writeItems(Collection<@NotNull ? extends Object> items, boolean writeObjectWrapper, IJsonWritingContext context)
       throws IOException;
 
   Object copyItem(@NotNull Object fromItem, Object parentInstance) throws BindingException;

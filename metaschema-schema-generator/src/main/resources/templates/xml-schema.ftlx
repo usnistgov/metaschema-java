@@ -11,101 +11,89 @@
 
 
 <#function typeForDefinition def>
+  <#local definitionType="${def.containingMetaschema.shortName}-${typeName(def)}-${def.modelType?upper_case}"/>
+
+  <#-- 
   <#local definitionType="${def.containingMetaschema.shortName}_${def.modelType}_${typeName(def)}_type"/>
   <#local definitionType="${toCamelCase(definitionType)}"/>
+   -->
   <#return definitionType/>
 </#function>
 
 <#function typeForValue def>
-  <#switch def.datatype>
-    <#case "BOOLEAN">
+  <#switch def.datatype.name>
+    <#case "base64Binary">
+      <#local valueType="xs:base64Binary"/>
+      <#break>
+    <#case "boolean">
       <#local valueType="xs:boolean"/>
       <#break>
-    <#case "BASE64">
-      <#local valueType="xs:base64Binary"/>
-      <#break>
-    <#case "STRING">
-      <#local valueType="xs:base64Binary"/>
-      <#break>
-    <#case "NCNAME">
-      <#local valueType="xs:NCName"/>
-      <#break>
-    <#case "DECIMAL">
-      <#local valueType="xs:decimal"/>
-      <#break>
-    <#case "INTEGER">
-      <#local valueType="xs:integer"/>
-      <#break>
-    <#case "NON_NEGATIVE_INTEGER">
-      <#local valueType="xs:nonNegativeInteger"/>
-      <#break>
-    <#case "POSITIVE_INTEGER">
-      <#local valueType="xs:positiveInteger"/>
-      <#break>
-    <#case "DATE">
+    <#case "date">
       <#local valueType="xs:date"/>
       <#break>
-    <#case "DATE_TIME">
+    <#case "dateTime">
       <#local valueType="xs:dateTime"/>
       <#break>
-    <#case "IP_V4_ADDRESS">
-      <#local valueType="ip-v4-address"/>
-      <@"<#assign ${def.datatype}_used=true>"?interpret />
+    <#case "day-time-duration">
+      <#-- consider a specialized data type -->
+      <#local valueType="xs:duration"/>
       <#break>
-    <#case "IP_V6_ADDRESS">
-      <#local valueType="ip-v6-address"/>
-      <@"<#assign ${def.datatype}_used=true>"?interpret />
+    <#case "decimal">
+      <#local valueType="xs:decimal"/>
       <#break>
-    <#case "DATE_TIME_WITH_TZ">
-      <#local valueType="dateTime-with-timezone"/>
-      <@"<#assign ${def.datatype}_used=true>"?interpret />
+    <#case "integer">
+      <#local valueType="xs:integer"/>
       <#break>
-    <#case "DATE_WITH_TZ">
-      <#local valueType="date-with-timezone"/>
-      <@"<#assign ${def.datatype}_used=true>"?interpret />
+    <#case "NCName">
+      <#local valueType="xs:NCName"/>
       <#break>
-    <#case "EMAIL_ADDRESS">
-      <#local valueType="email"/>
-      <@"<#assign ${def.datatype}_used=true>"?interpret />
+    <#case "nonNegativeInteger">
+      <#local valueType="xs:nonNegativeInteger"/>
       <#break>
-    <#case "HOSTNAME">
-      <#local valueType="hostname"/>
-      <@"<#assign ${def.datatype}_used=true>"?interpret />
+    <#case "positiveInteger">
+      <#local valueType="xs:positiveInteger"/>
       <#break>
-    <#case "URI">
-      <#local valueType="uri"/>
-      <@"<#assign ${def.datatype}_used=true>"?interpret />
+    <#case "string">
+      <#local valueType="xs:string"/>
       <#break>
-    <#case "URI_REFERENCE">
-      <#local valueType="uri-reference"/>
-      <@"<#assign ${def.datatype}_used=true>"?interpret />
+    <#case "markup-line">
+      <#local valueType="markupLineType"/>
+      <#assign markup\-line_used=true/>
       <#break>
-    <#case "UUID">
-      <#local valueType="uuid"/>
-      <@"<#assign ${def.datatype}_used=true>"?interpret />
+    <#case "markup-multiline">
+      <#local valueType="markupMultilineType"/>
+      <#assign markup\-multiline_used=true/>
+      <#break>
+    <#case "year-month-duration">
+      <#-- consider a specialized data type -->
+      <#local valueType="xs:duration"/>
       <#break>
     <#default>
-<#--       <#local valueType="${def.datatype}"/>  -->
-      <#local valueType="xs:string"/>
-      <@"<#assign ${def.datatype}_used=true>"?interpret />
-<#-- 
-  MARKUP_LINE
-  MARKUP_MULTILINE
- -->
+      <#-- date-with-timezone -->
+      <#-- dateTime-with-timezone -->
+      <#-- email -->
+      <#-- hostname -->
+      <#-- ip-v4-address -->
+      <#-- ip-v6-address -->
+      <#-- token -->
+      <#-- uri -->
+      <#-- uri-reference -->
+      <#-- uuid -->
+      <#local valueType>${def.datatype.name}</#local>
+      <@'<#assign ${def.datatype.name}_used=true/>'?replace("-","\\-")?interpret />
+ 
+	  <#-- markup\-line -->
+      <#-- markup\-multiline -->
   </#switch>
 
   <#return valueType>
 </#function>
 
 <#macro assemblyDefinition def>
-  <xs:complexType name="${typeForDefinition(def)}">
-    <xs:annotation>
-      <xs:appinfo>
-        <m:formal-name>${def.formalName}</m:formal-name>
-        <m:description>${def.description.toHtml()?no_esc}</m:description>
-      </xs:appinfo>
-      <xs:documentation><b>${def.formalName}</b>: ${def.description.toHtml()?no_esc}</xs:documentation>
-    </xs:annotation>
+  <xs:complexType<#if !def.inline> name="${typeForDefinition(def)}"</#if>>
+    <#if !def.inline>
+  	<@definitionAnnotation def=def/>
+  	</#if>
     <#list def.modelInstances>
     <xs:sequence>
       <#items as instance>
@@ -113,7 +101,7 @@
       </#items>
     </xs:sequence>
     </#list>
-    <#list def.flagInstances?values as instance>
+    <#list def.flagInstances as instance>
         <@flagInstance instance=instance/>
     </#list>
   </xs:complexType>
@@ -121,22 +109,17 @@
 
 <#macro fieldDefinition def>
   <#if def.flagInstances?size == 0>
-    <#-- skip fields without flags, since these will be bare simple types -->
-    <!-- SKIPPED field: ${typeForDefinition(def)} -->
+    <#-- skip fields without flags, since these are bare simple types -->
     <#return>
   </#if>
 
-  <xs:complexType name="${typeForDefinition(def)}">
-    <xs:annotation>
-      <xs:appinfo>
-        <m:formal-name>${def.formalName}</m:formal-name>
-        <m:description>${markupToHTML(def.description, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")?no_esc}</m:description>
-      </xs:appinfo>
-      <xs:documentation xmlns="http://www.w3.org/1999/xhtml"><b>${def.formalName}</b>: ${markupToHTML(def.description, "http://www.w3.org/1999/xhtml", "")?no_esc}</xs:documentation>
-    </xs:annotation>
+  <xs:complexType<#if !def.inline> name="${typeForDefinition(def)}"</#if>>
+    <#if !def.inline>
+  	<@definitionAnnotation def=def/>
+  	</#if>
     <xs:simpleContent>
       <xs:extension base="${typeForValue(def)}">
-        <#list def.flagInstances?values as instance>
+        <#list def.flagInstances as instance>
           <@flagInstance instance=instance/>
         </#list>
       </xs:extension>
@@ -148,7 +131,7 @@
   <#switch instance.modelType>
     <#case "ASSEMBLY">
     <#case "FIELD">
-      <#if (true || instance.maxOccurs gt 1 || instance.maxOccurs == -1) && instance.xmlGroupAsBehavior == "GROUPED">
+      <#if (instance.xmlGroupAsBehavior!"UNGROUPED") == "GROUPED">
       <xs:element name="${instance.groupAsName}"<#rt>
         <#if instance.minOccurs gt 0>
         <#lt> minOccurs="1"<#rt>
@@ -158,28 +141,37 @@
           <xs:sequence>
       </#if>
       <xs:element name="${instance.useName}"<#rt>
-        <#if instance.modelType == "ASSEMBLY" || (instance.modelType == "FIELD" && instance.definition.flagInstances?size gt 0)>
-          <#-- Use the type if the instance is an assembly or a field with attributes -->
-          <#lt> type="${typeForDefinition(instance.definition)}"<#rt>
-        </#if>
-        <#if instance.minOccurs gt 0>
-          <#lt> minOccurs="${instance.minOccurs}"<#rt>
-        </#if>
-        <#if instance.maxOccurs gt 1>
-          <#lt> maxOccurs="${instance.maxOccurs}"<#rt>
-        <#elseif instance.maxOccurs == -1>
-          <#lt> maxOccurs="unbounded"<#rt>
-        </#if>
-        <#if instance.modelType == "ASSEMBLY">
-          <#-- The complex type of an assembly was referenced as the type -->
-          <#lt>/>
-        <#else>
-          <#if instance.definition.flagInstances?size == 0>
-            <#lt> type="${typeForValue(instance.definition)}"<#rt>
-          </#if>
-          <#lt>/>
-        </#if>
-      <#if (true || instance.maxOccurs gt 1 || instance.maxOccurs == -1) && instance.xmlGroupAsBehavior == "GROUPED">
+      <#if instance.minOccurs != 1>
+        <#lt> minOccurs="${instance.minOccurs}"<#rt>
+      </#if>
+      <#if instance.maxOccurs gt 1>
+        <#lt> maxOccurs="${instance.maxOccurs}"<#rt>
+      <#elseif instance.maxOccurs == -1>
+        <#lt> maxOccurs="unbounded"<#rt>
+      </#if>
+      <#if instance.definition.global && (instance.modelType == "ASSEMBLY" || instance.definition.flagInstances?size gt 0)>
+        <#-- fields without flags are never global; they are represented as single values -->
+        <#lt> type="${typeForDefinition(instance.definition)}"<#rt>
+      <#elseif instance.modelType == "FIELD" && instance.definition.flagInstances?size == 0><#-- this is a field without flags -->
+	    <#lt> type="${typeForValue(instance.definition)}"<#rt>
+	  </#if>
+	  <#if instance.definition.inline>
+	  	<#lt>>
+ 	  	<@definitionAnnotation def=instance.definition/>
+ 	  	<@definition def=instance.definition/>
+      </xs:element>
+      <#elseif instance.remarks??>
+        <#lt>>
+        <xs:annotation>
+          <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+ 	        ${markupToHTML(instance.remarks, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")?no_esc}
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+	  <#else>
+	      <#lt>/>
+	  </#if>
+      <#if (instance.xmlGroupAsBehavior!"UNGROUPED") == "GROUPED">
           </xs:sequence>
         </xs:complexType>
       </xs:element>
@@ -201,77 +193,72 @@
 
 <#macro flagInstance instance>
     <xs:attribute name="${instance.useName}" type="${typeForValue(instance.definition)}"<#rt>
-      <#if instance.required>
-        <#lt> use="required"<#rt>
-      </#if>
-    <#lt>/>
+    <#if instance.required>
+      <#lt> use="required"<#rt>
+    </#if>
+    <#lt>>
+      <@definitionAnnotation def=instance.definition/>
+    </xs:attribute>
 </#macro>
-<#t>
-<#lt><?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  xmlns:m="http://csrc.nist.gov/ns/oscal/metaschema/1.0"
-  xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
-  <#if metaschemas?size == 1>
-  <#assign metaschema=metaschemas?first>
-  targetNamespace="${metaschema.xmlNamespace}"
-  xmlns="${metaschema.xmlNamespace}"
-  <#else>
-  </#if>
-  vc:minVersion="1.0" vc:maxVersion="1.1"
-  elementFormDefault="qualified">
-
-<#list definitions as def>
-  <#if def.modelType == "ASSEMBLY" && def.root>
-  <xs:element name="${def.rootName}" type="${typeForDefinition(def)}"/>
-  </#if>
-</#list>
-
-<#list definitions as def>
-  <!-- Definition: ${typeForDefinition(def)} -->
-<#switch def.modelType>
+<#macro definitionAnnotation def>
+    <xs:annotation>
+      <xs:appinfo>
+        <m:formal-name>${def.formalName}</m:formal-name>
+        <m:description>${markupToHTML(def.description, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")?no_esc}</m:description>
+      </xs:appinfo>
+      <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+      	<p><b>${def.formalName}</b>: ${markupToHTML(def.description, "http://www.w3.org/1999/xhtml", "")?no_esc}</p>
+	  <#if def.remarks??>
+ 	    ${markupToHTML(def.remarks, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")?no_esc}
+	  </#if>
+      </xs:documentation>
+    </xs:annotation>
+</#macro>
+<#macro definition def>
+  <#-- Definition: ${typeForDefinition(def)} -->
+  <#switch def.modelType>
   <#case "ASSEMBLY">
   	<@assemblyDefinition def=def />
   	<#break>
   <#case "FIELD">
     <@fieldDefinition def=def />
   	<#break>
-</#switch>
+  </#switch>
+</#macro>
+<#t>
+<#lt><?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:m="http://csrc.nist.gov/ns/oscal/metaschema/1.0"
+  xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+  targetNamespace="${metaschema.xmlNamespace}"
+  xmlns="${metaschema.xmlNamespace}"
+  vc:minVersion="1.0" vc:maxVersion="1.1"
+  elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:appinfo>
+      <m:schema-name>${markupToHTML(metaschema.name, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")?no_esc}</m:schema-name>
+      <m:schema-version>${metaschema.version}</m:schema-version>
+      <m:short-name>${metaschema.shortName}</m:short-name>
+    </xs:appinfo>
+    <#if metaschema.remarks??>
+   	<xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+      	${markupToHTML(metaschema.remarks, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")?no_esc}
+  	</xs:documentation>
+    </#if>
+  </xs:annotation>
+
+<#list definitions as def>
+  <#if def.global && def.modelType == "ASSEMBLY" && def.root>
+  <xs:element name="${def.rootName}" type="${typeForDefinition(def)}"/>
+  </#if>
 </#list>
 
-<#if IP_V4_ADDRESS_used?? && IP_V4_ADDRESS_used == true>
-  <xs:simpleType name="ip-v4-address">
-    <xs:annotation>
-      <xs:documentation>The ip-v4-address type specifies an IPv4 address in dot decimal notation.</xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"/>
-      <xs:pattern value="((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]).){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])"/>
-    </xs:restriction>
-  </xs:simpleType>
-</#if>  
-<#if IP_V6_ADDRESS_used?? && IP_V6_ADDRESS_used == true>
-  <xs:simpleType name="ip-v6-address">
-    <xs:annotation>
-      <xs:documentation>The ip-v6-address type specifies an IPv6 address represented in 8 hextets separated by colons.</xs:documentation>
-      <xs:documentation>This is based on the pattern provided here: https://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses with some customizations.</xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"/>
-      <xs:pattern value="(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|[fF][eE]80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::([fF]{4}(:0{1,4}){0,1}:){0,1}((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]).){3,3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]).){3,3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]))"/>
-    </xs:restriction>
-  </xs:simpleType>
-</#if>  
-<#if DATE_TIME_WITH_TZ_used?? && DATE_TIME_WITH_TZ_used == true>
-  <xs:simpleType name="dateTime-with-timezone">
-    <xs:annotation>
-      <xs:documentation>The xs:dateTime with a required timezone.</xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:dateTime">
-      <xs:pattern value=".+T.+(Z|[+-].+)"/>
-    </xs:restriction>
-  </xs:simpleType>
-</#if>
-<#if DATE_WITH_TZ_used?? && DATE_WITH_TZ_used == true>
+<#list definitions?filter(d -> d.global) as def>
+  <@definition def=def/>
+</#list>
+
+<#if date\-with\-timezone_used?? && date\-with\-timezone_used == true>
   <xs:simpleType name="date-with-timezone">
     <xs:annotation>
       <xs:documentation>The xs:date with a required timezone.</xs:documentation>
@@ -281,7 +268,17 @@
     </xs:restriction>
   </xs:simpleType>
 </#if>
-<#if EMAIL_ADDRESS_used?? && EMAIL_ADDRESS_used == true>
+<#if dateTime\-with\-timezone_used?? && dateTime\-with\-timezone_used == true>
+  <xs:simpleType name="dateTime-with-timezone">
+    <xs:annotation>
+      <xs:documentation>The xs:dateTime with a required timezone.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:dateTime">
+      <xs:pattern value=".+T.+(Z|[+-].+)"/>
+    </xs:restriction>
+  </xs:simpleType>
+</#if>
+<#if email_used?? && email_used == true>
   <xs:simpleType name="email">
     <xs:annotation>
       <xs:documentation>An email address</xs:documentation>
@@ -296,7 +293,7 @@
     </xs:restriction>
   </xs:simpleType>
 </#if>  
-<#if HOSTNAME_used?? && HOSTNAME_used == true>
+<#if hostname_used?? && hostname_used == true>
   <xs:simpleType name="hostname">
     <xs:annotation>
       <xs:documentation>A host name</xs:documentation>
@@ -311,7 +308,48 @@
     </xs:restriction>
   </xs:simpleType>
 </#if>  
-<#if URI_used?? && URI_used == true>
+<#if ip\-v4\-address_used?? && ip\-v4\-address_used == true>
+  <xs:simpleType name="ip-v4-address">
+    <xs:annotation>
+      <xs:documentation>The ip-v4-address type specifies an IPv4 address in dot decimal notation.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"/>
+      <xs:pattern value="((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]).){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])"/>
+    </xs:restriction>
+  </xs:simpleType>
+</#if>  
+<#if ip\-v6\-address_used?? && ip\-v6\-address_used == true>
+  <xs:simpleType name="ip-v6-address">
+    <xs:annotation>
+      <xs:documentation>The ip-v6-address type specifies an IPv6 address represented in 8 hextets separated by colons.</xs:documentation>
+      <xs:documentation>This is based on the pattern provided here: https://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses with some customizations.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"/>
+      <xs:pattern value="(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|[fF][eE]80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::([fF]{4}(:0{1,4}){0,1}:){0,1}((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]).){3,3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]).){3,3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]))"/>
+    </xs:restriction>
+  </xs:simpleType>
+</#if>  
+<#if token_used?? && token_used == true>
+  <xs:simpleType name="token">
+    <xs:annotation>
+      <!--<xs:documentation>Matching XSD NCName, except whitespace is not collapsed.</xs:documentation>-->
+      <xs:documentation>A string token following the rules of XML "no colon" names, with no whitespace. (XML names are single alphabetic characters
+      followed by alphanumeric characters, periods, underscores or dashes.)</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="preserve"/>
+      <xs:pattern value="[\i-[:&#x10000;-&#xEFFFF;]][\c-[:&#x10000;-&#xEFFFF;]]*">
+        <xs:annotation>
+          <!--<xs:documentation>An XML initial character (but not colon), followed by any XML name character (but not colon).</xs:documentation>-->
+          <xs:documentation>A single token may not contain whitespace.</xs:documentation>
+        </xs:annotation>
+      </xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+</#if>
+<#if uri_used?? && uri_used == true>
   <xs:simpleType name="uri">
     <xs:annotation>
       <xs:documentation>A URI</xs:documentation>
@@ -326,7 +364,7 @@
     </xs:restriction>
   </xs:simpleType>
 </#if>  
-<#if URI_REFERENCE_used?? && URI_REFERENCE_used == true>
+<#if uri\-reference_used?? && uri\-reference_used == true>
   <xs:simpleType name="uri-reference">
     <xs:annotation>
       <xs:documentation>A URI reference, such as a relative URL</xs:documentation>
@@ -336,14 +374,14 @@
     </xs:restriction>
   </xs:simpleType>
 </#if>  
-<#if UUID_used?? && UUID_used == true>
+<#if uuid_used?? && uuid_used == true>
   <xs:simpleType name="uuid">
     <xs:annotation>
-      <xs:documentation>A Type 4 ('random' or 'pseudorandom' UUID per RFC 4122</xs:documentation>
+      <xs:documentation>A type 4 ('random' or 'pseudorandom') or type 5 ('name-based') UUID per RFC 4122</xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"/>
-      <xs:pattern value="[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}">
+      <xs:pattern value="[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[45][0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}">
         <xs:annotation>
           <xs:documentation>A sequence of 8-4-4-4-12 hex digits, with extra constraints in the 13th and 17-18th places for version 4</xs:documentation>
         </xs:annotation>
@@ -351,12 +389,15 @@
     </xs:restriction>
   </xs:simpleType>
 </#if>  
-<#if MARKUP_LINE_used?? && MARKUP_LINE_used == true>
+<#if markup\-line_used?? && markup\-line_used == true>
   <xs:complexType name="markupLineType" mixed="true" >
     <xs:group ref="mixedInlineMarkupGroup"/>
   </xs:complexType>
 </#if>  
-<#if MARKUP_MULTILINE_used?? && MARKUP_MULTILINE_used == true>
+<#if markup\-multiline_used?? && markup\-multiline_used == true>
+  <xs:complexType name="markupMultilineType">
+    <xs:group ref="blockElementGroup" maxOccurs="unbounded" minOccurs="0"/>
+  </xs:complexType>
   <xs:group name="blockElementGroup">
     <xs:choice>
       <xs:element name="h1" type="blockElementType"/>
@@ -443,7 +484,7 @@
     </xs:restriction>
   </xs:simpleType>
 </#if>
-<#if (MARKUP_LINE_used?? && MARKUP_LINE_used == true) || (MARKUP_MULTILINE_used?? && MARKUP_MULTILINE_used == true)>
+<#if (markup\-line_used?? && markup\-line_used == true) || (markup\-multiline_used?? && markup\-multiline_used == true)>
   <xs:group name="mixedInlineMarkupGroup">
     <xs:sequence>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -491,5 +532,4 @@
     <xs:attribute name="param-id" use="required" type="xs:NCName"/>
   </xs:complexType>
 </#if>
-  
 </xs:schema>

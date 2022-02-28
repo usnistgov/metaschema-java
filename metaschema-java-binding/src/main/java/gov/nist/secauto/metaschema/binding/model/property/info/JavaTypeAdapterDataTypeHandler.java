@@ -99,8 +99,10 @@ public class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
   }
 
   @Override
-  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, IJsonWritingContext context)
-      throws IOException {
+  public void writeItems(
+      Collection<@NotNull ? extends Object> items,
+      boolean writeObjectWrapper,
+      IJsonWritingContext context) throws IOException {
     for (Object item : items) {
       adapter.writeJsonValue(item, context.getWriter());
     }

@@ -31,21 +31,55 @@ import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.PrintStream;
 import java.util.List;
+import java.util.Objects;
 
-@SuppressWarnings("PMD")
 public class CSTPrinter {
+  @NotNull
+  private final PrintStream outputStream;
   private boolean ignoringWrappers = true;
 
+  /**
+   * Construct a new concrete syntax tree (CST) printer.
+   * 
+   * @param outputStream
+   *          the stream to print to
+   */
+  public CSTPrinter(@NotNull PrintStream outputStream) {
+    this.outputStream = Objects.requireNonNull(outputStream, "outputStream");
+  }
+
+  /**
+   * Set the behavior for handling wrapper nodes in the CST hierarchy.
+   * 
+   * @param ignoringWrappers
+   *          {@code true} if wrappers should be ignored or {@code false} otherwise
+   */
   public void setIgnoringWrappers(boolean ignoringWrappers) {
     this.ignoringWrappers = ignoringWrappers;
   }
 
-  public void print(RuleContext ctx) {
+  /**
+   * Print a given CST {@link RuleContext} node.
+   * 
+   * @param ctx
+   *          the CST node
+   */
+  public void print(@NotNull RuleContext ctx) {
     explore(ctx, 0);
   }
 
+  /**
+   * Print a given CST {@link ParseTree} using the provided {@code ruleNames}.
+   * 
+   * @param tree
+   *          the CST parse tree
+   * @param ruleNames
+   *          the list of rule names to use for human readability
+   */
   public void print(ParseTree tree, List<String> ruleNames) {
     explore((RuleContext) tree.getPayload(), 0);
   }
@@ -54,15 +88,15 @@ public class CSTPrinter {
     boolean toBeIgnored = ignoringWrappers && ctx.getChildCount() == 1 && ctx.getChild(0) instanceof ParserRuleContext;
     String ruleName = metapath10Parser.ruleNames[ctx.getRuleIndex()];
     for (int i = 0; i < indentation; i++) {
-      System.out.print("  ");
+      outputStream.print("  ");
     }
-    System.out.print(ruleName);
+    outputStream.print(ruleName);
     if (toBeIgnored) {
-      System.out.print("(ignored)");
+      outputStream.print("(ignored)");
     }
-    System.out.print(": ");
-    System.out.print(ctx.getText());
-    System.out.println();
+    outputStream.print(": ");
+    outputStream.print(ctx.getText());
+    outputStream.println();
 
     for (int i = 0; i < ctx.getChildCount(); i++) {
       ParseTree element = ctx.getChild(i);

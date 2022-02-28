@@ -33,33 +33,17 @@ import org.jetbrains.annotations.NotNull;
 public class MetaschemaDataTypeProvider
     extends AbstractDataTypeProvider {
   @NotNull
-  public static final NcNameAdapter NCNAME = new NcNameAdapter();
+  public static final Base64Adapter BASE64 = new Base64Adapter();
   @NotNull
-  public static final TokenAdapter TOKEN = new TokenAdapter();
-  @NotNull
-  public static final DecimalAdapter DECIMAL = new DecimalAdapter();
-  @NotNull
-  public static final IntegerAdapter INTEGER = new IntegerAdapter();
-  @NotNull
-  public static final NonNegativeIntegerAdapter NON_NEGATIVE_INTEGER = new NonNegativeIntegerAdapter();
-  @NotNull
-  public static final PositiveIntegerAdapter POSITIVE_INTEGER = new PositiveIntegerAdapter();
+  public static final BooleanAdapter BOOLEAN = new BooleanAdapter();
   @NotNull
   public static final DateAdapter DATE = new DateAdapter();
   @NotNull
-  public static final DateTimeAdapter DATE_TIME = new DateTimeAdapter();
-  @NotNull
   public static final DateWithTZAdapter DATE_WITH_TZ = new DateWithTZAdapter();
   @NotNull
+  public static final DateTimeAdapter DATE_TIME = new DateTimeAdapter();
+  @NotNull
   public static final DateTimeWithTZAdapter DATE_TIME_WITH_TZ = new DateTimeWithTZAdapter();
-  @NotNull
-  public static final DayTimeAdapter DAY_TIME_DURATION = new DayTimeAdapter();
-  @NotNull
-  public static final Base64Adapter BASE64 = new Base64Adapter();
-  @NotNull
-  public static final EmailAddressAdapter EMAIL_ADDRESS = new EmailAddressAdapter();
-  @NotNull
-  public static final HostnameAdapter HOSTNAME = new HostnameAdapter();
   @NotNull
   public static final IPv4AddressAdapter IP_V4_ADDRESS = new IPv4AddressAdapter();
   @NotNull
@@ -70,16 +54,36 @@ public class MetaschemaDataTypeProvider
   public static final UriReferenceAdapter URI_REFERENCE = new UriReferenceAdapter();
   @NotNull
   public static final UuidAdapter UUID = new UuidAdapter();
+
+  @NotNull
+  public static final DayTimeAdapter DAY_TIME_DURATION = new DayTimeAdapter();
+  @NotNull
+  public static final YearMonthAdapter YEAR_MONTH_DURATION = new YearMonthAdapter();
+
+  @NotNull
+  public static final DecimalAdapter DECIMAL = new DecimalAdapter();
+  @NotNull
+  public static final IntegerAdapter INTEGER = new IntegerAdapter();
+  @NotNull
+  public static final NonNegativeIntegerAdapter NON_NEGATIVE_INTEGER = new NonNegativeIntegerAdapter();
+  @NotNull
+  public static final PositiveIntegerAdapter POSITIVE_INTEGER = new PositiveIntegerAdapter();
+
+  @NotNull
+  public static final EmailAddressAdapter EMAIL_ADDRESS = new EmailAddressAdapter();
+  @NotNull
+  public static final HostnameAdapter HOSTNAME = new HostnameAdapter();
+  @NotNull
+  public static final NcNameAdapter NCNAME = new NcNameAdapter();
+  @NotNull
+  public static final StringAdapter STRING = new StringAdapter();
+  @NotNull
+  public static final TokenAdapter TOKEN = new TokenAdapter();
+
   @NotNull
   public static final MarkupLineAdapter MARKUP_LINE = new MarkupLineAdapter();
   @NotNull
   public static final MarkupMultilineAdapter MARKUP_MULTILINE = new MarkupMultilineAdapter();
-  @NotNull
-  public static final BooleanAdapter BOOLEAN = new BooleanAdapter();
-  @NotNull
-  public static final StringAdapter STRING = new StringAdapter();
-  @NotNull
-  public static final YearMonthAdapter YEAR_MONTH_DURATION = new YearMonthAdapter();
 
   @NotNull
   public static final StringAdapter DEFAULT_DATA_TYPE = STRING;

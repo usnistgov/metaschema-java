@@ -33,4 +33,12 @@ import gov.nist.secauto.metaschema.model.common.INamedModelElement;
  */
 public interface INamedDefinition extends IDefinition, INamedModelElement {
 
+  /**
+   * Determine if the definition is defined inline, meaning the definition is declared where it is
+   * used.
+   * 
+   * @return {@code true} if the definition is declared inline or {@code false} if the definition is
+   *         able to be globally referenced
+   */
+  boolean isInline();
 }

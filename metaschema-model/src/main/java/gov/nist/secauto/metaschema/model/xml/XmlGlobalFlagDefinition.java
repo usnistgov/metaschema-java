@@ -129,15 +129,18 @@ public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
     return constraints.getExpectConstraints();
   }
 
+  @SuppressWarnings("null")
   @Override
   public ModuleScopeEnum getModuleScope() {
-    ModuleScopeEnum retval = IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
-    if (getXmlFlag().isSetScope()) {
-      retval = getXmlFlag().getScope();
-    }
-    return retval;
+    return getXmlFlag().isSetScope() ? getXmlFlag().getScope() : IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
   }
 
+  @Override
+  public boolean isInline() {
+    return false;
+  }
+
+  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlFlag().getName();
@@ -167,16 +170,10 @@ public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
     return MarkupStringConverter.toMarkupString(getXmlFlag().getDescription());
   }
 
+  @SuppressWarnings("null")
   @Override
   public IJavaTypeAdapter<?> getDatatype() {
-    IJavaTypeAdapter<?> retval;
-    if (getXmlFlag().isSetAsType()) {
-      retval = getXmlFlag().getAsType();
-    } else {
-      // the default
-      retval = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
-    }
-    return retval;
+    return getXmlFlag().isSetAsType() ? getXmlFlag().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
   }
 
   @Override

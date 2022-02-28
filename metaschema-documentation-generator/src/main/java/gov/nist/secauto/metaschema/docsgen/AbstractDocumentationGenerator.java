@@ -32,4 +32,5 @@ import gov.nist.secauto.metaschema.freemarker.support.AbstractFreemarkerGenerato
 public abstract class AbstractDocumentationGenerator
     extends AbstractFreemarkerGenerator
     implements DocumentationGenerator {
+  
 }

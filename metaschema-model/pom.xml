@@ -121,7 +121,8 @@
 							<goal>compile</goal>
 						</goals>
 						<configuration>
-							<sourceDir>${project.build.directory}/schema/xsd</sourceDir>
+							<sourceDir>${project.basedir}/metaschema/toolchains/xslt-M4/validate</sourceDir>
+							<sourceSchemas>metaschema.xsd</sourceSchemas>
 							<javaTargetDir>${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
 							<xmlConfigs>${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</xmlConfigs>
 							<classTargetDir>${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>

@@ -68,12 +68,14 @@ public class XmlAssemblyInstance
     return xmlAssembly;
   }
 
+  @SuppressWarnings("null")
   @Override
   public IAssemblyDefinition getDefinition() {
     return getContainingDefinition().getContainingMetaschema()
         .getScopedAssemblyDefinitionByName(getName());
   }
 
+  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlAssembly().getRef();

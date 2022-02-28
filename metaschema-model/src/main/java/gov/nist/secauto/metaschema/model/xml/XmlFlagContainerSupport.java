@@ -28,14 +28,14 @@ package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.secauto.metaschema.model.definitions.IXmlNamedModelDefinition;
 import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
-import gov.nist.secauto.metaschema.model.xml.XmlLocalAssemblyDefinition.InternalAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.xml.XmlLocalFieldDefinition.InternalFieldDefinition;
+import gov.nist.secauto.metaschema.model.xml.XmlInlineAssemblyDefinition.InternalAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.xml.XmlInlineFieldDefinition.InternalFieldDefinition;
 import gov.nist.secauto.metaschema.model.xmlbeans.FlagDocument;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFieldDefinitionType;
-import gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType;
-import gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType;
-import gov.nist.secauto.metaschema.model.xmlbeans.LocalFlagDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.InlineFlagDefinitionType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -79,7 +79,7 @@ public class XmlFlagContainerSupport {
   }
 
   public XmlFlagContainerSupport(
-      @NotNull LocalAssemblyDefinitionType xmlAssembly,
+      @NotNull InlineAssemblyDefinitionType xmlAssembly,
       @NotNull InternalAssemblyDefinition container) {
     // handle flags
     if (xmlAssembly.getFlagList().size() > 0 || xmlAssembly.getDefineFlagList().size() > 0) {
@@ -93,7 +93,7 @@ public class XmlFlagContainerSupport {
   }
 
   public XmlFlagContainerSupport(
-      @NotNull LocalFieldDefinitionType xmlField,
+      @NotNull InlineFieldDefinitionType xmlField,
       @NotNull InternalFieldDefinition container) {
     // handle flags
     if (xmlField.getFlagList().size() > 0 || xmlField.getDefineFlagList().size() > 0) {
@@ -125,8 +125,8 @@ public class XmlFlagContainerSupport {
       if (obj instanceof FlagDocument.Flag) {
         IXmlFlagInstance flagInstance = new XmlFlagInstance((FlagDocument.Flag) obj, parent);
         flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
-      } else if (obj instanceof LocalFlagDefinitionType) {
-        IXmlFlagInstance flagInstance = new XmlLocalFlagDefinition((LocalFlagDefinitionType) obj, parent);
+      } else if (obj instanceof InlineFlagDefinitionType) {
+        IXmlFlagInstance flagInstance = new XmlInlineFlagDefinition((InlineFlagDefinitionType) obj, parent);
         flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
       }
     }

@@ -44,21 +44,26 @@ import java.util.Set;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.core.ParseException;
+import freemarker.ext.beans.BeansWrapper;
+import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
+import freemarker.template.TemplateHashModel;
 import freemarker.template.TemplateNotFoundException;
+import freemarker.template.Version;
 
 public abstract class AbstractFreemarkerGenerator implements FreemarkerGenerator {
+  private static final Version CONFIG_VERSION = Configuration.VERSION_2_3_30;
   private boolean debug = false;
 
   protected Configuration newConfiguration() {
     // Create your Configuration instance, and specify if up to what FreeMarker
     // version (here 2.3.29) do you want to apply the fixes that are not 100%
     // backward-compatible. See the Configuration JavaDoc for details.
-    Configuration cfg = new Configuration(Configuration.VERSION_2_3_30);
+    Configuration cfg = new Configuration(CONFIG_VERSION);
 
     // // Specify the source where the template files come from. Here I set a
     // // plain directory for it, but non-file-system sources are possible too:
@@ -85,25 +90,22 @@ public abstract class AbstractFreemarkerGenerator implements FreemarkerGenerator
   }
 
   @Override
-  public void generateFromMetaschemas(Collection<@NotNull ? extends IMetaschema> metaschemas, Writer out)
+  public void generateFromMetaschema(@NotNull IMetaschema metaschema, Writer out)
       throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException {
-    Objects.requireNonNull(metaschemas, "metaschemas");
-
     Collection<@NotNull ? extends IDefinition> definitions
-        = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschemas);
-    generateFromDefinitions(definitions, out);
+        = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
+    generate(metaschema, definitions, out);
   }
 
-  @Override
-  public void generateFromDefinitions(Collection<@NotNull ? extends IDefinition> definitions, Writer out)
+  protected void generate(@NotNull IMetaschema metaschema, Collection<@NotNull ? extends IDefinition> definitions, Writer out)
       throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException {
     Objects.requireNonNull(definitions, "definitions");
     Set<IMetaschema> metaschemas = new LinkedHashSet<>();
     Set<IAssemblyDefinition> rootAssemblies = new LinkedHashSet<>();
     for (IDefinition definition : definitions) {
-      IMetaschema metaschema = definition.getContainingMetaschema();
-      if (!metaschemas.contains(metaschema)) {
-        metaschemas.add(metaschema);
+      IMetaschema containingMetaschema = definition.getContainingMetaschema();
+      if (!metaschemas.contains(containingMetaschema)) {
+        metaschemas.add(containingMetaschema);
       }
 
       if (definition instanceof IAssemblyDefinition) {
@@ -123,7 +125,16 @@ public abstract class AbstractFreemarkerGenerator implements FreemarkerGenerator
     cfg.setSharedVariable("toCamelCase", new ToCamelCaseMethod());
     cfg.setSharedVariable("markupToHTML", new MarkupToHtmlMethod());
 
+    // add constants
+    BeansWrapper wrapper = new BeansWrapperBuilder(CONFIG_VERSION).build();
+    TemplateHashModel staticModels = wrapper.getStaticModels();
+    
+    // add static values
+    cfg.setSharedVariable("statics", staticModels);
+
+    
     // add metaschema model
+    root.put("metaschema", metaschema);
     root.put("metaschemas", metaschemas);
     root.put("definitions", definitions);
     root.put("root-definitions", rootAssemblies);

@@ -33,14 +33,14 @@ import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 
 import org.apache.commons.io.output.TeeOutputStream;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -50,7 +50,6 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateNotFoundException;
 
 public class TestXmlSchemaGenerator {
-  @Disabled
   @Test
   void test() throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException,
       MetaschemaException, TemplateException {
@@ -58,35 +57,30 @@ public class TestXmlSchemaGenerator {
 
     MetaschemaLoader loader = new MetaschemaLoader();
 
-    List<IMetaschema> metaschemas = new LinkedList<>();
     IMetaschema metaschema
-        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_catalog_metaschema.xml"));
-    metaschemas.add(metaschema);
-    metaschema
-        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_profile_metaschema.xml"));
-    metaschemas.add(metaschema);
-    metaschema
-        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_component_metaschema.xml"));
-    metaschemas.add(metaschema);
-    metaschema
-        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_ssp_metaschema.xml"));
-    metaschemas.add(metaschema);
-    metaschema = loader
-        .loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_assessment-plan_metaschema.xml"));
-    metaschemas.add(metaschema);
-    metaschema = loader.loadXmlMetaschema(
-        new File("../../liboscal-java/oscal/src/metaschema/oscal_assessment-results_metaschema.xml"));
-    metaschemas.add(metaschema);
-    metaschema
-        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_poam_metaschema.xml"));
-    metaschemas.add(metaschema);
-
-    Collection<? extends IDefinition> definitions
-        = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschemas);
+        = loader.loadXmlMetaschema(new URL("https://raw.githubusercontent.com/usnistgov/OSCAL/main/src/metaschema/oscal_catalog_metaschema.xml"));
+//    metaschema
+//        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_profile_metaschema.xml"));
+//    metaschemas.add(metaschema);
+//    metaschema
+//        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_component_metaschema.xml"));
+//    metaschemas.add(metaschema);
+//    metaschema
+//        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_ssp_metaschema.xml"));
+//    metaschemas.add(metaschema);
+//    metaschema = loader
+//        .loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_assessment-plan_metaschema.xml"));
+//    metaschemas.add(metaschema);
+//    metaschema = loader.loadXmlMetaschema(
+//        new File("../../liboscal-java/oscal/src/metaschema/oscal_assessment-results_metaschema.xml"));
+//    metaschemas.add(metaschema);
+//    metaschema
+//        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_poam_metaschema.xml"));
+//    metaschemas.add(metaschema);
 
     try (FileOutputStream fos = new FileOutputStream("schema.out.xsd")) {
       TeeOutputStream out = new TeeOutputStream(System.out, fos);
-      generator.generateFromDefinitions(definitions, new OutputStreamWriter(out));
+      generator.generateFromMetaschema(metaschema, new OutputStreamWriter(out));
     }
   }
 }

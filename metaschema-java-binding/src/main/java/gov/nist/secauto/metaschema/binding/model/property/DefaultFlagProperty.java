@@ -280,6 +280,11 @@ public class DefaultFlagProperty
     }
 
     @Override
+    public boolean isInline() {
+      return true;
+    }
+
+    @Override
     public String getName() {
       return DefaultFlagProperty.this.getName();
     }

@@ -185,6 +185,11 @@ public class DefaultFieldProperty
     }
 
     @Override
+    public boolean isInline() {
+      return true;
+    }
+
+    @Override
     public String getName() {
       return DefaultFieldProperty.this.getName();
     }

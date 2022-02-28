@@ -210,6 +210,11 @@ public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
     return constraints.getHasCardinalityConstraints();
   }
 
+  @Override
+  public boolean isInline() {
+    return false;
+  }
+
   @SuppressWarnings("null")
   @Override
   public String getName() {
@@ -263,11 +268,7 @@ public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
   @SuppressWarnings("null")
   @Override
   public ModuleScopeEnum getModuleScope() {
-    ModuleScopeEnum retval = IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
-    if (getXmlAssembly().isSetScope()) {
-      retval = getXmlAssembly().getScope();
-    }
-    return retval;
+    return getXmlAssembly().isSetScope() ? getXmlAssembly().getScope() : IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
   }
 
   @Override

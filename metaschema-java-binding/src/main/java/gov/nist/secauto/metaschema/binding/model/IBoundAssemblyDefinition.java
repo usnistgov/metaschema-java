@@ -31,10 +31,13 @@ import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.Map;
 
 public interface IBoundAssemblyDefinition extends IBoundNamedModelDefinition, IAssemblyDefinition {
+  @Override
   IAssemblyClassBinding getClassBinding();
 
   @Override

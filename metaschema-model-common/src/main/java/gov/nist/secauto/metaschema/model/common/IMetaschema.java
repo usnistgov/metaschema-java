@@ -26,12 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.util.Collection;
@@ -66,6 +69,30 @@ public interface IMetaschema {
    */
   @NotNull
   URI getLocation();
+
+  /**
+   * Get the long name for the Metaschema.
+   * 
+   * @return the name
+   */
+  @NotNull
+  MarkupLine getName();
+
+  /**
+   * Get the revision of the Metaschema.
+   * 
+   * @return the revision
+   */
+  @NotNull
+  String getVersion();
+
+  /**
+   * Retrieve the remarks associated with this Metaschema, if any.
+   * 
+   * @return the remarks or {@code null} if no remarks are defined
+   */
+  @Nullable
+  MarkupMultiline getRemarks();
 
   /**
    * Retrieves the short name for the Metaschema, which provides a textual identifier for the

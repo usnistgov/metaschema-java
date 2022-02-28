@@ -30,6 +30,8 @@ import gov.nist.secauto.metaschema.model.IXmlMetaschema;
 import gov.nist.secauto.metaschema.model.common.AbstractMetaschema;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFieldDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFlagDefinition;
@@ -158,16 +160,44 @@ public class XmlMetaschema
     processExportedDefinitions();
   }
 
+  /**
+   * Get the XMLBeans representation of the Metaschema.
+   * 
+   * @return the XMLBean for the Metaschema
+   */
+  @NotNull
+  protected METASCHEMADocument.METASCHEMA getXmlMetaschema() {
+    return metaschema.getMETASCHEMA();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public MarkupLine getName() {
+    return MarkupStringConverter.toMarkupString(getXmlMetaschema().getSchemaName());
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public String getVersion() {
+    return getXmlMetaschema().getSchemaVersion();
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    return getXmlMetaschema().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlMetaschema().getRemarks())
+        : null;
+  }
+
   @SuppressWarnings("null")
   @Override
   public String getShortName() {
-    return metaschema.getMETASCHEMA().getShortName();
+    return getXmlMetaschema().getShortName();
   }
 
   @SuppressWarnings("null")
   @Override
   public URI getXmlNamespace() {
-    return URI.create(metaschema.getMETASCHEMA().getNamespace());
+    return URI.create(getXmlMetaschema().getNamespace());
   }
 
   @SuppressWarnings("null")

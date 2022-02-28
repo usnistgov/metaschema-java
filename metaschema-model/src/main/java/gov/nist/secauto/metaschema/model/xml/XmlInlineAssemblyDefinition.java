@@ -51,7 +51,7 @@ import gov.nist.secauto.metaschema.model.instances.IXmlChoiceInstance;
 import gov.nist.secauto.metaschema.model.instances.IXmlFieldInstance;
 import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
 import gov.nist.secauto.metaschema.model.instances.IXmlNamedModelInstance;
-import gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -62,10 +62,10 @@ import java.util.Map;
 /**
  * Represents a Metaschema assembly definition declared locally as an instance.
  */
-public class XmlLocalAssemblyDefinition
+public class XmlInlineAssemblyDefinition
     extends AbstractAssemblyInstance {
   @NotNull
-  private final LocalAssemblyDefinitionType xmlAssembly;
+  private final InlineAssemblyDefinitionType xmlAssembly;
   @NotNull
   private final InternalAssemblyDefinition assemblyDefinition;
 
@@ -77,8 +77,8 @@ public class XmlLocalAssemblyDefinition
    * @param parent
    *          the parent assembly definition
    */
-  public XmlLocalAssemblyDefinition(
-      @NotNull LocalAssemblyDefinitionType xmlAssembly,
+  public XmlInlineAssemblyDefinition(
+      @NotNull InlineAssemblyDefinitionType xmlAssembly,
       @NotNull IXmlAssemblyDefinition parent) {
     super(parent);
     this.xmlAssembly = xmlAssembly;
@@ -90,7 +90,7 @@ public class XmlLocalAssemblyDefinition
    * 
    * @return the XML model
    */
-  protected LocalAssemblyDefinitionType getXmlAssembly() {
+  protected InlineAssemblyDefinitionType getXmlAssembly() {
     return xmlAssembly;
   }
 
@@ -163,7 +163,7 @@ public class XmlLocalAssemblyDefinition
   }
 
   public class InternalAssemblyDefinition
-      implements IXmlAssemblyDefinition, ILocalDefinition<XmlLocalAssemblyDefinition> {
+      implements IXmlAssemblyDefinition, ILocalDefinition<XmlInlineAssemblyDefinition> {
     private XmlFlagContainerSupport flagContainer;
     private XmlModelContainerSupport modelContainer;
     private IAssemblyConstraintSupport constraints;
@@ -172,6 +172,11 @@ public class XmlLocalAssemblyDefinition
      * Create the corresponding definition for the local flag instance.
      */
     public InternalAssemblyDefinition() {
+    }
+
+    @Override
+    public boolean isInline() {
+      return true;
     }
 
     @Override
@@ -191,7 +196,7 @@ public class XmlLocalAssemblyDefinition
 
     @Override
     public String getName() {
-      return XmlLocalAssemblyDefinition.this.getName();
+      return XmlInlineAssemblyDefinition.this.getName();
     }
 
     @Override
@@ -201,7 +206,7 @@ public class XmlLocalAssemblyDefinition
 
     @Override
     public String getXmlNamespace() {
-      return XmlLocalAssemblyDefinition.this.getXmlNamespace();
+      return XmlInlineAssemblyDefinition.this.getXmlNamespace();
     }
 
     @Override
@@ -230,8 +235,8 @@ public class XmlLocalAssemblyDefinition
     }
 
     @Override
-    public XmlLocalAssemblyDefinition getDefiningInstance() {
-      return XmlLocalAssemblyDefinition.this;
+    public XmlInlineAssemblyDefinition getDefiningInstance() {
+      return XmlInlineAssemblyDefinition.this;
     }
 
     @SuppressWarnings("null")
@@ -348,7 +353,7 @@ public class XmlLocalAssemblyDefinition
 
     @Override
     public MarkupMultiline getRemarks() {
-      return XmlLocalAssemblyDefinition.this.getRemarks();
+      return XmlInlineAssemblyDefinition.this.getRemarks();
     }
 
     @Override

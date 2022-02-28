@@ -181,6 +181,11 @@ public class DefaultFieldClassBinding
   }
 
   @Override
+  public boolean isInline() {
+    return false;
+  }
+
+  @Override
   public DefaultFieldClassBinding getClassBinding() {
     return this;
   }

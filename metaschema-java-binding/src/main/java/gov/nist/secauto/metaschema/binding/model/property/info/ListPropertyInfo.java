@@ -79,7 +79,7 @@ public class ListPropertyInfo
   }
 
   @Override
-  public List<? extends Object> getItemsFromParentInstance(Object parentInstance) {
+  public List<@NotNull ? extends Object> getItemsFromParentInstance(Object parentInstance) {
     Object value = getProperty().getValue(parentInstance);
     return getItemsFromValue(value);
   }

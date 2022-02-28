@@ -59,24 +59,17 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.ValueComparison;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Wildcard;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Iterator;
 
 public class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpressionVisitor<RESULT, CONTEXT> {
 
-  @Nullable
   protected RESULT visitChildren(@NotNull IExpression expr, CONTEXT context) {
-    @Nullable
     RESULT result = defaultResult();
 
-    for (Iterator<@NotNull ? extends IExpression> itr = expr.getChildren().iterator(); itr.hasNext();) {
+    for (IExpression childExpr : expr.getChildren()) {
       if (!shouldVisitNextChild(expr, result, context)) {
         break;
       }
 
-      @SuppressWarnings("null")
-      IExpression childExpr = itr.next();
       RESULT childResult = childExpr.accept(this, context);
       result = aggregateResult(result, childResult);
     }
@@ -84,16 +77,14 @@ public class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpressionVi
     return result;
   }
 
-  protected boolean shouldVisitNextChild(@NotNull IExpression expr, @Nullable RESULT result, CONTEXT context) {
+  protected boolean shouldVisitNextChild(@NotNull IExpression expr, RESULT result, CONTEXT context) {
     return true;
   }
 
-  @Nullable
-  protected RESULT aggregateResult(@Nullable RESULT result, @Nullable RESULT nextResult) {
+  protected RESULT aggregateResult(RESULT result, RESULT nextResult) {
     return nextResult;
   }
 
-  @Nullable
   protected RESULT defaultResult() {
     return null;
   }

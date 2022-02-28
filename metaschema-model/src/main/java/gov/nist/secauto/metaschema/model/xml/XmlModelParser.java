@@ -35,8 +35,8 @@ import gov.nist.secauto.metaschema.model.instances.IXmlNamedModelInstance;
 import gov.nist.secauto.metaschema.model.xmlbeans.AssemblyDocument;
 import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceDocument;
 import gov.nist.secauto.metaschema.model.xmlbeans.FieldDocument;
-import gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType;
-import gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -93,8 +93,8 @@ class XmlModelParser {
         fieldInstances.put(field.getEffectiveName(), field);
         modelInstances.add(field);
         namedModelInstances.add(field);
-      } else if (obj instanceof LocalFieldDefinitionType) {
-        IXmlFieldInstance field = new XmlLocalFieldDefinition((LocalFieldDefinitionType) obj, parent);
+      } else if (obj instanceof InlineFieldDefinitionType) {
+        IXmlFieldInstance field = new XmlInlineFieldDefinition((InlineFieldDefinitionType) obj, parent);
         fieldInstances.put(field.getEffectiveName(), field);
         modelInstances.add(field);
         namedModelInstances.add(field);
@@ -103,8 +103,8 @@ class XmlModelParser {
         assemblyInstances.put(assembly.getEffectiveName(), assembly);
         modelInstances.add(assembly);
         namedModelInstances.add(assembly);
-      } else if (obj instanceof LocalAssemblyDefinitionType) {
-        IXmlAssemblyInstance assembly = new XmlLocalAssemblyDefinition((LocalAssemblyDefinitionType) obj, parent);
+      } else if (obj instanceof InlineAssemblyDefinitionType) {
+        IXmlAssemblyInstance assembly = new XmlInlineAssemblyDefinition((InlineAssemblyDefinitionType) obj, parent);
         assemblyInstances.put(assembly.getEffectiveName(), assembly);
         modelInstances.add(assembly);
         namedModelInstances.add(assembly);

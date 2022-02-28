@@ -46,6 +46,7 @@ public abstract class AbstractAnyAtomicItem<TYPE> implements IAnyAtomicItem {
     return value;
   }
 
+  @Override
   @NotNull
   public abstract IJavaTypeAdapter<TYPE> getJavaTypeAdapter();
 

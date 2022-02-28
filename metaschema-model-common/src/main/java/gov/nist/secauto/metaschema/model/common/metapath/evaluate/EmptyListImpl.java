@@ -58,6 +58,7 @@ class EmptyListImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> {
     return 0;
   }
 
+  @Override
   public boolean equals(Object other) {
     if (other == this) {
       return true;

@@ -76,7 +76,6 @@ public interface IFlaggedDefinition extends IDefinition {
    * 
    * @return the flags
    */
-  @SuppressWarnings("null")
   @NotNull
   default Collection<@NotNull ? extends IFlagInstance> getFlagInstances() {
     return getFlagInstanceMap().values();

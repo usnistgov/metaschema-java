@@ -43,16 +43,16 @@ import gov.nist.secauto.metaschema.model.definitions.ILocalDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlNamedModelDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFlagInstance;
-import gov.nist.secauto.metaschema.model.xmlbeans.LocalFlagDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.InlineFlagDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class XmlLocalFlagDefinition
+public class XmlInlineFlagDefinition
     extends AbstractFlagInstance {
   @NotNull
-  private final LocalFlagDefinitionType xmlFlag;
+  private final InlineFlagDefinitionType xmlFlag;
   @NotNull
   private final InternalFlagDefinition flagDefinition;
   private IValueConstraintSupport constraints;
@@ -65,7 +65,7 @@ public class XmlLocalFlagDefinition
    * @param parent
    *          the parent definition, which must be a definition type that can contain flags.
    */
-  public XmlLocalFlagDefinition(@NotNull LocalFlagDefinitionType xmlFlag, @NotNull IXmlNamedModelDefinition parent) {
+  public XmlInlineFlagDefinition(@NotNull InlineFlagDefinitionType xmlFlag, @NotNull IXmlNamedModelDefinition parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
     this.flagDefinition = new InternalFlagDefinition();
@@ -90,7 +90,7 @@ public class XmlLocalFlagDefinition
    * 
    * @return the XML model
    */
-  protected LocalFlagDefinitionType getXmlFlag() {
+  protected InlineFlagDefinitionType getXmlFlag() {
     return xmlFlag;
   }
 
@@ -129,7 +129,7 @@ public class XmlLocalFlagDefinition
     return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
   }
 
-  public class InternalFlagDefinition implements IXmlFlagDefinition, ILocalDefinition<XmlLocalFlagDefinition> {
+  public class InternalFlagDefinition implements IXmlFlagDefinition, ILocalDefinition<XmlInlineFlagDefinition> {
 
     /**
      * Create the corresponding definition for the local flag instance.
@@ -138,8 +138,13 @@ public class XmlLocalFlagDefinition
     }
 
     @Override
+    public boolean isInline() {
+      return true;
+    }
+
+    @Override
     public String getName() {
-      return XmlLocalFlagDefinition.this.getName();
+      return XmlInlineFlagDefinition.this.getName();
     }
 
     @Override
@@ -149,7 +154,7 @@ public class XmlLocalFlagDefinition
 
     @Override
     public String getXmlNamespace() {
-      return XmlLocalFlagDefinition.this.getXmlNamespace();
+      return XmlInlineFlagDefinition.this.getXmlNamespace();
     }
 
     @Override
@@ -180,8 +185,8 @@ public class XmlLocalFlagDefinition
     }
 
     @Override
-    public XmlLocalFlagDefinition getDefiningInstance() {
-      return XmlLocalFlagDefinition.this;
+    public XmlInlineFlagDefinition getDefiningInstance() {
+      return XmlInlineFlagDefinition.this;
     }
 
     @Override
@@ -216,12 +221,12 @@ public class XmlLocalFlagDefinition
 
     @Override
     public MarkupMultiline getRemarks() {
-      return XmlLocalFlagDefinition.this.getRemarks();
+      return XmlInlineFlagDefinition.this.getRemarks();
     }
 
     @Override
     public IXmlMetaschema getContainingMetaschema() {
-      return XmlLocalFlagDefinition.this.getContainingMetaschema();
+      return XmlInlineFlagDefinition.this.getContainingMetaschema();
     }
   }
 }

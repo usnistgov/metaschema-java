@@ -26,12 +26,31 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+
+import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.Serializer;
+import net.sf.saxon.s9api.Xslt30Transformer;
+import net.sf.saxon.s9api.XsltCompiler;
+import net.sf.saxon.s9api.XsltExecutable;
+
+import org.codehaus.stax2.io.Stax2StringSource;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+
+import javax.xml.transform.stream.StreamSource;
 
 import freemarker.core.ParseException;
 import freemarker.template.Configuration;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import freemarker.template.TemplateNotFoundException;
 
 public class XmlSchemaGenerator
@@ -41,6 +60,31 @@ public class XmlSchemaGenerator
   protected Template getTemplate(Configuration cfg)
       throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException {
     return cfg.getTemplate("xml-schema.ftlx");
+  }
+
+  @Override
+  public void generateFromMetaschema(@NotNull IMetaschema metaschema, @NotNull Writer out)
+      throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException {
+
+    StringWriter stringWriter = new StringWriter();
+    try (PrintWriter writer = new PrintWriter(stringWriter)) {
+      super.generateFromMetaschema(metaschema, writer);
+      writer.flush();
+
+      Processor processor = new Processor(false);
+      XsltCompiler compiler = processor.newXsltCompiler();
+      XsltExecutable stylesheet
+          = compiler.compile(new StreamSource(getClass().getClassLoader().getResourceAsStream("identity.xsl")));
+      Xslt30Transformer transformer = stylesheet.load30();
+      Serializer serializer = processor.newSerializer(out);
+      
+      try (StringReader stringReader = new StringReader(stringWriter.toString())) {
+        StreamSource source = new StreamSource(stringReader);
+        transformer.transform(source, serializer);
+      }
+    } catch (SaxonApiException ex) {
+      throw new IllegalStateException(ex);
+    }
   }
 
 }
