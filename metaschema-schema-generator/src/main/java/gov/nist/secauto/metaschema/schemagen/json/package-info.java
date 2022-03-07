@@ -24,46 +24,4 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.xmlbeans.handler;
-
-public final class BooleanType {
-  private BooleanType() {
-    // disable
-  }
-
-  /**
-   * Sets the value of obj onto the given simple value target.
-   * 
-   * @param obj
-   *          the boolean value to set
-   * @param target
-   *          the XML value to cast to a boolean
-   */
-  public static void encodeBooleanType(Boolean obj, org.apache.xmlbeans.SimpleValue target) {
-    if (obj != null) {
-      if (obj.booleanValue()) {
-        target.setStringValue("yes");
-      } else {
-        target.setStringValue("no");
-      }
-    }
-  }
-
-  /**
-   * Returns an appropriate Java object from the given simple value.
-   * 
-   * @param obj
-   *          the XML value to cast to a boolean
-   * @return the associated boolean value
-   */
-  public static Boolean decodeBooleanType(org.apache.xmlbeans.SimpleValue obj) {
-    String value = obj.getStringValue();
-    Boolean retval;
-    if ("yes".equals(value)) {
-      retval = Boolean.TRUE;
-    } else {
-      retval = Boolean.FALSE;
-    }
-    return retval;
-  }
-}
+package gov.nist.secauto.metaschema.schemagen.json;

@@ -57,7 +57,7 @@ import freemarker.template.Version;
 
 public abstract class AbstractFreemarkerGenerator implements FreemarkerGenerator {
   private static final Version CONFIG_VERSION = Configuration.VERSION_2_3_30;
-  private boolean debug = false;
+  private static final boolean DEBUG = false;
 
   protected Configuration newConfiguration() {
     // Create your Configuration instance, and specify if up to what FreeMarker
@@ -71,7 +71,7 @@ public abstract class AbstractFreemarkerGenerator implements FreemarkerGenerator
     ClassTemplateLoader ctl = new ClassTemplateLoader(getClass(), "/templates");
     cfg.setTemplateLoader(ctl);
 
-    if (debug) {
+    if (DEBUG) {
       cfg.setTemplateExceptionHandler(TemplateExceptionHandler.DEBUG_HANDLER);
     } else {
       cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
@@ -97,7 +97,8 @@ public abstract class AbstractFreemarkerGenerator implements FreemarkerGenerator
     generate(metaschema, definitions, out);
   }
 
-  protected void generate(@NotNull IMetaschema metaschema, Collection<@NotNull ? extends IDefinition> definitions, Writer out)
+  protected void generate(@NotNull IMetaschema metaschema, Collection<@NotNull ? extends IDefinition> definitions,
+      Writer out)
       throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException {
     Objects.requireNonNull(definitions, "definitions");
     Set<IMetaschema> metaschemas = new LinkedHashSet<>();
@@ -118,21 +119,21 @@ public abstract class AbstractFreemarkerGenerator implements FreemarkerGenerator
 
     Configuration cfg = newConfiguration();
 
-    // Create the root hash. We use a Map here, but it could be a JavaBean too.
-    Map<String, Object> root = new HashMap<>();
-
     // add directives
     cfg.setSharedVariable("toCamelCase", new ToCamelCaseMethod());
     cfg.setSharedVariable("markupToHTML", new MarkupToHtmlMethod());
+    cfg.setSharedVariable("markupToMarkdown", new MarkupToMarkdownMethod());
 
     // add constants
     BeansWrapper wrapper = new BeansWrapperBuilder(CONFIG_VERSION).build();
     TemplateHashModel staticModels = wrapper.getStaticModels();
-    
+
     // add static values
     cfg.setSharedVariable("statics", staticModels);
 
-    
+    // Create the root hash. We use a Map here, but it could be a JavaBean too.
+    Map<String, Object> root = new HashMap<>(); //NOPMD - Freemarker templates run in a single thread
+
     // add metaschema model
     root.put("metaschema", metaschema);
     root.put("metaschemas", metaschemas);
@@ -140,10 +141,13 @@ public abstract class AbstractFreemarkerGenerator implements FreemarkerGenerator
     root.put("root-definitions", rootAssemblies);
 
     Template template = getTemplate(cfg);
+    buildModel(cfg, root);
 
     template.process(root, out);
   }
 
   protected abstract Template getTemplate(Configuration cfg)
       throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException;
+
+  protected abstract void buildModel(Configuration cfg, Map<String, Object> root) throws IOException, TemplateException;
 }

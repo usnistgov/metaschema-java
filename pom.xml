@@ -695,8 +695,8 @@
 		<module>metaschema-maven-plugin</module>
 		<module>metaschema-java-binding</module>
 		<module>metaschema-model-common</module>
-		<module>metaschema-schema-generator</module>
 		<module>metaschema-freemarker-support</module>
+		<module>metaschema-schema-generator</module>
 		<!-- <module>metaschema-documentation-generator</module> -->
 	</modules>
 </project>
