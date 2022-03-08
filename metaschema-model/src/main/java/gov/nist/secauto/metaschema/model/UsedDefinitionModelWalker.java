@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +43,7 @@ import java.util.function.Function;
  */
 public class UsedDefinitionModelWalker
     extends DefinitionCollectingModelWalker {
-  private static final Function<IDefinition, Boolean> FILTER = (def) -> {
+  private static final Function<INamedDefinition, Boolean> FILTER = (def) -> {
     return true;
     // return def.isGlobal();
     // return def.isGlobal() || (def instanceof AssemblyDefinition &&
@@ -51,7 +51,7 @@ public class UsedDefinitionModelWalker
   };
 
   @NotNull
-  public static Collection<@NotNull ? extends IDefinition>
+  public static Collection<@NotNull ? extends INamedDefinition>
       collectUsedDefinitions(Collection<@NotNull ? extends IAssemblyDefinition> definitions) {
     UsedDefinitionModelWalker walker = new UsedDefinitionModelWalker();
     for (IAssemblyDefinition definition : definitions) {
@@ -69,7 +69,7 @@ public class UsedDefinitionModelWalker
    * @return a collection of matching definitions
    */
   @NotNull
-  public static Collection<@NotNull ? extends IDefinition>
+  public static Collection<@NotNull ? extends INamedDefinition>
       collectUsedDefinitionsFromMetaschema(@NotNull Collection<@NotNull ? extends IMetaschema> metaschemas) {
     Set<@NotNull IAssemblyDefinition> definitions = new HashSet<>();
     for (IMetaschema metaschema : metaschemas) {
@@ -96,8 +96,8 @@ public class UsedDefinitionModelWalker
    *          the metaschema to analyze
    * @return a collection of matching definitions
    */
-  @SuppressWarnings("null")
-  public static Collection<@NotNull ? extends IDefinition>
+  @NotNull
+  public static Collection<@NotNull ? extends INamedDefinition>
       collectUsedDefinitionsFromMetaschema(IMetaschema metaschema) {
     return collectUsedDefinitionsFromMetaschema(Collections.singleton(metaschema));
   }

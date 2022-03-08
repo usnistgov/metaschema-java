@@ -28,23 +28,16 @@ package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 
-import net.sf.saxon.s9api.Processor;
-import net.sf.saxon.s9api.SaxonApiException;
-import net.sf.saxon.s9api.Serializer;
-import net.sf.saxon.s9api.Xslt30Transformer;
-import net.sf.saxon.s9api.XsltCompiler;
-import net.sf.saxon.s9api.XsltExecutable;
-
-import org.codehaus.stax2.io.Stax2StringSource;
 import org.jetbrains.annotations.NotNull;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.InputStream;
 import java.io.Writer;
+import java.util.Map;
 
-import javax.xml.transform.stream.StreamSource;
+import javax.xml.parsers.ParserConfigurationException;
 
 import freemarker.core.ParseException;
 import freemarker.template.Configuration;
@@ -63,28 +56,66 @@ public class XmlSchemaGenerator
   }
 
   @Override
+  protected void buildModel(Configuration cfg, Map<String, Object> root) throws IOException, TemplateException {
+    try (InputStream schemaInputStream
+        = getClass().getClassLoader().getResourceAsStream("datatypes/oscal-datatypes.xsd")) {
+      InputSource is = new InputSource(schemaInputStream);
+      root.put("metaschema-datatypes", freemarker.ext.dom.NodeModel.parse(is, true, true));
+    } catch (SAXException | ParserConfigurationException ex) {
+      throw new TemplateException(ex, null);
+    }
+
+    try (InputStream schemaInputStream
+        = getClass().getClassLoader().getResourceAsStream("datatypes/oscal-prose-base.xsd")) {
+      InputSource is = new InputSource(schemaInputStream);
+      root.put("metaschema-prose-base", freemarker.ext.dom.NodeModel.parse(is, true, true));
+    } catch (SAXException | ParserConfigurationException ex) {
+      throw new TemplateException(ex, null);
+    }
+
+    try (InputStream schemaInputStream
+        = getClass().getClassLoader().getResourceAsStream("datatypes/oscal-prose-line.xsd")) {
+      InputSource is = new InputSource(schemaInputStream);
+      root.put("metaschema-prose-line", freemarker.ext.dom.NodeModel.parse(is, true, true));
+    } catch (SAXException | ParserConfigurationException ex) {
+      throw new TemplateException(ex, null);
+    }
+
+    try (InputStream schemaInputStream
+        = getClass().getClassLoader().getResourceAsStream("datatypes/oscal-prose-multiline.xsd")) {
+      InputSource is = new InputSource(schemaInputStream);
+      root.put("metaschema-prose-multiline", freemarker.ext.dom.NodeModel.parse(is, true, true));
+    } catch (SAXException | ParserConfigurationException ex) {
+      throw new TemplateException(ex, null);
+    }
+  }
+
+  @Override
   public void generateFromMetaschema(@NotNull IMetaschema metaschema, @NotNull Writer out)
       throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException {
 
-    StringWriter stringWriter = new StringWriter();
-    try (PrintWriter writer = new PrintWriter(stringWriter)) {
-      super.generateFromMetaschema(metaschema, writer);
-      writer.flush();
+    super.generateFromMetaschema(metaschema, out);
 
-      Processor processor = new Processor(false);
-      XsltCompiler compiler = processor.newXsltCompiler();
-      XsltExecutable stylesheet
-          = compiler.compile(new StreamSource(getClass().getClassLoader().getResourceAsStream("identity.xsl")));
-      Xslt30Transformer transformer = stylesheet.load30();
-      Serializer serializer = processor.newSerializer(out);
-      
-      try (StringReader stringReader = new StringReader(stringWriter.toString())) {
-        StreamSource source = new StreamSource(stringReader);
-        transformer.transform(source, serializer);
-      }
-    } catch (SaxonApiException ex) {
-      throw new IllegalStateException(ex);
-    }
+    // StringWriter stringWriter = new StringWriter();
+    // try (PrintWriter writer = new PrintWriter(stringWriter)) {
+    // super.generateFromMetaschema(metaschema, writer);
+    // writer.flush();
+    //
+    // Processor processor = new Processor(false);
+    // XsltCompiler compiler = processor.newXsltCompiler();
+    // XsltExecutable stylesheet
+    // = compiler.compile(new
+    // StreamSource(getClass().getClassLoader().getResourceAsStream("identity.xsl")));
+    // Xslt30Transformer transformer = stylesheet.load30();
+    // Serializer serializer = processor.newSerializer(out);
+    //
+    // try (StringReader stringReader = new StringReader(stringWriter.toString())) {
+    // StreamSource source = new StreamSource(stringReader);
+    // transformer.transform(source, serializer);
+    // }
+    // } catch (SaxonApiException ex) {
+    // throw new IllegalStateException(ex);
+    // }
   }
 
 }

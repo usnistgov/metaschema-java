@@ -41,7 +41,7 @@ public class PositiveIntegerAdapter
 
   @Override
   public String getName() {
-    return "positiveInteger";
+    return "positive-integer";
   }
 
   @SuppressWarnings("null")

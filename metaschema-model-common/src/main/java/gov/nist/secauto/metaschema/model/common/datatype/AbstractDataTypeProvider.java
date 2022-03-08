@@ -28,26 +28,34 @@ package gov.nist.secauto.metaschema.model.common.datatype;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 public class AbstractDataTypeProvider implements IDataTypeProvider {
   private final HashMap<String, IJavaTypeAdapter<?>> library = new HashMap<>();
 
   @SuppressWarnings("null")
   @Override
-  public synchronized Collection<? extends IJavaTypeAdapter<?>> getJavaTypeAdapters() {
-    return Collections.unmodifiableCollection(library.values());
+  public synchronized Map<String, ? extends IJavaTypeAdapter<?>> getJavaTypeAdapters() {
+    return Collections.unmodifiableMap(library);
   }
 
-  protected synchronized void registerJavaTypeAdapter(@NotNull IJavaTypeAdapter<?> adapter)
+  protected void registerDatatype(@NotNull IJavaTypeAdapter<?> adapter)
       throws IllegalArgumentException {
     String name = adapter.getName();
 
-    IJavaTypeAdapter<?> duplicate = library.put(name, adapter);
+    registerDatatypeByName(name, adapter);
+  }
+
+  protected void registerDatatypeByName(@NotNull String name, @NotNull IJavaTypeAdapter<?> adapter)
+      throws IllegalArgumentException {
+    IJavaTypeAdapter<?> duplicate;
+    synchronized(this) {
+      duplicate = library.put(name, adapter);
+    }
     if (duplicate != null) {
-      throw new IllegalArgumentException(String.format("Adapter registered with a duplicate name '%s'", name));
+      throw new IllegalArgumentException(String.format("Another adapter was registered with the name '%s'", name));
     }
   }
 }

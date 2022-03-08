@@ -163,6 +163,11 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
+  public IBoundAssemblyInstance getInlineInstance() {
+    return null;
+  }
+
+  @Override
   public boolean isRoot() {
     // Overriding this is more efficient, since the root name is derived from the XML QName
     return getRootXmlQName() != null;

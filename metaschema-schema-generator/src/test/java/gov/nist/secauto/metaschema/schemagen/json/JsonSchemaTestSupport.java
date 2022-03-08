@@ -1,0 +1,153 @@
+/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.schemagen.json;
+
+import gov.nist.secauto.metaschema.binding.validation.ConstraintContentValidator.ConstraintValidationFinding;
+import gov.nist.secauto.metaschema.binding.validation.IContentValidator;
+import gov.nist.secauto.metaschema.binding.validation.IValidationFinding;
+import gov.nist.secauto.metaschema.binding.validation.IValidationFindingVisitor;
+import gov.nist.secauto.metaschema.binding.validation.IValidationResult;
+import gov.nist.secauto.metaschema.binding.validation.JsonSchemaContentValidator;
+import gov.nist.secauto.metaschema.binding.validation.JsonSchemaContentValidator.JsonValidationFinding;
+import gov.nist.secauto.metaschema.binding.validation.XmlSchemaContentValidator.XmlValidationFinding;
+import gov.nist.secauto.metaschema.model.MetaschemaLoader;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+
+import org.apache.commons.io.output.TeeOutputStream;
+import org.apache.logging.log4j.LogBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+
+public abstract class JsonSchemaTestSupport {
+  private static final Logger LOGGER = LogManager.getLogger(JsonSchemaTestSupport.class);
+
+  private static final ISchemaGenerator JSON_GENERATOR = new JsonSchemaGenerator();
+  private static final MetaschemaLoader METASCHEMA_LOADER = new MetaschemaLoader();
+
+  protected abstract Path getSchemaGenerationPath();
+
+  @NotNull
+  Path generateSchema(@NotNull Path metaschemaPath, @NotNull String path) throws IOException, MetaschemaException {
+    IMetaschema metaschema = METASCHEMA_LOADER.loadXmlMetaschema(metaschemaPath);
+
+    Path schemaPath = getSchemaGenerationPath().resolve(path);
+    Files.createDirectories(schemaPath.getParent());
+
+    try (OutputStream os = Files.newOutputStream(schemaPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
+      TeeOutputStream out = new TeeOutputStream(System.out, os);
+      Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+      JSON_GENERATOR.generateFromMetaschema(metaschema, writer);
+      writer.flush();
+      out.flush();
+    }
+    return schemaPath;
+  }
+
+  boolean validateSchema(Path schemaTarget) throws IOException {
+    IContentValidator validator;
+    try (InputStream is = MetaschemaLoader.class.getClassLoader().getResourceAsStream("schema/json/json-schema.json")) {
+      validator = new JsonSchemaContentValidator(is);
+    }
+    return validate(validator, schemaTarget);
+  }
+
+  boolean validateData(Path dataTarget, Path schema) throws IOException {
+    IContentValidator validator;
+    try (InputStream is = Files.newInputStream(schema, StandardOpenOption.READ)) {
+      validator = new JsonSchemaContentValidator(is);
+    }
+    return validate(validator, dataTarget);
+  }
+
+  private boolean validate(@NotNull IContentValidator validator, @NotNull Path target) throws IOException {
+    IValidationResult schemaValidationResult = validator.validate(target);
+    ValidationFindingVisitor visitor = new ValidationFindingVisitor();
+    for (IValidationFinding finding : schemaValidationResult.getFindings()) {
+      finding.visit(visitor, null);
+    }
+    return schemaValidationResult.isPassing();
+  }
+
+  private static class ValidationFindingVisitor implements IValidationFindingVisitor<Void, Void> {
+
+    @NotNull
+    protected LogBuilder getLogger(@NotNull IValidationFinding finding) {
+      LogBuilder retval;
+      switch (finding.getSeverity()) {
+      case CRITICAL:
+        retval = LOGGER.atFatal();
+        break;
+      case ERROR:
+        retval = LOGGER.atError();
+        break;
+      case WARNING:
+        retval = LOGGER.atWarn();
+        break;
+      case INFORMATIONAL:
+        retval = LOGGER.atInfo();
+        break;
+      default:
+        throw new IllegalArgumentException("Unknown level: " + finding.getSeverity().name());
+      }
+
+      if (finding.getCause() != null) {
+        retval.withThrowable(finding.getCause());
+      }
+
+      return retval;
+    }
+
+    @Override
+    public Void visit(@NotNull JsonValidationFinding finding, Void context) {
+//      System.out.println(String.format("[%s] %s", finding.getCause().getPointerToViolation(), finding.getMessage()));
+      getLogger(finding).log("[{}] {}", finding.getCause().getPointerToViolation(), finding.getMessage());
+      return null;
+    }
+
+    @Override
+    public Void visit(@NotNull XmlValidationFinding finding, Void context) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Void visit(@NotNull ConstraintValidationFinding constraintValidationFinding, Void context) {
+      throw new UnsupportedOperationException();
+    }
+  }
+}

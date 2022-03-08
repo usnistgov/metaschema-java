@@ -41,6 +41,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFieldDefinition;
 import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFieldDefinitionType;
@@ -141,6 +142,11 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
     return false;
   }
 
+  @Override
+  public IInstance getInlineInstance() {
+    return null;
+  }
+
   @SuppressWarnings("null")
   @Override
   public String getName() {
@@ -159,12 +165,12 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
 
   @Override
   public String getFormalName() {
-    return getXmlField().getFormalName();
+    return getXmlField().isSetFormalName() ? getXmlField().getFormalName() : null;
   }
 
   @Override
   public MarkupLine getDescription() {
-    return MarkupStringConverter.toMarkupString(getXmlField().getDescription());
+    return getXmlField().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlField().getDescription()) : null;
   }
 
   protected synchronized void initFlagContainer() {
@@ -194,14 +200,14 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
 
   @Override
   public boolean hasJsonValueKeyFlagInstance() {
-    return getXmlField().isSetJsonValueKey() && getXmlField().getJsonValueKey().isSetFlagName();
+    return getXmlField().isSetJsonValueKeyFlag() && getXmlField().getJsonValueKeyFlag().isSetFlagRef();
   }
 
   @Override
   public IFlagInstance getJsonValueKeyFlagInstance() {
     IFlagInstance retval = null;
-    if (getXmlField().isSetJsonValueKey() && getXmlField().getJsonValueKey().isSetFlagName()) {
-      retval = getFlagInstanceByName(getXmlField().getJsonValueKey().getFlagName());
+    if (getXmlField().isSetJsonValueKeyFlag() && getXmlField().getJsonValueKeyFlag().isSetFlagRef()) {
+      retval = getFlagInstanceByName(getXmlField().getJsonValueKeyFlag().getFlagRef());
     }
     return retval;
   }
@@ -211,7 +217,7 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
     String retval = null;
 
     if (getXmlField().isSetJsonValueKey()) {
-      retval = getXmlField().getJsonValueKey().getStringValue();
+      retval = getXmlField().getJsonValueKey();
     }
 
     if (retval == null || retval.isEmpty()) {
@@ -229,7 +235,7 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
   public IXmlFlagInstance getJsonKeyFlagInstance() {
     IXmlFlagInstance retval = null;
     if (hasJsonKey()) {
-      retval = getFlagInstanceByName(getXmlField().getJsonKey().getFlagName());
+      retval = getFlagInstanceByName(getXmlField().getJsonKey().getFlagRef());
     }
     return retval;
   }

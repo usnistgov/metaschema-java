@@ -1,3 +1,6 @@
+<#ftl ns_prefixes={"xs":"http://www.w3.org/2001/XMLSchema"}>
+<#-- schema-specific data types -->
+<#assign schemaTypes = ['date-with-timezone','dateTime-with-timezone','email','hostname','ip-v4-address','ip-v6-address','markup-line','markup-multiline','string','token','uri','uri-reference','uuid']/>
 <#function typeName def>
   <#if !def.global>
     <#local definingInstance=def.definingInstance/>
@@ -44,60 +47,37 @@
     <#case "integer">
       <#local valueType="xs:integer"/>
       <#break>
-    <#case "NCName">
-      <#local valueType="xs:NCName"/>
-      <#break>
     <#case "nonNegativeInteger">
       <#local valueType="xs:nonNegativeInteger"/>
       <#break>
     <#case "positiveInteger">
       <#local valueType="xs:positiveInteger"/>
       <#break>
-    <#case "string">
-      <#local valueType="xs:string"/>
-      <#break>
-    <#case "markup-line">
-      <#local valueType="markupLineType"/>
-      <#assign markup\-line_used=true/>
-      <#break>
-    <#case "markup-multiline">
-      <#local valueType="markupMultilineType"/>
-      <#assign markup\-multiline_used=true/>
-      <#break>
     <#case "year-month-duration">
       <#-- consider a specialized data type -->
       <#local valueType="xs:duration"/>
       <#break>
     <#default>
-      <#-- date-with-timezone -->
-      <#-- dateTime-with-timezone -->
-      <#-- email -->
-      <#-- hostname -->
-      <#-- ip-v4-address -->
-      <#-- ip-v6-address -->
-      <#-- token -->
-      <#-- uri -->
-      <#-- uri-reference -->
-      <#-- uuid -->
-      <#local valueType>${def.datatype.name}</#local>
+      <#if !schemaTypes?seq_contains(def.datatype.name)>
+          <#stop "Unsupported data type: ${def.datatype.name}"/>
+      </#if>
+      
+      <#local valueType="${def.datatype.name}"/>
       <@'<#assign ${def.datatype.name}_used=true/>'?replace("-","\\-")?interpret />
- 
-	  <#-- markup\-line -->
-      <#-- markup\-multiline -->
   </#switch>
 
-  <#return valueType>
+  <#return valueType/>
 </#function>
 
 <#macro assemblyDefinition def>
   <xs:complexType<#if !def.inline> name="${typeForDefinition(def)}"</#if>>
     <#if !def.inline>
-  	<@definitionAnnotation def=def/>
-  	</#if>
+      <@definitionAnnotation def=def/>
+      </#if>
     <#list def.modelInstances>
     <xs:sequence>
       <#items as instance>
-      	<@modelInstance instance=instance/>
+          <@modelInstance instance=instance/>
       </#items>
     </xs:sequence>
     </#list>
@@ -108,23 +88,53 @@
 </#macro>
 
 <#macro fieldDefinition def>
-  <#if def.flagInstances?size == 0>
+  <#if !def.global && def.flagInstances?size == 0>
     <#-- skip fields without flags, since these are bare simple types -->
     <#return>
   </#if>
 
-  <xs:complexType<#if !def.inline> name="${typeForDefinition(def)}"</#if>>
+  <#local datatype="${typeForValue(def)}"/>
+  <#if def.flagInstances?size gt 0 || datatype?string == "markup-line" || datatype?string == "markup-multiline">
+    <xs:complexType<#if !def.inline> name="${typeForDefinition(def)}"</#if>>
     <#if !def.inline>
-  	<@definitionAnnotation def=def/>
-  	</#if>
-    <xs:simpleContent>
-      <xs:extension base="${typeForValue(def)}">
-        <#list def.flagInstances as instance>
-          <@flagInstance instance=instance/>
-        </#list>
-      </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
+      <@definitionAnnotation def=def/>
+    </#if>
+    <#if datatype?string == "markup-line" || datatype?string == "markup-multiline">
+      <xs:complexContent>
+        <xs:extension base="${datatype}"<#rt>
+        <#if def.flagInstances?size == 0>
+          <#lt>/>
+        <#else>
+          <#lt>>
+          <#list def.flagInstances as instance>
+            <@flagInstance instance=instance/>
+          </#list>
+          </xs:extension>
+        </#if>
+      </xs:complexContent>
+    <#else>
+      <xs:simpleContent>
+        <xs:extension base="${datatype}"<#rt>
+        <#if def.flagInstances?size == 0>
+          <#lt>/>
+        <#else>
+          <#lt>>
+          <#list def.flagInstances as instance>
+            <@flagInstance instance=instance/>
+          </#list>
+          </xs:extension>
+        </#if>
+      </xs:simpleContent>
+    </#if>
+    </xs:complexType>
+  <#else>
+    <xs:simpleType<#if !def.inline> name="${typeForDefinition(def)}"</#if>>
+    <#if !def.inline>
+      <@definitionAnnotation def=def/>
+    </#if>
+      <xs:restriction base="${datatype}"/>
+    </xs:simpleType>
+  </#if>
 </#macro>
 
 <#macro modelInstance instance>
@@ -133,50 +143,58 @@
     <#case "FIELD">
       <#if (instance.xmlGroupAsBehavior!"UNGROUPED") == "GROUPED">
       <xs:element name="${instance.groupAsName}"<#rt>
-        <#if instance.minOccurs gt 0>
-        <#lt> minOccurs="1"<#rt>
+        <#if instance.minOccurs == 0>
+        <#lt> minOccurs="0"<#rt>
         </#if>
       <#lt>>
         <xs:complexType>
           <xs:sequence>
       </#if>
-      <xs:element name="${instance.useName}"<#rt>
-      <#if instance.minOccurs != 1>
-        <#lt> minOccurs="${instance.minOccurs}"<#rt>
+      <#if instance.modelType == "FIELD" && instance.definition.datatype.name == "markup-multiline" && !instance.inXmlWrapped>
+        <xs:sequence minOccurs="${instance.minOccurs}" maxOccurs="unbounded">
+          <@definitionAnnotation def=instance.definition/>
+          <xs:group ref="blockElementGroup">
+          	<@definitionAnnotation def=instance.definition/>
+          </xs:group>
+        </xs:sequence>
+      <#else>
+        <xs:element name="${instance.useName}"<#rt>
+        <#if (!instance.xmlGroupAsBehavior?? || (instance.xmlGroupAsBehavior!"UNGROUPED") == "UNGROUPED")  && instance.minOccurs != 1>
+          <#lt> minOccurs="${instance.minOccurs}"<#rt>
+        </#if>
+        <#if instance.maxOccurs gt 1>
+          <#lt> maxOccurs="${instance.maxOccurs}"<#rt>
+        <#elseif instance.maxOccurs == -1>
+          <#lt> maxOccurs="unbounded"<#rt>
+        </#if>
+        <#if instance.definition.global>
+          <#lt> type="${typeForDefinition(instance.definition)}"<#rt>
+        <#elseif instance.modelType == "FIELD" && instance.definition.flagInstances?size == 0><#-- this is a field without flags -->
+          <#lt> type="${typeForValue(instance.definition)}"<#rt>
+        </#if>
+        <#if instance.definition.inline>
+          <#lt>>
+            <@definitionAnnotation def=instance.definition/>
+            <@definition def=instance.definition/>
+          </xs:element>
+        <#elseif instance.remarks??>
+            <#lt>>
+            <xs:annotation>
+              <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+                 ${markupToHTML(instance.remarks, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")}
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        <#else>
+          <#lt>/>
+        </#if>
       </#if>
-      <#if instance.maxOccurs gt 1>
-        <#lt> maxOccurs="${instance.maxOccurs}"<#rt>
-      <#elseif instance.maxOccurs == -1>
-        <#lt> maxOccurs="unbounded"<#rt>
-      </#if>
-      <#if instance.definition.global && (instance.modelType == "ASSEMBLY" || instance.definition.flagInstances?size gt 0)>
-        <#-- fields without flags are never global; they are represented as single values -->
-        <#lt> type="${typeForDefinition(instance.definition)}"<#rt>
-      <#elseif instance.modelType == "FIELD" && instance.definition.flagInstances?size == 0><#-- this is a field without flags -->
-	    <#lt> type="${typeForValue(instance.definition)}"<#rt>
-	  </#if>
-	  <#if instance.definition.inline>
-	  	<#lt>>
- 	  	<@definitionAnnotation def=instance.definition/>
- 	  	<@definition def=instance.definition/>
-      </xs:element>
-      <#elseif instance.remarks??>
-        <#lt>>
-        <xs:annotation>
-          <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
- 	        ${markupToHTML(instance.remarks, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")?no_esc}
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-	  <#else>
-	      <#lt>/>
-	  </#if>
       <#if (instance.xmlGroupAsBehavior!"UNGROUPED") == "GROUPED">
           </xs:sequence>
         </xs:complexType>
       </xs:element>
       </#if>
-    	<#break>
+        <#break>
     <#case "CHOICE">
       <#list instance.modelInstances>
       <xs:choice>
@@ -185,7 +203,7 @@
         </#items>
       </xs:choice>
       </#list>
-    	<#break>
+        <#break>
     <#default>
       <#stop "unsupported model type: ${def.modelType}">
   </#switch>
@@ -204,13 +222,13 @@
     <xs:annotation>
       <xs:appinfo>
         <m:formal-name>${def.formalName}</m:formal-name>
-        <m:description>${markupToHTML(def.description, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")?no_esc}</m:description>
+        <m:description>${markupToHTML(def.description, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")}</m:description>
       </xs:appinfo>
       <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
-      	<p><b>${def.formalName}</b>: ${markupToHTML(def.description, "http://www.w3.org/1999/xhtml", "")?no_esc}</p>
-	  <#if def.remarks??>
- 	    ${markupToHTML(def.remarks, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")?no_esc}
-	  </#if>
+          <p><b>${def.formalName}</b>: ${markupToHTML(def.description, "http://www.w3.org/1999/xhtml", "")}</p>
+      <#if def.remarks??>
+         ${markupToHTML(def.remarks, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")}
+      </#if>
       </xs:documentation>
     </xs:annotation>
 </#macro>
@@ -218,11 +236,11 @@
   <#-- Definition: ${typeForDefinition(def)} -->
   <#switch def.modelType>
   <#case "ASSEMBLY">
-  	<@assemblyDefinition def=def />
-  	<#break>
+    <@assemblyDefinition def=def />
+    <#break>
   <#case "FIELD">
     <@fieldDefinition def=def />
-  	<#break>
+      <#break>
   </#switch>
 </#macro>
 <#t>
@@ -233,18 +251,19 @@
   targetNamespace="${metaschema.xmlNamespace}"
   xmlns="${metaschema.xmlNamespace}"
   vc:minVersion="1.0" vc:maxVersion="1.1"
-  elementFormDefault="qualified">
+  elementFormDefault="qualified"
+  version="${metaschema.version}">
 
   <xs:annotation>
     <xs:appinfo>
-      <m:schema-name>${markupToHTML(metaschema.name, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")?no_esc}</m:schema-name>
+      <m:schema-name>${markupToHTML(metaschema.name, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")}</m:schema-name>
       <m:schema-version>${metaschema.version}</m:schema-version>
       <m:short-name>${metaschema.shortName}</m:short-name>
     </xs:appinfo>
     <#if metaschema.remarks??>
-   	<xs:documentation xmlns="http://www.w3.org/1999/xhtml">
-      	${markupToHTML(metaschema.remarks, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")?no_esc}
-  	</xs:documentation>
+       <xs:documentation>
+          ${markupToHTML(metaschema.remarks, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")}
+      </xs:documentation>
     </#if>
   </xs:annotation>
 
@@ -259,277 +278,73 @@
 </#list>
 
 <#if date\-with\-timezone_used?? && date\-with\-timezone_used == true>
-  <xs:simpleType name="date-with-timezone">
-    <xs:annotation>
-      <xs:documentation>The xs:date with a required timezone.</xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:date">
-      <xs:pattern value=".+[:Z].*"/>
-    </xs:restriction>
-  </xs:simpleType>
+<#noautoesc>
+  ${metaschema\-datatypes["xs:schema/xs:simpleType[@name='date-with-timezone']"].@@markup}
+</#noautoesc>
 </#if>
 <#if dateTime\-with\-timezone_used?? && dateTime\-with\-timezone_used == true>
-  <xs:simpleType name="dateTime-with-timezone">
-    <xs:annotation>
-      <xs:documentation>The xs:dateTime with a required timezone.</xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:dateTime">
-      <xs:pattern value=".+T.+(Z|[+-].+)"/>
-    </xs:restriction>
-  </xs:simpleType>
+<#noautoesc>
+  ${metaschema\-datatypes["xs:schema/xs:simpleType[@name='dateTime-with-timezone']"].@@markup}
+</#noautoesc>
 </#if>
 <#if email_used?? && email_used == true>
-  <xs:simpleType name="email">
-    <xs:annotation>
-      <xs:documentation>An email address</xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"/>
-      <xs:pattern value=".+@.+">
-        <xs:annotation>
-          <xs:documentation>Need a better pattern.</xs:documentation>
-        </xs:annotation>
-      </xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
+<#noautoesc>
+  ${metaschema\-datatypes["xs:schema/xs:simpleType[@name='email']"].@@markup}
+</#noautoesc>
 </#if>  
 <#if hostname_used?? && hostname_used == true>
-  <xs:simpleType name="hostname">
-    <xs:annotation>
-      <xs:documentation>A host name</xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"/>
-      <xs:pattern value=".+">
-        <xs:annotation>
-          <xs:documentation>Need a better pattern</xs:documentation>
-        </xs:annotation>
-      </xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
+<#noautoesc>
+  ${metaschema\-datatypes["xs:schema/xs:simpleType[@name='hostname']"].@@markup}
+</#noautoesc>
 </#if>  
 <#if ip\-v4\-address_used?? && ip\-v4\-address_used == true>
-  <xs:simpleType name="ip-v4-address">
-    <xs:annotation>
-      <xs:documentation>The ip-v4-address type specifies an IPv4 address in dot decimal notation.</xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"/>
-      <xs:pattern value="((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]).){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])"/>
-    </xs:restriction>
-  </xs:simpleType>
+<#noautoesc>
+  ${metaschema\-datatypes["xs:schema/xs:simpleType[@name='ip-v4-address']"].@@markup}
+</#noautoesc>
 </#if>  
 <#if ip\-v6\-address_used?? && ip\-v6\-address_used == true>
-  <xs:simpleType name="ip-v6-address">
-    <xs:annotation>
-      <xs:documentation>The ip-v6-address type specifies an IPv6 address represented in 8 hextets separated by colons.</xs:documentation>
-      <xs:documentation>This is based on the pattern provided here: https://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses with some customizations.</xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"/>
-      <xs:pattern value="(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|[fF][eE]80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::([fF]{4}(:0{1,4}){0,1}:){0,1}((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]).){3,3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]).){3,3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]))"/>
-    </xs:restriction>
-  </xs:simpleType>
+<#noautoesc>
+  ${metaschema\-datatypes["xs:schema/xs:simpleType[@name='ip-v6-address']"].@@markup}
+</#noautoesc>
 </#if>  
+<#if string_used?? && string_used == true>
+<#noautoesc>
+  ${metaschema\-datatypes["xs:schema/xs:simpleType[@name='string']"].@@markup}
+</#noautoesc>
+</#if>
 <#if token_used?? && token_used == true>
-  <xs:simpleType name="token">
-    <xs:annotation>
-      <!--<xs:documentation>Matching XSD NCName, except whitespace is not collapsed.</xs:documentation>-->
-      <xs:documentation>A string token following the rules of XML "no colon" names, with no whitespace. (XML names are single alphabetic characters
-      followed by alphanumeric characters, periods, underscores or dashes.)</xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="preserve"/>
-      <xs:pattern value="[\i-[:&#x10000;-&#xEFFFF;]][\c-[:&#x10000;-&#xEFFFF;]]*">
-        <xs:annotation>
-          <!--<xs:documentation>An XML initial character (but not colon), followed by any XML name character (but not colon).</xs:documentation>-->
-          <xs:documentation>A single token may not contain whitespace.</xs:documentation>
-        </xs:annotation>
-      </xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
+<#noautoesc>
+  ${metaschema\-datatypes["xs:schema/xs:simpleType[@name='token']"].@@markup}
+</#noautoesc>
 </#if>
 <#if uri_used?? && uri_used == true>
-  <xs:simpleType name="uri">
-    <xs:annotation>
-      <xs:documentation>A URI</xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:anyURI">
-      <xs:whiteSpace value="collapse"/>
-      <xs:pattern value="\p{L}[\p{L}\d+\-\.]*:.+">
-        <xs:annotation>
-          <xs:documentation>Requires a scheme with colon per RFC 3986</xs:documentation>
-        </xs:annotation>
-      </xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
+<#noautoesc>
+  ${metaschema\-datatypes["xs:schema/xs:simpleType[@name='uri']"].@@markup}
+</#noautoesc>
 </#if>  
 <#if uri\-reference_used?? && uri\-reference_used == true>
-  <xs:simpleType name="uri-reference">
-    <xs:annotation>
-      <xs:documentation>A URI reference, such as a relative URL</xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:anyURI">
-      <xs:whiteSpace value="collapse"/>
-    </xs:restriction>
-  </xs:simpleType>
+<#noautoesc>
+  ${metaschema\-datatypes["xs:schema/xs:simpleType[@name='uri-reference']"].@@markup}
+</#noautoesc>
 </#if>  
 <#if uuid_used?? && uuid_used == true>
-  <xs:simpleType name="uuid">
-    <xs:annotation>
-      <xs:documentation>A type 4 ('random' or 'pseudorandom') or type 5 ('name-based') UUID per RFC 4122</xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"/>
-      <xs:pattern value="[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[45][0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}">
-        <xs:annotation>
-          <xs:documentation>A sequence of 8-4-4-4-12 hex digits, with extra constraints in the 13th and 17-18th places for version 4</xs:documentation>
-        </xs:annotation>
-      </xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
-</#if>  
-<#if markup\-line_used?? && markup\-line_used == true>
-  <xs:complexType name="markupLineType" mixed="true" >
-    <xs:group ref="mixedInlineMarkupGroup"/>
-  </xs:complexType>
+<#noautoesc>
+  ${metaschema\-datatypes["xs:schema/xs:simpleType[@name='uuid']"].@@markup}
+</#noautoesc>
 </#if>  
 <#if markup\-multiline_used?? && markup\-multiline_used == true>
-  <xs:complexType name="markupMultilineType">
-    <xs:group ref="blockElementGroup" maxOccurs="unbounded" minOccurs="0"/>
-  </xs:complexType>
-  <xs:group name="blockElementGroup">
-    <xs:choice>
-      <xs:element name="h1" type="blockElementType"/>
-      <xs:element name="h2" type="blockElementType"/>
-      <xs:element name="h3" type="blockElementType"/>
-      <xs:element name="h4" type="blockElementType"/>
-      <xs:element name="h5" type="blockElementType"/>
-      <xs:element name="h6" type="blockElementType"/>
-      <xs:element name="p" type="blockElementType"/>
-      <xs:element name="ul" type="listType"/>
-      <xs:element name="ol" type="listType"/>
-      <xs:element name="pre" type="preformattedType"/>
-      <xs:element name="table" type="tableType"/>
-      <!-- TODO: need to add support for blockquote, which can contain block elements. usnistgov/metaschema#70 -->
-    </xs:choice>
-  </xs:group>
-
-  <xs:complexType name="blockElementType" mixed="true">
-    <xs:group ref="phraseInlineMarkupGroup"/>
-  </xs:complexType>
-
-  <xs:complexType name="headingType" mixed="true">
-    <xs:complexContent>
-      <xs:extension base="blockElementType">
-        <xs:annotation>
-          <xs:documentation>The content model is the same as blockElementType, but line endings need
-            to be preserved, since this is preformatted.</xs:documentation>
-        </xs:annotation>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="preformattedType" mixed="true">
-    <xs:complexContent>
-      <xs:extension base="blockElementType">
-        <xs:annotation>
-          <xs:documentation>The content model is the same as blockElementType, but line endings need
-            to be preserved, since this is preformatted.</xs:documentation>
-        </xs:annotation>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="listType">
-    <xs:sequence>
-      <xs:element name="li" type="listItemType" minOccurs="1" maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="listItemType" mixed="true">
-    <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:group ref="mixedInlineMarkupGroup"/>
-      <xs:element name="ul" type="listType"/>
-      <xs:element name="ol" type="listType"/>
-    </xs:choice>
-  </xs:complexType>
-
-  <xs:complexType name="tableType">
-    <xs:sequence>
-      <xs:element maxOccurs="unbounded" name="tr" type="tableRowType"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="tableRowType">
-    <!-- QUESTION: Should we allow TH and TD to be mixed? -->
-    <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="td" type="tableCellType" maxOccurs="unbounded"/>
-      <xs:element name="th" type="tableCellType" maxOccurs="unbounded"/>
-    </xs:choice>
-  </xs:complexType>
-
-  <xs:complexType name="tableCellType" mixed="true">
-    <xs:group ref="mixedInlineMarkupGroup"/>
-    <!-- TODO: consider adding a choice between the inline or paragraphs. We need to figure out what is supported in Markdown. -->
-    <xs:attribute name="align" type="alignType" default="left"/>
-    <!-- TODO: need to add support for alignment. usnistgov/metaschema#70 -->
-  </xs:complexType>
-
-  <xs:simpleType name="alignType">
-    <xs:restriction base="xs:token">
-      <xs:enumeration value="left"/>
-      <xs:enumeration value="center"/>
-      <xs:enumeration value="right"/>
-    </xs:restriction>
-  </xs:simpleType>
+<#noautoesc>
+  ${metaschema\-prose\-multiline["xs:schema/*[not(local-name()='include')]"].@@markup}
+</#noautoesc>
+</#if>
+<#if markup\-line_used?? && markup\-line_used == true>
+<#noautoesc>
+  ${metaschema\-prose\-line["xs:schema/*[not(local-name()='include')]"].@@markup}
+</#noautoesc>
 </#if>
 <#if (markup\-line_used?? && markup\-line_used == true) || (markup\-multiline_used?? && markup\-multiline_used == true)>
-  <xs:group name="mixedInlineMarkupGroup">
-    <xs:sequence>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:group ref="phraseInlineMarkupGroup"/>
-        <xs:element name="img" type="imageType"/>
-      </xs:choice>
-    </xs:sequence>
-  </xs:group>
-
-  <xs:group name="phraseInlineMarkupGroup">
-    <xs:sequence>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="code" type="inlineMarkupType" minOccurs="1"/>
-        <xs:element name="em" type="inlineMarkupType" minOccurs="1"/>
-        <xs:element name="i" type="inlineMarkupType" minOccurs="1"/>
-        <xs:element name="b" type="inlineMarkupType" minOccurs="1"/>
-        <xs:element name="strong" type="inlineMarkupType" minOccurs="1"/>
-        <xs:element name="sub" type="inlineMarkupType" minOccurs="1"/>
-        <xs:element name="sup" type="inlineMarkupType" minOccurs="1"/>
-        <xs:element name="q" type="inlineMarkupType" minOccurs="1"/>
-        <xs:element name="insert" type="insertType"/>
-        <xs:element name="a" type="anchorType"/>
-      </xs:choice>
-    </xs:sequence>
-  </xs:group>
-
-  <xs:complexType name="inlineMarkupType" mixed="true">
-    <xs:group ref="phraseInlineMarkupGroup"/>
-  </xs:complexType>
-
-  <xs:complexType name="imageType">
-    <xs:attribute name="alt" type="xs:string"/>
-    <xs:attribute name="src" use="required" type="xs:anyURI"/>
-  </xs:complexType>
-
-  <xs:complexType name="anchorType" mixed="true">
-    <xs:group ref="phraseInlineMarkupGroup"/>
-    <xs:attribute name="href" type="xs:anyURI"/>
-  </xs:complexType>
-
-  <xs:complexType name="insertType">
-    <xs:annotation>
-      <xs:documentation>A value to be assigned by responder via parameter, for which a parameter must be available.</xs:documentation>
-    </xs:annotation>
-    <xs:attribute name="param-id" use="required" type="xs:NCName"/>
-  </xs:complexType>
+<#noautoesc>
+  ${metaschema\-prose\-base["xs:schema/*"].@@markup}
+</#noautoesc>
 </#if>
 </xs:schema>

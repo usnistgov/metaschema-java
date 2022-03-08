@@ -39,6 +39,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataT
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFlagDefinition;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFlagDefinitionType;
 
@@ -140,6 +141,11 @@ public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
     return false;
   }
 
+  @Override
+  public IInstance getInlineInstance() {
+    return null;
+  }
+
   @SuppressWarnings("null")
   @Override
   public String getName() {
@@ -162,12 +168,12 @@ public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
 
   @Override
   public String getFormalName() {
-    return getXmlFlag().getFormalName();
+    return getXmlFlag().isSetFormalName() ? getXmlFlag().getFormalName() : null;
   }
 
   @Override
   public MarkupLine getDescription() {
-    return MarkupStringConverter.toMarkupString(getXmlFlag().getDescription());
+    return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription()) : null;
   }
 
   @SuppressWarnings("null")

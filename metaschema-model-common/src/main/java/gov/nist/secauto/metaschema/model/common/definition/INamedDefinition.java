@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.definition;
 
 import gov.nist.secauto.metaschema.model.common.INamedModelElement;
+import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 
 /**
  * This marker interface is used for some collections that contain various named definitions.
@@ -41,4 +42,11 @@ public interface INamedDefinition extends IDefinition, INamedModelElement {
    *         able to be globally referenced
    */
   boolean isInline();
+
+  /**
+   * If {@link #isInline()} is {@code true}, return the instance the definition is inlined for.
+   * 
+   * @return the instance or {@code null} otherwise
+   */
+  IInstance getInlineInstance();
 }

@@ -76,12 +76,15 @@ public class DataTypeService {
     ServiceLoader.load(IDataTypeProvider.class).stream()
         .map(Provider<IDataTypeProvider>::get)
         .flatMap(provider -> {
-          return provider.getJavaTypeAdapters().stream();
-        }).forEach(adapter -> {
-          libraryByName.put(adapter.getName(), adapter);
+          return provider.getJavaTypeAdapters().entrySet().stream();
+        }).forEach(entry -> {
+          String datatypeName = entry.getKey();
+          @SuppressWarnings("null")
+          IJavaTypeAdapter<?> adapter = entry.getValue();
+          libraryByName.put(datatypeName, adapter);
           @SuppressWarnings("rawtypes")
           Class<? extends IJavaTypeAdapter> clazz = adapter.getClass();
-          libraryByClass.put(clazz, adapter);
+          libraryByClass.putIfAbsent(clazz, adapter);
         });
     this.libraryByName = libraryByName;
     this.libraryByClass = libraryByClass;

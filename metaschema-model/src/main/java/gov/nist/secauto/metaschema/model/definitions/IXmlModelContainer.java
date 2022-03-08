@@ -47,13 +47,13 @@ public interface IXmlModelContainer extends IModelContainer {
 
   @Override
   default @Nullable INamedModelInstance getModelInstanceByName(String name) {
-    return getAssemblyInstanceMap().get(name);
+    return getNamedModelInstanceMap().get(name);
   }
 
   @SuppressWarnings("null")
   @Override
   default @NotNull Collection<@NotNull ? extends INamedModelInstance> getNamedModelInstances() {
-    return getAssemblyInstanceMap().values();
+    return getNamedModelInstanceMap().values();
   }
 
   @Override

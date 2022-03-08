@@ -190,6 +190,11 @@ public class DefaultFieldProperty
     }
 
     @Override
+    public IBoundFieldInstance getInlineInstance() {
+      return DefaultFieldProperty.this;
+    }
+
+    @Override
     public String getName() {
       return DefaultFieldProperty.this.getName();
     }

@@ -27,9 +27,9 @@
 package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ModelWalker;
 
 import org.apache.logging.log4j.LogManager;
@@ -50,9 +50,9 @@ public abstract class DefinitionCollectingModelWalker
     extends ModelWalker<Object> {
   private static final Logger LOGGER = LogManager.getLogger(DefinitionCollectingModelWalker.class);
 
-  private final Function<IDefinition, Boolean> filter;
+  private final Function<INamedDefinition, Boolean> filter;
   @NotNull
-  private final Set<@NotNull IDefinition> definitions = new LinkedHashSet<>();
+  private final Set<@NotNull INamedDefinition> definitions = new LinkedHashSet<>();
 
   /**
    * Construct a new walker using the provided filter.
@@ -60,7 +60,7 @@ public abstract class DefinitionCollectingModelWalker
    * @param filter
    *          the filter to match definitions against
    */
-  protected DefinitionCollectingModelWalker(Function<IDefinition, Boolean> filter) {
+  protected DefinitionCollectingModelWalker(Function<INamedDefinition, Boolean> filter) {
     Objects.requireNonNull(filter, "filter");
     this.filter = filter;
   }
@@ -70,7 +70,7 @@ public abstract class DefinitionCollectingModelWalker
    * 
    * @return the filter
    */
-  protected Function<IDefinition, Boolean> getFilter() {
+  protected Function<INamedDefinition, Boolean> getFilter() {
     return filter;
   }
 
@@ -80,7 +80,7 @@ public abstract class DefinitionCollectingModelWalker
    * @return the collection of definitions
    */
   @NotNull
-  public Collection<@NotNull ? extends IDefinition> getDefinitions() {
+  public Collection<@NotNull ? extends INamedDefinition> getDefinitions() {
     return definitions;
   }
 
@@ -99,15 +99,17 @@ public abstract class DefinitionCollectingModelWalker
     if (LOGGER.isTraceEnabled()) {
       LOGGER.trace("visiting field definition '{}'", def.toCoordinates());
     }
+    boolean retval;
     if (definitions.contains(def)) {
       // no need to visit, since this has already been seen
-      return false;
+      retval = false;
     } else {
       if (getFilter().apply(def)) {
         definitions.add(def);
       }
-      return true;
+      retval = true;
     }
+    return retval;
   }
 
   @Override
@@ -115,14 +117,16 @@ public abstract class DefinitionCollectingModelWalker
     if (LOGGER.isTraceEnabled()) {
       LOGGER.trace("visiting assembly definition '{}'", def.toCoordinates());
     }
+    boolean retval;
     if (definitions.contains(def)) {
       // no need to visit, since this has already been seen
-      return false;
+      retval = false;
     } else {
       if (getFilter().apply(def)) {
         definitions.add(def);
       }
-      return true;
+      retval = true;
     }
+    return retval;
   }
 }

@@ -23,12 +23,15 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.schemagen.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
@@ -46,6 +49,34 @@ public class JsonDefinitionGenerator {
     // disable construction
   }
 
+  public static void generateDescription(IDefinition definition, JsonGenerator jsonGenerator) throws IOException {
+    MarkupLine description = definition.getDescription();
+
+    StringBuilder retval = null;
+    if (description != null) {
+      retval = new StringBuilder().append(description.toMarkdown());
+    }
+
+    MarkupMultiline remarks = definition.getRemarks();
+    if (remarks != null) {
+      if (retval == null) {
+        retval = new StringBuilder();
+      } else {
+        retval.append("\n\n");
+      }
+      retval.append(remarks.toMarkdown());
+    }
+    if (retval != null) {
+      jsonGenerator.writeStringField("description", retval.toString());
+    }
+  }
+
+  public static void generateTitle(IDefinition definition, JsonGenerator jsonGenerator) throws IOException {
+    String formalName = definition.getFormalName();
+    if (formalName != null) {
+      jsonGenerator.writeStringField("title", formalName);
+    }
+  }
 
   public static void generateDefinition(@NotNull INamedDefinition definition,
       @NotNull DatatypeManager datatypeManager,
@@ -57,20 +88,9 @@ public class JsonDefinitionGenerator {
     jsonGenerator.writeStartObject();
 
     jsonGenerator.writeStringField("$id", datatypeManager.getJsonDefinitionRefForDefinition(definition).toString());
-    jsonGenerator.writeStringField("title", definition.getFormalName());
 
-    MarkupMultiline remarks = definition.getRemarks();
-    String description;
-    if (remarks == null) {
-      description = definition.getDescription().toMarkdown();
-    } else {
-      description = new StringBuilder()
-          .append(definition.getDescription().toMarkdown())
-          .append("\n\n")
-          .append(remarks.toMarkdown())
-          .toString();
-    }
-    jsonGenerator.writeStringField("description", description);
+    generateTitle(definition, jsonGenerator);
+    generateDescription(definition, jsonGenerator);
 
     switch (definition.getModelType()) {
     case ASSEMBLY:
@@ -96,7 +116,8 @@ public class JsonDefinitionGenerator {
 
     // determine the flag instances to generate
     IFlagInstance jsonKeyFlag = definition.getJsonKeyFlagInstance();
-    Collection<? extends IFlagInstance> flags = FlagInstanceFilter.filterFlags(definition.getFlagInstances(), jsonKeyFlag);
+    Collection<? extends IFlagInstance> flags
+        = FlagInstanceFilter.filterFlags(definition.getFlagInstances(), jsonKeyFlag);
 
     JsonPropertyGenerator.InstanceProperties properties = new JsonPropertyGenerator.InstanceProperties();
 
@@ -113,11 +134,11 @@ public class JsonDefinitionGenerator {
     Collection<? extends IChoiceInstance> choices = definition.getChoiceInstances();
     if (choices.isEmpty()) {
       properties.generate(jsonGenerator);
+
+      jsonGenerator.writeBooleanField("additionalProperties", false);
     } else {
       JsonPropertyGenerator.generateChoices(choices, datatypeManager, properties, jsonGenerator);
     }
-
-    jsonGenerator.writeBooleanField("additionalProperties", false);
   }
 
   public static void generateFieldDefinition(
@@ -146,22 +167,32 @@ public class JsonDefinitionGenerator {
 
       // generate value property
       if (jsonValueKeyFlag == null) {
-        JsonPropertyGenerator.generateSimpleFieldValue(definition, datatypeManager, properties);
+        if (definition.isCollapsible()) {
+          JsonPropertyGenerator.generateCollapsibleFieldValueInstance(definition, datatypeManager, properties);
+        } else {
+          JsonPropertyGenerator.generateSimpleFieldValueInstance(definition, datatypeManager, properties);
+        }
       }
 
       properties.generate(jsonGenerator);
 
-      if (jsonValueKeyFlag != null) {
+      if (jsonValueKeyFlag == null) {
+        jsonGenerator.writeBooleanField("additionalProperties", false);
+      } else {
         jsonGenerator.writeFieldName("additionalProperties");
-        jsonGenerator.writeStartObject();
-        // the type of the additional properties must be the datatype of the field value
-        jsonGenerator.writeStringField("$ref", datatypeManager.getJsonDefinitionRefForDatatype(definition.getDatatype()).toString());
-        jsonGenerator.writeEndObject();
-        
+
+        if (definition.isCollapsible()) {
+          jsonGenerator.writeTree(JsonPropertyGenerator.generateCollapsibleFieldValueType(definition, datatypeManager));
+        } else {
+          jsonGenerator.writeStartObject();
+          // the type of the additional properties must be the datatype of the field value
+          jsonGenerator.writeStringField("$ref",
+              datatypeManager.getJsonDefinitionRefForDatatype(definition.getDatatype()).toString());
+          jsonGenerator.writeEndObject();
+        }
+
         jsonGenerator.writeNumberField("minProperties", properties.getRequired().size() + 1);
         jsonGenerator.writeNumberField("maxProperties", properties.getProperties().size() + 1);
-      } else {
-        jsonGenerator.writeBooleanField("additionalProperties", false);
       }
     }
   }

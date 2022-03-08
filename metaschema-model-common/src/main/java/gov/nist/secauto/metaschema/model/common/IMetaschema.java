@@ -112,6 +112,14 @@ public interface IMetaschema {
   URI getXmlNamespace();
 
   /**
+   * Retrieve the JSON base URI associated with the Metaschema.
+   * 
+   * @return the base URI
+   */
+  @NotNull
+  URI getJsonBaseUri();
+
+  /**
    * Retrieves all Metaschema imported by this Metaschema.
    * 
    * @return a mapping of locations to Metaschema

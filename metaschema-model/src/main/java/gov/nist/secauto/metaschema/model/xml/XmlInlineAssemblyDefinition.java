@@ -40,6 +40,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
@@ -180,13 +181,18 @@ public class XmlInlineAssemblyDefinition
     }
 
     @Override
+    public IXmlAssemblyInstance getInlineInstance() {
+      return XmlInlineAssemblyDefinition.this;
+    }
+
+    @Override
     public String getFormalName() {
-      return getXmlAssembly().getFormalName();
+      return getXmlAssembly().isSetFormalName() ? getXmlAssembly().getFormalName() : null;
     }
 
     @Override
     public MarkupLine getDescription() {
-      return MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription());
+      return getXmlAssembly().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription()) : null;
     }
 
     @Override
@@ -229,7 +235,7 @@ public class XmlInlineAssemblyDefinition
     public IXmlFlagInstance getJsonKeyFlagInstance() {
       IXmlFlagInstance retval = null;
       if (hasJsonKey()) {
-        retval = getFlagInstanceByName(getXmlAssembly().getJsonKey().getFlagName());
+        retval = getFlagInstanceByName(getXmlAssembly().getJsonKey().getFlagRef());
       }
       return retval;
     }

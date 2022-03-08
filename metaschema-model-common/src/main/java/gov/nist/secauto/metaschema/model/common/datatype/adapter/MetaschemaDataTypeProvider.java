@@ -89,29 +89,36 @@ public class MetaschemaDataTypeProvider
   public static final StringAdapter DEFAULT_DATA_TYPE = STRING;
 
   public MetaschemaDataTypeProvider() {
-    registerJavaTypeAdapter(NCNAME);
-    registerJavaTypeAdapter(TOKEN);
-    registerJavaTypeAdapter(DECIMAL);
-    registerJavaTypeAdapter(INTEGER);
-    registerJavaTypeAdapter(NON_NEGATIVE_INTEGER);
-    registerJavaTypeAdapter(POSITIVE_INTEGER);
-    registerJavaTypeAdapter(DATE);
-    registerJavaTypeAdapter(DATE_TIME);
-    registerJavaTypeAdapter(DATE_WITH_TZ);
-    registerJavaTypeAdapter(DATE_TIME_WITH_TZ);
-    registerJavaTypeAdapter(DAY_TIME_DURATION);
-    registerJavaTypeAdapter(BASE64);
-    registerJavaTypeAdapter(EMAIL_ADDRESS);
-    registerJavaTypeAdapter(HOSTNAME);
-    registerJavaTypeAdapter(IP_V4_ADDRESS);
-    registerJavaTypeAdapter(IP_V6_ADDRESS);
-    registerJavaTypeAdapter(URI);
-    registerJavaTypeAdapter(URI_REFERENCE);
-    registerJavaTypeAdapter(UUID);
-    registerJavaTypeAdapter(MARKUP_LINE);
-    registerJavaTypeAdapter(MARKUP_MULTILINE);
-    registerJavaTypeAdapter(BOOLEAN);
-    registerJavaTypeAdapter(STRING);
-    registerJavaTypeAdapter(YEAR_MONTH_DURATION);
+    registerDatatype(BASE64);
+    registerDatatype(BOOLEAN);
+    registerDatatype(DATE);
+    registerDatatype(DATE_WITH_TZ);
+    registerDatatype(DATE_TIME);
+    registerDatatype(DATE_TIME_WITH_TZ);
+    registerDatatype(DAY_TIME_DURATION);
+    registerDatatype(DECIMAL);
+    registerDatatype(EMAIL_ADDRESS);
+    registerDatatype(HOSTNAME);
+    registerDatatype(INTEGER);
+    registerDatatype(IP_V4_ADDRESS);
+    registerDatatype(IP_V6_ADDRESS);
+    registerDatatype(MARKUP_LINE);
+    registerDatatype(MARKUP_MULTILINE);
+    registerDatatype(NON_NEGATIVE_INTEGER);
+    registerDatatype(POSITIVE_INTEGER);
+    registerDatatype(STRING);
+    registerDatatype(TOKEN);
+    registerDatatype(URI);
+    registerDatatype(URI_REFERENCE);
+    registerDatatype(UUID);
+    registerDatatype(YEAR_MONTH_DURATION);
+    // aliases for legacy type names
+    registerDatatypeByName("base64Binary", BASE64);
+    registerDatatypeByName("dateTime", DATE_TIME);
+    registerDatatypeByName("dateTime-with-timezone", DATE_TIME_WITH_TZ);
+    registerDatatypeByName("email", EMAIL_ADDRESS);
+    registerDatatypeByName("nonNegativeInteger", NON_NEGATIVE_INTEGER);
+    registerDatatypeByName("positiveInteger", POSITIVE_INTEGER);
+    
   }
 }

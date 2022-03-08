@@ -29,8 +29,7 @@ package gov.nist.secauto.metaschema.docsgen;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
-import gov.nist.secauto.metaschema.model.tree.UsedDefinitionModelWalker;
+import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 
 import org.apache.commons.io.output.TeeOutputStream;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +39,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.URL;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,14 +61,12 @@ class XmlOutlineDocumentationGeneratorTest {
     IMetaschema metaschema
         = loader.loadXmlMetaschema(new URL(
             "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
+    
     metaschemas.add(metaschema);
-
-    Collection<@NotNull ? extends IDefinition> definitions
-        = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschemas);
 
     try (FileOutputStream fos = new FileOutputStream("xml-outline.html")) {
       TeeOutputStream out = new TeeOutputStream(System.out, fos);
-      generator.generateFromDefinitions(definitions, new OutputStreamWriter(out));
+      generator.generateFromMetaschema(metaschema, new OutputStreamWriter(out));
     }
   }
 }

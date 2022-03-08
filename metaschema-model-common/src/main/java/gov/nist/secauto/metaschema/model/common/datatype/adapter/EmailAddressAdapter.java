@@ -39,7 +39,7 @@ public class EmailAddressAdapter
 
   @Override
   public String getName() {
-    return "email";
+    return "email-address";
   }
 
   @SuppressWarnings("null")

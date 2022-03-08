@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineType;
-import gov.nist.secauto.metaschema.model.xmlbeans.MarkupMultilineType;
+import gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineDatatype;
+import gov.nist.secauto.metaschema.model.xmlbeans.MarkupMultilineDatatype;
 
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlTokenSource;
@@ -52,7 +52,7 @@ public final class MarkupStringConverter {
    * @throws IllegalArgumentException
    *           if the {@code content} argument contains malformed markup
    */
-  public static MarkupLine toMarkupString(MarkupLineType content) {
+  public static MarkupLine toMarkupString(MarkupLineDatatype content) {
     String html = processHTML(content);
     return MarkupLine.fromHtml(html);
   }
@@ -67,7 +67,7 @@ public final class MarkupStringConverter {
    *           if the {@code content} argument contains malformed markup
    */
   public static MarkupMultiline
-      toMarkupString(MarkupMultilineType content) {
+      toMarkupString(MarkupMultilineDatatype content) {
     String html = processHTML(content);
     return MarkupMultiline.fromHtml(html);
   }

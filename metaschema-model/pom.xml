@@ -49,6 +49,9 @@
 			<resource>
 				<directory>${project.build.directory}/generated-resources/xmlbeans</directory>
 			</resource>
+			<resource>
+				<directory>${project.build.directory}/generated-resources/schema</directory>
+			</resource>
 		</resources>
 		<!-- 		<sourceDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceDirectory> -->
 		<!--     <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory> -->
@@ -90,18 +93,57 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>copy-resources</id>
+						<id>copy-schema-resources</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/schema/xsd</outputDirectory>
+							<outputDirectory>${project.build.directory}/generated-resources/schema/schema</outputDirectory>
 							<resources>
 								<resource>
-									<directory>metaschema/toolchains/xslt-M4/validate</directory>
+									<directory>metaschema/schema</directory>
 									<includes>
-										<include>metaschema.xsd</include>
+										<include>**/*.xsd</include>
+										<include>**/*.json</include>
+									</includes>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-supporting-xml-schema-resources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/generated-resources/schema/schema/xml</outputDirectory>
+							<resources>
+								<resource>
+									<directory>metaschema/support/xml</directory>
+									<includes>
+										<include>**/*</include>
+									</includes>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-supporting-json-schema-resources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/generated-resources/schema/schema/json</outputDirectory>
+							<resources>
+								<resource>
+									<directory>metaschema/support/json</directory>
+									<includes>
+										<include>**/*</include>
 									</includes>
 									<filtering>false</filtering>
 								</resource>
@@ -121,8 +163,8 @@
 							<goal>compile</goal>
 						</goals>
 						<configuration>
-							<sourceDir>${project.basedir}/metaschema/toolchains/xslt-M4/validate</sourceDir>
-							<sourceSchemas>metaschema.xsd</sourceSchemas>
+							<sourceDir>${project.basedir}/metaschema/schema/xml</sourceDir>
+							<!-- <sourceSchemas>metaschema.xsd</sourceSchemas> -->
 							<javaTargetDir>${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
 							<xmlConfigs>${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</xmlConfigs>
 							<classTargetDir>${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>

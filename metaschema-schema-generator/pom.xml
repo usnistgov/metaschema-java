@@ -32,6 +32,11 @@
 			<artifactId>metaschema-freemarker-support</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>metaschema-java-binding</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 		</dependency>
@@ -48,7 +53,6 @@
 		<dependency>
 			<groupId>net.sf.saxon</groupId>
 			<artifactId>Saxon-HE</artifactId>
-			<version>${dependency.saxon.version}</version>
 		</dependency>
 
 		<dependency>

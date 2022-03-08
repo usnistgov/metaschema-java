@@ -285,6 +285,11 @@ public class DefaultFlagProperty
     }
 
     @Override
+    public IBoundFlagInstance getInlineInstance() {
+      return DefaultFlagProperty.this;
+    }
+
+    @Override
     public String getName() {
       return DefaultFlagProperty.this.getName();
     }

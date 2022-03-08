@@ -140,7 +140,7 @@ public class JsonSchemaContentValidator
 
     @Override
     public boolean isPassing() {
-      return !findings.isEmpty();
+      return findings.isEmpty();
     }
 
     @Override

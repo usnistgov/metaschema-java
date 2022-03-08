@@ -200,6 +200,11 @@ public class XmlMetaschema
     return URI.create(getXmlMetaschema().getNamespace());
   }
 
+  @Override
+  public @NotNull URI getJsonBaseUri() {
+    return URI.create(getXmlMetaschema().getJsonBaseUri());
+  }
+
   @SuppressWarnings("null")
   @Override
   public Map<String, ? extends IXmlAssemblyDefinition> getAssemblyDefinitionMap() {

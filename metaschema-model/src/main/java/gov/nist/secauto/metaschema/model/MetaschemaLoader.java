@@ -48,6 +48,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -110,7 +111,20 @@ public class MetaschemaLoader {
   public IXmlMetaschema loadMetaschema(URI resource) throws MetaschemaException, IOException {
     return loadXmlMetaschema(resource, new Stack<>(), new LinkedHashMap<>());
   }
-
+  /**
+   * Load a Metaschema from the specified path.
+   * 
+   * @param path
+   *          the Metaschema to load
+   * @return the loaded Metaschema instance for the specified path
+   * @throws MetaschemaException
+   *           if an error occurred while processing the Metaschema definition
+   * @throws IOException
+   *           if an error occurred parsing the Metaschema
+   */
+  public IXmlMetaschema loadXmlMetaschema(Path path) throws MetaschemaException, IOException {
+    return loadXmlMetaschema(path.toUri());
+  }
   /**
    * Load a Metaschema from the specified file.
    * 

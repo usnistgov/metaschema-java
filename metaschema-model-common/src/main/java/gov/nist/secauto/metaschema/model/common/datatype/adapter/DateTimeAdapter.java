@@ -52,7 +52,7 @@ public class DateTimeAdapter
 
   @Override
   public String getName() {
-    return "dateTime";
+    return "date-time";
   }
 
   @SuppressWarnings("null")

@@ -27,10 +27,11 @@
 package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
-import gov.nist.secauto.metaschema.model.UsedDefinitionModelWalker;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
 
 import org.apache.commons.io.output.TeeOutputStream;
 import org.junit.jupiter.api.Test;
@@ -39,10 +40,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
@@ -53,12 +52,14 @@ public class TestXmlSchemaGenerator {
   @Test
   void test() throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException,
       MetaschemaException, TemplateException {
-    XmlSchemaGenerator generator = new XmlSchemaGenerator();
+    SchemaGenerator generator = new XmlSchemaGenerator();
 
     MetaschemaLoader loader = new MetaschemaLoader();
 
     IMetaschema metaschema
-        = loader.loadXmlMetaschema(new URL("https://raw.githubusercontent.com/usnistgov/OSCAL/main/src/metaschema/oscal_catalog_metaschema.xml"));
+    = loader.loadXmlMetaschema(Paths.get("../../OSCAL/src/metaschema/oscal_complete_metaschema.xml"));
+//    IMetaschema metaschema
+//        = loader.loadXmlMetaschema(new URL("https://raw.githubusercontent.com/usnistgov/OSCAL/main/src/metaschema/oscal_catalog_metaschema.xml"));
 //    metaschema
 //        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_profile_metaschema.xml"));
 //    metaschemas.add(metaschema);
@@ -77,6 +78,11 @@ public class TestXmlSchemaGenerator {
 //    metaschema
 //        = loader.loadXmlMetaschema(new File("../../liboscal-java/oscal/src/metaschema/oscal_poam_metaschema.xml"));
 //    metaschemas.add(metaschema);
+
+    IAssemblyDefinition part = metaschema.getExportedAssemblyDefinitionMap().get("metadata");
+    Collection<? extends IModelInstance> model = part.getModelInstances();
+    IModelInstance instance = model.toArray(new IModelInstance[0])[0];
+    IFieldInstance field = (IFieldInstance)instance;
 
     try (FileOutputStream fos = new FileOutputStream("schema.out.xsd")) {
       TeeOutputStream out = new TeeOutputStream(System.out, fos);

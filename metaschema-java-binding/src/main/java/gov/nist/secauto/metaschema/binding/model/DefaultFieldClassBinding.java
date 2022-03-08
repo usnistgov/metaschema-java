@@ -44,6 +44,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultFieldValueProperty;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundInstance;
@@ -183,6 +184,11 @@ public class DefaultFieldClassBinding
   @Override
   public boolean isInline() {
     return false;
+  }
+
+  @Override
+  public IBoundFieldInstance getInlineInstance() {
+    return null;
   }
 
   @Override

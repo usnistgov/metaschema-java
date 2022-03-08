@@ -43,6 +43,7 @@ import gov.nist.secauto.metaschema.model.definitions.ILocalDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlNamedModelDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFlagInstance;
+import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineFlagDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
@@ -143,6 +144,11 @@ public class XmlInlineFlagDefinition
     }
 
     @Override
+    public IXmlFlagInstance getInlineInstance() {
+      return XmlInlineFlagDefinition.this;
+    }
+
+    @Override
     public String getName() {
       return XmlInlineFlagDefinition.this.getName();
     }
@@ -164,12 +170,12 @@ public class XmlInlineFlagDefinition
 
     @Override
     public String getFormalName() {
-      return getXmlFlag().getFormalName();
+      return getXmlFlag().isSetFormalName() ? getXmlFlag().getFormalName() : null;
     }
 
     @Override
     public MarkupLine getDescription() {
-      return MarkupStringConverter.toMarkupString(getXmlFlag().getDescription());
+      return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription()) : null;
     }
 
     @Override
