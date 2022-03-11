@@ -50,7 +50,8 @@ public final class DateFormats {
     // .optionalEnd()
     // .toFormatter();
     DATE_WITH_TZ = new DateTimeFormatterBuilder()
-        .appendPattern("yyyy-MM-ddXXX")
+        .appendPattern("yyyy-MM-dd")
+        .appendPattern("XXX")
         .toFormatter();
     DATE_WITHOUT_TZ = new DateTimeFormatterBuilder()
         .appendPattern("yyyy-MM-dd")

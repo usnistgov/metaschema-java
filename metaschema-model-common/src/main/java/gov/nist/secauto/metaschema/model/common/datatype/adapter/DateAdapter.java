@@ -43,9 +43,19 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DateAdapter
     extends AbstractDatatypeJavaTypeAdapter<Date, IDateItem> {
+  private static final Pattern DATE_TIMEZONE = Pattern.compile("^("
+      + "(?:(?:2000|2400|2800|(?:19|2[0-9](?:0[48]|[2468][048]|[13579][26])))-02-29)"
+      + "|(?:(?:(?:19|2[0-9])[0-9]{2})-02-(?:0[1-9]|1[0-9]|2[0-8]))"
+      + "|(?:(?:(?:19|2[0-9])[0-9]{2})-(?:0[13578]|10|12)-(?:0[1-9]|[12][0-9]|3[01]))"
+      + "|(?:(?:(?:19|2[0-9])[0-9]{2})-(?:0[469]|11)-(?:0[1-9]|[12][0-9]|30))"
+      + ")"
+      + "(Z|[+-][0-9]{2}:[0-9]{2})?$");
+  
   @SuppressWarnings("null")
   public DateAdapter() {
     super(Date.class);
@@ -58,19 +68,27 @@ public class DateAdapter
 
   @Override
   public Date parse(String value) throws IllegalArgumentException {
-    try {
-      return new Date(ZonedDateTime.from(DateFormats.DATE_WITH_TZ.parse(value)), true);
-    } catch (DateTimeParseException ex) {
+    String parseValue = value;
+    Matcher matcher = DATE_TIMEZONE.matcher(value);
+    if (matcher.matches()) {
+      parseValue = String.format("%sT00:00:00%s", matcher.group(1), matcher.group(2) == null ? "" : matcher.group(2));
       try {
-        TemporalAccessor accessor = DateFormats.DATE_WITHOUT_TZ.parse(value);
-        LocalDate date = LocalDate.from(accessor);
-        return new Date(ZonedDateTime.of(date, LocalTime.MIN, ZoneOffset.UTC), false);
-      } catch (DateTimeParseException ex2) {
-        
-        IllegalArgumentException newEx = new IllegalArgumentException(ex2.getLocalizedMessage(), ex2);
-        newEx.addSuppressed(ex);
-        throw newEx;
+        TemporalAccessor accessor = DateFormats.DATE_TIME_WITH_TZ.parse(parseValue);
+        return new Date(ZonedDateTime.from(accessor), true);
+      } catch (DateTimeParseException ex) {
+        try {
+          TemporalAccessor accessor = DateFormats.DATE_TIME_WITHOUT_TZ.parse(parseValue);
+          LocalDate date = LocalDate.from(accessor);
+          return new Date(ZonedDateTime.of(date, LocalTime.MIN, ZoneOffset.UTC), false);
+        } catch (DateTimeParseException ex2) {
+          
+          IllegalArgumentException newEx = new IllegalArgumentException(ex2.getLocalizedMessage(), ex2);
+          newEx.addSuppressed(ex);
+          throw newEx;
+        }
       }
+    } else {
+      throw new  IllegalArgumentException("Invalid date: "+value);
     }
   }
 

@@ -170,7 +170,7 @@ public abstract class AbstractJavaTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
 
   @Override
   public void writeJsonValue(Object value, JsonGenerator generator) throws IOException {
-    generator.writeString(value.toString());
+    generator.writeString(asString(value));
   }
 
   @Override
