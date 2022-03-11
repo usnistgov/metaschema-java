@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
@@ -24,7 +26,6 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>metaschema-model-common</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
 			<artifactId>xmlbeans</artifactId>
@@ -53,8 +54,8 @@
 				<directory>${project.build.directory}/generated-resources/schema</directory>
 			</resource>
 		</resources>
-		<!-- 		<sourceDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceDirectory> -->
-		<!--     <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory> -->
+		<!-- <sourceDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceDirectory> -->
+		<!-- <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory> -->
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -62,7 +63,8 @@
 					<artifactId>maven-pmd-plugin</artifactId>
 					<configuration>
 						<excludeRoots>
-							<excludeRoot>${project.build.directory}/generated-sources/xmlbeans</excludeRoot>
+							<excludeRoot>target/generated-sources/xmlbeans</excludeRoot>
+<!-- 							<excludeRoot>target/generated-test-sources/metaschema</excludeRoot> -->
 						</excludeRoots>
 					</configuration>
 				</plugin>
@@ -77,15 +79,9 @@
 					</configuration>
 				</plugin>
 
-				<!--
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<configuration>
-						<excludePackageNames>gov.nist.itl.metaschema.model.m4.xml:gov.nist.itl.metaschema.model.m4.xml.impl</excludePackageNames>
-					</configuration>
-				</plugin>
--->
+				<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-javadoc-plugin</artifactId> 
+					<configuration> <excludePackageNames>gov.nist.itl.metaschema.model.m4.xml:gov.nist.itl.metaschema.model.m4.xml.impl</excludePackageNames> 
+					</configuration> </plugin> -->
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -170,9 +166,7 @@
 							<classTargetDir>${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
 							<name>metaschema</name>
 							<partialMethods>ALL,-XGET,-XSET,-XGET_ARRAY,-XSET_ARRAY,-XGET_IDX,-XSET_IDX</partialMethods>
-							<!--
-							<repackage>gov.nist.secauto.metaschema.model.xmlbeans</repackage>
--->
+							<!-- <repackage>gov.nist.secauto.metaschema.model.xmlbeans</repackage> -->
 						</configuration>
 					</execution>
 				</executions>
@@ -182,7 +176,7 @@
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>add-source</id>
+						<id>add-xmlbeans-source</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>add-source</goal>

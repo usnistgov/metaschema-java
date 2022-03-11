@@ -28,16 +28,28 @@ package gov.nist.secauto.metaschema.codegen.type;
 
 import com.squareup.javapoet.ClassName;
 
+import gov.nist.secauto.metaschema.binding.model.annotations.XmlNs;
+import gov.nist.secauto.metaschema.binding.model.annotations.XmlNsForm;
+import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
 import gov.nist.secauto.metaschema.codegen.binding.config.IBindingConfiguration;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.definitions.ILocalDefinition;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jaxb.core.api.impl.NameConverter;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.PrintWriter;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,17 +59,22 @@ public class DefaultTypeResolver implements ITypeResolver {
   private final Map<String, Set<String>> packageToClassNamesMap = new HashMap<>();
   private final Map<INamedModelDefinition, ClassName> definitionToTypeMap = new HashMap<>();
 
+  @NotNull 
   private final IBindingConfiguration bindingConfiguration;
 
-  public DefaultTypeResolver(IBindingConfiguration bindingConfiguration) {
+  public DefaultTypeResolver(@NotNull IBindingConfiguration bindingConfiguration) {
     this.bindingConfiguration = bindingConfiguration;
   }
 
+  protected IBindingConfiguration getBindingConfiguration() {
+    return bindingConfiguration;
+  }
+
   @Override
-  public ClassName getClassName(INamedModelDefinition definition) {
+  public ClassName getClassName(@NotNull INamedModelDefinition definition) {
     ClassName retval = definitionToTypeMap.get(definition);
     if (retval == null) {
-      String packageName = bindingConfiguration.getPackageNameForMetaschema(definition.getContainingMetaschema());
+      String packageName = getBindingConfiguration().getPackageNameForMetaschema(definition.getContainingMetaschema());
       if (definition.isGlobal()) {
         String className = generateClassName(packageName, definition);
         retval = ClassName.get(packageName, className);
@@ -74,8 +91,8 @@ public class DefaultTypeResolver implements ITypeResolver {
     return retval;
   }
 
-  private String generateClassName(String packageOrTypeName, INamedModelDefinition definition) {
-    String className = bindingConfiguration.getClassName(definition);
+  private String generateClassName(@NotNull String packageOrTypeName, @NotNull INamedModelDefinition definition) {
+    String className = getBindingConfiguration().getClassName(definition);
 
     Set<String> classNames = packageToClassNamesMap.get(packageOrTypeName);
     if (classNames == null) {
@@ -110,5 +127,10 @@ public class DefaultTypeResolver implements ITypeResolver {
       retval = ClassName.bestGuess(className);
     }
     return retval;
+  }
+  
+  @Override
+  public String getPackageName(@NotNull IMetaschema metaschema) {
+    return bindingConfiguration.getPackageNameForMetaschema(metaschema);
   }
 }

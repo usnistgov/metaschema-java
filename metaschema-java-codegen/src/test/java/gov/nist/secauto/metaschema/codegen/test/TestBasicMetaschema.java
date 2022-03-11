@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.codegen.test;
 
-import gov.nist.secauto.metaschema.codegen.JavaGenerator;
 import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
+import gov.nist.secauto.metaschema.codegen.compile.MetaschemaCompilerHelper;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
@@ -38,55 +38,32 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaFileObject;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class TestBasicMetaschema {
   private static final Logger LOGGER = LogManager.getLogger(TestBasicMetaschema.class);
   private static final MetaschemaLoader LOADER = new MetaschemaLoader();
 
-  private static IMetaschema loadMetaschema(File metaschemaFile) throws MetaschemaException, IOException {
+  private static IMetaschema loadMetaschema(Path metaschemaFile) throws MetaschemaException, IOException {
     return LOADER.loadXmlMetaschema(metaschemaFile);
   }
 
-  public static Class<?> compileMetaschema(File metaschemaFile, File bindingFile, String rootClassName, File classDir)
+  public static Class<?> compileMetaschema(Path metaschemaFile, Path bindingFile, String rootClassName, Path classDir)
       throws IOException, ClassNotFoundException, MetaschemaException {
     IMetaschema metaschema = loadMetaschema(metaschemaFile);
 
     DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
-    if (bindingFile != null && bindingFile.exists() && bindingFile.isFile()) {
+    if (bindingFile != null && Files.exists(bindingFile) && Files.isRegularFile(bindingFile)) {
       bindingConfiguration.load(bindingFile);
     }
-    List<JavaGenerator.GeneratedClass> classesToCompile = new LinkedList<>();
-    for (List<JavaGenerator.GeneratedClass> value : JavaGenerator.generate(metaschema, classDir, bindingConfiguration)
-        .values()) {
-      for (JavaGenerator.GeneratedClass generatedClass : value) {
-        classesToCompile.add(generatedClass);
-      }
-    }
 
-    TestDynamicJavaCompiler compiler = new TestDynamicJavaCompiler(classDir);
-    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
-
-    if (!compiler.compileGeneratedClasses(classesToCompile, diagnostics)) {
-      if (LOGGER.isErrorEnabled()) {
-        LOGGER.error(diagnostics.getDiagnostics().toString());
-      }
-      throw new IllegalStateException(String.format("failed to compile classes: %s",
-          classesToCompile.stream()
-              .map(clazz -> clazz.getClassName().canonicalName())
-              .collect(Collectors.joining(","))));
-    }
+    MetaschemaCompilerHelper.compileMetaschema(metaschema, classDir, bindingConfiguration);
 
     // Load classes
-    Class<?> retval = compiler.getClassLoader().loadClass(rootClassName);
-    return retval;
+    return MetaschemaCompilerHelper.getClassLoader(classDir).loadClass(rootClassName);
   }
 
   // private static Object readXml(Reader reader, Class<?> rootClass) throws BindingException {
@@ -134,18 +111,24 @@ public class TestBasicMetaschema {
   // context.newSerializer(Format.YAML, clazz, null).serialize(rootObject, writer);
   // }
 
-  private void runTests(String testPath, String rootClassName, File classDir)
+  private void runTests(String testPath, String rootClassName, Path classDir)
       throws ClassNotFoundException, IOException, MetaschemaException {
     runTests(testPath, rootClassName, classDir, null);
   }
 
-  private void runTests(String testPath, String rootClassName, File classDir,
+  private void runTests(
+      String testPath,
+      String rootClassName,
+      Path classDir,
       java.util.function.Consumer<Object> assertions)
       throws ClassNotFoundException, IOException, MetaschemaException {
     @SuppressWarnings("unused")
     Class<?> rootClass
-        = compileMetaschema(new File(String.format("src/test/resources/metaschema/%s/metaschema.xml", testPath)),
-            new File(String.format("src/test/resources/metaschema/%s/binding.xml", testPath)), rootClassName, classDir);
+        = compileMetaschema(
+            Paths.get(String.format("src/test/resources/metaschema/%s/metaschema.xml", testPath)),
+            Paths.get(String.format("src/test/resources/metaschema/%s/binding.xml", testPath)),
+            rootClassName,
+            classDir);
 
     // File xmlExample = new File(String.format("src/test/resources/metaschema/%s/example.xml",
     // testPath));
@@ -177,8 +160,8 @@ public class TestBasicMetaschema {
   }
 
   // @TempDir
-  // File generationDir;
-  File generationDir = new File("target/generated-test-sources/metaschema");
+  // Path generationDir;
+  Path generationDir = Paths.get("target/generated-test-sources/metaschema");
 
   @Test
   public void testSimpleMetaschema() throws MetaschemaException, IOException, ClassNotFoundException {

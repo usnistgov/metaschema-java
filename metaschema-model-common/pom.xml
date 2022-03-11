@@ -50,6 +50,15 @@
 			<artifactId>jackson-dataformat-yaml</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.erosb</groupId>
+			<artifactId>everit-json-schema</artifactId>
+		</dependency>
+		
+		<dependency>
 			<groupId>com.vladsch.flexmark</groupId>
 			<artifactId>flexmark</artifactId>
 		</dependency>
@@ -152,7 +161,7 @@
 					<artifactId>maven-pmd-plugin</artifactId>
 					<configuration>
 						<excludeRoots>
-							<excludeRoot>${project.build.directory}/generated-sources/antlr4</excludeRoot>
+							<excludeRoot>target/generated-sources/antlr4</excludeRoot>
 						</excludeRoots>
 					</configuration>
 				</plugin>

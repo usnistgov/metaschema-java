@@ -24,36 +24,4 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.validation;
-
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
-
-import java.util.Collections;
-import java.util.List;
-
-public interface IValidationResult {
-  static final IValidationResult PASSING_RESULT = new IValidationResult() {
-
-    @Override
-    public boolean isPassing() {
-      return true;
-    }
-
-    @Override
-    public Level getHighestSeverity() {
-      return IConstraint.Level.INFORMATIONAL;
-    }
-
-    @Override
-    public List<? extends IValidationFinding> getFindings() {
-      return Collections.emptyList();
-    }
-  };
-
-  boolean isPassing();
-
-  IConstraint.Level getHighestSeverity();
-
-  List<? extends IValidationFinding> getFindings();
-}
+package gov.nist.secauto.metaschema.codegen.compile;

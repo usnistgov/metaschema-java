@@ -190,10 +190,11 @@ public class ListPropertyInfo
 
     JsonGenerator writer = context.getWriter();
 
-    boolean writeArray = true;
+    boolean writeArray = false;
     if (JsonGroupAsBehavior.LIST.equals(getProperty().getJsonGroupAsBehavior())
         || JsonGroupAsBehavior.SINGLETON_OR_LIST.equals(getProperty().getJsonGroupAsBehavior()) && items.size() > 1) {
       // write array, then items
+      writeArray = true;
       writer.writeStartArray();
     } // only other option is a singleton value, write item
 

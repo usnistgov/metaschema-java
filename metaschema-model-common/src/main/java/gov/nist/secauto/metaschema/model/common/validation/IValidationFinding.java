@@ -24,29 +24,57 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.docsgen;
+package gov.nist.secauto.metaschema.model.common.validation;
 
-import java.io.IOException;
-import java.util.Map;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 
-import freemarker.core.ParseException;
-import freemarker.template.Configuration;
-import freemarker.template.MalformedTemplateNameException;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateNotFoundException;
+import org.jetbrains.annotations.NotNull;
 
-public class XmlOutlineDocumentationGenerator
-    extends AbstractDocumentationGenerator {
+import java.net.URI;
 
-  @Override
-  protected Template getTemplate(Configuration cfg)
-      throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException {
-    return cfg.getTemplate("xml-outline.ftlx");
-  }
+public interface IValidationFinding {
+  /**
+   * Get the finding's severity.
+   * 
+   * @return the severity
+   */
+  @NotNull
+  IConstraint.Level getSeverity();
 
-  @Override
-  protected void buildModel(Configuration cfg, Map<String, Object> root) throws IOException, TemplateException {
-    // nothing to add
-  }
+  /**
+   * Get the document's URI.
+   * 
+   * @return the document's URI
+   */
+  @NotNull
+  URI getDocumentUri();
+  //
+  // /**
+  // * Get the line on which the finding occurred.
+  // *
+  // * @return the line number or {@code null} if unknown
+  // */
+  // Integer getLineNumber();
+  //
+  // /**
+  // * Get the line column on which the finding occurred.
+  // *
+  // * @return the column umber or {@code null} if unknown
+  // */
+  // Integer getColumnNumber();
+
+  /**
+   * Get the finding message.
+   * 
+   * @return the message
+   */
+  @NotNull
+  CharSequence getMessage();
+
+  /**
+   * Get the exception associated with the finding.
+   * 
+   * @return the {@link Throwable} or {@code null} if no thowable is associated with the finding
+   */
+  Throwable getCause();
 }

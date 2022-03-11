@@ -27,16 +27,15 @@
 package gov.nist.secauto.metaschema.schemagen.json;
 
 import gov.nist.secauto.metaschema.binding.validation.ConstraintContentValidator.ConstraintValidationFinding;
-import gov.nist.secauto.metaschema.binding.validation.IContentValidator;
-import gov.nist.secauto.metaschema.binding.validation.IValidationFinding;
-import gov.nist.secauto.metaschema.binding.validation.IValidationFindingVisitor;
-import gov.nist.secauto.metaschema.binding.validation.IValidationResult;
-import gov.nist.secauto.metaschema.binding.validation.JsonSchemaContentValidator;
-import gov.nist.secauto.metaschema.binding.validation.JsonSchemaContentValidator.JsonValidationFinding;
-import gov.nist.secauto.metaschema.binding.validation.XmlSchemaContentValidator.XmlValidationFinding;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
+import gov.nist.secauto.metaschema.model.common.validation.IValidationFinding;
+import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
+import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator;
+import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator.JsonValidationFinding;
+import gov.nist.secauto.metaschema.model.common.validation.XmlSchemaContentValidator.XmlValidationFinding;
 
 import org.apache.commons.io.output.TeeOutputStream;
 import org.apache.logging.log4j.LogBuilder;
@@ -69,7 +68,7 @@ public abstract class JsonSchemaTestSupport {
     Path schemaPath = getSchemaGenerationPath().resolve(path);
     Files.createDirectories(schemaPath.getParent());
 
-    try (OutputStream os = Files.newOutputStream(schemaPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
+    try (OutputStream os = Files.newOutputStream(schemaPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
       TeeOutputStream out = new TeeOutputStream(System.out, os);
       Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
       JSON_GENERATOR.generateFromMetaschema(metaschema, writer);
@@ -97,57 +96,41 @@ public abstract class JsonSchemaTestSupport {
 
   private boolean validate(@NotNull IContentValidator validator, @NotNull Path target) throws IOException {
     IValidationResult schemaValidationResult = validator.validate(target);
-    ValidationFindingVisitor visitor = new ValidationFindingVisitor();
     for (IValidationFinding finding : schemaValidationResult.getFindings()) {
-      finding.visit(visitor, null);
+      logFinding(finding);
     }
     return schemaValidationResult.isPassing();
   }
 
-  private static class ValidationFindingVisitor implements IValidationFindingVisitor<Void, Void> {
-
-    @NotNull
-    protected LogBuilder getLogger(@NotNull IValidationFinding finding) {
-      LogBuilder retval;
-      switch (finding.getSeverity()) {
-      case CRITICAL:
-        retval = LOGGER.atFatal();
-        break;
-      case ERROR:
-        retval = LOGGER.atError();
-        break;
-      case WARNING:
-        retval = LOGGER.atWarn();
-        break;
-      case INFORMATIONAL:
-        retval = LOGGER.atInfo();
-        break;
-      default:
-        throw new IllegalArgumentException("Unknown level: " + finding.getSeverity().name());
-      }
-
-      if (finding.getCause() != null) {
-        retval.withThrowable(finding.getCause());
-      }
-
-      return retval;
+  private static void logFinding(@NotNull IValidationFinding finding) {
+    LogBuilder logBuilder;
+    switch (finding.getSeverity()) {
+    case CRITICAL:
+      logBuilder = LOGGER.atFatal();
+      break;
+    case ERROR:
+      logBuilder = LOGGER.atError();
+      break;
+    case WARNING:
+      logBuilder = LOGGER.atWarn();
+      break;
+    case INFORMATIONAL:
+      logBuilder = LOGGER.atInfo();
+      break;
+    default:
+      throw new IllegalArgumentException("Unknown level: " + finding.getSeverity().name());
     }
 
-    @Override
-    public Void visit(@NotNull JsonValidationFinding finding, Void context) {
-//      System.out.println(String.format("[%s] %s", finding.getCause().getPointerToViolation(), finding.getMessage()));
-      getLogger(finding).log("[{}] {}", finding.getCause().getPointerToViolation(), finding.getMessage());
-      return null;
+    if (finding.getCause() != null) {
+      logBuilder.withThrowable(finding.getCause());
     }
 
-    @Override
-    public Void visit(@NotNull XmlValidationFinding finding, Void context) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Void visit(@NotNull ConstraintValidationFinding constraintValidationFinding, Void context) {
-      throw new UnsupportedOperationException();
+    if (finding instanceof JsonValidationFinding) {
+      JsonValidationFinding jsonFinding = (JsonValidationFinding) finding;
+      logBuilder.log("[{}] {}", jsonFinding.getCause().getPointerToViolation(), finding.getMessage());
+    } else {
+      logBuilder.log("{}", finding.getMessage());
     }
   }
+
 }

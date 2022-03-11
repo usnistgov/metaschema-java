@@ -29,12 +29,12 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>metaschema-freemarker-support</artifactId>
+			<artifactId>metaschema-testing</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>metaschema-java-binding</artifactId>
-			<scope>test</scope>
+			<artifactId>metaschema-freemarker-support</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>

@@ -24,29 +24,24 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.docsgen;
+package gov.nist.secauto.metaschema.model.common.validation;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.Map;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
 
-import freemarker.core.ParseException;
-import freemarker.template.Configuration;
-import freemarker.template.MalformedTemplateNameException;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateNotFoundException;
+public interface IContentValidator {
+  @NotNull
+  IValidationResult validate(@NotNull Path path) throws IOException;
 
-public class XmlOutlineDocumentationGenerator
-    extends AbstractDocumentationGenerator {
+  @NotNull
+  IValidationResult validate(@NotNull URL url) throws IOException, URISyntaxException;
 
-  @Override
-  protected Template getTemplate(Configuration cfg)
-      throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException {
-    return cfg.getTemplate("xml-outline.ftlx");
-  }
-
-  @Override
-  protected void buildModel(Configuration cfg, Map<String, Object> root) throws IOException, TemplateException {
-    // nothing to add
-  }
+  @NotNull
+  IValidationResult validate(@NotNull InputStream is, @NotNull URI documentUri) throws IOException;
 }

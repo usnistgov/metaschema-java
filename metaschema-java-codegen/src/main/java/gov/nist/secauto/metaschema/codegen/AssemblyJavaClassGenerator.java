@@ -99,7 +99,7 @@ public class AssemblyJavaClassGenerator
     return retval;
   }
 
-  private final void processModel(IModelContainer model) {
+  private void processModel(IModelContainer model) {
     // create model instances for the model
     for (IModelInstance instance : model.getModelInstances()) {
       if (instance instanceof IChoiceInstance) {
@@ -120,7 +120,7 @@ public class AssemblyJavaClassGenerator
    *          the model instance to generate the property for
    * @return the new property generator
    */
-  private final ModelInstancePropertyGenerator newObjectModelInstance(INamedModelInstance instance) {
+  private ModelInstancePropertyGenerator newObjectModelInstance(INamedModelInstance instance) {
     ModelInstancePropertyGenerator retval = new ModelInstancePropertyGenerator(instance, this);
     addPropertyGenerator(retval);
     return retval;

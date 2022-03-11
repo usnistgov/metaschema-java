@@ -39,16 +39,19 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInst
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
+// TODO: make this test do some testing or delete it
 class JavaGeneratorTest {
-  // @TempDir
-  // File generationDir;
-  File generationDir = new File("target/generated-sources/metaschema");
+   @TempDir
+   Path generationDir;
+   //  Path generationDir = Paths.get("target/generated-sources/metaschema");
 
   @Disabled
   @Test
@@ -67,6 +70,8 @@ class JavaGeneratorTest {
     }
 
     DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
+    
+    
     JavaGenerator.generate(metaschema, generationDir, bindingConfiguration);
 
     ConstraintValidatingModelWalker walker = new ConstraintValidatingModelWalker();

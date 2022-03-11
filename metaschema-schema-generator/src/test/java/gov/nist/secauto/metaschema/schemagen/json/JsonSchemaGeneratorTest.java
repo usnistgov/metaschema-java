@@ -79,7 +79,7 @@ class JsonSchemaGeneratorTest
     Path schemaPath = getSchemaGenerationPath().resolve("test-schema.json");
     Files.createDirectories(schemaPath.getParent());
     
-    try (OutputStream os = Files.newOutputStream(schemaPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
+    try (OutputStream os = Files.newOutputStream(schemaPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
       TeeOutputStream out = new TeeOutputStream(System.out, os);
       generator.generateFromMetaschema(metaschema, new OutputStreamWriter(out));
     }

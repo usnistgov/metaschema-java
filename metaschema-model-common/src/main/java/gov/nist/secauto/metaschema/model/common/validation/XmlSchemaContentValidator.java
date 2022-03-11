@@ -24,10 +24,10 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.validation;
+package gov.nist.secauto.metaschema.model.common.validation;
 
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 import org.xml.sax.ErrorHandler;
@@ -40,7 +40,6 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
@@ -52,6 +51,7 @@ import javax.xml.validation.Validator;
 public class XmlSchemaContentValidator extends AbstractContentValidator {
   private final Schema schema;
 
+  @SuppressWarnings("null")
   @NotNull
   private static Schema toSchema(@NotNull List<? extends Source> schemaSources) throws SAXException {
     SchemaFactory schemafactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -66,11 +66,11 @@ public class XmlSchemaContentValidator extends AbstractContentValidator {
   }
 
   public XmlSchemaContentValidator(@NotNull List<? extends Source> schemaSources) throws SAXException {
-    this(toSchema(Objects.requireNonNull(schemaSources, "schemaSources")));
+    this(toSchema(ObjectUtils.requireNonNull(schemaSources, "schemaSources")));
   }
 
   protected XmlSchemaContentValidator(@NotNull Schema schema) {
-    this.schema = Objects.requireNonNull(schema, "schema");
+    this.schema = ObjectUtils.requireNonNull(schema, "schema");
   }
 
   public Schema getSchema() {
@@ -78,7 +78,7 @@ public class XmlSchemaContentValidator extends AbstractContentValidator {
   }
 
   @Override
-  protected IValidationResult validateInternal(@NotNull InputStream is, @NotNull URI documentUri) throws IOException {
+  public IValidationResult validate(@NotNull InputStream is, @NotNull URI documentUri) throws IOException {
     return validate(new StreamSource(is, documentUri.toString()), documentUri);
   }
 
@@ -101,26 +101,28 @@ public class XmlSchemaContentValidator extends AbstractContentValidator {
     @NotNull
     private final SAXParseException exception;
     @NotNull
-    private final IConstraint.Level severity;
+    private final Level severity;
 
-    public XmlValidationFinding(@NotNull IConstraint.Level severity, @NotNull SAXParseException exception,
+    public XmlValidationFinding(@NotNull Level severity, @NotNull SAXParseException exception,
         @NotNull URI documentUri) {
-      this.documentUri = Objects.requireNonNull(documentUri, "documentUri");
-      this.exception = Objects.requireNonNull(exception, "exception");
-      this.severity = Objects.requireNonNull(severity, "severity");
+      this.documentUri = ObjectUtils.requireNonNull(documentUri, "documentUri");
+      this.exception = ObjectUtils.requireNonNull(exception, "exception");
+      this.severity = ObjectUtils.requireNonNull(severity, "severity");
     }
 
     @Override
-    public IConstraint.Level getSeverity() {
+    public Level getSeverity() {
       return severity;
     }
 
+    @SuppressWarnings("null")
     @Override
     public URI getDocumentUri() {
       String systemId = getCause().getSystemId();
       return systemId == null ? documentUri : URI.create(systemId);
     }
 
+    @SuppressWarnings("null")
     @Override
     public String getMessage() {
       return getCause().getLocalizedMessage();
@@ -131,12 +133,6 @@ public class XmlSchemaContentValidator extends AbstractContentValidator {
     public SAXParseException getCause() {
       return exception;
     }
-
-    @Override
-    public <RESULT, CONTEXT> RESULT visit(@NotNull IValidationFindingVisitor<RESULT, CONTEXT> visitor,
-        CONTEXT context) {
-      return visitor.visit(this, context);
-    }
   }
 
   private static class XmlValidationErrorHandler implements ErrorHandler, IValidationResult {
@@ -145,40 +141,45 @@ public class XmlSchemaContentValidator extends AbstractContentValidator {
     @NotNull
     private final List<XmlValidationFinding> findings = new LinkedList<>();
     @NotNull
-    private IConstraint.Level highestSeverity = IConstraint.Level.INFORMATIONAL;
+    private Level highestSeverity = Level.INFORMATIONAL;
 
     public XmlValidationErrorHandler(@NotNull URI documentUri) {
-      this.documentUri = Objects.requireNonNull(documentUri, "documentUri");
+      this.documentUri = ObjectUtils.requireNonNull(documentUri, "documentUri");
     }
 
+    @NotNull
     public URI getDocumentUri() {
       return documentUri;
     }
 
-    private void adjustHighestSeverity(@NotNull IConstraint.Level severity) {
+    private void adjustHighestSeverity(@NotNull Level severity) {
       if (highestSeverity.ordinal() < severity.ordinal()) {
         highestSeverity = severity;
       }
     }
 
+    @SuppressWarnings("null")
     @Override
     public void warning(SAXParseException ex) throws SAXException {
-      findings.add(new XmlValidationFinding(IConstraint.Level.WARNING, ex, getDocumentUri()));
-      adjustHighestSeverity(IConstraint.Level.WARNING);
+      findings.add(new XmlValidationFinding(Level.WARNING, ex, getDocumentUri()));
+      adjustHighestSeverity(Level.WARNING);
     }
 
+    @SuppressWarnings("null")
     @Override
     public void error(SAXParseException ex) throws SAXException {
-      findings.add(new XmlValidationFinding(IConstraint.Level.ERROR, ex, getDocumentUri()));
-      adjustHighestSeverity(IConstraint.Level.ERROR);
+      findings.add(new XmlValidationFinding(Level.ERROR, ex, getDocumentUri()));
+      adjustHighestSeverity(Level.ERROR);
     }
 
+    @SuppressWarnings("null")
     @Override
     public void fatalError(SAXParseException ex) throws SAXException {
-      findings.add(new XmlValidationFinding(IConstraint.Level.CRITICAL, ex, getDocumentUri()));
-      adjustHighestSeverity(IConstraint.Level.CRITICAL);
+      findings.add(new XmlValidationFinding(Level.CRITICAL, ex, getDocumentUri()));
+      adjustHighestSeverity(Level.CRITICAL);
     }
 
+    @SuppressWarnings("null")
     @Override
     @NotNull
     public List<XmlValidationFinding> getFindings() {
@@ -187,7 +188,7 @@ public class XmlSchemaContentValidator extends AbstractContentValidator {
 
     @Override
     public boolean isPassing() {
-      return getHighestSeverity().ordinal() < IConstraint.Level.ERROR.ordinal();
+      return getHighestSeverity().ordinal() < Level.ERROR.ordinal();
     }
 
     @Override

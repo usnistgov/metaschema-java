@@ -23,7 +23,6 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.binding.validation;
 
 import gov.nist.secauto.metaschema.binding.DefaultBindingContext;
@@ -33,6 +32,8 @@ import gov.nist.secauto.metaschema.binding.io.json.DefaultJsonSerializer;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
+import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
+import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 
 import org.apache.commons.io.input.CharSequenceInputStream;
 import org.jetbrains.annotations.NotNull;
@@ -40,32 +41,14 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 
-public abstract class AbstractContentValidator implements IContentValidator {
-
-  @Override
-  public @NotNull IValidationResult validate(@NotNull Path path) throws IOException {
-    try (InputStream is = Files.newInputStream(path, StandardOpenOption.READ)) {
-      return validateInternal(is, path.toUri());
-    }
+public final class ValidationHelper {
+  private ValidationHelper() {
+    // disable construction
   }
 
-  @Override
-  public @NotNull IValidationResult validate(@NotNull URL url) throws IOException, URISyntaxException {
-    try (InputStream is = url.openStream()) {
-      return validateInternal(is, url.toURI());
-    }
-  }
-
-  @Override
-  public @NotNull IValidationResult validate(@NotNull IBoundXdmNodeItem nodeItem) throws IOException {
+  public @NotNull IValidationResult validate(@NotNull IBoundXdmNodeItem nodeItem, @NotNull IContentValidator validator) throws IOException {
     IClassBinding classBinding = nodeItem.getClassBinding();
     if (classBinding == null) {
       throw new IllegalArgumentException(
@@ -83,7 +66,7 @@ public abstract class AbstractContentValidator implements IContentValidator {
           writer.getBuffer();
 
           try (InputStream is = new CharSequenceInputStream(writer.getBuffer(), StandardCharsets.UTF_8)) {
-            return validateInternal(is, nodeItem.getBaseUri());
+            return validator.validate(is, nodeItem.getBaseUri());
           }
         }
       }
@@ -91,7 +74,4 @@ public abstract class AbstractContentValidator implements IContentValidator {
     }
     throw new IllegalArgumentException(String.format("The node '%s' not a bound assembly.", nodeItem.getMetapath()));
   }
-
-  @NotNull
-  protected abstract IValidationResult validateInternal(@NotNull InputStream is, @NotNull URI documentUri) throws IOException;
 }

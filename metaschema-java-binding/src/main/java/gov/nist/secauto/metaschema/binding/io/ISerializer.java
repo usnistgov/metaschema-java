@@ -94,7 +94,7 @@ public interface ISerializer<CLASS> extends IMutableConfiguration {
    *           if an error occurred while writing data to the stream
    */
   default void serialize(@NotNull CLASS data, @NotNull File file) throws IOException {
-    serialize(data, file.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+    serialize(data, file.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
   }
 
   /**

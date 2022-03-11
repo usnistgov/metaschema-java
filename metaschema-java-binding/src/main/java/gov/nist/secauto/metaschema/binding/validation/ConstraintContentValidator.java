@@ -32,6 +32,9 @@ import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.model.common.constraint.AbstractFindingCollectingConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.validation.AbstractContentValidator;
+import gov.nist.secauto.metaschema.model.common.validation.IValidationFinding;
+import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -56,8 +59,8 @@ public class ConstraintContentValidator
     return bindingContext;
   }
 
-  @Override
-  public @NotNull IValidationResult validate(@NotNull IBoundXdmNodeItem nodeItem) throws IOException {
+  @NotNull
+  public IValidationResult validate(@NotNull IBoundXdmNodeItem nodeItem) throws IOException {
     BindingConstraintValidationHandler handler = new BindingConstraintValidationHandler();
 
     getBindingContext().validate(nodeItem, nodeItem.getBaseUri(), true, handler);
@@ -66,8 +69,7 @@ public class ConstraintContentValidator
   }
 
   @Override
-  protected @NotNull IValidationResult validateInternal(@NotNull InputStream is, @NotNull URI documentUri)
-      throws IOException {
+  public IValidationResult validate(@NotNull InputStream is, @NotNull URI documentUri) throws IOException {
     IBoundXdmDocumentNodeItem nodeItem = getBindingContext().newBoundLoader().loadAsNodeItem(is, documentUri);
     return validate(nodeItem);
   }
@@ -157,12 +159,5 @@ public class ConstraintContentValidator
     public @NotNull URI getDocumentUri() {
       return getNode().getBaseUri();
     }
-
-    @Override
-    public <RESULT, CONTEXT> RESULT visit(@NotNull IValidationFindingVisitor<RESULT, CONTEXT> visitor,
-        CONTEXT context) {
-      return visitor.visit(this, context);
-    }
-
   }
 }

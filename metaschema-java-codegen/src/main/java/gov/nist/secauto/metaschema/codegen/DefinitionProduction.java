@@ -23,30 +23,27 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.codegen;
 
-package gov.nist.secauto.metaschema.docsgen;
+import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
 
-import java.io.IOException;
-import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
-import freemarker.core.ParseException;
-import freemarker.template.Configuration;
-import freemarker.template.MalformedTemplateNameException;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateNotFoundException;
+public class DefinitionProduction {
 
-public class XmlOutlineDocumentationGenerator
-    extends AbstractDocumentationGenerator {
+  private final IFlaggedDefinition definition;
+  private final GeneratedClass generatedClass;
 
-  @Override
-  protected Template getTemplate(Configuration cfg)
-      throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException {
-    return cfg.getTemplate("xml-outline.ftlx");
+  public DefinitionProduction(@NotNull IFlaggedDefinition definition, @NotNull GeneratedClass generatedClass) {
+    this.definition = definition;
+    this.generatedClass = generatedClass;
   }
 
-  @Override
-  protected void buildModel(Configuration cfg, Map<String, Object> root) throws IOException, TemplateException {
-    // nothing to add
+  public IFlaggedDefinition getDefinition() {
+    return definition;
+  }
+
+  public GeneratedClass getGeneratedClass() {
+    return generatedClass;
   }
 }

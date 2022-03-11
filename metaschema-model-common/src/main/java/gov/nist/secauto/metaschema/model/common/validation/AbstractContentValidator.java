@@ -24,29 +24,39 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.docsgen;
+package gov.nist.secauto.metaschema.model.common.validation;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.Map;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
-import freemarker.core.ParseException;
-import freemarker.template.Configuration;
-import freemarker.template.MalformedTemplateNameException;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateNotFoundException;
+public abstract class AbstractContentValidator implements IContentValidator {
 
-public class XmlOutlineDocumentationGenerator
-    extends AbstractDocumentationGenerator {
-
+  @SuppressWarnings("null")
   @Override
-  protected Template getTemplate(Configuration cfg)
-      throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException {
-    return cfg.getTemplate("xml-outline.ftlx");
+  public IValidationResult validate(@NotNull Path path) throws IOException {
+    try (InputStream is = Files.newInputStream(path, StandardOpenOption.READ)) {
+      return validate(is, path.toUri());
+    }
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public IValidationResult validate(@NotNull URL url) throws IOException, URISyntaxException {
+    try (InputStream is = url.openStream()) {
+      return validate(is, url.toURI());
+    }
   }
 
   @Override
-  protected void buildModel(Configuration cfg, Map<String, Object> root) throws IOException, TemplateException {
-    // nothing to add
-  }
+  @NotNull
+  public abstract IValidationResult validate(@NotNull InputStream is, @NotNull URI documentUri) throws IOException;
+
 }

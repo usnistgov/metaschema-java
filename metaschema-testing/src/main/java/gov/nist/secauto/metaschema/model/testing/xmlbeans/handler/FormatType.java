@@ -24,19 +24,45 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.validation;
+package gov.nist.secauto.metaschema.model.testing.xmlbeans.handler;
 
-import gov.nist.secauto.metaschema.binding.validation.ConstraintContentValidator.ConstraintValidationFinding;
-import gov.nist.secauto.metaschema.binding.validation.JsonSchemaContentValidator.JsonValidationFinding;
-import gov.nist.secauto.metaschema.binding.validation.XmlSchemaContentValidator.XmlValidationFinding;
+import gov.nist.secauto.metaschema.binding.io.Format;
 
-import org.jetbrains.annotations.NotNull;
+public final class FormatType {
+  private FormatType() {
+    // disable
+  }
 
-public interface IValidationFindingVisitor<RESULT, CONTEXT> {
+  /**
+   * Sets the value of obj onto the given simple value target.
+   * 
+   * @param obj
+   *          the boolean value to set
+   * @param target
+   *          the XML value to cast to a boolean
+   */
+  public static void encodeFormatType(Format obj, org.apache.xmlbeans.SimpleValue target) {
+    if (obj != null) {
+      switch (obj) {
+      case JSON:
+      case XML:
+      case YAML:
+        target.setStringValue(obj.name());
+        break;
+      default:
+        throw new UnsupportedOperationException(String.format("Unsupported format type '%s'", obj.toString()));
+      }
+    }
+  }
 
-  RESULT visit(@NotNull JsonValidationFinding finding, CONTEXT context);
-
-  RESULT visit(@NotNull XmlValidationFinding finding, CONTEXT context);
-
-  RESULT visit(@NotNull ConstraintValidationFinding constraintValidationFinding, CONTEXT context);
+  /**
+   * Returns an appropriate Java object from the given simple value.
+   * 
+   * @param obj
+   *          the XML value to cast to a boolean
+   * @return the associated boolean value
+   */
+  public static Format decodeFormatType(org.apache.xmlbeans.SimpleValue obj) {
+    return Format.valueOf(obj.getStringValue());
+  }
 }

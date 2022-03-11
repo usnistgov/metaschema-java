@@ -28,7 +28,11 @@ package gov.nist.secauto.metaschema.codegen.type;
 
 import com.squareup.javapoet.ClassName;
 
+import gov.nist.secauto.metaschema.codegen.binding.config.IBindingConfiguration;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
+
+import org.jetbrains.annotations.NotNull;
 
 public interface ITypeResolver {
   /**
@@ -48,4 +52,6 @@ public interface ITypeResolver {
    * @return the name of the base class or {@code null} if no base class is to be used
    */
   ClassName getBaseClassName(INamedModelDefinition definition);
+
+  String getPackageName(@NotNull IMetaschema metaschema);
 }

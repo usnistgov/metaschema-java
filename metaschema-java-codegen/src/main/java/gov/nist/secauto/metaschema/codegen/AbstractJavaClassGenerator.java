@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.codegen.property.FlagPropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.IPropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
 import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
@@ -47,8 +48,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -69,7 +70,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
   private final ITypeResolver typeResolver;
   @NotNull
   private final Map<String, IPropertyGenerator> propertyNameToPropertyGeneratorMap = new LinkedHashMap<>();
-  private boolean hasJsonKeyFlag = false;
+  private final boolean jsonKeyFlag;
 
   /**
    * Constructs a new class generator based on the provided definition.
@@ -84,7 +85,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
     Objects.requireNonNull(typeResolver, "typeResolver");
     this.definition = definition;
     this.typeResolver = typeResolver;
-    this.hasJsonKeyFlag = definition.hasJsonKey();
+    this.jsonKeyFlag = definition.hasJsonKey();
 
     // create Java properties for the definition's flags
     for (IFlagInstance instance : definition.getFlagInstances()) {
@@ -122,7 +123,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
     return typeResolver;
   }
 
-  protected void applyConstraints(AnnotationSpec.Builder annotation) {
+  protected void applyConstraints(@NotNull AnnotationSpec.Builder annotation) {
     AnnotationUtils.applyAllowedValuesConstraints(annotation, getDefinition().getAllowedValuesContraints());
     AnnotationUtils.applyIndexHasKeyConstraints(annotation, getDefinition().getIndexHasKeyConstraints());
     AnnotationUtils.applyMatchesConstraints(annotation, getDefinition().getMatchesConstraints());
@@ -131,22 +132,19 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
 
   @Override
   public TypeSpec.Builder generateChildClass() throws IOException {
-    ClassName className = getClassName();
-
-    TypeSpec.Builder builder = generateClass(className, true);
-    return builder;
+    return generateClass(getClassName(), true);
   }
 
   @Override
-  public JavaGenerator.GeneratedClass generateClass(File outputDir) throws IOException {
+  public GeneratedClass generateClass(Path outputDir) throws IOException {
     ClassName className = getClassName();
 
     TypeSpec.Builder builder = generateClass(className, false);
 
     JavaFile javaFile = JavaFile.builder(className.packageName(), builder.build()).build();
-    File classFile = javaFile.writeToFile(outputDir);
+    Path classFile = javaFile.writeToPath(outputDir);
 
-    return new JavaGenerator.GeneratedClass(classFile, className, isRootClass());
+    return new GeneratedClass(classFile, className, isRootClass());
   }
 
   /**
@@ -160,7 +158,8 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
    * @throws IOException
    *           if a building error occurred while generating the Java class
    */
-  protected TypeSpec.Builder generateClass(ClassName className, boolean isChild) throws IOException {
+  @NotNull
+  protected TypeSpec.Builder generateClass(@NotNull ClassName className, boolean isChild) throws IOException {
     // create the class
     TypeSpec.Builder builder = TypeSpec.classBuilder(className).addModifiers(Modifier.PUBLIC);
     if (isChild) {
@@ -210,7 +209,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
    * @param property
    *          the property generator to add
    */
-  protected final void addPropertyGenerator(IPropertyGenerator property) {
+  protected final void addPropertyGenerator(@NotNull IPropertyGenerator property) {
     String name = property.getPropertyName();
     IPropertyGenerator oldContext = propertyNameToPropertyGeneratorMap.put(name, property);
     if (oldContext != null) {
@@ -228,14 +227,15 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
    *          the flag instance to generate the property for
    * @return the new property generator
    */
-  private final FlagPropertyGenerator newFlagPropertyGenerator(@NotNull IFlagInstance instance) {
+  @NotNull
+  private FlagPropertyGenerator newFlagPropertyGenerator(@NotNull IFlagInstance instance) {
     FlagPropertyGenerator context = new FlagPropertyGenerator(instance, this);
     addPropertyGenerator(context);
     return context;
   }
 
   @Override
-  public boolean hasPropertyWithName(String newName) {
+  public boolean hasPropertyWithName(@NotNull String newName) {
     return propertyNameToPropertyGeneratorMap.containsKey(newName);
   }
 
@@ -244,6 +244,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
    * 
    * @return an unmodifiable collection of property generators
    */
+  @NotNull
   protected Collection<IPropertyGenerator> getPropertyGenerators() {
     return Collections.unmodifiableCollection(propertyNameToPropertyGeneratorMap.values());
   }
@@ -255,7 +256,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
    * @return {@code true} if the JSON key binding is configured or {@code false} otherwise
    */
   public boolean hasJsonKeyFlag() {
-    return hasJsonKeyFlag;
+    return jsonKeyFlag;
   }
 
   /**
@@ -269,8 +270,12 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
    * @throws IOException
    *           if an error occurred while building the class
    */
-  protected Set<INamedModelDefinition> buildClass(TypeSpec.Builder builder, ClassName className) throws IOException {
-    builder.addJavadoc(getDefinition().getDescription().toHtml());
+  @NotNull
+  protected Set<INamedModelDefinition> buildClass(@NotNull TypeSpec.Builder builder, @NotNull ClassName className) throws IOException {
+    MarkupLine description = getDefinition().getDescription();
+    if (description != null) {
+      builder.addJavadoc(getDefinition().getDescription().toHtml());
+    }
 
     Set<INamedModelDefinition> additionalChildClasses = new HashSet<>();
 

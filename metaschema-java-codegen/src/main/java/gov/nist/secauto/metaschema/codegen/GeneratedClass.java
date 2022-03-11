@@ -23,30 +23,64 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.codegen;
 
-package gov.nist.secauto.metaschema.docsgen;
+import com.squareup.javapoet.ClassName;
 
-import java.io.IOException;
-import java.util.Map;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import freemarker.core.ParseException;
-import freemarker.template.Configuration;
-import freemarker.template.MalformedTemplateNameException;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateNotFoundException;
+import org.jetbrains.annotations.NotNull;
 
-public class XmlOutlineDocumentationGenerator
-    extends AbstractDocumentationGenerator {
+import java.nio.file.Path;
 
-  @Override
-  protected Template getTemplate(Configuration cfg)
-      throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException {
-    return cfg.getTemplate("xml-outline.ftlx");
+public class GeneratedClass {
+  @NotNull
+  private final Path classFile;
+  @NotNull
+  private final ClassName className;
+  private final boolean rootClass;
+
+  /**
+   * Construct a new class information object for a generated class.
+   * 
+   * @param classFile
+   *          the file the class was written to
+   * @param className
+   *          the type info for the class
+   * @param rootClass
+   *          {@code true} if the class is a root assembly, or {@code false} otherwise
+   */
+  public GeneratedClass(@NotNull Path classFile, @NotNull ClassName className, boolean rootClass) {
+    this.classFile = ObjectUtils.requireNonNull(classFile, "classFile");
+    this.className = ObjectUtils.requireNonNull(className, "className");
+    this.rootClass = rootClass;
   }
 
-  @Override
-  protected void buildModel(Configuration cfg, Map<String, Object> root) throws IOException, TemplateException {
-    // nothing to add
+  /**
+   * The file the class was written to.
+   * 
+   * @return the class file
+   */
+  public Path getClassFile() {
+    return classFile;
+  }
+
+  /**
+   * The type info for the class.
+   * 
+   * @return the class's type info
+   */
+  public ClassName getClassName() {
+    return className;
+  }
+
+  /**
+   * Indicates if the class represents a root Metaschema assembly which can be the top-level
+   * element/property of an XML, JSON, or YAML instance.
+   * 
+   * @return {@code true} if the class is a root assembly, or {@code false} otherwise
+   */
+  public boolean isRootClass() {
+    return rootClass;
   }
 }

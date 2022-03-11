@@ -24,9 +24,10 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.validation;
+package gov.nist.secauto.metaschema.model.common.validation;
 
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
@@ -45,50 +46,59 @@ import java.util.stream.Stream;
 
 public class JsonSchemaContentValidator
     extends AbstractContentValidator {
+  @NotNull
   private final Schema schema;
 
   public JsonSchemaContentValidator(@NotNull InputStream schemaInputStream) {
     this(new JSONObject(new JSONTokener(Objects.requireNonNull(schemaInputStream, "schemaInputStream"))));
   }
 
+  @SuppressWarnings("null")
   public JsonSchemaContentValidator(@NotNull JSONObject jsonSchema) {
     this(SchemaLoader.load(Objects.requireNonNull(jsonSchema, "jsonSchema")));
   }
 
   protected JsonSchemaContentValidator(@NotNull Schema schema) {
-    this.schema = Objects.requireNonNull(schema, "schema");
+    this.schema = ObjectUtils.requireNonNull(schema, "schema");
   }
 
+  @NotNull
   public Schema getSchema() {
     return schema;
   }
 
   @Override
-  protected IValidationResult validateInternal(@NotNull InputStream is, @NotNull URI uri) {
+  public IValidationResult validate(@NotNull InputStream is, @NotNull URI uri) {
     JSONObject json = new JSONObject(new JSONTokener(is));
     return validate(json, uri);
   }
 
+  @SuppressWarnings("null")
   @NotNull
-  public IValidationResult validate(JSONObject json, URI documentUri) {
+  public IValidationResult validate(@NotNull JSONObject json, @NotNull URI documentUri) {
     IValidationResult retval;
     try {
       schema.validate(json);
       retval = IValidationResult.PASSING_RESULT;
     } catch (ValidationException ex) {
-      Stream<JsonValidationFinding> findings = handleValidationException(ex, documentUri);
-      retval = new JsonValidationResult(findings.collect(Collectors.toList()));
+      retval = new JsonValidationResult(
+          handleValidationException(ex, documentUri)
+              .collect(Collectors.toList()));
     }
 
     return retval;
   }
 
+  @SuppressWarnings("null")
+  @NotNull
   protected Stream<JsonValidationFinding> handleValidationException(@NotNull ValidationException ex,
       @NotNull URI documentUri) {
-    return Stream.concat(
-        Stream.of(new JsonValidationFinding(ex, documentUri)),
-        ex.getCausingExceptions().stream()
-            .flatMap(exception -> handleValidationException(exception, documentUri)));
+    JsonValidationFinding finding = new JsonValidationFinding(ex, documentUri);
+    Stream<JsonValidationFinding> childFindings = ex.getCausingExceptions().stream()
+        .flatMap(exception -> {
+          return handleValidationException(exception, documentUri);
+        });
+    return Stream.concat(Stream.of(finding), childFindings);
   }
 
   public static class JsonValidationFinding implements IValidationFinding {
@@ -98,8 +108,8 @@ public class JsonSchemaContentValidator
     private final URI documentUri;
 
     public JsonValidationFinding(@NotNull ValidationException exception, @NotNull URI documentUri) {
-      this.exception = Objects.requireNonNull(exception, "exception");
-      this.documentUri = Objects.requireNonNull(documentUri, "documentUri");
+      this.exception = ObjectUtils.requireNonNull(exception, "exception");
+      this.documentUri = ObjectUtils.requireNonNull(documentUri, "documentUri");
     }
 
     @Override
@@ -112,6 +122,7 @@ public class JsonSchemaContentValidator
       return documentUri;
     }
 
+    @SuppressWarnings("null")
     @Override
     public String getMessage() {
       return getCause().getLocalizedMessage();
@@ -122,18 +133,13 @@ public class JsonSchemaContentValidator
     public ValidationException getCause() {
       return exception;
     }
-
-    @Override
-    public <RESULT, CONTEXT> RESULT visit(@NotNull IValidationFindingVisitor<RESULT, CONTEXT> visitor,
-        CONTEXT context) {
-      return visitor.visit(this, context);
-    }
   }
 
   private static class JsonValidationResult implements IValidationResult {
     @NotNull
     private final List<JsonValidationFinding> findings;
 
+    @SuppressWarnings("null")
     public JsonValidationResult(@NotNull List<JsonValidationFinding> findings) {
       this.findings = Collections.unmodifiableList(Objects.requireNonNull(findings, "findings"));
     }

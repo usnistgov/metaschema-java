@@ -28,7 +28,10 @@ package gov.nist.secauto.metaschema.model.common.util;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -57,5 +60,34 @@ public final class CustomCollectors {
           String.join(", ", list.subList(0, last)),
           list.get(last));
     };
+  }
+  
+
+  public static <T, K, V> Collector<T, ?, Map<K, V>> toMap(
+      @NotNull Function<? super T, ? extends K> keyMapper,
+      @NotNull Function<? super T, ? extends V> valueMapper,
+      @NotNull DuplicateHandler<K, V, ?> duplicateHander) {
+    return Collector.of(
+        HashMap::new,
+        (map, item) -> {
+          K key = keyMapper.apply(item);
+          V value = Objects.requireNonNull(valueMapper.apply(item));
+          if (map.putIfAbsent(key, value) != null)
+            throw duplicateHander.handle(key, map.get(key), value);
+        },
+        (map1, map2) -> {
+          map2.forEach((k, v) -> {
+            if (map1.putIfAbsent(k, v) != null)
+              throw duplicateHander.handle(k, map1.get(k), v);
+          });
+          return map1;
+        }
+        );
+  }
+  
+  @FunctionalInterface
+  public static interface DuplicateHandler<K, V, R extends RuntimeException> {
+    @NotNull
+    R handle(K key, V value1, V value2);
   }
 }

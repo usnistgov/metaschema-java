@@ -49,6 +49,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>net.openhft</groupId>
 			<artifactId>compiler</artifactId>
 			<version>2.3.4</version>
@@ -83,7 +88,7 @@
 					<artifactId>maven-pmd-plugin</artifactId>
 					<configuration>
 						<excludeRoots>
-							<excludeRoot>${project.build.directory}/generated-sources/xmlbeans</excludeRoot>
+							<excludeRoot>target/generated-sources/xmlbeans</excludeRoot>
 						</excludeRoots>
 					</configuration>
 				</plugin>

@@ -33,10 +33,15 @@ import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 public interface IJavaClassGenerator {
+  /**
+   * Retrieve the definition the class generator is for.
+   * 
+   * @return the definition
+   */
   @NotNull
   INamedModelDefinition getDefinition();
 
@@ -49,7 +54,8 @@ public interface IJavaClassGenerator {
    * @throws IOException
    *           if a build error occurred while generating the class
    */
-  JavaGenerator.GeneratedClass generateClass(File dir) throws IOException;
+  @NotNull
+  GeneratedClass generateClass(@NotNull Path dir) throws IOException;
 
   /**
    * This method is responsible for generating the Java class using a builder that is returned for
@@ -59,6 +65,7 @@ public interface IJavaClassGenerator {
    * @throws IOException
    *           if a build error occurred while generating the class
    */
+  @NotNull
   TypeSpec.Builder generateChildClass() throws IOException;
 
   /**
@@ -67,6 +74,7 @@ public interface IJavaClassGenerator {
    * 
    * @return the class's type information
    */
+  @NotNull
   ClassName getClassName();
 
   /**
@@ -76,7 +84,12 @@ public interface IJavaClassGenerator {
    *          the property name to look for
    * @return the associated property or {@code null} if no matching property exists
    */
-  boolean hasPropertyWithName(String name);
+  boolean hasPropertyWithName(@NotNull String name);
 
+  /**
+   * Get the class type information for the base class of the generated class.
+   * 
+   * @return the type information or {@code null} if no base class is configured
+   */
   ClassName getBaseClassName();
 }

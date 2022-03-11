@@ -138,7 +138,7 @@ public class DefaultBindingContext implements IBindingContext {
       getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz) {
     IJavaTypeAdapter<?> instance;
     synchronized (this) {
-      instance =  javaTypeAdapterMap.get(clazz);
+      instance = javaTypeAdapterMap.get(clazz);
       if (instance == null) {
         Constructor<TYPE> constructor;
         try {
@@ -156,7 +156,7 @@ public class DefaultBindingContext implements IBindingContext {
       }
     }
     @SuppressWarnings("unchecked")
-    TYPE retval = (TYPE)instance;
+    TYPE retval = (TYPE) instance;
     return retval;
   }
 
@@ -223,8 +223,10 @@ public class DefaultBindingContext implements IBindingContext {
     }
   }
 
-  protected synchronized List<IBindingMatcher> getBindingMatchers() {
-    return Collections.unmodifiableList(bindingMatchers);
+  protected List<? extends IBindingMatcher> getBindingMatchers() {
+    synchronized (this) {
+      return Collections.unmodifiableList(bindingMatchers);
+    }
   }
 
   public synchronized Map<Class<?>, IClassBinding> getClassBindingsByClass() {

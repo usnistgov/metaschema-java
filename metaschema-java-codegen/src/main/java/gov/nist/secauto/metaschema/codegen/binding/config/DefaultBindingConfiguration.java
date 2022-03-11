@@ -46,6 +46,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -199,6 +200,11 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
       }
     }
     return retval;
+  }
+
+  public void load(Path file) throws MalformedURLException, IOException, MetaschemaException {
+    URL resource = file.toUri().toURL();
+    load(resource);
   }
 
   public void load(File file) throws MalformedURLException, IOException, MetaschemaException {

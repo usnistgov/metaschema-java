@@ -184,6 +184,11 @@
 				<artifactId>metaschema-java-schemagen</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>metaschema-testing</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>org.apache.xmlbeans</groupId>
@@ -698,5 +703,6 @@
 		<module>metaschema-freemarker-support</module>
 		<module>metaschema-schema-generator</module>
 		<!-- <module>metaschema-documentation-generator</module> -->
+		<module>metaschema-testing</module>
 	</modules>
 </project>

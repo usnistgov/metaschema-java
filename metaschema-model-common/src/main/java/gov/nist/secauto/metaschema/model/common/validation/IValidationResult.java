@@ -24,29 +24,57 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.docsgen;
+package gov.nist.secauto.metaschema.model.common.validation;
 
-import java.io.IOException;
-import java.util.Map;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 
-import freemarker.core.ParseException;
-import freemarker.template.Configuration;
-import freemarker.template.MalformedTemplateNameException;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateNotFoundException;
+import org.jetbrains.annotations.NotNull;
 
-public class XmlOutlineDocumentationGenerator
-    extends AbstractDocumentationGenerator {
+import java.util.Collections;
+import java.util.List;
 
-  @Override
-  protected Template getTemplate(Configuration cfg)
-      throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException {
-    return cfg.getTemplate("xml-outline.ftlx");
-  }
+public interface IValidationResult {
+  @NotNull
+  IValidationResult PASSING_RESULT = new IValidationResult() {
 
-  @Override
-  protected void buildModel(Configuration cfg, Map<String, Object> root) throws IOException, TemplateException {
-    // nothing to add
-  }
+    @Override
+    public boolean isPassing() {
+      return true;
+    }
+
+    @Override
+    public Level getHighestSeverity() {
+      return Level.INFORMATIONAL;
+    }
+
+    @SuppressWarnings("null")
+    @Override
+    public List<? extends IValidationFinding> getFindings() {
+      return Collections.emptyList();
+    }
+  };
+
+  /**
+   * Determines if the result of validation was valid or not.
+   * 
+   * @return {@code true} if the result was determined to be valid or {@code false} otherwise
+   */
+  boolean isPassing();
+
+  /**
+   * Get the highest finding severity level for the validation. The level {@link Level#INFORMATIONAL}
+   * will be returned if no validation findings were identified.
+   * 
+   * @return the highest finding severity level
+   */
+  @NotNull
+  Level getHighestSeverity();
+
+  /**
+   * Get the list of validation findings, which may be empty.
+   * 
+   * @return the list
+   */
+  @NotNull
+  List<? extends IValidationFinding> getFindings();
 }
