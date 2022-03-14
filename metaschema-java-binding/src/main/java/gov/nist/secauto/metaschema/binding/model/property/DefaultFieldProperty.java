@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.binding.model.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
+import gov.nist.secauto.metaschema.binding.model.property.info.IModelPropertyInfo;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
@@ -50,43 +51,61 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class DefaultFieldProperty
     extends AbstractFieldProperty {
 
-  public static DefaultFieldProperty createInstance(IAssemblyClassBinding parentClassBinding,
-      java.lang.reflect.Field field) {
-    DefaultFieldProperty retval = new DefaultFieldProperty(parentClassBinding, field);
-    return retval;
-  }
-
+  @NotNull
   private final Field field;
   private final IJavaTypeAdapter<?> javaTypeAdapter;
   private IBoundFieldDefinition definition;
   private IValueConstraintSupport constraints;
 
-  public DefaultFieldProperty(IAssemblyClassBinding parentClassBinding, java.lang.reflect.Field field) {
+  public static DefaultFieldProperty createInstance(@NotNull IAssemblyClassBinding parentClassBinding,
+      java.lang.reflect.Field field) {
+    return new DefaultFieldProperty(parentClassBinding, field);
+  }
+
+  public DefaultFieldProperty(@NotNull IAssemblyClassBinding parentClassBinding, @NotNull java.lang.reflect.Field field) {
     super(parentClassBinding, field);
-    this.field = field.getAnnotation(Field.class);
-    if (this.field == null) {
+    
+    if (field.isAnnotationPresent(Field.class)) {
+      this.field = ObjectUtils.notNull(field.getAnnotation(Field.class));
+    } else {
       throw new IllegalArgumentException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
           field.getName(), parentClassBinding.getBoundClass().getName(), Field.class.getName()));
     }
 
-    Class<? extends IJavaTypeAdapter<?>> adapterClass = getFieldAnnotation().typeAdapter();
+    Class<? extends IJavaTypeAdapter<?>> adapterClass = ObjectUtils.notNull(getFieldAnnotation().typeAdapter());
     if (NullJavaTypeAdapter.class.equals(adapterClass)) {
       javaTypeAdapter = null;
     } else {
-      javaTypeAdapter = getParentClassBinding().getBindingContext().getJavaTypeAdapterInstance(adapterClass);
+      javaTypeAdapter = ObjectUtils.requireNonNull(
+        getParentClassBinding().getBindingContext().getJavaTypeAdapterInstance(adapterClass));
+
+      IModelPropertyInfo propertyInfo = getPropertyInfo();
+      Class<?> itemType = propertyInfo.getItemType();
+      if (!itemType.equals(javaTypeAdapter.getJavaClass())) {
+        throw new IllegalStateException(
+            String.format("Property '%s' on class '%s' has the '%s' type adapter configured,"+
+                " but the field's item type '%s' does not match the adapter's type '%s'.",
+                getName(),
+                getContainingDefinition().getBoundClass().getName(),
+                javaTypeAdapter.getClass().getName(),
+                itemType.getName(),
+                javaTypeAdapter.getJavaClass().getName()));
+      }
     }
   }
 
+  @NotNull
   public Field getFieldAnnotation() {
     return field;
   }
@@ -114,7 +133,7 @@ public class DefaultFieldProperty
         }
       }
     }
-    return definition;
+    return ObjectUtils.notNull(definition);
   }
 
   @Override
@@ -124,7 +143,7 @@ public class DefaultFieldProperty
 
   @Override
   public String getXmlNamespace() {
-    return ModelUtil.resolveNamespace(getFieldAnnotation().namespace(), getParentClassBinding(), false);
+    return ModelUtil.resolveNamespace(getFieldAnnotation().namespace(), getParentClassBinding());
   }
 
   @Override
@@ -149,7 +168,7 @@ public class DefaultFieldProperty
 
   @Override
   public String getGroupAsXmlNamespace() {
-    return ModelUtil.resolveNamespace(getFieldAnnotation().groupNamespace(), getParentClassBinding(), false);
+    return ModelUtil.resolveNamespace(getFieldAnnotation().groupNamespace(), getParentClassBinding());
   }
 
   @Override
@@ -166,9 +185,11 @@ public class DefaultFieldProperty
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.
    */
-  protected synchronized void checkModelConstraints() {
-    if (constraints == null) {
-      constraints = new ValueConstraintSupport(this);
+  protected void checkModelConstraints() {
+    synchronized (this) {
+      if (constraints == null) {
+        constraints = new ValueConstraintSupport(getFieldAnnotation());
+      }
     }
   }
 
@@ -181,7 +202,7 @@ public class DefaultFieldProperty
   private class ScalarFieldDefinition implements IBoundFieldDefinition {
     @Override
     public IJavaTypeAdapter<?> getDatatype() {
-      return getJavaTypeAdapter();
+      return ObjectUtils.notNull(getJavaTypeAdapter());
     }
 
     @Override
@@ -205,11 +226,6 @@ public class DefaultFieldProperty
     }
 
     @Override
-    public String getXmlNamespace() {
-      return DefaultFieldProperty.this.getXmlNamespace();
-    }
-
-    @Override
     public MarkupMultiline getRemarks() {
       return DefaultFieldProperty.this.getRemarks();
     }
@@ -221,7 +237,7 @@ public class DefaultFieldProperty
 
     @Override
     public Map<String, ? extends IBoundFlagInstance> getFlagInstanceMap() {
-      return Collections.emptyMap();
+      return CollectionUtil.emptyMap();
     }
 
     @Override
@@ -246,7 +262,8 @@ public class DefaultFieldProperty
 
     @Override
     public String getJsonValueKeyName() {
-      return null;
+      // this will never be used
+      return getDatatype().getDefaultJsonValueKey();
     }
 
     @Override

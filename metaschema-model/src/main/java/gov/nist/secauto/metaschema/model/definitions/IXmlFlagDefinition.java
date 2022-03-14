@@ -33,18 +33,10 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInst
 
 import org.jetbrains.annotations.NotNull;
 
-import javax.xml.namespace.QName;
-
 public interface IXmlFlagDefinition extends IFlagDefinition, IXmlNamedDefinition {
 
   @Override
   default @NotNull IInstanceSet evaluateMetapathInstances(@NotNull MetapathExpression metapath) {
     return metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(IInstanceSet.newInstanceSet(this)));
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default @NotNull QName getXmlQName() {
-    return QName.valueOf(getEffectiveName());
   }
 }

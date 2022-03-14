@@ -63,7 +63,8 @@ public class TestBasicMetaschema {
     MetaschemaCompilerHelper.compileMetaschema(metaschema, classDir, bindingConfiguration);
 
     // Load classes
-    return MetaschemaCompilerHelper.getClassLoader(classDir).loadClass(rootClassName);
+    return MetaschemaCompilerHelper.getClassLoader(classDir, Thread.currentThread().getContextClassLoader())
+        .loadClass(rootClassName);
   }
 
   // private static Object readXml(Reader reader, Class<?> rootClass) throws BindingException {

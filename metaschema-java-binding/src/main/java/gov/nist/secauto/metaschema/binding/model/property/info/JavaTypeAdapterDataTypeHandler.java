@@ -34,14 +34,14 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -49,14 +49,14 @@ import javax.xml.stream.events.StartElement;
 
 // TODO: implement can handle QName for XML parsing
 public class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
+  @NotNull
   private final IJavaTypeAdapter<?> adapter;
+  @NotNull
   private final IBoundNamedModelInstance property;
 
   public JavaTypeAdapterDataTypeHandler(IJavaTypeAdapter<?> adapter, IBoundNamedModelInstance property) {
-    Objects.requireNonNull(adapter, "adapter");
-    Objects.requireNonNull(property, "property");
-    this.adapter = adapter;
-    this.property = property;
+    this.adapter = ObjectUtils.requireNonNull(adapter, "adapter");
+    this.property = ObjectUtils.requireNonNull(property, "property");
   }
 
   @Override
@@ -76,14 +76,17 @@ public class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
   }
 
   @Override
-  public boolean isUnrappedValueAllowedInXml() {
+  public boolean isUnwrappedValueAllowedInXml() {
     return getJavaTypeAdapter().isUnrappedValueAllowedInXml();
   }
 
   @Override
-  public List<Object> get(Object parentInstance, IJsonParsingContext context) throws IOException {
+  public List<@NotNull Object> get(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context) throws IOException {
+    if (requiresJsonKey) {
+      throw new IOException("A scalar datatype cannot have a JSON key.");
+    }
     Object value = adapter.parse(context.getReader());
-    return value != null ? Collections.singletonList(value) : Collections.emptyList();
+    return CollectionUtil.singletonList(value);
   }
 
   @Override

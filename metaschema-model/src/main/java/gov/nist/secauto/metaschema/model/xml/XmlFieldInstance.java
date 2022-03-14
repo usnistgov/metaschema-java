@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.model.common.ModelConstants;
+import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
@@ -81,7 +81,7 @@ public class XmlFieldInstance
     boolean retval;
     if (MetaschemaDataTypeProvider.MARKUP_MULTILINE.equals(getDefinition().getDatatype())) {
       // default value
-      retval = ModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
+      retval = MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
       if (getXmlField().isSetInXml()) {
         retval = getXmlField().getInXml().booleanValue();
       }
@@ -105,7 +105,7 @@ public class XmlFieldInstance
 
   @Override
   public String getXmlNamespace() {
-    return getContainingDefinition().getXmlNamespace();
+    return getContainingDefinition().getContainingMetaschema().getXmlNamespace().toASCIIString();
   }
 
   @Override
@@ -115,12 +115,12 @@ public class XmlFieldInstance
 
   @Override
   public String getGroupAsXmlNamespace() {
-    return getContainingDefinition().getXmlNamespace();
+    return getContainingDefinition().getContainingMetaschema().getXmlNamespace().toASCIIString();
   }
 
   @Override
   public int getMinOccurs() {
-    int retval = ModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
+    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
     if (getXmlField().isSetMinOccurs()) {
       retval = getXmlField().getMinOccurs().intValueExact();
     }
@@ -129,7 +129,7 @@ public class XmlFieldInstance
 
   @Override
   public int getMaxOccurs() {
-    int retval = ModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
+    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
     if (getXmlField().isSetMaxOccurs()) {
       Object value = getXmlField().getMaxOccurs();
       if (value instanceof String) {

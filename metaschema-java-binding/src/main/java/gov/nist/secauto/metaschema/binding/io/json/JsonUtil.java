@@ -32,11 +32,15 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundInstance;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class JsonUtil {
   private static final Logger LOGGER = LogManager.getLogger(JsonUtil.class);
@@ -135,9 +139,22 @@ public final class JsonUtil {
     return retval;
   }
 
-  public static void assertCurrent(JsonParser parser, JsonToken expectedToken) {
+  public static void assertCurrent(@NotNull JsonParser parser, @NotNull JsonToken expectedToken) {
+    assertCurrent(parser, CollectionUtil.singleton(expectedToken));
+  }
+
+  public static void assertCurrent(@NotNull JsonParser parser, @NotNull Set<@NotNull JsonToken> expectedTokens) {
     JsonToken token = parser.currentToken();
-    assert expectedToken.equals(token) : getAssertMessage(expectedToken, token, parser.getCurrentLocation());
+    assert expectedTokens.contains(token) : getAssertMessage(expectedTokens, token, parser.getCurrentLocation());
+  }
+
+  public static void assertCurrentIsFieldValue(@NotNull JsonParser parser) {
+    JsonToken token = parser.currentToken();
+    assert token.isStructStart() || token.isScalarValue() :
+      String.format(
+        "Expected a START_OBJECT, START_ARRAY, or VALUE_xxx token, but found JsonToken '%s' at '%s'.",
+        token,
+        JsonUtil.toString(parser.getCurrentLocation()));
   }
 
   public static JsonToken assertAndAdvance(JsonParser parser, JsonToken expectedToken) throws IOException {
@@ -146,7 +163,7 @@ public final class JsonUtil {
     return parser.nextToken();
   }
 
-  public static JsonToken consumeAndAssert(JsonParser parser, JsonToken expectedToken)
+  public static JsonToken advanceAndAssert(JsonParser parser, JsonToken expectedToken)
       throws IOException {
     JsonToken token = parser.nextToken();
     assert expectedToken.equals(token) : getAssertMessage(expectedToken, token, parser.getCurrentLocation());
@@ -156,6 +173,13 @@ public final class JsonUtil {
   public static String getAssertMessage(JsonToken expected, JsonToken actual, JsonLocation location) {
     return String.format("Expected JsonToken '%s', but found JsonToken '%s' at '%s'.",
         expected,
+        actual,
+        JsonUtil.toString(location));
+  }
+
+  public static String getAssertMessage(@NotNull Set<@NotNull JsonToken> expected, JsonToken actual, JsonLocation location) {
+    return String.format("Expected JsonToken(s) '%s', but found JsonToken '%s' at '%s'.",
+        expected.stream().map(token -> token.name()).collect(Collectors.joining(",")),
         actual,
         JsonUtil.toString(location));
   }

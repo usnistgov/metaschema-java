@@ -30,9 +30,6 @@ import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.xml.namespace.QName;
 
 public class RelativeFieldDefinitionFieldProperty
     extends AbstractFieldDefinitionFieldProperty {
@@ -49,15 +46,5 @@ public class RelativeFieldDefinitionFieldProperty
   @Override
   public String getName() {
     return getDefinition().getEffectiveName();
-  }
-
-  @Override
-  public @Nullable String getXmlNamespace() {
-    return getDefinition().getXmlNamespace();
-  }
-
-  @Override
-  public @Nullable QName getXmlQName() {
-    return getDefinition().getXmlQName();
   }
 }

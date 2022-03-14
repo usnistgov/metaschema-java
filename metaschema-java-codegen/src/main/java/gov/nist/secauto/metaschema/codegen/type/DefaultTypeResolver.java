@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
 import gov.nist.secauto.metaschema.codegen.binding.config.IBindingConfiguration;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ILocalDefinition;
+import gov.nist.secauto.metaschema.model.definitions.IInlineDefinition;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -81,7 +81,7 @@ public class DefaultTypeResolver implements ITypeResolver {
       } else {
         // this is a local definition, which means a child class needs to be generated
         INamedModelDefinition parentDefinition
-            = ((ILocalDefinition<?>) definition).getDefiningInstance().getContainingDefinition();
+            = ((IInlineDefinition<?>) definition).getDefiningInstance().getContainingDefinition();
         ClassName parentClassName = getClassName(parentDefinition);
         String name = generateClassName(parentClassName.canonicalName(), definition);
         retval = parentClassName.nestedClass(name);

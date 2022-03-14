@@ -42,6 +42,7 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,12 +62,15 @@ public class DefaultFieldValueProperty
   private static final Logger LOGGER = LogManager.getLogger(DefaultFieldValueProperty.class);
 
   private final FieldValue fieldValue;
+  @NotNull
   private final IJavaTypeAdapter<?> javaTypeAdapter;
 
-  public DefaultFieldValueProperty(IFieldClassBinding fieldClassBinding, Field field) {
+  public DefaultFieldValueProperty(@NotNull IFieldClassBinding fieldClassBinding, @NotNull Field field) {
     super(field, fieldClassBinding);
-    this.fieldValue = field.getAnnotation(FieldValue.class);
-    this.javaTypeAdapter = fieldClassBinding.getBindingContext().getJavaTypeAdapterInstance(fieldValue.typeAdapter());
+    this.fieldValue = ObjectUtils.requireNonNull(field.getAnnotation(FieldValue.class));
+    this.javaTypeAdapter = ObjectUtils.requireNonNull(
+        fieldClassBinding.getBindingContext().getJavaTypeAdapterInstance(
+            ObjectUtils.notNull(fieldValue.typeAdapter())));
   }
 
   protected FieldValue getFieldValueAnnotation() {
@@ -76,7 +80,7 @@ public class DefaultFieldValueProperty
   @Override
   public String getJsonValueKeyName() {
     String name = getFieldValueAnnotation().name();
-    if ("##none".equals(name)) {
+    if (name == null || "##none".equals(name)) {
       name = getJavaTypeAdapter().getDefaultJsonValueKey();
     }
     return name;
@@ -100,7 +104,7 @@ public class DefaultFieldValueProperty
 
     Object retval = null;
     if (isNextProperty(context)) {
-      JsonParser parser = context.getReader();
+      JsonParser parser = context.getReader(); // NOPMD - intentional
       // advance past the property name
       parser.nextFieldName();
 
@@ -110,31 +114,34 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public boolean read(Object parentInstance, IJsonParsingContext context) throws IOException {
+  public boolean read(Object objectInstance, IJsonParsingContext context) throws IOException {
     boolean handled = isNextProperty(context);
     if (handled) {
-      JsonParser parser = context.getReader();
+      JsonParser parser = context.getReader();// NOPMD - intentional
       // There are two modes:
       // 1) use of a JSON value key, or
       // 2) a simple value named "value"
       IBoundFlagInstance jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
       if (jsonValueKey != null) {
         // this is the JSON value key case
-        jsonValueKey.setValue(parentInstance, jsonValueKey.readValueFromString(parser.nextFieldName()));
+        String fieldName = ObjectUtils.notNull(parser.currentName());
+        jsonValueKey.setValue(objectInstance, jsonValueKey.readValueFromString(fieldName));
       } else {
         // advance past the property name
-        parser.nextFieldName();
+        String valueKeyName = getJsonValueKeyName();
+        String fieldName = parser.getCurrentName();
+        if (!fieldName.equals(valueKeyName)) {
+          throw new IOException(
+              String.format("Expecteded to parse the value property named '%s', but found a property named '%s'.",
+                  valueKeyName, fieldName));
+        }
+        parser.nextToken();
       }
 
       Object retval = readInternal(context);
-      setValue(parentInstance, retval);
+      setValue(objectInstance, retval);
     }
     return handled;
-  }
-
-  @Override
-  public Object read(IXmlParsingContext context) throws IOException, XMLStreamException {
-    return readInternal(context);
   }
 
   @Override
@@ -151,12 +158,12 @@ public class DefaultFieldValueProperty
   }
 
   public boolean isNextProperty(IJsonParsingContext context) throws IOException {
-    JsonParser parser = context.getReader();
+    JsonParser parser = context.getReader(); // NOPMD - intentional
 
     // the parser's current token should be the JSON field name
     JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
 
-    boolean handled = false;
+    boolean handled;
     IBoundFlagInstance jsonValueKey = getParentClassBinding().getJsonValueKeyFlagInstance();
     if (jsonValueKey != null) {
       // assume this is the JSON value key case
@@ -211,7 +218,9 @@ public class DefaultFieldValueProperty
 
   @Override
   public void writeValue(Object value, IJsonWritingContext context) throws IOException {
-    getJavaTypeAdapter().writeJsonValue(value, context.getWriter());
+    if (value != null) {
+      getJavaTypeAdapter().writeJsonValue(value, context.getWriter());
+    }
   }
 
   @Override
@@ -238,12 +247,9 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public void copyBoundObject(@NotNull Object fromInstance, @NotNull Object toInstance) {
+  public void copyBoundObject(Object fromInstance, Object toInstance) {
     Object value = getValue(fromInstance);
-
     IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
-
-    Object copiedValue = adapter.copy(value);
-    setValue(toInstance, copiedValue);
+    setValue(toInstance, value == null ? null : adapter.copy(value));
   }
 }

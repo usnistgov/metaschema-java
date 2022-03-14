@@ -36,7 +36,6 @@ import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 
@@ -48,9 +47,10 @@ public interface IXdmFactory {
       int position,
       @NotNull IBoundXdmAssemblyNodeItem parentNodeItem);
 
+  @NotNull
   IBoundXdmAssemblyNodeItem newAssemblyNodeItem(@NotNull IBoundAssemblyInstance instance, @NotNull Object value,
       int position,
-      @Nullable URI baseUri);
+      @NotNull URI baseUri);
 
   @NotNull
   IBoundXdmFieldNodeItem newFieldNodeItem(@NotNull IBoundFieldInstance instance, @NotNull Object value, int position,
@@ -58,32 +58,34 @@ public interface IXdmFactory {
 
   @NotNull
   IBoundXdmFieldNodeItem newFieldNodeItem(@NotNull IBoundFieldInstance instance, @NotNull Object value, int position,
-      @Nullable URI baseUri);
+      @NotNull URI baseUri);
 
   @NotNull
   IBoundXdmFlagNodeItem newFlagNodeItem(@NotNull IBoundFlagInstance instance, @NotNull Object value,
       @NotNull IBoundXdmModelNodeItem parentNodeItem);
-
-  @NotNull
-  IBoundXdmDocumentNodeItem newDocumentNodeItem(@NotNull RootDefinitionAssemblyProperty instance,
-      @NotNull Object value, @Nullable URI documentUri);
+//
+//  @NotNull
+//  IBoundXdmDocumentNodeItem newDocumentNodeItem(@NotNull RootDefinitionAssemblyProperty instance, @NotNull Object value,
+//      @NotNull URI documentUri);
 
   @NotNull
   IBoundXdmDocumentNodeItem newDocumentNodeItem(@NotNull IAssemblyClassBinding definition, @NotNull Object value,
-      @Nullable URI documentUri);
+      @NotNull URI documentUri);
 
   @NotNull
   IBoundXdmDocumentNodeItem newDocumentNodeItem(@NotNull Object value, @NotNull IBindingContext bindingContext,
-      @Nullable URI documentUri);
+      @NotNull URI documentUri);
 
   @NotNull
   IBoundXdmAssemblyNodeItem newRelativeAssemblyNodeItem(@NotNull IAssemblyClassBinding definition,
       @NotNull Object value,
-      @Nullable URI baseUri);
+      @NotNull URI baseUri);
 
+  @NotNull
   IBoundXdmFieldNodeItem newRelativeFieldNodeItem(@NotNull IFieldClassBinding definition, @NotNull Object value,
-      @Nullable URI baseUri);
+      @NotNull URI baseUri);
 
-  IBoundXdmNodeItem newNodeItem(@NotNull IClassBinding definition, @NotNull Object boundObject, @Nullable URI baseUri,
+  @NotNull
+  IBoundXdmNodeItem newNodeItem(@NotNull IClassBinding definition, @NotNull Object boundObject, @NotNull URI baseUri,
       boolean rootNode);
 }

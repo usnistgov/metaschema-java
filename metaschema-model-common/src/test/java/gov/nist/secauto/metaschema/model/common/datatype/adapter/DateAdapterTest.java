@@ -26,18 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import gov.nist.secauto.metaschema.model.common.datatype.object.Date;
-
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class DateAdapterTest {
-  private DateAdapter adapter = new DateAdapter();
+  private static final DateAdapter ADAPTER = new DateAdapter();
 
   @ParameterizedTest
   @ValueSource(strings = { "2018-01-01", "2020-06-23Z", "2020-06-23-04:00", "2020-06-23", "2020-01-01" })
-  void testSimpleDate(String date) {
-    Date parsedDate = adapter.parse(date);
-    System.out.println(adapter.asString(parsedDate));
+  void testSimpleDate(@NotNull String date) {
+    ADAPTER.parse(date);
   }
 }

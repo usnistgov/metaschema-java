@@ -36,12 +36,12 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -49,10 +49,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 public class SingletonPropertyInfo
-    extends AbstractModelPropertyInfo<Type>
-    implements IModelPropertyInfo {
+    extends AbstractModelPropertyInfo<Type> {
 
-  public SingletonPropertyInfo(IBoundNamedModelInstance property) {
+  public SingletonPropertyInfo(@NotNull IBoundNamedModelInstance property) {
     super(property);
   }
 
@@ -68,19 +67,19 @@ public class SingletonPropertyInfo
 
     JsonParser parser = context.getReader();
 
-    boolean isObject = JsonToken.START_OBJECT.equals(parser.currentToken());
-    if (isObject) {
-      // read the object's START_OBJECT
-      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-    }
+//    boolean isObject = JsonToken.START_OBJECT.equals(parser.currentToken()); // TODO: is this object check needed?
+//    if (isObject) {
+//      // read the object's START_OBJECT
+//      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+//    }
 
-    List<Object> values = property.readItem(parentInstance, context);
+    List<@NotNull Object> values = property.readItem(parentInstance, false, context);
     collector.addAll(values);
 
-    if (isObject) {
-      // read the object's END_OBJECT
-      JsonUtil.assertAndAdvance(context.getReader(), JsonToken.END_OBJECT);
-    }
+//    if (isObject) {
+//      // read the object's END_OBJECT
+//      JsonUtil.assertAndAdvance(context.getReader(), JsonToken.END_OBJECT);
+//    }
   }
 
   @Override
@@ -109,13 +108,15 @@ public class SingletonPropertyInfo
   public boolean writeValue(Object parentInstance, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     IBoundNamedModelInstance property = getProperty();
-    return property.writeItem(property.getValue(parentInstance), parentName, context);
+    Object value = property.getValue(parentInstance);
+    // TODO: does this need to happen if the value is NULL?
+    return property.writeItem(value, parentName, context);
   }
 
   @Override
   public void writeValue(Object parentInstance, IJsonWritingContext context) throws IOException {
     IBoundNamedModelInstance property = getProperty();
-    getProperty().getDataTypeHandler().writeItems(Collections.singleton(property.getValue(parentInstance)), true,
+    getProperty().getDataTypeHandler().writeItems(CollectionUtil.singleton(property.getValue(parentInstance)), true,
         context);
   }
 

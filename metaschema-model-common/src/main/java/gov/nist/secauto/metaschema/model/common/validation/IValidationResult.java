@@ -76,5 +76,5 @@ public interface IValidationResult {
    * @return the list
    */
   @NotNull
-  List<? extends IValidationFinding> getFindings();
+  List<@NotNull ? extends IValidationFinding> getFindings();
 }

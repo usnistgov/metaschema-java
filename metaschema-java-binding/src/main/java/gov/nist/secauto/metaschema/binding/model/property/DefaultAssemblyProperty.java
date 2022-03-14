@@ -32,6 +32,9 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
 import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 
@@ -43,12 +46,14 @@ public class DefaultAssemblyProperty
     return retval;
   }
 
+  @NotNull
   private final Assembly assembly;
 
   protected DefaultAssemblyProperty(IAssemblyClassBinding parentClassBinding, Field field) {
     super(parentClassBinding, field);
-    this.assembly = field.getAnnotation(Assembly.class);
-    if (this.assembly == null) {
+    if (field.isAnnotationPresent(Assembly.class)) {
+      this.assembly = ObjectUtils.notNull(field.getAnnotation(Assembly.class));
+    } else {
       throw new IllegalArgumentException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
           field.getName(), parentClassBinding.getBoundClass().getName(), Assembly.class.getName()));
     }
@@ -71,7 +76,7 @@ public class DefaultAssemblyProperty
 
   @Override
   public String getXmlNamespace() {
-    return ModelUtil.resolveNamespace(getAssemblyAnnotation().namespace(), getParentClassBinding(), false);
+    return ObjectUtils.notNull(ModelUtil.resolveNamespace(getAssemblyAnnotation().namespace(), getParentClassBinding()));
   }
 
   @Override
@@ -91,7 +96,7 @@ public class DefaultAssemblyProperty
 
   @Override
   public String getGroupAsXmlNamespace() {
-    return ModelUtil.resolveNamespace(getAssemblyAnnotation().groupNamespace(), getParentClassBinding(), false);
+    return ModelUtil.resolveNamespace(getAssemblyAnnotation().groupNamespace(), getParentClassBinding());
   }
 
   @Override

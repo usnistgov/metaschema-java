@@ -31,11 +31,11 @@ import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 
 @MetaschemaAssembly
-public class FlaggedAssemblyClass {
+public class FlaggedAssembly {
   @Flag(useName = "id", typeAdapter = StringAdapter.class)
   private String id;
 
-  public FlaggedAssemblyClass() {
+  public FlaggedAssembly() {
   }
 
   protected String getId() {

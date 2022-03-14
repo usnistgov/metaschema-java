@@ -24,21 +24,58 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.freemarker.support;
+package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
-
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
+import org.jdom2.filter.Filters;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.io.Writer;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import freemarker.core.ParseException;
-import freemarker.template.MalformedTemplateNameException;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateNotFoundException;
+public class JDom2XmlSchemaLoader {
+  public static final String NS_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
 
-public interface FreemarkerGenerator {
-  void generateFromMetaschema(@NotNull IMetaschema metaschema, @NotNull Writer out)
-      throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException;
+  @NotNull
+  private final Document document;
+
+  public JDom2XmlSchemaLoader(@NotNull Path path) throws JDOMException, IOException {
+    this(new SAXBuilder().build(path.toFile()));
+  }
+
+  public JDom2XmlSchemaLoader(@NotNull InputStream is) throws JDOMException, IOException {
+    this(new SAXBuilder().build(is));
+  }
+
+  public JDom2XmlSchemaLoader(@NotNull Document document) {
+    this.document = document;
+  }
+
+  protected Document getNode() {
+    return document;
+  }
+
+  @SuppressWarnings("null")
+  @NotNull
+  public List<@NotNull Element> getContent(
+      @NotNull String path,
+      @NotNull Map<String, String> prefixToNamespaceMap) {
+
+    Collection<Namespace> namespaces = prefixToNamespaceMap.entrySet().stream()
+        .map(entry -> Namespace.getNamespace(entry.getKey(), entry.getValue()))
+        .collect(Collectors.toList());
+    XPathExpression<Element> xpath = XPathFactory.instance().compile(path, Filters.element(), null, namespaces);
+    return xpath.evaluate(getNode());
+  }
 }

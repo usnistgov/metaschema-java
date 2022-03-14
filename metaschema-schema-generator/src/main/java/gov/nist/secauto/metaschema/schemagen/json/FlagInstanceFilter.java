@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.schemagen.json;
 
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -40,10 +41,10 @@ public class FlagInstanceFilter {
   }
 
   @NotNull
-  public static Collection<? extends IFlagInstance> filterFlags(
-      @NotNull Collection<? extends IFlagInstance> flags,
+  public static Collection<@NotNull ? extends IFlagInstance> filterFlags(
+      @NotNull Collection<@NotNull ? extends IFlagInstance> flags,
       IFlagInstance jsonKeyFlag) {
-    Predicate<IFlagInstance> filter = null;
+    Predicate<@NotNull IFlagInstance> filter = null;
 
     // determine if we need to filter a JSON key
     if (jsonKeyFlag != null) {
@@ -53,11 +54,11 @@ public class FlagInstanceFilter {
   }
 
   @NotNull
-  public static Collection<? extends IFlagInstance> filterFlags(
-      @NotNull Collection<? extends IFlagInstance> flags,
+  public static Collection<@NotNull ? extends IFlagInstance> filterFlags(
+      @NotNull Collection<@NotNull ? extends IFlagInstance> flags,
       IFlagInstance jsonKeyFlag,
       IFlagInstance jsonValueKeyFlag) {
-    Predicate<IFlagInstance> filter = null;
+    Predicate<@NotNull IFlagInstance> filter = null;
 
     // determine if we need to filter a JSON key
     if (jsonKeyFlag != null) {
@@ -66,7 +67,7 @@ public class FlagInstanceFilter {
 
     // determine if we need to filter a JSON value key
     if (jsonValueKeyFlag != null) {
-      Predicate<IFlagInstance> jsonValueKeyFilter = filterFlag(jsonValueKeyFlag);
+      Predicate<@NotNull IFlagInstance> jsonValueKeyFilter = filterFlag(jsonValueKeyFlag);
       if (filter == null) {
         filter = jsonValueKeyFilter;
       } else {
@@ -78,21 +79,21 @@ public class FlagInstanceFilter {
   }
 
   @NotNull
-  protected static Predicate<IFlagInstance> filterFlag(@NotNull IFlagInstance flagToFilter) {
+  protected static Predicate<@NotNull IFlagInstance> filterFlag(@NotNull IFlagInstance flagToFilter) {
     return flag -> flag != flagToFilter;
   }
 
   @NotNull
-  protected static Collection<? extends IFlagInstance> applyFilter(
-      @NotNull Collection<? extends IFlagInstance> flags,
-      Predicate<IFlagInstance> filter) {
-    Collection<? extends IFlagInstance> retval;
+  protected static Collection<@NotNull ? extends IFlagInstance> applyFilter(
+      @NotNull Collection<@NotNull ? extends IFlagInstance> flags,
+      Predicate<@NotNull IFlagInstance> filter) {
+    Collection<@NotNull ? extends IFlagInstance> retval;
     if (filter == null) {
       retval = flags;
     } else {
-      retval = flags.stream()
+      retval = ObjectUtils.notNull(flags.stream()
           .filter(filter)
-          .collect(Collectors.toList());
+          .collect(Collectors.toList()));
     }
     return retval;
   }

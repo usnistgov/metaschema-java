@@ -38,8 +38,7 @@ import java.lang.annotation.Target;
  * Indicates that the target of this annotation is a Metaschema flag whose value should be the
  * property/item name of the field's value in JSON or YAML.
  * <p>
- * Use of this annotation is mutually exclusive with the {@link Field#valueName()} or
- * {@link FieldValue} annotations.
+ * Use of this annotation is mutually exclusive with the {@link FieldValue} annotation.
  */
 // TODO: remove this and move this to MetaschemaField
 @Documented

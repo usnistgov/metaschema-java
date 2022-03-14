@@ -57,6 +57,8 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.apache.logging.log4j.LogManager;
@@ -85,6 +87,12 @@ public class DefaultFieldClassBinding
     implements IFieldClassBinding {
   private static final Logger LOGGER = LogManager.getLogger(DefaultFieldClassBinding.class);
 
+  @NotNull
+  private final MetaschemaField metaschemaField;
+  private IBoundFieldValueInstance fieldValue;
+  private IBoundFlagInstance jsonValueKeyFlagInstance;
+  private IValueConstraintSupport constraints;
+
   /**
    * Create a new {@link IClassBinding} for a Java bean annotated with the {@link Field} annotation.
    * 
@@ -94,20 +102,16 @@ public class DefaultFieldClassBinding
    *          the Metaschema binding environment context
    * @return the Metaschema field binding for the class
    */
-  public static DefaultFieldClassBinding createInstance(Class<?> clazz, IBindingContext bindingContext) {
+  @NotNull
+  public static DefaultFieldClassBinding createInstance(@NotNull Class<?> clazz,
+      @NotNull IBindingContext bindingContext) {
     Objects.requireNonNull(clazz, "clazz");
     if (!clazz.isAnnotationPresent(MetaschemaField.class)) {
       throw new IllegalArgumentException(
           String.format("Class '%s' is missing the '%' annotation.", clazz.getName(), MetaschemaField.class.getName()));
     }
-    DefaultFieldClassBinding retval = new DefaultFieldClassBinding(clazz, bindingContext);
-    return retval;
+    return new DefaultFieldClassBinding(clazz, bindingContext);
   }
-
-  private final MetaschemaField metaschemaField;
-  private IBoundFieldValueInstance fieldValue;
-  private IBoundFlagInstance jsonValueKeyFlagInstance;
-  private IValueConstraintSupport constraints;
 
   /**
    * Construct a new {@link IClassBinding} for a Java bean annotated with the {@link Field}
@@ -118,11 +122,12 @@ public class DefaultFieldClassBinding
    * @param bindingContext
    *          the class binding context for which this class is participating
    */
-  protected DefaultFieldClassBinding(Class<?> clazz, IBindingContext bindingContext) {
+  protected DefaultFieldClassBinding(@NotNull Class<?> clazz, @NotNull IBindingContext bindingContext) {
     super(clazz, bindingContext);
-    this.metaschemaField = clazz.getAnnotation(MetaschemaField.class);
+    this.metaschemaField = ObjectUtils.notNull(clazz.getAnnotation(MetaschemaField.class));
   }
 
+  @NotNull
   public MetaschemaField getMetaschemaFieldAnnotation() {
     return metaschemaField;
   }
@@ -165,17 +170,16 @@ public class DefaultFieldClassBinding
   /**
    * Initialize the flag instances for this class.
    */
-  protected synchronized void initalizeFieldValueInstance() {
-    if (this.fieldValue == null) {
-      java.lang.reflect.Field field = getFieldValueField(getBoundClass());
-      if (field == null) {
-        throw new IllegalArgumentException(
-            String.format("Class '%s' is missing the '%' annotation on one of its fields.", getBoundClass().getName(),
-                FieldValue.class.getName()));
-      }
+  protected void initalizeFieldValueInstance() {
+    synchronized (this) {
+      if (this.fieldValue == null) {
+        java.lang.reflect.Field field = getFieldValueField(getBoundClass());
+        if (field == null) {
+          throw new IllegalArgumentException(
+              String.format("Class '%s' is missing the '%' annotation on one of its fields.", getBoundClass().getName(),
+                  FieldValue.class.getName()));
+        }
 
-      FieldValue fieldValueAnnotation = field.getAnnotation(FieldValue.class);
-      if (fieldValueAnnotation != null) {
         this.fieldValue = new DefaultFieldValueProperty(this, field);
       }
     }
@@ -256,25 +260,49 @@ public class DefaultFieldClassBinding
   }
 
   @Override
-  public List<Object> readItem(Object parentInstance, IJsonParsingContext context) throws IOException {
-    List<Object> retval;
-    if (isCollapsible()) {
-      retval = readCollapsed(parentInstance, context);
-    } else {
-      retval = Collections.singletonList(readNormal(parentInstance, context));
+  public List<@NotNull Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
+      throws IOException {
+    JsonParser jsonParser = context.getReader(); // NOPMD - intentional
+    
+    if (requiresJsonKey) {
+      // the start object has already been parsed, the next field name is the JSON key
+      JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME);
+    } else { 
+//      JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
+      // This could be an empty assembly signified by a END_OBJECT, or a series of properties signified by a FIELD_NAME
+      JsonUtil.assertCurrent(jsonParser, Set.of(JsonToken.FIELD_NAME, JsonToken.END_OBJECT));
     }
 
+    List<@NotNull Object> retval;
+    if (isCollapsible()) {
+      retval = readCollapsed(parentInstance, requiresJsonKey, context);
+    } else {
+      retval = CollectionUtil.singletonList(readNormal(parentInstance, requiresJsonKey, context));
+    }
+
+//    if (!requiresJsonKey) {
+//      JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
+//    }
     return retval;
   }
 
-  private Object readNormal(Object parentInstance, IJsonParsingContext context) throws IOException {
+  @NotNull
+  private Object readNormal(Object parentInstance, boolean requiresJsonKey, @NotNull IJsonParsingContext context)
+      throws IOException {
     Predicate<IBoundFlagInstance> flagFilter = null;
 
-    IBoundFlagInstance jsonKey = getJsonKeyFlagInstance();
-    if (jsonKey != null) {
+    IBoundFlagInstance jsonKey;
+    if (requiresJsonKey) {
+      jsonKey = getJsonKeyFlagInstance();
+      if (jsonKey == null) {
+        throw new IOException("This property is configured to use a JSON key, but no JSON key was found");
+      }
+
       flagFilter = (flag) -> {
         return !jsonKey.equals(flag);
       };
+    } else {
+      jsonKey = null;
     }
 
     IBoundFlagInstance jsonValueKey = getJsonValueKeyFlagInstance();
@@ -290,93 +318,119 @@ public class DefaultFieldClassBinding
       }
     }
 
-    Map<String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
+    Map<@NotNull String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
 
     try {
       Object instance = newInstance();
 
       callBeforeDeserialize(instance, parentInstance);
 
-      JsonParser jsonParser = context.getReader();
+      JsonParser jsonParser = context.getReader(); // NOPMD - intentional
+
       if (jsonKey != null) {
         // if there is a json key, the first field will be the key
-        String key = jsonParser.nextFieldName();
+        String key = jsonParser.currentName();
         jsonKey.setValue(instance, jsonKey.readValueFromString(key));
 
-        // next the value will be a start object
-        JsonUtil.consumeAndAssert(jsonParser, JsonToken.START_OBJECT);
+        // advance past the field name
+        if (properties.isEmpty()) {
+          // the value will be a standard value
+          // advance past the field name
+          JsonUtil.assertAndAdvance(jsonParser, JsonToken.FIELD_NAME);
+        } else {
+          // the value will be a start object
+          JsonUtil.advanceAndAssert(jsonParser, JsonToken.START_OBJECT);
+          // advance past the start object
+          jsonParser.nextToken();
+        }
       }
 
-      boolean parsedValueKey = false;
       Set<String> handledProperties = new HashSet<>();
-      // now parse each property until the end object is reached
-      while (!jsonParser.hasTokenId(JsonToken.END_OBJECT.id())) {
-        String propertyName = jsonParser.getCurrentName();
-        // JsonUtil.assertAndAdvance(jsonParser, JsonToken.FIELD_NAME);
-
-        IBoundNamedInstance namedProperty = properties.get(propertyName);
-
-        boolean handled = false;
-        if (namedProperty != null) {
-          // this is a recognized flag
-
-          if (jsonValueKey != null && namedProperty.equals(jsonValueKey)) {
-            throw new IOException(
-                String.format("JSON value key configured, but found standard flag for the value key '%s'",
-                    namedProperty.toCoordinates()));
-          }
-
-          // Now parse
-          Object value = namedProperty.read(context);
-          if (value != null) {
-            namedProperty.setValue(instance, value);
-            handled = true;
-          }
+      if (properties.isEmpty()) {
+        // this may be a value key value, an unrecognized flag, or the field value
+        IBoundFieldValueInstance fieldValue = getFieldValue();
+        Object value = fieldValue.readValue(instance, context);
+        if (value != null) {
+          fieldValue.setValue(instance, value);
         }
-
-        if (namedProperty == null && !parsedValueKey) {
-          // this may be a value key value, an unrecognized flag, or the field value
-          parsedValueKey = getFieldValue().read(instance, context);
-
-          if (parsedValueKey) {
-            handled = true;
-          } else {
-            if (context.getProblemHandler().canHandleUnknownProperty(this, propertyName, context)) {
-              handled = context.getProblemHandler().handleUnknownProperty(this, propertyName, context);
+        handledProperties.add(fieldValue.getJsonValueKeyName());
+      } else {
+        // This could be an empty assembly signified by a END_OBJECT, or a series of properties signified by a FIELD_NAME
+        JsonUtil.assertCurrent(jsonParser, Set.of(JsonToken.FIELD_NAME, JsonToken.END_OBJECT));
+  
+        boolean parsedValueKey = false;
+        // now parse each property until the end object is reached
+        while (!jsonParser.hasTokenId(JsonToken.END_OBJECT.id())) {
+          String propertyName = jsonParser.getCurrentName();
+          // JsonUtil.assertAndAdvance(jsonParser, JsonToken.FIELD_NAME);
+  
+          IBoundNamedInstance namedProperty = properties.get(propertyName);
+  
+          boolean handled = false;
+          if (namedProperty != null) {
+            // this is a recognized flag
+  
+            if (namedProperty.equals(jsonValueKey)) {
+              throw new IOException(
+                  String.format("JSON value key configured, but found standard flag for the value key '%s'",
+                      namedProperty.toCoordinates()));
+            }
+  
+            // Now parse
+            Object value = namedProperty.read(context);
+            if (value != null) {
+              namedProperty.setValue(instance, value);
+              handled = true;
             }
           }
-        }
-
-        if (handled) {
-          handledProperties.add(propertyName);
-        } else {
-          if (LOGGER.isWarnEnabled()) {
-            LOGGER.warn("Unrecognized property named '{}' at '{}'", propertyName,
-                JsonUtil.toString(jsonParser.getCurrentLocation()));
+  
+          if (namedProperty == null && !parsedValueKey) {
+            // this may be a value key value, an unrecognized flag, or the field value
+            parsedValueKey = getFieldValue().read(instance, context);
+  
+            if (parsedValueKey) {
+              handled = true;
+            } else {
+              if (context.getProblemHandler().canHandleUnknownProperty(this, propertyName, context)) {
+                handled = context.getProblemHandler().handleUnknownProperty(this, propertyName, context);
+              }
+            }
           }
-          JsonUtil.skipNextValue(jsonParser);
+  
+          if (handled) {
+            handledProperties.add(propertyName);
+          } else {
+            if (LOGGER.isWarnEnabled()) {
+              LOGGER.warn("Unrecognized property named '{}' at '{}'", propertyName,
+                  JsonUtil.toString(jsonParser.getCurrentLocation()));
+            }
+            JsonUtil.skipNextValue(jsonParser);
+          }
         }
       }
 
       // set undefined properties
-      for (Map.Entry<String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
+      for (Map.Entry<@NotNull String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
         if (!handledProperties.contains(entry.getKey())) {
-          IBoundNamedInstance property = entry.getValue();
+          IBoundNamedInstance property = ObjectUtils.notNull(entry.getValue());
           // use the default value of the collector
           property.setValue(instance, property.newPropertyCollector().getValue());
         }
 
       }
 
-      if (jsonKey != null) {
+      if (jsonKey != null && !properties.isEmpty()) {
         // read the END_OBJECT for the JSON key value
-        JsonUtil.consumeAndAssert(jsonParser, JsonToken.END_OBJECT);
-      } else {
-        JsonUtil.assertCurrent(jsonParser, JsonToken.END_OBJECT);
+        JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
       }
 
-      // // read the END_OBJECT for the field
-      // JsonUtil.consumeAndAssert(jsonParser, JsonToken.END_OBJECT);
+      if (properties.isEmpty()) {
+        // this is the next field or the end of the containing object of this field
+        JsonUtil.assertCurrent(jsonParser, Set.of(JsonToken.FIELD_NAME, JsonToken.END_OBJECT));
+      } else {
+        // this is the current end element, but we are not responsible for parsing it.
+        JsonUtil.assertCurrent(jsonParser, JsonToken.END_OBJECT);
+      }
 
       callAfterDeserialize(instance, parentInstance);
       return instance;
@@ -385,15 +439,24 @@ public class DefaultFieldClassBinding
     }
   }
 
-  private List<Object> readCollapsed(Object parentInstance, IJsonParsingContext context) throws IOException {
+  @NotNull
+  private List<@NotNull Object> readCollapsed(Object parentInstance, boolean requiresJsonKey,
+      IJsonParsingContext context) throws IOException {
 
     Predicate<IBoundFlagInstance> flagFilter = null;
 
-    IBoundFlagInstance jsonKey = getJsonKeyFlagInstance();
-    if (jsonKey != null) {
+    IBoundFlagInstance jsonKey;
+    if (requiresJsonKey) {
+      jsonKey = getJsonKeyFlagInstance();
+      if (jsonKey == null) {
+        throw new IOException("This property is configured to use a JSON key, but no JSON key was found");
+      }
+
       flagFilter = (flag) -> {
         return !jsonKey.equals(flag);
       };
+    } else {
+      jsonKey = null;
     }
 
     IBoundFlagInstance jsonValueKey = getJsonValueKeyFlagInstance();
@@ -409,12 +472,13 @@ public class DefaultFieldClassBinding
       }
     }
 
-    Map<String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
+    Map<@NotNull String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
 
-    Map<IBoundInstance, Supplier<? extends Object>> parsedProperties = new HashMap<>();
-    JsonParser jsonParser = context.getReader();
+    Map<IBoundInstance, Supplier<? extends Object>> parsedProperties = new HashMap<>(); // NOPMD - intentional
 
-    // JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
+    JsonParser jsonParser = context.getReader(); // NOPMD - intentional
+    // This could be an empty assembly signified by a END_OBJECT, or a series of properties signified by a FIELD_NAME
+    JsonUtil.assertCurrent(jsonParser, Set.of(JsonToken.FIELD_NAME, JsonToken.END_OBJECT));
 
     if (jsonKey != null) {
       // if there is a json key, the first field will be the key
@@ -423,7 +487,7 @@ public class DefaultFieldClassBinding
       parsedProperties.put(jsonKey, jsonKeySupplier);
 
       // next the value will be a start object
-      JsonUtil.consumeAndAssert(jsonParser, JsonToken.START_OBJECT);
+      JsonUtil.advanceAndAssert(jsonParser, JsonToken.START_OBJECT);
       // advance to the next field name
       jsonParser.nextToken();
     }
@@ -433,23 +497,23 @@ public class DefaultFieldClassBinding
     // now parse each property until the end object is reached
     while (!jsonParser.hasTokenId(JsonToken.END_OBJECT.id())) {
       String propertyName = jsonParser.getCurrentName();
-      // advance past the field name
-      jsonParser.nextToken();
+//      // advance past the field name
+//      jsonParser.nextToken();
 
-      IBoundNamedInstance property = properties.get(propertyName);
+      IBoundNamedInstance namedProperty = properties.get(propertyName);
 
       boolean handled = false;
-      if (property != null) {
+      if (namedProperty != null) {
         // this is a recognized flag
 
-        if (jsonValueKey != null && property.equals(jsonValueKey)) {
+        if (namedProperty.equals(jsonValueKey)) {
           throw new IOException(String.format(
-              "JSON value key configured, but found standard flag for the value key '%s'", property.toCoordinates()));
+              "JSON value key configured, but found standard flag for the value key '%s'", namedProperty.toCoordinates()));
         }
 
         // Now parse
-        Supplier<? extends Object> supplier = ((IBoundFlagInstance) property).readValueAndSupply(context);
-        parsedProperties.put(property, supplier);
+        Supplier<? extends Object> supplier = ((IBoundFlagInstance) namedProperty).readValueAndSupply(context);
+        parsedProperties.put(namedProperty, supplier);
         handled = true;
       } else {
         // this may be a value key value, an unrecognized flag, or the field value
@@ -465,6 +529,8 @@ public class DefaultFieldClassBinding
         } else {
           String valueKeyName = fieldValue.getJsonValueKeyName();
           if (propertyName.equals(valueKeyName)) {
+            // advance past the field
+            jsonParser.nextToken();
             // treat this as the field value
             values = handleCollapsedValues(parentInstance, context);
             handled = true;
@@ -484,10 +550,10 @@ public class DefaultFieldClassBinding
     }
 
     // set undefined properties
-    for (Map.Entry<String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
+    for (Map.Entry<@NotNull String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
       if (!handledProperties.contains(entry.getKey())) {
         // use the default value of the collector
-        IBoundNamedInstance property = entry.getValue();
+        IBoundNamedInstance property = ObjectUtils.notNull(entry.getValue());
         parsedProperties.put(property, () -> {
           return property.newPropertyCollector().getValue();
         });
@@ -499,8 +565,9 @@ public class DefaultFieldClassBinding
       JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
     }
 
-    // // read the END_OBJECT for the field
-    // JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
+
+    // this is the current end element, but we are not responsible for parsing it.
+    JsonUtil.assertCurrent(jsonParser, JsonToken.END_OBJECT);
 
     // now we need to clone one item per value
     // TODO: handle the case where there are no values
@@ -552,20 +619,23 @@ public class DefaultFieldClassBinding
     return retval;
   }
 
-  private List<? extends Object> handleCollapsedValues(Object parentInstance, IJsonParsingContext context)
+  @NotNull
+  private List<? extends Object> handleCollapsedValues(@NotNull Object parentInstance, @NotNull IJsonParsingContext context)
       throws IOException {
     IBoundFieldValueInstance fieldValue = getFieldValue();
 
-    JsonParser jsonParser = context.getReader();
+    JsonParser jsonParser = context.getReader(); // NOPMD - intentional
 
     ListPropertyCollector collector = new ListPropertyCollector();
     if (jsonParser.hasToken(JsonToken.START_ARRAY)) {
+      JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_ARRAY);
       while (!jsonParser.hasToken(JsonToken.END_ARRAY)) {
         Object value = fieldValue.readValue(parentInstance, context);
         if (value != null) {
           collector.add(value);
         }
       }
+      JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_ARRAY);
     } else {
       Object value = fieldValue.readValue(parentInstance, context);
       if (value != null) {
@@ -600,7 +670,8 @@ public class DefaultFieldClassBinding
     builder.write(writeObjectWrapper, context);
   }
 
-  private void writeNormal(Collection<? extends Object> items, boolean writeObjectWrapper, IJsonWritingContext context)
+  private void writeNormal(Collection<@NotNull ? extends Object> items, boolean writeObjectWrapper,
+      IJsonWritingContext context)
       throws IOException {
     if (items.isEmpty()) {
       return;
@@ -628,9 +699,9 @@ public class DefaultFieldClassBinding
       }
     }
 
-    Map<String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
+    Map<@NotNull String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
 
-    JsonGenerator writer = context.getWriter();
+    JsonGenerator writer = context.getWriter(); // NOPMD - intentional
 
     for (Object item : items) {
       if (writeObjectWrapper) {
@@ -639,7 +710,8 @@ public class DefaultFieldClassBinding
 
       if (jsonKey != null) {
         // if there is a json key, the first field will be the key
-        String key = jsonKey.getValueAsString(item);
+        Object flagValue = jsonKey.getValue(item);
+        String key = jsonKey.getValueAsString(flagValue);
         if (key == null) {
           throw new IOException(new NullPointerException("Null key value"));
         }
@@ -650,7 +722,7 @@ public class DefaultFieldClassBinding
       }
 
       for (IBoundNamedInstance property : properties.values()) {
-        property.write(item, context);
+        ObjectUtils.notNull(property).write(item, context);
       }
 
       Object fieldValue = getFieldValue().getValue(item);
@@ -684,9 +756,11 @@ public class DefaultFieldClassBinding
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.
    */
-  protected synchronized void checkModelConstraints() {
-    if (constraints == null) {
-      constraints = new ValueConstraintSupport(this);
+  protected void checkModelConstraints() {
+    synchronized (this) {
+      if (constraints == null) {
+        constraints = new ValueConstraintSupport(this.getMetaschemaFieldAnnotation());
+      }
     }
   }
 

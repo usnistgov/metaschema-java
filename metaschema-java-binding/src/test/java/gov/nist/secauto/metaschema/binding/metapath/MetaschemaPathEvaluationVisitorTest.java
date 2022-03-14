@@ -26,20 +26,26 @@
 
 package gov.nist.secauto.metaschema.binding.metapath;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaPathEvaluationVisitor;
 
+import org.jetbrains.annotations.NotNull;
+import org.jmock.auto.Mock;
 import org.junit.jupiter.api.Test;
 
 class MetaschemaPathEvaluationVisitorTest {
+  @Mock
+  INodeContext nodeContext; 
 
   @Test
   void test() {
+    
     MetapathExpression path = MetapathExpression.compile("2 eq 1 + 1");
     MetaschemaPathEvaluationVisitor visitor
         = new MetaschemaPathEvaluationVisitor(new StaticContext().newDynamicContext());
-    visitor.visit(path.getASTNode(), null);
+    visitor.visit(path.getASTNode(), nodeContext);
   }
 
 }

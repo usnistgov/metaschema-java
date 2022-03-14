@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.secauto.metaschema.model.IXmlMetaschema;
-import gov.nist.secauto.metaschema.model.common.ModelConstants;
+import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
@@ -39,7 +39,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.definitions.ILocalDefinition;
+import gov.nist.secauto.metaschema.model.definitions.IInlineDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFlagDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlNamedModelDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFlagInstance;
@@ -76,12 +76,14 @@ public class XmlInlineFlagDefinition
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.
    */
-  protected synchronized void checkModelConstraints() {
-    if (constraints == null) {
-      if (getXmlFlag().isSetConstraint()) {
-        constraints = new ValueConstraintSupport(getXmlFlag().getConstraint());
-      } else {
-        constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+  protected void checkModelConstraints() {
+    synchronized (this) {
+      if (constraints == null) {
+        if (getXmlFlag().isSetConstraint()) {
+          constraints = new ValueConstraintSupport(getXmlFlag().getConstraint());
+        } else {
+          constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+        }
       }
     }
   }
@@ -122,7 +124,7 @@ public class XmlInlineFlagDefinition
 
   @Override
   public boolean isRequired() {
-    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : ModelConstants.DEFAULT_FLAG_REQUIRED;
+    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : MetaschemaModelConstants.DEFAULT_FLAG_REQUIRED;
   }
 
   @Override
@@ -130,13 +132,10 @@ public class XmlInlineFlagDefinition
     return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
   }
 
-  public class InternalFlagDefinition implements IXmlFlagDefinition, ILocalDefinition<XmlInlineFlagDefinition> {
-
-    /**
-     * Create the corresponding definition for the local flag instance.
-     */
-    public InternalFlagDefinition() {
-    }
+  /**
+   * The corresponding definition for the local flag instance.
+   */
+  public class InternalFlagDefinition implements IXmlFlagDefinition, IInlineDefinition<XmlInlineFlagDefinition> {
 
     @Override
     public boolean isInline() {
@@ -156,11 +155,6 @@ public class XmlInlineFlagDefinition
     @Override
     public String getUseName() {
       return getName();
-    }
-
-    @Override
-    public String getXmlNamespace() {
-      return XmlInlineFlagDefinition.this.getXmlNamespace();
     }
 
     @Override

@@ -103,6 +103,11 @@ public abstract class AbstractJavaTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
   }
 
   @Override
+  public boolean isXmlMixed() {
+    return false;
+  }
+
+  @Override
   public TYPE parse(XMLEventReader2 eventReader) throws IOException {
     StringBuilder builder = new StringBuilder();
     try {

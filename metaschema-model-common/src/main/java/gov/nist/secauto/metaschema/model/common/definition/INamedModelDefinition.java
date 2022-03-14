@@ -30,5 +30,4 @@ package gov.nist.secauto.metaschema.model.common.definition;
  * This marker interface identifies a definition that is intended to be part of an Assembly's model.
  */
 public interface INamedModelDefinition extends INamedDefinition, IFlaggedDefinition {
-
 }

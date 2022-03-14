@@ -27,8 +27,15 @@
 package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-public class ModelUtil {
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+public final class ModelUtil {
+  private ModelUtil() {
+    // disable construction
+  }
 
   // public static <T, R> List<R> deepCopyList(T parent, Class<R> clazz, List<R> parameter, boolean
   // useEmpty) {
@@ -77,11 +84,21 @@ public class ModelUtil {
     if (value == null || "##default".equals(value)) {
       retval = defaultValue;
     } else if ("##none".equals(value)) {
-      retval = null;
+      retval = null; // NOPMD - intentional
     } else {
       retval = value;
     }
     return retval;
+  }
+
+  @NotNull
+  public static String resolveNamespace(String annotationValue, IClassBinding classBinding) {
+    return ObjectUtils.notNull(resolveNamespace(annotationValue, classBinding, false));
+  }
+
+  @Nullable
+  public static String resolveOptionalNamespace(String annotationValue, IClassBinding classBinding) {
+    return resolveNamespace(annotationValue, classBinding, true);
   }
 
   /**
@@ -95,20 +112,23 @@ public class ModelUtil {
    *          a class with the {@link XmlSchema} annotation
    * @param allowNone
    *          if the "##none" value is honored
-   * @return the resolved value
+   * @return the resolved value or {@code null} if no namespace is defined
    */
-  public static String resolveNamespace(String value, IClassBinding classBinding, boolean allowNone) {
+  private static String resolveNamespace(String value, IClassBinding classBinding, boolean allowNone) {
     String retval;
     if (value == null || "##default".equals(value)) {
       // get namespace from package-info
-      XmlSchema xmlSchema = classBinding.getBoundClass().getPackage().getAnnotation(XmlSchema.class);
-      if (xmlSchema == null) {
-        retval = "";
-      } else {
+      Package packageClass = classBinding.getBoundClass().getPackage();
+      if (packageClass.isAnnotationPresent(XmlSchema.class)) {
+        XmlSchema xmlSchema = ObjectUtils.notNull(packageClass.getAnnotation(XmlSchema.class));
         retval = xmlSchema.namespace();
+      } else {
+        throw new IllegalArgumentException(
+            String.format("Package '%s' is missing the '%s' annotation.", packageClass.getName(),
+                XmlSchema.class.getName()));
       }
     } else if (allowNone && "##none".equals(value)) {
-      retval = null;
+      retval = null; // NOPMD - intentional
     } else {
       retval = value;
     }

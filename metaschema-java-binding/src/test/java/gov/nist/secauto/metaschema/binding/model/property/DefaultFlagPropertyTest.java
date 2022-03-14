@@ -94,7 +94,7 @@ class DefaultFlagPropertyTest {
       }
     });
 
-    DefaultFlagProperty idProperty = new DefaultFlagProperty(classBinding, field, bindingContext);
+    DefaultFlagProperty idProperty = new DefaultFlagProperty(field, classBinding, bindingContext);
 
     assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
     assertEquals("test", jsonParser.nextFieldName());
@@ -131,7 +131,7 @@ class DefaultFlagPropertyTest {
       }
     });
 
-    DefaultFlagProperty idProperty = new DefaultFlagProperty(classBinding, field, bindingContext);
+    DefaultFlagProperty idProperty = new DefaultFlagProperty(field, classBinding, bindingContext);
 
     assertEquals(XMLEvent.START_DOCUMENT, eventReader.nextEvent().getEventType());
     XMLEvent event = eventReader.nextEvent();

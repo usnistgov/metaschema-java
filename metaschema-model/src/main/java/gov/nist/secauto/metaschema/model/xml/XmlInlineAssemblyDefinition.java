@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.secauto.metaschema.model.IXmlMetaschema;
-import gov.nist.secauto.metaschema.model.common.ModelConstants;
+import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
@@ -40,11 +40,10 @@ import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.definitions.ILocalDefinition;
+import gov.nist.secauto.metaschema.model.definitions.IInlineDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.model.instances.IXmlAssemblyInstance;
@@ -118,7 +117,7 @@ public class XmlInlineAssemblyDefinition
 
   @Override
   public int getMinOccurs() {
-    int retval = ModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
+    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
     if (getXmlAssembly().isSetMinOccurs()) {
       retval = getXmlAssembly().getMinOccurs().intValueExact();
     }
@@ -127,7 +126,7 @@ public class XmlInlineAssemblyDefinition
 
   @Override
   public int getMaxOccurs() {
-    int retval = ModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
+    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
     if (getXmlAssembly().isSetMaxOccurs()) {
       Object value = getXmlAssembly().getMaxOccurs();
       if (value instanceof String) {
@@ -164,7 +163,7 @@ public class XmlInlineAssemblyDefinition
   }
 
   public class InternalAssemblyDefinition
-      implements IXmlAssemblyDefinition, ILocalDefinition<XmlInlineAssemblyDefinition> {
+      implements IXmlAssemblyDefinition, IInlineDefinition<XmlInlineAssemblyDefinition> {
     private XmlFlagContainerSupport flagContainer;
     private XmlModelContainerSupport modelContainer;
     private IAssemblyConstraintSupport constraints;
@@ -208,11 +207,6 @@ public class XmlInlineAssemblyDefinition
     @Override
     public String getUseName() {
       return getName();
-    }
-
-    @Override
-    public String getXmlNamespace() {
-      return XmlInlineAssemblyDefinition.this.getXmlNamespace();
     }
 
     @Override

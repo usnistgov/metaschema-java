@@ -28,6 +28,9 @@ package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -41,7 +44,7 @@ public abstract class AbstractXdmNodeItemVisitor<RESULT, CONTEXT> implements IBo
         break;
       }
 
-      RESULT childResult = flag.accept(this, context);
+      RESULT childResult = ObjectUtils.notNull(flag).accept(this, context);
       result = aggregateResult(result, childResult);
     }
     return result;
@@ -50,8 +53,8 @@ public abstract class AbstractXdmNodeItemVisitor<RESULT, CONTEXT> implements IBo
   protected RESULT visitModelChildren(IBoundXdmAssemblyNodeItem item, CONTEXT context) {
     RESULT result = defaultResult();
 
-    for (List<? extends IBoundXdmModelNodeItem> childItems : item.getModelItems().values()) {
-      for (IBoundXdmModelNodeItem childItem : childItems) {
+    for (List<@NotNull ? extends IBoundXdmModelNodeItem> childItems : item.getModelItems().values()) {
+      for (IBoundXdmModelNodeItem childItem : ObjectUtils.notNull(childItems)) {
         if (!shouldVisitNextChild(childItem, result, context)) {
           break;
         }

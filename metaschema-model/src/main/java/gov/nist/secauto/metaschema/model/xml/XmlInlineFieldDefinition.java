@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.secauto.metaschema.model.IXmlMetaschema;
-import gov.nist.secauto.metaschema.model.common.ModelConstants;
+import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
@@ -42,7 +42,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.definitions.ILocalDefinition;
+import gov.nist.secauto.metaschema.model.definitions.IInlineDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFieldDefinition;
 import gov.nist.secauto.metaschema.model.instances.AbstractFieldInstance;
@@ -102,7 +102,7 @@ public class XmlInlineFieldDefinition
     boolean retval;
     if (MetaschemaDataTypeProvider.MARKUP_MULTILINE.equals(getDefinition().getDatatype())) {
       // default value
-      retval = ModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
+      retval = MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
       if (getXmlField().isSetInXml()) {
         retval = getXmlField().getInXml();
       }
@@ -125,23 +125,13 @@ public class XmlInlineFieldDefinition
   }
 
   @Override
-  public String getXmlNamespace() {
-    return getContainingDefinition().getXmlNamespace();
-  }
-
-  @Override
   public String getGroupAsName() {
     return getXmlField().isSetGroupAs() ? getXmlField().getGroupAs().getName() : null;
   }
 
   @Override
-  public String getGroupAsXmlNamespace() {
-    return getContainingDefinition().getXmlNamespace();
-  }
-
-  @Override
   public int getMinOccurs() {
-    int retval = ModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
+    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
     if (getXmlField().isSetMinOccurs()) {
       retval = getXmlField().getMinOccurs().intValueExact();
     }
@@ -150,7 +140,7 @@ public class XmlInlineFieldDefinition
 
   @Override
   public int getMaxOccurs() {
-    int retval = ModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
+    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
     if (getXmlField().isSetMaxOccurs()) {
       Object value = getXmlField().getMaxOccurs();
       if (value instanceof String) {
@@ -165,7 +155,7 @@ public class XmlInlineFieldDefinition
 
   @Override
   public JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    JsonGroupAsBehavior retval = ModelConstants.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
+    JsonGroupAsBehavior retval = MetaschemaModelConstants.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
     if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInJson()) {
       retval = getXmlField().getGroupAs().getInJson();
     }
@@ -174,7 +164,7 @@ public class XmlInlineFieldDefinition
 
   @Override
   public XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    XmlGroupAsBehavior retval = ModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR;
+    XmlGroupAsBehavior retval = MetaschemaModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR;
     if (getXmlField().isSetGroupAs() && getXmlField().getGroupAs().isSetInXml()) {
       retval = getXmlField().getGroupAs().getInXml();
     }
@@ -186,7 +176,7 @@ public class XmlInlineFieldDefinition
     return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
   }
 
-  public class InternalFieldDefinition implements IXmlFieldDefinition, ILocalDefinition<XmlInlineFieldDefinition> {
+  public class InternalFieldDefinition implements IXmlFieldDefinition, IInlineDefinition<XmlInlineFieldDefinition> {
     private XmlFlagContainerSupport flagContainer;
     private IValueConstraintSupport constraints;
 
@@ -233,11 +223,6 @@ public class XmlInlineFieldDefinition
       return getName();
     }
 
-    @Override
-    public String getXmlNamespace() {
-      return XmlInlineFieldDefinition.this.getXmlNamespace();
-    }
-
     @SuppressWarnings("null")
     @Override
     public IJavaTypeAdapter<?> getDatatype() {
@@ -282,7 +267,7 @@ public class XmlInlineFieldDefinition
     @Override
     public boolean isCollapsible() {
       return getXmlField().isSetCollapsible() ? getXmlField().getCollapsible()
-          : ModelConstants.DEFAULT_FIELD_COLLAPSIBLE;
+          : MetaschemaModelConstants.DEFAULT_FIELD_COLLAPSIBLE;
     }
 
     @Override

@@ -23,33 +23,30 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
-package gov.nist.secauto.metaschema.model.definitions;
-
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
+package gov.nist.secauto.metaschema.schemagen;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * A trait indicating that the implementation is a localized information element definition that is
- * declared in-line as an instance.
- * 
- * @param <INSTANCE>
- *          the associated instance type
- */
-public interface ILocalDefinition<INSTANCE extends INamedInstance> extends IDefinition {
+import java.util.List;
 
-  @Override
-  default boolean isGlobal() {
-    return false;
+public abstract class AbstractDatatypeContent implements IDatatypeContent {
+  @NotNull
+  private final String typeName;
+  @NotNull
+  private final List<@NotNull String> dependencies;
+
+  public AbstractDatatypeContent(@NotNull String typeName, @NotNull List<@NotNull String> dependencies) {
+    this.typeName = typeName;
+    this.dependencies = dependencies;
   }
 
-  /**
-   * Retrieves the {@link INamedInstance} associated with this definition.
-   * 
-   * @return the associated instance
-   */
-  @NotNull
-  INSTANCE getDefiningInstance();
+  @Override
+  public String getTypeName() {
+    return typeName;
+  }
+
+  @Override
+  public @NotNull List<@NotNull String> getDependencies() {
+    return dependencies;
+  }
 }

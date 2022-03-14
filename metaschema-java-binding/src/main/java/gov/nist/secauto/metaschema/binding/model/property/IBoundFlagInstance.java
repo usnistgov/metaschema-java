@@ -31,6 +31,8 @@ import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.binding.model.IBoundFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.function.Supplier;
 
@@ -39,13 +41,34 @@ public interface IBoundFlagInstance extends IBoundNamedInstance, IFlagInstance {
   @Override
   IBoundFlagDefinition getDefinition();
 
-  Object readValueFromString(String value) throws IOException;
+  @NotNull
+  Object readValueFromString(@NotNull String value) throws IOException;
 
-  Supplier<?> readValueAndSupply(String value) throws IOException;
+  @NotNull
+  Supplier<?> readValueAndSupply(@NotNull String value) throws IOException;
 
-  Supplier<?> readValueAndSupply(IJsonParsingContext context) throws IOException;
+  @NotNull
+  Supplier<?> readValueAndSupply(@NotNull IJsonParsingContext context) throws IOException;
 
+  /**
+   * Given a bound flag value, get that value as a {@link String}.
+   * 
+   * @param value
+   *          the bound flag value, which may be {@code null}
+   * @return the bound flag value as a string, or {@code null} if the flag is not defined
+   * @throws IOException
+   */
   String getValueAsString(Object value) throws IOException;
 
-  void writeValue(Object value, IJsonWritingContext context) throws IOException;
+  /**
+   * Write the provided value as a JSON property.
+   * 
+   * @param value
+   *          the value of the property to write
+   * @param context
+   *          the writing context used for serializing JSON
+   * @throws IOException
+   *           if an error occured while writing
+   */
+  void writeValue(@NotNull Object value, @NotNull IJsonWritingContext context) throws IOException;
 }

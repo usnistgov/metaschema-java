@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -77,24 +78,28 @@ public interface IModelPropertyInfo {
    * @throws IOException
    *           if there was an error when reading JSON data
    */
-  void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
+  void readValue(@NotNull IPropertyCollector collector, @Nullable Object parentInstance,
+      @NotNull IJsonParsingContext context)
       throws IOException;
 
-  boolean readValue(IPropertyCollector collector, Object parentInstance, StartElement start, IXmlParsingContext context)
+  boolean readValue(@NotNull IPropertyCollector collector, @Nullable Object parentInstance, @NotNull StartElement start,
+      @NotNull IXmlParsingContext context)
       throws IOException, XMLStreamException;
 
-  boolean writeValue(Object parentInstance, QName parentName, IXmlWritingContext context)
+  boolean writeValue(@NotNull Object parentInstance, @NotNull QName parentName, @NotNull IXmlWritingContext context)
       throws XMLStreamException, IOException;
 
-  void writeValue(Object parentInstance, IJsonWritingContext context) throws IOException;
+  void writeValue(@NotNull Object parentInstance, @NotNull IJsonWritingContext context) throws IOException;
 
-  boolean isValueSet(Object parentInstance) throws IOException;
+  boolean isValueSet(@NotNull Object parentInstance) throws IOException;
 
-  default Collection<@NotNull ? extends Object> getItemsFromParentInstance(Object parentInstance) {
+  @NotNull
+  default Collection<@NotNull ? extends Object> getItemsFromParentInstance(@NotNull Object parentInstance) {
     Object value = getProperty().getValue(parentInstance);
     return getItemsFromValue(value);
   }
 
+  @NotNull
   Collection<@NotNull ? extends Object> getItemsFromValue(Object value);
 
   void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull IPropertyCollector collector)

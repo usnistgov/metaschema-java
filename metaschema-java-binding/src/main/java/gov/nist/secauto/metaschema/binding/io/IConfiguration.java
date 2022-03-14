@@ -26,19 +26,11 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
 
 public interface IConfiguration {
-  // /**
-  // * Determines if a specific serialization/deserialization feature is enabled.
-  // *
-  // * @param feature
-  // * the feature to check for
-  // * @param defaultState
-  // * the default to use if the feature is not specifically configured
-  // * @return {@code true} if the feature is enabled, or {@code false} otherwise
-  // */
-  // boolean isFeatureEnabled(Feature feature, boolean defaultState);
   /**
    * Determines if a specific serialization/deserialization feature is enabled.
    * 
@@ -46,7 +38,13 @@ public interface IConfiguration {
    *          the feature to check for
    * @return {@code true} if the feature is enabled, or {@code false} otherwise
    */
-  boolean isFeatureEnabled(Feature feature);
+  boolean isFeatureEnabled(@NotNull Feature feature);
 
-  Map<Feature, Boolean> getFeatureSettings();
+  /**
+   * Get a map of feature to setting.
+   * 
+   * @return the map
+   */
+  @NotNull
+  Map<@NotNull Feature, Boolean> getFeatureSettings();
 }

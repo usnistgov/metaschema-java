@@ -233,11 +233,6 @@ public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
   }
 
   @Override
-  public String getXmlNamespace() {
-    return getContainingMetaschema().getXmlNamespace().toString();
-  }
-
-  @Override
   public String getFormalName() {
     return getXmlAssembly().isSetFormalName() ? getXmlAssembly().getFormalName() : null;
   }

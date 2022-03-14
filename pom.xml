@@ -125,6 +125,7 @@
 		<dependency.freemarker.version>2.3.30</dependency.freemarker.version>
 		<dependency.jackson.version>2.13.1</dependency.jackson.version>
 		<dependency.jaxb.version>3.0.0</dependency.jaxb.version>
+		<dependency.jaxen.version>1.2.0</dependency.jaxen.version>
 		<dependency.jetbrains-annotation.version>16.0.2</dependency.jetbrains-annotation.version>
 		<dependency.junit5.version>5.8.2</dependency.junit5.version>
 		<dependency.junit5-platform-launcher.version>1.8.2</dependency.junit5-platform-launcher.version>
@@ -134,9 +135,8 @@
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
 		<dependency.woodstox.version>6.2.7</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.0.3</dependency.xmlbeans.version>
+		<dependency.xmlresolver.version>4.2.0</dependency.xmlresolver.version>
 
-
-		<!-- <dependency.xmlbeans.version>4.0.0</dependency.xmlbeans.version> -->
 		<plugin.license.version>4.0.rc1</plugin.license.version>
 		<plugin.antlr4test.version>1.17</plugin.antlr4test.version>
 		<plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
@@ -195,6 +195,17 @@
 				<artifactId>xmlbeans</artifactId>
 				<version>${dependency.xmlbeans.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.jdom</groupId>
+				<artifactId>jdom2</artifactId>
+				<version>2.0.6.1</version>
+			</dependency>
+			<dependency>
+				<!-- For JDOM2 XPath support -->
+				<groupId>jaxen</groupId>
+				<artifactId>jaxen</artifactId>
+				<version>${dependency.jaxen.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>org.eclipse.persistence</groupId>
@@ -223,6 +234,12 @@
 				<groupId>net.sf.saxon</groupId>
 				<artifactId>Saxon-HE</artifactId>
 				<version>${dependency.saxon.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.xmlresolver</groupId>
+						<artifactId>xmlresolver</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<dependency>
@@ -310,11 +327,15 @@
 			</dependency>
 
 			<dependency>
-				<groupId>xml-resolver</groupId>
-				<artifactId>xml-resolver</artifactId>
-				<version>1.2</version>
-				<type>jar</type>
-				<scope>compile</scope>
+				<groupId>org.xmlresolver</groupId>
+				<artifactId>xmlresolver</artifactId>
+				<version>${dependency.xmlresolver.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>xml-apis</groupId>
+						<artifactId>xml-apis</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
@@ -398,14 +419,17 @@
 	</dependencyManagement>
 	<dependencies>
 		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<!-- <dependency> -->
 		<!-- <groupId>org.junit.platform</groupId> -->

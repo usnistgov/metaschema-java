@@ -28,10 +28,25 @@ package gov.nist.secauto.metaschema.binding.model.property.info;
 
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.util.List;
 
 @FunctionalInterface
 public interface IJsonBindingSupplier {
-  List<Object> get(Object parentInstance, IJsonParsingContext context) throws IOException;
+  /**
+   * Parse and return the next set of items from the JSON.
+   * 
+   * @param parentInstance
+   *          an optional parent object to use for serialization callbacks
+   * @param context
+   *          the JSON parser
+   * @return the set of parsed items
+   * @throws IOException
+   *           if an error occurred while parsing
+   */
+  @NotNull
+  List<Object> get(@Nullable Object parentInstance, boolean requiresJsonKey, @NotNull IJsonParsingContext context) throws IOException;
 }

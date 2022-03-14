@@ -121,7 +121,7 @@ public abstract class AbstractFieldProperty
     IDataTypeHandler handler = getDataTypeHandler();
 
     // figure out if we need to parse the wrapper or not
-    boolean writeWrapper = isInXmlWrapped() || !handler.isUnrappedValueAllowedInXml();
+    boolean writeWrapper = isInXmlWrapped() || !handler.isUnwrappedValueAllowedInXml();
 
     XMLStreamWriter2 writer = context.getWriter();
 

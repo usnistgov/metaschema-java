@@ -52,6 +52,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSuppo
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.jetbrains.annotations.NotNull;
@@ -59,6 +60,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
@@ -70,19 +72,34 @@ public class DefaultFlagProperty
     extends AbstractNamedProperty<IClassBinding>
     implements IBoundFlagInstance {
   // private static final Logger logger = LogManager.getLogger(DefaultFlagProperty.class);
-
+  @NotNull
   private final Flag flag;
+  @NotNull
   private final IJavaTypeAdapter<?> javaTypeAdapter;
   private InternalFlagDefinition definition;
   private IValueConstraintSupport constraints;
 
-  public DefaultFlagProperty(IClassBinding parentClassBinding, Field field, IBindingContext bindingContext) {
+  /**
+   * Construct a new bound flag instance based on a Java property. The name of the property is bound
+   * to the name of the instance.
+   * 
+   * @param field
+   *          the Java field to bind to
+   * @param parentClassBinding
+   *          the class binding for the field's containing class
+   * @param bindingContext
+   *          the binding context to use for resolving bound types
+   */
+  public DefaultFlagProperty(@NotNull Field field, @NotNull IClassBinding parentClassBinding,
+      @NotNull IBindingContext bindingContext) {
     super(field, parentClassBinding);
-    this.flag = field.getAnnotation(Flag.class);
-    this.javaTypeAdapter = bindingContext.getJavaTypeAdapterInstance(this.flag.typeAdapter());
+    this.flag = ObjectUtils.requireNonNull(field.getAnnotation(Flag.class));
+    this.javaTypeAdapter = ObjectUtils.notNull(
+        bindingContext.getJavaTypeAdapterInstance(ObjectUtils.notNull(this.flag.typeAdapter())));
   }
 
-  public Flag getFlagAnnotation() {
+  @NotNull
+  protected Flag getFlagAnnotation() {
     return flag;
   }
 
@@ -101,6 +118,7 @@ public class DefaultFlagProperty
     return getFlagAnnotation().required();
   }
 
+  @NotNull
   public IJavaTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
@@ -112,22 +130,19 @@ public class DefaultFlagProperty
 
   @Override
   public String getXmlNamespace() {
-    return ModelUtil.resolveNamespace(getFlagAnnotation().namespace(), getParentClassBinding(), true);
+    return ModelUtil.resolveOptionalNamespace(getFlagAnnotation().namespace(), getParentClassBinding());
   }
 
   /**
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.
    */
-  protected synchronized void checkModelConstraints() {
-    if (constraints == null) {
-      constraints = new ValueConstraintSupport(this);
+  protected void checkModelConstraints() {
+    synchronized (this) {
+      if (constraints == null) {
+        constraints = new ValueConstraintSupport(this.getFlagAnnotation());
+      }
     }
-  }
-
-  @Override
-  public Object read(IXmlParsingContext context) throws IOException, XMLStreamException {
-    throw new UnsupportedOperationException("use read(Object, StartElement, IXmlParsingContext) instead");
   }
 
   @Override
@@ -137,16 +152,14 @@ public class DefaultFlagProperty
     // - "parent" will contain the attributes to read
     // - the event reader "peek" will be on the end element or the next start element
     boolean handled = false;
-    if (parent != null) {
-      Attribute attribute = parent.getAttributeByName(getXmlQName());
-      if (attribute != null) {
-        // get the attribute value
-        Object value = getJavaTypeAdapter().parse(attribute.getValue());
-        // apply the value to the parentObject
-        setValue(parentInstance, value);
+    Attribute attribute = parent.getAttributeByName(getXmlQName());
+    if (attribute != null) {
+      // get the attribute value
+      Object value = getJavaTypeAdapter().parse(ObjectUtils.notNull(attribute.getValue()));
+      // apply the value to the parentObject
+      setValue(parentInstance, value);
 
-        handled = true;
-      }
+      handled = true;
     }
     return handled;
   }
@@ -158,7 +171,7 @@ public class DefaultFlagProperty
 
   @Override
   protected Object readInternal(Object parentInstance, IJsonParsingContext context) throws IOException {
-    JsonParser parser = context.getReader();
+    JsonParser parser = context.getReader();// NOPMD - intentional
 
     // advance past the property name
     parser.nextFieldName();
@@ -186,17 +199,11 @@ public class DefaultFlagProperty
   @Override
   public boolean write(Object instance, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
-    QName name = getXmlQName();
-    String value;
-
     Object objectValue = getValue(instance);
-    if (objectValue != null) {
-      value = objectValue.toString();
-    } else {
-      value = null;
-    }
+    String value = objectValue == null ? null : getJavaTypeAdapter().asString(objectValue);
 
     if (value != null) {
+      QName name = getXmlQName();
       XMLStreamWriter2 writer = context.getWriter();
       if (name.getNamespaceURI().isEmpty()) {
         writer.writeAttribute(name.getLocalPart(), value);
@@ -209,7 +216,7 @@ public class DefaultFlagProperty
 
   @Override
   public void write(Object instance, IJsonWritingContext context) throws IOException {
-    JsonGenerator writer = context.getWriter();
+    JsonGenerator writer = context.getWriter(); // NOPMD - intentional
 
     Object value = getValue(instance);
     if (value != null) {
@@ -223,11 +230,11 @@ public class DefaultFlagProperty
 
   @Override
   public String getValueAsString(Object value) throws IOException {
-    return getJavaTypeAdapter().asString(getValue(value));
+    return value == null ? null : getJavaTypeAdapter().asString(value);
   }
 
   @Override
-  public void writeValue(Object value, IJsonWritingContext context) throws IOException {
+  public void writeValue(@NotNull Object value, IJsonWritingContext context) throws IOException {
     getJavaTypeAdapter().writeJsonValue(value, context.getWriter());
   }
 
@@ -236,10 +243,14 @@ public class DefaultFlagProperty
     return getParentClassBinding();
   }
 
+  @SuppressWarnings("null")
   @Override
   public String toCoordinates() {
-    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(), getName(),
-        getParentClassBinding().getBoundClass().getName(), getField().getName());
+    return String.format("%s Instance(%s): %s:%s",
+        getModelType().name().toLowerCase(Locale.ROOT),
+        getName(),
+        getParentClassBinding().getBoundClass().getName(),
+        getField().getName());
   }
 
   @Override
@@ -247,6 +258,7 @@ public class DefaultFlagProperty
     throw new UnsupportedOperationException();
   }
 
+  @SuppressWarnings("null")
   @Override
   public IBoundFlagDefinition getDefinition() {
     synchronized (this) {
@@ -264,13 +276,10 @@ public class DefaultFlagProperty
   }
 
   @Override
-  public void copyBoundObject(@NotNull Object fromInstance, @NotNull Object toInstance) {
+  public void copyBoundObject(Object fromInstance, Object toInstance) {
     Object value = getValue(fromInstance);
-
     IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
-
-    Object copiedValue = adapter.copy(value);
-    setValue(toInstance, copiedValue);
+    setValue(toInstance, value == null ? null : adapter.copy(value));
   }
 
   private class InternalFlagDefinition implements IBoundFlagDefinition {
@@ -297,11 +306,6 @@ public class DefaultFlagProperty
     @Override
     public String getUseName() {
       return null;
-    }
-
-    @Override
-    public String getXmlNamespace() {
-      return DefaultFlagProperty.this.getXmlNamespace();
     }
 
     @Override

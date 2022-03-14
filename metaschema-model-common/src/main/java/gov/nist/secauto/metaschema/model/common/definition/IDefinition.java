@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.INamedModelElement;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -47,20 +46,6 @@ public interface IDefinition extends INamedModelElement {
    */
   @NotNull
   List<@NotNull ? extends IConstraint> getConstraints();
-
-  /**
-   * The formal display name for a definition.
-   * 
-   * @return the formal name
-   */
-  String getFormalName();
-
-  /**
-   * Get the text that describes the basic use of the definition.
-   * 
-   * @return a line of markup text
-   */
-  MarkupLine getDescription();
 
   /**
    * Retrieve the definition's scope within the context of its defining module.

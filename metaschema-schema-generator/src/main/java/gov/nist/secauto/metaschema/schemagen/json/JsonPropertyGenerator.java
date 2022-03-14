@@ -39,6 +39,8 @@ import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -66,12 +68,12 @@ public class JsonPropertyGenerator {
 
   public static void generateFlagProperty(
       @NotNull IFlagInstance flag,
-      @NotNull DatatypeManager datatypeManager,
+      @NotNull JsonDatatypeManager datatypeManager,
       @NotNull InstanceProperties properties) {
-    String propertyName = flag.getUseName();
+    String propertyName = flag.getJsonName();
     properties.addProperty(propertyName,
-        JsonNodeFactory.instance.objectNode()
-            .put("$ref", datatypeManager.getJsonDefinitionRefForDefinition(flag.getDefinition()).toString()));
+        ObjectUtils.notNull(JsonNodeFactory.instance.objectNode()
+            .put("$ref", datatypeManager.getJsonDefinitionRefForDefinition(flag.getDefinition()).toString())));
     if (flag.isRequired()) {
       properties.addRequired(propertyName);
     }
@@ -79,18 +81,18 @@ public class JsonPropertyGenerator {
 
   public static void generateSimpleFieldValueInstance(
       @NotNull IFieldDefinition definition,
-      @NotNull DatatypeManager datatypeManager,
+      @NotNull JsonDatatypeManager datatypeManager,
       @NotNull InstanceProperties properties) {
     String propertyName = definition.getJsonValueKeyName();
     properties.addProperty(propertyName,
-        JsonNodeFactory.instance.objectNode()
-            .put("$ref", datatypeManager.getJsonDefinitionRefForDatatype(definition.getDatatype()).toString()));
+        ObjectUtils.notNull(JsonNodeFactory.instance.objectNode()
+            .put("$ref", datatypeManager.getJsonDefinitionRefForDatatype(definition.getDatatype()).toString())));
     properties.addRequired(propertyName);
   }
 
   public static void generateCollapsibleFieldValueInstance(
       @NotNull IFieldDefinition definition,
-      @NotNull DatatypeManager datatypeManager,
+      @NotNull JsonDatatypeManager datatypeManager,
       @NotNull InstanceProperties properties) {
     String propertyName = definition.getJsonValueKeyName();
 
@@ -98,9 +100,10 @@ public class JsonPropertyGenerator {
     properties.addRequired(propertyName);
   }
 
+  @NotNull
   public static ObjectNode generateCollapsibleFieldValueType(
       @NotNull IFieldDefinition definition,
-      @NotNull DatatypeManager datatypeManager) {
+      @NotNull JsonDatatypeManager datatypeManager) {
     String definitionRef = datatypeManager.getJsonDefinitionRefForDatatype(definition.getDatatype()).toString();
 
     ObjectNode retval = JsonNodeFactory.instance.objectNode();
@@ -117,7 +120,7 @@ public class JsonPropertyGenerator {
 
   public static void generateInstanceProperty(
       INamedModelInstance instance,
-      @NotNull DatatypeManager datatypeManager,
+      @NotNull JsonDatatypeManager datatypeManager,
       @NotNull InstanceProperties properties) {
     String propertyName = instance.getJsonName();
     String definitionRef = datatypeManager.getJsonDefinitionRefForDefinition(instance.getDefinition()).toString();
@@ -182,7 +185,7 @@ public class JsonPropertyGenerator {
   @NotNull
   public static void generateChoices(
       @NotNull Collection<? extends IChoiceInstance> choices,
-      @NotNull DatatypeManager datatypeManager,
+      @NotNull JsonDatatypeManager datatypeManager,
       @NotNull InstanceProperties properties,
       @NotNull JsonGenerator jsonGenerator) throws IOException {
 
@@ -207,8 +210,8 @@ public class JsonPropertyGenerator {
   }
 
   protected static List<InstanceProperties> explodeChoices(
-      @NotNull Collection<? extends IChoiceInstance> choices,
-      @NotNull DatatypeManager datatypeManager,
+      @NotNull Collection<@NotNull ? extends IChoiceInstance> choices,
+      @NotNull JsonDatatypeManager datatypeManager,
       @NotNull List<InstanceProperties> propertyChoices) {
 
     List<InstanceProperties> retval = propertyChoices;
@@ -219,7 +222,7 @@ public class JsonPropertyGenerator {
         if (ModelType.CHOICE.equals(optionInstance.getModelType())) {
           // recurse
           newRetval.addAll(explodeChoices(
-              Collections.singleton((IChoiceInstance) optionInstance),
+              CollectionUtil.singleton((IChoiceInstance) optionInstance),
               datatypeManager,
               retval));
         } else {

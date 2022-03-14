@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
+import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+
 /**
  * Configuration options for serialization and deserialization of bound objects.
  */
@@ -33,12 +35,13 @@ public enum Feature {
   /**
    * If enabled, perform constraint validation on the deserialized bound objects.
    */
-  DESERIALIZE_VALIDATE,
+  DESERIALIZE_VALIDATE_CONSTRAINTS,
   /**
-   * If enabled, process document level constructs in the underlying data format (e.g. XML
-   * declarations).
+   * If enabled, process the next JSON node as a field, whose name must match the
+   * {@link IAssemblyDefinition#getRootJsonName()}. If not enabled, the next JSON node is expected to
+   * be an object containing the data of the {@link IAssemblyDefinition}.
    */
-  DESERIALIZE_ROOT,
+  DESERIALIZE_JSON_ROOT_PROPERTY,
   /**
    * If enabled, generate document level constructs in the underlying data format (e.g. XML
    * declarations).

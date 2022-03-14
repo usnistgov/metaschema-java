@@ -36,7 +36,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.Field;
 import gov.nist.secauto.metaschema.codegen.AssemblyJavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
-import gov.nist.secauto.metaschema.model.common.ModelConstants;
+import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
@@ -148,13 +148,13 @@ public class ModelInstancePropertyGenerator
 
       IJavaTypeAdapter<?> valueDataType = fieldDefinition.getDatatype();
 
-      if (ModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
+      if (MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
         fieldAnnoation.addMember("inXmlWrapped", "$L", fieldInstance.isInXmlWrapped());
       }
       if (fieldInstance.isSimple()) {
         // this is a simple field, without flags
         // we need to add the FieldValue annotation to the property
-        fieldAnnoation.addMember("valueName", "$S", fieldDefinition.getJsonValueKeyName());
+//        fieldAnnoation.addMember("valueName", "$S", fieldDefinition.getJsonValueKeyName());
 
         fieldAnnoation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
 
@@ -166,12 +166,12 @@ public class ModelInstancePropertyGenerator
     }
 
     int minOccurs = modelInstance.getMinOccurs();
-    if (minOccurs != ModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
+    if (minOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
       fieldAnnoation.addMember("minOccurs", "$L", minOccurs);
     }
 
     int maxOccurs = modelInstance.getMaxOccurs();
-    if (maxOccurs != ModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
+    if (maxOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
       fieldAnnoation.addMember("maxOccurs", "$L", maxOccurs);
     }
 

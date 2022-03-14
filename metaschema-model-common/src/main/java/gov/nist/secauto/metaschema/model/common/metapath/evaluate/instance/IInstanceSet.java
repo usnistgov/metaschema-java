@@ -38,6 +38,8 @@ import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -48,7 +50,7 @@ public interface IInstanceSet {
 
   Collection<? extends IInstance> getInstances();
 
-  public static IInstanceSet newInstanceSet(IAssemblyDefinition definition) {
+  public static IInstanceSet newInstanceSet(@NotNull IAssemblyDefinition definition) {
     return new IInstanceSet() {
 
       @Override
@@ -65,9 +67,10 @@ public interface IInstanceSet {
             return getDefinition().getUseName();
           }
 
+          @SuppressWarnings("null")
           @Override
           public String getXmlNamespace() {
-            return getDefinition().getXmlNamespace();
+            return getDefinition().getContainingMetaschema().getXmlNamespace().toASCIIString();
           }
 
           @Override
@@ -130,7 +133,7 @@ public interface IInstanceSet {
     };
   }
 
-  public static IInstanceSet newInstanceSet(IFieldDefinition definition) {
+  public static IInstanceSet newInstanceSet(@NotNull IFieldDefinition definition) {
     return new IInstanceSet() {
 
       @Override
@@ -145,11 +148,6 @@ public interface IInstanceSet {
           @Override
           public String getUseName() {
             return getDefinition().getUseName();
-          }
-
-          @Override
-          public String getXmlNamespace() {
-            return getDefinition().getXmlNamespace();
           }
 
           @Override
@@ -218,7 +216,7 @@ public interface IInstanceSet {
     };
   }
 
-  public static IInstanceSet newInstanceSet(IFlagDefinition definition) {
+  public static IInstanceSet newInstanceSet(@NotNull IFlagDefinition definition) {
     return new IInstanceSet() {
 
       @Override
@@ -233,11 +231,6 @@ public interface IInstanceSet {
           @Override
           public String getUseName() {
             return getDefinition().getUseName();
-          }
-
-          @Override
-          public String getXmlNamespace() {
-            return getDefinition().getXmlNamespace();
           }
 
           @Override

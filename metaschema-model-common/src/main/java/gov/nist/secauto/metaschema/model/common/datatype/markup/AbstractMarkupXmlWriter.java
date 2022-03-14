@@ -91,8 +91,7 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
   private final boolean handleBlockElements;
 
   public AbstractMarkupXmlWriter(String namespace, boolean handleBlockElements) {
-    Objects.requireNonNull(namespace, "namespace");
-    this.namespace = namespace;
+    this.namespace = Objects.requireNonNull(namespace, "namespace");
     this.handleBlockElements = handleBlockElements;
   }
 

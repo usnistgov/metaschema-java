@@ -55,7 +55,7 @@ import freemarker.template.TemplateHashModel;
 import freemarker.template.TemplateNotFoundException;
 import freemarker.template.Version;
 
-public abstract class AbstractFreemarkerGenerator implements FreemarkerGenerator {
+public abstract class AbstractFreemarkerGenerator implements IFreemarkerGenerator {
   private static final Version CONFIG_VERSION = Configuration.VERSION_2_3_30;
   private static final boolean DEBUG = false;
 

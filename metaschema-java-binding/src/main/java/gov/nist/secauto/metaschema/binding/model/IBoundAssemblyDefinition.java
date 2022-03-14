@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.Map;
 
 public interface IBoundAssemblyDefinition extends IBoundNamedModelDefinition, IAssemblyDefinition {
+  @NotNull
   @Override
   IAssemblyClassBinding getClassBinding();
 
@@ -58,20 +59,21 @@ public interface IBoundAssemblyDefinition extends IBoundNamedModelDefinition, IA
   // align the return value with the extended marker interface
 
   @Override
-  Map<String, ? extends IBoundNamedModelInstance> getNamedModelInstanceMap();
+  Map<@NotNull String, ? extends IBoundNamedModelInstance> getNamedModelInstanceMap();
 
+  @SuppressWarnings("null")
   @Override
-  default Collection<? extends IBoundNamedModelInstance> getNamedModelInstances() {
+  default Collection<@NotNull ? extends IBoundNamedModelInstance> getNamedModelInstances() {
     return getNamedModelInstanceMap().values();
   }
 
   @Override
-  Map<String, ? extends IBoundFieldInstance> getFieldInstanceMap();
+  Map<@NotNull String, ? extends IBoundFieldInstance> getFieldInstanceMap();
 
   @Override
-  Map<String, ? extends IBoundAssemblyInstance> getAssemblyInstanceMap();
+  Map<@NotNull String, ? extends IBoundAssemblyInstance> getAssemblyInstanceMap();
 
   @Override
-  Collection<? extends IBoundNamedModelInstance> getModelInstances();
+  Collection<@NotNull ? extends IBoundNamedModelInstance> getModelInstances();
 
 }

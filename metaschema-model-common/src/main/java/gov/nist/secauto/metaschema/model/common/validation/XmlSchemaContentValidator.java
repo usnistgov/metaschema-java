@@ -182,7 +182,7 @@ public class XmlSchemaContentValidator extends AbstractContentValidator {
     @SuppressWarnings("null")
     @Override
     @NotNull
-    public List<XmlValidationFinding> getFindings() {
+    public List<@NotNull XmlValidationFinding> getFindings() {
       return Collections.unmodifiableList(findings);
     }
 

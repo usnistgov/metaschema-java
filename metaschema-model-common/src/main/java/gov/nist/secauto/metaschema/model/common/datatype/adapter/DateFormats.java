@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
+import java.util.regex.Pattern;
 
 public final class DateFormats {
   private DateFormats() {
@@ -42,6 +43,14 @@ public final class DateFormats {
   public static final DateTimeFormatter DATE_TIME_WITH_TZ;
   public static final DateTimeFormatter DATE_TIME_WITHOUT_TZ;
 
+  private static final Pattern DATE_TIMEZONE = Pattern.compile("^("
+      + "(?:(?:2000|2400|2800|(?:19|2[0-9](?:0[48]|[2468][048]|[13579][26])))-02-29)"
+      + "|(?:(?:(?:19|2[0-9])[0-9]{2})-02-(?:0[1-9]|1[0-9]|2[0-8]))"
+      + "|(?:(?:(?:19|2[0-9])[0-9]{2})-(?:0[13578]|10|12)-(?:0[1-9]|[12][0-9]|3[01]))"
+      + "|(?:(?:(?:19|2[0-9])[0-9]{2})-(?:0[469]|11)-(?:0[1-9]|[12][0-9]|30))"
+      + ")"
+      + "(Z|[+-][0-9]{2}:[0-9]{2})?$");
+  
   static {
     // dateWithOptionalTZ = new DateTimeFormatterBuilder()
     // .appendPattern("yyyy-MM-dd")

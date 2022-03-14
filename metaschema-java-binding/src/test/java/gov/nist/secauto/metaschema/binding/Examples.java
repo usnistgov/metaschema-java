@@ -26,52 +26,40 @@
 
 package gov.nist.secauto.metaschema.binding;
 
-import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.Format;
-import gov.nist.secauto.metaschema.binding.io.IBoundLoader;
-import gov.nist.secauto.metaschema.binding.io.ISerializer;
-import gov.nist.secauto.metaschema.binding.model.test.BoundClass;
-
-import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 class Examples {
 
-  @SuppressWarnings("PMD")
-  @Test
-  void testLoadJson() throws FileNotFoundException, IOException {
-    // get the binding context instance, which manages Metaschema-to-object binding information
-    IBindingContext bindingContext = IBindingContext.newInstance();
-
-    // create a loader which is used to parse the content
-    IBoundLoader loader = bindingContext.newBoundLoader();
-
-    // specify the bound class to load data into and the file to load it from
-    // the loader figures out the format to load from (i.e. JSON)
-    BoundClass object
-        = loader.load(BoundClass.class, new File("src/test/resources/test-content/bound-class-simple.json"));
-    System.out.println(object.getId());
-  }
-
-  @Test
-  void test() throws FileNotFoundException, IOException, BindingException {
-    // get the binding context instance, which manages Metaschema-to-object binding information
-    IBindingContext bindingContext = IBindingContext.newInstance();
-
-    // create a loader which is used to parse the content
-    IBoundLoader loader = bindingContext.newBoundLoader();
-
-    // specify the bound class to load data into and the file to load it from
-    // the loader figures out the format to load from (i.e. JSON)
-    BoundClass object
-        = loader.load(BoundClass.class, new File("src/test/resources/test-content/bound-class-simple.json"));
-
-    // create a serializer to write the object
-    ISerializer<BoundClass> serializer = bindingContext.newSerializer(Format.XML, BoundClass.class);
-    serializer.serialize(object, new File("target/bound-class-simple.xml"));
-  }
+//  @SuppressWarnings("PMD")
+//  @Test
+//  void testLoadJson() throws FileNotFoundException, IOException {
+//    // get the binding context instance, which manages Metaschema-to-object binding information
+//    IBindingContext bindingContext = IBindingContext.newInstance();
+//
+//    // create a loader which is used to parse the content
+//    IBoundLoader loader = bindingContext.newBoundLoader();
+//
+//    // specify the bound class to load data into and the file to load it from
+//    // the loader figures out the format to load from (i.e. JSON)
+//    BoundClass object
+//        = loader.load(BoundClass.class, new File("src/test/resources/test-content/bound-class-simple.json"));
+//    System.out.println(object.getId());
+//  }
+//
+//  @Test
+//  void test() throws FileNotFoundException, IOException {
+//    // get the binding context instance, which manages Metaschema-to-object binding information
+//    IBindingContext bindingContext = IBindingContext.newInstance();
+//
+//    // create a loader which is used to parse the content
+//    IBoundLoader loader = bindingContext.newBoundLoader();
+//
+//    // specify the bound class to load data into and the file to load it from
+//    // the loader figures out the format to load from (i.e. JSON)
+//    BoundClass object
+//        = loader.load(BoundClass.class, new File("src/test/resources/test-content/bound-class-simple.json"));
+//
+//    // create a serializer to write the object
+//    ISerializer<@NotNull BoundClass> serializer = bindingContext.newSerializer(Format.XML, BoundClass.class);
+//    serializer.serialize(object, new File("target/bound-class-simple.xml"));
+//  }
 
 }

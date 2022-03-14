@@ -49,20 +49,16 @@ public class DefaultJsonProblemHandler implements IJsonProblemHandler {
     IGNORED_ROOT_FIELD_NAMES.add(JSON_SCHEMA_ROOT_FIELD_NAME);
   }
 
-  // TODO: implement this
   @Override
-  public boolean handleUnknownRootProperty(Object instance, IAssemblyClassBinding classBinding, String fieldName,
-      IJsonParsingContext parsingContext) throws BindingException, IOException {
+  public boolean handleUnknownRootProperty(IAssemblyClassBinding classBinding, String fieldName,
+      IJsonParsingContext context) throws IOException {
+    boolean retval = false;
     if (IGNORED_ROOT_FIELD_NAMES.contains(fieldName)) {
-      JsonParser parser = parsingContext.getReader();
-      try {
-        JsonUtil.skipNextValue(parser);
-      } catch (IOException ex) {
-        throw new BindingException(ex);
-      }
-      return true;
+      JsonParser parser = context.getReader(); // NOPMD - intentional
+      JsonUtil.skipNextValue(parser);
+      retval = true;
     }
-    return false;
+    return retval;
   }
 
   // TODO: implement this
@@ -74,7 +70,7 @@ public class DefaultJsonProblemHandler implements IJsonProblemHandler {
 
   @Override
   public boolean handleUnknownProperty(IClassBinding classBinding, String propertyName,
-      IJsonParsingContext parsingContext) throws BindingException, IOException {
+      IJsonParsingContext parsingContext) throws IOException {
     return false;
   }
 

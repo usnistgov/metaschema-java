@@ -36,6 +36,8 @@ import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator.JsonValidationFinding;
 import gov.nist.secauto.metaschema.model.common.validation.XmlSchemaContentValidator.XmlValidationFinding;
+import gov.nist.secauto.metaschema.schemagen.json.ISchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
 
 import org.apache.commons.io.output.TeeOutputStream;
 import org.apache.logging.log4j.LogBuilder;

@@ -31,13 +31,14 @@ import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundInstance;
 
 public interface IFieldClassBinding extends IClassBinding, IBoundFieldDefinition {
+
+  @Override
+  IBoundFlagInstance getJsonValueKeyFlagInstance();
+
   /**
    * Get the {@link IBoundInstance} that represents the Metaschema Field's value.
    * 
    * @return the value property
    */
   IBoundFieldValueInstance getFieldValue();
-
-  @Override
-  IBoundFlagInstance getJsonValueKeyFlagInstance();
 }

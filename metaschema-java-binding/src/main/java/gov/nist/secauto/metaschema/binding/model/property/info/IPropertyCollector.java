@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.model.property.info;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 
 /**
@@ -41,7 +43,7 @@ public interface IPropertyCollector {
    * @throws IllegalStateException
    *           if the item cannot be added due to a model inconsistency
    */
-  void add(Object item) throws IllegalStateException;
+  void add(@NotNull Object item) throws IllegalStateException;
 
   /**
    * Add a collection of item to the "collection", who's type depends on the property configuration.
@@ -51,12 +53,13 @@ public interface IPropertyCollector {
    * @throws IllegalStateException
    *           if the item cannot be added due to a model inconsistency
    */
-  void addAll(Collection<?> items) throws IllegalStateException;
+  void addAll(@NotNull Collection<@NotNull ?> items) throws IllegalStateException;
 
   /**
    * Get the current state of the "collection".
    * 
    * @return the collection
    */
+  @NotNull
   Object getValue();
 }

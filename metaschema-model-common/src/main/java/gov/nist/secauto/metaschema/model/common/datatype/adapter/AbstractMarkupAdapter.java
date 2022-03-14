@@ -54,4 +54,9 @@ public abstract class AbstractMarkupAdapter<TYPE extends AbstractMarkupString<TY
   protected AbstractMarkupAdapter(Class<TYPE> clazz) {
     super(clazz);
   }
+
+  @Override
+  public boolean isXmlMixed() {
+    return true;
+  }
 }

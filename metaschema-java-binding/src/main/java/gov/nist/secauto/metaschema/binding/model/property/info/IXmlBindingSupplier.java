@@ -26,8 +26,10 @@
 
 package gov.nist.secauto.metaschema.binding.model.property.info;
 
-import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
@@ -36,6 +38,6 @@ import javax.xml.stream.events.StartElement;
 
 @FunctionalInterface
 public interface IXmlBindingSupplier {
-  Object get(Object parentInstance, StartElement start, IXmlParsingContext context)
+  Object get(@Nullable Object parentInstance, @NotNull StartElement start, @NotNull IXmlParsingContext context)
       throws IOException, XMLStreamException;
 }

@@ -28,8 +28,6 @@ package gov.nist.secauto.metaschema.model.common.util;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 public final class ObjectUtils {
   private ObjectUtils() {
     // disable construction
@@ -38,7 +36,25 @@ public final class ObjectUtils {
   @SuppressWarnings("null")
   public static <T> @NotNull T notNull(T obj) {
     assert obj != null;
+    return obj;
+  }
 
+  /**
+   * Require a non-null value.
+   * 
+   * @param <T>
+   *          the type of the reference
+   * @param obj
+   *          the object reference to check for nullity
+   * @return {@code obj} if not {@code null}
+   * @throws NullPointerException
+   *           if {@code obj} is {@code null}
+   */
+  @NotNull
+  public static <T> T requireNonNull(T obj) {
+    if (obj == null) {
+      throw new NullPointerException(); //NOPMD
+    }
     return obj;
   }
 
@@ -56,9 +72,11 @@ public final class ObjectUtils {
    * @throws NullPointerException
    *           if {@code obj} is {@code null}
    */
-  @SuppressWarnings("null")
   @NotNull
   public static <T> T requireNonNull(T obj, @NotNull String message) {
-    return Objects.requireNonNull(obj, message);
+    if (obj == null) {
+      throw new NullPointerException(message); //NOPMD
+    }
+    return obj;
   }
 }

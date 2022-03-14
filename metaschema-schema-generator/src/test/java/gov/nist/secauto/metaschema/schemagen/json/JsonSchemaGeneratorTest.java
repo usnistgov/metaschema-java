@@ -32,6 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.schemagen.json.ISchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
 
 import org.apache.commons.io.output.TeeOutputStream;
 import org.junit.jupiter.api.Disabled;

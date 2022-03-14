@@ -26,6 +26,14 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface IWritingContext<WRITER> {
+  /**
+   * Get the writer associated with the writing context.
+   * 
+   * @return the writer
+   */
+  @NotNull
   WRITER getWriter();
 }

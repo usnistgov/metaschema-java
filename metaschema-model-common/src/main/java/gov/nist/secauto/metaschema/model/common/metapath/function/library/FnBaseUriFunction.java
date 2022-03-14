@@ -107,15 +107,13 @@ public final class FnBaseUriFunction {
   }
 
   public static IAnyUriItem fnBaseUri(INodeItem arg) {
+    IAnyUriItem retval;
     if (arg == null) {
-      return null;
+      retval = null;
+    } else {
+      URI baseUri = arg.getBaseUri();
+      retval = baseUri == null ? null : IAnyUriItem.valueOf(baseUri);
     }
-
-    // this behavior is different from XPath
-    URI baseUri = arg.getBaseUri();
-    if (baseUri == null) {
-      return null;
-    }
-    return IAnyUriItem.valueOf(baseUri);
+    return retval;
   }
 }

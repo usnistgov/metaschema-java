@@ -23,10 +23,25 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.binding.model.test;
 
-package gov.nist.secauto.metaschema.schemagen;
+import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
+import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.BooleanAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.TokenAdapter;
 
-import gov.nist.secauto.metaschema.freemarker.support.FreemarkerGenerator;
+@MetaschemaField(isCollapsible = false)
+public class FlaggedBoundField {
+  @JsonKey
+  @Flag(useName = "field-required-flag", typeAdapter = TokenAdapter.class, required = true)
+  private String id;
 
-public interface SchemaGenerator extends FreemarkerGenerator {
+  @Flag(useName = "field-other-flag", typeAdapter = BooleanAdapter.class)
+  private String other;
+  
+  @FieldValue(name = "field-value", typeAdapter = StringAdapter.class)
+  private String _value;
 }

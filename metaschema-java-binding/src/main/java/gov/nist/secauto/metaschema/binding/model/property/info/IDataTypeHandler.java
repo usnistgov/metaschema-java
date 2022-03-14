@@ -33,12 +33,19 @@ import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstan
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Collection;
 
 // TODO: get rid of functional interfaces
 public interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSupplier, IXmlBindingConsumer {
+  /**
+   * Get the model instance associated with this handler.
+   * 
+   * @return the model instance
+   */
+  @NotNull
   IBoundNamedModelInstance getProperty();
 
   /**
@@ -48,18 +55,56 @@ public interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSuppl
    */
   IClassBinding getClassBinding();
 
+  /**
+   * Get the associated {@link IJavaTypeAdapter}, if the data type is not a complex bound object.
+   * 
+   * @return the adpater, or {@code null} otherwise
+   */
   IJavaTypeAdapter<?> getJavaTypeAdapter();
 
-  // a proxy to the JavaTypeAdapter if it is used or {@code false}
-  boolean isUnrappedValueAllowedInXml();
+  /**
+   * Indicate if the value supported by this handler allows values without an XML element wrapper.
+   * <p>
+   * Implementations may proxy this request to the JavaTypeAdapter if it is used or return
+   * {@code false} otherwise.
+   * 
+   * @return {@code true} if the underlying data type is allowed to be unwrapped, or {@code false}
+   *         otherwise
+   */
+  boolean isUnwrappedValueAllowedInXml();
 
   // void writeProxyWritableItem(ProxyWritableItem item, IJsonWritingContext context) throws
   // IOException;
   //
   // void writeCollapsedWritableItem(CollapsedWritableItem proxy, IJsonWritingContext context);
 
-  void writeItems(Collection<@NotNull ? extends Object> items, boolean writeObjectWrapper, IJsonWritingContext context)
+  /**
+   * Write the provided collection of items to JSON.
+   * 
+   * @param items
+   *          the collection of items to write
+   * @param writeObjectWrapper
+   *          if {@code true} an object should be written before writing the item
+   * @param context
+   *          the JSON serializer
+   * @throws IOException
+   *           if an error occurred while writing
+   */
+  void writeItems(@NotNull Collection<@NotNull ? extends Object> items, boolean writeObjectWrapper,
+      @NotNull IJsonWritingContext context)
       throws IOException;
 
-  Object copyItem(@NotNull Object fromItem, Object parentInstance) throws BindingException;
+  /**
+   * Build and return a deep copy of the provided item.
+   * 
+   * @param item
+   *          the item to copy
+   * @param parentInstance
+   *          an optional parent object to use for serialization callbacks
+   * @return the new deep copy
+   * @throws BindingException
+   *           if an error occurred while analyzing the bound objects
+   */
+  @NotNull
+  Object copyItem(@NotNull Object item, @Nullable Object parentInstance) throws BindingException;
 }

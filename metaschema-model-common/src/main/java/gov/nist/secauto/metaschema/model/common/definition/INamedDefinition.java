@@ -26,14 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.definition;
 
-import gov.nist.secauto.metaschema.model.common.INamedModelElement;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 
 /**
  * This marker interface is used for some collections that contain various named definitions.
  */
-public interface INamedDefinition extends IDefinition, INamedModelElement {
-
+public interface INamedDefinition extends IDefinition {
   /**
    * Determine if the definition is defined inline, meaning the definition is declared where it is
    * used.

@@ -36,14 +36,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.xml.namespace.QName;
 
 public interface IFlagDefinition extends INamedValuedDefinition, IFlag {
-  @Override
-  @NotNull
-  default QName getXmlQName() {
-    @SuppressWarnings("null")
-    @NotNull
-    QName retval = QName.valueOf(getEffectiveName());
-    return retval;
-  }
 
   @Override
   @NotNull

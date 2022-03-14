@@ -39,6 +39,7 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -50,6 +51,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -57,8 +59,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 public class MapPropertyInfo
-    extends AbstractModelPropertyInfo<ParameterizedType>
-    implements IModelPropertyInfo {
+    extends AbstractModelPropertyInfo<ParameterizedType>  {
 
   @Override
   public Collection<?> getItemsFromValue(Object value) {
@@ -101,24 +102,25 @@ public class MapPropertyInfo
   public void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
       throws IOException {
     JsonParser jsonParser = context.getReader();
-    JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
 
-    // parse items
-    // IClassBinding classBinding = getClassBinding();
-    // if (classBinding == null) {
-    // throw new BindingException(
-    // String.format("Unable to parse type '%s', which is not a known bound class", getItemType()));
-    // }
+    // A map value is always wrapped in a START_OBJECT, since fields are used for the keys
+    JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
 
     IBoundNamedModelInstance property = getProperty();
     // process all map items
     while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
-
-      List<Object> values = property.readItem(parentInstance, context);
+      
+      // a map item will always start with a FIELD_NAME, since this represents the key
+      JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME);
+      
+      List<@NotNull Object> values = property.readItem(parentInstance, true, context);
       collector.addAll(values);
+
+      // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all items have been read
+      JsonUtil.assertCurrent(jsonParser, Set.of(JsonToken.FIELD_NAME, JsonToken.END_OBJECT));
     }
 
-    // advance to next token
+    // A map value will always end with an end object, which needs to be consumed 
     JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
   }
 
@@ -154,9 +156,9 @@ public class MapPropertyInfo
       throws XMLStreamException, IOException {
     IBoundNamedModelInstance property = getProperty();
     @SuppressWarnings("unchecked")
-    Map<String, ? extends Object> items = (Map<String, ? extends Object>) property.getValue(parentInstance);
+    Map<@NotNull String, ? extends Object> items = (Map<@NotNull String, ? extends Object>) property.getValue(parentInstance);
     for (Object item : items.values()) {
-      property.writeItem(item, parentName, context);
+      property.writeItem(ObjectUtils.notNull(item), parentName, context);
     }
     return true;
   }
@@ -168,7 +170,7 @@ public class MapPropertyInfo
 
     protected MapPropertyCollector(IBoundNamedModelInstance property) {
       IClassBinding classBinding = property.getDataTypeHandler().getClassBinding();
-      this.jsonKey = classBinding != null ? classBinding.getJsonKeyFlagInstance() : null;
+      this.jsonKey = classBinding == null ? null : classBinding.getJsonKeyFlagInstance();
       if (this.jsonKey == null) {
         throw new IllegalStateException("No JSON key found");
       }
@@ -188,7 +190,7 @@ public class MapPropertyInfo
     }
 
     @Override
-    public void addAll(Collection<?> items) {
+    public void addAll(Collection<@NotNull ?> items) {
       for (Object item : items) {
         add(item);
       }

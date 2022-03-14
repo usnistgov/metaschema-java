@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.binding.model.property.info;
 
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 
 import javax.xml.namespace.QName;
@@ -35,5 +37,6 @@ import javax.xml.stream.XMLStreamException;
 
 @FunctionalInterface
 public interface IXmlBindingConsumer {
-  void accept(Object value, QName currentParentName, IXmlWritingContext context) throws IOException, XMLStreamException;
+  void accept(@NotNull Object value, @NotNull QName currentParentName, @NotNull IXmlWritingContext context)
+      throws IOException, XMLStreamException;
 }

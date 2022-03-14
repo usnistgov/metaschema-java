@@ -24,21 +24,21 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common;
+package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
+import org.jetbrains.annotations.NotNull;
 
-public final class ModelConstants {
-  public static final boolean DEFAULT_FLAG_REQUIRED = false;
-  public static final boolean DEFAULT_FIELD_IN_XML_WRAPPED = true;
-  public static final boolean DEFAULT_FIELD_COLLAPSIBLE = false;
-  public static final int DEFAULT_GROUP_AS_MIN_OCCURS = 0;
-  public static final int DEFAULT_GROUP_AS_MAX_OCCURS = 1;
-  public static final JsonGroupAsBehavior DEFAULT_JSON_GROUP_AS_BEHAVIOR = JsonGroupAsBehavior.SINGLETON_OR_LIST;
-  public static final XmlGroupAsBehavior DEFAULT_XML_GROUP_AS_BEHAVIOR = XmlGroupAsBehavior.UNGROUPED;
+import java.util.List;
 
-  private ModelConstants() {
-    /* disable construction */
-  }
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+public interface IDatatypeContent {
+  @NotNull
+  String getTypeName();
+
+  @NotNull
+  List<@NotNull String> getDependencies();
+
+  void write(@NotNull XMLStreamWriter writer) throws XMLStreamException;
 }

@@ -26,35 +26,39 @@
 
 package gov.nist.secauto.metaschema.binding.model.property.info;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 public class ClassDataTypeHandler implements IDataTypeHandler {
+  @NotNull
   private final IBoundNamedModelInstance property;
+  @NotNull
   private final IClassBinding classBinding;
 
-  public ClassDataTypeHandler(IClassBinding classBinding, IBoundNamedModelInstance property) {
-    Objects.requireNonNull(classBinding, "classBinding");
-    Objects.requireNonNull(property, "property");
-    this.classBinding = classBinding;
-    this.property = property;
+  public ClassDataTypeHandler(@NotNull IClassBinding classBinding, @NotNull IBoundNamedModelInstance property) {
+    this.classBinding = ObjectUtils.requireNonNull(classBinding, "classBinding");
+    this.property = ObjectUtils.requireNonNull(property, "property");
   }
 
   @Override
@@ -74,14 +78,25 @@ public class ClassDataTypeHandler implements IDataTypeHandler {
   }
 
   @Override
-  public boolean isUnrappedValueAllowedInXml() {
+  public boolean isUnwrappedValueAllowedInXml() {
     // classes are always wrapped
     return false;
   }
 
   @Override
-  public List<Object> get(Object parentInstance, IJsonParsingContext context) throws IOException {
-    return classBinding.readItem(parentInstance, context);
+  public List<Object> get(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context) throws IOException {
+    JsonParser parser = context.getReader(); // NOPMD - intentional
+    boolean objectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
+    if (objectWrapper) {
+      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+    }
+
+    List<Object> retval = classBinding.readItem(parentInstance, requiresJsonKey, context);
+    
+    if (objectWrapper) {
+      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
+    }
+    return retval;
   }
 
   @Override
@@ -97,7 +112,8 @@ public class ClassDataTypeHandler implements IDataTypeHandler {
   }
 
   @Override
-  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, IJsonWritingContext context)
+  public void writeItems(Collection<@NotNull ? extends Object> items, boolean writeObjectWrapper,
+      IJsonWritingContext context)
       throws IOException {
     classBinding.writeItems(items, writeObjectWrapper, context);
   }

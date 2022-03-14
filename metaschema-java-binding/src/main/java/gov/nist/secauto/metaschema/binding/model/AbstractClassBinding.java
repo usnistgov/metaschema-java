@@ -41,6 +41,8 @@ import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -54,8 +56,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -63,15 +65,18 @@ import java.util.stream.Collectors;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
 public abstract class AbstractClassBinding implements IClassBinding {
   // private static final Logger logger = LogManager.getLogger(AbstractClassBinding.class);
 
+  @NotNull
   private final IBindingContext bindingContext;
+  @NotNull
   private final Class<?> clazz;
   private final Method beforeDeserializeMethod;
   private final Method afterDeserializeMethod;
-  private Map<String, IBoundFlagInstance> flagInstances;
+  private Map<@NotNull String, IBoundFlagInstance> flagInstances;
   private IBoundFlagInstance jsonKeyFlag;
 
   /**
@@ -82,11 +87,9 @@ public abstract class AbstractClassBinding implements IClassBinding {
    * @param bindingContext
    *          the class binding context for which this class is participating
    */
-  public AbstractClassBinding(Class<?> clazz, IBindingContext bindingContext) {
-    Objects.requireNonNull(bindingContext, "bindingContext");
-    Objects.requireNonNull(clazz, "clazz");
-    this.bindingContext = bindingContext;
-    this.clazz = clazz;
+  public AbstractClassBinding(@NotNull Class<?> clazz, @NotNull IBindingContext bindingContext) {
+    this.bindingContext = ObjectUtils.requireNonNull(bindingContext, "bindingContext");
+    this.clazz = ObjectUtils.requireNonNull(clazz, "clazz");
     this.beforeDeserializeMethod = ClassIntrospector.getMatchingMethod(clazz, "beforeDeserialize", Object.class);
     this.afterDeserializeMethod = ClassIntrospector.getMatchingMethod(clazz, "afterDeserialize", Object.class);
   }
@@ -105,39 +108,30 @@ public abstract class AbstractClassBinding implements IClassBinding {
   public String getName() {
     // there is not a provided name, but we need to have one. This will always be provided on the
     // instance side as a use name
-    return getBoundClass().getName();
+    return ObjectUtils.notNull(getBoundClass().getName());
   }
 
-  @SuppressWarnings("PMD")
   @Override
-  public String getUseName() {
+  public String getUseName() { // NOPMD
     // a use name is never provided
     return null;
   }
 
-  @SuppressWarnings("PMD")
-  @Override
-  public String getXmlNamespace() {
-    // a namespace is never provided. This will always be defined on the instance side
-    return null;
-  }
-
+  @SuppressWarnings("null")
   @Override
   public String toCoordinates() {
-    return String.format("%s IClassBinding(%s): %s", getModelType().name().toLowerCase(), getName(),
+    return String.format("%s IClassBinding(%s): %s", getModelType().name().toLowerCase(Locale.ROOT), getName(),
         getBoundClass().getName());
   }
 
-  @SuppressWarnings("PMD")
   @Override
-  public String getFormalName() {
+  public String getFormalName() { // NOPMD - remove after implementation
     // TODO: implement
     return null;
   }
 
-  @SuppressWarnings("PMD")
   @Override
-  public MarkupLine getDescription() {
+  public MarkupLine getDescription() { // NOPMD - remove after implementation
     // TODO: implement
     return null;
   }
@@ -153,16 +147,14 @@ public abstract class AbstractClassBinding implements IClassBinding {
     return getBoundClass().getEnclosingClass() == null;
   }
 
-  @SuppressWarnings("PMD")
   @Override
-  public IMetaschema getContainingMetaschema() {
+  public IMetaschema getContainingMetaschema() { // NOPMD - remove after implementation
     // TODO: implement
     return null;
   }
 
-  @SuppressWarnings("PMD")
   @Override
-  public MarkupMultiline getRemarks() {
+  public MarkupMultiline getRemarks() { // NOPMD - remove after implementation
     // TODO: implement
     return null;
   }
@@ -174,10 +166,11 @@ public abstract class AbstractClassBinding implements IClassBinding {
    *          the class
    * @return an immutable collection of flag instances
    */
-  protected Collection<Field> getFlagInstanceFields(Class<?> clazz) {
+  @NotNull
+  protected Collection<@NotNull Field> getFlagInstanceFields(Class<?> clazz) {
     Field[] fields = clazz.getDeclaredFields();
 
-    List<Field> retval = new LinkedList<>();
+    List<@NotNull Field> retval = new LinkedList<>();
 
     Class<?> superClass = clazz.getSuperclass();
     if (superClass != null) {
@@ -198,26 +191,32 @@ public abstract class AbstractClassBinding implements IClassBinding {
 
       retval.add(field);
     }
-    return Collections.unmodifiableCollection(retval);
+    return ObjectUtils.notNull(Collections.unmodifiableCollection(retval));
   }
 
   /**
    * Initialize the flag instances for this class.
+   * 
+   * @return the initialized flag instances
    */
-  protected synchronized void initalizeFlagInstances() {
-    if (this.flagInstances == null) {
-      Map<String, IBoundFlagInstance> flags = new LinkedHashMap<>();
-      for (Field field : getFlagInstanceFields(clazz)) {
+  @NotNull
+  protected Map<@NotNull String, IBoundFlagInstance> initalizeFlagInstances() {
+    synchronized (this) {
+      if (this.flagInstances == null) {
+        Map<@NotNull String, IBoundFlagInstance> flags = new LinkedHashMap<>(); // NOPMD - intentional use
+        for (Field field : getFlagInstanceFields(clazz)) {
 
-        Flag flag = field.getAnnotation(Flag.class);
-        if (flag != null) {
-          IBoundFlagInstance flagBinding = new DefaultFlagProperty(this, field, bindingContext);
-          initializeFlagInstance(flagBinding);
-          flags.put(flagBinding.getEffectiveName(), flagBinding);
+          if (field.isAnnotationPresent(Flag.class)) {
+            IBoundFlagInstance flagBinding
+                = new DefaultFlagProperty(field, this, bindingContext); // NOPMD - intentional
+            initializeFlagInstance(flagBinding);
+            flags.put(flagBinding.getEffectiveName(), flagBinding);
+          }
         }
+        this.flagInstances = flags.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flags);
       }
-      this.flagInstances = flags.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flags);
     }
+    return ObjectUtils.notNull(this.flagInstances);
   }
 
   /**
@@ -234,10 +233,9 @@ public abstract class AbstractClassBinding implements IClassBinding {
   }
 
   @Override
-  public synchronized Map<String, IBoundFlagInstance> getFlagInstanceMap() {
+  public Map<@NotNull String, IBoundFlagInstance> getFlagInstanceMap() {
     // check that the flag instances are lazy loaded
-    initalizeFlagInstances();
-    return flagInstances;
+    return initalizeFlagInstances();
   }
 
   @Override
@@ -252,13 +250,13 @@ public abstract class AbstractClassBinding implements IClassBinding {
   }
 
   @Override
-  public Map<String, ? extends IBoundNamedInstance> getNamedInstances(Predicate<IBoundFlagInstance> filter) {
-    Map<String, ? extends IBoundNamedInstance> retval;
+  public Map<@NotNull String, ? extends IBoundNamedInstance> getNamedInstances(Predicate<IBoundFlagInstance> filter) {
+    Map<@NotNull String, ? extends IBoundFlagInstance> retval;
     if (filter == null) {
       retval = getFlagInstanceMap();
     } else {
-      retval = getFlagInstances().stream().filter(filter)
-          .collect(Collectors.toMap(IFlagInstance::getJsonName, Function.identity()));
+      retval = ObjectUtils.notNull(getFlagInstances().stream().filter(filter)
+          .collect(Collectors.toMap(IFlagInstance::getJsonName, Function.identity())));
     }
     return retval;
   }
@@ -272,13 +270,13 @@ public abstract class AbstractClassBinding implements IClassBinding {
    * @throws BindingException
    *           if the instance cannot be created due to a binding error
    */
+  @NotNull
   protected <CLASS> CLASS newInstance() throws BindingException {
     Class<?> clazz = getBoundClass();
-    CLASS retval;
     try {
       @SuppressWarnings("unchecked")
       Constructor<CLASS> constructor = (Constructor<CLASS>) clazz.getDeclaredConstructor();
-      retval = constructor.newInstance();
+      return ObjectUtils.notNull(constructor.newInstance());
     } catch (NoSuchMethodException ex) {
       String msg = String.format("Class '%s' does not have a required no-arg constructor.", clazz.getName());
       throw new BindingException(msg, ex);
@@ -286,7 +284,6 @@ public abstract class AbstractClassBinding implements IClassBinding {
         | InvocationTargetException ex) {
       throw new BindingException(ex);
     }
-    return retval;
   }
 
   /**
@@ -340,7 +337,7 @@ public abstract class AbstractClassBinding implements IClassBinding {
     try {
       Object instance = newInstance();
       callBeforeDeserialize(instance, parentInstance);
-      readInternal(parentInstance, instance, start, context);
+      readInternal(instance, start, context);
       callAfterDeserialize(instance, parentInstance);
       return instance;
     } catch (BindingException ex) {
@@ -348,17 +345,18 @@ public abstract class AbstractClassBinding implements IClassBinding {
     }
   }
 
-  protected void readInternal(@SuppressWarnings("unused") Object parentInstance, Object instance, StartElement start,
-      IXmlParsingContext context) throws IOException, XMLStreamException {
+  protected void readInternal(@NotNull Object instance, @NotNull StartElement start,
+      @NotNull IXmlParsingContext context) throws IOException, XMLStreamException {
     for (IBoundFlagInstance flag : getFlagInstances()) {
       flag.read(instance, start, context);
     }
     readBody(instance, start, context);
 
-    // TODO: should I check for the END_ELEMENT here?
+    XmlEventUtil.assertNext(context.getReader(), XMLEvent.END_ELEMENT, start.getName());
   }
 
-  protected abstract void readBody(Object instance, StartElement start, IXmlParsingContext context)
+  protected abstract void readBody(@NotNull Object instance, @NotNull StartElement start,
+      @NotNull IXmlParsingContext context)
       throws IOException, XMLStreamException;
 
   @Override
@@ -367,7 +365,7 @@ public abstract class AbstractClassBinding implements IClassBinding {
     writeInternal(instance, parentName, context);
   }
 
-  protected void writeInternal(Object instance, QName parentName, IXmlWritingContext context)
+  protected void writeInternal(@NotNull Object instance, @NotNull QName parentName, @NotNull IXmlWritingContext context)
       throws IOException, XMLStreamException {
     // write flags
     for (IBoundFlagInstance flag : getFlagInstances()) {
@@ -376,11 +374,12 @@ public abstract class AbstractClassBinding implements IClassBinding {
     writeBody(instance, parentName, context);
   }
 
-  protected abstract void writeBody(Object instance, QName parentName, IXmlWritingContext context)
+  protected abstract void writeBody(@NotNull Object instance, @NotNull QName parentName,
+      @NotNull IXmlWritingContext context)
       throws XMLStreamException, IOException;
 
   @Override
-  public Object copyBoundObject(@NotNull Object item, Object parentInstance) throws BindingException {
+  public Object copyBoundObject(Object item, Object parentInstance) throws BindingException {
     Object instance = newInstance();
 
     callBeforeDeserialize(instance, parentInstance);

@@ -25,7 +25,7 @@
 
 <#function typeForValue def>
   <#switch def.datatype.name>
-    <#case "base64Binary">
+    <#case "base64">
       <#local valueType="xs:base64Binary"/>
       <#break>
     <#case "boolean">
@@ -34,7 +34,7 @@
     <#case "date">
       <#local valueType="xs:date"/>
       <#break>
-    <#case "dateTime">
+    <#case "date-time">
       <#local valueType="xs:dateTime"/>
       <#break>
     <#case "day-time-duration">
@@ -47,10 +47,10 @@
     <#case "integer">
       <#local valueType="xs:integer"/>
       <#break>
-    <#case "nonNegativeInteger">
+    <#case "non-negative-integer">
       <#local valueType="xs:nonNegativeInteger"/>
       <#break>
-    <#case "positiveInteger">
+    <#case "positive-integer">
       <#local valueType="xs:positiveInteger"/>
       <#break>
     <#case "year-month-duration">
@@ -219,18 +219,26 @@
     </xs:attribute>
 </#macro>
 <#macro definitionAnnotation def>
+  <#if def.formalName?? || def.description??>
     <xs:annotation>
       <xs:appinfo>
+  <#if def.formalName??>
         <m:formal-name>${def.formalName}</m:formal-name>
+  </#if>
+  <#if def.description??>
         <m:description>${markupToHTML(def.description, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")}</m:description>
+  </#if>
       </xs:appinfo>
+  <#if def.formalName??>
       <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
           <p><b>${def.formalName}</b>: ${markupToHTML(def.description, "http://www.w3.org/1999/xhtml", "")}</p>
       <#if def.remarks??>
          ${markupToHTML(def.remarks, "http://csrc.nist.gov/ns/oscal/metaschema/1.0")}
       </#if>
       </xs:documentation>
+  </#if>
     </xs:annotation>
+  </#if>
 </#macro>
 <#macro definition def>
   <#-- Definition: ${typeForDefinition(def)} -->

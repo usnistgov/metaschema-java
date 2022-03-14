@@ -33,8 +33,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedV
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
-import gov.nist.secauto.metaschema.binding.model.property.DefaultFieldProperty;
-import gov.nist.secauto.metaschema.binding.model.property.DefaultFlagProperty;
 import gov.nist.secauto.metaschema.model.common.constraint.AbstractConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultExpectConstraint;
@@ -42,9 +40,11 @@ import gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexHasKeyCon
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -52,14 +52,24 @@ import java.util.List;
  * Support for constraints on valued objects (i.e., fields and flags).
  */
 public class ValueConstraintSupport implements IValueConstraintSupport {
+  @NotNull
   private final List<AbstractConstraint> constraints;
+  @NotNull
   private final List<DefaultAllowedValuesConstraint> allowedValuesConstraints;
+  @NotNull
   private final List<DefaultMatchesConstraint> matchesConstraints;
+  @NotNull
   private final List<DefaultIndexHasKeyConstraint> indexHasKeyConstraints;
+  @NotNull
   private final List<DefaultExpectConstraint> expectConstraints;
 
-  public ValueConstraintSupport(DefaultFlagProperty propertyBinding) {
-    Flag propertyAnnotation = propertyBinding.getFlagAnnotation();
+  /**
+   * Generate constraints from a {@link Flag} annotation.
+   * 
+   * @param propertyAnnotation
+   *          the annotation where the constraints are defined
+   */
+  public ValueConstraintSupport(@NotNull Flag propertyAnnotation) { // NOPMD - intentional
     List<AbstractConstraint> constraints = new LinkedList<>();
 
     List<DefaultAllowedValuesConstraint> allowedValuesConstraints
@@ -69,8 +79,8 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
       allowedValuesConstraints.add(constraint);
       constraints.add(constraint);
     }
-    this.allowedValuesConstraints = allowedValuesConstraints.isEmpty() ? Collections.emptyList()
-        : Collections.unmodifiableList(allowedValuesConstraints);
+    this.allowedValuesConstraints = allowedValuesConstraints.isEmpty() ? CollectionUtil.emptyList()
+        : CollectionUtil.unmodifiableList(allowedValuesConstraints);
 
     List<DefaultMatchesConstraint> matchesConstraints = new ArrayList<>(propertyAnnotation.matches().length);
     for (Matches annotation : propertyAnnotation.matches()) {
@@ -79,7 +89,8 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
       constraints.add(constraint);
     }
     this.matchesConstraints
-        = matchesConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(matchesConstraints);
+        = matchesConstraints.isEmpty() ? CollectionUtil.emptyList()
+            : CollectionUtil.unmodifiableList(matchesConstraints);
 
     List<DefaultIndexHasKeyConstraint> indexHasKeyConstraints
         = new ArrayList<>(propertyAnnotation.indexHasKey().length);
@@ -88,8 +99,8 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
       indexHasKeyConstraints.add(constraint);
       constraints.add(constraint);
     }
-    this.indexHasKeyConstraints = indexHasKeyConstraints.isEmpty() ? Collections.emptyList()
-        : Collections.unmodifiableList(indexHasKeyConstraints);
+    this.indexHasKeyConstraints = indexHasKeyConstraints.isEmpty() ? CollectionUtil.emptyList()
+        : CollectionUtil.unmodifiableList(indexHasKeyConstraints);
 
     List<DefaultExpectConstraint> expectConstraints = new ArrayList<>(propertyAnnotation.expect().length);
     for (Expect annotation : propertyAnnotation.expect()) {
@@ -98,13 +109,19 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
       constraints.add(constraint);
     }
     this.expectConstraints
-        = expectConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(expectConstraints);
+        = expectConstraints.isEmpty() ? CollectionUtil.emptyList() : CollectionUtil.unmodifiableList(expectConstraints);
 
-    this.constraints = constraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(constraints);
+    this.constraints
+        = constraints.isEmpty() ? CollectionUtil.emptyList() : CollectionUtil.unmodifiableList(constraints);
   }
 
-  public ValueConstraintSupport(DefaultFieldProperty propertyBinding) {
-    Field propertyAnnotation = propertyBinding.getFieldAnnotation();
+  /**
+   * Generate constraints from a {@link Field} annotation.
+   * 
+   * @param propertyAnnotation
+   *          the annotation where the constraints are defined
+   */
+  public ValueConstraintSupport(@NotNull Field propertyAnnotation) {// NOPMD - intentional
     List<AbstractConstraint> constraints = new LinkedList<>();
 
     List<DefaultAllowedValuesConstraint> allowedValuesConstraints
@@ -114,8 +131,8 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
       allowedValuesConstraints.add(constraint);
       constraints.add(constraint);
     }
-    this.allowedValuesConstraints = allowedValuesConstraints.isEmpty() ? Collections.emptyList()
-        : Collections.unmodifiableList(allowedValuesConstraints);
+    this.allowedValuesConstraints = allowedValuesConstraints.isEmpty() ? CollectionUtil.emptyList()
+        : CollectionUtil.unmodifiableList(allowedValuesConstraints);
 
     List<DefaultMatchesConstraint> matchesConstraints = new ArrayList<>(propertyAnnotation.matches().length);
     for (Matches annotation : propertyAnnotation.matches()) {
@@ -124,7 +141,8 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
       constraints.add(constraint);
     }
     this.matchesConstraints
-        = matchesConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(matchesConstraints);
+        = matchesConstraints.isEmpty() ? CollectionUtil.emptyList()
+            : CollectionUtil.unmodifiableList(matchesConstraints);
 
     List<DefaultIndexHasKeyConstraint> indexHasKeyConstraints
         = new ArrayList<>(propertyAnnotation.indexHasKey().length);
@@ -133,8 +151,8 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
       indexHasKeyConstraints.add(constraint);
       constraints.add(constraint);
     }
-    this.indexHasKeyConstraints = indexHasKeyConstraints.isEmpty() ? Collections.emptyList()
-        : Collections.unmodifiableList(indexHasKeyConstraints);
+    this.indexHasKeyConstraints = indexHasKeyConstraints.isEmpty() ? CollectionUtil.emptyList()
+        : CollectionUtil.unmodifiableList(indexHasKeyConstraints);
 
     List<DefaultExpectConstraint> expectConstraints = new ArrayList<>(propertyAnnotation.expect().length);
     for (Expect annotation : propertyAnnotation.expect()) {
@@ -143,13 +161,19 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
       constraints.add(constraint);
     }
     this.expectConstraints
-        = expectConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(expectConstraints);
+        = expectConstraints.isEmpty() ? CollectionUtil.emptyList() : CollectionUtil.unmodifiableList(expectConstraints);
 
-    this.constraints = constraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(constraints);
+    this.constraints
+        = constraints.isEmpty() ? CollectionUtil.emptyList() : CollectionUtil.unmodifiableList(constraints);
   }
 
-  public ValueConstraintSupport(DefaultFieldClassBinding classBinding) {
-    MetaschemaField classAnnotation = classBinding.getMetaschemaFieldAnnotation();
+  /**
+   * Generate constraints from a {@link MetaschemaField} annotation.
+   * 
+   * @param classAnnotation
+   *          the annotation where the constraints are defined
+   */
+  public ValueConstraintSupport(@NotNull MetaschemaField classAnnotation) {// NOPMD - intentional
     List<AbstractConstraint> constraints = new LinkedList<>();
 
     List<DefaultAllowedValuesConstraint> allowedValuesConstraints
@@ -159,8 +183,8 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
       allowedValuesConstraints.add(constraint);
       constraints.add(constraint);
     }
-    this.allowedValuesConstraints = allowedValuesConstraints.isEmpty() ? Collections.emptyList()
-        : Collections.unmodifiableList(allowedValuesConstraints);
+    this.allowedValuesConstraints = allowedValuesConstraints.isEmpty() ? CollectionUtil.emptyList()
+        : CollectionUtil.unmodifiableList(allowedValuesConstraints);
 
     List<DefaultMatchesConstraint> matchesConstraints = new ArrayList<>(classAnnotation.matches().length);
     for (Matches annotation : classAnnotation.matches()) {
@@ -169,7 +193,8 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
       constraints.add(constraint);
     }
     this.matchesConstraints
-        = matchesConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(matchesConstraints);
+        = matchesConstraints.isEmpty() ? CollectionUtil.emptyList()
+            : CollectionUtil.unmodifiableList(matchesConstraints);
 
     List<DefaultIndexHasKeyConstraint> indexHasKeyConstraints = new ArrayList<>(classAnnotation.indexHasKey().length);
     for (IndexHasKey annotation : classAnnotation.indexHasKey()) {
@@ -177,8 +202,8 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
       indexHasKeyConstraints.add(constraint);
       constraints.add(constraint);
     }
-    this.indexHasKeyConstraints = indexHasKeyConstraints.isEmpty() ? Collections.emptyList()
-        : Collections.unmodifiableList(indexHasKeyConstraints);
+    this.indexHasKeyConstraints = indexHasKeyConstraints.isEmpty() ? CollectionUtil.emptyList()
+        : CollectionUtil.unmodifiableList(indexHasKeyConstraints);
 
     List<DefaultExpectConstraint> expectConstraints = new ArrayList<>(classAnnotation.expect().length);
     for (Expect annotation : classAnnotation.expect()) {
@@ -187,9 +212,10 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
       constraints.add(constraint);
     }
     this.expectConstraints
-        = expectConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(expectConstraints);
+        = expectConstraints.isEmpty() ? CollectionUtil.emptyList() : CollectionUtil.unmodifiableList(expectConstraints);
 
-    this.constraints = constraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(constraints);
+    this.constraints
+        = constraints.isEmpty() ? CollectionUtil.emptyList() : CollectionUtil.unmodifiableList(constraints);
   }
 
   @Override

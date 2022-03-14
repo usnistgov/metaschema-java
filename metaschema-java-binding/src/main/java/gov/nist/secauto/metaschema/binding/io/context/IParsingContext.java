@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.io.context;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Provides objects used for parsing data associated with a specific format.
  * 
@@ -40,6 +42,7 @@ public interface IParsingContext<READER, PROBLEM_HANDLER extends IProblemHandler
    * 
    * @return the parser
    */
+  @NotNull
   READER getReader();
 
   /**
@@ -47,5 +50,6 @@ public interface IParsingContext<READER, PROBLEM_HANDLER extends IProblemHandler
    * 
    * @return the configured handler
    */
+  @NotNull
   PROBLEM_HANDLER getProblemHandler();
 }

@@ -39,13 +39,14 @@ import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationFinding;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator.JsonValidationFinding;
-import gov.nist.secauto.metaschema.model.testing.xmlbeans.CollectionDocument.Collection;
-import gov.nist.secauto.metaschema.model.testing.xmlbeans.ContentCaseDocument.ContentCase;
-import gov.nist.secauto.metaschema.model.testing.xmlbeans.GenerateDocument.Generate;
+import gov.nist.secauto.metaschema.model.testing.xmlbeans.ContentCaseType;
+import gov.nist.secauto.metaschema.model.testing.xmlbeans.GenerateSchemaDocument.GenerateSchema;
 import gov.nist.secauto.metaschema.model.testing.xmlbeans.MetaschemaDocument.Metaschema;
-import gov.nist.secauto.metaschema.model.testing.xmlbeans.ScenarioDocument.Scenario;
+import gov.nist.secauto.metaschema.model.testing.xmlbeans.TestCollectionDocument.TestCollection;
+import gov.nist.secauto.metaschema.model.testing.xmlbeans.TestScenarioDocument.TestScenario;
 import gov.nist.secauto.metaschema.model.testing.xmlbeans.TestSuiteDocument;
 
+import org.apache.commons.io.output.TeeOutputStream;
 import org.apache.logging.log4j.LogBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,13 +59,20 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.platform.commons.JUnitException;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -74,16 +82,21 @@ public abstract class AbstractTestSuite {
   private static final Logger LOGGER = LogManager.getLogger(AbstractTestSuite.class);
   private static final MetaschemaLoader LOADER = new MetaschemaLoader();
 
+  @NotNull
   protected abstract Format getRequiredContentFormat();
 
+  @NotNull
   protected abstract URI getTestSuiteURI();
 
+  @NotNull
   protected abstract Path getGenerationPath();
 
+  @NotNull
   protected abstract BiFunction<IMetaschema, Writer, Void> getGeneratorSupplier();
 
   protected abstract Supplier<IContentValidator> getSchemaValidatorSupplier();
 
+  @NotNull
   protected abstract Function<Path, IContentValidator> getContentValidatorSupplier();
 
   protected Stream<? extends DynamicNode> testFactory() {
@@ -104,11 +117,11 @@ public abstract class AbstractTestSuite {
     TestSuiteDocument directive = TestSuiteDocument.Factory.parse(testSuiteUrl, options);
 
     Path generationPath = getGenerationPath();
-    return directive.getTestSuite().getCollectionList().stream()
+    return directive.getTestSuite().getTestCollectionList().stream()
         .flatMap(collection -> Stream.of(generateCollection(collection, testSuiteUri, generationPath)));
   }
 
-  private DynamicContainer generateCollection(@NotNull Collection collection, @NotNull URI testSuiteUri,
+  private DynamicContainer generateCollection(@NotNull TestCollection collection, @NotNull URI testSuiteUri,
       @NotNull Path generationPath) {
     URI collectionUri = testSuiteUri.resolve(collection.getLocation());
 
@@ -123,7 +136,7 @@ public abstract class AbstractTestSuite {
     return DynamicContainer.dynamicContainer(
         collection.getName(),
         testSuiteUri,
-        collection.getScenarioList().stream()
+        collection.getTestScenarioList().stream()
             .flatMap(scenario -> {
               return Stream.of(generateScenario(scenario, collectionUri, collectionGenerationPath));
             })
@@ -131,19 +144,50 @@ public abstract class AbstractTestSuite {
   }
 
   protected void produceSchema(@NotNull IMetaschema metaschema, @NotNull Path schemaPath) throws IOException {
-    try (Writer writer = Files.newBufferedWriter(schemaPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
-      getGeneratorSupplier().apply(metaschema, writer);
+    produceSchema(metaschema, schemaPath, getGeneratorSupplier());
+  }
+
+  protected void produceSchema(@NotNull IMetaschema metaschema, @NotNull Path schemaPath, @NotNull BiFunction<IMetaschema, Writer, Void> schemaProducer) throws IOException {
+    Path parentDir = schemaPath.getParent();
+    if (!Files.exists(parentDir)) {
+      Files.createDirectories(parentDir);
+    }
+
+    try (OutputStream os = Files.newOutputStream(
+        schemaPath,
+        StandardOpenOption.CREATE,
+      StandardOpenOption.WRITE,
+      StandardOpenOption.TRUNCATE_EXISTING)) {
+      
+      TeeOutputStream tos = new TeeOutputStream(os, System.out);
+      Writer writer = new OutputStreamWriter(tos, StandardCharsets.UTF_8);
+    
+//    try (Writer writer = Files.newBufferedWriter(
+//        schemaPath,
+//        StandardCharsets.UTF_8,
+//        StandardOpenOption.CREATE,
+//        StandardOpenOption.WRITE,
+//        StandardOpenOption.TRUNCATE_EXISTING)) {
+      schemaProducer.apply(metaschema, writer);
       writer.flush();
     }
   }
 
   protected DynamicBindingContext produceDynamicBindingContext(@NotNull IMetaschema metaschema,
-      @NotNull Path classDirPath) throws IOException {
-    Production production = MetaschemaCompilerHelper.compileMetaschema(metaschema, classDirPath);
-    return new DynamicBindingContext(production, MetaschemaCompilerHelper.getClassLoader(classDirPath));
+      @NotNull Path generationDirPath) throws IOException {
+    Path classDir;
+    try {
+      classDir = Files.createTempDirectory(generationDirPath, "classes-");
+    } catch (IOException ex) {
+      throw new JUnitException("Unable to class generation directory", ex);
+    }
+
+    Production production = MetaschemaCompilerHelper.compileMetaschema(metaschema, classDir);
+    return new DynamicBindingContext(production,
+        MetaschemaCompilerHelper.getClassLoader(classDir, Thread.currentThread().getContextClassLoader()));
   }
 
-  private DynamicContainer generateScenario(@NotNull Scenario scenario, @NotNull URI collectionUri,
+  private DynamicContainer generateScenario(@NotNull TestScenario scenario, @NotNull URI collectionUri,
       @NotNull Path collectionGenerationPath) {
     Path scenarioGenerationPath;
     try {
@@ -159,55 +203,73 @@ public abstract class AbstractTestSuite {
       throw new JUnitException("Unable to create test directories for path: " + scenarioGenerationPath, ex);
     }
 
-    Generate generate = scenario.getGenerate();
-    Metaschema metaschemaDirective = generate.getMetaschema();
+    GenerateSchema generateSchema = scenario.getGenerateSchema();
+    Metaschema metaschemaDirective = generateSchema.getMetaschema();
     URI metaschemaUri = collectionUri.resolve(metaschemaDirective.getLocation());
 
-    LOGGER.atInfo().log("Metaschema: " + metaschemaUri);
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+    Future<@NotNull IMetaschema> loadMetaschemaFuture = executor.submit(() -> {
+      IMetaschema metaschema;
+      try {
+        metaschema = LOADER.loadXmlMetaschema(metaschemaUri.toURL());
+      } catch (IOException | MetaschemaException ex) {
+        throw new JUnitException("Unable to generate schema for Metaschema: " + metaschemaUri, ex);
+      }
+      return metaschema;
+    });
 
-    Path schemaPath;
-    // determine what file to use for the schema
-    try {
-      schemaPath = Files.createTempFile(scenarioGenerationPath, "", "-schema");
-    } catch (IOException ex) {
-      throw new JUnitException("Unable to create schema temp file", ex);
-    }
-
-    IMetaschema metaschema;
-    try {
-      metaschema = LOADER.loadXmlMetaschema(metaschemaUri.toURL());
+    Future<@NotNull Path> generateSchemaFuture = executor.submit(() -> {
+      IMetaschema metaschema = loadMetaschemaFuture.get();
+      Path schemaPath;
+      // determine what file to use for the schema
+      try {
+        schemaPath = Files.createTempFile(scenarioGenerationPath, "", "-schema");
+      } catch (IOException ex) {
+        throw new JUnitException("Unable to create schema temp file", ex);
+      }
       produceSchema(metaschema, schemaPath);
-    } catch (IOException | MetaschemaException ex) {
-      throw new JUnitException("Unable to generate schema for Metaschema: " + metaschemaUri, ex);
-    }
+      return schemaPath;
+    });
+
+    Future<@NotNull DynamicBindingContext> dynamicBindingContextFuture = executor.submit(() -> {
+      IMetaschema metaschema = loadMetaschemaFuture.get();
+      DynamicBindingContext context;
+      try {
+        context = produceDynamicBindingContext(metaschema, scenarioGenerationPath);
+      } catch (Throwable ex) {
+        throw new JUnitException("Unable to generate classes for metaschema: " + metaschemaUri, ex);
+      }
+      return context;
+    });
+
+    Future<@NotNull IContentValidator> contentValidatorFuture = executor.submit(() -> {
+      Path schemaPath = generateSchemaFuture.get();
+      return getContentValidatorSupplier().apply(schemaPath);
+    });
 
     // build a test container for the generate and validate steps
     DynamicTest validateSchema = DynamicTest.dynamicTest(
         "Validate Schema",
-        schemaPath.toUri(),
-        () -> validate(getSchemaValidatorSupplier().get(), schemaPath));
-
-    Path classDir;
-    try {
-      classDir = Files.createTempDirectory(scenarioGenerationPath, "-classes");
-    } catch (IOException ex) {
-      throw new JUnitException("Unable to create schema temp file", ex);
-    }
-
-    DynamicBindingContext context;
-    try {
-      context = produceDynamicBindingContext(metaschema, classDir);
-    } catch (IOException ex) {
-      throw new JUnitException("Unable to generate classes", ex);
-    }
+        () -> {
+          Supplier<IContentValidator> supplier = getSchemaValidatorSupplier();
+          if (supplier != null) {
+            Path schemaPath;
+            try {
+              schemaPath = generateSchemaFuture.get();
+            } catch (ExecutionException ex) {
+              throw new JUnitException("failed to generate schema", ex.getCause());
+            }
+            validate(supplier.get(), schemaPath);
+          }
+        });
 
     Stream<? extends DynamicNode> contentTests;
     {
-      IContentValidator schemaValidator = getContentValidatorSupplier().apply(schemaPath);
-      contentTests = scenario.getContentCaseList().stream()
+      contentTests = scenario.getValidationCaseList().stream()
           .flatMap(contentCase -> {
             DynamicTest test
-                = generateContentCase(contentCase, context, schemaValidator, collectionUri, scenarioGenerationPath);
+                = generateValidationCase(contentCase, dynamicBindingContextFuture, contentValidatorFuture,
+                    collectionUri, scenarioGenerationPath);
             return test == null ? Stream.empty() : Stream.of(test);
           }).sequential();
     }
@@ -219,8 +281,34 @@ public abstract class AbstractTestSuite {
   }
 
   @SuppressWarnings("unchecked")
-  private DynamicTest generateContentCase(@NotNull ContentCase contentCase, @NotNull DynamicBindingContext context,
-      @NotNull IContentValidator schemaValidator, URI collectionUri,
+  protected Path convertContent(URI contentUri, @NotNull Path generationPath, @NotNull DynamicBindingContext context)
+      throws IOException {
+    Object object = context.newBoundLoader().load(contentUri.toURL());
+
+    if (!Files.exists(generationPath)) {
+      Files.createDirectories(generationPath);
+    }
+
+    Path convertedContetPath;
+    try {
+      convertedContetPath = Files.createTempFile(generationPath, "", "-content");
+    } catch (IOException ex) {
+      throw new JUnitException("Unable to create schema temp file", ex);
+    }
+
+    @SuppressWarnings("rawtypes")
+    ISerializer serializer = context.newSerializer(getRequiredContentFormat(), object.getClass());
+    serializer.serialize(object, convertedContetPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
+        StandardOpenOption.TRUNCATE_EXISTING);
+
+    return convertedContetPath;
+  }
+
+  private DynamicTest generateValidationCase(
+      @NotNull ContentCaseType contentCase,
+      @NotNull Future<@NotNull DynamicBindingContext> contextFuture,
+      @NotNull Future<@NotNull IContentValidator> contentValidatorFuture,
+      @NotNull URI collectionUri,
       @NotNull Path generationPath) {
     DynamicTest retval;
 
@@ -229,35 +317,47 @@ public abstract class AbstractTestSuite {
     Format format = contentCase.getSourceFormat();
     if (getRequiredContentFormat().equals(format)) {
       retval = DynamicTest.dynamicTest(
-          String.format("Validate %s=%s: %s", format, contentCase.getExpectedValidationResult(),
+          String.format("Validate %s=%s: %s", format, contentCase.getValidationResult(),
               contentCase.getLocation()),
           contentUri,
           () -> {
-            assertEquals(contentCase.getExpectedValidationResult(), validate(schemaValidator, contentUri.toURL()),
+            IContentValidator contentValidator;
+            try {
+              contentValidator = contentValidatorFuture.get();
+            } catch (ExecutionException ex) {
+              throw new JUnitException("failed to produce the content validator", ex.getCause());
+            }
+
+            assertEquals(contentCase.getValidationResult(), validate(contentValidator, contentUri.toURL()),
                 "validation did not match expectation");
           });
-    } else if (contentCase.getExpectedValidationResult()) {
+    } else if (contentCase.getValidationResult()) {
       retval = DynamicTest.dynamicTest(
-          String.format("Convert and Validate %s=%s: %s", format, contentCase.getExpectedValidationResult(),
+          String.format("Convert and Validate %s=%s: %s", format, contentCase.getValidationResult(),
               contentCase.getLocation()),
           contentUri,
           () -> {
-
-            Object object = context.newBoundLoader().load(contentUri.toURL());
-
-            Path convertedContetPath;
+            DynamicBindingContext context;
             try {
-              convertedContetPath = Files.createTempFile(generationPath, "", "-content");
-            } catch (IOException ex) {
-              throw new JUnitException("Unable to create schema temp file", ex);
+              context = contextFuture.get();
+            } catch (ExecutionException ex) {
+              throw new JUnitException("failed to produce the content validator", ex.getCause());
+            }            Path convertedContetPath;
+            try {
+              convertedContetPath = convertContent(contentUri, generationPath, context);
+            } catch (Exception ex) {
+              throw new JUnitException("failed to convert content: " + contentUri, ex);
             }
-            @SuppressWarnings("rawtypes")
-            ISerializer serializer = context.newSerializer(getRequiredContentFormat(), object.getClass());
-            serializer.serialize(object, convertedContetPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
 
-            assertEquals(contentCase.getExpectedValidationResult(),
-                validate(schemaValidator, convertedContetPath.toUri().toURL()),
-                "validation did not match expectation");
+            IContentValidator contentValidator;
+            try {
+              contentValidator = contentValidatorFuture.get();
+            } catch (ExecutionException ex) {
+              throw new JUnitException("failed to produce the content validator", ex.getCause());
+            }
+            assertEquals(contentCase.getValidationResult(),
+                validate(contentValidator, convertedContetPath.toUri().toURL()),
+                String.format("validation of '%s' did not match expectation", convertedContetPath));
           });
     } else {
       retval = null;
@@ -306,9 +406,9 @@ public abstract class AbstractTestSuite {
       throw new IllegalArgumentException("Unknown level: " + finding.getSeverity().name());
     }
 
-    if (finding.getCause() != null) {
-      logBuilder.withThrowable(finding.getCause());
-    }
+//    if (finding.getCause() != null) {
+//      logBuilder.withThrowable(finding.getCause());
+//    }
 
     if (finding instanceof JsonValidationFinding) {
       JsonValidationFinding jsonFinding = (JsonValidationFinding) finding;

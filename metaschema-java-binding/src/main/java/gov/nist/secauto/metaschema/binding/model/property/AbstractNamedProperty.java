@@ -32,20 +32,30 @@ import com.fasterxml.jackson.core.JsonToken;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
-import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Set;
 
 public abstract class AbstractNamedProperty<CLASS_BINDING extends IClassBinding>
     extends AbstractProperty<CLASS_BINDING>
-    implements IBoundNamedInstance, INamedInstance {
+    implements IBoundNamedInstance {
   private static final Logger LOGGER = LogManager.getLogger(AbstractNamedProperty.class);
 
-  public AbstractNamedProperty(Field field, CLASS_BINDING parentClassBinding) {
+  /**
+   * Construct a new bound instance based on a Java property. The name of the property is bound to the
+   * name of the instance.
+   * 
+   * @param field
+   *          the Java field to bind to
+   * @param parentClassBinding
+   *          the class binding for the field's containing class
+   */
+  public AbstractNamedProperty(@NotNull Field field, @NotNull CLASS_BINDING parentClassBinding) {
     super(field, parentClassBinding);
   }
 
@@ -78,12 +88,17 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends IClassBinding>
   }
 
   @Override
-  public boolean read(Object parentInstance, IJsonParsingContext context) throws IOException {
+  public boolean read(Object objectInstance, IJsonParsingContext context) throws IOException {
+    JsonParser parser = context.getReader();
+    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
+
     boolean handled = isNextProperty(context);
     if (handled) {
-      Object value = readInternal(parentInstance, context);
-      setValue(parentInstance, value);
+      Object value = readInternal(objectInstance, context);
+      setValue(objectInstance, value);
     }
+
+    JsonUtil.assertCurrent(parser, Set.of(JsonToken.FIELD_NAME, JsonToken.END_OBJECT));
     return handled;
   }
 

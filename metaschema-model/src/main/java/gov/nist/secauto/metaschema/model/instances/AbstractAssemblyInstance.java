@@ -59,11 +59,11 @@ public abstract class AbstractAssemblyInstance implements IXmlAssemblyInstance {
 
   @Override
   public String getXmlNamespace() {
-    return getContainingMetaschema().getXmlNamespace().toString();
+    return getContainingMetaschema().getXmlNamespace().toASCIIString();
   }
 
   @Override
   public String getGroupAsXmlNamespace() {
-    return getContainingMetaschema().getXmlNamespace().toString();
+    return getContainingMetaschema().getXmlNamespace().toASCIIString();
   }
 }

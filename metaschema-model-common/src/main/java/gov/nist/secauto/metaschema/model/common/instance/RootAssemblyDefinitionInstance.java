@@ -29,8 +29,12 @@ package gov.nist.secauto.metaschema.model.common.instance;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IRootAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
+
+import javax.xml.namespace.QName;
 
 public class RootAssemblyDefinitionInstance implements IAssemblyInstance {
   @NotNull
@@ -75,9 +79,15 @@ public class RootAssemblyDefinitionInstance implements IAssemblyInstance {
     return null;
   }
 
+  @SuppressWarnings("null")
   @Override
   public String getXmlNamespace() {
-    return getProxy().getXmlNamespace();
+    return getXmlQName().getNamespaceURI();
+  }
+
+  @Override
+  public QName getXmlQName() {
+    return ObjectUtils.requireNonNull(getProxy().getRootXmlQName(), "the XML root QName is expected to be non-null");
   }
 
   @Override

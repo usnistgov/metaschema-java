@@ -33,12 +33,13 @@ import com.fasterxml.jackson.core.JsonToken;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.binding.io.Feature;
+import gov.nist.secauto.metaschema.binding.io.IConfiguration;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -48,14 +49,18 @@ public class DefaultJsonDeserializer<CLASS>
     extends AbstractDeserializer<CLASS> {
   private JsonFactory jsonFactory;
 
-  public DefaultJsonDeserializer(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
+  public DefaultJsonDeserializer(@NotNull IBindingContext bindingContext, @NotNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
+  @SuppressWarnings("null")
+  @NotNull
   protected JsonFactory getJsonFactoryInstance() {
     return JsonFactoryFactory.instance();
   }
 
+  @SuppressWarnings("null")
+  @NotNull
   protected JsonFactory getJsonFactory() {
     synchronized (this) {
       if (jsonFactory == null) {
@@ -65,48 +70,46 @@ public class DefaultJsonDeserializer<CLASS>
     }
   }
 
-  protected void setJsonFactory(JsonFactory jsonFactory) {
+  protected void setJsonFactory(@NotNull JsonFactory jsonFactory) {
     synchronized (this) {
       this.jsonFactory = jsonFactory;
     }
   }
 
-  protected JsonParser newJsonParser(Reader reader) throws IOException {
-    JsonFactory factory = getJsonFactory();
-    JsonParser retval = factory.createParser(reader);
-    return retval;
+  @SuppressWarnings("null")
+  @NotNull
+  protected JsonParser newJsonParser(@NotNull Reader reader) throws IOException {
+    return getJsonFactory().createParser(reader);
   }
 
   @Override
-  protected IBoundXdmNodeItem deserializeToNodeItemInternal(Reader reader, @Nullable URI documentUri)
+  protected IBoundXdmNodeItem deserializeToNodeItemInternal(@NotNull Reader reader, @NotNull URI documentUri)
       throws IOException {
+    IBoundXdmNodeItem retval;
     try (JsonParser parser = newJsonParser(reader)) {
-
       DefaultJsonParsingContext parsingContext = new DefaultJsonParsingContext(parser, new DefaultJsonProblemHandler());
-
       IAssemblyClassBinding classBinding = getClassBinding();
-      CLASS retval;
-      IBoundXdmNodeItem parsedNodeItem;
-      if (classBinding.isRoot() && getConfiguration().isFeatureEnabled(Feature.DESERIALIZE_ROOT)) {
-        RootDefinitionAssemblyProperty property = new RootDefinitionAssemblyProperty(classBinding);
-        // first read the initial START_OBJECT
-        JsonUtil.consumeAndAssert(parser, JsonToken.START_OBJECT);
-        JsonUtil.consumeAndAssert(parser, JsonToken.FIELD_NAME);
+      IConfiguration configuration = getConfiguration();
 
+      if (classBinding.isRoot()
+          && configuration.isFeatureEnabled(Feature.DESERIALIZE_JSON_ROOT_PROPERTY)) {
+        // now parse the root property
         @SuppressWarnings("unchecked")
-        CLASS value = (CLASS) property.read(parsingContext);
-        retval = value;
+        CLASS value = ObjectUtils.requireNonNull((CLASS) classBinding.readRoot(parsingContext));
 
-        // first read the initial START_OBJECT
-        JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
-        parsedNodeItem = IXdmFactory.INSTANCE.newDocumentNodeItem(property, retval, documentUri);
+//        // we should be at the end object
+//        JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
+//
+//        // advance past the end object
+//        JsonToken end = parser.nextToken();
+
+        retval = IXdmFactory.INSTANCE.newDocumentNodeItem(classBinding, value, documentUri);
       } else {
         @SuppressWarnings("unchecked")
-        CLASS value = (CLASS) classBinding.readItem(null, parsingContext);
-        retval = value;
-        parsedNodeItem = IXdmFactory.INSTANCE.newRelativeAssemblyNodeItem(classBinding, retval, documentUri);
+        CLASS value = ObjectUtils.requireNonNull((CLASS) classBinding.readObject(parsingContext));
+        retval = IXdmFactory.INSTANCE.newRelativeAssemblyNodeItem(classBinding, value, documentUri);
       }
-      return parsedNodeItem;
+      return retval;
     }
   }
 

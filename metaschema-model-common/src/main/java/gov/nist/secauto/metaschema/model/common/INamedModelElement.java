@@ -26,13 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.xml.namespace.QName;
 
 /**
  * A marker interface for Metaschema constructs that can be members of a Metaschema definition's
@@ -40,23 +39,32 @@ import javax.xml.namespace.QName;
  */
 public interface INamedModelElement extends IModelElement {
   /**
-   * Get the XML qualified name to use in XML.
+   * The formal display name for a definition.
    * 
-   * @return the XML qualified name
+   * @return the formal name
    */
-  @Nullable
-  default QName getXmlQName() {
-    String namespace = getXmlNamespace();
+  String getFormalName();
 
-    @NotNull
-    QName retval;
-    if (namespace != null) {
-      retval = new QName(namespace, getEffectiveName());
-    } else {
-      retval = new QName(getEffectiveName());
-    }
-    return retval;
-  }
+  /**
+   * Get the text that describes the basic use of the definition.
+   * 
+   * @return a line of markup text
+   */
+  MarkupLine getDescription();
+
+//  @NotNull
+//  default QName getXmlQName() {
+//    String namespace = getXmlNamespace();
+//
+//    @NotNull
+//    QName retval;
+//    if (namespace != null) {
+//      retval = new QName(namespace, getEffectiveName());
+//    } else {
+//      retval = new QName(getEffectiveName());
+//    }
+//    return retval;
+//  }
 
   /**
    * Get the name used for the associated property in JSON/YAML.
@@ -104,14 +112,6 @@ public interface INamedModelElement extends IModelElement {
    */
   @Nullable
   String getUseName();
-
-  /**
-   * Retrieve the XML namespace for this instance.
-   * 
-   * @return the XML namespace or {@code null} if no namespace is defined
-   */
-  @Nullable
-  String getXmlNamespace();
 
   /**
    * Evaluate the Metapath expression to retrieve the resulting Metaschema instances evaluated by the

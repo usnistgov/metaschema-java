@@ -27,10 +27,13 @@
 package gov.nist.secauto.metaschema.model.common.instance;
 
 import gov.nist.secauto.metaschema.model.common.INamedModelElement;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 
 import org.jetbrains.annotations.NotNull;
+
+import javax.xml.namespace.QName;
 
 /**
  * This marker interface indicates that the instance has a flag, field, or assembly name associated
@@ -38,6 +41,18 @@ import org.jetbrains.annotations.NotNull;
  *
  */
 public interface INamedInstance extends IInstance, INamedModelElement {
+  @Override
+  default String getFormalName() {
+    // TODO: implement as an override of the definition
+    return null;
+  }
+
+  @Override
+  default MarkupLine getDescription() {
+    // TODO: implement as an override of the definition
+    return null;
+  }
+
   /**
    * Retrieve the definition of this instance.
    * 
@@ -45,6 +60,24 @@ public interface INamedInstance extends IInstance, INamedModelElement {
    */
   @NotNull
   INamedDefinition getDefinition();
+
+  /**
+   * Get the XML qualified name to use in XML.
+   * 
+   * @return the XML qualified name, or {@code null} if there isn't one
+   */
+  default QName getXmlQName() {
+    return new QName(getXmlNamespace(), getEffectiveName());
+  }
+
+  /**
+   * Retrieve the XML namespace for this instance.
+   * 
+   * @return the XML namespace or {@code null} if no namespace is defined
+   */
+  default String getXmlNamespace() {
+    return getContainingMetaschema().getXmlNamespace().toASCIIString();
+  }
 
   /**
    * Generates a "coordinate" string for the provided information element instance.

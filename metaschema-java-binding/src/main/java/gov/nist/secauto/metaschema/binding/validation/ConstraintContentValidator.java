@@ -31,7 +31,9 @@ import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmDocumentNodeIte
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.model.common.constraint.AbstractFindingCollectingConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.validation.AbstractContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationFinding;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
@@ -52,20 +54,21 @@ public class ConstraintContentValidator
   private final IBindingContext bindingContext;
 
   public ConstraintContentValidator(@NotNull IBindingContext bindingContext) {
-    this.bindingContext = Objects.requireNonNull(bindingContext, "bindingContext");
+    this.bindingContext = ObjectUtils.requireNonNull(bindingContext, "bindingContext");
   }
 
+  @NotNull
   public IBindingContext getBindingContext() {
     return bindingContext;
   }
 
   @NotNull
-  public IValidationResult validate(@NotNull IBoundXdmNodeItem nodeItem) throws IOException {
+  public IValidationResult validate(@NotNull IBoundXdmNodeItem nodeItem) {
     BindingConstraintValidationHandler handler = new BindingConstraintValidationHandler();
 
     getBindingContext().validate(nodeItem, nodeItem.getBaseUri(), true, handler);
 
-    return null;
+    return handler;
   }
 
   @Override
@@ -75,16 +78,19 @@ public class ConstraintContentValidator
   }
 
   public static class BindingConstraintValidationHandler
-      extends AbstractFindingCollectingConstraintValidationHandler {
+      extends AbstractFindingCollectingConstraintValidationHandler implements IValidationResult {
     @NotNull
     private final List<ConstraintValidationFinding> findings = new LinkedList<>();
-    private IConstraint.Level highestLevel = IConstraint.Level.INFORMATIONAL;
+    @NotNull
+    private Level highestLevel = IConstraint.Level.INFORMATIONAL;
 
+    @Override
     public List<ConstraintValidationFinding> getFindings() {
-      return Collections.unmodifiableList(findings);
+      return ObjectUtils.notNull(Collections.unmodifiableList(findings));
     }
 
-    public IConstraint.Level getHighestLevel() {
+    @Override
+    public @NotNull Level getHighestSeverity() {
       return highestLevel;
     }
 
@@ -101,6 +107,13 @@ public class ConstraintContentValidator
         highestLevel = constraint.getLevel();
       }
     }
+
+    @Override
+    public boolean isPassing() {
+      // TODO Auto-generated method stub
+      return false;
+    }
+
   }
 
   public static class ConstraintValidationFinding implements IValidationFinding {

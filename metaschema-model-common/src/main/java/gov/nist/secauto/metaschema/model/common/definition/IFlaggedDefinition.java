@@ -44,6 +44,10 @@ import java.util.Map;
  * value (for a field) or complex model contents (for an assembly).
  */
 public interface IFlaggedDefinition extends IDefinition {
+  /**
+   * Identifies if the field has flags or not.
+   * @return {@code true} if the field has not flags, or false otherwise
+   */
   default boolean isSimple() {
     return getFlagInstances().isEmpty();
   }
@@ -76,6 +80,7 @@ public interface IFlaggedDefinition extends IDefinition {
    * 
    * @return the flags
    */
+  @SuppressWarnings("null")
   @NotNull
   default Collection<@NotNull ? extends IFlagInstance> getFlagInstances() {
     return getFlagInstanceMap().values();

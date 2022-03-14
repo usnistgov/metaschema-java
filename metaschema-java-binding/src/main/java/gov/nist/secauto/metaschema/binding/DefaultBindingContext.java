@@ -51,6 +51,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidation
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -82,15 +83,17 @@ import javax.xml.namespace.QName;
 public class DefaultBindingContext implements IBindingContext {
   private static DefaultBindingContext singleton;
 
-  private final Map<Class<?>, IClassBinding> classBindingsByClass // NOPMD synchronization is handled in the methods
-                                                                  // accessing this field
-      = new HashMap<>();
-  private final Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> javaTypeAdapterMap // NOPMD
-                                                                                                  // synchronization is
-                                                                                                  // handled in the
-                                                                                                  // methods accessing
-                                                                                                  // this field
-      = new HashMap<>();
+  @NotNull
+  private final Map<
+      Class<?>,
+      IClassBinding> classBindingsByClass
+          = new HashMap<>(); // NOPMD synchronization is handled in the methods accessing this field
+  @NotNull
+  private final Map<
+      Class<? extends IJavaTypeAdapter<?>>,
+      IJavaTypeAdapter<?>> javaTypeAdapterMap
+          = new HashMap<>(); // NOPMD synchronization is handled in the methods accessing this field
+  @NotNull
   private final List<IBindingMatcher> bindingMatchers = new LinkedList<>();
 
   public static DefaultBindingContext instance() {
@@ -125,9 +128,7 @@ public class DefaultBindingContext implements IBindingContext {
                   + " since it is missing a '%s' or '%s' annotation.",
               clazz.getName(), MetaschemaAssembly.class.getName(), MetaschemaField.class.getName()));
         }
-        if (retval != null) {
-          classBindingsByClass.put(clazz, retval);
-        }
+        classBindingsByClass.put(clazz, retval);
       }
     }
     return retval;
@@ -223,9 +224,10 @@ public class DefaultBindingContext implements IBindingContext {
     }
   }
 
-  protected List<? extends IBindingMatcher> getBindingMatchers() {
+  @NotNull
+  protected List<@NotNull ? extends IBindingMatcher> getBindingMatchers() {
     synchronized (this) {
-      return Collections.unmodifiableList(bindingMatchers);
+      return CollectionUtil.unmodifiableList(bindingMatchers);
     }
   }
 

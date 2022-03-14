@@ -37,82 +37,68 @@ import gov.nist.secauto.metaschema.binding.model.property.RelativeAssemblyDefini
 import gov.nist.secauto.metaschema.binding.model.property.RelativeFieldDefinitionFieldProperty;
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.net.URI;
 
 public class DefaultXdmFactory implements IXdmFactory {
 
   @Override
-  public IBoundXdmAssemblyNodeItem newAssemblyNodeItem(@NotNull IBoundAssemblyInstance instance, @NotNull Object value,
-      int position,
-      @NotNull IBoundXdmAssemblyNodeItem parentNodeItem) {
+  public IBoundXdmAssemblyNodeItem newAssemblyNodeItem(IBoundAssemblyInstance instance, Object value, int position,
+      IBoundXdmAssemblyNodeItem parentNodeItem) {
     return new IntermediateXdmAssemblyNodeItemImpl(instance, value, position, parentNodeItem);
   }
 
   @Override
-  public IBoundXdmAssemblyNodeItem newAssemblyNodeItem(@NotNull IBoundAssemblyInstance instance, @NotNull Object value,
-      int position,
-      @Nullable URI baseUri) {
+  public IBoundXdmAssemblyNodeItem newAssemblyNodeItem(IBoundAssemblyInstance instance, Object value, int position,
+      URI baseUri) {
     return new OrphanedXdmAssemblyNodeItemImpl(instance, value, position, baseUri);
   }
 
   @Override
-  public IBoundXdmFieldNodeItem newFieldNodeItem(@NotNull IBoundFieldInstance instance, @NotNull Object value,
-      int position,
-      @NotNull IBoundXdmAssemblyNodeItem parentNodeItem) {
+  public IBoundXdmFieldNodeItem newFieldNodeItem(IBoundFieldInstance instance, Object value, int position,
+      IBoundXdmAssemblyNodeItem parentNodeItem) {
     return new IntermediateXdmFieldNodeItemImpl(instance, value, position, parentNodeItem);
   }
 
   @Override
-  public IBoundXdmFieldNodeItem newFieldNodeItem(@NotNull IBoundFieldInstance instance, @NotNull Object value,
-      int position,
-      @Nullable URI baseUri) {
+  public IBoundXdmFieldNodeItem newFieldNodeItem(IBoundFieldInstance instance, Object value, int position,
+      URI baseUri) {
     return new OrphanedXdmFieldNodeItemImpl(instance, value, position, baseUri);
   }
 
   @Override
-  public IBoundXdmFlagNodeItem newFlagNodeItem(@NotNull IBoundFlagInstance instance, @NotNull Object value,
+  public IBoundXdmFlagNodeItem newFlagNodeItem(IBoundFlagInstance instance, Object value,
       IBoundXdmModelNodeItem parentNodeItem) {
     return new XdmFlagNodeItemImpl(instance, value, parentNodeItem);
   }
 
   @Override
-  public IBoundXdmDocumentNodeItem newDocumentNodeItem(@NotNull RootDefinitionAssemblyProperty instance,
-      @NotNull Object value, @NotNull URI documentUri) {
-    return new XdmDocumentNodeItemImpl(instance, value, documentUri);
+  public IBoundXdmDocumentNodeItem newDocumentNodeItem(Object value, IBindingContext bindingContext, URI documentUri) {
+    IAssemblyClassBinding classBinding = (IAssemblyClassBinding) bindingContext.getClassBinding(value.getClass());
+    if (classBinding == null) {
+      throw new IllegalStateException("Could not find class binding for class: " + value.getClass());
+    }
+    return newDocumentNodeItem(classBinding, value, documentUri);
   }
 
   @Override
-  public IBoundXdmDocumentNodeItem newDocumentNodeItem(@NotNull Object value, @NotNull IBindingContext bindingContext,
-      @NotNull URI documentUri) {
-    return newDocumentNodeItem((IAssemblyClassBinding) bindingContext.getClassBinding(value.getClass()), value,
-        documentUri);
+  public IBoundXdmDocumentNodeItem newDocumentNodeItem(IAssemblyClassBinding definition, Object value,
+      URI documentUri) {
+    return new XdmDocumentNodeItemImpl(new RootDefinitionAssemblyProperty(definition), value, documentUri);
   }
 
   @Override
-  public IBoundXdmDocumentNodeItem newDocumentNodeItem(@NotNull IAssemblyClassBinding definition, @NotNull Object value,
-      @NotNull URI documentUri) {
-    return newDocumentNodeItem(new RootDefinitionAssemblyProperty(definition), value, documentUri);
-  }
-
-  @Override
-  public IBoundXdmAssemblyNodeItem newRelativeAssemblyNodeItem(@NotNull IAssemblyClassBinding definition,
-      @NotNull Object value,
-      @Nullable URI baseUri) {
+  public IBoundXdmAssemblyNodeItem newRelativeAssemblyNodeItem(IAssemblyClassBinding definition, Object value,
+      URI baseUri) {
     return newAssemblyNodeItem(new RelativeAssemblyDefinitionAssemblyProperty(definition), value, 1, baseUri);
   }
 
   @Override
-  public IBoundXdmFieldNodeItem newRelativeFieldNodeItem(@NotNull IFieldClassBinding definition, @NotNull Object value,
-      @Nullable URI baseUri) {
+  public IBoundXdmFieldNodeItem newRelativeFieldNodeItem(IFieldClassBinding definition, Object value, URI baseUri) {
     return newFieldNodeItem(new RelativeFieldDefinitionFieldProperty(definition), value, 1, baseUri);
   }
 
   @Override
-  public IBoundXdmNodeItem newNodeItem(@NotNull IClassBinding definition, @NotNull Object value,
-      @Nullable URI baseUri, boolean rootNode) {
+  public IBoundXdmNodeItem newNodeItem(IClassBinding definition, Object value, URI baseUri, boolean rootNode) {
     IBoundXdmNodeItem retval;
     if (definition instanceof IAssemblyClassBinding) {
       if (rootNode) {

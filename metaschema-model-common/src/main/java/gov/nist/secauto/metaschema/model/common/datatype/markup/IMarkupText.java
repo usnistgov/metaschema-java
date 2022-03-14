@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.model.common.datatype.markup;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 
+import org.codehaus.stax2.XMLStreamWriter2;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.OutputStream;
@@ -42,8 +43,9 @@ public interface IMarkupText {
   @NotNull
   Document getDocument();
 
-  @NotNull
-  void toHtmlAsStream(OutputStream os, String namespace, String prefix) throws XMLStreamException;
+  void toHtmlAsStream(@NotNull XMLStreamWriter2 xmlStreamWriter, String namespace) throws XMLStreamException;
+
+  void toHtmlAsStream(@NotNull OutputStream os, String namespace, String prefix) throws XMLStreamException;
 
   @NotNull
   String toHtml();

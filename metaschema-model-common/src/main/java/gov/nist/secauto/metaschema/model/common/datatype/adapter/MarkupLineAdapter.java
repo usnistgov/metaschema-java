@@ -61,7 +61,6 @@ public class MarkupLineAdapter
     return "markup-line";
   }
 
-  @SuppressWarnings("null")
   @Override
   public MarkupLine parse(String value) {
     return MarkupLine.fromMarkdown(value);

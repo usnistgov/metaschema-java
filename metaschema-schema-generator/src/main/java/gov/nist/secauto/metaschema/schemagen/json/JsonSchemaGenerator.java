@@ -45,13 +45,14 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class JsonSchemaGenerator implements ISchemaGenerator {
+  @NotNull
   private final JsonFactory jsonFactory;
 
   public JsonSchemaGenerator() {
     this(new JsonFactory());
   }
 
-  public JsonSchemaGenerator(JsonFactory jsonFactory) {
+  public JsonSchemaGenerator(@NotNull JsonFactory jsonFactory) {
     this.jsonFactory = jsonFactory;
   }
 
@@ -86,7 +87,7 @@ public class JsonSchemaGenerator implements ISchemaGenerator {
     Collection<@NotNull ? extends INamedDefinition> definitions
         = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
 
-    DatatypeManager datatypeManager = new DatatypeManager();
+    JsonDatatypeManager datatypeManager = new JsonDatatypeManager();
 
     generateDefinitions(definitions, datatypeManager, jsonGenerator);
 
@@ -109,7 +110,7 @@ public class JsonSchemaGenerator implements ISchemaGenerator {
 
   protected void generateDefinitions(
       @NotNull Collection<@NotNull ? extends INamedDefinition> definitions,
-      @NotNull DatatypeManager datatypeManager,
+      @NotNull JsonDatatypeManager datatypeManager,
       @NotNull JsonGenerator jsonGenerator) throws IOException {
     if (!definitions.isEmpty()) {
       jsonGenerator.writeFieldName("definitions");
@@ -128,7 +129,7 @@ public class JsonSchemaGenerator implements ISchemaGenerator {
 
   protected void generateRootProperties(
       @NotNull Set<IAssemblyDefinition> rootAssemblies,
-      @NotNull DatatypeManager datatypeManager,
+      @NotNull JsonDatatypeManager datatypeManager,
       @NotNull JsonGenerator jsonGenerator) throws IOException {
     // generate root properties
     jsonGenerator.writeFieldName("properties");

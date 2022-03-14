@@ -53,7 +53,6 @@ public interface IModelInstance extends IInstance {
    * @return the groupAs QName or {@code null} if no name is configured, such as when
    *         {@link #getMaxOccurs()} = 1.
    */
-  @Nullable
   default QName getXmlGroupAsQName() {
     QName retval = null;
     if (XmlGroupAsBehavior.GROUPED.equals(getXmlGroupAsBehavior())) {

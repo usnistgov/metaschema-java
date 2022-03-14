@@ -79,7 +79,7 @@ public class JsonDefinitionGenerator {
   }
 
   public static void generateDefinition(@NotNull INamedDefinition definition,
-      @NotNull DatatypeManager datatypeManager,
+      @NotNull JsonDatatypeManager datatypeManager,
       @NotNull JsonGenerator jsonGenerator)
       throws IOException {
     String name = datatypeManager.getJsonDefinitionNameForDefinition(definition).toString();
@@ -110,13 +110,13 @@ public class JsonDefinitionGenerator {
 
   public static void generateAssemblyDefinition(
       @NotNull IAssemblyDefinition definition,
-      @NotNull DatatypeManager datatypeManager,
+      @NotNull JsonDatatypeManager datatypeManager,
       @NotNull JsonGenerator jsonGenerator) throws IOException {
     jsonGenerator.writeStringField("type", "object");
 
     // determine the flag instances to generate
     IFlagInstance jsonKeyFlag = definition.getJsonKeyFlagInstance();
-    Collection<? extends IFlagInstance> flags
+    Collection<@NotNull ? extends IFlagInstance> flags
         = FlagInstanceFilter.filterFlags(definition.getFlagInstances(), jsonKeyFlag);
 
     JsonPropertyGenerator.InstanceProperties properties = new JsonPropertyGenerator.InstanceProperties();
@@ -143,9 +143,9 @@ public class JsonDefinitionGenerator {
 
   public static void generateFieldDefinition(
       @NotNull IFieldDefinition definition,
-      @NotNull DatatypeManager datatypeManager,
+      @NotNull JsonDatatypeManager datatypeManager,
       @NotNull JsonGenerator jsonGenerator) throws IOException {
-    Collection<? extends IFlagInstance> flags = definition.getFlagInstances();
+    Collection<@NotNull ? extends IFlagInstance> flags = definition.getFlagInstances();
     IFlagInstance jsonKeyFlag = definition.getJsonKeyFlagInstance();
     if (flags.isEmpty() || (jsonKeyFlag != null && flags.size() == 1)) {
       // field is a simple value if there are no flags or if the only flag is a JSON key
@@ -199,7 +199,7 @@ public class JsonDefinitionGenerator {
 
   public static void generateFlagDefinition(
       @NotNull IFlagDefinition definition,
-      @NotNull DatatypeManager datatypeManager,
+      @NotNull JsonDatatypeManager datatypeManager,
       @NotNull JsonGenerator jsonGenerator)
       throws IOException {
     jsonGenerator.writeStringField("$ref",

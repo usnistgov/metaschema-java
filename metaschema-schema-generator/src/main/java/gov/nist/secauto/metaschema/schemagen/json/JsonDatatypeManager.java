@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
+import gov.nist.secauto.metaschema.schemagen.AbstractDatatypeManager;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -49,37 +50,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class DatatypeManager {
+public class JsonDatatypeManager extends AbstractDatatypeManager {
   private static final JsonNode jsonDatatypes;
-  private static final Map<String, String> datatypeTranslationMap = new LinkedHashMap<>();
   private static final Map<String, String> jsonDatatypeDependencyMap = new HashMap<>();
   private static final Pattern DEFINITION_REF_PATTERN = Pattern.compile("^#/definitions/(.+)$");
 
   static {
-    datatypeTranslationMap.put("base64", "Base64Datatype");
-    datatypeTranslationMap.put("boolean", "BooleanDatatype");
-    datatypeTranslationMap.put("date", "DateDatatype");
-    datatypeTranslationMap.put("date-with-timezone", "DateWithTimezoneDatatype");
-    datatypeTranslationMap.put("date-time", "DateTimeDatatype");
-    datatypeTranslationMap.put("date-time-with-timezone", "DateTimeWithTimezoneDatatype");
-    datatypeTranslationMap.put("day-time-duration", "DayTimeDurationDatatype");
-    datatypeTranslationMap.put("decimal", "DecimalDatatype");
-    datatypeTranslationMap.put("email-address", "EmailAddressDatatype");
-    datatypeTranslationMap.put("hostname", "HostnameDatatype");
-    datatypeTranslationMap.put("integer", "IntegerDatatype");
-    datatypeTranslationMap.put("ip-v4-address", "IPV4AddressDatatype");
-    datatypeTranslationMap.put("ip-v6-address", "IPV6AddressDatatype");
-    datatypeTranslationMap.put("markup-line", "MarkupLineDatatype");
-    datatypeTranslationMap.put("markup-multiline", "MarkupMultilineDatatype");
-    datatypeTranslationMap.put("non-negative-integer", "NonNegativeIntegerDatatype");
-    datatypeTranslationMap.put("positive-integer", "PositiveIntegerDatatype");
-    datatypeTranslationMap.put("string", "StringDatatype");
-    datatypeTranslationMap.put("token", "TokenDatatype");
-    datatypeTranslationMap.put("uri", "URIDatatype");
-    datatypeTranslationMap.put("uri-reference", "URIReferenceDatatype");
-    datatypeTranslationMap.put("uuid", "UUIDDatatype");
-    datatypeTranslationMap.put("year-month-duration", "YearMonthDurationDatatype");
-
     try (InputStream is
         = MetaschemaLoader.class.getClassLoader().getResourceAsStream("schema/json/metaschema-datatypes.json")) {
       ObjectMapper objectMapper = new ObjectMapper();
@@ -89,7 +65,7 @@ public class DatatypeManager {
     }
 
     // analyze datatypes for dependencies
-    for (String ref : datatypeTranslationMap.values()) {
+    for (String ref : getDatatypeTranslationMap().values()) {
       JsonNode refNode = jsonDatatypes.at("/definitions/" + ref + "/$ref");
       if (!refNode.isMissingNode()) {
         Matcher matcher = DEFINITION_REF_PATTERN.matcher(refNode.asText());
@@ -157,19 +133,7 @@ public class DatatypeManager {
   protected CharSequence getJsonDefinitionRefForDatatype(@NotNull IJavaTypeAdapter<?> datatype) {
     return new StringBuilder()
         .append("#/definitions/")
-        .append(getJsonDefinitionNameForDatatype(datatype));
-  }
-
-  @NotNull
-  protected String getJsonDefinitionNameForDatatype(@NotNull IJavaTypeAdapter<?> datatype) {
-    synchronized (this) {
-      String name = dataTypeToDefinitionReferenceMap.get(datatype);
-      if (name == null) {
-        name = datatypeTranslationMap.get(datatype.getName());
-        dataTypeToDefinitionReferenceMap.put(datatype, name);
-      }
-      return name;
-    }
+        .append(getTypeForDatatype(datatype));
   }
 
   @NotNull
@@ -190,17 +154,4 @@ public class DatatypeManager {
     return retval;
   }
 
-  @NotNull
-  protected static CharSequence toCamelCase(String text) {
-    StringBuilder builder = new StringBuilder();
-    for (String segment : text.split("\\p{Punct}")) {
-      if (segment.length() > 0) {
-        builder.append(segment.substring(0, 1).toUpperCase());
-      }
-      if (segment.length() > 1) {
-        builder.append(segment.substring(1).toLowerCase());
-      }
-    }
-    return builder;
-  }
 }

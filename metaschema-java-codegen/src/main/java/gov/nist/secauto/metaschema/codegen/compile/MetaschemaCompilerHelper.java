@@ -91,9 +91,9 @@ public class MetaschemaCompilerHelper {
     return production;
   }
 
-  public static ClassLoader getClassLoader(@NotNull Path classDir) {
+  public static ClassLoader getClassLoader(@NotNull Path classDir, @NotNull ClassLoader parent) {
     try {
-      return new URLClassLoader(new URL[] { classDir.toUri().toURL() });
+      return new URLClassLoader(new URL[] { classDir.toUri().toURL() }, parent);
     } catch (MalformedURLException ex) {
       throw new IllegalStateException("unable to configure class loader", ex);
     }
@@ -106,6 +106,8 @@ public class MetaschemaCompilerHelper {
       List<JavaFileObject> compilationUnits,
       Path classDir) {
     List<String> options = new LinkedList<String>();
+//    options.add("-verbose");
+//    options.add("-g");
     options.add("-d");
     options.add(classDir.toString());
     options.add("-classpath");

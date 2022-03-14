@@ -57,7 +57,7 @@ public class DynamicBindingContext
           try {
             @SuppressWarnings("unchecked")
             Class<IAssemblyClassBinding> clazz = (Class<IAssemblyClassBinding>) classLoader
-                .loadClass(definitionProduction.getGeneratedClass().getClassName().canonicalName());
+                .loadClass(definitionProduction.getGeneratedClass().getClassName().reflectionName());
             return new DynamicBindingMatcher(definition, clazz);
           } catch (ClassNotFoundException ex) {
             throw new IllegalStateException(ex);

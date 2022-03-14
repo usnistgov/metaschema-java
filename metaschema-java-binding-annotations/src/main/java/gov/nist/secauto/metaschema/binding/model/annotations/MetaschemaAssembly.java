@@ -68,13 +68,6 @@ public @interface MetaschemaAssembly {
   String rootNamespace() default "##default";
 
   /**
-   * A list of other properties at the root level to ignore in JSON data.
-   * 
-   * @return an array of JSON field names
-   */
-  String[] ignoreRootJsonProperties() default {};
-
-  /**
    * Get the allowed value constraints for this assembly.
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined

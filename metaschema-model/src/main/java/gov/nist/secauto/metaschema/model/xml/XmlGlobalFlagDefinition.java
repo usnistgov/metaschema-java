@@ -162,11 +162,6 @@ public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
   }
 
   @Override
-  public String getXmlNamespace() {
-    return getContainingMetaschema().getXmlNamespace().toString();
-  }
-
-  @Override
   public String getFormalName() {
     return getXmlFlag().isSetFormalName() ? getXmlFlag().getFormalName() : null;
   }

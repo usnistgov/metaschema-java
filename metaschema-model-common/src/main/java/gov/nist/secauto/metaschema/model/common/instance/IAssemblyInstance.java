@@ -37,7 +37,23 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.Objects;
 
+import javax.xml.namespace.QName;
+
 public interface IAssemblyInstance extends INamedModelInstance, IAssembly {
+
+  @SuppressWarnings("null")
+  @NotNull
+  @Override
+  default String getXmlNamespace() {
+    return INamedModelInstance.super.getXmlNamespace();
+  }
+
+  @SuppressWarnings("null")
+  @NotNull
+  @Override
+  default QName getXmlQName() {
+    return INamedModelInstance.super.getXmlQName();
+  }
 
   @Override
   default String getJsonName() {

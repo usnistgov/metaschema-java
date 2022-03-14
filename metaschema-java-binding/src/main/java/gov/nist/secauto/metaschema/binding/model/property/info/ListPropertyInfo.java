@@ -38,6 +38,8 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -53,8 +55,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 public class ListPropertyInfo
-    extends AbstractModelPropertyInfo<ParameterizedType>
-    implements IModelPropertyInfo {
+    extends AbstractModelPropertyInfo<ParameterizedType> {
 
   public ListPropertyInfo(IBoundNamedModelInstance property) {
     super(property);
@@ -70,7 +71,7 @@ public class ListPropertyInfo
   public Class<?> getItemType() {
     ParameterizedType actualType = getType();
     // this is a List so there is only a single generic type
-    return (Class<?>) actualType.getActualTypeArguments()[0];
+    return ObjectUtils.notNull((Class<?>) actualType.getActualTypeArguments()[0]);
   }
 
   @Override
@@ -84,9 +85,10 @@ public class ListPropertyInfo
     return getItemsFromValue(value);
   }
 
+  @SuppressWarnings("null")
   @Override
-  public List<?> getItemsFromValue(Object value) {
-    return value == null ? List.of() : (List<?>) value;
+  public List<@NotNull ? extends Object> getItemsFromValue(Object value) {
+    return value == null ? CollectionUtil.emptyList() : (List<?>) value;
   }
 
   @Override
@@ -122,54 +124,51 @@ public class ListPropertyInfo
   @Override
   public void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
       throws IOException {
-    JsonParser parser = context.getReader();
+    JsonParser parser = context.getReader(); // NOPMD - intentional
 
     boolean parseArray = true;
     if (JsonGroupAsBehavior.SINGLETON_OR_LIST.equals(getProperty().getJsonGroupAsBehavior())
         && !JsonToken.START_ARRAY.equals(parser.currentToken())) {
-      // this is a singleton
-      parseArray = false;
-    }
+//      boolean isObject = JsonToken.START_OBJECT.equals(parser.currentToken());
+//
+//      if (isObject) {
+//        // read the object's START_OBJECT
+//        JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+//      }
+      
+      // this is a singleton, just parse the value as a single item
+      IBoundNamedModelInstance property = getProperty();
+      List<@NotNull Object> values = property.readItem(parentInstance, false, context);
+      collector.addAll(values);
 
-    if (parseArray) {
-      // advance past the array
+//      if (isObject) {
+//        // read the object's END_OBJECT
+//        JsonUtil.assertAndAdvance(context.getReader(), JsonToken.END_OBJECT);
+//      }
+    } else {
+      // this is an array, we need to parse the array wrapper then each item
       JsonUtil.assertAndAdvance(parser, JsonToken.START_ARRAY);
 
       // parse items
       while (!JsonToken.END_ARRAY.equals(parser.currentToken())) {
+//
+//        boolean isObject = JsonToken.START_OBJECT.equals(parser.currentToken());
+//        if (isObject) {
+//          // read the object's START_OBJECT
+//          JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+//        }
 
-        boolean isObject = JsonToken.START_OBJECT.equals(parser.currentToken());
-        if (isObject) {
-          // read the object's START_OBJECT
-          JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-        }
-
-        List<Object> values = getProperty().readItem(parentInstance, context);
+        List<@NotNull Object> values = getProperty().readItem(parentInstance, false, context);
         collector.addAll(values);
 
-        if (isObject) {
-          // read the object's END_OBJECT
-          JsonUtil.assertAndAdvance(context.getReader(), JsonToken.END_OBJECT);
-        }
+//        if (isObject) {
+//          // read the object's END_OBJECT
+//          JsonUtil.assertAndAdvance(context.getReader(), JsonToken.END_OBJECT);
+//        }
       }
 
-      // advance past the END_ARRAY
+      // this is the other side of the array wrapper, advance past it
       JsonUtil.assertAndAdvance(parser, JsonToken.END_ARRAY);
-    } else {
-      // just parse the object
-      boolean isObject = JsonToken.START_OBJECT.equals(parser.currentToken());
-      if (isObject) {
-        // read the object's START_OBJECT
-        JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-      }
-
-      List<Object> values = getProperty().readItem(parentInstance, context);
-      collector.addAll(values);
-
-      if (isObject) {
-        // read the object's END_OBJECT
-        JsonUtil.assertAndAdvance(context.getReader(), JsonToken.END_OBJECT);
-      }
     }
   }
 
@@ -177,7 +176,7 @@ public class ListPropertyInfo
   public boolean writeValue(Object parentInstance, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     IBoundNamedModelInstance property = getProperty();
-    List<? extends Object> items = getItemsFromParentInstance(parentInstance);
+    List<@NotNull ? extends Object> items = getItemsFromParentInstance(parentInstance);
     for (Object item : items) {
       property.writeItem(item, parentName, context);
     }
@@ -186,9 +185,9 @@ public class ListPropertyInfo
 
   @Override
   public void writeValue(Object parentInstance, IJsonWritingContext context) throws IOException {
-    List<? extends Object> items = getItemsFromParentInstance(parentInstance);
+    List<@NotNull ? extends Object> items = getItemsFromParentInstance(parentInstance);
 
-    JsonGenerator writer = context.getWriter();
+    JsonGenerator writer = context.getWriter(); // NOPMD - intentional
 
     boolean writeArray = false;
     if (JsonGroupAsBehavior.LIST.equals(getProperty().getJsonGroupAsBehavior())

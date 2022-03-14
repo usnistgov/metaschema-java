@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
+import com.fasterxml.jackson.core.JsonToken;
+
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
@@ -69,8 +71,9 @@ public interface IBoundInstance extends IInstance {
   /**
    * Get the {@link IClassBinding} for the Java class within which this property exists.
    * 
-   * @return the contaning class's binding
+   * @return the containing class's binding
    */
+  @NotNull
   IClassBinding getParentClassBinding();
 
   /**
@@ -78,6 +81,7 @@ public interface IBoundInstance extends IInstance {
    * 
    * @return the item type
    */
+  @NotNull
   Type getType();
 
   /**
@@ -85,6 +89,7 @@ public interface IBoundInstance extends IInstance {
    * 
    * @return the raw type of the property
    */
+  @NotNull
   Class<?> getRawType();
 
   /**
@@ -92,6 +97,7 @@ public interface IBoundInstance extends IInstance {
    * 
    * @return the raw type of the bound object
    */
+  @NotNull
   Class<?> getItemType();
 
   /**
@@ -99,6 +105,7 @@ public interface IBoundInstance extends IInstance {
    * 
    * @return the Java field
    */
+  @NotNull
   Field getField();
 
   /**
@@ -106,6 +113,7 @@ public interface IBoundInstance extends IInstance {
    * 
    * @return the name in the pattern "somePropertyName"
    */
+  @NotNull
   String getJavaPropertyName();
 
   /**
@@ -118,7 +126,7 @@ public interface IBoundInstance extends IInstance {
    *          a value, which may be a simple {@link Type} or a {@link ParameterizedType} for a
    *          collection
    */
-  void setValue(Object parentInstance, Object value);
+  void setValue(@NotNull Object parentInstance, Object value);
 
   /**
    * Get the current value from the provided object. The provided object must be of the item's type
@@ -128,15 +136,20 @@ public interface IBoundInstance extends IInstance {
    *          the object
    * @return the value if set, or {@code null} otherwise
    */
-  Object getValue(Object parentInstance);
+  Object getValue(@NotNull Object parentInstance);
 
+  @NotNull
   IPropertyCollector newPropertyCollector();
 
   /**
-   * Read JSON data associated with this property and apply it to the provided parent object on which
+   * Read JSON data associated with this property and apply it to the provided {@code objectInstance} on which
    * this property exists.
+   * <p>
+   * The parser's current token is expected to be the {@link JsonToken#FIELD_NAME} for the field value being parsed.
+   * <p>
+   * After parsing the parser's current token will be the next token after the field's value.
    * 
-   * @param parentInstance
+   * @param objectInstance
    *          an instance of the class on which this property exists
    * @param context
    *          the JSON parsing context
@@ -145,24 +158,28 @@ public interface IBoundInstance extends IInstance {
    * @throws IOException
    *           if there was an error when reading JSON data
    */
-  boolean read(Object parentInstance, IJsonParsingContext context) throws IOException;
+  boolean read(@NotNull Object objectInstance, @NotNull IJsonParsingContext context) throws IOException;
 
   /**
    * Read JSON data associated with this property and return it.
+   * <p>
+   * The parser's current token is expected to be the {@link JsonToken#FIELD_NAME} for the field value being parsed.
+   * <p>
+   * After parsing the parser's current token will be the next token after the field's value.
    * 
    * @param context
    *          the JSON parsing context
-   * @return the instance value
+   * @return the instance value or {@code null} if no data was available to read
    * @throws IOException
    *           if there was an error when reading JSON data
    */
-  Object read(IJsonParsingContext context) throws IOException;
+  Object read(@NotNull IJsonParsingContext context) throws IOException;
 
   /**
-   * Read the XML data associated with this property and apply it to the provided parent object on
+   * Read the XML data associated with this property and apply it to the provided {@code objectInstance} on
    * which this property exists.
    * 
-   * @param parentInstance
+   * @param objectInstance
    *          an instance of the class on which this property exists
    * @param parent
    *          the containing XML element that was previously parsed
@@ -175,21 +192,8 @@ public interface IBoundInstance extends IInstance {
    * @throws XMLStreamException
    *           if there was an error generating an {@link XMLEvent} from the XML
    */
-  boolean read(Object parentInstance, StartElement parent, IXmlParsingContext context)
+  boolean read(@NotNull Object objectInstance, @NotNull StartElement parent, @NotNull IXmlParsingContext context)
       throws IOException, XMLStreamException;
-
-  /**
-   * Read the XML data associated with this property and return it.
-   * 
-   * @param context
-   *          the XML parsing context
-   * @return the instance value
-   * @throws IOException
-   *           if there was an error when reading XML data
-   * @throws XMLStreamException
-   *           if there was an error generating an {@link XMLEvent} from the XML
-   */
-  Object read(IXmlParsingContext context) throws IOException, XMLStreamException;
 
   // /**
   // * Get a supplier that can continually parse the underlying stream loading multiple values.
@@ -211,10 +215,20 @@ public interface IBoundInstance extends IInstance {
   // IXmlBindingSupplier getXmlItemSupplier(IBindingContext context)
   // throws BindingException;
 
-  boolean write(Object parentInstance, QName parentName, IXmlWritingContext context)
+  boolean write(@NotNull Object parentInstance, @NotNull QName parentName, @NotNull IXmlWritingContext context)
       throws XMLStreamException, IOException;
 
-  void write(Object parentInstance, IJsonWritingContext context) throws IOException;
+  void write(@NotNull Object parentInstance, @NotNull IJsonWritingContext context) throws IOException;
 
+  /**
+   * Copy this instance from one parent object to another.
+   * 
+   * @param fromInstance
+   *          the object to copy from
+   * @param toInstance
+   *          the object to copy to
+   * @throws BindingException
+   *           if an error occurred while processing the object bindings
+   */
   void copyBoundObject(@NotNull Object fromInstance, @NotNull Object toInstance) throws BindingException;
 }

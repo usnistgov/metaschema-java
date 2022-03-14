@@ -40,13 +40,17 @@ import java.util.Collections;
 import javax.xml.namespace.QName;
 
 public interface IFlagInstance extends INamedInstance, IFlag {
+
   @Override
+  default String getXmlNamespace() {
+    return INamedInstance.super.getXmlNamespace();
+  }
+
+  @SuppressWarnings("null")
   @NotNull
+  @Override
   default QName getXmlQName() {
-    @SuppressWarnings("null")
-    @NotNull
-    QName retval = QName.valueOf(getEffectiveName());
-    return retval;
+    return INamedInstance.super.getXmlQName();
   }
 
   @Override

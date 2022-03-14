@@ -49,11 +49,9 @@ public interface IBoundXdmRootAssemblyNodeItem extends IBoundXdmAssemblyNodeItem
   }
 
   @Override
-  @NotNull
   default URI getBaseUri() {
     // to follow XPath, this should be null
     return null;
-    // return getDocumentNodeItem().getBaseUri();
   }
 
   @Override

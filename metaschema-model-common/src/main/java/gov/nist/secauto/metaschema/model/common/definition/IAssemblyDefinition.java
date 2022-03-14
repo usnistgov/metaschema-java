@@ -55,20 +55,19 @@ public interface IAssemblyDefinition extends INamedModelDefinition, IModelContai
    * 
    * @return the root name if this assembly is a top-level root, or {@code null} otherwise
    */
-  @Nullable
   String getRootName();
 
   /**
    * Get the XML qualified name to use in XML as the root element.
    * 
-   * @return the XML qualified name
+   * @return the root XML qualified name if this assembly is a top-level root, or {@code null}
+   *         otherwise
    */
-  @Nullable
   default QName getRootXmlQName() {
     QName retval = null;
     String rootName = getRootName();
     if (rootName != null) {
-      String namespace = getXmlNamespace();
+      String namespace = getContainingMetaschema().getXmlNamespace().toASCIIString();
       if (namespace != null) {
         retval = new QName(namespace, rootName);
       } else {
@@ -81,9 +80,9 @@ public interface IAssemblyDefinition extends INamedModelDefinition, IModelContai
   /**
    * Get the name used for the associated property in JSON/YAML.
    * 
-   * @return the JSON property name
+   * @return the root JSON property name if this assembly is a top-level root, or {@code null}
+   *         otherwise
    */
-  @Nullable
   default String getRootJsonName() {
     return getRootName();
   }

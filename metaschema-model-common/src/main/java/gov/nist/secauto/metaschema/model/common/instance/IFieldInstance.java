@@ -33,7 +33,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.Defau
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -41,25 +40,15 @@ import java.util.Objects;
 import javax.xml.namespace.QName;
 
 public interface IFieldInstance extends INamedModelInstance, IField {
-  /**
-   * Get the XML qualified name to use in XML.
-   * 
-   * @return the XML qualified name, or {@code null} if the instance is not wrapped by an XML an XML
-   *         element or attribute
-   */
+
+  @Override
+  default String getXmlNamespace() {
+    return isInXmlWrapped() ? INamedModelInstance.super.getXmlNamespace() : null;
+  }
+
   @Override
   default QName getXmlQName() {
-    @Nullable
-    QName retval = null;
-    if (isInXmlWrapped()) {
-      String namespace = getXmlNamespace();
-      if (namespace != null) {
-        retval = new QName(namespace, getEffectiveName());
-      } else {
-        retval = new QName(getEffectiveName());
-      }
-    }
-    return retval;
+    return isInXmlWrapped() ? INamedModelInstance.super.getXmlQName() : null;
   }
 
   @Override
@@ -75,6 +64,11 @@ public interface IFieldInstance extends INamedModelInstance, IField {
       retval = getEffectiveName();
     }
     return retval;
+  }
+
+  @Override
+  default String getGroupAsXmlNamespace() {
+    return isInXmlWrapped() ? getContainingMetaschema().getXmlNamespace().toASCIIString() : null;
   }
 
   @Override

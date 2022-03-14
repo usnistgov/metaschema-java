@@ -31,10 +31,8 @@
 			<artifactId>xmlbeans</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>xml-resolver</groupId>
-			<artifactId>xml-resolver</artifactId>
-			<type>jar</type>
-			<scope>compile</scope>
+			<groupId>org.xmlresolver</groupId>
+			<artifactId>xmlresolver</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -64,7 +62,7 @@
 					<configuration>
 						<excludeRoots>
 							<excludeRoot>target/generated-sources/xmlbeans</excludeRoot>
-<!-- 							<excludeRoot>target/generated-test-sources/metaschema</excludeRoot> -->
+							<!-- <excludeRoot>target/generated-test-sources/metaschema</excludeRoot> -->
 						</excludeRoots>
 					</configuration>
 				</plugin>

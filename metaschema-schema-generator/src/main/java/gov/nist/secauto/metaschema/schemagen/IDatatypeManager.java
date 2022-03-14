@@ -23,12 +23,15 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.freemarker.support.AbstractFreemarkerGenerator;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
-public abstract class AbstractSchemaGenerator
-    extends AbstractFreemarkerGenerator
-    implements SchemaGenerator {
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
+
+public interface IDatatypeManager {
+  String getTypeForDatatype(@NotNull IJavaTypeAdapter<?> datatype);
+  Set<String> getUsedTypes();
 }

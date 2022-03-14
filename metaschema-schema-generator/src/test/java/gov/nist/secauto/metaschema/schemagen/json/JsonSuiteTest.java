@@ -39,6 +39,8 @@ import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator;
 import gov.nist.secauto.metaschema.model.testing.AbstractTestSuite;
 import gov.nist.secauto.metaschema.model.testing.DynamicBindingContext;
+import gov.nist.secauto.metaschema.schemagen.json.ISchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -65,11 +67,11 @@ import java.util.stream.Stream;
 public class JsonSuiteTest
     extends AbstractTestSuite {
   private static final ISchemaGenerator GENERATOR = new JsonSchemaGenerator();
-  private static final JsonSchemaContentValidator JSON_SCHEMA_VALIDATOR;
+  private static final JsonSchemaContentValidator SCHEMA_VALIDATOR;
 
   static {
     try (InputStream is = MetaschemaLoader.class.getClassLoader().getResourceAsStream("schema/json/json-schema.json")) {
-      JSON_SCHEMA_VALIDATOR = new JsonSchemaContentValidator(is);
+      SCHEMA_VALIDATOR = new JsonSchemaContentValidator(is);
     } catch (IOException ex) {
       throw new IllegalStateException(ex);
     }
@@ -87,7 +89,7 @@ public class JsonSuiteTest
 
   @Override
   protected Supplier<IContentValidator> getSchemaValidatorSupplier() {
-    return () -> JSON_SCHEMA_VALIDATOR;
+    return () -> SCHEMA_VALIDATOR;
   }
 
   @Override
@@ -118,7 +120,7 @@ public class JsonSuiteTest
     };
   }
 
-  @Execution(ExecutionMode.SAME_THREAD)
+  @Execution(ExecutionMode.CONCURRENT)
   @DisplayName("JSON Schema Generation")
   @TestFactory
   public Stream<? extends DynamicNode> generateTests() {
@@ -126,28 +128,24 @@ public class JsonSuiteTest
   }
 
 
-  @Disabled
+//  @Disabled
   @Test
   void test() throws IOException, MetaschemaException {
-    MetaschemaLoader loader = new MetaschemaLoader();
-    IMetaschema  metaschema = loader.loadXmlMetaschema(Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/datatypes/datatypes-date_metaschema.xml"));
+    Path generationDir = getGenerationPath();
 
-    Path schemaPath = Paths.get("test-schema.out");
+    Path testSuite = Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/");
+    MetaschemaLoader loader = new MetaschemaLoader();
+    IMetaschema  metaschema = loader.loadXmlMetaschema(testSuite.resolve("datatypes/datatypes-uuid_metaschema.xml"));
+
+    Path schemaPath = generationDir.resolve("test-schema.out");
     produceSchema(metaschema, schemaPath);
     assertEquals(true, validate(getSchemaValidatorSupplier().get(), schemaPath));
     
-    Path classDir = Paths.get("compiled-classes");
-    Production production = MetaschemaCompilerHelper.compileMetaschema(metaschema, classDir);
-    DynamicBindingContext context = new DynamicBindingContext(production, MetaschemaCompilerHelper.getClassLoader(classDir));
-    
-    Object object = context.newBoundLoader().load(Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/datatypes/datatypes-date_test_valid_PASS.xml"));
+    Path contentPath = testSuite.resolve("datatypes/datatypes-uuid_test_valid_PASS.json");
 
-    Path contentPath = Paths.get("test-content.out");
-    @SuppressWarnings("rawtypes")
-    ISerializer serializer = context.newSerializer(getRequiredContentFormat(), object.getClass());
-    serializer.serialize(object, contentPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+    DynamicBindingContext context = produceDynamicBindingContext(metaschema, generationDir); 
+    contentPath = convertContent(contentPath.toUri(), generationDir, context);
 
-    IContentValidator schemaValidator = getContentValidatorSupplier().apply(schemaPath);
     assertEquals(true,
         validate(getContentValidatorSupplier().apply(schemaPath), contentPath),
         "validation did not match expectation");

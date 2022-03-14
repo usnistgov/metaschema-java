@@ -27,16 +27,29 @@
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 public abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> implements IBoundInstance {
+  @NotNull
   private final Field field;
+  @NotNull
   private final CLASS_BINDING parentClassBinding;
 
-  public AbstractProperty(Field field, CLASS_BINDING parentClassBinding) {
+  /**
+   * Construct a new bound instance based on a Java property.
+   * 
+   * @param field
+   *          the Java field to bind to
+   * @param parentClassBinding
+   *          the class binding for the field's containing class
+   */
+  public AbstractProperty(@NotNull Field field, @NotNull CLASS_BINDING parentClassBinding) {
     this.parentClassBinding = parentClassBinding;
     this.field = field;
   }
@@ -48,7 +61,7 @@ public abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> impl
 
   @Override
   public Type getType() {
-    return getField().getGenericType();
+    return ObjectUtils.notNull(getField().getGenericType());
   }
 
   @Override
@@ -58,13 +71,14 @@ public abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> impl
 
   @Override
   public String getJavaPropertyName() {
-    return field.getName();
+    return ObjectUtils.notNull(field.getName());
   }
 
   @Override
   public Class<?> getRawType() {
     Type type = getType();
-    return (Class<?>) (type instanceof ParameterizedType ? ((ParameterizedType) type).getRawType() : type);
+    return ObjectUtils.notNull(
+        (Class<?>) (type instanceof ParameterizedType ? ((ParameterizedType) type).getRawType() : type));
   }
 
   @Override
@@ -75,7 +89,7 @@ public abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> impl
   @Override
   public void setValue(Object obj, Object value) {
     boolean accessable = field.canAccess(obj);
-    field.setAccessible(true);
+    field.setAccessible(true); // NOPMD - intentional
     try {
       field.set(obj, value);
     } catch (IllegalArgumentException | IllegalAccessException ex) {
@@ -84,14 +98,14 @@ public abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> impl
               field.getDeclaringClass().getName()),
           ex);
     } finally {
-      field.setAccessible(accessable);
+      field.setAccessible(accessable); // NOPMD - intentional
     }
   }
 
   @Override
   public Object getValue(Object obj) {
     boolean accessable = field.canAccess(obj);
-    field.setAccessible(true);
+    field.setAccessible(true); // NOPMD - intentional
     Object retval;
     try {
       Object result = field.get(obj);
@@ -102,7 +116,7 @@ public abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> impl
               field.getDeclaringClass().getName()),
           ex);
     } finally {
-      field.setAccessible(accessable);
+      field.setAccessible(accessable); // NOPMD - intentional
     }
     return retval;
   }

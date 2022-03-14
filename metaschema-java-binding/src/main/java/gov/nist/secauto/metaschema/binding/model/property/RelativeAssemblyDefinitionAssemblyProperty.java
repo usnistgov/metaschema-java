@@ -28,8 +28,6 @@ package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 
-import javax.xml.namespace.QName;
-
 public class RelativeAssemblyDefinitionAssemblyProperty
     extends AbstractAssemblyDefinitionAssemblyProperty {
 
@@ -43,15 +41,5 @@ public class RelativeAssemblyDefinitionAssemblyProperty
   @Override
   public String getName() {
     return getDefinition().getEffectiveName();
-  }
-
-  @Override
-  public String getXmlNamespace() {
-    return getDefinition().getXmlNamespace();
-  }
-
-  @Override
-  public QName getXmlQName() {
-    return getDefinition().getXmlQName();
   }
 }

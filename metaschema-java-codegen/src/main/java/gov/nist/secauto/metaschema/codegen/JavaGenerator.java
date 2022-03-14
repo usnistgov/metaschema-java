@@ -41,7 +41,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
-public class JavaGenerator {
+public final class JavaGenerator {
   private static final Logger LOGGER = LogManager.getLogger(JavaGenerator.class);
 
   private JavaGenerator() {

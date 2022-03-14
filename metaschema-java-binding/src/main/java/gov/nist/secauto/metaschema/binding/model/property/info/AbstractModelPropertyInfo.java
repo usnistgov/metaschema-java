@@ -27,18 +27,20 @@
 package gov.nist.secauto.metaschema.binding.model.property.info;
 
 import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
-import java.util.Objects;
 
 public abstract class AbstractModelPropertyInfo<TYPE extends Type>
     implements IModelPropertyInfo {
 
+  @NotNull
   private final IBoundNamedModelInstance property;
 
-  public AbstractModelPropertyInfo(IBoundNamedModelInstance property) {
-    Objects.requireNonNull(property, "property");
-    this.property = property;
+  public AbstractModelPropertyInfo(@NotNull IBoundNamedModelInstance property) {
+    this.property = ObjectUtils.requireNonNull(property, "property");
   }
 
   @Override
@@ -47,6 +49,7 @@ public abstract class AbstractModelPropertyInfo<TYPE extends Type>
   }
 
   @SuppressWarnings("unchecked")
+  @NotNull
   protected TYPE getType() {
     return (TYPE) getProperty().getType();
   }
