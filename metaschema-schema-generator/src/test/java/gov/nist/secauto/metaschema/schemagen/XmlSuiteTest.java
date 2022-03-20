@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json;
+package gov.nist.secauto.metaschema.schemagen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -36,7 +36,9 @@ import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.XmlSchemaContentValidator;
 import gov.nist.secauto.metaschema.model.testing.AbstractTestSuite;
 import gov.nist.secauto.metaschema.model.testing.DynamicBindingContext;
-import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.JsonSchemaGenerator;
+import gov.nist.secauto.metaschema.schemagen.XmlSchemaGenerator;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;

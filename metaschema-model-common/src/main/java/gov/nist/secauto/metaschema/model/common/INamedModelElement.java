@@ -52,19 +52,19 @@ public interface INamedModelElement extends IModelElement {
    */
   MarkupLine getDescription();
 
-//  @NotNull
-//  default QName getXmlQName() {
-//    String namespace = getXmlNamespace();
-//
-//    @NotNull
-//    QName retval;
-//    if (namespace != null) {
-//      retval = new QName(namespace, getEffectiveName());
-//    } else {
-//      retval = new QName(getEffectiveName());
-//    }
-//    return retval;
-//  }
+  // @NotNull
+  // default QName getXmlQName() {
+  // String namespace = getXmlNamespace();
+  //
+  // @NotNull
+  // QName retval;
+  // if (namespace != null) {
+  // retval = new QName(namespace, getEffectiveName());
+  // } else {
+  // retval = new QName(getEffectiveName());
+  // }
+  // return retval;
+  // }
 
   /**
    * Get the name used for the associated property in JSON/YAML.

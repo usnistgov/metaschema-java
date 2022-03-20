@@ -274,7 +274,7 @@ public class DefaultFunction
         if (atomize) {
           item = XPathFunctions.fnDataItem(item);
 
-          if (IUntypedAtomicItem.class.isInstance(item)) {
+          if (IUntypedAtomicItem.class.isInstance(item)) { // NOPMD
             // TODO: apply cast to atomic type
           }
 

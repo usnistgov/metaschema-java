@@ -116,7 +116,7 @@ public class ConstraintContentValidator
 
   }
 
-  public static class ConstraintValidationFinding implements IValidationFinding {
+  public static class ConstraintValidationFinding implements IValidationFinding { // NOPMD - intentional
     @NotNull
     private final IConstraint constraint;
     @NotNull

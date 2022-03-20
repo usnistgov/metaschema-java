@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -56,16 +57,21 @@ public class Production {
     }
 
     Map<String, URI> packageNameToXmlNamespaceMap = retval.getMetaschemaProductions().stream()
-        .collect(CustomCollectors.toMap(
-            MetaschemaProduction::getPackageName,
-            metaschema -> metaschema.getMetaschema().getXmlNamespace(),
-            (javaPackage, ns1, ns2) -> {
-              return new IllegalStateException(
-                  String.format(
-                      "The package %s is associated with the XML namespaces '%s' and '%s'."
-                          + " A package must be associated with a single XML namespace.",
-                      javaPackage, ns1, ns2));
-            }));
+        .map(meta -> Pair.of(meta.getPackageName(), meta.getMetaschema().getXmlNamespace()))
+        .collect(
+            CustomCollectors.toMap(
+                pair -> pair.getLeft(),
+                pair -> pair.getRight(),
+                (javaPackage, ns1, ns2) -> {
+                  if (ns1.equals(ns2)) {
+                    return ns1;
+                  }
+                  throw new IllegalStateException(
+                      String.format(
+                          "The package %s is associated with the XML namespaces '%s' and '%s'."
+                              + " A package must be associated with a single XML namespace.",
+                          javaPackage, ns1, ns2));
+                }));
 
     for (Map.Entry<String, URI> entry : packageNameToXmlNamespaceMap.entrySet()) {
       retval.addPackage(entry.getKey(), entry.getValue(), targetDirectory);

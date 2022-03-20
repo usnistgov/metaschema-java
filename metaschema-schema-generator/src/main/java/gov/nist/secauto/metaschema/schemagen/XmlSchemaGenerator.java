@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.xml;
+package gov.nist.secauto.metaschema.schemagen;
 
 import com.ctc.wstx.stax.WstxOutputFactory;
 
@@ -48,7 +48,6 @@ import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-import gov.nist.secauto.metaschema.schemagen.json.ISchemaGenerator;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -149,7 +148,7 @@ public class XmlSchemaGenerator implements ISchemaGenerator {
       @NotNull
       String targetNS = metaschema.getXmlNamespace().toASCIIString();
 
-      GenerationState state = new GenerationState(writer, targetNS);
+      GenerationState state = new GenerationState(writer, targetNS, nestInlineTypes);
 
       writer.writeStartDocument("UTF-8", "1.0");
       writer.writeStartElement("xs", "schema", NS_XML_SCHEMA);
@@ -254,7 +253,7 @@ public class XmlSchemaGenerator implements ISchemaGenerator {
 
     writer.writeStartElement("xs", "element", NS_XML_SCHEMA);
     writer.writeAttribute("name", xmlQName.getLocalPart());
-    writer.writeAttribute("type", state.getDatatypeManager().getTypeForDefinition(definition).toString());
+    writer.writeAttribute("type", state.getDatatypeManager().getTypeNameForDefinition(definition).toString());
 
     writer.writeEndElement();
   }
@@ -281,7 +280,7 @@ public class XmlSchemaGenerator implements ISchemaGenerator {
     XMLStreamWriter2 writer = state.getWriter();
     writer.writeStartElement("xs", "complexType", NS_XML_SCHEMA);
     if (!(definition.isInline() && isNestInlineTypes())) {
-      writer.writeAttribute("name", state.getDatatypeManager().getTypeForDefinition(definition).toString());
+      writer.writeAttribute("name", state.getDatatypeManager().getTypeNameForDefinition(definition).toString());
     }
 
     if (!definition.isInline() || !isNestInlineTypes()) {
@@ -374,7 +373,7 @@ public class XmlSchemaGenerator implements ISchemaGenerator {
     XMLStreamWriter2 writer = state.getWriter();
     writer.writeStartElement("xs", "complexType", NS_XML_SCHEMA);
     if (!(definition.isInline() && isNestInlineTypes())) {
-      writer.writeAttribute("name", state.getDatatypeManager().getTypeForDefinition(definition).toString());
+      writer.writeAttribute("name", state.getDatatypeManager().getTypeNameForDefinition(definition).toString());
     }
 
     if (!definition.isInline() || !isNestInlineTypes()) {
@@ -444,7 +443,7 @@ public class XmlSchemaGenerator implements ISchemaGenerator {
       break;
     }
     case CHOICE:
-      generateChoiceModelInstance((IChoiceInstance) modelInstance, grouped, state);
+      generateChoiceModelInstance((IChoiceInstance) modelInstance, state);
       break;
     default:
       throw new UnsupportedOperationException();
@@ -541,7 +540,7 @@ public class XmlSchemaGenerator implements ISchemaGenerator {
       builder.append(state.getNSPrefix(xmlNS));
       builder.append(':');
     }
-    builder.append(state.getDatatypeManager().getTypeForDefinition(definition));
+    builder.append(state.getDatatypeManager().getTypeNameForDefinition(definition));
     return builder.toString();
   }
 
@@ -647,7 +646,7 @@ public class XmlSchemaGenerator implements ISchemaGenerator {
     }
   }
 
-  private void generateChoiceModelInstance(@NotNull IChoiceInstance choice, boolean grouped,
+  private void generateChoiceModelInstance(@NotNull IChoiceInstance choice,
       @NotNull GenerationState state) throws XMLStreamException {
     XMLStreamWriter2 writer = state.getWriter();
     writer.writeStartElement(NS_XML_SCHEMA, "choice");
@@ -748,27 +747,17 @@ public class XmlSchemaGenerator implements ISchemaGenerator {
     writer.writeEndElement(); // xs:simpleType
   }
 
-  public class GenerationState {
-    @NotNull
-    private final XMLStreamWriter2 writer;
+  public static class GenerationState extends AbstractGenerationState<XMLStreamWriter2, XmlDatatypeManager> {
     @NotNull
     private final String defaultNS;
     @NotNull
     private final Map<String, String> namespaceToPrefixMap = new HashMap<>();
-    @NotNull
-    private final XmlDatatypeManager datatypeManager;
 
     private int prefixNum = 0;
 
-    public GenerationState(@NotNull XMLStreamWriter2 writer, @NotNull String defaultNS) {
-      this.writer = writer;
+    public GenerationState(@NotNull XMLStreamWriter2 writer, @NotNull String defaultNS, boolean nestInlineTypes) {
+      super(writer, new XmlDatatypeManager(), nestInlineTypes);
       this.defaultNS = defaultNS;
-      this.datatypeManager = new XmlDatatypeManager(this);
-    }
-
-    @NotNull
-    public XMLStreamWriter2 getWriter() {
-      return writer;
     }
 
     @NotNull
@@ -778,11 +767,6 @@ public class XmlSchemaGenerator implements ISchemaGenerator {
 
     public String getDatatypeNS() {
       return getDefaultNS();
-    }
-
-    @NotNull
-    public XmlDatatypeManager getDatatypeManager() {
-      return datatypeManager;
     }
 
     public String getNS(@NotNull INamedDefinition definition) {
@@ -811,10 +795,6 @@ public class XmlSchemaGenerator implements ISchemaGenerator {
         }
       }
       return retval;
-    }
-
-    public boolean isNestInlineTypes() {
-      return nestInlineTypes;
     }
   }
 }

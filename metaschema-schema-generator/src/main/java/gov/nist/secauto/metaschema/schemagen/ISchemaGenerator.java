@@ -23,30 +23,15 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.schemagen;
 
-package gov.nist.secauto.metaschema.model.definitions;
-
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Map;
+import java.io.IOException;
+import java.io.Writer;
 
-public interface IXmlNamedModelDefinition extends IXmlNamedDefinition, INamedModelDefinition {
-
-  @Override
-  Map<@NotNull String, ? extends IXmlFlagInstance> getFlagInstanceMap();
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<@NotNull ? extends IXmlFlagInstance> getFlagInstances() {
-    return getFlagInstanceMap().values();
-  }
-
-  @Override
-  default IXmlFlagInstance getFlagInstanceByName(String name) {
-    return getFlagInstanceMap().get(name);
-  }
+public interface ISchemaGenerator {
+  void generateFromMetaschema(@NotNull IMetaschema metaschema, @NotNull Writer out) throws IOException;
 }

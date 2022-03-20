@@ -92,7 +92,7 @@
 							<goal>compile</goal>
 						</goals>
 						<configuration>
-							<sourceDir>../metaschema-model/metaschema/test-suite</sourceDir>
+							<sourceDir>${project.directory}/../metaschema-model/metaschema/test-suite</sourceDir>
 							<sourceSchemas>unit-tests.xsd</sourceSchemas>
 							<javaTargetDir>${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
 							<xmlConfigs>${project.basedir}/src/main/xsdconfig/test-suite.xsdconfig</xmlConfigs>

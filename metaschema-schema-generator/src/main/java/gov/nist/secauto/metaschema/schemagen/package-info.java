@@ -23,43 +23,5 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.schemagen.xml;
 
-import gov.nist.secauto.metaschema.schemagen.CompositeDatatypeProvider;
-import gov.nist.secauto.metaschema.schemagen.IDatatypeContent;
-import gov.nist.secauto.metaschema.schemagen.IDatatypeProvider;
-
-import org.codehaus.stax2.XMLStreamWriter2;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.xml.stream.XMLStreamException;
-
-public class ProseCompositDatatypeProvider
-    extends CompositeDatatypeProvider {
-  
-  private final ProseBaseDatatypeProvider proseBaseProvider = new ProseBaseDatatypeProvider();
-
-  public ProseCompositDatatypeProvider(List<@NotNull IDatatypeProvider> proxiedProviders) {
-    super(proxiedProviders);
-  }
-
-  @Override
-  public @NotNull Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes,
-      @NotNull XMLStreamWriter2 writer) throws XMLStreamException {
-    Set<@NotNull String> result =  super.generateDatatypes(requiredTypes, writer);
-
-    if (!result.isEmpty()) {
-      // apply core markup types
-      Collection<@NotNull IDatatypeContent> datatypes = proseBaseProvider.getDatatypes().values();
-      Set<String> proseBaseTypes = datatypes.stream().map(content -> content.getTypeName()).collect(Collectors.toSet());
-      proseBaseProvider.generateDatatypes(proseBaseTypes, writer);
-    }
-    return result;
-  }
-
-}
+package gov.nist.secauto.metaschema.schemagen;

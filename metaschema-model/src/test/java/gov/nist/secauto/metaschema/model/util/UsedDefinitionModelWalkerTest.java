@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.util;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.UsedDefinitionModelWalker;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
@@ -55,6 +57,7 @@ class UsedDefinitionModelWalkerTest {
 
     Collection<@NotNull ? extends IDefinition> definitions
         = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
+    assertFalse(definitions.isEmpty());
 
     if (LOGGER.isDebugEnabled()) {
       for (IDefinition definition : definitions) {

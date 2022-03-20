@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json;
+package gov.nist.secauto.metaschema.schemagen;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -33,27 +33,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.schemagen.AbstractDatatypeManager;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class JsonDatatypeManager extends AbstractDatatypeManager {
   private static final JsonNode jsonDatatypes;
   private static final Map<String, String> jsonDatatypeDependencyMap = new HashMap<>();
   private static final Pattern DEFINITION_REF_PATTERN = Pattern.compile("^#/definitions/(.+)$");
+  private static final Map<String, JsonNode> JSON_DATATYPES = new HashMap<>();
 
   static {
     try (InputStream is
@@ -66,12 +63,17 @@ public class JsonDatatypeManager extends AbstractDatatypeManager {
 
     // analyze datatypes for dependencies
     for (String ref : getDatatypeTranslationMap().values()) {
-      JsonNode refNode = jsonDatatypes.at("/definitions/" + ref + "/$ref");
+      JsonNode refNode = jsonDatatypes.at("/definitions/" + ref);
       if (!refNode.isMissingNode()) {
-        Matcher matcher = DEFINITION_REF_PATTERN.matcher(refNode.asText());
-        if (matcher.matches()) {
-          String dependency = matcher.group(1);
-          jsonDatatypeDependencyMap.put(ref, dependency);
+        JSON_DATATYPES.put(ref, refNode);
+        
+        JsonNode refKeyword = refNode.get("$ref");
+        if (refKeyword != null) {
+          Matcher matcher = DEFINITION_REF_PATTERN.matcher(refKeyword.asText());
+          if (matcher.matches()) {
+            String dependency = matcher.group(1);
+            jsonDatatypeDependencyMap.put(ref, dependency);
+          }
         }
       }
     }
@@ -81,77 +83,52 @@ public class JsonDatatypeManager extends AbstractDatatypeManager {
     return jsonDatatypes;
   }
 
-  @NotNull
-  private final Map<@NotNull IJavaTypeAdapter<?>, String> dataTypeToDefinitionReferenceMap = new HashMap<>();
-
   public void generateDatatypes(@NotNull JsonGenerator jsonGenerator) throws IOException {
-    Set<String> requiredJsonDatatypes = new HashSet<>();
+    Set<String> requiredJsonDatatypes = getUsedTypes();
     // resolve dependencies
-    for (String jsonDataType : dataTypeToDefinitionReferenceMap.values()) {
-      requiredJsonDatatypes.add(jsonDataType);
-      String dependency = jsonDatatypeDependencyMap.get(jsonDataType);
-      if (dependency != null) {
-        requiredJsonDatatypes.add(dependency);
+    for (String datatype: CollectionUtil.toIterable(requiredJsonDatatypes.stream()
+      .flatMap(datatype -> {
+        Stream<String> result;
+        String dependency = jsonDatatypeDependencyMap.get(datatype);
+        if (dependency == null) {
+          result = Stream.of(datatype);
+        } else {
+          result = Stream.of(datatype, dependency);
+        }
+        return result;
+      }).distinct()
+      .sorted()
+      .iterator())) {
+      jsonGenerator.writeFieldName(datatype);
+      
+      JsonNode definition = JSON_DATATYPES.get(datatype);
+      if (definition == null) {
+        throw new IOException("Missing JSON datatype definition for: /definitions/"+datatype);
       }
-    }
-    List<String> requiredDatatypes = requiredJsonDatatypes.stream().sorted().collect(Collectors.toList());
-
-    JsonNode datatypesSchemaNode = getJsonDatatypes();
-    for (String ref : requiredDatatypes) {
-      JsonNode datatypeNode = datatypesSchemaNode.at("/definitions/" + ref);
-      if (datatypeNode.isMissingNode()) {
-        throw new IOException("Missing JSON datatype definition for: /definitions/"+ref);
-      }
-
-      jsonGenerator.writeFieldName(ref);
-      // jsonGenerator.writeTree(datatypeNode);
-      jsonGenerator.writeTree(datatypeNode);
+      jsonGenerator.writeTree(definition);
     }
   }
 
+  @SuppressWarnings("null")
   @NotNull
-  protected CharSequence getJsonDefinitionRefForDefinition(@NotNull INamedDefinition definition) {
+  protected String getJsonDefinitionRefForDefinition(@NotNull INamedDefinition definition) {
     return new StringBuilder()
         .append("#/definitions/")
-        .append(getJsonDefinitionNameForDefinition(definition));
-  }
-
-  @NotNull
-  protected CharSequence getJsonDefinitionNameForDefinition(@NotNull INamedDefinition definition) {
-    StringBuilder builder = new StringBuilder()
-        .append(definition.getContainingMetaschema().getShortName())
-        .append('-')
         .append(getTypeNameForDefinition(definition))
-        .append('-')
-        .append(definition.getModelType())
-        .append('-')
-        .append("Type");
-    return toCamelCase(builder.toString());
+        .toString();
   }
 
+  @SuppressWarnings("null")
   @NotNull
-  protected CharSequence getJsonDefinitionRefForDatatype(@NotNull IJavaTypeAdapter<?> datatype) {
+  protected String getJsonDefinitionRefForDatatype(@NotNull IJavaTypeAdapter<?> datatype) {
     return new StringBuilder()
         .append("#/definitions/")
-        .append(getTypeForDatatype(datatype));
+        .append(getTypeForDatatype(datatype))
+        .toString();
   }
 
-  @NotNull
-  protected CharSequence getTypeNameForDefinition(@NotNull INamedDefinition definition) {
-    CharSequence retval;
-    if (definition.isInline()) {
-      INamedModelDefinition parentDefinition = definition.getInlineInstance().getContainingDefinition();
-      if (parentDefinition == null) {
-        throw new IllegalStateException();
-      }
-      retval = new StringBuilder()
-          .append(getTypeNameForDefinition(parentDefinition))
-          .append('-')
-          .append(definition.getName());
-    } else {
-      retval = definition.getName();
-    }
-    return retval;
+  @Override
+  protected boolean isNestInlineDefinitions() {
+    return false;
   }
-
 }

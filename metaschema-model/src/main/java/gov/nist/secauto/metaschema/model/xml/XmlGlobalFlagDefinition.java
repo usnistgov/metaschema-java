@@ -39,7 +39,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataT
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFlagDefinition;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFlagDefinitionType;
 
@@ -90,12 +90,14 @@ public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.
    */
-  protected synchronized void checkModelConstraints() {
-    if (constraints == null) {
-      if (getXmlFlag().isSetConstraint()) {
-        constraints = new ValueConstraintSupport(getXmlFlag().getConstraint());
-      } else {
-        constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+  protected void checkModelConstraints() {
+    synchronized (this) {
+      if (constraints == null) {
+        if (getXmlFlag().isSetConstraint()) {
+          constraints = new ValueConstraintSupport(getXmlFlag().getConstraint());
+        } else {
+          constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+        }
       }
     }
   }
@@ -130,7 +132,6 @@ public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
     return constraints.getExpectConstraints();
   }
 
-  @SuppressWarnings("null")
   @Override
   public ModuleScopeEnum getModuleScope() {
     return getXmlFlag().isSetScope() ? getXmlFlag().getScope() : IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
@@ -142,11 +143,10 @@ public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
   }
 
   @Override
-  public IInstance getInlineInstance() {
+  public INamedInstance getInlineInstance() {
     return null;
   }
 
-  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlFlag().getName();
@@ -171,7 +171,6 @@ public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
     return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription()) : null;
   }
 
-  @SuppressWarnings("null")
   @Override
   public IJavaTypeAdapter<?> getDatatype() {
     return getXmlFlag().isSetAsType() ? getXmlFlag().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;

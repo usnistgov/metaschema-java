@@ -109,10 +109,11 @@ public class AbstractExpressionEvaluationVisitor implements IExpressionEvaluatio
     return ISequence.empty();
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public ISequence<?> visit(IExpression expr, INodeContext context) {
+  public <T extends IItem> ISequence<T> visit(IExpression expr, INodeContext context) {
     ISequence<?> retval = expr.accept(this, context);
-    return retval;
+    return (ISequence<T>)retval;
   }
 
   @Override

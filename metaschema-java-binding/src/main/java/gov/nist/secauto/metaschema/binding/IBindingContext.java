@@ -215,7 +215,7 @@ public interface IBindingContext {
    *           if the provided class is not bound to a Metaschema assembly or field
    * @see MetapathExpression
    */
-  default IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri) {
+  default IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, @NotNull URI baseUri) {
     return toNodeItem(boundObject, baseUri, false);
   }
 
@@ -233,7 +233,7 @@ public interface IBindingContext {
    *           if the provided class is not bound to a Metaschema assembly or field
    * @see MetapathExpression
    */
-  IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode);
+  IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, @NotNull URI baseUri, boolean rootNode);
 
   /**
    * Perform constraint validation on the provided bound object.
@@ -249,5 +249,5 @@ public interface IBindingContext {
    * @throws IllegalArgumentException
    *           if the provided class is not bound to a Metaschema assembly or field
    */
-  void validate(@NotNull Object boundObject, URI baseUri, boolean rootNode, IConstraintValidationHandler handler);
+  void validate(@NotNull Object boundObject, @NotNull URI baseUri, boolean rootNode, IConstraintValidationHandler handler);
 }

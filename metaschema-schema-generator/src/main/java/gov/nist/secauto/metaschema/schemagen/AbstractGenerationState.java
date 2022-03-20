@@ -23,15 +23,36 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.schemagen.json;
-
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
+package gov.nist.secauto.metaschema.schemagen;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.io.Writer;
+public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends IDatatypeManager> implements IGenerationState<WRITER, DATATYPE_MANAGER> {
+  @NotNull
+  private final WRITER writer;
+  @NotNull
+  private final DATATYPE_MANAGER datatypeManager;
+  private final boolean nestInlineTypes;
 
-public interface ISchemaGenerator {
-  void generateFromMetaschema(@NotNull IMetaschema metaschema, @NotNull Writer out) throws IOException;
+  public AbstractGenerationState(@NotNull WRITER writer, @NotNull DATATYPE_MANAGER datatypeManager,
+      boolean nestInlineTypes) {
+    this.writer = writer;
+    this.datatypeManager = datatypeManager;
+    this.nestInlineTypes = nestInlineTypes;
+  }
+
+  @Override
+  public WRITER getWriter() {
+    return writer;
+  }
+
+  @Override
+  public boolean isNestInlineTypes() {
+    return nestInlineTypes;
+  }
+
+  @Override
+  public DATATYPE_MANAGER getDatatypeManager() {
+    return datatypeManager;
+  }
 }

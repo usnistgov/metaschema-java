@@ -373,17 +373,8 @@ public class DefaultConstraintValidator implements IConstraintValidator {
       ISequence<? extends INodeItem> targets) throws MetapathException {
     targets.asStream().forEachOrdered(item -> {
       String value = XPathFunctions.fnDataItem(item).asString();
-      if (!constraint.getAllowedValues().containsKey(value)) {
-        // if (constraint.isAllowedOther()) {
-        updateValueStatus((IAtomicValuedNodeItem) item, false);
-        // } else {
-        // LOGGER.atError().log(String.format("Value '%s' did not match one of the required allowed values
-        // at path '%s'", value,
-        // toPath(item)));
-        // }
-      } else {
-        updateValueStatus((IAtomicValuedNodeItem) item, true);
-      }
+
+      updateValueStatus((IAtomicValuedNodeItem) item, constraint.getAllowedValues().containsKey(value));
     });
   }
 

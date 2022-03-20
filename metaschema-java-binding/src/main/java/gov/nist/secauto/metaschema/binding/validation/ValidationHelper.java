@@ -48,7 +48,7 @@ public final class ValidationHelper {
     // disable construction
   }
 
-  public @NotNull IValidationResult validate(@NotNull IBoundXdmNodeItem nodeItem, @NotNull IContentValidator validator) throws IOException {
+  public static @NotNull IValidationResult validate(@NotNull IBoundXdmNodeItem nodeItem, @NotNull IContentValidator validator) throws IOException {
     IClassBinding classBinding = nodeItem.getClassBinding();
     if (classBinding == null) {
       throw new IllegalArgumentException(

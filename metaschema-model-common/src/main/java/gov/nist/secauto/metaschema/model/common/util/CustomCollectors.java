@@ -61,33 +61,37 @@ public final class CustomCollectors {
           list.get(last));
     };
   }
-  
 
   public static <T, K, V> Collector<T, ?, Map<K, V>> toMap(
       @NotNull Function<? super T, ? extends K> keyMapper,
       @NotNull Function<? super T, ? extends V> valueMapper,
-      @NotNull DuplicateHandler<K, V, ?> duplicateHander) {
+      @NotNull DuplicateHandler<K, V> duplicateHander) {
     return Collector.of(
         HashMap::new,
         (map, item) -> {
           K key = keyMapper.apply(item);
           V value = Objects.requireNonNull(valueMapper.apply(item));
-          if (map.putIfAbsent(key, value) != null)
-            throw duplicateHander.handle(key, map.get(key), value);
+          V oldValue = map.get(key);
+          if (oldValue != null) {
+            value = duplicateHander.handle(key, oldValue, value);
+          }
+          map.put(key, value);
         },
         (map1, map2) -> {
-          map2.forEach((k, v) -> {
-            if (map1.putIfAbsent(k, v) != null)
-              throw duplicateHander.handle(k, map1.get(k), v);
+          map2.forEach((key, value) -> {
+            V oldValue = map1.get(key);
+            if (oldValue != null) {
+              value = duplicateHander.handle(key, oldValue, value);
+            }
+            map1.put(key, value);
           });
           return map1;
-        }
-        );
+        });
   }
-  
+
   @FunctionalInterface
-  public static interface DuplicateHandler<K, V, R extends RuntimeException> {
+  public static interface DuplicateHandler<K, V> {
     @NotNull
-    R handle(K key, V value1, V value2);
+    V handle(K key, V value1, V value2);
   }
 }

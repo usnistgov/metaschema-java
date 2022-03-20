@@ -26,26 +26,41 @@
 
 package gov.nist.secauto.metaschema.binding.metapath;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaPathEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
+import org.jmock.Mockery;
 import org.jmock.auto.Mock;
+import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 class MetaschemaPathEvaluationVisitorTest {
+  @RegisterExtension
+  Mockery context = new JUnit5Mockery();
+
   @Mock
   INodeContext nodeContext; 
 
   @Test
   void test() {
-    
     MetapathExpression path = MetapathExpression.compile("2 eq 1 + 1");
     MetaschemaPathEvaluationVisitor visitor
         = new MetaschemaPathEvaluationVisitor(new StaticContext().newDynamicContext());
-    visitor.visit(path.getASTNode(), nodeContext);
+    ISequence<IBooleanItem> result = visitor.visit(path.getASTNode(), ObjectUtils.notNull(nodeContext));
+    assertNotNull(result);
+    assertTrue(!result.isEmpty());
+    assertEquals(1, result.size());
+    assertEquals(true, result.asList().iterator().next().toBoolean());
   }
 
 }

@@ -24,60 +24,59 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.xml;
+package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-import gov.nist.secauto.metaschema.schemagen.AbstractDatatypeProvider;
-import gov.nist.secauto.metaschema.schemagen.IDatatypeContent;
-import gov.nist.secauto.metaschema.schemagen.JDom2DatatypeContent;
-import gov.nist.secauto.metaschema.schemagen.JDom2XmlSchemaLoader;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLStreamWriter2;
-import org.jdom2.Element;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.InputStream;
-import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLStreamException;
 
-public class MarkupLineDatatypeProvider
-    extends AbstractDatatypeProvider {
-  private static final String DATATYPE_NAME = "MarkupLineDatatype";
+public class XmlDatatypeManager
+    extends AbstractDatatypeManager {
+  public static final String NS_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
 
-  @Override
-  protected InputStream getSchemaResource() {
-    return JDom2XmlSchemaLoader.class.getClassLoader()
-        .getResourceAsStream("schema/xml/metaschema-markup-line.xsd");
+  @NotNull
+  private static final List<@NotNull IDatatypeProvider> DATATYPE_PROVIDERS;
+
+  static {
+    DATATYPE_PROVIDERS = ObjectUtils.notNull(List.of(
+        new XmlCoreDatatypeProvider(),
+        new XmlProseCompositDatatypeProvider(
+            List.of(
+                new XmlMarkupMultilineDatatypeProvider(),
+                new XmlMarkupLineDatatypeProvider()))));
+  }
+
+  public void generateDatatypes(@NotNull XMLStreamWriter2 writer) throws XMLStreamException {
+    // resolve dependencies
+    Set<String> used = getUsedTypes();
+
+    @SuppressWarnings("null")
+    Set<@NotNull String> requiredTypes = getDatatypeTranslationMap().values().stream()
+        .filter(type -> used.contains(type))
+        .collect(Collectors.toCollection(LinkedHashSet::new));
+
+    for (IDatatypeProvider provider : DATATYPE_PROVIDERS) {
+      Set<String> providedDatatypes = provider.generateDatatypes(requiredTypes, writer);
+      requiredTypes.removeAll(providedDatatypes);
+    }
+
+    if (!requiredTypes.isEmpty()) {
+      throw new IllegalStateException(
+          String.format("The following datatypes were not provided: %s",
+              requiredTypes.stream().collect(Collectors.joining(","))));
+    }
   }
 
   @Override
-  protected List<@NotNull Element> queryElements(JDom2XmlSchemaLoader loader) {
-    return loader.getContent(
-        "/xs:schema/*",
-        Collections.singletonMap("xs", loader.NS_XML_SCHEMA));
-  }
-
-  @Override
-  protected @NotNull Map<@NotNull String, IDatatypeContent> handleResults(@NotNull List<@NotNull Element> items) {
-    return CollectionUtil.singletonMap(
-        DATATYPE_NAME,
-        new JDom2DatatypeContent(
-            DATATYPE_NAME,
-            items.stream()
-                .filter(element -> !("include".equals(element.getName())))
-                .collect(Collectors.toList()),
-            CollectionUtil.emptyList()));
-  }
-
-  @Override
-  public @NotNull Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes,
-      @NotNull XMLStreamWriter2 writer) throws XMLStreamException {
-    writer.writeComment(" markup line ");
-    return super.generateDatatypes(requiredTypes, writer);
+  protected boolean isNestInlineDefinitions() {
+    return true;
   }
 }

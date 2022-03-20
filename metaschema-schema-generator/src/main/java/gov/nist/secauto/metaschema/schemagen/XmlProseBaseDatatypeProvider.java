@@ -24,81 +24,56 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.xml;
+package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-import gov.nist.secauto.metaschema.schemagen.AbstractDatatypeProvider;
-import gov.nist.secauto.metaschema.schemagen.IDatatypeContent;
-import gov.nist.secauto.metaschema.schemagen.JDom2DatatypeContent;
-import gov.nist.secauto.metaschema.schemagen.JDom2XmlSchemaLoader;
 
 import org.codehaus.stax2.XMLStreamWriter2;
-import org.jdom2.Attribute;
 import org.jdom2.Element;
-import org.jdom2.filter.Filters;
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLStreamException;
 
-public class CoreDatatypeProvider
-    extends AbstractDatatypeProvider {
+public class XmlProseBaseDatatypeProvider
+    extends AbstractXmlDatatypeProvider {
+  private static final String DATATYPE_NAME = "ProseBase";
 
   @Override
   protected InputStream getSchemaResource() {
     return JDom2XmlSchemaLoader.class.getClassLoader()
-        .getResourceAsStream("schema/xml/metaschema-datatypes.xsd");
+        .getResourceAsStream("schema/xml/metaschema-prose-base.xsd");
   }
-//
-//  @SuppressWarnings("null")
-//  @Override
-//  protected List<@NotNull IDatatypeContent> handleResults(@NotNull List<Element> items) {
-//    return items.stream()
-//        .map(element -> {
-//          return new JDom2DatatypeContent(element.getAttributeValue("name"), items, analyzeDependencies(element)); 
-//        }).collect(Collectors.toList());
-//  }
+
   @Override
   protected List<@NotNull Element> queryElements(JDom2XmlSchemaLoader loader) {
     return loader.getContent(
-        "/xs:schema/xs:simpleType",
+        "/xs:schema/*",
         Collections.singletonMap("xs", loader.NS_XML_SCHEMA));
   }
 
-  @SuppressWarnings("null")
-  @NotNull
-  private static List<@NotNull String> analyzeDependencies(@NotNull Element element) {
-    XPathExpression<Attribute> xpath = XPathFactory.instance().compile(".//@base", Filters.attribute());
-    return xpath.evaluate(element).stream()
-      .map(attr -> attr.getValue())
-      .filter(type -> !type.startsWith("xs:"))
-      .distinct()
-      .collect(Collectors.toList());
-  }
-
   @Override
-  protected @NotNull Map<@NotNull String, IDatatypeContent> handleResults(
-      @NotNull List<@NotNull Element> items) {
-    return items.stream()
-        .map(element -> {
-          return new JDom2DatatypeContent(element.getAttributeValue("name"), CollectionUtil.singletonList(element), analyzeDependencies(element));
-        }).collect(Collectors.toMap(content -> content.getTypeName(), Function.identity(), (e1, e2) -> e2, LinkedHashMap::new));
+  protected @NotNull Map<@NotNull String, IDatatypeContent> handleResults(@NotNull List<@NotNull Element> items) {
+    return CollectionUtil.singletonMap(
+        DATATYPE_NAME,
+        new JDom2DatatypeContent(
+            DATATYPE_NAME,
+            items,
+            CollectionUtil.emptyList()));
   }
 
   @Override
   public @NotNull Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes,
       @NotNull XMLStreamWriter2 writer) throws XMLStreamException {
-    writer.writeComment(" core ");
+    writer.writeComment(" ================ ");
+    writer.writeComment(" prose base types ");
+    writer.writeComment(" ================ ");
     return super.generateDatatypes(requiredTypes, writer);
   }
 }

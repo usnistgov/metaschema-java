@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.definition;
 
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
 /**
  * This marker interface is used for some collections that contain various named definitions.
@@ -46,5 +46,5 @@ public interface INamedDefinition extends IDefinition {
    * 
    * @return the instance or {@code null} otherwise
    */
-  IInstance getInlineInstance();
+  INamedInstance getInlineInstance();
 }

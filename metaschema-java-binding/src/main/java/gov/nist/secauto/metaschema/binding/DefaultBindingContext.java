@@ -84,17 +84,12 @@ public class DefaultBindingContext implements IBindingContext {
   private static DefaultBindingContext singleton;
 
   @NotNull
-  private final Map<
-      Class<?>,
-      IClassBinding> classBindingsByClass
-          = new HashMap<>(); // NOPMD synchronization is handled in the methods accessing this field
+  private final Map<Class<?>, IClassBinding> classBindingsByClass = new HashMap<>(); // NOPMD - intentional
   @NotNull
-  private final Map<
-      Class<? extends IJavaTypeAdapter<?>>,
-      IJavaTypeAdapter<?>> javaTypeAdapterMap
-          = new HashMap<>(); // NOPMD synchronization is handled in the methods accessing this field
+  private final Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> javaTypeAdapterMap // NOPMD - intentional
+      = new HashMap<>();
   @NotNull
-  private final List<IBindingMatcher> bindingMatchers = new LinkedList<>();
+  private final List<@NotNull IBindingMatcher> bindingMatchers = new LinkedList<>();
 
   public static DefaultBindingContext instance() {
     synchronized (DefaultBindingContext.class) {
@@ -196,8 +191,10 @@ public class DefaultBindingContext implements IBindingContext {
    */
   @Override
   public <CLASS> IDeserializer<CLASS> newDeserializer(@NotNull Format format, @NotNull Class<CLASS> clazz) {
-    Objects.requireNonNull(format, "format");
     IAssemblyClassBinding classBinding = (IAssemblyClassBinding) getClassBinding(clazz);
+    if (classBinding == null) {
+      throw new IllegalStateException(String.format("A binding for class '%s' was not found.", clazz.getName()));
+    }
 
     IDeserializer<CLASS> retval;
     switch (format) {
@@ -231,8 +228,10 @@ public class DefaultBindingContext implements IBindingContext {
     }
   }
 
-  public synchronized Map<Class<?>, IClassBinding> getClassBindingsByClass() {
-    return Collections.unmodifiableMap(classBindingsByClass);
+  public Map<Class<?>, IClassBinding> getClassBindingsByClass() {
+    synchronized (this) {
+      return Collections.unmodifiableMap(classBindingsByClass);
+    }
   }
 
   public Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> getJavaTypeAdaptersByClass() {
@@ -278,8 +277,12 @@ public class DefaultBindingContext implements IBindingContext {
 
   @Override
   public IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode) {
-    IClassBinding binding = getClassBinding(boundObject.getClass());
-    return IXdmFactory.INSTANCE.newNodeItem(binding, boundObject, baseUri, rootNode);
+    IClassBinding classBinding = getClassBinding(boundObject.getClass());
+    if (classBinding == null) {
+      throw new IllegalStateException(
+          String.format("A binding for class '%s' was not found.", boundObject.getClass().getName()));
+    }
+    return IXdmFactory.INSTANCE.newNodeItem(classBinding, boundObject, baseUri, rootNode);
   }
 
   @Override

@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json;
+package gov.nist.secauto.metaschema.schemagen;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -41,6 +41,7 @@ import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.schemagen.JsonSchemaGenerator.GenerationState;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -59,21 +60,21 @@ public class JsonPropertyGenerator {
     // disable construction
   }
 
-  public static void generateDescription(IInstance instance, JsonGenerator jsonGenerator) throws IOException {
+  public static void generateDescription(IInstance instance, @NotNull GenerationState state) throws IOException {
     MarkupMultiline remarks = instance.getRemarks();
     if (remarks != null) {
-      jsonGenerator.writeStringField("description", remarks.toMarkdown());
+      state.getWriter().writeStringField("description", remarks.toMarkdown());
     }
   }
 
   public static void generateFlagProperty(
       @NotNull IFlagInstance flag,
-      @NotNull JsonDatatypeManager datatypeManager,
-      @NotNull InstanceProperties properties) {
+      @NotNull InstanceProperties properties,
+      @NotNull GenerationState state) {
     String propertyName = flag.getJsonName();
     properties.addProperty(propertyName,
         ObjectUtils.notNull(JsonNodeFactory.instance.objectNode()
-            .put("$ref", datatypeManager.getJsonDefinitionRefForDefinition(flag.getDefinition()).toString())));
+            .put("$ref",  state.getDatatypeManager().getJsonDefinitionRefForDefinition(flag.getDefinition()))));
     if (flag.isRequired()) {
       properties.addRequired(propertyName);
     }
@@ -81,30 +82,30 @@ public class JsonPropertyGenerator {
 
   public static void generateSimpleFieldValueInstance(
       @NotNull IFieldDefinition definition,
-      @NotNull JsonDatatypeManager datatypeManager,
-      @NotNull InstanceProperties properties) {
+      @NotNull InstanceProperties properties,
+      @NotNull GenerationState state) {
     String propertyName = definition.getJsonValueKeyName();
     properties.addProperty(propertyName,
         ObjectUtils.notNull(JsonNodeFactory.instance.objectNode()
-            .put("$ref", datatypeManager.getJsonDefinitionRefForDatatype(definition.getDatatype()).toString())));
+            .put("$ref",  state.getDatatypeManager().getJsonDefinitionRefForDatatype(definition.getDatatype()))));
     properties.addRequired(propertyName);
   }
 
   public static void generateCollapsibleFieldValueInstance(
       @NotNull IFieldDefinition definition,
-      @NotNull JsonDatatypeManager datatypeManager,
-      @NotNull InstanceProperties properties) {
+      @NotNull InstanceProperties properties,
+      @NotNull GenerationState state) {
     String propertyName = definition.getJsonValueKeyName();
 
-    properties.addProperty(propertyName, generateCollapsibleFieldValueType(definition, datatypeManager));
+    properties.addProperty(propertyName, generateCollapsibleFieldValueType(definition, state));
     properties.addRequired(propertyName);
   }
 
   @NotNull
   public static ObjectNode generateCollapsibleFieldValueType(
       @NotNull IFieldDefinition definition,
-      @NotNull JsonDatatypeManager datatypeManager) {
-    String definitionRef = datatypeManager.getJsonDefinitionRefForDatatype(definition.getDatatype()).toString();
+      @NotNull GenerationState state) {
+    String definitionRef = state.getDatatypeManager().getJsonDefinitionRefForDatatype(definition.getDatatype());
 
     ObjectNode retval = JsonNodeFactory.instance.objectNode();
     ArrayNode oneOf = retval.putArray("oneOf");
@@ -120,10 +121,12 @@ public class JsonPropertyGenerator {
 
   public static void generateInstanceProperty(
       INamedModelInstance instance,
-      @NotNull JsonDatatypeManager datatypeManager,
-      @NotNull InstanceProperties properties) {
+      @NotNull InstanceProperties properties,
+      @NotNull GenerationState state) {
+    JsonDatatypeManager datatypeManager = state.getDatatypeManager();
+
     String propertyName = instance.getJsonName();
-    String definitionRef = datatypeManager.getJsonDefinitionRefForDefinition(instance.getDefinition()).toString();
+    String definitionRef = datatypeManager.getJsonDefinitionRefForDefinition(instance.getDefinition());
 
     ObjectNode instanceJsonObject = JsonNodeFactory.instance.objectNode();
     int maxOccurs = instance.getMaxOccurs();
@@ -163,7 +166,7 @@ public class JsonPropertyGenerator {
 
         instanceJsonObject.putObject("propertyNames")
             .put("$ref",
-                datatypeManager.getJsonDefinitionRefForDatatype(jsonKey.getDefinition().getDatatype()).toString());
+                datatypeManager.getJsonDefinitionRefForDatatype(jsonKey.getDefinition().getDatatype()));
         instanceJsonObject.putObject("additionalProperties")
             .put("$ref", definitionRef);
         break;
@@ -184,35 +187,34 @@ public class JsonPropertyGenerator {
 
   @NotNull
   public static void generateChoices(
-      @NotNull Collection<? extends IChoiceInstance> choices,
-      @NotNull JsonDatatypeManager datatypeManager,
+      @NotNull Collection<@NotNull ? extends IChoiceInstance> choices,
       @NotNull InstanceProperties properties,
-      @NotNull JsonGenerator jsonGenerator) throws IOException {
-
-    List<InstanceProperties> propertyChoices = Collections.singletonList(properties);
-    propertyChoices = explodeChoices(choices, datatypeManager, propertyChoices);
+      @NotNull GenerationState state) throws IOException {
+    JsonGenerator writer = state.getWriter();
+    List<InstanceProperties> propertyChoices = CollectionUtil.singletonList(properties);
+    propertyChoices = explodeChoices(choices, propertyChoices, state);
 
     if (propertyChoices.size() == 1) {
-      propertyChoices.iterator().next().generate(jsonGenerator);
+      propertyChoices.iterator().next().generate(writer);
     } else if (propertyChoices.size() > 1) {
-      jsonGenerator.writeFieldName("anyOf");
-      jsonGenerator.writeStartArray();
+      writer.writeFieldName("anyOf");
+      writer.writeStartArray();
       for (InstanceProperties propertyChoice : propertyChoices) {
-        jsonGenerator.writeStartObject();
-        propertyChoice.generate(jsonGenerator);
+        writer.writeStartObject();
+        propertyChoice.generate(writer);
 
-        jsonGenerator.writeBooleanField("additionalProperties", false);
+        writer.writeBooleanField("additionalProperties", false);
 
-        jsonGenerator.writeEndObject();
+        writer.writeEndObject();
       }
-      jsonGenerator.writeEndArray();
+      writer.writeEndArray();
     }
   }
 
   protected static List<InstanceProperties> explodeChoices(
       @NotNull Collection<@NotNull ? extends IChoiceInstance> choices,
-      @NotNull JsonDatatypeManager datatypeManager,
-      @NotNull List<InstanceProperties> propertyChoices) {
+      @NotNull List<InstanceProperties> propertyChoices,
+      @NotNull GenerationState state) {
 
     List<InstanceProperties> retval = propertyChoices;
 
@@ -223,18 +225,20 @@ public class JsonPropertyGenerator {
           // recurse
           newRetval.addAll(explodeChoices(
               CollectionUtil.singleton((IChoiceInstance) optionInstance),
-              datatypeManager,
-              retval));
+              retval,
+              state));
         } else {
-          // interate over the old array of choices and append new choice
+          // iterate over the old array of choices and append new choice
           for (InstanceProperties oldInstanceProperties : retval) {
+            @SuppressWarnings("null")
+            @NotNull
             InstanceProperties newInstanceProperties = oldInstanceProperties.copy();
 
             // add the choice
             generateInstanceProperty(
                 (INamedModelInstance) optionInstance,
-                datatypeManager,
-                newInstanceProperties);
+                newInstanceProperties,
+                state);
             newRetval.add(newInstanceProperties);
           }
         }

@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json;
+package gov.nist.secauto.metaschema.schemagen;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -87,11 +87,11 @@ public class JsonSchemaGenerator implements ISchemaGenerator {
     Collection<@NotNull ? extends INamedDefinition> definitions
         = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
 
-    JsonDatatypeManager datatypeManager = new JsonDatatypeManager();
+    GenerationState state = new GenerationState(jsonGenerator, false);
 
-    generateDefinitions(definitions, datatypeManager, jsonGenerator);
+    generateDefinitions(definitions, state);
 
-    Set<IAssemblyDefinition> rootAssemblies = new LinkedHashSet<>();
+    Set<@NotNull IAssemblyDefinition> rootAssemblies = new LinkedHashSet<>();
 
     for (IDefinition definition : definitions) {
       if (definition instanceof IAssemblyDefinition) {
@@ -103,69 +103,73 @@ public class JsonSchemaGenerator implements ISchemaGenerator {
     }
 
     if (!rootAssemblies.isEmpty()) {
-      generateRootProperties(rootAssemblies, datatypeManager, jsonGenerator);
+      generateRootProperties(rootAssemblies, state);
     }
     jsonGenerator.writeEndObject();
   }
 
   protected void generateDefinitions(
       @NotNull Collection<@NotNull ? extends INamedDefinition> definitions,
-      @NotNull JsonDatatypeManager datatypeManager,
-      @NotNull JsonGenerator jsonGenerator) throws IOException {
+      @NotNull GenerationState state) throws IOException {
     if (!definitions.isEmpty()) {
-      jsonGenerator.writeFieldName("definitions");
-      jsonGenerator.writeStartObject();
+      JsonGenerator writer = state.getWriter();
+
+      writer.writeFieldName("definitions");
+      writer.writeStartObject();
 
       for (INamedDefinition definition : definitions) {
-        JsonDefinitionGenerator.generateDefinition(definition, datatypeManager, jsonGenerator);
+        JsonDefinitionGenerator.generateDefinition(definition, state);
       }
 
       // write datatypes
-      datatypeManager.generateDatatypes(jsonGenerator);
+      state.getDatatypeManager().generateDatatypes(writer);
 
-      jsonGenerator.writeEndObject();
+      writer.writeEndObject();
     }
   }
 
   protected void generateRootProperties(
-      @NotNull Set<IAssemblyDefinition> rootAssemblies,
-      @NotNull JsonDatatypeManager datatypeManager,
-      @NotNull JsonGenerator jsonGenerator) throws IOException {
+      @NotNull Set<@NotNull IAssemblyDefinition> rootAssemblies,
+      @NotNull GenerationState state) throws IOException {
+    JsonGenerator writer = state.getWriter();
     // generate root properties
-    jsonGenerator.writeFieldName("properties");
-    jsonGenerator.writeStartObject();
+    writer.writeFieldName("properties");
+    writer.writeStartObject();
 
-    jsonGenerator.writeFieldName("$schema");
-    jsonGenerator.writeStartObject();
-    jsonGenerator.writeStringField("type", "string");
-    jsonGenerator.writeStringField("format", "uri-reference");
-    jsonGenerator.writeEndObject();
+    writer.writeFieldName("$schema");
+    writer.writeStartObject();
+    writer.writeStringField("type", "string");
+    writer.writeStringField("format", "uri-reference");
+    writer.writeEndObject();
 
     for (IAssemblyDefinition root : rootAssemblies) {
-      jsonGenerator.writeFieldName(root.getRootJsonName());
-      jsonGenerator.writeStartObject();
-      jsonGenerator.writeStringField("$ref", datatypeManager.getJsonDefinitionRefForDefinition(root).toString());
-      jsonGenerator.writeEndObject();
+      writer.writeFieldName(root.getRootJsonName());
+      writer.writeStartObject();
+      writer.writeStringField("$ref", state.getDatatypeManager().getJsonDefinitionRefForDefinition(root));
+      writer.writeEndObject();
     }
-    jsonGenerator.writeEndObject();
+    writer.writeEndObject();
 
     // generate root requires
     if (rootAssemblies.size() == 1) {
-      generateRootRequired(rootAssemblies.iterator().next(), jsonGenerator);
+      @SuppressWarnings("null")
+      @NotNull
+      IAssemblyDefinition root = rootAssemblies.iterator().next();
+      generateRootRequired(root, writer);
     } else {
-      jsonGenerator.writeFieldName("oneOf");
-      jsonGenerator.writeStartArray();
+      writer.writeFieldName("oneOf");
+      writer.writeStartArray();
 
       for (IAssemblyDefinition root : rootAssemblies) {
-        jsonGenerator.writeStartObject();
-        generateRootRequired(root, jsonGenerator);
-        jsonGenerator.writeEndObject();
+        writer.writeStartObject();
+        generateRootRequired(root, writer);
+        writer.writeEndObject();
       }
 
-      jsonGenerator.writeEndArray();
+      writer.writeEndArray();
     }
 
-    jsonGenerator.writeBooleanField("additionalProperties", false);
+    writer.writeBooleanField("additionalProperties", false);
   }
 
   protected void generateRootRequired(@NotNull IAssemblyDefinition root, @NotNull JsonGenerator jsonGenerator)
@@ -175,5 +179,12 @@ public class JsonSchemaGenerator implements ISchemaGenerator {
     jsonGenerator.writeString(root.getRootJsonName());
     jsonGenerator.writeEndArray();
 
+  }
+
+  public static class GenerationState extends AbstractGenerationState<JsonGenerator, JsonDatatypeManager> {
+
+    public GenerationState(@NotNull JsonGenerator writer, boolean nestInlineTypes) {
+      super(writer, new JsonDatatypeManager(), nestInlineTypes);
+    }
   }
 }

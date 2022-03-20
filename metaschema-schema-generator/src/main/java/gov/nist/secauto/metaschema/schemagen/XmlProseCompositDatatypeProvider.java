@@ -23,5 +23,39 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.schemagen;
 
-package gov.nist.secauto.metaschema.schemagen.xml;
+import org.codehaus.stax2.XMLStreamWriter2;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.xml.stream.XMLStreamException;
+
+public class XmlProseCompositDatatypeProvider
+    extends CompositeDatatypeProvider {
+  
+  private final XmlProseBaseDatatypeProvider proseBaseProvider = new XmlProseBaseDatatypeProvider();
+
+  public XmlProseCompositDatatypeProvider(List<@NotNull IDatatypeProvider> proxiedProviders) {
+    super(proxiedProviders);
+  }
+
+  @Override
+  public @NotNull Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes,
+      @NotNull XMLStreamWriter2 writer) throws XMLStreamException {
+    Set<@NotNull String> result =  super.generateDatatypes(requiredTypes, writer);
+
+    if (!result.isEmpty()) {
+      // apply core markup types
+      Collection<@NotNull IDatatypeContent> datatypes = proseBaseProvider.getDatatypes().values();
+      Set<String> proseBaseTypes = datatypes.stream().map(content -> content.getTypeName()).collect(Collectors.toSet());
+      proseBaseProvider.generateDatatypes(proseBaseTypes, writer);
+    }
+    return result;
+  }
+
+}

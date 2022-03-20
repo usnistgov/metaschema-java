@@ -387,9 +387,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * @throws XMLStreamException
    *           if an error occurred while looking at the next event
    */
-  public static boolean isNextEventStartElement(XMLEventReader2 reader, QName name) throws XMLStreamException { // NO_UCD
-                                                                                                                // (unused
-                                                                                                                // code)
+  public static boolean isNextEventStartElement(XMLEventReader2 reader, QName name) throws XMLStreamException {
     XMLEvent nextEvent = reader.peek();
     return nextEvent.isStartElement() && name.equals(nextEvent.asStartElement().getName());
   }
@@ -403,8 +401,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * @throws XMLStreamException
    *           if an error occurred while looking at the next event
    */
-  public static boolean isNextEventEndDocument(XMLEventReader2 reader) throws XMLStreamException { // NO_UCD (unused
-                                                                                                   // code)
+  public static boolean isNextEventEndDocument(XMLEventReader2 reader) throws XMLStreamException {
     return reader.peek().isEndDocument();
   }
 
@@ -465,9 +462,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * @throws XMLStreamException
    *           if an error occurred while looking at the next event
    */
-  public static void assertNext(XMLEventReader2 reader, int presumedEventType) throws XMLStreamException { // NO_UCD
-                                                                                                           // (unused
-                                                                                                           // code)
+  public static void assertNext(XMLEventReader2 reader, int presumedEventType)
+      throws XMLStreamException {
     assertNext(reader, presumedEventType, null);
   }
 

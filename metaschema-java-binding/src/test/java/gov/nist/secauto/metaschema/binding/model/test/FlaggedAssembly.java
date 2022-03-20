@@ -35,9 +35,6 @@ public class FlaggedAssembly {
   @Flag(useName = "id", typeAdapter = StringAdapter.class)
   private String id;
 
-  public FlaggedAssembly() {
-  }
-
   protected String getId() {
     return id;
   }

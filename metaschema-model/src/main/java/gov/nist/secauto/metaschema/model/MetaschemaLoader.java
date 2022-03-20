@@ -66,14 +66,8 @@ public class MetaschemaLoader {
   private static final Logger LOGGER = LogManager.getLogger(MetaschemaLoader.class);
 
   private final Set<IXmlMetaschema> loadedMetaschema = new LinkedHashSet<>();
-  private final Map<URI, IXmlMetaschema> metaschemaCache = new LinkedHashMap<>();
-  private boolean resolveEntities = false;
-
-  /**
-   * Create a new Metaschema loader.
-   */
-  public MetaschemaLoader() {
-  }
+  private final Map<URI, IXmlMetaschema> metaschemaCache = new LinkedHashMap<>(); // NOPMD - intentional
+  private boolean resolveEntities; // = false;
 
   public void allowEntityResolution() {
     resolveEntities = true;
@@ -108,9 +102,11 @@ public class MetaschemaLoader {
    * @throws IOException
    *           if an error occurred parsing the Metaschema
    */
+  @NotNull
   public IXmlMetaschema loadMetaschema(URI resource) throws MetaschemaException, IOException {
     return loadXmlMetaschema(resource, new Stack<>(), new LinkedHashMap<>());
   }
+
   /**
    * Load a Metaschema from the specified path.
    * 
@@ -122,9 +118,11 @@ public class MetaschemaLoader {
    * @throws IOException
    *           if an error occurred parsing the Metaschema
    */
+  @NotNull
   public IXmlMetaschema loadXmlMetaschema(Path path) throws MetaschemaException, IOException {
     return loadXmlMetaschema(path.toUri());
   }
+
   /**
    * Load a Metaschema from the specified file.
    * 
@@ -136,6 +134,7 @@ public class MetaschemaLoader {
    * @throws IOException
    *           if an error occurred parsing the Metaschema
    */
+  @NotNull
   public IXmlMetaschema loadXmlMetaschema(File file) throws MetaschemaException, IOException {
     return loadXmlMetaschema(file.toURI());
   }
@@ -266,7 +265,7 @@ public class MetaschemaLoader {
         }
         options.setBaseURI(resource);
         options.setLoadLineNumbers();
-        metaschemaXml = (METASCHEMADocument) METASCHEMADocument.Factory.parse(resource.toURL(), options);
+        metaschemaXml = METASCHEMADocument.Factory.parse(resource.toURL(), options);
       } catch (XmlException e) {
         throw new MetaschemaException(e);
       }

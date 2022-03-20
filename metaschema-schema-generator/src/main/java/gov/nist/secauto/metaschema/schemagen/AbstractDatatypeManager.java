@@ -25,7 +25,11 @@
  */
 package gov.nist.secauto.metaschema.schemagen;
 
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class AbstractDatatypeManager implements IDatatypeManager {
+public abstract class AbstractDatatypeManager implements IDatatypeManager {
   @NotNull
   private static final Map<String, String> datatypeTranslationMap = new LinkedHashMap<>();
 
@@ -75,6 +79,8 @@ public class AbstractDatatypeManager implements IDatatypeManager {
   @NotNull
   private final Map<@NotNull IJavaTypeAdapter<?>, String> datatypeToTypeMap = new HashMap<>();
 
+  protected abstract boolean isNestInlineDefinitions();
+
   @Override
   public Set<String> getUsedTypes() {
     return new HashSet<>(datatypeToTypeMap.values());
@@ -92,6 +98,48 @@ public class AbstractDatatypeManager implements IDatatypeManager {
       }
       return name;
     }
+  }
+
+  public CharSequence getTypeNameForDefinition(@NotNull INamedDefinition definition) {
+    StringBuilder builder = new StringBuilder();
+
+    if (!definition.isInline()) {
+      builder.append(toCamelCase(definition.getContainingMetaschema().getShortName()));
+    }
+    
+    if (definition.isInline() && !isNestInlineDefinitions()) {
+      // need to append the parent name(s) to disambiguate this type name
+      builder.append(getParentTypeContext(definition, definition.getContainingMetaschema()));
+    }
+
+    builder
+        .append(toCamelCase(definition.getEffectiveName()))
+        .append(toCamelCase(definition.getModelType().name()))
+        .append("Type");
+
+    return builder;
+  }
+
+  /**
+   * 
+   * @param inlineInstance
+   * @param childMetaschema
+   * @return
+   */
+  private CharSequence getParentTypeContext(@NotNull INamedDefinition definition,
+      @NotNull IMetaschema childMetaschema) {
+    StringBuilder builder = new StringBuilder();
+    if (definition.isInline()) {
+      INamedInstance inlineInstance = definition.getInlineInstance();
+      INamedModelDefinition parentDefinition = inlineInstance.getContainingDefinition();
+      if (parentDefinition == null) {
+        throw new IllegalStateException();
+      }
+      builder.append(getParentTypeContext(parentDefinition, childMetaschema));
+    } else {
+      builder.append(toCamelCase(definition.getEffectiveName()));
+    }
+    return builder;
   }
 
   @NotNull

@@ -40,8 +40,8 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.instances.IXmlAssemblyInstance;
 import gov.nist.secauto.metaschema.model.instances.IXmlChoiceInstance;
@@ -99,10 +99,14 @@ public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
     return metaschema;
   }
 
-  @SuppressWarnings("null")
-  protected synchronized void initFlagContainer() {
-    if (flagContainer == null) {
-      flagContainer = new XmlFlagContainerSupport(getXmlAssembly(), this);
+  /**
+   * Lazy initialize the flag instances associated with this definition.
+   */
+  protected void initFlagContainer() {
+    synchronized (this) {
+      if (flagContainer == null) {
+        flagContainer = new XmlFlagContainerSupport(getXmlAssembly(), this);
+      }
     }
   }
 
@@ -112,10 +116,14 @@ public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
     return flagContainer.getFlagInstanceMap();
   }
 
-  @SuppressWarnings("null")
-  protected synchronized void initModelContainer() {
-    if (modelContainer == null) {
-      modelContainer = new XmlModelContainerSupport(getXmlAssembly(), this);
+  /**
+   * Lazy initialize the model instances associated with this definition.
+   */
+  protected void initModelContainer() {
+    synchronized (this) {
+      if (modelContainer == null) {
+        modelContainer = new XmlModelContainerSupport(getXmlAssembly(), this);
+      }
     }
   }
 
@@ -153,12 +161,14 @@ public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.
    */
-  protected synchronized void checkModelConstraints() {
-    if (constraints == null) {
-      if (getXmlAssembly().isSetConstraint()) {
-        constraints = new AssemblyConstraintSupport(getXmlAssembly().getConstraint());
-      } else {
-        constraints = IAssemblyConstraintSupport.NULL_CONSTRAINT;
+  protected void checkModelConstraints() {
+    synchronized (this) {
+      if (constraints == null) {
+        if (getXmlAssembly().isSetConstraint()) {
+          constraints = new AssemblyConstraintSupport(getXmlAssembly().getConstraint());
+        } else {
+          constraints = IAssemblyConstraintSupport.NULL_CONSTRAINT;
+        }
       }
     }
   }
@@ -217,11 +227,10 @@ public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
   }
 
   @Override
-  public IInstance getInlineInstance() {
+  public INamedInstance getInlineInstance() {
     return null;
   }
 
-  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlAssembly().getName();
@@ -239,7 +248,8 @@ public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
 
   @Override
   public MarkupLine getDescription() {
-    return getXmlAssembly().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription()) : null;
+    return getXmlAssembly().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription())
+        : null;
   }
 
   @Override
@@ -266,7 +276,6 @@ public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
     return getXmlAssembly().isSetRootName() ? getXmlAssembly().getRootName() : null;
   }
 
-  @SuppressWarnings("null")
   @Override
   public ModuleScopeEnum getModuleScope() {
     return getXmlAssembly().isSetScope() ? getXmlAssembly().getScope() : IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;

@@ -24,60 +24,78 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.xml;
-
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-import gov.nist.secauto.metaschema.schemagen.AbstractDatatypeProvider;
-import gov.nist.secauto.metaschema.schemagen.IDatatypeContent;
-import gov.nist.secauto.metaschema.schemagen.JDom2DatatypeContent;
-import gov.nist.secauto.metaschema.schemagen.JDom2XmlSchemaLoader;
+package gov.nist.secauto.metaschema.schemagen;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLStreamException;
 
-public class MarkupMultilineDatatypeProvider
-    extends AbstractDatatypeProvider {
-  private static final String DATATYPE_NAME = "MarkupMultilineDatatype";
+public abstract class AbstractXmlDatatypeProvider implements IDatatypeProvider {
+  private Map<@NotNull String, IDatatypeContent> datatypes;
+
+  protected abstract InputStream getSchemaResource();
+
+  private void initSchema() {
+    synchronized (this) {
+      if (datatypes == null) {
+        try (InputStream is = getSchemaResource()) {
+          JDom2XmlSchemaLoader loader = new JDom2XmlSchemaLoader(is);
+
+          List<@NotNull Element> elements = queryElements(loader);
+
+          datatypes = Collections.unmodifiableMap(handleResults(elements));
+        } catch (JDOMException | IOException ex) {
+          throw new IllegalStateException(ex);
+        }
+      }
+    }
+  }
+
+  protected abstract List<@NotNull Element> queryElements(JDom2XmlSchemaLoader loader);
+
+  @NotNull
+  protected abstract Map<@NotNull String, IDatatypeContent> handleResults(@NotNull List<@NotNull Element> items);
 
   @Override
-  protected InputStream getSchemaResource() {
-    return JDom2XmlSchemaLoader.class.getClassLoader()
-        .getResourceAsStream("schema/xml/metaschema-markup-multiline.xsd");
+  public Map<@NotNull String, IDatatypeContent> getDatatypes() {
+    initSchema();
+    return datatypes;
   }
 
   @Override
-  protected List<@NotNull Element> queryElements(JDom2XmlSchemaLoader loader) {
-    return loader.getContent(
-        "/xs:schema/*",
-        Collections.singletonMap("xs", loader.NS_XML_SCHEMA));
+  public Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes, @NotNull XMLStreamWriter2 writer)
+      throws XMLStreamException {
+    Map<@NotNull String, IDatatypeContent> datatypes = getDatatypes();
+
+    Set<@NotNull String> providedDatatypes = new LinkedHashSet<>();
+    for (IDatatypeContent datatype : datatypes.values()) {
+      String type = datatype.getTypeName();
+      if (requiredTypes.contains(type)) {
+        providedDatatypes.add(type);
+        providedDatatypes.addAll(datatype.getDependencies());
+      }
+    }
+
+    for (IDatatypeContent datatype : datatypes.values()) {
+      String type = datatype.getTypeName();
+      if (providedDatatypes.contains(type)) {
+        datatype.write(writer);
+      }
+    }
+    return providedDatatypes;
   }
 
-  @Override
-  protected @NotNull Map<@NotNull String, IDatatypeContent> handleResults(@NotNull List<@NotNull Element> items) {
-    return CollectionUtil.singletonMap(
-        DATATYPE_NAME,
-        new JDom2DatatypeContent(
-            DATATYPE_NAME,
-            items.stream()
-                .filter(element -> !("include".equals(element.getName())))
-                .collect(Collectors.toList()),
-            CollectionUtil.emptyList()));
-  }
-
-  @Override
-  public @NotNull Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes,
-      @NotNull XMLStreamWriter2 writer) throws XMLStreamException {
-    writer.writeComment(" markup multiline ");
-    return super.generateDatatypes(requiredTypes, writer);
-  }
 }

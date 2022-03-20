@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding;
 
-class Examples {
+class Examples { // NOPMD
 
 //  @SuppressWarnings("PMD")
 //  @Test

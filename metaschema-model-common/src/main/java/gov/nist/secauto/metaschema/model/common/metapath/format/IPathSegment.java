@@ -69,7 +69,7 @@ public interface IPathSegment {
   Stream<? extends IPathSegment> getPathStream();
 
   /**
-   * Get the value associated with the path segment
+   * Get the value associated with the path segment.
    * 
    * @return the value or {@code} if no value is associated with this path segment
    */

@@ -46,7 +46,6 @@ import gov.nist.secauto.metaschema.model.testing.xmlbeans.TestCollectionDocument
 import gov.nist.secauto.metaschema.model.testing.xmlbeans.TestScenarioDocument.TestScenario;
 import gov.nist.secauto.metaschema.model.testing.xmlbeans.TestSuiteDocument;
 
-import org.apache.commons.io.output.TeeOutputStream;
 import org.apache.logging.log4j.LogBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,8 +58,6 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.platform.commons.JUnitException;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -68,7 +65,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -147,27 +146,28 @@ public abstract class AbstractTestSuite {
     produceSchema(metaschema, schemaPath, getGeneratorSupplier());
   }
 
-  protected void produceSchema(@NotNull IMetaschema metaschema, @NotNull Path schemaPath, @NotNull BiFunction<IMetaschema, Writer, Void> schemaProducer) throws IOException {
+  protected void produceSchema(@NotNull IMetaschema metaschema, @NotNull Path schemaPath,
+      @NotNull BiFunction<IMetaschema, Writer, Void> schemaProducer) throws IOException {
     Path parentDir = schemaPath.getParent();
     if (!Files.exists(parentDir)) {
       Files.createDirectories(parentDir);
     }
 
-    try (OutputStream os = Files.newOutputStream(
+    // try (OutputStream os = Files.newOutputStream(
+    // schemaPath,
+    // StandardOpenOption.CREATE,
+    // StandardOpenOption.WRITE,
+    // StandardOpenOption.TRUNCATE_EXISTING)) {
+    //
+    // TeeOutputStream tos = new TeeOutputStream(os, System.out);
+    // Writer writer = new OutputStreamWriter(tos, StandardCharsets.UTF_8);
+
+    try (Writer writer = Files.newBufferedWriter(
         schemaPath,
+        StandardCharsets.UTF_8,
         StandardOpenOption.CREATE,
-      StandardOpenOption.WRITE,
-      StandardOpenOption.TRUNCATE_EXISTING)) {
-      
-      TeeOutputStream tos = new TeeOutputStream(os, System.out);
-      Writer writer = new OutputStreamWriter(tos, StandardCharsets.UTF_8);
-    
-//    try (Writer writer = Files.newBufferedWriter(
-//        schemaPath,
-//        StandardCharsets.UTF_8,
-//        StandardOpenOption.CREATE,
-//        StandardOpenOption.WRITE,
-//        StandardOpenOption.TRUNCATE_EXISTING)) {
+        StandardOpenOption.WRITE,
+        StandardOpenOption.TRUNCATE_EXISTING)) {
       schemaProducer.apply(metaschema, writer);
       writer.flush();
     }
@@ -342,7 +342,8 @@ public abstract class AbstractTestSuite {
               context = contextFuture.get();
             } catch (ExecutionException ex) {
               throw new JUnitException("failed to produce the content validator", ex.getCause());
-            }            Path convertedContetPath;
+            }
+            Path convertedContetPath;
             try {
               convertedContetPath = convertContent(contentUri, generationPath, context);
             } catch (Exception ex) {
@@ -406,9 +407,9 @@ public abstract class AbstractTestSuite {
       throw new IllegalArgumentException("Unknown level: " + finding.getSeverity().name());
     }
 
-//    if (finding.getCause() != null) {
-//      logBuilder.withThrowable(finding.getCause());
-//    }
+    // if (finding.getCause() != null) {
+    // logBuilder.withThrowable(finding.getCause());
+    // }
 
     if (finding instanceof JsonValidationFinding) {
       JsonValidationFinding jsonFinding = (JsonValidationFinding) finding;
@@ -417,4 +418,37 @@ public abstract class AbstractTestSuite {
       logBuilder.log("{}", finding.getMessage());
     }
   }
+  
+
+  @SuppressWarnings("null")
+  protected void doTest(
+      @NotNull String collectionName,
+      @NotNull String metaschemaName,
+      @NotNull String generatedSchemaName,
+      @NotNull Map<@NotNull String, Boolean> contentMap) throws IOException, MetaschemaException {
+    Path generationDir = getGenerationPath();
+
+    Path testSuite = Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/");
+    Path collectionPath = testSuite.resolve(collectionName);
+
+    MetaschemaLoader loader = new MetaschemaLoader();
+    Path metaschemaPath = collectionPath.resolve(metaschemaName);
+    IMetaschema metaschema = loader.loadXmlMetaschema(metaschemaPath);
+
+    Path schemaPath = generationDir.resolve(generatedSchemaName);
+    produceSchema(metaschema, schemaPath);
+    assertEquals(true, validate(getSchemaValidatorSupplier().get(), schemaPath));
+
+    DynamicBindingContext context = produceDynamicBindingContext(metaschema, generationDir);
+    for (Map.Entry<@NotNull String, Boolean> entry : contentMap.entrySet()) {
+      Path contentPath = collectionPath.resolve(entry.getKey());
+
+      contentPath = convertContent(contentPath.toUri(), generationDir, context);
+  
+      assertEquals(entry.getValue(),
+          validate(getContentValidatorSupplier().apply(schemaPath), contentPath),
+          "validation did not match expectation");
+    }
+  }
+
 }

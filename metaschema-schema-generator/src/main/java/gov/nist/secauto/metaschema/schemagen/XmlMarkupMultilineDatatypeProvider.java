@@ -24,13 +24,9 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.xml;
+package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-import gov.nist.secauto.metaschema.schemagen.AbstractDatatypeProvider;
-import gov.nist.secauto.metaschema.schemagen.IDatatypeContent;
-import gov.nist.secauto.metaschema.schemagen.JDom2DatatypeContent;
-import gov.nist.secauto.metaschema.schemagen.JDom2XmlSchemaLoader;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.jdom2.Element;
@@ -45,14 +41,14 @@ import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLStreamException;
 
-public class ProseBaseDatatypeProvider
-    extends AbstractDatatypeProvider {
-  private static final String DATATYPE_NAME = "ProseBase";
+public class XmlMarkupMultilineDatatypeProvider
+    extends AbstractXmlDatatypeProvider {
+  private static final String DATATYPE_NAME = "MarkupMultilineDatatype";
 
   @Override
   protected InputStream getSchemaResource() {
     return JDom2XmlSchemaLoader.class.getClassLoader()
-        .getResourceAsStream("schema/xml/metaschema-prose-base.xsd");
+        .getResourceAsStream("schema/xml/metaschema-markup-multiline.xsd");
   }
 
   @Override
@@ -68,14 +64,18 @@ public class ProseBaseDatatypeProvider
         DATATYPE_NAME,
         new JDom2DatatypeContent(
             DATATYPE_NAME,
-            items,
+            items.stream()
+                .filter(element -> !("include".equals(element.getName())))
+                .collect(Collectors.toList()),
             CollectionUtil.emptyList()));
   }
 
   @Override
   public @NotNull Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes,
       @NotNull XMLStreamWriter2 writer) throws XMLStreamException {
-    writer.writeComment(" prose base ");
+    writer.writeComment(" ====================== ");
+    writer.writeComment(" markup multiline types ");
+    writer.writeComment(" ====================== ");
     return super.generateDatatypes(requiredTypes, writer);
   }
 }

@@ -41,7 +41,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 import gov.nist.secauto.metaschema.model.definitions.IXmlFieldDefinition;
 import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFieldDefinitionType;
@@ -97,12 +97,14 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.
    */
-  protected synchronized void checkModelConstraints() {
-    if (constraints == null) {
-      if (getXmlField().isSetConstraint()) {
-        constraints = new ValueConstraintSupport(getXmlField().getConstraint());
-      } else {
-        constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+  protected void checkModelConstraints() {
+    synchronized (this) {
+      if (constraints == null) {
+        if (getXmlField().isSetConstraint()) {
+          constraints = new ValueConstraintSupport(getXmlField().getConstraint());
+        } else {
+          constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+        }
       }
     }
   }
@@ -143,11 +145,10 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
   }
 
   @Override
-  public IInstance getInlineInstance() {
+  public INamedInstance getInlineInstance() {
     return null;
   }
 
-  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlField().getName();
@@ -165,12 +166,18 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
 
   @Override
   public MarkupLine getDescription() {
-    return getXmlField().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlField().getDescription()) : null;
+    return getXmlField().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlField().getDescription())
+        : null;
   }
 
-  protected synchronized void initFlagContainer() {
-    if (flagContainer == null) {
-      flagContainer = new XmlFlagContainerSupport(getXmlField(), this);
+  /**
+   * Lazy initialize the flag instances of this definition.
+   */
+  protected void initFlagContainer() {
+    synchronized (this) {
+      if (flagContainer == null) {
+        flagContainer = new XmlFlagContainerSupport(getXmlField(), this);
+      }
     }
   }
 
@@ -180,7 +187,6 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
     return flagContainer.getFlagInstanceMap();
   }
 
-  @SuppressWarnings("null")
   @Override
   public IJavaTypeAdapter<?> getDatatype() {
     IJavaTypeAdapter<?> retval;
@@ -237,10 +243,10 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
 
   @Override
   public boolean isCollapsible() {
-    return getXmlField().isSetCollapsible() ? getXmlField().getCollapsible() : MetaschemaModelConstants.DEFAULT_FIELD_COLLAPSIBLE;
+    return getXmlField().isSetCollapsible() ? getXmlField().getCollapsible()
+        : MetaschemaModelConstants.DEFAULT_FIELD_COLLAPSIBLE;
   }
 
-  @SuppressWarnings("null")
   @Override
   public ModuleScopeEnum getModuleScope() {
     return getXmlField().isSetScope() ? getXmlField().getScope() : IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;

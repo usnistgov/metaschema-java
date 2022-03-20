@@ -140,7 +140,12 @@ public class ModelInstancePropertyGenerator
       retval.add(definition);
     }
 
-    fieldAnnoation.addMember("namespace", "$S", modelInstance.getXmlNamespace());
+    String namespace = modelInstance.getXmlNamespace();
+    if (namespace == null) {
+      fieldAnnoation.addMember("namespace", "$S", "##none");
+    } else if (!modelInstance.getContainingMetaschema().getXmlNamespace().toASCIIString().equals(namespace)) {
+      fieldAnnoation.addMember("namespace", "$S", namespace);
+    } // otherwise use the ##default
 
     if (modelInstance instanceof IFieldInstance) {
       IFieldInstance fieldInstance = (IFieldInstance) modelInstance;
@@ -177,7 +182,13 @@ public class ModelInstancePropertyGenerator
 
     if (maxOccurs == -1 || maxOccurs > 1) {
       fieldAnnoation.addMember("groupName", "$S", getInstanceName());
-      fieldAnnoation.addMember("groupNamespace", "$S", modelInstance.getGroupAsXmlNamespace());
+      
+      String groupAsNamespace = modelInstance.getGroupAsXmlNamespace();
+      if (groupAsNamespace == null) {
+        fieldAnnoation.addMember("groupNamespace", "$S", "##none");
+      } else if (!modelInstance.getContainingMetaschema().getXmlNamespace().toASCIIString().equals(groupAsNamespace)) {
+        fieldAnnoation.addMember("groupNamespace", "$S", groupAsNamespace);
+      } // otherwise use the ##default
 
       JsonGroupAsBehavior jsonGroupAsBehavior = modelInstance.getJsonGroupAsBehavior();
       assert jsonGroupAsBehavior != null;

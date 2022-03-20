@@ -24,14 +24,11 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json;
+package gov.nist.secauto.metaschema.schemagen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import gov.nist.secauto.metaschema.binding.io.Format;
-import gov.nist.secauto.metaschema.binding.io.ISerializer;
-import gov.nist.secauto.metaschema.codegen.Production;
-import gov.nist.secauto.metaschema.codegen.compile.MetaschemaCompilerHelper;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
@@ -39,10 +36,8 @@ import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator;
 import gov.nist.secauto.metaschema.model.testing.AbstractTestSuite;
 import gov.nist.secauto.metaschema.model.testing.DynamicBindingContext;
-import gov.nist.secauto.metaschema.schemagen.json.ISchemaGenerator;
-import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
 
-import org.junit.jupiter.api.Disabled;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.Test;
@@ -59,6 +54,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -77,11 +73,13 @@ public class JsonSuiteTest
     }
   }
 
+  @SuppressWarnings("null")
   @Override
   protected URI getTestSuiteURI() {
     return Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/unit-tests.xml").toUri();
   }
 
+  @SuppressWarnings("null")
   @Override
   protected Path getGenerationPath() {
     return Paths.get("test-schemagen");
@@ -96,17 +94,20 @@ public class JsonSuiteTest
   protected Format getRequiredContentFormat() {
     return Format.JSON;
   }
+
+  @SuppressWarnings("null")
   @Override
   protected Function<Path, IContentValidator> getContentValidatorSupplier() {
     return (path) -> {
       try (InputStream is = Files.newInputStream(path, StandardOpenOption.READ)) {
         return new JsonSchemaContentValidator(is);
-      } catch (IOException ex) {
-        throw new IllegalStateException(ex);
+      } catch (Exception ex) {
+        throw new JUnitException("Failed to create content validator for schema: " + path.toString(), ex);
       }
     };
   }
 
+  @SuppressWarnings("null")
   @Override
   protected BiFunction<IMetaschema, Writer, Void> getGeneratorSupplier() {
     // TODO Auto-generated method stub
@@ -114,7 +115,7 @@ public class JsonSuiteTest
       try {
         GENERATOR.generateFromMetaschema(metaschema, writer);
       } catch (IOException ex) {
-        throw new JUnitException("IO error", ex);
+        throw new JUnitException("Failed to schema generator for metaschema: " + metaschema.getLocation().toString(), ex);
       }
       return null;
     };
@@ -127,28 +128,16 @@ public class JsonSuiteTest
     return testFactory();
   }
 
-
-//  @Disabled
+  // @Disabled
+  @SuppressWarnings("null")
   @Test
   void test() throws IOException, MetaschemaException {
-    Path generationDir = getGenerationPath();
-
-    Path testSuite = Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/");
-    MetaschemaLoader loader = new MetaschemaLoader();
-    IMetaschema  metaschema = loader.loadXmlMetaschema(testSuite.resolve("datatypes/datatypes-uuid_metaschema.xml"));
-
-    Path schemaPath = generationDir.resolve("test-schema.out");
-    produceSchema(metaschema, schemaPath);
-    assertEquals(true, validate(getSchemaValidatorSupplier().get(), schemaPath));
-    
-    Path contentPath = testSuite.resolve("datatypes/datatypes-uuid_test_valid_PASS.json");
-
-    DynamicBindingContext context = produceDynamicBindingContext(metaschema, generationDir); 
-    contentPath = convertContent(contentPath.toUri(), generationDir, context);
-
-    assertEquals(true,
-        validate(getContentValidatorSupplier().apply(schemaPath), contentPath),
-        "validation did not match expectation");
-
+    doTest(
+        "datatypes/",
+        "datatypes-uuid_metaschema.xml",
+        "test-schema.json",
+        Map.ofEntries(
+            Map.entry("datatypes-uuid_test_valid_PASS.json", true)));
   }
+  
 }

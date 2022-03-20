@@ -66,7 +66,6 @@ public class CompositeDatatypeProvider implements IDatatypeProvider {
     for (IDatatypeProvider provider : getProxiedProviders()) {
       retval.addAll(provider.generateDatatypes(requiredTypes, writer));
     }
-    writer.writeComment(" composite ");
     return retval;
   }
 
