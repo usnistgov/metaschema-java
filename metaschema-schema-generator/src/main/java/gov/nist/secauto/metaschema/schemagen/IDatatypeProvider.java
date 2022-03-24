@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.schemagen;
 
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -38,6 +39,7 @@ public interface IDatatypeProvider {
   Map<@NotNull String, IDatatypeContent> getDatatypes();
 
   @NotNull
-  Set<String> generateDatatypes(Set<@NotNull String> requiredTypes, @NotNull XMLStreamWriter2 writer) throws XMLStreamException;
+  Set<String> generateDatatypes(Set<@NotNull String> requiredTypes, @NotNull XMLStreamWriter2 writer)
+      throws XMLStreamException;
 
 }

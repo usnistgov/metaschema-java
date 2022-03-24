@@ -57,7 +57,6 @@ public class XmlFlagContainerSupport {
     if (xmlField.getFlagList().size() > 0 || xmlField.getDefineFlagList().size() > 0) {
       this.flagInstances = parseLocalFlags(xmlField, container);
     } else {
-      @SuppressWarnings("null")
       @NotNull
       Map<@NotNull String, IXmlFlagInstance> flags = Collections.emptyMap();
       this.flagInstances = flags;
@@ -71,7 +70,6 @@ public class XmlFlagContainerSupport {
     if (xmlAssembly.getFlagList().size() > 0 || xmlAssembly.getDefineFlagList().size() > 0) {
       this.flagInstances = parseLocalFlags(xmlAssembly, container);
     } else {
-      @SuppressWarnings("null")
       @NotNull
       Map<@NotNull String, IXmlFlagInstance> flags = Collections.emptyMap();
       this.flagInstances = flags;
@@ -85,7 +83,6 @@ public class XmlFlagContainerSupport {
     if (xmlAssembly.getFlagList().size() > 0 || xmlAssembly.getDefineFlagList().size() > 0) {
       this.flagInstances = parseLocalFlags(xmlAssembly, container);
     } else {
-      @SuppressWarnings("null")
       @NotNull
       Map<@NotNull String, IXmlFlagInstance> flags = Collections.emptyMap();
       this.flagInstances = flags;
@@ -99,7 +96,6 @@ public class XmlFlagContainerSupport {
     if (xmlField.getFlagList().size() > 0 || xmlField.getDefineFlagList().size() > 0) {
       this.flagInstances = parseLocalFlags(xmlField, container);
     } else {
-      @SuppressWarnings("null")
       @NotNull
       Map<@NotNull String, IXmlFlagInstance> flags = Collections.emptyMap();
       this.flagInstances = flags;
@@ -131,7 +127,6 @@ public class XmlFlagContainerSupport {
       }
     }
 
-    @SuppressWarnings("null")
     @NotNull
     Map<@NotNull String, IXmlFlagInstance> retval
         = flagInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagInstances);

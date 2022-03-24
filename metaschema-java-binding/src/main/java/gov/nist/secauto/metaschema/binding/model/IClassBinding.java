@@ -92,6 +92,8 @@ public interface IClassBinding extends IBoundNamedModelDefinition {
    * 
    * @param parentInstance
    *          the parent Java object to store the data in
+   * @param requiresJsonKey
+   *          when {@code true} indicates that the item will have a JSON key
    * @param context
    *          the parsing context
    * @return the instances or an empty list if no data was parsed

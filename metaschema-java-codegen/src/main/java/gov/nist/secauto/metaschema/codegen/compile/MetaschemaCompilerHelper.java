@@ -56,15 +56,21 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-public class MetaschemaCompilerHelper {
+public final class MetaschemaCompilerHelper {
   private static final Logger LOGGER = LogManager.getLogger(MetaschemaCompilerHelper.class);
   private static final MetaschemaLoader LOADER = new MetaschemaLoader();
 
-  public static Production compileMetaschema(Path metaschemaPath, Path classDir) throws IOException, MetaschemaException {
+  private MetaschemaCompilerHelper() {
+    // disable construction
+  }
+
+  public static Production compileMetaschema(Path metaschemaPath, Path classDir)
+      throws IOException, MetaschemaException {
     return compileMetaschema(metaschemaPath, classDir, new DefaultBindingConfiguration());
   }
 
-  public static Production compileMetaschema(Path metaschemaPath, Path classDir, IBindingConfiguration bindingConfiguration)
+  public static Production compileMetaschema(Path metaschemaPath, Path classDir,
+      IBindingConfiguration bindingConfiguration)
       throws IOException, MetaschemaException {
     IMetaschema metaschema = LOADER.loadXmlMetaschema(metaschemaPath);
     return compileMetaschema(metaschema, classDir, bindingConfiguration);
@@ -74,11 +80,12 @@ public class MetaschemaCompilerHelper {
     return compileMetaschema(metaschema, classDir, new DefaultBindingConfiguration());
   }
 
-  public static Production compileMetaschema(IMetaschema metaschema, Path classDir, IBindingConfiguration bindingConfiguration) throws IOException {
+  public static Production compileMetaschema(IMetaschema metaschema, Path classDir,
+      IBindingConfiguration bindingConfiguration) throws IOException {
     Production production = JavaGenerator.generate(metaschema, classDir, bindingConfiguration);
     List<GeneratedClass> classesToCompile = production.getGeneratedClasses().collect(Collectors.toList());
 
-    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
+    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     if (!compileGeneratedClasses(classesToCompile, diagnostics, classDir)) {
       if (LOGGER.isErrorEnabled()) {
         LOGGER.error(diagnostics.getDiagnostics().toString());
@@ -105,9 +112,9 @@ public class MetaschemaCompilerHelper {
       DiagnosticCollector<JavaFileObject> diagnostics,
       List<JavaFileObject> compilationUnits,
       Path classDir) {
-    List<String> options = new LinkedList<String>();
-//    options.add("-verbose");
-//    options.add("-g");
+    List<String> options = new LinkedList<>();
+    // options.add("-verbose");
+    // options.add("-g");
     options.add("-d");
     options.add(classDir.toString());
     options.add("-classpath");
@@ -121,15 +128,17 @@ public class MetaschemaCompilerHelper {
   private static boolean compileGeneratedClasses(
       List<GeneratedClass> classesToCompile,
       DiagnosticCollector<JavaFileObject> diagnostics,
-      Path classDir) {
+      Path classDir) throws IOException {
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-    StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
 
-    List<JavaFileObject> compilationUnits = new ArrayList<>(classesToCompile.size());
-    for (GeneratedClass generatedClass : classesToCompile) {
-      compilationUnits.add(fileManager.getJavaFileObjects(generatedClass.getClassFile()).iterator().next());
+    try (StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null)) {
+
+      List<JavaFileObject> compilationUnits = new ArrayList<>(classesToCompile.size());
+      for (GeneratedClass generatedClass : classesToCompile) {
+        compilationUnits.add(fileManager.getJavaFileObjects(generatedClass.getClassFile()).iterator().next());
+      }
+
+      return compile(compiler, fileManager, diagnostics, compilationUnits, classDir);
     }
-
-    return compile(compiler, fileManager, diagnostics, compilationUnits, classDir);
   }
 }

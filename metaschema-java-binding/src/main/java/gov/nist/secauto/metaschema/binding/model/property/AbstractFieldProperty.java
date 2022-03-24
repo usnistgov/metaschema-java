@@ -33,12 +33,16 @@ import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.IXmlBindingSupplier;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Locale;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -49,7 +53,7 @@ public abstract class AbstractFieldProperty
     extends AbstractNamedModelProperty
     implements IBoundFieldInstance {
 
-  public AbstractFieldProperty(IAssemblyClassBinding parentClassBinding, java.lang.reflect.Field field) {
+  public AbstractFieldProperty(@NotNull IAssemblyClassBinding parentClassBinding, @NotNull Field field) {
     super(parentClassBinding, field);
   }
 
@@ -60,7 +64,7 @@ public abstract class AbstractFieldProperty
       XMLEventReader2 eventReader = context.getReader();
       XMLEvent event = eventReader.peek();
       if (event.isStartElement()) {
-        QName qname = event.asStartElement().getName();
+        QName qname = ObjectUtils.notNull(event.asStartElement().getName());
         IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
         retval = !isInXmlWrapped() && adapter.isUnrappedValueAllowedInXml() && adapter.canHandleQName(qname);
       }
@@ -147,9 +151,10 @@ public abstract class AbstractFieldProperty
     return getParentClassBinding();
   }
 
+  @SuppressWarnings("null")
   @Override
   public String toCoordinates() {
-    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(), getName(),
+    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(Locale.ROOT), getName(),
         getParentClassBinding().getBoundClass().getName(), getField().getName());
   }
 

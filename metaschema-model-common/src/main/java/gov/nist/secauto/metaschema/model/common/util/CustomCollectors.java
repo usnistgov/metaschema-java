@@ -90,7 +90,7 @@ public final class CustomCollectors {
   }
 
   @FunctionalInterface
-  public static interface DuplicateHandler<K, V> {
+  public interface DuplicateHandler<K, V> {
     @NotNull
     V handle(K key, V value1, V value2);
   }

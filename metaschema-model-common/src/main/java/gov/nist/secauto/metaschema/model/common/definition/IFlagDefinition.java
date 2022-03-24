@@ -33,8 +33,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInst
 
 import org.jetbrains.annotations.NotNull;
 
-import javax.xml.namespace.QName;
-
 public interface IFlagDefinition extends INamedValuedDefinition, IFlag {
 
   @Override

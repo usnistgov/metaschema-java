@@ -44,6 +44,9 @@ import java.util.stream.Stream;
 
 public class Production {
 
+  private final Map<IMetaschema, MetaschemaProduction> metaschemaToProductionMap = new HashMap<>();
+  private final Map<String, PackageProduction> packageNameToProductionMap = new HashMap<>();
+
   public static Production of(@NotNull IMetaschema metaschema, @NotNull ITypeResolver typeResolver,
       @NotNull Path targetDirectory) throws IOException {
     return of(Collections.singleton(metaschema), typeResolver, targetDirectory);
@@ -90,11 +93,8 @@ public class Production {
     }
   }
 
-  private final Map<IMetaschema, MetaschemaProduction> metaschemaToProductionMap = new HashMap<>();
-  private final Map<String, PackageProduction> packageNameToProductionMap = new HashMap<>();
-
   public MetaschemaProduction addMetaschema(@NotNull IMetaschema metaschema, @NotNull ITypeResolver typeResolver,
-      @NotNull Path targetDirectory) throws IOException {
+      @NotNull Path targetDirectory) {
     MetaschemaProduction retval = metaschemaToProductionMap.get(metaschema);
     if (retval == null) {
       metaschemaToProductionMap.put(metaschema, new MetaschemaProduction(metaschema, typeResolver, targetDirectory));

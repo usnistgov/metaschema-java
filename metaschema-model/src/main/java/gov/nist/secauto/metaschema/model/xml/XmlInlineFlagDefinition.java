@@ -169,7 +169,8 @@ public class XmlInlineFlagDefinition
 
     @Override
     public MarkupLine getDescription() {
-      return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription()) : null;
+      return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription())
+          : null;
     }
 
     @Override

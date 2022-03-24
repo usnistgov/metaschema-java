@@ -57,13 +57,6 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   private final Map<String, MetaschemaBindingConfiguration> metaschemaUrlToMetaschemaBindingConfigurationMap
       = new HashMap<>();
 
-  /**
-   * Create a new binding configuration.
-   */
-  public DefaultBindingConfiguration() {
-
-  }
-
   @Override
   public String getPackageNameForMetaschema(IMetaschema metaschema) {
     URI namespace = metaschema.getXmlNamespace();
@@ -138,7 +131,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   protected String getPackageNameForNamespace(String namespace) {
     String packageName = namespaceToPackageNameMap.get(namespace);
     if (packageName == null) {
-      packageName = NameConverter.standard.toPackageName(namespace.toString());
+      packageName = NameConverter.standard.toPackageName(namespace);
     }
     return packageName;
   }
@@ -268,6 +261,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
       String name = fieldBinding.getName();
       IDefinitionBindingConfiguration config = metaschemaConfig.getFieldDefinitionBindingConfig(name);
       config = processDefinitionBindingConfiguration(config, fieldBinding);
+      metaschemaConfig.addFieldDefinitionBindingConfig(name, config);
     }
   }
 

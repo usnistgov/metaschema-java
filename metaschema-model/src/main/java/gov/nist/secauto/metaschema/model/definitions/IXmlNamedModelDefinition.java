@@ -39,7 +39,6 @@ public interface IXmlNamedModelDefinition extends IXmlNamedDefinition, INamedMod
   @Override
   Map<@NotNull String, ? extends IXmlFlagInstance> getFlagInstanceMap();
 
-  @SuppressWarnings("null")
   @Override
   default Collection<@NotNull ? extends IXmlFlagInstance> getFlagInstances() {
     return getFlagInstanceMap().values();

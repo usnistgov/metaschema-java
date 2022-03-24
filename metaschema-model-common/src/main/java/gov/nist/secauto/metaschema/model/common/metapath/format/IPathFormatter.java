@@ -41,7 +41,7 @@ public interface IPathFormatter {
    * A path formatter that produces Metapath-based paths.
    */
   @NotNull
-  public static final IPathFormatter METAPATH_PATH_FORMATER = new MetapathFormatter();
+  IPathFormatter METAPATH_PATH_FORMATER = new MetapathFormatter();
 
   /**
    * Format the path represented by the provided path segment. The provided segment is expected to be

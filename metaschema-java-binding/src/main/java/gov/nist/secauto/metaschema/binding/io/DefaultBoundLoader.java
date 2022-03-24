@@ -174,11 +174,11 @@ public class DefaultBoundLoader implements IBoundLoader {
   public <CLASS> CLASS load(Class<CLASS> clazz, InputStream is, URI documentUri) throws IOException {
     // we cannot close this stream, since it will cause the underlying stream to be closed
     BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES);
-    bis.mark(LOOK_AHEAD_BYTES);
 
-    DataFormatMatcher matcher = matchFormat(bis);
-
+    DataFormatMatcher matcher;
     try {
+      bis.mark(LOOK_AHEAD_BYTES);
+      matcher = matchFormat(bis);
       bis.reset();
     } catch (IOException ex) {
       throw new IOException("Unable to reset input stream before parsing", ex);
@@ -301,9 +301,9 @@ public class DefaultBoundLoader implements IBoundLoader {
       String name = parser.getCurrentName();
       switch (name) {
       case "$schema":
-        // do nothing 
+        // do nothing
         parser.nextToken();
-//        JsonUtil.skipNextValue(parser);
+        // JsonUtil.skipNextValue(parser);
         break;
       default:
         retval = getBoundClassForJsonName(name);
@@ -313,6 +313,7 @@ public class DefaultBoundLoader implements IBoundLoader {
     return retval;
   }
 
+  @NotNull
   protected <CLASS> IDeserializer<CLASS> getDeserializer(@NotNull Class<CLASS> clazz, @NotNull Format format,
       @NotNull IConfiguration config) {
     IDeserializer<CLASS> retval = getBindingContext().newDeserializer(format, clazz);

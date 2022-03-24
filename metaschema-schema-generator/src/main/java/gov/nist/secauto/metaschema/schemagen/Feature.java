@@ -26,37 +26,19 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import org.codehaus.stax2.XMLStreamWriter2;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.xml.stream.XMLStreamException;
-
-public class XmlProseCompositDatatypeProvider
-    extends CompositeDatatypeProvider {
-  
-  private final XmlProseBaseDatatypeProvider proseBaseProvider = new XmlProseBaseDatatypeProvider();
-
-  public XmlProseCompositDatatypeProvider(List<@NotNull IDatatypeProvider> proxiedProviders) {
-    super(proxiedProviders);
-  }
-
-  @Override
-  public @NotNull Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes,
-      @NotNull XMLStreamWriter2 writer) throws XMLStreamException {
-    Set<@NotNull String> result =  super.generateDatatypes(requiredTypes, writer);
-
-    if (!result.isEmpty()) {
-      // apply core markup types
-      Collection<@NotNull IDatatypeContent> datatypes = proseBaseProvider.getDatatypes().values();
-      Set<String> proseBaseTypes = datatypes.stream().map(content -> content.getTypeName()).collect(Collectors.toSet());
-      proseBaseProvider.generateDatatypes(proseBaseTypes, writer);
-    }
-    return result;
-  }
-
+/**
+ * Configuration options for schema generation.
+ */
+public enum Feature {
+  /**
+   * If enabled, definitions that are defined inline will be generated as inline types. If disabled,
+   * definitions will always be generated as global types.
+   */
+  INLINE_DEFINITIONS,
+  /**
+   * If enabled, child definitions of a choice that are defined inline will be generated as inline
+   * types. If disabled, child definitions of a choice will always be generated as global types. This option
+   * will only be used if {@link #INLINE_DEFINITIONS} is also enabled.
+   */
+  INLINE_CHOICE_DEFINITIONS,
 }

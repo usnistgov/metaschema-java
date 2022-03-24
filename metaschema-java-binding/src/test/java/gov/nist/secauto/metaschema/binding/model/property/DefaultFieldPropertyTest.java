@@ -42,7 +42,7 @@ import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.annotations.Field;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
@@ -69,10 +69,10 @@ class DefaultFieldPropertyTest {
   @RegisterExtension
   JUnit5Mockery context = new JUnit5Mockery();
 
-  private IAssemblyClassBinding classBinding = context.mock(IAssemblyClassBinding.class);
-  private IBindingContext bindingContext = context.mock(IBindingContext.class);
-  private IJsonParsingContext jsonParsingContext = context.mock(IJsonParsingContext.class);
-  private IXmlParsingContext xmlParsingContext = context.mock(IXmlParsingContext.class);
+  private final IAssemblyClassBinding classBinding = context.mock(IAssemblyClassBinding.class);
+  private final IBindingContext bindingContext = context.mock(IBindingContext.class);
+  private final IJsonParsingContext jsonParsingContext = context.mock(IJsonParsingContext.class);
+  private final IXmlParsingContext xmlParsingContext = context.mock(IXmlParsingContext.class);
 
   @Test
   void testJsonRead()
@@ -83,7 +83,7 @@ class DefaultFieldPropertyTest {
     Class<?> theClass = TestField.class;
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
         will(returnValue(new StringAdapter()));
 
@@ -131,7 +131,7 @@ class DefaultFieldPropertyTest {
     Class<?> theClass = TestField.class;
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
         will(returnValue(new StringAdapter()));
 
@@ -177,7 +177,7 @@ class DefaultFieldPropertyTest {
     Class<?> theClass = TestField.class;
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
         will(returnValue(new StringAdapter()));
 
@@ -222,7 +222,7 @@ class DefaultFieldPropertyTest {
     Class<?> theClass = TestField.class;
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         allowing(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
         will(returnValue(new StringAdapter()));
 
@@ -265,10 +265,10 @@ class DefaultFieldPropertyTest {
   @SuppressWarnings("PMD")
   @MetaschemaAssembly
   public static class TestField {
-    @Field(typeAdapter = StringAdapter.class, inJson = JsonGroupAsBehavior.NONE, inXml = XmlGroupAsBehavior.UNGROUPED)
+    @BoundField(typeAdapter = StringAdapter.class, inJson = JsonGroupAsBehavior.NONE, inXml = XmlGroupAsBehavior.UNGROUPED)
     private String field1;
 
-    @Field(useName = "field2", groupName = "fields2", maxOccurs = -1, inXml = XmlGroupAsBehavior.GROUPED,
+    @BoundField(useName = "field2", groupName = "fields2", maxOccurs = -1, inXml = XmlGroupAsBehavior.GROUPED,
         inJson = JsonGroupAsBehavior.LIST, typeAdapter = StringAdapter.class)
     private List<String> _field2;
 

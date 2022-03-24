@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
@@ -106,27 +107,31 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
     if (!definition.isInline()) {
       builder.append(toCamelCase(definition.getContainingMetaschema().getShortName()));
     }
-    
+
     if (definition.isInline() && !isNestInlineDefinitions()) {
       // need to append the parent name(s) to disambiguate this type name
-      builder.append(getParentTypeContext(definition, definition.getContainingMetaschema()));
+      builder.append(getTypeContext(definition, definition.getContainingMetaschema()));
+    } else {
+      builder
+          .append(toCamelCase(definition.getEffectiveName()))
+          .append(toCamelCase(definition.getModelType().name()));
     }
-
-    builder
-        .append(toCamelCase(definition.getEffectiveName()))
-        .append(toCamelCase(definition.getModelType().name()))
-        .append("Type");
+    builder.append("Type");
 
     return builder;
   }
 
   /**
+   * Get the name of the definition (and any parent instances/definition) to ensure an inline type is
+   * unique.
    * 
-   * @param inlineInstance
+   * @param definition
+   *          the definition to generate a type name for
    * @param childMetaschema
-   * @return
+   *          the metaschema of the left node
+   * @return the unique type name
    */
-  private CharSequence getParentTypeContext(@NotNull INamedDefinition definition,
+  private CharSequence getTypeContext(@NotNull INamedDefinition definition,
       @NotNull IMetaschema childMetaschema) {
     StringBuilder builder = new StringBuilder();
     if (definition.isInline()) {
@@ -135,7 +140,8 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
       if (parentDefinition == null) {
         throw new IllegalStateException();
       }
-      builder.append(getParentTypeContext(parentDefinition, childMetaschema));
+      builder.append(getTypeContext(parentDefinition, childMetaschema));
+      builder.append(toCamelCase(inlineInstance.getEffectiveName()));
     } else {
       builder.append(toCamelCase(definition.getEffectiveName()));
     }

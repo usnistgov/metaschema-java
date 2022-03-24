@@ -44,20 +44,20 @@ public final class MetapathExpressionHandler {
     try {
       return MetapathExpression.compile(value);
     } catch (Exception ex) {
-      StringBuilder builder = new StringBuilder();
-      builder.append("Error parsing metapath '");
-      builder.append(value);
-      builder.append("'");
+      StringBuilder builder = new StringBuilder(32)
+          .append("Error parsing metapath '")
+          .append(value)
+          .append('\'');
 
       XmlCursor cursor = obj.newCursor();
       cursor.toParent();
       XmlBookmark bookmark = cursor.getBookmark(XmlLineNumber.class);
       if (bookmark != null) {
         XmlLineNumber lineNumber = (XmlLineNumber) bookmark;
-        builder.append(" at location ");
-        builder.append(lineNumber.getLine());
-        builder.append(':');
-        builder.append(lineNumber.getColumn());
+        builder.append(" at location ")
+            .append(lineNumber.getLine())
+            .append(':')
+            .append(lineNumber.getColumn());
       }
       XmlValueNotSupportedException exNew
           = new XmlValueNotSupportedException(builder.toString());
@@ -66,6 +66,7 @@ public final class MetapathExpressionHandler {
     }
   }
 
+  @SuppressWarnings("unused")
   public static void encodeMetaschemaPathType(MetapathExpression targetValue, SimpleValue target) {
     throw new UnsupportedOperationException();
   }

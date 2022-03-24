@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.validation;
 
 import gov.nist.secauto.metaschema.binding.DefaultBindingContext;
@@ -48,7 +49,8 @@ public final class ValidationHelper {
     // disable construction
   }
 
-  public static @NotNull IValidationResult validate(@NotNull IBoundXdmNodeItem nodeItem, @NotNull IContentValidator validator) throws IOException {
+  public static @NotNull IValidationResult validate(@NotNull IBoundXdmNodeItem nodeItem,
+      @NotNull IContentValidator validator) throws IOException {
     IClassBinding classBinding = nodeItem.getClassBinding();
     if (classBinding == null) {
       throw new IllegalArgumentException(

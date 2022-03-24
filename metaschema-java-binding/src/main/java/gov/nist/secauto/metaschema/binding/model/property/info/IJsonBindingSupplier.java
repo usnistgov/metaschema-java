@@ -41,6 +41,8 @@ public interface IJsonBindingSupplier {
    * 
    * @param parentInstance
    *          an optional parent object to use for serialization callbacks
+   * @param requiresJsonKey
+   *          when {@code true} indicates that the item will have a JSON key
    * @param context
    *          the JSON parser
    * @return the set of parsed items
@@ -48,5 +50,6 @@ public interface IJsonBindingSupplier {
    *           if an error occurred while parsing
    */
   @NotNull
-  List<Object> get(@Nullable Object parentInstance, boolean requiresJsonKey, @NotNull IJsonParsingContext context) throws IOException;
+  List<Object> get(@Nullable Object parentInstance, boolean requiresJsonKey, @NotNull IJsonParsingContext context)
+      throws IOException;
 }

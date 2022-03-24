@@ -33,7 +33,6 @@ import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -57,16 +56,8 @@ public interface IXdmFactory {
       @NotNull IBoundXdmAssemblyNodeItem parentNodeItem);
 
   @NotNull
-  IBoundXdmFieldNodeItem newFieldNodeItem(@NotNull IBoundFieldInstance instance, @NotNull Object value, int position,
-      @NotNull URI baseUri);
-
-  @NotNull
   IBoundXdmFlagNodeItem newFlagNodeItem(@NotNull IBoundFlagInstance instance, @NotNull Object value,
       @NotNull IBoundXdmModelNodeItem parentNodeItem);
-//
-//  @NotNull
-//  IBoundXdmDocumentNodeItem newDocumentNodeItem(@NotNull RootDefinitionAssemblyProperty instance, @NotNull Object value,
-//      @NotNull URI documentUri);
 
   @NotNull
   IBoundXdmDocumentNodeItem newDocumentNodeItem(@NotNull IAssemblyClassBinding definition, @NotNull Object value,
@@ -80,10 +71,11 @@ public interface IXdmFactory {
   IBoundXdmAssemblyNodeItem newRelativeAssemblyNodeItem(@NotNull IAssemblyClassBinding definition,
       @NotNull Object value,
       @NotNull URI baseUri);
-
-  @NotNull
-  IBoundXdmFieldNodeItem newRelativeFieldNodeItem(@NotNull IFieldClassBinding definition, @NotNull Object value,
-      @NotNull URI baseUri);
+  //
+  // @NotNull
+  // IBoundXdmFieldNodeItem newRelativeFieldNodeItem(@NotNull IFieldClassBinding definition, @NotNull
+  // Object value,
+  // @NotNull URI baseUri);
 
   @NotNull
   IBoundXdmNodeItem newNodeItem(@NotNull IClassBinding definition, @NotNull Object boundObject, @NotNull URI baseUri,

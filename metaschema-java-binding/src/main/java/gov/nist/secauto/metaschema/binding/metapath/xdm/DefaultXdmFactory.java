@@ -29,12 +29,10 @@ package gov.nist.secauto.metaschema.binding.metapath.xdm;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
-import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.binding.model.property.RelativeAssemblyDefinitionAssemblyProperty;
-import gov.nist.secauto.metaschema.binding.model.property.RelativeFieldDefinitionFieldProperty;
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
 
 import java.net.URI;
@@ -57,12 +55,6 @@ public class DefaultXdmFactory implements IXdmFactory {
   public IBoundXdmFieldNodeItem newFieldNodeItem(IBoundFieldInstance instance, Object value, int position,
       IBoundXdmAssemblyNodeItem parentNodeItem) {
     return new IntermediateXdmFieldNodeItemImpl(instance, value, position, parentNodeItem);
-  }
-
-  @Override
-  public IBoundXdmFieldNodeItem newFieldNodeItem(IBoundFieldInstance instance, Object value, int position,
-      URI baseUri) {
-    return new OrphanedXdmFieldNodeItemImpl(instance, value, position, baseUri);
   }
 
   @Override
@@ -93,11 +85,6 @@ public class DefaultXdmFactory implements IXdmFactory {
   }
 
   @Override
-  public IBoundXdmFieldNodeItem newRelativeFieldNodeItem(IFieldClassBinding definition, Object value, URI baseUri) {
-    return newFieldNodeItem(new RelativeFieldDefinitionFieldProperty(definition), value, 1, baseUri);
-  }
-
-  @Override
   public IBoundXdmNodeItem newNodeItem(IClassBinding definition, Object value, URI baseUri, boolean rootNode) {
     IBoundXdmNodeItem retval;
     if (definition instanceof IAssemblyClassBinding) {
@@ -106,8 +93,8 @@ public class DefaultXdmFactory implements IXdmFactory {
       } else {
         retval = newRelativeAssemblyNodeItem((IAssemblyClassBinding) definition, value, baseUri);
       }
-    } else if (definition instanceof IFieldClassBinding) {
-      retval = newRelativeFieldNodeItem((IFieldClassBinding) definition, value, baseUri);
+      // } else if (definition instanceof IFieldClassBinding) {
+      // retval = newRelativeFieldNodeItem((IFieldClassBinding) definition, value, baseUri);
     } else {
       throw new UnsupportedOperationException("must be a bound assembly or field");
     }

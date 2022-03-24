@@ -91,10 +91,7 @@ public interface INamedModelElement extends IModelElement {
   default String getEffectiveName() {
     @Nullable
     String useName = getUseName();
-    if (useName == null) {
-      return getName();
-    }
-    return useName;
+    return useName == null ? getName() : useName;
   }
 
   /**

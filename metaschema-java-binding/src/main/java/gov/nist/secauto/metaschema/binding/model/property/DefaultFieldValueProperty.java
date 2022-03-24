@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.binding.model.property.info.IPropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
@@ -61,19 +61,19 @@ public class DefaultFieldValueProperty
     implements IBoundFieldValueInstance {
   private static final Logger LOGGER = LogManager.getLogger(DefaultFieldValueProperty.class);
 
-  private final FieldValue fieldValue;
+  private final BoundFieldValue fieldValue;
   @NotNull
   private final IJavaTypeAdapter<?> javaTypeAdapter;
 
   public DefaultFieldValueProperty(@NotNull IFieldClassBinding fieldClassBinding, @NotNull Field field) {
     super(field, fieldClassBinding);
-    this.fieldValue = ObjectUtils.requireNonNull(field.getAnnotation(FieldValue.class));
+    this.fieldValue = ObjectUtils.requireNonNull(field.getAnnotation(BoundFieldValue.class));
     this.javaTypeAdapter = ObjectUtils.requireNonNull(
         fieldClassBinding.getBindingContext().getJavaTypeAdapterInstance(
             ObjectUtils.notNull(fieldValue.typeAdapter())));
   }
 
-  protected FieldValue getFieldValueAnnotation() {
+  protected BoundFieldValue getFieldValueAnnotation() {
     return fieldValue;
   }
 

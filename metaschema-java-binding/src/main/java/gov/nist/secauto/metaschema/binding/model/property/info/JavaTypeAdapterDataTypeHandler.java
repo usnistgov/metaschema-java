@@ -81,7 +81,8 @@ public class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
   }
 
   @Override
-  public List<@NotNull Object> get(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context) throws IOException {
+  public List<@NotNull Object> get(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
+      throws IOException {
     if (requiresJsonKey) {
       throw new IOException("A scalar datatype cannot have a JSON key.");
     }

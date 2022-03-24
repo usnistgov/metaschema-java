@@ -68,11 +68,6 @@ public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
   }
 
   @Override
-  public boolean isGlobal() {
-    return true;
-  }
-
-  @Override
   public IXmlMetaschema getContainingMetaschema() {
     return metaschema;
   }

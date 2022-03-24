@@ -42,7 +42,8 @@ public interface IJsonProblemHandler extends IProblemHandler {
   boolean handleUnknownRootProperty(@NotNull IAssemblyClassBinding classBinding, @NotNull String fieldName,
       @NotNull IJsonParsingContext parsingContext) throws IOException;
 
-  boolean canHandleUnknownProperty(@NotNull IClassBinding classBinding, @NotNull String propertyName, @NotNull IJsonParsingContext parsingContext)
+  boolean canHandleUnknownProperty(@NotNull IClassBinding classBinding, @NotNull String propertyName,
+      @NotNull IJsonParsingContext parsingContext)
       throws IOException;
 
   boolean handleUnknownProperty(@NotNull IClassBinding classBinding, @NotNull String propertyName,
@@ -65,5 +66,6 @@ public interface IJsonProblemHandler extends IProblemHandler {
    *           if an unhandled binding error has occurred for any reason
    */
   Map<IBoundInstance, IJsonBindingSupplier> handleMissingFields(@NotNull IClassBinding classBinding,
-      @NotNull Map<String, IBoundInstance> missingPropertyBindings, @NotNull IJsonParsingContext context) throws BindingException;
+      @NotNull Map<String, IBoundInstance> missingPropertyBindings, @NotNull IJsonParsingContext context)
+      throws BindingException;
 }

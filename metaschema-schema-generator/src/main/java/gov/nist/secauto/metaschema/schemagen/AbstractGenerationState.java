@@ -23,22 +23,27 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.schemagen;
+
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends IDatatypeManager> implements IGenerationState<WRITER, DATATYPE_MANAGER> {
+public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends IDatatypeManager>
+    implements IGenerationState<WRITER, DATATYPE_MANAGER> {
   @NotNull
   private final WRITER writer;
   @NotNull
   private final DATATYPE_MANAGER datatypeManager;
-  private final boolean nestInlineTypes;
+  @NotNull
+  private final IInlineStrategy inlineStrategy;
 
   public AbstractGenerationState(@NotNull WRITER writer, @NotNull DATATYPE_MANAGER datatypeManager,
-      boolean nestInlineTypes) {
+      @NotNull IInlineStrategy inlineStrategy) {
     this.writer = writer;
     this.datatypeManager = datatypeManager;
-    this.nestInlineTypes = nestInlineTypes;
+    this.inlineStrategy = inlineStrategy;
   }
 
   @Override
@@ -47,12 +52,12 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
   }
 
   @Override
-  public boolean isNestInlineTypes() {
-    return nestInlineTypes;
+  public DATATYPE_MANAGER getDatatypeManager() {
+    return datatypeManager;
   }
 
   @Override
-  public DATATYPE_MANAGER getDatatypeManager() {
-    return datatypeManager;
+  public boolean isInline(@NotNull INamedDefinition definition) {
+    return inlineStrategy.isInline(definition);
   }
 }

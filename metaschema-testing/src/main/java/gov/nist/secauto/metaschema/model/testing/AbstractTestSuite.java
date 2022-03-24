@@ -63,11 +63,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
-import java.util.Map;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -91,12 +93,12 @@ public abstract class AbstractTestSuite {
   protected abstract Path getGenerationPath();
 
   @NotNull
-  protected abstract BiFunction<IMetaschema, Writer, Void> getGeneratorSupplier();
+  protected abstract BiFunction<@NotNull IMetaschema, @NotNull Writer, Void> getGeneratorSupplier();
 
-  protected abstract Supplier<IContentValidator> getSchemaValidatorSupplier();
+  protected abstract Supplier<@NotNull ? extends IContentValidator> getSchemaValidatorSupplier();
 
   @NotNull
-  protected abstract Function<Path, IContentValidator> getContentValidatorSupplier();
+  protected abstract Function<Path, @NotNull ? extends IContentValidator> getContentValidatorSupplier();
 
   protected Stream<? extends DynamicNode> testFactory() {
     try {
@@ -120,6 +122,36 @@ public abstract class AbstractTestSuite {
         .flatMap(collection -> Stream.of(generateCollection(collection, testSuiteUri, generationPath)));
   }
 
+  protected void deleteCollectionOnExit(@NotNull Path path) {
+    Runtime.getRuntime().addShutdownHook(new Thread(
+        new Runnable() {
+          @Override
+          public void run() {
+            try {
+              Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                  Files.delete(file);
+                  return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
+                  if (e == null) {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                  }
+                  // directory iteration failed for some reason
+                  throw e;
+                }
+              });
+            } catch (IOException e) {
+              throw new RuntimeException("Failed to delete collection: " + path, e);
+            }
+          }
+        }));
+  }
+
   private DynamicContainer generateCollection(@NotNull TestCollection collection, @NotNull URI testSuiteUri,
       @NotNull Path generationPath) {
     URI collectionUri = testSuiteUri.resolve(collection.getLocation());
@@ -128,6 +160,7 @@ public abstract class AbstractTestSuite {
     Path collectionGenerationPath;
     try {
       collectionGenerationPath = Files.createTempDirectory(generationPath, "collection-");
+      deleteCollectionOnExit(collectionGenerationPath);
     } catch (IOException ex) {
       throw new JUnitException("Unable to create collection temp directory", ex);
     }
@@ -147,7 +180,7 @@ public abstract class AbstractTestSuite {
   }
 
   protected void produceSchema(@NotNull IMetaschema metaschema, @NotNull Path schemaPath,
-      @NotNull BiFunction<IMetaschema, Writer, Void> schemaProducer) throws IOException {
+      @NotNull BiFunction<@NotNull IMetaschema, @NotNull Writer, Void> schemaProducer) throws IOException {
     Path parentDir = schemaPath.getParent();
     if (!Files.exists(parentDir)) {
       Files.createDirectories(parentDir);
@@ -155,9 +188,7 @@ public abstract class AbstractTestSuite {
 
     // try (OutputStream os = Files.newOutputStream(
     // schemaPath,
-    // StandardOpenOption.CREATE,
-    // StandardOpenOption.WRITE,
-    // StandardOpenOption.TRUNCATE_EXISTING)) {
+    // getWriteOpenOptions())) {
     //
     // TeeOutputStream tos = new TeeOutputStream(os, System.out);
     // Writer writer = new OutputStreamWriter(tos, StandardCharsets.UTF_8);
@@ -165,12 +196,18 @@ public abstract class AbstractTestSuite {
     try (Writer writer = Files.newBufferedWriter(
         schemaPath,
         StandardCharsets.UTF_8,
-        StandardOpenOption.CREATE,
-        StandardOpenOption.WRITE,
-        StandardOpenOption.TRUNCATE_EXISTING)) {
+        getWriteOpenOptions())) {
       schemaProducer.apply(metaschema, writer);
       writer.flush();
     }
+  }
+
+  protected OpenOption[] getWriteOpenOptions() {
+    return new OpenOption[] {
+        StandardOpenOption.CREATE,
+        StandardOpenOption.WRITE,
+        StandardOpenOption.TRUNCATE_EXISTING
+    };
   }
 
   protected DynamicBindingContext produceDynamicBindingContext(@NotNull IMetaschema metaschema,
@@ -207,7 +244,7 @@ public abstract class AbstractTestSuite {
     Metaschema metaschemaDirective = generateSchema.getMetaschema();
     URI metaschemaUri = collectionUri.resolve(metaschemaDirective.getLocation());
 
-    ExecutorService executor = Executors.newSingleThreadExecutor();
+    ExecutorService executor = Executors.newSingleThreadExecutor(); // NOPMD - intentional use of threads
     Future<@NotNull IMetaschema> loadMetaschemaFuture = executor.submit(() -> {
       IMetaschema metaschema;
       try {
@@ -251,7 +288,7 @@ public abstract class AbstractTestSuite {
     DynamicTest validateSchema = DynamicTest.dynamicTest(
         "Validate Schema",
         () -> {
-          Supplier<IContentValidator> supplier = getSchemaValidatorSupplier();
+          Supplier<@NotNull ? extends IContentValidator> supplier = getSchemaValidatorSupplier();
           if (supplier != null) {
             Path schemaPath;
             try {
@@ -298,8 +335,7 @@ public abstract class AbstractTestSuite {
 
     @SuppressWarnings("rawtypes")
     ISerializer serializer = context.newSerializer(getRequiredContentFormat(), object.getClass());
-    serializer.serialize(object, convertedContetPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
-        StandardOpenOption.TRUNCATE_EXISTING);
+    serializer.serialize(object, convertedContetPath, getWriteOpenOptions());
 
     return convertedContetPath;
   }
@@ -418,37 +454,4 @@ public abstract class AbstractTestSuite {
       logBuilder.log("{}", finding.getMessage());
     }
   }
-  
-
-  @SuppressWarnings("null")
-  protected void doTest(
-      @NotNull String collectionName,
-      @NotNull String metaschemaName,
-      @NotNull String generatedSchemaName,
-      @NotNull Map<@NotNull String, Boolean> contentMap) throws IOException, MetaschemaException {
-    Path generationDir = getGenerationPath();
-
-    Path testSuite = Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/");
-    Path collectionPath = testSuite.resolve(collectionName);
-
-    MetaschemaLoader loader = new MetaschemaLoader();
-    Path metaschemaPath = collectionPath.resolve(metaschemaName);
-    IMetaschema metaschema = loader.loadXmlMetaschema(metaschemaPath);
-
-    Path schemaPath = generationDir.resolve(generatedSchemaName);
-    produceSchema(metaschema, schemaPath);
-    assertEquals(true, validate(getSchemaValidatorSupplier().get(), schemaPath));
-
-    DynamicBindingContext context = produceDynamicBindingContext(metaschema, generationDir);
-    for (Map.Entry<@NotNull String, Boolean> entry : contentMap.entrySet()) {
-      Path contentPath = collectionPath.resolve(entry.getKey());
-
-      contentPath = convertContent(contentPath.toUri(), generationDir, context);
-  
-      assertEquals(entry.getValue(),
-          validate(getContentValidatorSupplier().apply(schemaPath), contentPath),
-          "validation did not match expectation");
-    }
-  }
-
 }

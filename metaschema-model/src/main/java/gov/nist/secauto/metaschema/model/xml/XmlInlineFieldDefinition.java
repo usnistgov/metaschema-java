@@ -113,7 +113,6 @@ public class XmlInlineFieldDefinition
     return retval;
   }
 
-  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlField().getName();
@@ -176,16 +175,12 @@ public class XmlInlineFieldDefinition
     return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
   }
 
+  /**
+   * The corresponding definition for the local flag instance.
+   */
   public class InternalFieldDefinition implements IXmlFieldDefinition, IInlineDefinition<XmlInlineFieldDefinition> {
     private XmlFlagContainerSupport flagContainer;
     private IValueConstraintSupport constraints;
-
-    /**
-     * Create the corresponding definition for the local flag instance.
-     */
-    public InternalFieldDefinition() {
-
-    }
 
     @Override
     public boolean isInline() {
@@ -223,7 +218,6 @@ public class XmlInlineFieldDefinition
       return getName();
     }
 
-    @SuppressWarnings("null")
     @Override
     public IJavaTypeAdapter<?> getDatatype() {
       IJavaTypeAdapter<?> retval;
@@ -320,7 +314,6 @@ public class XmlInlineFieldDefinition
      * 
      * @return the constraints container
      */
-    @SuppressWarnings("null")
     @NotNull
     protected IValueConstraintSupport getConstraintSupport() {
       checkModelConstraints();

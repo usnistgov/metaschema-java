@@ -53,7 +53,7 @@ public class MetaschemaProduction {
   private final String packageName;
 
   public MetaschemaProduction(@NotNull IMetaschema metaschema, @NotNull ITypeResolver typeResolver,
-      @NotNull Path targetDirectory) throws IOException {
+      @NotNull Path targetDirectory) {
     this.metaschema = metaschema;
 
     Set<String> classNames = new HashSet<>();

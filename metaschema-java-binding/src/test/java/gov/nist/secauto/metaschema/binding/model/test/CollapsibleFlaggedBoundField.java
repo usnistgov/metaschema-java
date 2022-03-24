@@ -27,8 +27,8 @@ package gov.nist.secauto.metaschema.binding.model.test;
 
 import com.fasterxml.jackson.annotation.JsonKey;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
-import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.BooleanAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
@@ -37,12 +37,12 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.TokenAdapter;
 @MetaschemaField(isCollapsible = true)
 public class CollapsibleFlaggedBoundField {
   @JsonKey
-  @Flag(useName = "field-required-flag", typeAdapter = TokenAdapter.class, required = true)
-  private String id;
+  @BoundFlag(useName = "field-required-flag", typeAdapter = TokenAdapter.class, required = true)
+  private String id; // NOPMD - intentional
 
-  @Flag(useName = "field-other-flag", typeAdapter = BooleanAdapter.class)
-  private String other;
+  @BoundFlag(useName = "field-other-flag", typeAdapter = BooleanAdapter.class)
+  private String other; // NOPMD - intentional
   
-  @FieldValue(name = "field-value", typeAdapter = StringAdapter.class)
-  private String _value;
+  @BoundFieldValue(name = "field-value", typeAdapter = StringAdapter.class)
+  private String _value; // NOPMD - intentional
 }

@@ -75,7 +75,8 @@ public interface ISerializer<CLASS> extends IMutableConfiguration {
    * @param openOptions
    *          options specifying how the file is opened
    * @throws IOException
-   *           if an error occurred while writing data to the file indicated by the {@code path} parameter
+   *           if an error occurred while writing data to the file indicated by the {@code path}
+   *           parameter
    */
   default void serialize(@NotNull CLASS data, @NotNull Path path, OpenOption... openOptions) throws IOException {
     try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, openOptions)) {
@@ -94,7 +95,8 @@ public interface ISerializer<CLASS> extends IMutableConfiguration {
    *           if an error occurred while writing data to the stream
    */
   default void serialize(@NotNull CLASS data, @NotNull File file) throws IOException {
-    serialize(data, file.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+    serialize(data, file.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE,
+        StandardOpenOption.TRUNCATE_EXISTING);
   }
 
   /**

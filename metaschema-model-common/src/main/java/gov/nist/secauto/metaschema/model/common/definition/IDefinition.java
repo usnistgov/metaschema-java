@@ -37,7 +37,7 @@ import java.util.List;
 
 public interface IDefinition extends INamedModelElement {
 
-  public static final ModuleScopeEnum DEFAULT_DEFINITION_MODEL_SCOPE = ModuleScopeEnum.INHERITED;
+  ModuleScopeEnum DEFAULT_DEFINITION_MODEL_SCOPE = ModuleScopeEnum.INHERITED;
 
   /**
    * Retrieve the list of constraints associated with this definition.
@@ -54,15 +54,6 @@ public interface IDefinition extends INamedModelElement {
    */
   @NotNull
   ModuleScopeEnum getModuleScope();
-
-  /**
-   * A definition can be locally defined (inline with instances) or globally defined. In the former
-   * case {@link #isGlobal()} will be {@code false}, and in the latter case {@link #isGlobal()} will
-   * be {@code true}.
-   * 
-   * @return {@code true} if the definition is globally defined, or {@code false} otherwise
-   */
-  boolean isGlobal();
 
   /**
    * Generates a coordinate string for the provided information element definition.

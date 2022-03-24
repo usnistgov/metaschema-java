@@ -47,12 +47,17 @@ import java.util.function.Function;
  * provided filter. For a definition to be collected, the filter must return {@code true}.
  */
 public abstract class DefinitionCollectingModelWalker
-    extends ModelWalker<Object> {
+    extends ModelWalker<Void> {
   private static final Logger LOGGER = LogManager.getLogger(DefinitionCollectingModelWalker.class);
 
   private final Function<INamedDefinition, Boolean> filter;
   @NotNull
   private final Set<@NotNull INamedDefinition> definitions = new LinkedHashSet<>();
+
+  @Override
+  protected Void getDefaultData() { // NOPMD - intentional
+    return null;
+  }
 
   /**
    * Construct a new walker using the provided filter.
@@ -85,7 +90,7 @@ public abstract class DefinitionCollectingModelWalker
   }
 
   @Override
-  protected void visit(IFlagDefinition def, Object data) {
+  protected void visit(IFlagDefinition def, Void data) {
     if (LOGGER.isTraceEnabled()) {
       LOGGER.trace("visiting flag definition '{}'", def.toCoordinates());
     }
@@ -95,7 +100,7 @@ public abstract class DefinitionCollectingModelWalker
   }
 
   @Override
-  protected boolean visit(IFieldDefinition def, Object data) {
+  protected boolean visit(IFieldDefinition def, Void data) {
     if (LOGGER.isTraceEnabled()) {
       LOGGER.trace("visiting field definition '{}'", def.toCoordinates());
     }
@@ -113,7 +118,7 @@ public abstract class DefinitionCollectingModelWalker
   }
 
   @Override
-  protected boolean visit(IAssemblyDefinition def, Object data) {
+  protected boolean visit(IAssemblyDefinition def, Void data) {
     if (LOGGER.isTraceEnabled()) {
       LOGGER.trace("visiting assembly definition '{}'", def.toCoordinates());
     }

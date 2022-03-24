@@ -28,7 +28,10 @@ package gov.nist.secauto.metaschema.codegen.support;
 
 import org.glassfish.jaxb.core.api.impl.NameConverter;
 
-public class ClassUtils {
+public final class ClassUtils {
+  private ClassUtils() {
+    // disable construction
+  }
 
   // public static String getInstanceJavaType(AbstractInstanceGenerator instance,
   // AbstractClassGenerator clazz) {

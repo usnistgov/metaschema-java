@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.schemagen;
 
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -55,14 +56,15 @@ public class CompositeDatatypeProvider implements IDatatypeProvider {
   public @NotNull Map<@NotNull String, IDatatypeContent> getDatatypes() {
     return proxiedProviders.stream()
         .flatMap(provider -> provider.getDatatypes().values().stream())
-        .collect(Collectors.toMap(content -> content.getTypeName(), Function.identity(), (e1, e2) -> e2, LinkedHashMap::new));
+        .collect(Collectors.toMap(content -> content.getTypeName(), Function.identity(), (e1, e2) -> e2,
+            LinkedHashMap::new));
   }
 
   @Override
   public Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes, XMLStreamWriter2 writer)
       throws XMLStreamException {
     Set<@NotNull String> retval = new HashSet<>();
-    
+
     for (IDatatypeProvider provider : getProxiedProviders()) {
       retval.addAll(provider.generateDatatypes(requiredTypes, writer));
     }

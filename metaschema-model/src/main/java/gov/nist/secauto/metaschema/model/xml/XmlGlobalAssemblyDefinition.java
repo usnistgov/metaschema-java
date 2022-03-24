@@ -90,11 +90,6 @@ public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
   }
 
   @Override
-  public boolean isGlobal() {
-    return true;
-  }
-
-  @Override
   public XmlMetaschema getContainingMetaschema() {
     return metaschema;
   }

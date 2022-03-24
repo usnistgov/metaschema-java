@@ -25,8 +25,8 @@
  */
 package gov.nist.secauto.metaschema.binding.model.test;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.Field;
-import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.UuidAdapter;
@@ -38,20 +38,20 @@ import java.util.UUID;
 
 @MetaschemaAssembly(rootName = "root")
 public class RootBoundAssembly {
-  @Flag(useName = "uuid", defaultValue = "374dd648-b247-483c-afd8-a66ba8876070", typeAdapter = UuidAdapter.class)
+  @BoundFlag(useName = "uuid", defaultValue = "374dd648-b247-483c-afd8-a66ba8876070", typeAdapter = UuidAdapter.class)
   private UUID uuid;
 
   /**
    * An optional singleton simple field.
    */
-  @Field(useName = "simple-singleton-field",
+  @BoundField(useName = "simple-singleton-field",
       typeAdapter = StringAdapter.class)
   private String simpleSingletonField;
 
   /**
    * A required keyed assembly.
    */
-  @Field(useName = "keyed-field",
+  @BoundField(useName = "keyed-field",
       minOccurs = 1,
       maxOccurs = -1,
       groupName = "keyed-field-items",
@@ -61,7 +61,7 @@ public class RootBoundAssembly {
   /**
    * A required singleton or array assembly.
    */
-  @Field(useName = "singleton-or-array-assembly",
+  @BoundField(useName = "singleton-or-array-assembly",
       minOccurs = 1,
       maxOccurs = -1,
       groupName = "singleton-or-array-assembly-items",

@@ -26,20 +26,13 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import gov.nist.secauto.metaschema.binding.io.Format;
-import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.XmlSchemaContentValidator;
-import gov.nist.secauto.metaschema.model.testing.AbstractTestSuite;
-import gov.nist.secauto.metaschema.model.testing.DynamicBindingContext;
-import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator;
-import gov.nist.secauto.metaschema.schemagen.JsonSchemaGenerator;
-import gov.nist.secauto.metaschema.schemagen.XmlSchemaGenerator;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicNode;
@@ -47,28 +40,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.junit.platform.commons.JUnitException;
-import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.net.URI;
-import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-
 public class XmlSuiteTest
-    extends AbstractTestSuite {
-  private static final ISchemaGenerator GENERATOR = new XmlSchemaGenerator();
+    extends AbstractSchemaGeneratorTestSuite {
   // private static final XmlSchemaContentValidator SCHEMA_VALIDATOR;
 
   // static {
@@ -83,17 +66,7 @@ public class XmlSuiteTest
   // }
 
   @Override
-  protected URI getTestSuiteURI() {
-    return Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/unit-tests.xml").toUri();
-  }
-
-  @Override
-  protected Path getGenerationPath() {
-    return Paths.get("test-schemagen");
-  }
-
-  @Override
-  protected Supplier<IContentValidator> getSchemaValidatorSupplier() {
+  protected Supplier<@NotNull IContentValidator> getSchemaValidatorSupplier() {
     return null;
     // return () -> SCHEMA_VALIDATOR;
   }
@@ -104,30 +77,14 @@ public class XmlSuiteTest
   }
 
   @Override
-  protected Function<Path, IContentValidator> getContentValidatorSupplier() {
-    return (path) -> {
-      try {
-        URL schemaResource = path.toUri().toURL();
-        List<? extends Source> schemaSources = Collections.singletonList(
-            new StreamSource(schemaResource.openStream(), schemaResource.toString()));
-        return new XmlSchemaContentValidator(schemaSources);
-      } catch (IOException | SAXException ex) {
-        throw new IllegalStateException(ex);
-      }
-    };
+  protected Function<@NotNull Path, @NotNull XmlSchemaContentValidator> getContentValidatorSupplier() {
+    return XML_CONTENT_VALIDATOR_PROVIDER;
   }
 
   @Override
-  protected BiFunction<IMetaschema, Writer, Void> getGeneratorSupplier() {
+  protected BiFunction<@NotNull IMetaschema, @NotNull Writer, Void> getGeneratorSupplier() {
     // TODO Auto-generated method stub
-    return (metaschema, writer) -> {
-      try {
-        GENERATOR.generateFromMetaschema(metaschema, writer);
-      } catch (IOException ex) {
-        throw new JUnitException("IO error", ex);
-      }
-      return null;
-    };
+    return XML_SCHEMA_PROVIDER;
   }
 
   @Execution(ExecutionMode.CONCURRENT)
@@ -139,224 +96,25 @@ public class XmlSuiteTest
 
   @Disabled
   @Test
-  void testAllowedValuesBasic() throws IOException, MetaschemaException {
-    Path generationDir = getGenerationPath();
-
-    Path testSuite = Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/");
-    MetaschemaLoader loader = new MetaschemaLoader();
-    // Path metaschemaPath = Paths.get("../../OSCAL/src/metaschema/oscal_catalog_metaschema.xml");
-    Path metaschemaPath = testSuite.resolve("allowed-values/allowed-values-basic_metaschema.xml");
-    IMetaschema metaschema = loader.loadXmlMetaschema(metaschemaPath);
-
-    Path schemaPath = generationDir.resolve("test-schema.out");
-    produceSchema(metaschema, schemaPath);
-
-    Path contentPath = testSuite.resolve("allowed-values/allowed-values-basic_test_valid_PASS.json");
-
-    DynamicBindingContext context = produceDynamicBindingContext(metaschema, generationDir);
-    contentPath = convertContent(contentPath.toUri(), generationDir, context);
-
-    assertEquals(true,
-        validate(getContentValidatorSupplier().apply(schemaPath), contentPath),
-        "validation did not match expectation");
-
-  }
-
-  @Disabled
-  @Test
+  @SuppressWarnings("null")
   void testChoiceMultiple() throws IOException, MetaschemaException {
-    Path generationDir = getGenerationPath();
-
-    Path testSuite = Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/");
-    MetaschemaLoader loader = new MetaschemaLoader();
-    // Path metaschemaPath = Paths.get("../../OSCAL/src/metaschema/oscal_catalog_metaschema.xml");
-    Path metaschemaPath = testSuite.resolve("choice/choice-multiple_metaschema.xml");
-    IMetaschema metaschema = loader.loadXmlMetaschema(metaschemaPath);
-
-    Path schemaPath = generationDir.resolve("choice-schema.xsd");
-    produceSchema(metaschema, schemaPath);
-    produceSchema(metaschema, generationDir.resolve("choice-schema.json"), (ms, writer) -> {
-      try {
-        new JsonSchemaGenerator().generateFromMetaschema(ms, writer);
-      } catch (IOException ex) {
-        throw new JUnitException("IO error", ex);
-      }
-      return null;
-    });
-
-    Path contentPath = testSuite.resolve("choice/choice-multiple_test_multiple_PASS.json");
-
-    DynamicBindingContext context = produceDynamicBindingContext(metaschema, generationDir);
-    contentPath = convertContent(contentPath.toUri(), generationDir, context);
-
-    assertEquals(true,
-        validate(getContentValidatorSupplier().apply(schemaPath), contentPath),
-        "validation did not match expectation");
-
+    doTest(
+        "choice/",
+        "choice-multiple_metaschema.xml",
+        "choice-schema",
+        List.of(
+            contentCase(Format.JSON, "choice-multiple_test_multiple_PASS.json", true)));
   }
 
   @Disabled
   @Test
+  @SuppressWarnings("null")
   void testCollapsibleMultiple() throws IOException, MetaschemaException {
-    Path generationDir = getGenerationPath();
-
-    Path testSuite = Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/");
-    MetaschemaLoader loader = new MetaschemaLoader();
-    // Path metaschemaPath = Paths.get("../../OSCAL/src/metaschema/oscal_catalog_metaschema.xml");
-    Path metaschemaPath = testSuite.resolve("collapsible/collapsible_metaschema.xml");
-    IMetaschema metaschema = loader.loadXmlMetaschema(metaschemaPath);
-
-    Path schemaPath = generationDir.resolve("collapsible-schema.xsd");
-    produceSchema(metaschema, schemaPath);
-    produceSchema(metaschema, generationDir.resolve("collapsible-schema.json"), (ms, writer) -> {
-      try {
-        new JsonSchemaGenerator().generateFromMetaschema(ms, writer);
-      } catch (IOException ex) {
-        throw new JUnitException("IO error", ex);
-      }
-      return null;
-    });
-
-    Path contentPath = testSuite.resolve("collapsible/collapsible_test_multiple_PASS.json");
-
-    DynamicBindingContext context = produceDynamicBindingContext(metaschema, generationDir);
-    contentPath = convertContent(contentPath.toUri(), generationDir, context);
-
-    assertEquals(true,
-        validate(getContentValidatorSupplier().apply(schemaPath), contentPath),
-        String.format("validation of '%s' did not match expectation", contentPath));
-
+    doTest(
+        "collapsible/",
+        "collapsible_metaschema.xml",
+        "collapsible-schema",
+        List.of(
+            contentCase(Format.JSON, "choice-multiple_test_multiple_PASS.json", true)));
   }
-
-  @Disabled
-  @Test
-  void testDatatypeProse() throws IOException, MetaschemaException {
-    Path generationDir = getGenerationPath();
-
-    Path testSuite = Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/");
-    MetaschemaLoader loader = new MetaschemaLoader();
-    // Path metaschemaPath = Paths.get("../../OSCAL/src/metaschema/oscal_catalog_metaschema.xml");
-    Path metaschemaPath = testSuite.resolve("datatypes/datatypes-prose_metaschema.xml");
-    IMetaschema metaschema = loader.loadXmlMetaschema(metaschemaPath);
-
-    Path schemaPath = generationDir.resolve("datatypes-prose-schema.xsd");
-    produceSchema(metaschema, schemaPath);
-    produceSchema(metaschema, generationDir.resolve("datatypes-prose-schema.json"), (ms, writer) -> {
-      try {
-        new JsonSchemaGenerator().generateFromMetaschema(ms, writer);
-      } catch (IOException ex) {
-        throw new JUnitException("IO error", ex);
-      }
-      return null;
-    });
-
-    Path contentPath = testSuite.resolve("datatypes/datatypes-prose_test_valid_PASS.json");
-
-    DynamicBindingContext context = produceDynamicBindingContext(metaschema, generationDir);
-    contentPath = convertContent(contentPath.toUri(), generationDir, context);
-
-    assertEquals(true,
-        validate(getContentValidatorSupplier().apply(schemaPath), contentPath),
-        String.format("validation of '%s' did not match expectation", contentPath));
-
-  }
-
-  @Disabled
-  @Test
-  void testDatatypeDateTime() throws IOException, MetaschemaException {
-    Path generationDir = getGenerationPath();
-
-    Path testSuite = Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/");
-    MetaschemaLoader loader = new MetaschemaLoader();
-    // Path metaschemaPath = Paths.get("../../OSCAL/src/metaschema/oscal_catalog_metaschema.xml");
-    Path metaschemaPath = testSuite.resolve("datatypes/datatypes-datetime-no-tz_metaschema.xml");
-    IMetaschema metaschema = loader.loadXmlMetaschema(metaschemaPath);
-
-    Path schemaPath = generationDir.resolve("datatypes-datetime-no-tz-schema.xsd");
-    produceSchema(metaschema, schemaPath);
-    produceSchema(metaschema, generationDir.resolve("datatypes-datetime-no-tz-schema.json"), (ms, writer) -> {
-      try {
-        new JsonSchemaGenerator().generateFromMetaschema(ms, writer);
-      } catch (IOException ex) {
-        throw new JUnitException("IO error", ex);
-      }
-      return null;
-    });
-
-    Path contentPath = testSuite.resolve("datatypes/datatypes-datetime-no-tz_test_valid_PASS.json");
-
-    DynamicBindingContext context = produceDynamicBindingContext(metaschema, generationDir);
-    contentPath = convertContent(contentPath.toUri(), generationDir, context);
-
-    assertEquals(true,
-        validate(getContentValidatorSupplier().apply(schemaPath), contentPath),
-        String.format("validation of '%s' did not match expectation", contentPath));
-
-  }
-
-  @Disabled
-  @Test
-  void testGroupAsByKey() throws IOException, MetaschemaException {
-    Path generationDir = getGenerationPath();
-
-    Path testSuite = Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/");
-    MetaschemaLoader loader = new MetaschemaLoader();
-    // Path metaschemaPath = Paths.get("../../OSCAL/src/metaschema/oscal_catalog_metaschema.xml");
-    Path metaschemaPath = testSuite.resolve("group-as/group-as-by-key_metaschema.xml");
-    IMetaschema metaschema = loader.loadXmlMetaschema(metaschemaPath);
-
-    Path schemaPath = generationDir.resolve("group-as-by-key-schema.xsd");
-    produceSchema(metaschema, schemaPath);
-    produceSchema(metaschema, generationDir.resolve("group-as-by-key-schema.json"), (ms, writer) -> {
-      try {
-        new JsonSchemaGenerator().generateFromMetaschema(ms, writer);
-      } catch (IOException ex) {
-        throw new JUnitException("IO error", ex);
-      }
-      return null;
-    });
-
-    Path contentPath = testSuite.resolve("group-as/group-as-by-key_test_valid_PASS.json");
-
-    DynamicBindingContext context = produceDynamicBindingContext(metaschema, generationDir);
-    contentPath = convertContent(contentPath.toUri(), generationDir, context);
-
-    assertEquals(true,
-        validate(getContentValidatorSupplier().apply(schemaPath), contentPath),
-        String.format("validation of '%s' did not match expectation", contentPath));
-
-  }
-
-  @Test
-  void testJsonValueKeyField() throws IOException, MetaschemaException {
-    Path generationDir = getGenerationPath();
-
-    Path testSuite = Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/");
-    MetaschemaLoader loader = new MetaschemaLoader();
-    // Path metaschemaPath = Paths.get("../../OSCAL/src/metaschema/oscal_catalog_metaschema.xml");
-    Path metaschemaPath = testSuite.resolve("json-value-key/json-value-key-field_metaschema.xml");
-    IMetaschema metaschema = loader.loadXmlMetaschema(metaschemaPath);
-
-    Path schemaPath = generationDir.resolve("json-value-key-field-schema.xsd");
-    produceSchema(metaschema, schemaPath);
-    produceSchema(metaschema, generationDir.resolve("json-value-key-field-schema.json"), (ms, writer) -> {
-      try {
-        new JsonSchemaGenerator().generateFromMetaschema(ms, writer);
-      } catch (IOException ex) {
-        throw new JUnitException("IO error", ex);
-      }
-      return null;
-    });
-
-    Path contentPath = testSuite.resolve("json-value-key/json-value-key-field_test_valid_PASS.json");
-
-    DynamicBindingContext context = produceDynamicBindingContext(metaschema, generationDir);
-    contentPath = convertContent(contentPath.toUri(), generationDir, context);
-
-    assertEquals(true,
-        validate(getContentValidatorSupplier().apply(schemaPath), contentPath),
-        String.format("validation of '%s' did not match expectation", contentPath));
-
-  }
-
 }

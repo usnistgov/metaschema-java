@@ -26,55 +26,26 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 
-import org.codehaus.stax2.XMLStreamWriter2;
-import org.jdom2.Element;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+public interface IInlineStrategy {
+  @NotNull
+  public static final IInlineStrategy NONE_INLINE = new IInlineStrategy() {
+    @Override
+    public boolean isInline(@NotNull INamedDefinition definition) {
+      return false;
+    }
+  };
 
-import javax.xml.stream.XMLStreamException;
+  @NotNull
+  public static final IInlineStrategy DEFINED_AS_INLINE = new IInlineStrategy() {
+    @Override
+    public boolean isInline(@NotNull INamedDefinition definition) {
+      return definition.isInline();
+    }
+  };
 
-public class XmlMarkupMultilineDatatypeProvider
-    extends AbstractXmlDatatypeProvider {
-  private static final String DATATYPE_NAME = "MarkupMultilineDatatype";
-
-  @Override
-  protected InputStream getSchemaResource() {
-    return JDom2XmlSchemaLoader.class.getClassLoader()
-        .getResourceAsStream("schema/xml/metaschema-markup-multiline.xsd");
-  }
-
-  @Override
-  protected List<@NotNull Element> queryElements(JDom2XmlSchemaLoader loader) {
-    return loader.getContent(
-        "/xs:schema/*",
-        CollectionUtil.singletonMap("xs", JDom2XmlSchemaLoader.NS_XML_SCHEMA));
-  }
-
-  @Override
-  protected @NotNull Map<@NotNull String, IDatatypeContent> handleResults(@NotNull List<@NotNull Element> items) {
-    return CollectionUtil.singletonMap(
-        DATATYPE_NAME,
-        new JDom2DatatypeContent(
-            DATATYPE_NAME,
-            items.stream()
-                .filter(element -> !("include".equals(element.getName())))
-                .collect(Collectors.toList()),
-            CollectionUtil.emptyList()));
-  }
-
-  @Override
-  public @NotNull Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes,
-      @NotNull XMLStreamWriter2 writer) throws XMLStreamException {
-    writer.writeComment(" ====================== ");
-    writer.writeComment(" markup multiline types ");
-    writer.writeComment(" ====================== ");
-    return super.generateDatatypes(requiredTypes, writer);
-  }
+  boolean isInline(@NotNull INamedDefinition definition);
 }

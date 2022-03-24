@@ -78,6 +78,22 @@ public interface IAssemblyClassBinding extends IClassBinding, IBoundAssemblyDefi
   Object readRoot(@NotNull IJsonParsingContext context) throws IOException;
 
   /**
+   * Parses XML into a bound object. This assembly must be a root assembly for which a call to
+   * {@link IAssemblyClassBinding#isRoot()} will return {@code true}.
+   * 
+   * @param context
+   *          the XML parser
+   * @return the bound object instance representing the JSON object
+   * @throws XMLStreamException
+   *           if an error occurred while parsing into XML
+   * @throws IOException
+   *           if an error occurred while reading the input
+   */
+  // TODO: merge the XMLStreamException into IOException
+  @NotNull
+  Object readRoot(@NotNull IXmlParsingContext context) throws XMLStreamException, IOException;
+
+  /**
    * Parses JSON into a bound object.
    * <p>
    * This method expects the parser's current token to be:
@@ -100,22 +116,6 @@ public interface IAssemblyClassBinding extends IClassBinding, IBoundAssemblyDefi
    */
   @NotNull
   Object readObject(@NotNull IJsonParsingContext context) throws IOException;
-
-  /**
-   * Parses XML into a bound object. This assembly must be a root assembly for which a call to
-   * {@link IAssemblyClassBinding#isRoot()} will return {@code true}.
-   * 
-   * @param context
-   *          the XML parser
-   * @return the bound object instance representing the JSON object
-   * @throws XMLStreamException
-   *           if an error occurred while parsing into XML
-   * @throws IOException
-   *           if an error occurred while reading the input
-   */
-  // TODO: merge the XMLStreamException into IOException
-  @NotNull
-  Object readRoot(@NotNull IXmlParsingContext context) throws XMLStreamException, IOException;
 
   /**
    * Writes data in a bound object to JSON. This assembly must be a root assembly for which a call to

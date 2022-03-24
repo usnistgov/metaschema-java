@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.util;
 
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
@@ -40,10 +41,19 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 /**
- * Walks a metaschema model. The "visit" methods can be implemented by child classes to perform
+ * Walks a Metaschema model. The "visit" methods can be implemented by child classes to perform
  * processing on a visited node.
+ * 
+ * @param <DATA>
+ *          state information that is carried through the walk
  */
 public abstract class ModelWalker<DATA> {
+  /**
+   * Generate default state information.
+   * 
+   * @return the state information
+   */
+  protected abstract DATA getDefaultData();
 
   /**
    * Will visit the provided metaschema flag definition.
@@ -51,9 +61,8 @@ public abstract class ModelWalker<DATA> {
    * @param flag
    *          the metaschema flag definition to walk
    */
-  @SuppressWarnings("null")
   public void walk(@NotNull IFlagDefinition flag) {
-    walk(flag, null);
+    walk(flag, getDefaultData());
   }
 
   /**
@@ -62,7 +71,7 @@ public abstract class ModelWalker<DATA> {
    * @param flag
    *          the metaschema flag definition to walk
    * @param data
-   *          additional information to operate on
+   *          additional state information to operate on
    */
   public void walk(@NotNull IFlagDefinition flag, DATA data) {
     visit(flag, data);
@@ -74,9 +83,8 @@ public abstract class ModelWalker<DATA> {
    * @param field
    *          the metaschema field definition to walk
    */
-  @SuppressWarnings("null")
   public void walk(@NotNull IFieldDefinition field) {
-    walk(field, null);
+    walk(field, getDefaultData());
   }
 
   /**
@@ -85,7 +93,7 @@ public abstract class ModelWalker<DATA> {
    * @param field
    *          the metaschema field definition to walk
    * @param data
-   *          additional information to operate on
+   *          additional state information to operate on
    */
   public void walk(@NotNull IFieldDefinition field, DATA data) {
     if (visit(field, data)) {
@@ -100,9 +108,8 @@ public abstract class ModelWalker<DATA> {
    * @param assembly
    *          the metaschema assembly definition to walk
    */
-  @SuppressWarnings("null")
   public void walk(@NotNull IAssemblyDefinition assembly) {
-    walk(assembly, null);
+    walk(assembly, getDefaultData());
   }
 
   /**
@@ -112,7 +119,7 @@ public abstract class ModelWalker<DATA> {
    * @param assembly
    *          the metaschema assembly definition to walk
    * @param data
-   *          additional information to operate on
+   *          additional state information to operate on
    */
   public void walk(@NotNull IAssemblyDefinition assembly, DATA data) {
     if (visit(assembly, data)) {
@@ -120,12 +127,40 @@ public abstract class ModelWalker<DATA> {
       walkModelInstances(assembly.getModelInstances(), data);
     }
   }
+  /**
+   * Will walk the provided model definition.
+   * 
+   * @param definition
+   *          the definition to walk
+   */
+  public void walkDefinition(@NotNull IDefinition definition) {
+    walkDefinition(definition, getDefaultData());
+  }
 
+  /**
+   * Will walk the provided model definition.
+   * 
+   * @param definition
+   *          the definition to walk
+   * @param data
+   *          additional state information to operate on
+   */
+  public void walkDefinition(@NotNull IDefinition definition, DATA data) {
+    if (definition instanceof IAssemblyDefinition) {
+      walk((IAssemblyDefinition) definition, data);
+    } else if (definition instanceof IFieldDefinition) {
+      walk((IFieldDefinition) definition, data);
+    } else if (definition instanceof IFlagDefinition) {
+      walk((IFlagDefinition) definition, data);
+    }
+  }
   /**
    * Will visit the provided metaschema flag instance, and then walk the associated flag definition.
    * 
    * @param instance
    *          the metaschema flag instance to walk
+   * @param data
+   *          additional state information to operate on
    */
   public void walk(@NotNull IFlagInstance instance, DATA data) {
     if (visit(instance, data)) {
@@ -138,6 +173,8 @@ public abstract class ModelWalker<DATA> {
    * 
    * @param instance
    *          the metaschema field instance to walk
+   * @param data
+   *          additional state information to operate on
    */
   public void walk(@NotNull IFieldInstance instance, DATA data) {
     if (visit(instance, data)) {
@@ -151,6 +188,8 @@ public abstract class ModelWalker<DATA> {
    * 
    * @param instance
    *          the metaschema assembly instance to walk
+   * @param data
+   *          additional state information to operate on
    */
   public void walk(@NotNull IAssemblyInstance instance, DATA data) {
     if (visit(instance, data)) {
@@ -164,6 +203,8 @@ public abstract class ModelWalker<DATA> {
    * 
    * @param instance
    *          the metaschema choice instance to walk
+   * @param data
+   *          additional state information to operate on
    */
   public void walk(@NotNull IChoiceInstance instance, DATA data) {
     if (visit(instance, data)) {
@@ -176,6 +217,8 @@ public abstract class ModelWalker<DATA> {
    * 
    * @param instances
    *          a collection of flag instances to visit
+   * @param data
+   *          additional state information to operate on
    */
   protected void walkFlagInstances(@NotNull Collection<@NotNull ? extends IFlagInstance> instances, DATA data) {
     for (IFlagInstance instance : instances) {
@@ -188,6 +231,8 @@ public abstract class ModelWalker<DATA> {
    * 
    * @param instances
    *          a collection of model instances to visit
+   * @param data
+   *          additional state information to operate on
    */
   protected void walkModelInstances(@NotNull Collection<@NotNull ? extends IModelInstance> instances, DATA data) {
     for (IModelInstance instance : instances) {
@@ -200,6 +245,8 @@ public abstract class ModelWalker<DATA> {
    * 
    * @param instance
    *          the instance to walk
+   * @param data
+   *          additional state information to operate on
    */
   protected void walkModelInstance(@NotNull IModelInstance instance, DATA data) {
     if (instance instanceof IAssemblyInstance) {
@@ -218,7 +265,7 @@ public abstract class ModelWalker<DATA> {
    * @param def
    *          the definition that is visited
    * @param data
-   *          additional information to operate on
+   *          additional state information to operate on
    */
   protected abstract void visit(@NotNull IFlagDefinition def, DATA data);
 
@@ -229,7 +276,7 @@ public abstract class ModelWalker<DATA> {
    * @param def
    *          the definition that is visited
    * @param data
-   *          additional information to operate on
+   *          additional state information to operate on
    * @return {@code true} if child instances are to be walked, or {@code false} otherwise
    */
   protected boolean visit(@NotNull IFieldDefinition def, DATA data) {
@@ -243,7 +290,7 @@ public abstract class ModelWalker<DATA> {
    * @param def
    *          the definition that is visited
    * @param data
-   *          additional information to operate on
+   *          additional state information to operate on
    * @return {@code true} if child instances are to be walked, or {@code false} otherwise
    */
   protected boolean visit(@NotNull IAssemblyDefinition def, DATA data) {
@@ -257,7 +304,7 @@ public abstract class ModelWalker<DATA> {
    * @param instance
    *          the instance that is visited
    * @param data
-   *          additional information to operate on
+   *          additional state information to operate on
    * @return {@code true} if the associated definition is to be walked, or {@code false} otherwise
    */
   protected boolean visit(@NotNull IFlagInstance instance, DATA data) {
@@ -271,7 +318,7 @@ public abstract class ModelWalker<DATA> {
    * @param instance
    *          the instance that is visited
    * @param data
-   *          additional information to operate on
+   *          additional state information to operate on
    * @return {@code true} if the associated definition is to be walked, or {@code false} otherwise
    */
   protected boolean visit(@NotNull IFieldInstance instance, DATA data) {
@@ -285,7 +332,7 @@ public abstract class ModelWalker<DATA> {
    * @param instance
    *          the instance that is visited
    * @param data
-   *          additional information to operate on
+   *          additional state information to operate on
    * @return {@code true} if the associated definition is to be walked, or {@code false} otherwise
    */
   protected boolean visit(@NotNull IAssemblyInstance instance, DATA data) {
@@ -299,7 +346,7 @@ public abstract class ModelWalker<DATA> {
    * @param instance
    *          the instance that is visited
    * @param data
-   *          additional information to operate on
+   *          additional state information to operate on
    * @return {@code true} if the child instances are to be walked, or {@code false} otherwise
    */
   protected boolean visit(@NotNull IChoiceInstance instance, DATA data) {

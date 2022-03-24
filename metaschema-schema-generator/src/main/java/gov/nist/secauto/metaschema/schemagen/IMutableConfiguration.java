@@ -26,55 +26,22 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-
-import org.codehaus.stax2.XMLStreamWriter2;
-import org.jdom2.Element;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+public interface IMutableConfiguration extends IConfiguration {
+  /**
+   * Turn on the provided feature.
+   * @param feature the feature to turn on
+   * @return the updated configuration
+   */
+  @NotNull
+  IMutableConfiguration enableFeature(@NotNull Feature feature);
 
-import javax.xml.stream.XMLStreamException;
-
-public class XmlMarkupMultilineDatatypeProvider
-    extends AbstractXmlDatatypeProvider {
-  private static final String DATATYPE_NAME = "MarkupMultilineDatatype";
-
-  @Override
-  protected InputStream getSchemaResource() {
-    return JDom2XmlSchemaLoader.class.getClassLoader()
-        .getResourceAsStream("schema/xml/metaschema-markup-multiline.xsd");
-  }
-
-  @Override
-  protected List<@NotNull Element> queryElements(JDom2XmlSchemaLoader loader) {
-    return loader.getContent(
-        "/xs:schema/*",
-        CollectionUtil.singletonMap("xs", JDom2XmlSchemaLoader.NS_XML_SCHEMA));
-  }
-
-  @Override
-  protected @NotNull Map<@NotNull String, IDatatypeContent> handleResults(@NotNull List<@NotNull Element> items) {
-    return CollectionUtil.singletonMap(
-        DATATYPE_NAME,
-        new JDom2DatatypeContent(
-            DATATYPE_NAME,
-            items.stream()
-                .filter(element -> !("include".equals(element.getName())))
-                .collect(Collectors.toList()),
-            CollectionUtil.emptyList()));
-  }
-
-  @Override
-  public @NotNull Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes,
-      @NotNull XMLStreamWriter2 writer) throws XMLStreamException {
-    writer.writeComment(" ====================== ");
-    writer.writeComment(" markup multiline types ");
-    writer.writeComment(" ====================== ");
-    return super.generateDatatypes(requiredTypes, writer);
-  }
+  /**
+   * Turn off the provided feature.
+   * @param feature the feature to turn off
+   * @return the updated configuration
+   */
+  @NotNull
+  IMutableConfiguration disableFeature(@NotNull Feature feature);
 }

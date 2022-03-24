@@ -67,19 +67,20 @@ public class SingletonPropertyInfo
 
     JsonParser parser = context.getReader();
 
-//    boolean isObject = JsonToken.START_OBJECT.equals(parser.currentToken()); // TODO: is this object check needed?
-//    if (isObject) {
-//      // read the object's START_OBJECT
-//      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-//    }
+    // boolean isObject = JsonToken.START_OBJECT.equals(parser.currentToken()); // TODO: is this object
+    // check needed?
+    // if (isObject) {
+    // // read the object's START_OBJECT
+    // JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+    // }
 
     List<@NotNull Object> values = property.readItem(parentInstance, false, context);
     collector.addAll(values);
 
-//    if (isObject) {
-//      // read the object's END_OBJECT
-//      JsonUtil.assertAndAdvance(context.getReader(), JsonToken.END_OBJECT);
-//    }
+    // if (isObject) {
+    // // read the object's END_OBJECT
+    // JsonUtil.assertAndAdvance(context.getReader(), JsonToken.END_OBJECT);
+    // }
   }
 
   @Override

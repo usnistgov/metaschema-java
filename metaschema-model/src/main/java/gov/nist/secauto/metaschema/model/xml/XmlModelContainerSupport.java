@@ -80,7 +80,6 @@ public class XmlModelContainerSupport {
     return assemblyInstances;
   }
 
-  @SuppressWarnings("null")
   @NotNull
   public List<@NotNull ? extends IXmlChoiceInstance> getChoiceInstances() {
     // this shouldn't get called all that often, so this is better than allocating memory

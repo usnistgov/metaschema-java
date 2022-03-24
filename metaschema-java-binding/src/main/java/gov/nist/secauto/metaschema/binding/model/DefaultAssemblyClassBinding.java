@@ -37,8 +37,8 @@ import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
-import gov.nist.secauto.metaschema.binding.model.annotations.Field;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultAssemblyProperty;
@@ -103,7 +103,7 @@ public class DefaultAssemblyClassBinding
   private IAssemblyConstraintSupport constraints;
 
   /**
-   * Create a new {@link IClassBinding} for a Java bean annotated with the {@link Assembly}
+   * Create a new {@link IClassBinding} for a Java bean annotated with the {@link BoundAssembly}
    * annotation.
    * 
    * @param clazz
@@ -119,7 +119,7 @@ public class DefaultAssemblyClassBinding
   }
 
   /**
-   * Construct a new {@link IClassBinding} for a Java bean annotated with the {@link Assembly}
+   * Construct a new {@link IClassBinding} for a Java bean annotated with the {@link BoundAssembly}
    * annotation.
    * 
    * @param clazz
@@ -200,7 +200,7 @@ public class DefaultAssemblyClassBinding
     }
 
     for (java.lang.reflect.Field field : fields) {
-      if (!field.isAnnotationPresent(Assembly.class) && !field.isAnnotationPresent(Field.class)) {
+      if (!field.isAnnotationPresent(BoundAssembly.class) && !field.isAnnotationPresent(BoundField.class)) {
         // skip fields that aren't a field or assembly instance
         continue;
       }
@@ -235,9 +235,9 @@ public class DefaultAssemblyClassBinding
 
   protected IBoundNamedModelInstance newModelInstance(@NotNull java.lang.reflect.Field field) {
     IBoundNamedModelInstance retval = null;
-    if (field.isAnnotationPresent(Assembly.class)) {
+    if (field.isAnnotationPresent(BoundAssembly.class)) {
       retval = DefaultAssemblyProperty.createInstance(this, field);
-    } else if (field.isAnnotationPresent(Field.class)) {
+    } else if (field.isAnnotationPresent(BoundField.class)) {
       retval = DefaultFieldProperty.createInstance(this, field);
       // modelInstances.put(instance.getEffectiveName(), instance);
     }
@@ -283,7 +283,8 @@ public class DefaultAssemblyClassBinding
             .map(ObjectUtils::notNull),
         getNamedModelInstances().stream())
         .collect(
-            Collectors.toMap(instance -> instance.getJsonName(), Function.identity(), (a, b) -> b, LinkedHashMap::new)));
+            Collectors.toMap(instance -> instance.getJsonName(), Function.identity(), (a, b) -> b,
+                LinkedHashMap::new)));
   }
 
   @Override
@@ -422,7 +423,7 @@ public class DefaultAssemblyClassBinding
     if (parser.currentToken() == null) {
       parser.nextToken();
     }
-    
+
     if (JsonToken.START_OBJECT.equals(parser.currentToken())) {
       // advance past the start object to the field name
       JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
@@ -468,7 +469,7 @@ public class DefaultAssemblyClassBinding
   @Override
   public Object readObject(IJsonParsingContext context) throws IOException {
     JsonParser parser = context.getReader(); // NOPMD - intentional
-    
+
     JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
 
     try {

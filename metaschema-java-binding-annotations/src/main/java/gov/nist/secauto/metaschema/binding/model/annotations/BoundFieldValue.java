@@ -42,7 +42,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target({ FIELD })
-public @interface FieldValue {
+public @interface BoundFieldValue {
   /**
    * The Metaschema data type adapter for the field's value.
    * 

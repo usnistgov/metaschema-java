@@ -57,7 +57,7 @@ import javax.xml.stream.XMLStreamException;
 
 public class AbstractBoundModelTestSupport {
   @RegisterExtension
-  private JUnit5Mockery context = new JUnit5Mockery();
+  private final JUnit5Mockery context = new JUnit5Mockery();
 
   @Mock
   private IBindingContext bindingContext;
@@ -69,7 +69,7 @@ public class AbstractBoundModelTestSupport {
 
   protected void registerDatatype(@NotNull IJavaTypeAdapter<?> adapter) {
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         allowing(bindingContext).getJavaTypeAdapterInstance(adapter.getClass());
         will(returnValue(adapter));
       }
@@ -80,7 +80,7 @@ public class AbstractBoundModelTestSupport {
   protected IFieldClassBinding registerFieldBinding(@NotNull Class<?> clazz) {
     IFieldClassBinding retval = DefaultFieldClassBinding.createInstance(clazz, bindingContext);
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         allowing(bindingContext).getClassBinding(clazz);
         will(returnValue(retval));
       }
@@ -92,7 +92,7 @@ public class AbstractBoundModelTestSupport {
   protected IAssemblyClassBinding registerAssemblyBinding(@NotNull Class<?> clazz) {
     IAssemblyClassBinding retval = DefaultAssemblyClassBinding.createInstance(clazz, bindingContext);
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         allowing(bindingContext).getClassBinding(clazz);
         will(returnValue(retval));
       }
@@ -130,7 +130,7 @@ public class AbstractBoundModelTestSupport {
     IXmlParsingContext retval = context.mock(IXmlParsingContext.class);
     
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         allowing(retval).getReader();
         will(returnValue(parser));
       }
@@ -146,7 +146,7 @@ public class AbstractBoundModelTestSupport {
     IJsonParsingContext retval = context.mock(IJsonParsingContext.class);
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         allowing(retval).getReader();
         will(returnValue(jsonParser));
       }

@@ -68,15 +68,13 @@ public abstract class AbstractChoiceInstance implements IXmlChoiceInstance {
     return 1;
   }
 
-  @SuppressWarnings("PMD") // this method should return null
   @Override
-  public String getGroupAsName() {
+  public String getGroupAsName() { // NOPMD - this method should return null
     return null;
   }
 
-  @SuppressWarnings("PMD") // this method should return null
   @Override
-  public String getGroupAsXmlNamespace() {
+  public String getGroupAsXmlNamespace() { // NOPMD - this method should return null
     return null;
   }
 

@@ -134,25 +134,21 @@ class XmlModelParser {
     }
   }
 
-  @SuppressWarnings("null")
   @NotNull
   public Map<@NotNull String, ? extends IXmlNamedModelInstance> getNamedModelInstances() {
     return namedModelInstances == null ? Collections.emptyMap() : namedModelInstances;
   }
 
-  @SuppressWarnings("null")
   @NotNull
   public Map<@NotNull String, ? extends IXmlFieldInstance> getFieldInstances() {
     return fieldInstances == null ? Collections.emptyMap() : fieldInstances;
   }
 
-  @SuppressWarnings("null")
   @NotNull
   public Map<@NotNull String, ? extends IXmlAssemblyInstance> getAssemblyInstances() {
     return assemblyInstances == null ? Collections.emptyMap() : assemblyInstances;
   }
 
-  @SuppressWarnings("null")
   @NotNull
   protected List<@NotNull ? extends IModelInstance> getModelInstances() {
     return modelInstances == null ? Collections.emptyList() : modelInstances;

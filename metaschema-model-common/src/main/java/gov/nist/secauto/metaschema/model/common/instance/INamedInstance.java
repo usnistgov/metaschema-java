@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.model.common.INamedModelElement;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -96,17 +97,20 @@ public interface INamedInstance extends IInstance, INamedModelElement {
   @SuppressWarnings("null")
   @Override
   default String toCoordinates() {
-    IDefinition definition = getDefinition();
+    INamedDefinition definition = getDefinition();
 
-    IDefinition containingDefinition = getContainingDefinition();
+    INamedModelDefinition containingDefinition = getContainingDefinition();
     String retval;
     if (containingDefinition == null) {
-      retval = String.format("%s:%s@%d(%d)", getModelType(), definition != null ? definition.getName() : "N/A",
-          hashCode(), definition != null && definition.isGlobal() ? definition.hashCode() : 0);
+      retval = String.format("%s:%s@%d(%d)",
+          getModelType(),
+          definition != null ? definition.getName() : "N/A",
+          hashCode(),
+          definition != null && definition.isInline() ? 0 : definition.hashCode());
     } else {
       retval = String.format("%s:%s:%s@%d(%d)", containingDefinition.getContainingMetaschema().getShortName(),
           getModelType(), definition != null ? definition.getName() : "N/A", hashCode(),
-          definition != null && definition.isGlobal() ? definition.hashCode() : 0);
+          definition != null && definition.isInline() ? 0 : definition.hashCode());
     }
 
     return retval;

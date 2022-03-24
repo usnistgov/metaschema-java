@@ -53,7 +53,7 @@ public final class XmlGroupAsBehaviorType {
         break;
       default:
         target.setStringValue(MetaschemaModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR.name());
-        // do nothing
+        break;
       }
     }
   }

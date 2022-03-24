@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultFlagProperty;
@@ -95,6 +95,11 @@ public abstract class AbstractClassBinding implements IClassBinding {
   }
 
   @Override
+  public boolean isInline() {
+    return getBoundClass().getEnclosingClass() != null;
+  }
+
+  @Override
   public Class<?> getBoundClass() {
     return clazz;
   }
@@ -143,11 +148,6 @@ public abstract class AbstractClassBinding implements IClassBinding {
   }
 
   @Override
-  public boolean isGlobal() {
-    return getBoundClass().getEnclosingClass() == null;
-  }
-
-  @Override
   public IMetaschema getContainingMetaschema() { // NOPMD - remove after implementation
     // TODO: implement
     return null;
@@ -179,7 +179,7 @@ public abstract class AbstractClassBinding implements IClassBinding {
     }
 
     for (Field field : fields) {
-      if (!field.isAnnotationPresent(Flag.class)) {
+      if (!field.isAnnotationPresent(BoundFlag.class)) {
         // skip non-flag fields
         continue;
       }
@@ -206,7 +206,7 @@ public abstract class AbstractClassBinding implements IClassBinding {
         Map<@NotNull String, IBoundFlagInstance> flags = new LinkedHashMap<>(); // NOPMD - intentional use
         for (Field field : getFlagInstanceFields(clazz)) {
 
-          if (field.isAnnotationPresent(Flag.class)) {
+          if (field.isAnnotationPresent(BoundFlag.class)) {
             IBoundFlagInstance flagBinding
                 = new DefaultFlagProperty(field, this, bindingContext); // NOPMD - intentional
             initializeFlagInstance(flagBinding);

@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -38,6 +39,7 @@ import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.JsonSchemaGenerator.GenerationState;
 
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +52,7 @@ public class JsonDefinitionGenerator {
     // disable construction
   }
 
-  public static void generateDescription(IDefinition definition, @NotNull GenerationState state) throws IOException {
+  public static void generateDescription(@NotNull IDefinition definition, @NotNull ObjectNode parentNode) {
     MarkupLine description = definition.getDescription();
 
     StringBuilder retval = null;
@@ -68,54 +70,61 @@ public class JsonDefinitionGenerator {
       retval.append(remarks.toMarkdown());
     }
     if (retval != null) {
-      state.getWriter().writeStringField("description", retval.toString());
+      parentNode.put("description", retval.toString());
     }
   }
 
-  public static void generateTitle(IDefinition definition, @NotNull GenerationState state) throws IOException {
+  public static void generateTitle(@NotNull IDefinition definition, @NotNull ObjectNode parentNode) {
     String formalName = definition.getFormalName();
     if (formalName != null) {
-      state.getWriter().writeStringField("title", formalName);
+      parentNode.put("title", formalName);
     }
   }
 
-  public static void generateDefinition(@NotNull INamedDefinition definition, @NotNull GenerationState state)
+  public static void generateDefinition(@NotNull INamedDefinition definition, @NotNull ObjectNode parentNode,
+      @NotNull GenerationState state)
       throws IOException {
-    JsonGenerator writer = state.getWriter();
     JsonDatatypeManager datatypeManager = state.getDatatypeManager();
 
-    String name = datatypeManager.getTypeNameForDefinition(definition).toString();
-    writer.writeFieldName(name);
+    boolean inline = state.isInline(definition);
 
-    writer.writeStartObject();
+    ObjectNode definitionContextNode;
+    if (inline) {
+      definitionContextNode = parentNode;
+    } else {
+      definitionContextNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
+      definitionContextNode.put("$id", datatypeManager.getJsonDefinitionRefForDefinition(definition));
+    }
 
-    writer.writeStringField("$id", datatypeManager.getJsonDefinitionRefForDefinition(definition));
-
-    generateTitle(definition, state);
-    generateDescription(definition, state);
+    generateTitle(definition, definitionContextNode);
+    generateDescription(definition, definitionContextNode);
 
     switch (definition.getModelType()) {
     case ASSEMBLY:
-      generateAssemblyDefinition((IAssemblyDefinition) definition, state);
+      generateAssemblyDefinition((IAssemblyDefinition) definition, definitionContextNode, state);
       break;
     case FIELD:
-      generateFieldDefinition((IFieldDefinition) definition, state);
+      generateFieldDefinition((IFieldDefinition) definition, definitionContextNode, state);
       break;
     case FLAG:
-      generateFlagDefinition((IFlagDefinition) definition, state);
+      generateFlagDefinition((IFlagDefinition) definition, definitionContextNode, state);
       break;
     default:
       break;
     }
-    writer.writeEndObject();
+
+    if (!inline) {
+      String name = datatypeManager.getTypeNameForDefinition(definition).toString();
+      parentNode.set(name, definitionContextNode);
+    }
   }
 
   public static void generateAssemblyDefinition(
       @NotNull IAssemblyDefinition definition,
+      @NotNull ObjectNode definitionNode,
       @NotNull GenerationState state) throws IOException {
-    JsonGenerator writer = state.getWriter();
 
-    writer.writeStringField("type", "object");
+    definitionNode.put("type", "object");
 
     // determine the flag instances to generate
     IFlagInstance jsonKeyFlag = definition.getJsonKeyFlagInstance();
@@ -129,35 +138,35 @@ public class JsonDefinitionGenerator {
       JsonPropertyGenerator.generateFlagProperty(flag, properties, state);
     }
     // generate model properties
-    Collection<? extends INamedModelInstance> instances = definition.getNamedModelInstances();
+    Collection<@NotNull ? extends INamedModelInstance> instances = definition.getNamedModelInstances();
     for (INamedModelInstance instance : instances) {
       JsonPropertyGenerator.generateInstanceProperty(instance, properties, state);
     }
 
     Collection<@NotNull ? extends IChoiceInstance> choices = definition.getChoiceInstances();
     if (choices.isEmpty()) {
-      properties.generate(writer);
+      properties.generate(definitionNode);
 
-      writer.writeBooleanField("additionalProperties", false);
+      definitionNode.put("additionalProperties", false);
     } else {
-      JsonPropertyGenerator.generateChoices(choices, properties, state);
+      JsonPropertyGenerator.generateChoices(choices, properties, definitionNode, state);
     }
   }
 
   public static void generateFieldDefinition(
       @NotNull IFieldDefinition definition,
+      @NotNull ObjectNode definitionNode,
       @NotNull GenerationState state) throws IOException {
-    JsonGenerator writer = state.getWriter();
     JsonDatatypeManager datatypeManager = state.getDatatypeManager();
 
     Collection<@NotNull ? extends IFlagInstance> flags = definition.getFlagInstances();
     IFlagInstance jsonKeyFlag = definition.getJsonKeyFlagInstance();
     if (flags.isEmpty() || (jsonKeyFlag != null && flags.size() == 1)) {
       // field is a simple value if there are no flags or if the only flag is a JSON key
-      writer.writeStringField("$ref",
+      definitionNode.put("$ref",
           datatypeManager.getJsonDefinitionRefForDatatype(definition.getDatatype()));
     } else {
-      writer.writeStringField("type", "object");
+      definitionNode.put("type", "object");
 
       // determine the flag instances to generate
       IFlagInstance jsonValueKeyFlag = definition.getJsonValueKeyFlagInstance();
@@ -179,34 +188,35 @@ public class JsonDefinitionGenerator {
         }
       }
 
-      properties.generate(writer);
+      properties.generate(definitionNode);
 
       if (jsonValueKeyFlag == null) {
-        writer.writeBooleanField("additionalProperties", false);
+        definitionNode.put("additionalProperties", false);
       } else {
-        writer.writeFieldName("additionalProperties");
+        ObjectNode additionalPropertiesNode;
 
         if (definition.isCollapsible()) {
-          writer.writeTree(JsonPropertyGenerator.generateCollapsibleFieldValueType(definition, state));
+          additionalPropertiesNode = JsonPropertyGenerator.generateCollapsibleFieldValueType(definition, state);
         } else {
-          writer.writeStartObject();
+          additionalPropertiesNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
           // the type of the additional properties must be the datatype of the field value
-          writer.writeStringField("$ref", datatypeManager.getJsonDefinitionRefForDatatype(definition.getDatatype()));
-          writer.writeEndObject();
+          additionalPropertiesNode.put("$ref",
+              datatypeManager.getJsonDefinitionRefForDatatype(definition.getDatatype()));
         }
 
-        writer.writeNumberField("minProperties", properties.getRequired().size() + 1);
-        writer.writeNumberField("maxProperties", properties.getProperties().size() + 1);
+        additionalPropertiesNode.put("minProperties", properties.getRequired().size() + 1);
+        additionalPropertiesNode.put("maxProperties", properties.getProperties().size() + 1);
+
+        definitionNode.set("additionalProperties", additionalPropertiesNode);
       }
     }
   }
 
   public static void generateFlagDefinition(
       @NotNull IFlagDefinition definition,
-      @NotNull GenerationState state)
-      throws IOException {
-    state.getWriter().writeStringField("$ref",
-        state.getDatatypeManager().getJsonDefinitionRefForDatatype(definition.getDatatype()));
+      @NotNull ObjectNode definitionNode,
+      @NotNull GenerationState state) {
+    definitionNode.put("$ref", state.getDatatypeManager().getJsonDefinitionRefForDatatype(definition.getDatatype()));
   }
 
 }

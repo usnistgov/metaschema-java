@@ -45,7 +45,7 @@ import java.util.Objects;
 
 public class CollapseKeyBuilder {
   private final IFieldClassBinding classBinding;
-  private final ArrayList<IBoundFlagInstance> flagProperties;
+  private final List<IBoundFlagInstance> flagProperties;
   private final Map<CollapseKey, List<Object>> keyToValuesMap;
 
   public CollapseKeyBuilder(IFieldClassBinding classBinding) {
@@ -58,7 +58,7 @@ public class CollapseKeyBuilder {
     return classBinding;
   }
 
-  protected ArrayList<IBoundFlagInstance> getFlagProperties() {
+  protected List<IBoundFlagInstance> getFlagProperties() {
     return flagProperties;
   }
 
@@ -92,7 +92,7 @@ public class CollapseKeyBuilder {
     IBoundFlagInstance jsonKey = classBinding.getJsonKeyFlagInstance();
     IBoundFlagInstance jsonValueKey = classBinding.getJsonValueKeyFlagInstance();
     IBoundFieldValueInstance fieldValue = classBinding.getFieldValue();
-    ArrayList<IBoundFlagInstance> flagProperties = getFlagProperties();
+    List<IBoundFlagInstance> flagProperties = getFlagProperties();
 
     // first build an index of the flag properties
     List<Integer> flagIndex;
@@ -115,7 +115,7 @@ public class CollapseKeyBuilder {
       }
     }
 
-    JsonGenerator writer = context.getWriter();
+    JsonGenerator writer = context.getWriter(); // NOPMD - intentional
     // for each key, we need to write the properties
     for (Map.Entry<CollapseKey, List<Object>> entry : keyToValuesMap.entrySet()) {
       CollapseKey key = entry.getKey();
@@ -190,12 +190,14 @@ public class CollapseKeyBuilder {
     }
 
     @Override
-    public synchronized int hashCode() {
-      if (hashCode == null) {
-        final int prime = 31;
-        hashCode = 1;
-        hashCode = prime * hashCode + getEnclosingInstance().hashCode();
-        hashCode = prime * hashCode + Arrays.hashCode(flagValues);
+    public int hashCode() {
+      synchronized (this) {
+        if (hashCode == null) {
+          final int prime = 31;
+          hashCode = 1;
+          hashCode = prime * hashCode + getEnclosingInstance().hashCode();
+          hashCode = prime * hashCode + Arrays.hashCode(flagValues);
+        }
       }
       return hashCode;
     }

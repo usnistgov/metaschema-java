@@ -56,43 +56,49 @@ import org.apache.logging.log4j.Logger;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Set;
 
 public class ConstraintValidatingModelWalker
-    extends ConstraintVisitingModelWalker<ConstraintValidatingModelWalker> {
+    extends ConstraintVisitingModelWalker<Void> {
   private static final Logger LOGGER = LogManager.getLogger(ConstraintValidatingModelWalker.class);
 
   private final Set<IAssemblyDefinition> seenAssemblies = new HashSet<>();
   private final Deque<IAssemblyDefinition> stack = new LinkedList<>();
   private int depth; // 0;
 
+  @Override
+  protected Void getDefaultData() {
+    return null;
+  }
+
   protected String getPadding() {
     return "  ".repeat(depth);
   }
 
   @Override
-  public void walk(IFlagInstance instance, ConstraintValidatingModelWalker data) {
+  public void walk(IFlagInstance instance, Void data) {
     ++depth;
     super.walk(instance, data);
     --depth;
   }
 
   @Override
-  public void walk(IFieldInstance instance, ConstraintValidatingModelWalker data) {
+  public void walk(IFieldInstance instance, Void data) {
     ++depth;
     super.walk(instance, data);
     --depth;
   }
 
   @Override
-  public void walk(IAssemblyInstance instance, ConstraintValidatingModelWalker data) {
+  public void walk(IAssemblyInstance instance, Void data) {
     ++depth;
     super.walk(instance, data);
     --depth;
   }
 
   @Override
-  public void walk(IAssemblyDefinition assembly, ConstraintValidatingModelWalker data) {
+  public void walk(IAssemblyDefinition assembly, Void data) {
     if (seenAssemblies.contains(assembly)) {
       seenAssemblies.add(assembly);
     } else {
@@ -109,12 +115,12 @@ public class ConstraintValidatingModelWalker
   }
 
   @Override
-  protected boolean visit(IChoiceInstance instance, ConstraintValidatingModelWalker data) {
+  protected boolean visit(IChoiceInstance instance, Void data) {
     return false;
   }
 
   @Override
-  protected boolean visit(IAssemblyDefinition def, ConstraintValidatingModelWalker data) {
+  protected boolean visit(IAssemblyDefinition def, Void data) {
     if (def.isRoot() && LOGGER.isDebugEnabled()) {
       LOGGER.debug(String.format("%sRoot(%s)", getPadding(), def.getName()));
     }
@@ -122,7 +128,7 @@ public class ConstraintValidatingModelWalker
   }
 
   @Override
-  protected boolean visit(IFlagInstance instance, ConstraintValidatingModelWalker data) {
+  protected boolean visit(IFlagInstance instance, Void data) {
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug(String.format("%sFlag(%s)%s", getPadding(), instance.getName(), instance.getEffectiveName()));
     }
@@ -130,7 +136,7 @@ public class ConstraintValidatingModelWalker
   }
 
   @Override
-  protected boolean visit(IFieldInstance instance, ConstraintValidatingModelWalker data) {
+  protected boolean visit(IFieldInstance instance, Void data) {
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug(String.format("%sField(%s)%s", getPadding(), instance.getName(), instance.getEffectiveName()));
     }
@@ -138,7 +144,7 @@ public class ConstraintValidatingModelWalker
   }
 
   @Override
-  protected boolean visit(IAssemblyInstance instance, ConstraintValidatingModelWalker data) {
+  protected boolean visit(IAssemblyInstance instance, Void data) {
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug(String.format("%sAssembly(%s)%s", getPadding(), instance.getName(), instance.getEffectiveName()));
     }
@@ -146,104 +152,100 @@ public class ConstraintValidatingModelWalker
   }
 
   @Override
-  protected void visit(IFlagDefinition def, IAllowedValuesConstraint constraint, ConstraintValidatingModelWalker data) {
-    logAllowedValuesConstraint(constraint, data);
-    validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def), data);
+  protected void visit(IFlagDefinition def, IAllowedValuesConstraint constraint, Void data) {
+    logAllowedValuesConstraint(constraint);
+    validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def));
   }
 
   @Override
-  protected void visit(IFlagDefinition def, IMatchesConstraint constraint, ConstraintValidatingModelWalker data) {
-    validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def), data);
+  protected void visit(IFlagDefinition def, IMatchesConstraint constraint, Void data) {
+    validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def));
   }
 
   @Override
-  protected void visit(IFlagDefinition def, IExpectConstraint constraint, ConstraintValidatingModelWalker data) {
+  protected void visit(IFlagDefinition def, IExpectConstraint constraint, Void data) {
     IInstanceSet result
-        = validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def), data);
+        = validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def));
     validateExpectTest(def, constraint, result);
   }
 
   @Override
-  protected void visit(IFlagDefinition def, IIndexHasKeyConstraint constraint, ConstraintValidatingModelWalker data) {
+  protected void visit(IFlagDefinition def, IIndexHasKeyConstraint constraint, Void data) {
     IInstanceSet result
-        = validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def), data);
+        = validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def));
     validateKeys(def, constraint, result);
   }
 
   @Override
-  protected void visit(IFieldDefinition def, IAllowedValuesConstraint constraint,
-      ConstraintValidatingModelWalker data) {
-    logAllowedValuesConstraint(constraint, data);
-    validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def), data);
+  protected void visit(IFieldDefinition def, IAllowedValuesConstraint constraint, Void data) {
+    logAllowedValuesConstraint(constraint);
+    validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def));
   }
 
   @Override
-  protected void visit(IFieldDefinition def, IMatchesConstraint constraint, ConstraintValidatingModelWalker data) {
-    validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def), data);
+  protected void visit(IFieldDefinition def, IMatchesConstraint constraint, Void data) {
+    validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def));
   }
 
   @Override
-  protected void visit(IFieldDefinition def, IExpectConstraint constraint, ConstraintValidatingModelWalker data) {
+  protected void visit(IFieldDefinition def, IExpectConstraint constraint, Void data) {
     IInstanceSet result
-        = validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def), data);
+        = validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def));
     validateExpectTest(def, constraint, result);
   }
 
   @Override
-  protected void visit(IFieldDefinition def, IIndexHasKeyConstraint constraint, ConstraintValidatingModelWalker data) {
+  protected void visit(IFieldDefinition def, IIndexHasKeyConstraint constraint, Void data) {
     IInstanceSet result
-        = validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def), data);
+        = validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def));
     validateKeys(def, constraint, result);
   }
 
   @Override
-  protected void visit(IAssemblyDefinition def, IAllowedValuesConstraint constraint,
-      ConstraintValidatingModelWalker data) {
-    logAllowedValuesConstraint(constraint, data);
-    validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def), data);
+  protected void visit(IAssemblyDefinition def, IAllowedValuesConstraint constraint, Void data) {
+    logAllowedValuesConstraint(constraint);
+    validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def));
   }
 
   @Override
-  protected void visit(IAssemblyDefinition def, IMatchesConstraint constraint, ConstraintValidatingModelWalker data) {
-    validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def), data);
+  protected void visit(IAssemblyDefinition def, IMatchesConstraint constraint, Void data) {
+    validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def));
   }
 
   @Override
-  protected void visit(IAssemblyDefinition def, IExpectConstraint constraint, ConstraintValidatingModelWalker data) {
+  protected void visit(IAssemblyDefinition def, IExpectConstraint constraint, Void data) {
     IInstanceSet result
-        = validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def), data);
+        = validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def));
     validateExpectTest(def, constraint, result);
   }
 
   @Override
-  protected void visit(IAssemblyDefinition def, IUniqueConstraint constraint, ConstraintValidatingModelWalker data) {
+  protected void visit(IAssemblyDefinition def, IUniqueConstraint constraint, Void data) {
     IInstanceSet result
-        = validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def), data);
+        = validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def));
     validateKeys(def, constraint, result);
   }
 
   @Override
-  protected void visit(IAssemblyDefinition def, IIndexConstraint constraint, ConstraintValidatingModelWalker data) {
+  protected void visit(IAssemblyDefinition def, IIndexConstraint constraint, Void data) {
     IInstanceSet result
-        = validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def), data);
+        = validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def));
     validateKeys(def, constraint, result);
   }
 
   @Override
-  protected void visit(IAssemblyDefinition def, IIndexHasKeyConstraint constraint,
-      ConstraintValidatingModelWalker data) {
+  protected void visit(IAssemblyDefinition def, IIndexHasKeyConstraint constraint, Void data) {
     IInstanceSet result
-        = validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def), data);
+        = validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def));
     validateKeys(def, constraint, result);
   }
 
   @Override
-  protected void visit(IAssemblyDefinition def, ICardinalityConstraint constraint,
-      ConstraintValidatingModelWalker data) {
-    validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def), data);
+  protected void visit(IAssemblyDefinition def, ICardinalityConstraint constraint, Void data) {
+    validateConstraintTarget(def, constraint, IInstanceSet.newInstanceSet(def));
   }
 
-  private void logAllowedValuesConstraint(IAllowedValuesConstraint constraint, ConstraintValidatingModelWalker data) {
+  private void logAllowedValuesConstraint(IAllowedValuesConstraint constraint) {
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug(String.format("%s  allowed-values(%s:%s): %s", getPadding(), constraint.getId(),
           constraint.isAllowedOther(), constraint.getTarget().getPath()));
@@ -257,22 +259,24 @@ public class ConstraintValidatingModelWalker
   }
 
   protected IInstanceSet validateConstraintTarget(IDefinition definition, IConstraint constraint,
-      IInstanceSet instanceSet, ConstraintValidatingModelWalker data) {
+      IInstanceSet instanceSet) {
     MetapathExpression metapath = constraint.getTarget();
+    IInstanceSet retval;
     try {
       IInstanceSet result = metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(instanceSet));
       if (result.getInstances().isEmpty() && LOGGER.isErrorEnabled()) {
         LOGGER.error(String.format("Path '%s' did not match in %s definition '%s'", metapath.getPath(),
-            definition.getModelType().name().toLowerCase(), definition.getName()));
+            definition.getModelType().name().toLowerCase(Locale.ROOT), definition.getName()));
       }
-      return result;
+      retval = result;
     } catch (RuntimeException ex) {
       if (LOGGER.isErrorEnabled()) {
         LOGGER.error(String.format("Path '%s' failed to evaluate in %s definition '%s'", metapath.getPath(),
-            definition.getModelType().name().toLowerCase(), definition.getName()), ex);
+            definition.getModelType().name().toLowerCase(Locale.ROOT), definition.getName()), ex);
       }
-      return IInstanceSet.EMPTY_INSTANCE_SET;
+      retval = IInstanceSet.EMPTY_INSTANCE_SET;
     }
+    return retval;
   }
 
   private void validateExpectTest(IDefinition definition, IExpectConstraint constraint, IInstanceSet instanceSet) {
@@ -281,12 +285,12 @@ public class ConstraintValidatingModelWalker
       IInstanceSet result = test.evaluateMetaschemaInstance(new DefaultMetaschemaContext(instanceSet));
       if (result.getInstances().isEmpty() && LOGGER.isErrorEnabled()) {
         LOGGER.error(String.format("Expect test path '%s' did not match in %s definition '%s'", test.getPath(),
-            definition.getModelType().name().toLowerCase(), definition.getName()));
+            definition.getModelType().name().toLowerCase(Locale.ROOT), definition.getName()));
       }
     } catch (RuntimeException ex) {
       if (LOGGER.isErrorEnabled()) {
         LOGGER.error(String.format("Expect test path '%s' failed to evaluate in %s definition '%s'", test.getPath(),
-            definition.getModelType().name().toLowerCase(), definition.getName()), ex);
+            definition.getModelType().name().toLowerCase(Locale.ROOT), definition.getName()), ex);
       }
     }
   }
@@ -295,15 +299,16 @@ public class ConstraintValidatingModelWalker
     for (IKeyField keyField : constraint.getKeyFields()) {
       MetapathExpression keyTarget = keyField.getTarget();
       try {
-        IInstanceSet result = keyTarget.evaluateMetaschemaInstance(new DefaultMetaschemaContext(targets));
+        IInstanceSet result = keyTarget.evaluateMetaschemaInstance(
+            new DefaultMetaschemaContext(targets)); // NOPMD - intentional
         if (result.getInstances().isEmpty() && LOGGER.isErrorEnabled()) {
           LOGGER.error(String.format("KeyField path '%s' did not match in %s definition '%s'", keyTarget.getPath(),
-              definition.getModelType().name().toLowerCase(), definition.getName()));
+              definition.getModelType().name().toLowerCase(Locale.ROOT), definition.getName()));
         }
       } catch (RuntimeException ex) {
         if (LOGGER.isErrorEnabled()) {
           LOGGER.error(String.format("KeyField path '%s' failed to evaluate in %s definition '%s'", keyTarget.getPath(),
-              definition.getModelType().name().toLowerCase(), definition.getName()), ex);
+              definition.getModelType().name().toLowerCase(Locale.ROOT), definition.getName()), ex);
         }
       }
     }

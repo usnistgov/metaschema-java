@@ -43,7 +43,6 @@ public interface IXmlMetaschema extends IMetaschema {
   @Override
   Map<@NotNull String, ? extends IXmlAssemblyDefinition> getAssemblyDefinitionMap();
 
-  @SuppressWarnings("null")
   @Override
   default Collection<@NotNull ? extends IXmlAssemblyDefinition> getAssemblyDefinitions() {
     return getAssemblyDefinitionMap().values();
@@ -52,7 +51,6 @@ public interface IXmlMetaschema extends IMetaschema {
   @Override
   Map<String, ? extends IXmlFieldDefinition> getFieldDefinitionMap();
 
-  @SuppressWarnings("null")
   @Override
   default Collection<@NotNull ? extends IXmlFieldDefinition> getFieldDefinitions() {
     return getFieldDefinitionMap().values();
@@ -64,7 +62,6 @@ public interface IXmlMetaschema extends IMetaschema {
   @Override
   Map<@NotNull String, ? extends IXmlFlagDefinition> getFlagDefinitionMap();
 
-  @SuppressWarnings("null")
   @Override
   default Collection<@NotNull ? extends IXmlFlagDefinition> getFlagDefinitions() {
     return getFlagDefinitionMap().values();

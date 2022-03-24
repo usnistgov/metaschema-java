@@ -70,7 +70,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public abstract class AbstractNamedModelProperty //NOPMD - intentional
+public abstract class AbstractNamedModelProperty // NOPMD - intentional
     extends AbstractNamedProperty<IAssemblyClassBinding>
     implements IBoundNamedModelInstance {
   // private static final Logger logger = LogManager.getLogger(AbstractNamedModelProperty.class);
@@ -260,7 +260,7 @@ public abstract class AbstractNamedModelProperty //NOPMD - intentional
   @Override
   protected Object readInternal(Object parentInstance, IJsonParsingContext context)
       throws IOException {
-    JsonParser parser = context.getReader(); //NOPMD - intentional
+    JsonParser parser = context.getReader(); // NOPMD - intentional
 
     // the parser's current token should be the JSON field name
     // advance past the property name
@@ -276,7 +276,8 @@ public abstract class AbstractNamedModelProperty //NOPMD - intentional
     return collector.getValue();
   }
 
-  protected Object readInternal(@Nullable Object parentInstance, @NotNull StartElement start, @NotNull IXmlParsingContext context)
+  protected Object readInternal(@Nullable Object parentInstance, @NotNull StartElement start,
+      @NotNull IXmlParsingContext context)
       throws IOException, XMLStreamException {
     XMLEventReader2 eventReader = context.getReader();
 
@@ -299,7 +300,7 @@ public abstract class AbstractNamedModelProperty //NOPMD - intentional
 
     // consume extra whitespace between elements
     XmlEventUtil.skipWhitespace(eventReader);
-    
+
     if (groupQName != null) {
       // consume the end of the group
       XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.END_ELEMENT, groupQName);
@@ -314,7 +315,8 @@ public abstract class AbstractNamedModelProperty //NOPMD - intentional
   }
 
   @Override
-  public List<Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context) throws IOException {
+  public List<Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
+      throws IOException {
     IDataTypeHandler supplier = getDataTypeHandler();
     return supplier.get(parentInstance, requiresJsonKey, context);
   }
@@ -324,7 +326,7 @@ public abstract class AbstractNamedModelProperty //NOPMD - intentional
       throws XMLStreamException, IOException {
     Object value = getValue(parentInstance);
     if (value == null) {
-      return false; //NOPMD - intentional
+      return false; // NOPMD - intentional
     }
 
     boolean handled = false;

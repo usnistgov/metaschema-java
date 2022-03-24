@@ -101,6 +101,8 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
    * 
    * @param parentInstance
    *          the object the data is parsed into
+   * @param requiresJsonKey
+   *          when {@code true} indicates that the item will have a JSON key
    * @param context
    *          the JSON/YAML parsing context
    * @return the items read, or {@code null} if no item was read
@@ -108,9 +110,11 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
    *           if an error occurred reading the underlying XML file
    */
   @NotNull
-  List<@NotNull Object> readItem(@Nullable Object parentInstance, boolean requiresJsonKey, @NotNull IJsonParsingContext context) throws IOException;
+  List<@NotNull Object> readItem(@Nullable Object parentInstance, boolean requiresJsonKey,
+      @NotNull IJsonParsingContext context) throws IOException;
 
-  boolean writeItem(@NotNull Object item, @NotNull QName parentName, @NotNull IXmlWritingContext context) throws XMLStreamException, IOException;
+  boolean writeItem(@NotNull Object item, @NotNull QName parentName, @NotNull IXmlWritingContext context)
+      throws XMLStreamException, IOException;
 
   @NotNull
   Object copyItem(@NotNull Object fromItem, @NotNull Object toInstance) throws BindingException;

@@ -66,7 +66,7 @@ class DefaultBindingConfigurationTest {
         config.getPackageNameForNamespace("http://csrc.nist.gov/ns/metaschema/testing/assembly"));
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         oneOf(metaschema).getLocation();
         will(returnValue(METASCHEMA_LOCATION));
         allowing(definition).getContainingMetaschema();

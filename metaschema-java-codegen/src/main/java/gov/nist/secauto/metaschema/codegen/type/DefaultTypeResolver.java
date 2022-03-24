@@ -28,9 +28,6 @@ package gov.nist.secauto.metaschema.codegen.type;
 
 import com.squareup.javapoet.ClassName;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.XmlNs;
-import gov.nist.secauto.metaschema.binding.model.annotations.XmlNsForm;
-import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
 import gov.nist.secauto.metaschema.codegen.binding.config.IBindingConfiguration;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
@@ -41,15 +38,8 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jaxb.core.api.impl.NameConverter;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.PrintWriter;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -75,16 +65,16 @@ public class DefaultTypeResolver implements ITypeResolver {
     ClassName retval = definitionToTypeMap.get(definition);
     if (retval == null) {
       String packageName = getBindingConfiguration().getPackageNameForMetaschema(definition.getContainingMetaschema());
-      if (definition.isGlobal()) {
-        String className = generateClassName(packageName, definition);
-        retval = ClassName.get(packageName, className);
-      } else {
+      if (definition.isInline()) {
         // this is a local definition, which means a child class needs to be generated
         INamedModelDefinition parentDefinition
             = ((IInlineDefinition<?>) definition).getDefiningInstance().getContainingDefinition();
         ClassName parentClassName = getClassName(parentDefinition);
         String name = generateClassName(parentClassName.canonicalName(), definition);
         retval = parentClassName.nestedClass(name);
+      } else {
+        String className = generateClassName(packageName, definition);
+        retval = ClassName.get(packageName, className);
       }
       definitionToTypeMap.put(definition, retval);
     }

@@ -26,13 +26,13 @@
 
 package gov.nist.secauto.metaschema.binding.model.test;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 
 @MetaschemaAssembly
 public class FlaggedAssembly {
-  @Flag(useName = "id", typeAdapter = StringAdapter.class)
+  @BoundFlag(useName = "id", typeAdapter = StringAdapter.class)
   private String id;
 
   protected String getId() {

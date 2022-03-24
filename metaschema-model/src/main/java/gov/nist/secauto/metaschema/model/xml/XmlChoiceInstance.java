@@ -79,10 +79,11 @@ public class XmlChoiceInstance
     return xmlChoice;
   }
 
-  @SuppressWarnings("null")
-  protected synchronized void initModelContainer() {
-    if (modelContainer == null) {
-      modelContainer = new XmlModelContainerSupport(getXmlChoice(), getContainingDefinition());
+  protected void initModelContainer() {
+    synchronized (this) {
+      if (modelContainer == null) {
+        modelContainer = new XmlModelContainerSupport(getXmlChoice(), getContainingDefinition());
+      }
     }
   }
 

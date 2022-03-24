@@ -46,7 +46,7 @@ import java.lang.annotation.Target;
 @Target(TYPE)
 public @interface MetaschemaField {
   /**
-   * Defines if the annotated class representing a Metaschema Field is collapsible, meaning fields
+   * Defines if the annotated class representing a Metaschema BoundField is collapsible, meaning fields
    * with the same set of flag/values can be combined together, with an array of values containing the
    * combination of corresponding field values.
    * <p>

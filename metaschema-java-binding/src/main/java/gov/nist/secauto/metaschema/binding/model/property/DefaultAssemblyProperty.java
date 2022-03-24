@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
-import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
@@ -41,28 +41,28 @@ import java.lang.reflect.Field;
 public class DefaultAssemblyProperty
     extends AbstractAssemblyProperty {
 
-  public static DefaultAssemblyProperty createInstance(IAssemblyClassBinding parentClassBinding, Field field) {
-    DefaultAssemblyProperty retval = new DefaultAssemblyProperty(parentClassBinding, field);
-    return retval;
-  }
-
   @NotNull
-  private final Assembly assembly;
+  private final BoundAssembly assembly;
+
+  public static DefaultAssemblyProperty createInstance(IAssemblyClassBinding parentClassBinding, Field field) {
+    return new DefaultAssemblyProperty(parentClassBinding, field);
+  }
 
   protected DefaultAssemblyProperty(IAssemblyClassBinding parentClassBinding, Field field) {
     super(parentClassBinding, field);
-    if (field.isAnnotationPresent(Assembly.class)) {
-      this.assembly = ObjectUtils.notNull(field.getAnnotation(Assembly.class));
+    if (field.isAnnotationPresent(BoundAssembly.class)) {
+      this.assembly = ObjectUtils.notNull(field.getAnnotation(BoundAssembly.class));
     } else {
-      throw new IllegalArgumentException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
-          field.getName(), parentClassBinding.getBoundClass().getName(), Assembly.class.getName()));
+      throw new IllegalArgumentException(String.format("BoundField '%s' on class '%s' is missing the '%s' annotation.",
+          field.getName(), parentClassBinding.getBoundClass().getName(), BoundAssembly.class.getName()));
     }
   }
 
-  protected Assembly getAssemblyAnnotation() {
+  protected BoundAssembly getAssemblyAnnotation() {
     return assembly;
   }
 
+  @SuppressWarnings("null")
   @Override
   public IAssemblyClassBinding getDefinition() {
     IDataTypeHandler handler = getDataTypeHandler();
@@ -76,7 +76,8 @@ public class DefaultAssemblyProperty
 
   @Override
   public String getXmlNamespace() {
-    return ObjectUtils.notNull(ModelUtil.resolveNamespace(getAssemblyAnnotation().namespace(), getParentClassBinding()));
+    return ObjectUtils
+        .notNull(ModelUtil.resolveNamespace(getAssemblyAnnotation().namespace(), getParentClassBinding()));
   }
 
   @Override

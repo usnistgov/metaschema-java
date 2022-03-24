@@ -32,9 +32,6 @@ import java.util.stream.Collectors;
 
 class MetapathFormatter implements IPathFormatter {
 
-  public MetapathFormatter() {
-  }
-
   protected String getEffectiveName(IDefinitionPathSegment segment) {
     return segment.getInstance().getEffectiveName();
   }
@@ -81,10 +78,10 @@ class MetapathFormatter implements IPathFormatter {
   @SuppressWarnings("null")
   @NotNull
   protected String formatModelPathSegment(IModelPositionalPathSegment segment) {
-    StringBuilder builder = new StringBuilder(getEffectiveName(segment));
-    builder.append('[');
-    builder.append(segment.getPosition());
-    builder.append(']');
+    StringBuilder builder = new StringBuilder(getEffectiveName(segment))
+        .append('[')
+        .append(segment.getPosition())
+        .append(']');
     return builder.toString();
   }
 }

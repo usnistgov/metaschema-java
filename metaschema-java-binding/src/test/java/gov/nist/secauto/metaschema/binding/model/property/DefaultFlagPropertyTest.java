@@ -40,7 +40,7 @@ import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
-import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IntegerAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
@@ -65,10 +65,10 @@ class DefaultFlagPropertyTest {
   @RegisterExtension
   JUnit5Mockery context = new JUnit5Mockery();
 
-  private IClassBinding classBinding = context.mock(IClassBinding.class);
-  private IBindingContext bindingContext = context.mock(IBindingContext.class);
-  private IJsonParsingContext jsonParsingContext = context.mock(IJsonParsingContext.class);
-  private IXmlParsingContext xmlParsingContext = context.mock(IXmlParsingContext.class);
+  private final IClassBinding classBinding = context.mock(IClassBinding.class);
+  private final IBindingContext bindingContext = context.mock(IBindingContext.class);
+  private final IJsonParsingContext jsonParsingContext = context.mock(IJsonParsingContext.class);
+  private final IXmlParsingContext xmlParsingContext = context.mock(IXmlParsingContext.class);
 
   @Test
   void testJsonRead()
@@ -80,7 +80,7 @@ class DefaultFlagPropertyTest {
     Field field = SimpleAssembly.class.getDeclaredField("_id");
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         oneOf(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
         will(returnValue(new StringAdapter()));
 
@@ -119,7 +119,7 @@ class DefaultFlagPropertyTest {
     Field field = SimpleAssembly.class.getDeclaredField("_id");
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         oneOf(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
         will(returnValue(new StringAdapter()));
 
@@ -150,10 +150,10 @@ class DefaultFlagPropertyTest {
   @SuppressWarnings("PMD")
   @MetaschemaAssembly(rootName = "test", rootNamespace = "http://example.com/ns")
   private static class SimpleAssembly {
-    @Flag(useName = "id", typeAdapter = StringAdapter.class)
+    @BoundFlag(useName = "id", typeAdapter = StringAdapter.class)
     private String _id;
 
-    @Flag(useName = "number", typeAdapter = IntegerAdapter.class)
+    @BoundFlag(useName = "number", typeAdapter = IntegerAdapter.class)
     private BigInteger _number;
 
     public SimpleAssembly() {

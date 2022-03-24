@@ -45,15 +45,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class JDom2XmlSchemaLoader {
+  @NotNull
   public static final String NS_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
 
   @NotNull
   private final Document document;
 
+  @SuppressWarnings("null")
   public JDom2XmlSchemaLoader(@NotNull Path path) throws JDOMException, IOException {
     this(new SAXBuilder().build(path.toFile()));
   }
 
+  @SuppressWarnings("null")
   public JDom2XmlSchemaLoader(@NotNull InputStream is) throws JDOMException, IOException {
     this(new SAXBuilder().build(is));
   }
@@ -70,7 +73,7 @@ public class JDom2XmlSchemaLoader {
   @NotNull
   public List<@NotNull Element> getContent(
       @NotNull String path,
-      @NotNull Map<String, String> prefixToNamespaceMap) {
+      @NotNull Map<@NotNull String, String> prefixToNamespaceMap) {
 
     Collection<Namespace> namespaces = prefixToNamespaceMap.entrySet().stream()
         .map(entry -> Namespace.getNamespace(entry.getKey(), entry.getValue()))

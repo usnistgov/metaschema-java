@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.Field;
-import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValues;
 import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
@@ -64,12 +64,12 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
   private final List<DefaultExpectConstraint> expectConstraints;
 
   /**
-   * Generate constraints from a {@link Flag} annotation.
+   * Generate constraints from a {@link BoundFlag} annotation.
    * 
    * @param propertyAnnotation
    *          the annotation where the constraints are defined
    */
-  public ValueConstraintSupport(@NotNull Flag propertyAnnotation) { // NOPMD - intentional
+  public ValueConstraintSupport(@NotNull BoundFlag propertyAnnotation) { // NOPMD - intentional
     List<AbstractConstraint> constraints = new LinkedList<>();
 
     List<DefaultAllowedValuesConstraint> allowedValuesConstraints
@@ -116,12 +116,12 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
   }
 
   /**
-   * Generate constraints from a {@link Field} annotation.
+   * Generate constraints from a {@link BoundField} annotation.
    * 
    * @param propertyAnnotation
    *          the annotation where the constraints are defined
    */
-  public ValueConstraintSupport(@NotNull Field propertyAnnotation) {// NOPMD - intentional
+  public ValueConstraintSupport(@NotNull BoundField propertyAnnotation) {// NOPMD - intentional
     List<AbstractConstraint> constraints = new LinkedList<>();
 
     List<DefaultAllowedValuesConstraint> allowedValuesConstraints

@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
@@ -46,7 +46,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-public class JsonDatatypeManager extends AbstractDatatypeManager {
+public class JsonDatatypeManager
+    extends AbstractDatatypeManager {
   private static final JsonNode jsonDatatypes;
   private static final Map<String, String> jsonDatatypeDependencyMap = new HashMap<>();
   private static final Pattern DEFINITION_REF_PATTERN = Pattern.compile("^#/definitions/(.+)$");
@@ -66,7 +67,7 @@ public class JsonDatatypeManager extends AbstractDatatypeManager {
       JsonNode refNode = jsonDatatypes.at("/definitions/" + ref);
       if (!refNode.isMissingNode()) {
         JSON_DATATYPES.put(ref, refNode);
-        
+
         JsonNode refKeyword = refNode.get("$ref");
         if (refKeyword != null) {
           Matcher matcher = DEFINITION_REF_PATTERN.matcher(refKeyword.asText());
@@ -83,29 +84,28 @@ public class JsonDatatypeManager extends AbstractDatatypeManager {
     return jsonDatatypes;
   }
 
-  public void generateDatatypes(@NotNull JsonGenerator jsonGenerator) throws IOException {
+  public void generateDatatypes(@NotNull ObjectNode definitionsObject) throws IOException {
     Set<String> requiredJsonDatatypes = getUsedTypes();
     // resolve dependencies
-    for (String datatype: CollectionUtil.toIterable(requiredJsonDatatypes.stream()
-      .flatMap(datatype -> {
-        Stream<String> result;
-        String dependency = jsonDatatypeDependencyMap.get(datatype);
-        if (dependency == null) {
-          result = Stream.of(datatype);
-        } else {
-          result = Stream.of(datatype, dependency);
-        }
-        return result;
-      }).distinct()
-      .sorted()
-      .iterator())) {
-      jsonGenerator.writeFieldName(datatype);
-      
+    for (String datatype : CollectionUtil.toIterable(requiredJsonDatatypes.stream()
+        .flatMap(datatype -> {
+          Stream<String> result;
+          String dependency = jsonDatatypeDependencyMap.get(datatype);
+          if (dependency == null) {
+            result = Stream.of(datatype);
+          } else {
+            result = Stream.of(datatype, dependency);
+          }
+          return result;
+        }).distinct()
+        .sorted()
+        .iterator())) {
+
       JsonNode definition = JSON_DATATYPES.get(datatype);
       if (definition == null) {
-        throw new IOException("Missing JSON datatype definition for: /definitions/"+datatype);
+        throw new IOException("Missing JSON datatype definition for: /definitions/" + datatype);
       }
-      jsonGenerator.writeTree(definition);
+      definitionsObject.set(datatype, definition);
     }
   }
 

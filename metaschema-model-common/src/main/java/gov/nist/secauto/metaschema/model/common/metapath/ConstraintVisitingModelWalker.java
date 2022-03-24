@@ -38,7 +38,7 @@ import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ModelWalker;
 
-public class ConstraintVisitingModelWalker<DATA>
+public abstract class ConstraintVisitingModelWalker<DATA>
     extends ModelWalker<DATA> {
 
   @Override
@@ -48,31 +48,31 @@ public class ConstraintVisitingModelWalker<DATA>
     return retval;
   }
 
-  protected void visit(IAssemblyDefinition def, IAllowedValuesConstraint constraint, DATA data) {
+  protected void visit(IAssemblyDefinition def, IAllowedValuesConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IAssemblyDefinition def, ICardinalityConstraint constraint, DATA data) {
+  protected void visit(IAssemblyDefinition def, ICardinalityConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IAssemblyDefinition def, IExpectConstraint constraint, DATA data) {
+  protected void visit(IAssemblyDefinition def, IExpectConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IAssemblyDefinition def, IIndexConstraint constraint, DATA data) {
+  protected void visit(IAssemblyDefinition def, IIndexConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IAssemblyDefinition def, IIndexHasKeyConstraint constraint, DATA data) {
+  protected void visit(IAssemblyDefinition def, IIndexHasKeyConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IAssemblyDefinition def, IMatchesConstraint constraint, DATA data) {
+  protected void visit(IAssemblyDefinition def, IMatchesConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IAssemblyDefinition def, IUniqueConstraint constraint, DATA data) {
+  protected void visit(IAssemblyDefinition def, IUniqueConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
@@ -83,19 +83,19 @@ public class ConstraintVisitingModelWalker<DATA>
     return retval;
   }
 
-  protected void visit(IFieldDefinition def, IAllowedValuesConstraint constraint, DATA data) {
+  protected void visit(IFieldDefinition def, IAllowedValuesConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IFieldDefinition def, IExpectConstraint constraint, DATA data) {
+  protected void visit(IFieldDefinition def, IExpectConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IFieldDefinition def, IIndexHasKeyConstraint constraint, DATA data) {
+  protected void visit(IFieldDefinition def, IIndexHasKeyConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IFieldDefinition def, IMatchesConstraint constraint, DATA data) {
+  protected void visit(IFieldDefinition def, IMatchesConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
@@ -104,19 +104,19 @@ public class ConstraintVisitingModelWalker<DATA>
     walkConstraints(def, data);
   }
 
-  protected void visit(IFlagDefinition def, IAllowedValuesConstraint constraint, DATA data) {
+  protected void visit(IFlagDefinition def, IAllowedValuesConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IFlagDefinition def, IExpectConstraint constraint, DATA data) {
+  protected void visit(IFlagDefinition def, IExpectConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IFlagDefinition def, IIndexHasKeyConstraint constraint, DATA data) {
+  protected void visit(IFlagDefinition def, IIndexHasKeyConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IFlagDefinition def, IMatchesConstraint constraint, DATA data) {
+  protected void visit(IFlagDefinition def, IMatchesConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 

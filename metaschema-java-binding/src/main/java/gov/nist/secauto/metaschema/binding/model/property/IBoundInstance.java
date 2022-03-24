@@ -50,8 +50,8 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 /**
- * Represents a property on a Java class that is bound to a Metaschema object (i.e., Assembly,
- * Field, or Flag). A property has a field and associated getter and setter methods.
+ * Represents a property on a Java class that is bound to a Metaschema object (i.e., BoundAssembly,
+ * BoundField, or BoundFlag). A property has a field and associated getter and setter methods.
  * <p>
  * Properties are bound to constructs in XML and JSON/YAML formats.
  * <p>

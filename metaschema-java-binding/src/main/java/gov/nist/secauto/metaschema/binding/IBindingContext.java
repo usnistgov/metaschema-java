@@ -249,5 +249,6 @@ public interface IBindingContext {
    * @throws IllegalArgumentException
    *           if the provided class is not bound to a Metaschema assembly or field
    */
-  void validate(@NotNull Object boundObject, @NotNull URI baseUri, boolean rootNode, IConstraintValidationHandler handler);
+  void validate(@NotNull Object boundObject, @NotNull URI baseUri, boolean rootNode,
+      IConstraintValidationHandler handler);
 }

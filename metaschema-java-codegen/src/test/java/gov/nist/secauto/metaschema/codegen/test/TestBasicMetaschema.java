@@ -32,8 +32,6 @@ import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
@@ -44,7 +42,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class TestBasicMetaschema {
-  private static final Logger LOGGER = LogManager.getLogger(TestBasicMetaschema.class);
   private static final MetaschemaLoader LOADER = new MetaschemaLoader();
 
   private static IMetaschema loadMetaschema(Path metaschemaFile) throws MetaschemaException, IOException {

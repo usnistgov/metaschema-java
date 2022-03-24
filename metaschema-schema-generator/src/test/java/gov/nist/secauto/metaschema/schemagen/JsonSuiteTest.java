@@ -26,68 +26,36 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import gov.nist.secauto.metaschema.binding.io.Format;
-import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator;
-import gov.nist.secauto.metaschema.model.testing.AbstractTestSuite;
-import gov.nist.secauto.metaschema.model.testing.DynamicBindingContext;
 
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.junit.platform.commons.JUnitException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Writer;
-import java.net.URI;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.Map;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class JsonSuiteTest
-    extends AbstractTestSuite {
-  private static final ISchemaGenerator GENERATOR = new JsonSchemaGenerator();
-  private static final JsonSchemaContentValidator SCHEMA_VALIDATOR;
-
-  static {
-    try (InputStream is = MetaschemaLoader.class.getClassLoader().getResourceAsStream("schema/json/json-schema.json")) {
-      SCHEMA_VALIDATOR = new JsonSchemaContentValidator(is);
-    } catch (IOException ex) {
-      throw new IllegalStateException(ex);
-    }
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  protected URI getTestSuiteURI() {
-    return Paths.get("../metaschema-model/metaschema/test-suite/schema-generation/unit-tests.xml").toUri();
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  protected Path getGenerationPath() {
-    return Paths.get("test-schemagen");
-  }
+    extends AbstractSchemaGeneratorTestSuite {
 
   @Override
-  protected Supplier<IContentValidator> getSchemaValidatorSupplier() {
-    return () -> SCHEMA_VALIDATOR;
+  protected Supplier<@NotNull IContentValidator> getSchemaValidatorSupplier() {
+    return () -> JSON_SCHEMA_VALIDATOR;
   }
 
   @Override
@@ -95,30 +63,14 @@ public class JsonSuiteTest
     return Format.JSON;
   }
 
-  @SuppressWarnings("null")
   @Override
-  protected Function<Path, IContentValidator> getContentValidatorSupplier() {
-    return (path) -> {
-      try (InputStream is = Files.newInputStream(path, StandardOpenOption.READ)) {
-        return new JsonSchemaContentValidator(is);
-      } catch (Exception ex) {
-        throw new JUnitException("Failed to create content validator for schema: " + path.toString(), ex);
-      }
-    };
+  protected Function<@NotNull Path, @NotNull JsonSchemaContentValidator> getContentValidatorSupplier() {
+    return JSON_CONTENT_VALIDATOR_PROVIDER;
   }
 
-  @SuppressWarnings("null")
   @Override
-  protected BiFunction<IMetaschema, Writer, Void> getGeneratorSupplier() {
-    // TODO Auto-generated method stub
-    return (metaschema, writer) -> {
-      try {
-        GENERATOR.generateFromMetaschema(metaschema, writer);
-      } catch (IOException ex) {
-        throw new JUnitException("Failed to schema generator for metaschema: " + metaschema.getLocation().toString(), ex);
-      }
-      return null;
-    };
+  protected BiFunction<@NotNull IMetaschema, @NotNull Writer, Void> getGeneratorSupplier() {
+    return JSON_SCHEMA_PROVIDER;
   }
 
   @Execution(ExecutionMode.CONCURRENT)
@@ -128,16 +80,27 @@ public class JsonSuiteTest
     return testFactory();
   }
 
-  // @Disabled
+  @Disabled
   @SuppressWarnings("null")
   @Test
-  void test() throws IOException, MetaschemaException {
+  void testDatatypeUuid() throws IOException, MetaschemaException {
     doTest(
         "datatypes/",
         "datatypes-uuid_metaschema.xml",
-        "test-schema.json",
-        Map.ofEntries(
-            Map.entry("datatypes-uuid_test_valid_PASS.json", true)));
+        "test-schema",
+        List.of(
+            contentCase(Format.JSON, "datatypes-uuid_test_valid_PASS.json", true)));
   }
   
+//  @Disabled
+  @SuppressWarnings("null")
+  @Test
+  void testChoice() throws IOException, MetaschemaException {
+    doTest(
+        "choice/",
+        "choice-multiple_metaschema.xml",
+        "test-choice-schema",
+        List.of(
+            contentCase(Format.JSON, "choice-multiple_test_multiple_PASS.json", true)));
+  }
 }

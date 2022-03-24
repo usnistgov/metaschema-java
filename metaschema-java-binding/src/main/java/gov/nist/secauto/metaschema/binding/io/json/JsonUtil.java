@@ -117,7 +117,7 @@ public final class JsonUtil {
     JsonToken currentToken = parser.getCurrentToken();
 
     boolean retval;
-    switch (startToken) {
+    switch (startToken) { // NOPMD - intentional fall through
     case START_OBJECT:
       retval = JsonToken.END_OBJECT.equals(currentToken);
       break;
@@ -150,8 +150,7 @@ public final class JsonUtil {
 
   public static void assertCurrentIsFieldValue(@NotNull JsonParser parser) {
     JsonToken token = parser.currentToken();
-    assert token.isStructStart() || token.isScalarValue() :
-      String.format(
+    assert token.isStructStart() || token.isScalarValue() : String.format(
         "Expected a START_OBJECT, START_ARRAY, or VALUE_xxx token, but found JsonToken '%s' at '%s'.",
         token,
         JsonUtil.toString(parser.getCurrentLocation()));
@@ -177,7 +176,8 @@ public final class JsonUtil {
         JsonUtil.toString(location));
   }
 
-  public static String getAssertMessage(@NotNull Set<@NotNull JsonToken> expected, JsonToken actual, JsonLocation location) {
+  public static String getAssertMessage(@NotNull Set<@NotNull JsonToken> expected, JsonToken actual,
+      JsonLocation location) {
     return String.format("Expected JsonToken(s) '%s', but found JsonToken '%s' at '%s'.",
         expected.stream().map(token -> token.name()).collect(Collectors.joining(",")),
         actual,

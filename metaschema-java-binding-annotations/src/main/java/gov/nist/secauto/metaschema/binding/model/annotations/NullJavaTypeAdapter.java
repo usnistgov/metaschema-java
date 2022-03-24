@@ -77,6 +77,9 @@ public class NullJavaTypeAdapter
     throw new UnsupportedOperationException(NOT_VALID);
   }
 
+  /**
+   * Used to support {@link NullJavaTypeAdapter#getItemClass()}.
+   */
   public static class VoidItem implements IAnyAtomicItem {
 
     @Override

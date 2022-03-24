@@ -410,7 +410,8 @@ public class MetaschemaMojo
       // create the stale file
       staleFileDirectory.mkdirs();
       try (OutputStream os
-          = Files.newOutputStream(staleFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+          = Files.newOutputStream(staleFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE,
+              StandardOpenOption.TRUNCATE_EXISTING)) {
         os.close();
         getLog().info("Created stale file: " + staleFile);
       } catch (IOException ex) {

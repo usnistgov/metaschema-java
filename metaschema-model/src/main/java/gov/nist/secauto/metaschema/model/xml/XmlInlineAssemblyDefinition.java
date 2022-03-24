@@ -99,7 +99,6 @@ public class XmlInlineAssemblyDefinition
     return assemblyDefinition;
   }
 
-  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlAssembly().getName();
@@ -162,17 +161,14 @@ public class XmlInlineAssemblyDefinition
     return getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : null;
   }
 
+  /**
+   * The corresponding definition for the local flag instance.
+   */
   public class InternalAssemblyDefinition
       implements IXmlAssemblyDefinition, IInlineDefinition<XmlInlineAssemblyDefinition> {
     private XmlFlagContainerSupport flagContainer;
     private XmlModelContainerSupport modelContainer;
     private IAssemblyConstraintSupport constraints;
-
-    /**
-     * Create the corresponding definition for the local flag instance.
-     */
-    public InternalAssemblyDefinition() {
-    }
 
     @Override
     public boolean isInline() {
@@ -191,7 +187,9 @@ public class XmlInlineAssemblyDefinition
 
     @Override
     public MarkupLine getDescription() {
-      return getXmlAssembly().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription()) : null;
+      return getXmlAssembly().isSetDescription()
+          ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription())
+          : null;
     }
 
     @Override
@@ -239,7 +237,6 @@ public class XmlInlineAssemblyDefinition
       return XmlInlineAssemblyDefinition.this;
     }
 
-    @SuppressWarnings("null")
     protected synchronized void initFlagContainer() {
       if (flagContainer == null) {
         flagContainer = new XmlFlagContainerSupport(getXmlAssembly(), this);
@@ -252,7 +249,6 @@ public class XmlInlineAssemblyDefinition
       return flagContainer.getFlagInstanceMap();
     }
 
-    @SuppressWarnings("null")
     protected synchronized void initModelContainer() {
       if (modelContainer == null) {
         modelContainer = new XmlModelContainerSupport(getXmlAssembly(), this);

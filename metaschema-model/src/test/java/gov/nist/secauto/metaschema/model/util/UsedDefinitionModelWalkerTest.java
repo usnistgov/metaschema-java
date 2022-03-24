@@ -57,7 +57,7 @@ class UsedDefinitionModelWalkerTest {
 
     Collection<@NotNull ? extends IDefinition> definitions
         = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
-    assertFalse(definitions.isEmpty());
+    assertFalse(definitions.isEmpty(), "no definitions found");
 
     if (LOGGER.isDebugEnabled()) {
       for (IDefinition definition : definitions) {

@@ -23,6 +23,8 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
+
 package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
@@ -33,5 +35,6 @@ import java.util.Set;
 
 public interface IDatatypeManager {
   String getTypeForDatatype(@NotNull IJavaTypeAdapter<?> datatype);
+
   Set<String> getUsedTypes();
 }

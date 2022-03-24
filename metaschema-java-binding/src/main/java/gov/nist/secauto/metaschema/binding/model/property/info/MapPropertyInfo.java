@@ -59,7 +59,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 public class MapPropertyInfo
-    extends AbstractModelPropertyInfo<ParameterizedType>  {
+    extends AbstractModelPropertyInfo<ParameterizedType> {
 
   @Override
   public Collection<?> getItemsFromValue(Object value) {
@@ -109,18 +109,19 @@ public class MapPropertyInfo
     IBoundNamedModelInstance property = getProperty();
     // process all map items
     while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
-      
+
       // a map item will always start with a FIELD_NAME, since this represents the key
       JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME);
-      
+
       List<@NotNull Object> values = property.readItem(parentInstance, true, context);
       collector.addAll(values);
 
-      // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all items have been read
+      // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all items have been
+      // read
       JsonUtil.assertCurrent(jsonParser, Set.of(JsonToken.FIELD_NAME, JsonToken.END_OBJECT));
     }
 
-    // A map value will always end with an end object, which needs to be consumed 
+    // A map value will always end with an end object, which needs to be consumed
     JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
   }
 
@@ -156,7 +157,8 @@ public class MapPropertyInfo
       throws XMLStreamException, IOException {
     IBoundNamedModelInstance property = getProperty();
     @SuppressWarnings("unchecked")
-    Map<@NotNull String, ? extends Object> items = (Map<@NotNull String, ? extends Object>) property.getValue(parentInstance);
+    Map<@NotNull String, ? extends Object> items
+        = (Map<@NotNull String, ? extends Object>) property.getValue(parentInstance);
     for (Object item : items.values()) {
       property.writeItem(ObjectUtils.notNull(item), parentName, context);
     }

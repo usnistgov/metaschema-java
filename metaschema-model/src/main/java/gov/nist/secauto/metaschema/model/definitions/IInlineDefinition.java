@@ -43,11 +43,6 @@ public interface IInlineDefinition<INSTANCE extends INamedInstance> extends IDef
     return true;
   }
 
-  @Override
-  default boolean isGlobal() {
-    return false;
-  }
-
   /**
    * Retrieves the {@link INamedInstance} associated with this definition.
    * 

@@ -38,7 +38,7 @@ import gov.nist.secauto.metaschema.binding.model.IBoundFlagDefinition;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.ValueConstraintSupport;
-import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.property.info.IPropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
@@ -73,7 +73,7 @@ public class DefaultFlagProperty
     implements IBoundFlagInstance {
   // private static final Logger logger = LogManager.getLogger(DefaultFlagProperty.class);
   @NotNull
-  private final Flag flag;
+  private final BoundFlag flag;
   @NotNull
   private final IJavaTypeAdapter<?> javaTypeAdapter;
   private InternalFlagDefinition definition;
@@ -93,13 +93,13 @@ public class DefaultFlagProperty
   public DefaultFlagProperty(@NotNull Field field, @NotNull IClassBinding parentClassBinding,
       @NotNull IBindingContext bindingContext) {
     super(field, parentClassBinding);
-    this.flag = ObjectUtils.requireNonNull(field.getAnnotation(Flag.class));
+    this.flag = ObjectUtils.requireNonNull(field.getAnnotation(BoundFlag.class));
     this.javaTypeAdapter = ObjectUtils.notNull(
         bindingContext.getJavaTypeAdapterInstance(ObjectUtils.notNull(this.flag.typeAdapter())));
   }
 
   @NotNull
-  protected Flag getFlagAnnotation() {
+  protected BoundFlag getFlagAnnotation() {
     return flag;
   }
 
@@ -369,11 +369,6 @@ public class DefaultFlagProperty
     public @NotNull ModuleScopeEnum getModuleScope() {
       // TODO: is this the right value?
       return ModuleScopeEnum.INHERITED;
-    }
-
-    @Override
-    public boolean isGlobal() {
-      return false;
     }
 
     @Override

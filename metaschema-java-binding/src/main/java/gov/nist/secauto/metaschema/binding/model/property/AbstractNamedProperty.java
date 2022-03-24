@@ -65,7 +65,7 @@ public abstract class AbstractNamedProperty<CLASS_BINDING extends IClassBinding>
   }
 
   public boolean isNextProperty(IJsonParsingContext context) throws IOException {
-    JsonParser parser = context.getReader();
+    JsonParser parser = context.getReader(); // NOPMD - intentional
 
     // the parser's current token should be the JSON field name
     JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);

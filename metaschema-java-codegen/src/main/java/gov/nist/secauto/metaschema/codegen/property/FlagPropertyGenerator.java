@@ -31,7 +31,7 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeName;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.codegen.IJavaClassGenerator;
@@ -90,7 +90,7 @@ public class FlagPropertyGenerator
   @Override
   protected Set<INamedModelDefinition> buildField(FieldSpec.Builder builder) {
     AnnotationSpec.Builder annotation
-        = AnnotationSpec.builder(Flag.class).addMember("useName", "$S", instance.getEffectiveName());
+        = AnnotationSpec.builder(BoundFlag.class).addMember("useName", "$S", instance.getEffectiveName());
 
     if (getInstance().isRequired()) {
       annotation.addMember("required", "$L", true);

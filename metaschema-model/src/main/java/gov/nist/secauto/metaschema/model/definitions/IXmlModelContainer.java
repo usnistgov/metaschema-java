@@ -50,7 +50,6 @@ public interface IXmlModelContainer extends IModelContainer {
     return getNamedModelInstanceMap().get(name);
   }
 
-  @SuppressWarnings("null")
   @Override
   default @NotNull Collection<@NotNull ? extends INamedModelInstance> getNamedModelInstances() {
     return getNamedModelInstanceMap().values();
@@ -65,7 +64,6 @@ public interface IXmlModelContainer extends IModelContainer {
     return getFieldInstanceMap().get(name);
   }
 
-  @SuppressWarnings("null")
   @Override
   default @NotNull Collection<@NotNull ? extends IXmlFieldInstance> getFieldInstances() {
     return getFieldInstanceMap().values();
@@ -80,7 +78,6 @@ public interface IXmlModelContainer extends IModelContainer {
     return getAssemblyInstanceMap().get(name);
   }
 
-  @SuppressWarnings("null")
   @Override
   default @NotNull Collection<@NotNull ? extends IXmlAssemblyInstance> getAssemblyInstances() {
     return getAssemblyInstanceMap().values();

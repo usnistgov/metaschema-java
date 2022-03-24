@@ -25,7 +25,7 @@
  */
 package gov.nist.secauto.metaschema.binding.model.test;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.BooleanAdapter;
@@ -34,9 +34,9 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 @MetaschemaAssembly
 public class FlaggedBoundAssembly {
   @JsonKey
-  @Flag(useName = "assembly-required-flag", typeAdapter = StringAdapter.class, required = true)
+  @BoundFlag(useName = "assembly-required-flag", typeAdapter = StringAdapter.class, required = true)
   private String id;
 
-  @Flag(useName = "assembly-other-flag", typeAdapter = BooleanAdapter.class)
+  @BoundFlag(useName = "assembly-other-flag", typeAdapter = BooleanAdapter.class)
   private String other;
 }

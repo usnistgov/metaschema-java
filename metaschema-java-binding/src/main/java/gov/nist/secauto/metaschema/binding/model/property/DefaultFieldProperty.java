@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.ValueConstraintSupport;
-import gov.nist.secauto.metaschema.binding.model.annotations.Field;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.IModelPropertyInfo;
@@ -56,6 +56,7 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
@@ -63,24 +64,24 @@ public class DefaultFieldProperty
     extends AbstractFieldProperty {
 
   @NotNull
-  private final Field field;
+  private final BoundField field;
   private final IJavaTypeAdapter<?> javaTypeAdapter;
   private IBoundFieldDefinition definition;
   private IValueConstraintSupport constraints;
 
   public static DefaultFieldProperty createInstance(@NotNull IAssemblyClassBinding parentClassBinding,
-      java.lang.reflect.Field field) {
+      @NotNull Field field) {
     return new DefaultFieldProperty(parentClassBinding, field);
   }
 
-  public DefaultFieldProperty(@NotNull IAssemblyClassBinding parentClassBinding, @NotNull java.lang.reflect.Field field) {
+  public DefaultFieldProperty(@NotNull IAssemblyClassBinding parentClassBinding, @NotNull Field field) {
     super(parentClassBinding, field);
-    
-    if (field.isAnnotationPresent(Field.class)) {
-      this.field = ObjectUtils.notNull(field.getAnnotation(Field.class));
+
+    if (field.isAnnotationPresent(BoundField.class)) {
+      this.field = ObjectUtils.notNull(field.getAnnotation(BoundField.class));
     } else {
-      throw new IllegalArgumentException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
-          field.getName(), parentClassBinding.getBoundClass().getName(), Field.class.getName()));
+      throw new IllegalArgumentException(String.format("BoundField '%s' on class '%s' is missing the '%s' annotation.",
+          field.getName(), parentClassBinding.getBoundClass().getName(), BoundField.class.getName()));
     }
 
     Class<? extends IJavaTypeAdapter<?>> adapterClass = ObjectUtils.notNull(getFieldAnnotation().typeAdapter());
@@ -88,13 +89,13 @@ public class DefaultFieldProperty
       javaTypeAdapter = null;
     } else {
       javaTypeAdapter = ObjectUtils.requireNonNull(
-        getParentClassBinding().getBindingContext().getJavaTypeAdapterInstance(adapterClass));
+          getParentClassBinding().getBindingContext().getJavaTypeAdapterInstance(adapterClass));
 
       IModelPropertyInfo propertyInfo = getPropertyInfo();
       Class<?> itemType = propertyInfo.getItemType();
       if (!itemType.equals(javaTypeAdapter.getJavaClass())) {
         throw new IllegalStateException(
-            String.format("Property '%s' on class '%s' has the '%s' type adapter configured,"+
+            String.format("Property '%s' on class '%s' has the '%s' type adapter configured," +
                 " but the field's item type '%s' does not match the adapter's type '%s'.",
                 getName(),
                 getContainingDefinition().getBoundClass().getName(),
@@ -106,7 +107,7 @@ public class DefaultFieldProperty
   }
 
   @NotNull
-  public Field getFieldAnnotation() {
+  public BoundField getFieldAnnotation() {
     return field;
   }
 
@@ -322,11 +323,6 @@ public class DefaultFieldProperty
     public @NotNull ModuleScopeEnum getModuleScope() {
       // TODO: is this the right value?
       return ModuleScopeEnum.INHERITED;
-    }
-
-    @Override
-    public boolean isGlobal() {
-      return false;
     }
 
     @Override

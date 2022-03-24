@@ -32,8 +32,8 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
-import gov.nist.secauto.metaschema.binding.model.annotations.Field;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.codegen.AssemblyJavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
@@ -122,9 +122,9 @@ public class ModelInstancePropertyGenerator
     AnnotationSpec.Builder fieldAnnoation;
     INamedModelInstance modelInstance = getModelInstance();
     if (modelInstance instanceof IFieldInstance) {
-      fieldAnnoation = AnnotationSpec.builder(Field.class);
+      fieldAnnoation = AnnotationSpec.builder(BoundField.class);
     } else if (modelInstance instanceof IAssemblyInstance) {
-      fieldAnnoation = AnnotationSpec.builder(Assembly.class);
+      fieldAnnoation = AnnotationSpec.builder(BoundAssembly.class);
     } else {
       throw new UnsupportedOperationException(String.format("Model instance '%s' of type '%s' is not supported.",
           modelInstance.getName(), modelInstance.getClass().getName()));
@@ -133,10 +133,8 @@ public class ModelInstancePropertyGenerator
     fieldAnnoation.addMember("useName", "$S", modelInstance.getEffectiveName());
 
     INamedModelDefinition definition = modelInstance.getDefinition();
-    if (definition instanceof IFieldDefinition && ((IFieldDefinition) definition).isSimple()) {
-      // do not generate a child class
-    } else if (!definition.isGlobal()) {
-      // this is a local definition that must be built as a child class
+    if (definition.isInline() && !(definition instanceof IFieldDefinition && definition.isSimple())) {
+      // this is an inline definition that must be built as a child class
       retval.add(definition);
     }
 
@@ -158,8 +156,8 @@ public class ModelInstancePropertyGenerator
       }
       if (fieldInstance.isSimple()) {
         // this is a simple field, without flags
-        // we need to add the FieldValue annotation to the property
-//        fieldAnnoation.addMember("valueName", "$S", fieldDefinition.getJsonValueKeyName());
+        // we need to add the BoundFieldValue annotation to the property
+        // fieldAnnoation.addMember("valueName", "$S", fieldDefinition.getJsonValueKeyName());
 
         fieldAnnoation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
 
@@ -182,7 +180,7 @@ public class ModelInstancePropertyGenerator
 
     if (maxOccurs == -1 || maxOccurs > 1) {
       fieldAnnoation.addMember("groupName", "$S", getInstanceName());
-      
+
       String groupAsNamespace = modelInstance.getGroupAsXmlNamespace();
       if (groupAsNamespace == null) {
         fieldAnnoation.addMember("groupNamespace", "$S", "##none");

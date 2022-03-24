@@ -46,7 +46,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target({ FIELD, METHOD })
-public @interface Flag {
+public @interface BoundFlag {
   /**
    * The model name to use for singleton values. This name will be used for associated XML attributes
    * and JSON properties.

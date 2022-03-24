@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.binding.io.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
@@ -97,11 +96,11 @@ public class DefaultJsonDeserializer<CLASS>
         @SuppressWarnings("unchecked")
         CLASS value = ObjectUtils.requireNonNull((CLASS) classBinding.readRoot(parsingContext));
 
-//        // we should be at the end object
-//        JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
-//
-//        // advance past the end object
-//        JsonToken end = parser.nextToken();
+        // // we should be at the end object
+        // JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
+        //
+        // // advance past the end object
+        // JsonToken end = parser.nextToken();
 
         retval = IXdmFactory.INSTANCE.newDocumentNodeItem(classBinding, value, documentUri);
       } else {

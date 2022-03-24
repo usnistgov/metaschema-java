@@ -33,7 +33,6 @@ import org.jdom2.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,7 +54,7 @@ public class XmlMarkupLineDatatypeProvider
   protected List<@NotNull Element> queryElements(JDom2XmlSchemaLoader loader) {
     return loader.getContent(
         "/xs:schema/*",
-        Collections.singletonMap("xs", loader.NS_XML_SCHEMA));
+        CollectionUtil.singletonMap("xs", JDom2XmlSchemaLoader.NS_XML_SCHEMA));
   }
 
   @Override

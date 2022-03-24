@@ -49,9 +49,9 @@ import java.util.List;
 
 // TODO: make this test do some testing or delete it
 class JavaGeneratorTest {
-   @TempDir
-   Path generationDir;
-   //  Path generationDir = Paths.get("target/generated-sources/metaschema");
+  @TempDir
+  Path generationDir;
+  // Path generationDir = Paths.get("target/generated-sources/metaschema");
 
   @Disabled
   @Test
@@ -70,8 +70,7 @@ class JavaGeneratorTest {
     }
 
     DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
-    
-    
+
     JavaGenerator.generate(metaschema, generationDir, bindingConfiguration);
 
     ConstraintValidatingModelWalker walker = new ConstraintValidatingModelWalker();

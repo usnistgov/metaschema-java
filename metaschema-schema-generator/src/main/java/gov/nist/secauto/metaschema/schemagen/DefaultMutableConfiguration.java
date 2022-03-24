@@ -24,27 +24,51 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.model.property;
+package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
 
-public class RelativeFieldDefinitionFieldProperty
-    extends AbstractFieldDefinitionFieldProperty {
+import java.util.EnumMap;
+import java.util.Map;
 
-  public RelativeFieldDefinitionFieldProperty(@NotNull IFieldClassBinding classBinding) {
-    super(classBinding);
+public class DefaultMutableConfiguration implements IMutableConfiguration {
+  @NotNull
+  private final EnumMap<@NotNull Feature, Boolean> features;
+
+  public DefaultMutableConfiguration() {
+    this.features = new EnumMap<>(Feature.class);
+    
+    // Set defaults
+    disableFeature(Feature.INLINE_DEFINITIONS);
+    disableFeature(Feature.INLINE_CHOICE_DEFINITIONS);
+  }
+
+  public DefaultMutableConfiguration(IConfiguration configuration) {
+    this.features = new EnumMap<>(configuration.getFeatureSettings());
   }
 
   @Override
-  protected IJavaTypeAdapter<?> getJavaTypeAdapter() {
-    return null;
+  public DefaultMutableConfiguration enableFeature(Feature feature) {
+    features.put(feature, Boolean.TRUE);
+    return this;
   }
 
   @Override
-  public String getName() {
-    return getDefinition().getEffectiveName();
+  public DefaultMutableConfiguration disableFeature(Feature feature) {
+    features.put(feature, Boolean.FALSE);
+    return this;
+  }
+
+  @Override
+  public boolean isFeatureEnabled(Feature feature) {
+    Boolean state = features.get(feature);
+    return state == null ? false : state;
+  }
+
+  @Override
+  public Map<@NotNull Feature, Boolean> getFeatureSettings() {
+    return CollectionUtil.unmodifiableMap(features);
   }
 }

@@ -91,14 +91,14 @@ public final class ModelUtil {
     return retval;
   }
 
-  @NotNull
-  public static String resolveNamespace(String annotationValue, IClassBinding classBinding) {
-    return ObjectUtils.notNull(resolveNamespace(annotationValue, classBinding, false));
-  }
-
   @Nullable
   public static String resolveOptionalNamespace(String annotationValue, IClassBinding classBinding) {
     return resolveNamespace(annotationValue, classBinding, true);
+  }
+
+  @NotNull
+  public static String resolveNamespace(String annotationValue, IClassBinding classBinding) {
+    return ObjectUtils.notNull(resolveNamespace(annotationValue, classBinding, false));
   }
 
   /**

@@ -29,7 +29,12 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValues;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
@@ -38,7 +43,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Identifies that the annotation target is a bound property that references a Metaschema assembly.
+ * Identifies that the annotation target is a bound property that references a Metaschema field.
  * <p>
  * For XML serialization, the {@link #useName()} identifies the name of the element to use and the
  * {@link #namespace()} identifies the namespace of this element.
@@ -49,7 +54,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target({ FIELD })
-public @interface Assembly {
+public @interface BoundField {
   /**
    * The model name to use for singleton values. This name will be used for associated XML elements.
    * <p>
@@ -60,6 +65,8 @@ public @interface Assembly {
   String useName() default "##default";
 
   /**
+   */
+  /**
    * The namespace to use for associated XML elements.
    * <p>
    * If the value is "##default", then element name is derived from the namespace provided in the
@@ -68,6 +75,30 @@ public @interface Assembly {
    * @return the namespace
    */
   String namespace() default "##default";
+
+  /**
+   * If the data type allows it, determines if the field's value must be wrapped with an element
+   * having the specified {@link #useName()} and {@link #namespace()}.
+   * 
+   * @return {@code true} if the field must be wrapped, or {@code false} otherwise
+   */
+  boolean inXmlWrapped() default MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
+
+  /**
+   * The Metaschema data type adapter for the field's value.
+   * 
+   * @return the data type adapter
+   */
+  Class<? extends IJavaTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
+  //
+  // /**
+  // * The name of the JSON property that contains the field's value. If this value is provided, the
+  // * name will be used as the property name. Use of this annotation is mutually exclusive with the
+  // * {@link JsonFieldValueKeyFlag} annotation.
+  // *
+  // * @return the name
+  // */
+  // String valueName() default "##none";
 
   /**
    * The name to use for an XML element wrapper or a JSON/YAML property.
@@ -113,4 +144,32 @@ public @interface Assembly {
    * @return the XML collection strategy
    */
   XmlGroupAsBehavior inXml() default XmlGroupAsBehavior.UNGROUPED;
+
+  /**
+   * Get the allowed value constraints for this field.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  AllowedValues[] allowedValues() default {};
+
+  /**
+   * Get the matches constraints for this field.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  Matches[] matches() default {};
+
+  /**
+   * Get the index-has-key constraints for this field.
+   * 
+   * @return the allowed values or an empty array if no allowed values constraints are defined
+   */
+  IndexHasKey[] indexHasKey() default {};
+
+  /**
+   * Get the expect constraints for this field.
+   * 
+   * @return the expected constraints or an empty array if no expected constraints are defined
+   */
+  Expect[] expect() default {};
 }

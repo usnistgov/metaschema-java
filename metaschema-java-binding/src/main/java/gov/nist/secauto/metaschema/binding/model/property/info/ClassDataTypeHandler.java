@@ -84,7 +84,8 @@ public class ClassDataTypeHandler implements IDataTypeHandler {
   }
 
   @Override
-  public List<Object> get(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context) throws IOException {
+  public List<Object> get(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
+      throws IOException {
     JsonParser parser = context.getReader(); // NOPMD - intentional
     boolean objectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
     if (objectWrapper) {

@@ -36,7 +36,7 @@ public interface IFieldClassBinding extends IClassBinding, IBoundFieldDefinition
   IBoundFlagInstance getJsonValueKeyFlagInstance();
 
   /**
-   * Get the {@link IBoundInstance} that represents the Metaschema Field's value.
+   * Get the {@link IBoundInstance} that represents the Metaschema BoundField's value.
    * 
    * @return the value property
    */

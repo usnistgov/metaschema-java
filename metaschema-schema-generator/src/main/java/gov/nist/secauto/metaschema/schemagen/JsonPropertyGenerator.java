@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -38,6 +37,7 @@ import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IInstance;
 import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -60,21 +60,21 @@ public class JsonPropertyGenerator {
     // disable construction
   }
 
-  public static void generateDescription(IInstance instance, @NotNull GenerationState state) throws IOException {
+  public static void generateDescription(IInstance instance, @NotNull ObjectNode propertyNode) {
     MarkupMultiline remarks = instance.getRemarks();
     if (remarks != null) {
-      state.getWriter().writeStringField("description", remarks.toMarkdown());
+      propertyNode.put("description", remarks.toMarkdown());
     }
   }
 
   public static void generateFlagProperty(
       @NotNull IFlagInstance flag,
       @NotNull InstanceProperties properties,
-      @NotNull GenerationState state) {
+      @NotNull GenerationState state) throws IOException {
     String propertyName = flag.getJsonName();
-    properties.addProperty(propertyName,
-        ObjectUtils.notNull(JsonNodeFactory.instance.objectNode()
-            .put("$ref",  state.getDatatypeManager().getJsonDefinitionRefForDefinition(flag.getDefinition()))));
+    ObjectNode type = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
+    generateInstancePropertyDefinitionOrRef(flag, type, state);
+    properties.addProperty(propertyName, type);
     if (flag.isRequired()) {
       properties.addRequired(propertyName);
     }
@@ -87,7 +87,7 @@ public class JsonPropertyGenerator {
     String propertyName = definition.getJsonValueKeyName();
     properties.addProperty(propertyName,
         ObjectUtils.notNull(JsonNodeFactory.instance.objectNode()
-            .put("$ref",  state.getDatatypeManager().getJsonDefinitionRefForDatatype(definition.getDatatype()))));
+            .put("$ref", state.getDatatypeManager().getJsonDefinitionRefForDatatype(definition.getDatatype()))));
     properties.addRequired(propertyName);
   }
 
@@ -120,42 +120,54 @@ public class JsonPropertyGenerator {
   }
 
   public static void generateInstanceProperty(
-      INamedModelInstance instance,
+      @NotNull INamedModelInstance instance,
       @NotNull InstanceProperties properties,
-      @NotNull GenerationState state) {
+      @NotNull GenerationState state) throws IOException {
     JsonDatatypeManager datatypeManager = state.getDatatypeManager();
 
     String propertyName = instance.getJsonName();
-    String definitionRef = datatypeManager.getJsonDefinitionRefForDefinition(instance.getDefinition());
 
+    @SuppressWarnings("null")
+    @NotNull
     ObjectNode instanceJsonObject = JsonNodeFactory.instance.objectNode();
     int maxOccurs = instance.getMaxOccurs();
     int minOccurs = instance.getMinOccurs();
     if (maxOccurs > 1 || maxOccurs == -1) {
       switch (instance.getJsonGroupAsBehavior()) {
-      case LIST:
+      case LIST: {
         instanceJsonObject.put("type", "array");
-        instanceJsonObject.putObject("items")
-            .put("$ref", definitionRef);
+
+        @SuppressWarnings("null")
+        @NotNull
+        ObjectNode items = instanceJsonObject.putObject("items");
+        generateInstancePropertyDefinitionOrRef(instance, items, state);
         instanceJsonObject.put("minItems", Math.max(1, minOccurs));
         if (maxOccurs != -1) {
           instanceJsonObject.put("maxItems", maxOccurs);
         }
         break;
-      case SINGLETON_OR_LIST:
+      }
+      case SINGLETON_OR_LIST: {
         ArrayNode oneOf = instanceJsonObject.putArray("oneOf");
-        oneOf.addObject()
-            .put("$ref", definitionRef);
+
+        @SuppressWarnings("null")
+        @NotNull
+        ObjectNode singleton = oneOf.addObject();
+        generateInstancePropertyDefinitionOrRef(instance, singleton, state);
         ObjectNode arrayObject = oneOf.addObject();
         arrayObject.put("type", "array");
-        arrayObject.putObject("items")
-            .put("$ref", definitionRef);
+
+        @SuppressWarnings("null")
+        @NotNull
+        ObjectNode items = arrayObject.putObject("items");
+        generateInstancePropertyDefinitionOrRef(instance, items, state);
         arrayObject.put("minItems", Math.max(2, minOccurs));
         if (maxOccurs != -1) {
           arrayObject.put("maxItems", maxOccurs);
         }
         break;
-      case KEYED:
+      }
+      case KEYED: {
         instanceJsonObject.put("type", "object");
         instanceJsonObject.put("minProperties", 1);
 
@@ -167,15 +179,19 @@ public class JsonPropertyGenerator {
         instanceJsonObject.putObject("propertyNames")
             .put("$ref",
                 datatypeManager.getJsonDefinitionRefForDatatype(jsonKey.getDefinition().getDatatype()));
-        instanceJsonObject.putObject("additionalProperties")
-            .put("$ref", definitionRef);
+        // TODO: is this correct?
+        @SuppressWarnings("null")
+        @NotNull
+        ObjectNode additional = instanceJsonObject.putObject("additionalProperties");
+        generateInstancePropertyDefinitionOrRef(instance, additional, state);
         break;
+      }
       default:
         throw new UnsupportedOperationException(
             String.format("Unsupported group-as in-json binding '%s'.", instance.getJsonGroupAsBehavior()));
       }
     } else {
-      instanceJsonObject.put("$ref", definitionRef);
+      generateInstancePropertyDefinitionOrRef(instance, instanceJsonObject, state);
     }
 
     properties.addProperty(propertyName, instanceJsonObject);
@@ -185,36 +201,45 @@ public class JsonPropertyGenerator {
     }
   }
 
+  public static void generateInstancePropertyDefinitionOrRef(
+      @NotNull INamedInstance instance,
+      @NotNull ObjectNode instanceNode,
+      @NotNull GenerationState state) throws IOException {
+    if (!state.isInline(instance.getDefinition())) {
+      String definitionRef = state.getDatatypeManager().getJsonDefinitionRefForDefinition(instance.getDefinition());
+      instanceNode.put("$ref", definitionRef);
+    } else {
+      JsonDefinitionGenerator.generateDefinition(instance.getDefinition(), instanceNode, state);
+    }
+  }
+
   @NotNull
   public static void generateChoices(
       @NotNull Collection<@NotNull ? extends IChoiceInstance> choices,
       @NotNull InstanceProperties properties,
+      @NotNull ObjectNode definitionNode,
       @NotNull GenerationState state) throws IOException {
-    JsonGenerator writer = state.getWriter();
     List<InstanceProperties> propertyChoices = CollectionUtil.singletonList(properties);
     propertyChoices = explodeChoices(choices, propertyChoices, state);
 
     if (propertyChoices.size() == 1) {
-      propertyChoices.iterator().next().generate(writer);
+      propertyChoices.iterator().next().generate(definitionNode);
     } else if (propertyChoices.size() > 1) {
-      writer.writeFieldName("anyOf");
-      writer.writeStartArray();
+      ArrayNode anyOfdNode = ObjectUtils.notNull(JsonNodeFactory.instance.arrayNode());
       for (InstanceProperties propertyChoice : propertyChoices) {
-        writer.writeStartObject();
-        propertyChoice.generate(writer);
-
-        writer.writeBooleanField("additionalProperties", false);
-
-        writer.writeEndObject();
+        ObjectNode choiceDefinitionNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
+        propertyChoice.generate(choiceDefinitionNode);
+        choiceDefinitionNode.put("additionalProperties", false);
+        anyOfdNode.add(choiceDefinitionNode);
       }
-      writer.writeEndArray();
+      definitionNode.set("anyOf", anyOfdNode);
     }
   }
 
   protected static List<InstanceProperties> explodeChoices(
       @NotNull Collection<@NotNull ? extends IChoiceInstance> choices,
       @NotNull List<InstanceProperties> propertyChoices,
-      @NotNull GenerationState state) {
+      @NotNull GenerationState state) throws IOException {
 
     List<InstanceProperties> retval = propertyChoices;
 
@@ -281,23 +306,20 @@ public class JsonPropertyGenerator {
       return new InstanceProperties(new LinkedHashMap<>(properties), new LinkedHashSet<>(required));
     }
 
-    public void generate(JsonGenerator jsonGenerator) throws IOException {
+    public void generate(@NotNull ObjectNode definitionNode) {
       if (!properties.isEmpty()) {
-        jsonGenerator.writeFieldName("properties");
-        jsonGenerator.writeStartObject();
+        ObjectNode propertiesNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
         for (Map.Entry<String, ObjectNode> entry : properties.entrySet()) {
-          jsonGenerator.writeFieldName(entry.getKey());
-          jsonGenerator.writeTree(entry.getValue());
+          propertiesNode.set(entry.getKey(), entry.getValue());
         }
-        jsonGenerator.writeEndObject();
+        definitionNode.set("properties", propertiesNode);
 
         if (!required.isEmpty()) {
-          jsonGenerator.writeFieldName("required");
-          jsonGenerator.writeStartArray();
+          ArrayNode requiredNode = ObjectUtils.notNull(JsonNodeFactory.instance.arrayNode());
           for (String requiredProperty : required) {
-            jsonGenerator.writeString(requiredProperty);
+            requiredNode.add(requiredProperty);
           }
-          jsonGenerator.writeEndArray();
+          definitionNode.set("required", requiredNode);
         }
       }
     }

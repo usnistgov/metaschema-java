@@ -29,9 +29,9 @@ package gov.nist.secauto.metaschema.binding.model.annotations.constraint;
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.Field;
-import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
-import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
@@ -67,10 +67,10 @@ public @interface Matches {
 
   /**
    * An optional metapath that points to the target flag or field value that the constraint applies
-   * to. If omitted the target will be ".", which means the target is the value of the {@link Flag},
-   * {@link Field} or {@link FieldValue} annotation the constraint appears on. In the prior case, this
-   * annotation may only appear on a {@link Field} if the field has no flags, which results in a
-   * {@link Field} annotation on a field instance with a scalar, data type value.
+   * to. If omitted the target will be ".", which means the target is the value of the {@link BoundFlag},
+   * {@link BoundField} or {@link BoundFieldValue} annotation the constraint appears on. In the prior case, this
+   * annotation may only appear on a {@link BoundField} if the field has no flags, which results in a
+   * {@link BoundField} annotation on a field instance with a scalar, data type value.
    * 
    * @return the target metapath
    */

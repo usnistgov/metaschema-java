@@ -33,10 +33,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>metaschema-freemarker-support</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 		</dependency>
@@ -52,11 +48,6 @@
 			<!-- For JDOM2 XPath support -->
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
 		</dependency>
 
 		<dependency>

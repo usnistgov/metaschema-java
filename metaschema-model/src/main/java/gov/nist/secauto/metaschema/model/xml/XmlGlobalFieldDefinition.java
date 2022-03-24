@@ -88,11 +88,6 @@ public class XmlGlobalFieldDefinition implements IXmlFieldDefinition {
     return metaschema;
   }
 
-  @Override
-  public boolean isGlobal() {
-    return true;
-  }
-
   /**
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.

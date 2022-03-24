@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 
+// TODO: remove this?
 class OrphanedXdmFieldNodeItemImpl
     extends AbstractBoundXdmFieldNodeItem<IBoundFieldInstance> {
   private final URI baseUri;

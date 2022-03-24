@@ -31,7 +31,7 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeName;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.codegen.FieldJavaClassGenerator;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
@@ -78,16 +78,14 @@ public class FieldValuePropertyGenerator
   protected Set<INamedModelDefinition> buildField(FieldSpec.Builder builder) {
 
     IFieldDefinition definition = getClassGenerator().getDefinition();
-    AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(FieldValue.class);
+    AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(BoundFieldValue.class);
 
     IJavaTypeAdapter<?> valueDataType = definition.getDatatype();
 
     // a field object always has a single value
-    if (definition.hasJsonValueKeyFlagInstance()) {
-      // do nothing, the annotation will be on the flag
-    } else {
+    if (!definition.hasJsonValueKeyFlagInstance()) {
       fieldValue.addMember("name", "$S", definition.getJsonValueKeyName());
-    }
+    } // else do nothing, the annotation will be on the flag
 
     fieldValue.addMember("typeAdapter", "$T.class", valueDataType.getClass());
 

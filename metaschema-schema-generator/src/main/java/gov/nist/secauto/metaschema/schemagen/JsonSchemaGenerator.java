@@ -29,12 +29,15 @@ package gov.nist.secauto.metaschema.schemagen;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import gov.nist.secauto.metaschema.model.UsedDefinitionModelWalker;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +47,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class JsonSchemaGenerator implements ISchemaGenerator {
+public class JsonSchemaGenerator extends AbstractSchemaGenerator {
   @NotNull
   private final JsonFactory jsonFactory;
 
@@ -61,17 +64,19 @@ public class JsonSchemaGenerator implements ISchemaGenerator {
   }
 
   @Override
-  public void generateFromMetaschema(@NotNull IMetaschema metaschema, @NotNull Writer out) throws IOException {
+  public void generateFromMetaschema(@NotNull IMetaschema metaschema, @NotNull Writer out,
+      @NotNull IConfiguration configuration) throws IOException {
     JsonGenerator jsonGenerator = getJsonFactory().createGenerator(out);
     jsonGenerator.setCodec(new ObjectMapper());
     jsonGenerator.useDefaultPrettyPrinter();
 
-    generateSchemaMetadata(metaschema, jsonGenerator);
+    generateSchemaMetadata(metaschema, jsonGenerator, configuration);
 
     jsonGenerator.flush();
   }
 
-  protected void generateSchemaMetadata(@NotNull IMetaschema metaschema, @NotNull JsonGenerator jsonGenerator)
+  protected void generateSchemaMetadata(@NotNull IMetaschema metaschema, @NotNull JsonGenerator jsonGenerator,
+      @NotNull IConfiguration configuration)
       throws IOException {
     jsonGenerator.writeStartObject();
 
@@ -87,7 +92,9 @@ public class JsonSchemaGenerator implements ISchemaGenerator {
     Collection<@NotNull ? extends INamedDefinition> definitions
         = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
 
-    GenerationState state = new GenerationState(jsonGenerator, false);
+    IInlineStrategy inlineStrategy = newInlineStrategy(configuration, definitions);
+
+    GenerationState state = new GenerationState(jsonGenerator, inlineStrategy);
 
     generateDefinitions(definitions, state);
 
@@ -114,17 +121,21 @@ public class JsonSchemaGenerator implements ISchemaGenerator {
     if (!definitions.isEmpty()) {
       JsonGenerator writer = state.getWriter();
 
-      writer.writeFieldName("definitions");
-      writer.writeStartObject();
+      ObjectNode definitionsObject = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
 
       for (INamedDefinition definition : definitions) {
-        JsonDefinitionGenerator.generateDefinition(definition, state);
+        if (!state.isInline(definition)) {
+          JsonDefinitionGenerator.generateDefinition(definition, definitionsObject, state);
+        }
       }
 
       // write datatypes
-      state.getDatatypeManager().generateDatatypes(writer);
+      state.getDatatypeManager().generateDatatypes(definitionsObject);
 
-      writer.writeEndObject();
+      if (!definitionsObject.isEmpty()) {
+        writer.writeFieldName("definitions");
+        writer.writeTree(definitionsObject);
+      }
     }
   }
 
@@ -181,10 +192,11 @@ public class JsonSchemaGenerator implements ISchemaGenerator {
 
   }
 
-  public static class GenerationState extends AbstractGenerationState<JsonGenerator, JsonDatatypeManager> {
+  public static class GenerationState
+      extends AbstractGenerationState<JsonGenerator, JsonDatatypeManager> {
 
-    public GenerationState(@NotNull JsonGenerator writer, boolean nestInlineTypes) {
-      super(writer, new JsonDatatypeManager(), nestInlineTypes);
+    public GenerationState(@NotNull JsonGenerator writer, @NotNull IInlineStrategy inlineStrategy) {
+      super(writer, new JsonDatatypeManager(), inlineStrategy);
     }
   }
 }

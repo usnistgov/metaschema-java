@@ -62,25 +62,21 @@ public class TestDynamicClassLoader
   private static String readFile(Path filePath) throws IOException {
     StringBuilder contentBuilder = new StringBuilder();
     try (Stream<String> stream = Files.lines(filePath, StandardCharsets.UTF_8)) {
-      stream.forEach(s -> contentBuilder.append(s).append("\n"));
+      stream.forEach(s -> contentBuilder.append(s).append('\n'));
     }
     return contentBuilder.toString();
   }
 
   @Override
   protected Class<?> findClass(String name) throws ClassNotFoundException {
-    Class<?> retval = null;
-    // try {
-    // retval = super.findClass(name);
-    // } catch (ClassNotFoundException ex) {
 
     File classFile = new File(getClassDir(), name.replace(".", "/") + ".java");
+    Class<?> retval;
     try {
       retval = CompilerUtils.CACHED_COMPILER.loadFromJava(this, name, readFile(classFile.toPath()));
     } catch (IOException e) {
       throw new ClassNotFoundException("An IO error occured while loading java class code", e);
     }
-    // }
     if (retval == null) {
       throw new ClassNotFoundException(name);
     }

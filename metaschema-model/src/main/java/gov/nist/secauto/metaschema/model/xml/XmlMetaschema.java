@@ -95,7 +95,6 @@ public class XmlMetaschema
 
       Map<String, IXmlFlagDefinition> flagDefinitions = new LinkedHashMap<>();
       while (cursor.toNextSelection()) {
-        @SuppressWarnings("null")
         @NotNull
         GlobalFlagDefinitionType obj = (GlobalFlagDefinitionType) cursor.getObject();
         IXmlFlagDefinition flag = new XmlGlobalFlagDefinition(obj, this);
@@ -115,8 +114,6 @@ public class XmlMetaschema
 
       Map<String, IXmlFieldDefinition> fieldDefinitions = new LinkedHashMap<>();
       while (cursor.toNextSelection()) {
-        @SuppressWarnings("null")
-        @NotNull
         GlobalFieldDefinitionType obj = (GlobalFieldDefinitionType) cursor.getObject();
         XmlGlobalFieldDefinition field = new XmlGlobalFieldDefinition(obj, this);
         if (LOGGER.isTraceEnabled()) {
@@ -138,8 +135,6 @@ public class XmlMetaschema
           "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" + "$this/m:define-assembly");
 
       while (cursor.toNextSelection()) {
-        @SuppressWarnings("null")
-        @NotNull
         GlobalAssemblyDefinitionType obj = (GlobalAssemblyDefinitionType) cursor.getObject();
         XmlGlobalAssemblyDefinition assembly = new XmlGlobalAssemblyDefinition(obj, this);
         if (LOGGER.isTraceEnabled()) {
@@ -170,13 +165,11 @@ public class XmlMetaschema
     return metaschema.getMETASCHEMA();
   }
 
-  @SuppressWarnings("null")
   @Override
   public MarkupLine getName() {
     return MarkupStringConverter.toMarkupString(getXmlMetaschema().getSchemaName());
   }
 
-  @SuppressWarnings("null")
   @Override
   public String getVersion() {
     return getXmlMetaschema().getSchemaVersion();
@@ -188,13 +181,11 @@ public class XmlMetaschema
         : null;
   }
 
-  @SuppressWarnings("null")
   @Override
   public String getShortName() {
     return getXmlMetaschema().getShortName();
   }
 
-  @SuppressWarnings("null")
   @Override
   public URI getXmlNamespace() {
     return URI.create(getXmlMetaschema().getNamespace());
@@ -205,7 +196,6 @@ public class XmlMetaschema
     return URI.create(getXmlMetaschema().getJsonBaseUri());
   }
 
-  @SuppressWarnings("null")
   @Override
   public Map<String, ? extends IXmlAssemblyDefinition> getAssemblyDefinitionMap() {
     return assemblyDefinitions;
@@ -216,20 +206,17 @@ public class XmlMetaschema
     return fieldDefinitions;
   }
 
-  @SuppressWarnings("null")
   @Override
   public List<? extends IXmlNamedModelDefinition> getAssemblyAndFieldDefinitions() {
     return Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())
         .collect(Collectors.toList());
   }
 
-  @SuppressWarnings("null")
   @Override
   public Map<String, ? extends IXmlFlagDefinition> getFlagDefinitionMap() {
     return flagDefinitions;
   }
 
-  @SuppressWarnings("null")
   @Override
   public Map<String, ? extends IXmlAssemblyDefinition> getRootAssemblyDefinitionMap() {
     return rootAssemblyDefinitions;

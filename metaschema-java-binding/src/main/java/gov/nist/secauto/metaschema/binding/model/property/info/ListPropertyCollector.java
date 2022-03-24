@@ -32,7 +32,7 @@ import java.util.List;
 
 public class ListPropertyCollector
     implements IPropertyCollector {
-  private List<Object> collection;
+  private final List<Object> collection;
 
   public ListPropertyCollector() {
     this.collection = new LinkedList<Object>();
