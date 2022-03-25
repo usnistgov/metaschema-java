@@ -35,17 +35,27 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedNodeItem {
+public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedNodeItem, IFieldPathSegment {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.FIELD;
   }
-
+  @Override
+  default IFieldNodeItem getContextNodeItem() {
+    return this;
+  }
   @Override
   IAssemblyNodeItem getParentNodeItem();
 
   @Override
-  IFieldPathSegment getPathSegment();
+  default IFieldPathSegment getPathSegment() {
+    return this;
+  }
+
+  @Override
+  default IFieldNodeItem getNodeItem() {
+    return this;
+  }
 
   @Override
   IFieldDefinition getDefinition();

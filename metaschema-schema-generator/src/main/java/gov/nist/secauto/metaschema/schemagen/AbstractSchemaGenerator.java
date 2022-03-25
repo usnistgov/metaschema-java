@@ -44,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
 
@@ -84,6 +85,7 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
       extends ModelWalker<@NotNull Integer> {
     @NotNull
     private final Map<@NotNull INamedDefinition, Boolean> definitionInlinedMap = new HashMap<>(); // NOPMD - intentional
+    private final Stack<@NotNull INamedDefinition> visitStack = new Stack<>();
 
     @NotNull
     protected Map<@NotNull INamedDefinition, Boolean> getDefinitionInlinedMap() {
@@ -168,9 +170,13 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
     }
 
     @Override
-    public void walk(@NotNull IAssemblyDefinition assembly, @NotNull Integer choiceDepth) {
-      // ignore depth on children, since they can make their own decision
-      super.walk(assembly, 0);
+    public void walk(@NotNull IAssemblyDefinition def, @NotNull Integer choiceDepth) {
+      if (!visitStack.contains(def)) {
+        visitStack.push(def);
+        // ignore depth on children, since they can make their own decision
+        super.walk(def, 0);
+        visitStack.pop();
+      }
     }
 
     @Override

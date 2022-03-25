@@ -26,13 +26,13 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
-public interface IBoundXdmDocumentNodeItem extends IXdmDocumentNodeItem, IBoundXdmNodeItem {
+public interface IBoundXdmDocumentNodeItem extends IDocumentNodeItem, IBoundXdmNodeItem {
 
   @Override
   IBoundXdmDocumentNodeItem getContextNodeItem();

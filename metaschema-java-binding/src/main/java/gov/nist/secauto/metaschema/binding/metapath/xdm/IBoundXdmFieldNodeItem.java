@@ -28,11 +28,11 @@ package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.IBoundFieldDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmFieldNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface IBoundXdmFieldNodeItem extends IBoundXdmModelNodeItem, IXdmFieldNodeItem {
+public interface IBoundXdmFieldNodeItem extends IBoundXdmModelNodeItem, IFieldNodeItem {
 
   @Override
   default IBoundXdmFieldNodeItem getContextNodeItem() {

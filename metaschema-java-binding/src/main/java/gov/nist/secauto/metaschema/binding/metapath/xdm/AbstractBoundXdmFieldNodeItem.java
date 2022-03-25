@@ -34,10 +34,11 @@ import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IValuedDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -57,28 +58,31 @@ public abstract class AbstractBoundXdmFieldNodeItem<INSTANCE extends IBoundField
     super(instance, value, position);
   }
 
-  protected synchronized void initAtomicItem() {
-    if (atomicItem == null) {
-      IDefinition definition = getInstance().getDefinition();
-      if (definition instanceof IValuedDefinition) {
-        IJavaTypeAdapter<?> type = ((IValuedDefinition) definition).getDatatype();
-        atomicItem = type.newItem(getValue());
-      } else {
-        throw new InvalidTypeFunctionMetapathException(InvalidTypeFunctionMetapathException.NODE_HAS_NO_TYPED_VALUE,
-            String.format("the node type '%s' does not have a typed value", this.getItemName()));
+  @NotNull
+  protected IAnyAtomicItem initAtomicItem() {
+    synchronized (this) {
+      if (this.atomicItem == null) {
+        IDefinition definition = getInstance().getDefinition();
+        if (definition instanceof IValuedDefinition) {
+          IJavaTypeAdapter<?> type = ((IValuedDefinition) definition).getDatatype();
+          this.atomicItem = type.newItem(getValue());
+        } else {
+          throw new InvalidTypeFunctionMetapathException(InvalidTypeFunctionMetapathException.NODE_HAS_NO_TYPED_VALUE,
+              String.format("the node type '%s' does not have a typed value", this.getItemName()));
+        }
       }
     }
+    return ObjectUtils.notNull(this.atomicItem);
   }
 
   @Override
   public IAnyAtomicItem toAtomicItem() {
-    initAtomicItem();
-    return atomicItem;
+    return initAtomicItem();
   }
 
   @Override
   public Map<@NotNull String, ? extends List<@NotNull ? extends IBoundXdmModelNodeItem>> getModelItems() {
-    return Collections.emptyMap();
+    return CollectionUtil.emptyMap();
   }
 
   @Override

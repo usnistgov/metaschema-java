@@ -41,17 +41,6 @@ class DayTimeDurationItemImpl
     super(value);
   }
 
-  @SuppressWarnings("null")
-  @Override
-  public String asString() {
-    return getValue().toString();
-  }
-
-  @Override
-  public IDayTimeDurationItem toAtomicItem() {
-    return this;
-  }
-
   @Override
   public DayTimeAdapter getJavaTypeAdapter() {
     return MetaschemaDataTypeProvider.DAY_TIME_DURATION;

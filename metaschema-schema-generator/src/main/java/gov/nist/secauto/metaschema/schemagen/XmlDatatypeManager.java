@@ -74,9 +74,4 @@ public class XmlDatatypeManager
               requiredTypes.stream().collect(Collectors.joining(","))));
     }
   }
-
-  @Override
-  protected boolean isNestInlineDefinitions() {
-    return true;
-  }
 }

@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -63,7 +63,7 @@ class XdmRootAssemblyNodeItemImpl
   }
 
   @Override
-  public @NotNull IXdmDocumentNodeItem getDocumentPathSegment() {
+  public @NotNull IDocumentNodeItem getDocumentPathSegment() {
     return getDocumentNodeItem();
   }
 }

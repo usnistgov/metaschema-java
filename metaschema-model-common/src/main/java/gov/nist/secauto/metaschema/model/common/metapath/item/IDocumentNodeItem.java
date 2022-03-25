@@ -33,8 +33,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.stream.Stream;
 
-public interface IDocumentNodeItem extends INodeItem {
+public interface IDocumentNodeItem extends INodeItem, IDocumentPathSegment {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.DOCUMENT;
@@ -49,7 +50,20 @@ public interface IDocumentNodeItem extends INodeItem {
   IAssemblyNodeItem getRootAssemblyNodeItem();
 
   @Override
-  IDocumentPathSegment getPathSegment();
+  default IDocumentNodeItem getPathSegment() {
+    return this;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default Stream<? extends IDocumentNodeItem> getPathStream() {
+    return Stream.of(this);
+  }
+
+  @Override
+  default IDocumentNodeItem getNodeItem() {
+    return this;
+  }
 
   /**
    * Get the URI associated with this document.

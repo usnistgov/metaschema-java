@@ -166,7 +166,7 @@ public class XmlSchemaGenerator
           // this definition is not in this schema's namespace
           continue;
         }
-
+        
         if (definition instanceof IAssemblyDefinition && ((IAssemblyDefinition) definition).isRoot()) {
           IAssemblyDefinition assemblyDefinition = (IAssemblyDefinition) definition;
           rootAssemblyDefinitions.add(assemblyDefinition);
@@ -300,7 +300,7 @@ public class XmlSchemaGenerator
 
     writer.writeStartElement("xs", "element", NS_XML_SCHEMA);
     writer.writeAttribute("name", xmlQName.getLocalPart());
-    writer.writeAttribute("type", state.getDatatypeManager().getTypeNameForDefinition(definition).toString());
+    writer.writeAttribute("type", state.getDatatypeManager().getTypeNameForDefinition(definition, state));
 
     writer.writeEndElement();
   }
@@ -328,12 +328,13 @@ public class XmlSchemaGenerator
     writer.writeStartElement("xs", "complexType", NS_XML_SCHEMA);
 
     boolean inline = state.isInline(definition);
-
     if (!inline) {
-      writer.writeAttribute("name", state.getDatatypeManager().getTypeNameForDefinition(definition).toString());
+      writer.writeAttribute("name", state.getDatatypeManager().getTypeNameForDefinition(definition, state));
       generateMetadata(definition, state);
     } // otherwise the metadata will appear on the element ref
 
+    state.addComment(definition, "AssemblyDefinitionComplexType");
+    
     Collection<@NotNull ? extends IModelInstance> modelInstances = definition.getModelInstances();
     if (!modelInstances.isEmpty()) {
       writer.writeStartElement("xs", "sequence", NS_XML_SCHEMA);
@@ -355,6 +356,8 @@ public class XmlSchemaGenerator
 
   private void generateFieldDefinitionComplexType(@NotNull IFieldDefinition definition, @NotNull GenerationState state)
       throws XMLStreamException {
+    state.addComment(definition, "FieldDefinitionComplexType");
+
     Collection<@NotNull ? extends IFlagInstance> flagInstances = definition.getFlagInstances();
     if (flagInstances.isEmpty()) {
       // this is a simple field with only a datatype. no type definition needed
@@ -367,7 +370,7 @@ public class XmlSchemaGenerator
     boolean inline = state.isInline(definition);
 
     if (!inline) {
-      writer.writeAttribute("name", state.getDatatypeManager().getTypeNameForDefinition(definition).toString());
+      writer.writeAttribute("name", state.getDatatypeManager().getTypeNameForDefinition(definition, state));
       generateMetadata(definition, state);
     } // otherwise the metadata will appear on the element ref
 
@@ -381,7 +384,7 @@ public class XmlSchemaGenerator
 
     writer.writeStartElement("xs", xmlContentType, NS_XML_SCHEMA);
     writer.writeStartElement("xs", "extension", NS_XML_SCHEMA);
-    writer.writeAttribute("base", state.getDatatypeManager().getTypeForDatatype(datatype).toString());
+    writer.writeAttribute("base", state.getDatatypeManager().getTypeNameForDatatype(datatype));
 
     for (IFlagInstance flagInstance : flagInstances) {
       generateFlagInstance(flagInstance, state);
@@ -478,6 +481,7 @@ public class XmlSchemaGenerator
       generateTypeReferenceForDefinition(definition, state);
       generateInstanceMetadata(modelInstance, false, state);
     }
+    state.addComment(definition, "NamedModelInstance");
 
     writer.writeEndElement(); // xs:element
   }
@@ -518,7 +522,7 @@ public class XmlSchemaGenerator
       builder.append(state.getNSPrefix(namespace));
       builder.append(':');
     }
-    builder.append(state.getDatatypeManager().getTypeForDatatype(definition.getDatatype()));
+    builder.append(state.getDatatypeManager().getTypeNameForDatatype(definition.getDatatype()));
     return builder.toString();
   }
 
@@ -530,7 +534,7 @@ public class XmlSchemaGenerator
       builder.append(state.getNSPrefix(xmlNS));
       builder.append(':');
     }
-    builder.append(state.getDatatypeManager().getTypeNameForDefinition(definition));
+    builder.append(state.getDatatypeManager().getTypeNameForDefinition(definition, state));
     return builder.toString();
   }
 
@@ -721,6 +725,8 @@ public class XmlSchemaGenerator
     }
 
     generateInstanceMetadata(instance, inline, state);
+    
+    state.addComment(definition, "FlagInstance");
 
     if (inline) {
       generateFlagDefinitionSimpleType(instance, state);
@@ -791,6 +797,11 @@ public class XmlSchemaGenerator
         }
       }
       return retval;
+    }
+
+    public void addComment(@NotNull INamedDefinition definition, @NotNull String context) throws XMLStreamException {
+      getWriter().writeComment(generateComment(definition, context));
+      
     }
   }
 }

@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.model.UsedDefinitionModelWalker;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
@@ -47,7 +48,8 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class JsonSchemaGenerator extends AbstractSchemaGenerator {
+public class JsonSchemaGenerator
+    extends AbstractSchemaGenerator {
   @NotNull
   private final JsonFactory jsonFactory;
 
@@ -156,7 +158,7 @@ public class JsonSchemaGenerator extends AbstractSchemaGenerator {
     for (IAssemblyDefinition root : rootAssemblies) {
       writer.writeFieldName(root.getRootJsonName());
       writer.writeStartObject();
-      writer.writeStringField("$ref", state.getDatatypeManager().getJsonDefinitionRefForDefinition(root));
+      writer.writeStringField("$ref", state.getDatatypeManager().getJsonDefinitionRefForDefinition(root, state));
       writer.writeEndObject();
     }
     writer.writeEndObject();
@@ -197,6 +199,15 @@ public class JsonSchemaGenerator extends AbstractSchemaGenerator {
 
     public GenerationState(@NotNull JsonGenerator writer, @NotNull IInlineStrategy inlineStrategy) {
       super(writer, new JsonDatatypeManager(), inlineStrategy);
+    }
+
+    public void addComment(@NotNull INamedDefinition definition, @NotNull String context,
+        @NotNull ObjectNode definitionContextNode) {
+      definitionContextNode.put("$comment", generateComment(definition, context));
+    }
+
+    public void addComment(@NotNull IFlagDefinition definition, @NotNull String context) throws IOException {
+      getWriter().writeStringField("$comment", generateComment(definition, context));
     }
   }
 }

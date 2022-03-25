@@ -28,11 +28,11 @@ package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.IBoundFlagDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface IBoundXdmFlagNodeItem extends IBoundXdmNodeItem, IXdmFlagNodeItem {
+public interface IBoundXdmFlagNodeItem extends IBoundXdmNodeItem, IFlagNodeItem {
 
   @Override
   default IBoundXdmFlagNodeItem getContextNodeItem() {

@@ -58,9 +58,4 @@ public interface IDateItem extends IAnyAtomicItem {
 
   @NotNull
   ZonedDateTime asZonedDateTime();
-
-  @Override
-  default IDateItem toAtomicItem() {
-    return this;
-  }
 }

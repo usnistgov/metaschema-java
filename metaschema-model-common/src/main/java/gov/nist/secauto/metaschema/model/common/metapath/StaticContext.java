@@ -26,37 +26,50 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
-import java.util.Objects;
 
 public class StaticContext {
-  // private final List<? extends INamedDefinition> knownDefinitions;
-  // private final Map<String, IItemType> uriToKnownDocumentTypeMap;
+  @Nullable
   private URI baseUri;
 
-  public StaticContext() {
-    // this.uriToKnownDocumentTypeMap = new HashMap<>();
-  }
-
+  /**
+   * Get the static base URI to use in resolving URIs handled by the Metapath processor. This URI, if
+   * provided, will be used when a document base URI is not available.
+   * 
+   * @return the base URI or {@code null} if not defined
+   */
+  @Nullable
   public URI getBaseUri() {
-    return baseUri;
+    synchronized (this) {
+      return baseUri;
+    }
   }
 
-  @SuppressWarnings("null")
+  /**
+   * Sets the static base URI to use in resolving URIs handled by the Metapath processor, when a
+   * document base URI is not available. There is only a single base URI. Subsequent calls to this
+   * method will change the base URI.
+   * 
+   * @param baseUri
+   *          the base URI to use
+   */
   public void setBaseUri(@NotNull URI baseUri) {
-    this.baseUri = Objects.requireNonNull(baseUri, "baseUri");
+    synchronized (this) {
+      this.baseUri = ObjectUtils.requireNonNull(baseUri, "baseUri");
+    }
   }
 
-  // public IItemType getTypeForDocument(@NotNull URI uri) {
-  // return getTypeForDocument(uri.toString());
-  // }
-  //
-  // public IItemType getTypeForDocument(@NotNull String uri) {
-  // return uriToKnownDocumentTypeMap.get(uri);
-  // }
-
+  /**
+   * Generate a new dynamic context.
+   * 
+   * @return the generated dynamic context
+   */
+  @NotNull
   public DynamicContext newDynamicContext() {
     return new DynamicContext(this);
   }

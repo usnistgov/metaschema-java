@@ -35,11 +35,6 @@ import java.time.temporal.TemporalAmount;
 public interface IDurationItem extends IAnyAtomicItem {
 
   @Override
-  default IDurationItem toAtomicItem() {
-    return this;
-  }
-
-  @Override
   TemporalAmount getValue();
 
   @NotNull

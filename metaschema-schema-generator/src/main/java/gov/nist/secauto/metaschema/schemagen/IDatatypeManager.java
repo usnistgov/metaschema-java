@@ -24,17 +24,19 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-
 package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
 public interface IDatatypeManager {
-  String getTypeForDatatype(@NotNull IJavaTypeAdapter<?> datatype);
+  String getTypeNameForDatatype(@NotNull IJavaTypeAdapter<?> datatype);
+
+  String getTypeNameForDefinition(@NotNull INamedDefinition definition, @NotNull IGenerationState<?, ?> state);
 
   Set<String> getUsedTypes();
 }

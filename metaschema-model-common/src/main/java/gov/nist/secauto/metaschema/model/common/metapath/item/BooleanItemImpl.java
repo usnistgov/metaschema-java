@@ -71,9 +71,4 @@ class BooleanItemImpl implements IBooleanItem {
   public Boolean getValue() {
     return toBoolean();
   }
-
-  @Override
-  public IBooleanItem toAtomicItem() {
-    return this;
-  }
 }

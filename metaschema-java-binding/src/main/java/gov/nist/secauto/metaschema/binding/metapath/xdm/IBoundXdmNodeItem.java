@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidator;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public interface IBoundXdmNodeItem extends IXdmNodeItem {
+public interface IBoundXdmNodeItem extends INodeItem {
   /**
    * Retrieve the {@link IClassBinding} associated with the node item.
    * 

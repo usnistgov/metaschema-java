@@ -43,11 +43,6 @@ public interface ITokenItem extends IStringItem {
   }
 
   @Override
-  default ITokenItem toAtomicItem() {
-    return this;
-  }
-
-  @Override
   default ITokenItem newStringItem() {
     return this;
   }

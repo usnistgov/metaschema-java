@@ -43,11 +43,6 @@ public interface IStringItem extends IAnyAtomicItem {
   }
 
   @Override
-  default IStringItem toAtomicItem() {
-    return this;
-  }
-
-  @Override
   default IStringItem newStringItem() {
     return this;
   }

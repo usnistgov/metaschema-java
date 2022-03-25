@@ -79,8 +79,8 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
 
   @NotNull
   private final Map<@NotNull IJavaTypeAdapter<?>, String> datatypeToTypeMap = new HashMap<>();
-
-  protected abstract boolean isNestInlineDefinitions();
+  @NotNull
+  private final Map<@NotNull INamedDefinition, String> definitionToNameMap = new HashMap<>();
 
   @Override
   public Set<String> getUsedTypes() {
@@ -90,7 +90,7 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
   @SuppressWarnings("null")
   @Override
   @NotNull
-  public String getTypeForDatatype(@NotNull IJavaTypeAdapter<?> datatype) {
+  public String getTypeNameForDatatype(@NotNull IJavaTypeAdapter<?> datatype) {
     synchronized (this) {
       String name = datatypeToTypeMap.get(datatype);
       if (name == null) {
@@ -101,24 +101,27 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
     }
   }
 
-  public CharSequence getTypeNameForDefinition(@NotNull INamedDefinition definition) {
-    StringBuilder builder = new StringBuilder();
-
-    if (!definition.isInline()) {
-      builder.append(toCamelCase(definition.getContainingMetaschema().getShortName()));
-    }
-
-    if (definition.isInline() && !isNestInlineDefinitions()) {
-      // need to append the parent name(s) to disambiguate this type name
-      builder.append(getTypeContext(definition, definition.getContainingMetaschema()));
-    } else {
+  @Override
+  public String getTypeNameForDefinition(@NotNull INamedDefinition definition, @NotNull IGenerationState<?,?> state) {
+    String retval = definitionToNameMap.get(definition);
+    if (retval == null) {
+      StringBuilder builder = new StringBuilder()
+          .append(toCamelCase(definition.getContainingMetaschema().getShortName()));
+  
+      if (state.isInline(definition)) {
+        builder.append(toCamelCase(definition.getEffectiveName()));
+      } else {
+        // need to append the parent name(s) to disambiguate this type name
+        builder.append(getTypeContext(definition, definition.getContainingMetaschema(), state));
+      }
       builder
-          .append(toCamelCase(definition.getEffectiveName()))
-          .append(toCamelCase(definition.getModelType().name()));
+          .append(toCamelCase(definition.getModelType().name()))
+          .append("Type");
+  
+      retval = builder.toString();
+      definitionToNameMap.put(definition, retval);
     }
-    builder.append("Type");
-
-    return builder;
+    return retval;
   }
 
   /**
@@ -132,7 +135,7 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
    * @return the unique type name
    */
   private CharSequence getTypeContext(@NotNull INamedDefinition definition,
-      @NotNull IMetaschema childMetaschema) {
+      @NotNull IMetaschema childMetaschema, @NotNull IGenerationState<?,?> state) {
     StringBuilder builder = new StringBuilder();
     if (definition.isInline()) {
       INamedInstance inlineInstance = definition.getInlineInstance();
@@ -140,7 +143,7 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
       if (parentDefinition == null) {
         throw new IllegalStateException();
       }
-      builder.append(getTypeContext(parentDefinition, childMetaschema));
+      builder.append(getTypeContext(parentDefinition, childMetaschema, state));
       builder.append(toCamelCase(inlineInstance.getEffectiveName()));
     } else {
       builder.append(toCamelCase(definition.getEffectiveName()));

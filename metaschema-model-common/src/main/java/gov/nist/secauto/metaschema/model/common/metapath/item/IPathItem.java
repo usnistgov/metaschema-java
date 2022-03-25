@@ -72,6 +72,9 @@ public interface IPathItem extends IItem {
   /**
    * Get the path for this node item using the provided formatter.
    * 
+   * @param formatter
+   *          the path formatter to use to produce the path
+   * 
    * @return the formatted path
    */
   @NotNull

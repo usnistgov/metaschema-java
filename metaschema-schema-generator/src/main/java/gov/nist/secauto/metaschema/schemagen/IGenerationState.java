@@ -31,9 +31,11 @@ import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 import org.jetbrains.annotations.NotNull;
 
 public interface IGenerationState<WRITER, DATATYPE_MANAGER extends IDatatypeManager> {
+  @NotNull
   WRITER getWriter();
 
   boolean isInline(@NotNull INamedDefinition definition);
 
+  @NotNull
   DATATYPE_MANAGER getDatatypeManager();
 }

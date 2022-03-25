@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import org.jetbrains.annotations.NotNull;
 
 class MarkupMultiLineItemImpl
-    extends AbstractMarkupItem<MarkupMultiline>
+    extends AbstractAnyAtomicItem<MarkupMultiline>
     implements IMarkupItem {
 
   public MarkupMultiLineItemImpl(@NotNull MarkupMultiline value) {
@@ -44,10 +44,4 @@ class MarkupMultiLineItemImpl
   public MarkupMultilineAdapter getJavaTypeAdapter() {
     return MetaschemaDataTypeProvider.MARKUP_MULTILINE;
   }
-
-  @Override
-  public IMarkupItem toAtomicItem() {
-    return this;
-  }
-
 }

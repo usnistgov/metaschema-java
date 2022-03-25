@@ -27,18 +27,28 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
+/**
+ * Provides a common implementation for all atomic types.
+ *
+ * @param <TYPE>
+ *          the Java type associated with the atomic type.
+ */
 public abstract class AbstractAnyAtomicItem<TYPE> implements IAnyAtomicItem {
   @NotNull
-  private TYPE value;
+  private final TYPE value;
 
+  /**
+   * Construct a new atomic item using the provided {@code value}.
+   * 
+   * @param value
+   *          the value to assign to this atomic item
+   */
   public AbstractAnyAtomicItem(@NotNull TYPE value) {
-    Objects.requireNonNull(value, "value");
-    this.value = value;
+    this.value = ObjectUtils.requireNonNull(value, "value");
   }
 
   @Override

@@ -51,9 +51,4 @@ public interface IAnyUriItem extends IAnyAtomicItem {
 
   @Override
   URI getValue();
-
-  @Override
-  default IAnyUriItem toAtomicItem() {
-    return this;
-  }
 }

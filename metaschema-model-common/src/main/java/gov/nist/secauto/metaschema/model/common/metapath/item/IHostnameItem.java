@@ -43,11 +43,6 @@ public interface IHostnameItem extends IStringItem {
   }
 
   @Override
-  default IHostnameItem toAtomicItem() {
-    return this;
-  }
-
-  @Override
   default IHostnameItem newStringItem() {
     return this;
   }

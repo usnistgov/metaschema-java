@@ -93,8 +93,10 @@ public class JsonDefinitionGenerator {
       definitionContextNode = parentNode;
     } else {
       definitionContextNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
-      definitionContextNode.put("$id", datatypeManager.getJsonDefinitionRefForDefinition(definition));
+      definitionContextNode.put("$id", datatypeManager.getJsonDefinitionRefForDefinition(definition, state));
     }
+
+    state.addComment(definition, "Definition", definitionContextNode);
 
     generateTitle(definition, definitionContextNode);
     generateDescription(definition, definitionContextNode);
@@ -114,7 +116,7 @@ public class JsonDefinitionGenerator {
     }
 
     if (!inline) {
-      String name = datatypeManager.getTypeNameForDefinition(definition).toString();
+      String name = datatypeManager.getTypeNameForDefinition(definition, state).toString();
       parentNode.set(name, definitionContextNode);
     }
   }

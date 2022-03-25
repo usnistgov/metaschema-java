@@ -29,15 +29,27 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
 
-public interface IAssemblyNodeItem extends IModelNodeItem {
+public interface IAssemblyNodeItem extends IModelNodeItem, IAssemblyPathSegment {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.ASSEMBLY;
   }
 
   @Override
-  IAssemblyPathSegment getPathSegment();
+  default IAssemblyPathSegment getPathSegment() {
+    return this;
+  }
 
   @Override
   IAssemblyDefinition getDefinition();
+
+  @Override
+  default IAssemblyNodeItem getContextNodeItem() {
+    return this;
+  }
+
+  @Override
+  default IAssemblyNodeItem getNodeItem() {
+    return this;
+  }
 }

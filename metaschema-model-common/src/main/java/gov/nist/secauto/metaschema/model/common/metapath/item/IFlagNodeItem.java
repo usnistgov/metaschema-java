@@ -35,10 +35,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-public interface IFlagNodeItem extends IAtomicValuedNodeItem {
+public interface IFlagNodeItem extends IAtomicValuedNodeItem, IFlagPathSegment {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.FLAG;
+  }
+
+  @Override
+  default IFlagNodeItem getContextNodeItem() {
+    return this;
+  }
+
+  @Override
+  default IFlagPathSegment getPathSegment() {
+    return this;
+  }
+
+  @Override
+  default IFlagNodeItem getNodeItem() {
+    return this;
   }
 
   @Override
@@ -47,9 +62,6 @@ public interface IFlagNodeItem extends IAtomicValuedNodeItem {
 
   @Override
   IModelNodeItem getParentNodeItem();
-
-  @Override
-  IFlagPathSegment getPathSegment();
 
   @Override
   IFlagDefinition getDefinition();

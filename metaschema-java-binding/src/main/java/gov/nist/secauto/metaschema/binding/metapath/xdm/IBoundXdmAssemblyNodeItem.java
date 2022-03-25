@@ -29,11 +29,11 @@ package gov.nist.secauto.metaschema.binding.metapath.xdm;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IBoundAssemblyDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface IBoundXdmAssemblyNodeItem extends IBoundXdmModelNodeItem, IXdmAssemblyNodeItem {
+public interface IBoundXdmAssemblyNodeItem extends IBoundXdmModelNodeItem, IAssemblyNodeItem {
 
   @Override
   default IBoundXdmAssemblyNodeItem getContextNodeItem() {

@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 
 import org.jetbrains.annotations.NotNull;
@@ -59,5 +60,21 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
   @Override
   public boolean isInline(@NotNull INamedDefinition definition) {
     return inlineStrategy.isInline(definition);
+  }
+
+  public String getTypeNameForDatatype(@NotNull IJavaTypeAdapter<?> datatype) {
+    return getDatatypeManager().getTypeNameForDatatype(datatype);
+  }
+
+  public String getTypeNameForDefinition(@NotNull INamedDefinition definition) {
+    return getDatatypeManager().getTypeNameForDefinition(definition, this);
+  }
+
+  protected String generateComment(@NotNull INamedDefinition definition, @NotNull String context) {
+    return String.format("%s %s: inline(%s:%s)",
+        context,
+        getTypeNameForDefinition(definition),
+        definition.isInline(),
+        isInline(definition));
   }
 }

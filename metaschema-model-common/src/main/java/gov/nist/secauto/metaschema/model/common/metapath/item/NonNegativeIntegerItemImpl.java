@@ -47,11 +47,6 @@ class NonNegativeIntegerItemImpl
   }
 
   @Override
-  public INonNegativeIntegerItem toAtomicItem() {
-    return this;
-  }
-
-  @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;

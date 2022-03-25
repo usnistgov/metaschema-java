@@ -111,10 +111,10 @@ public class JsonDatatypeManager
 
   @SuppressWarnings("null")
   @NotNull
-  protected String getJsonDefinitionRefForDefinition(@NotNull INamedDefinition definition) {
+  protected String getJsonDefinitionRefForDefinition(@NotNull INamedDefinition definition, @NotNull IGenerationState<?,?> state) {
     return new StringBuilder()
         .append("#/definitions/")
-        .append(getTypeNameForDefinition(definition))
+        .append(getTypeNameForDefinition(definition, state))
         .toString();
   }
 
@@ -123,12 +123,7 @@ public class JsonDatatypeManager
   protected String getJsonDefinitionRefForDatatype(@NotNull IJavaTypeAdapter<?> datatype) {
     return new StringBuilder()
         .append("#/definitions/")
-        .append(getTypeForDatatype(datatype))
+        .append(getTypeNameForDatatype(datatype))
         .toString();
-  }
-
-  @Override
-  protected boolean isNestInlineDefinitions() {
-    return false;
   }
 }

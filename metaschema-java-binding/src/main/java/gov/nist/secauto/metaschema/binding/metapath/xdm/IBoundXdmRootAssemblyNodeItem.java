@@ -26,14 +26,14 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmRootAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IRootAssemblyNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 import java.util.stream.Stream;
 
-public interface IBoundXdmRootAssemblyNodeItem extends IBoundXdmAssemblyNodeItem, IXdmRootAssemblyNodeItem {
+public interface IBoundXdmRootAssemblyNodeItem extends IBoundXdmAssemblyNodeItem, IRootAssemblyNodeItem {
   @Override
   @NotNull
   IBoundXdmDocumentNodeItem getDocumentNodeItem();

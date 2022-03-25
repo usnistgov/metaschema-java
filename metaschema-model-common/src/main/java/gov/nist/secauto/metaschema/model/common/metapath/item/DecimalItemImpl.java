@@ -46,11 +46,6 @@ class DecimalItemImpl
     return MetaschemaDataTypeProvider.DECIMAL;
   }
 
-  @Override
-  public IDecimalItem toAtomicItem() {
-    return this;
-  }
-
   @SuppressWarnings("null")
   @Override
   public String asString() {

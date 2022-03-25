@@ -34,12 +34,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaPathEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
-public interface INodeItem extends IPathItem, INodeContext {
+public interface INodeItem extends IPathItem, INodeContext, IPathSegment {
 
   /**
    * Get the type of node item this is.
@@ -72,6 +76,17 @@ public interface INodeItem extends IPathItem, INodeContext {
   @NotNull
   default String getMetapath() {
     return toPath(IPathFormatter.METAPATH_PATH_FORMATER);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default Stream<? extends INodeItem> getPathStream() {
+    Stream<INodeItem> retval = Stream.of(this);
+    INodeItem parent = getParentNodeItem();
+    if (parent != null) {
+      retval = Stream.concat(parent.getPathStream(), retval);
+    }
+    return retval;
   }
 
   /**
@@ -121,6 +136,12 @@ public interface INodeItem extends IPathItem, INodeContext {
    *         content node item
    */
   IModelNodeItem getParentContentNodeItem();
+
+  @Override
+  Map<@NotNull String, ? extends IFlagNodeItem> getFlags();
+
+  @Override
+  Map<@NotNull String, ? extends List<@NotNull ? extends IModelNodeItem>> getModelItems();
 
   @NotNull
   <CLASS> CLASS toBoundObject();

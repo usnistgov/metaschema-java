@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.xdm.IXdmModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -67,13 +67,13 @@ public abstract class AbstractXdmNodeItemVisitor<RESULT, CONTEXT> implements IBo
   }
 
   protected boolean shouldVisitNextChild(
-      @SuppressWarnings("unused") IXdmFlagNodeItem item,
+      @SuppressWarnings("unused") IFlagNodeItem item,
       @SuppressWarnings("unused") RESULT result, @SuppressWarnings("unused") CONTEXT context) {
     return true;
   }
 
   protected boolean shouldVisitNextChild(
-      @SuppressWarnings("unused") IXdmModelNodeItem item,
+      @SuppressWarnings("unused") IModelNodeItem item,
       @SuppressWarnings("unused") RESULT result, @SuppressWarnings("unused") CONTEXT context) {
     return true;
   }

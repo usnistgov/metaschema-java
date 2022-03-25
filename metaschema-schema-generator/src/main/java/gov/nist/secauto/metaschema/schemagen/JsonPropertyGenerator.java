@@ -205,8 +205,10 @@ public class JsonPropertyGenerator {
       @NotNull INamedInstance instance,
       @NotNull ObjectNode instanceNode,
       @NotNull GenerationState state) throws IOException {
+    state.addComment(instance.getDefinition(), "InstancePropertyDefinitionOrRef", instanceNode);
+
     if (!state.isInline(instance.getDefinition())) {
-      String definitionRef = state.getDatatypeManager().getJsonDefinitionRefForDefinition(instance.getDefinition());
+      String definitionRef = state.getDatatypeManager().getJsonDefinitionRefForDefinition(instance.getDefinition(), state);
       instanceNode.put("$ref", definitionRef);
     } else {
       JsonDefinitionGenerator.generateDefinition(instance.getDefinition(), instanceNode, state);

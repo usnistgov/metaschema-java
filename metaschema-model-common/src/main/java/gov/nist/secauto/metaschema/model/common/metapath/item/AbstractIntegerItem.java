@@ -44,12 +44,6 @@ public abstract class AbstractIntegerItem
     return !BigInteger.ZERO.equals(getValue());
   }
 
-  @SuppressWarnings("null")
-  @Override
-  public String asString() {
-    return getValue().toString();
-  }
-
   @Override
   public BigDecimal asDecimal() {
     return new BigDecimal(getValue(), MathContext.DECIMAL64);
