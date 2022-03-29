@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-public interface IBoundFieldValueInstance extends IBoundInstance {
+public interface IBoundFieldValueInstance extends IBoundNamedInstance {
 
   @NotNull
   IJavaTypeAdapter<?> getJavaTypeAdapter();

@@ -26,33 +26,59 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
+import gov.nist.secauto.metaschema.binding.model.IBoundAssemblyDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
-class IntermediateXdmAssemblyNodeItemImpl
-    extends AbstractBoundXdmAssemblyNodeItem<IBoundAssemblyInstance> {
+import java.util.stream.Stream;
 
-  private final @NotNull IBoundXdmAssemblyNodeItem parent;
+class IntermediateXdmAssemblyNodeItemImpl
+    extends AbstractBoundXdmAssemblyNodeItem {
+
+  @NotNull
+  private final IBoundAssemblyInstance instance;
+  @NotNull
+  private final IAssemblyNodeItem parent;
 
   public IntermediateXdmAssemblyNodeItemImpl(
       @NotNull IBoundAssemblyInstance instance,
       @NotNull Object value,
       int position,
-      @NotNull IBoundXdmAssemblyNodeItem parent) {
-    super(instance, value, position);
+      @NotNull IAssemblyNodeItem parent) {
+    super(value, position);
+    this.instance = instance;
     this.parent = parent;
   }
 
   @Override
   @NotNull
-  public IBoundXdmNodeItem getParentNodeItem() {
+  public IBoundAssemblyInstance getInstance() {
+    return instance;
+  }
+
+  @Override
+  public IBoundAssemblyDefinition getDefinition() {
+    return getInstance().getDefinition();
+  }
+
+  @Override
+  @NotNull
+  public IAssemblyNodeItem getParentNodeItem() {
     return parent;
   }
 
   @Override
   @NotNull
-  public IBoundXdmAssemblyNodeItem getParentContentNodeItem() {
+  public IAssemblyNodeItem getParentContentNodeItem() {
     return parent;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Stream<? extends INodeItem> getPathStream() {
+    return Stream.concat(getParentNodeItem().getPathStream(), Stream.of(this));
   }
 }

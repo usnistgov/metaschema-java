@@ -23,30 +23,38 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.metapath.format.IRootAssemblyPathSegment;
+import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
-public interface IRootAssemblyNodeItem extends IAssemblyNodeItem, IRootAssemblyPathSegment {
+public interface IRootAssemblyNodeItem extends IAssemblyNodeItem {
+
   @NotNull
   IDocumentNodeItem getDocumentNodeItem();
+
+  @Override
+  IRootAssemblyDefinition getDefinition();
 
   @Override
   default IRootAssemblyNodeItem getContextNodeItem() {
     return this;
   }
 
-  @NotNull
   @Override
-  IDocumentNodeItem getDocumentPathSegment();
+  default String format(@NotNull IPathFormatter formatter) {
+    return formatter.formatRootAssembly(this);
+  }
 
   @SuppressWarnings("null")
   @Override
-  default @NotNull Stream<? extends INodeItem> getPathStream() {
+  default @NotNull Stream<@NotNull ? extends INodeItem> getPathStream() {
     return Stream.of(getDocumentNodeItem(), this);
   }
+
 }

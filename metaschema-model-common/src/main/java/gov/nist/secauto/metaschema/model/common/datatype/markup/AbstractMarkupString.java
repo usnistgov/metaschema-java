@@ -114,7 +114,8 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   }
 
   @NotNull
-  protected String toMarkdown(Formatter formatter) {
+  @Override
+  public String toMarkdown(Formatter formatter) {
     return formatter.render(getDocument());
   }
 

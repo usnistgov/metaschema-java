@@ -27,7 +27,9 @@
 package gov.nist.secauto.metaschema.codegen.binding.config;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+
+import org.jetbrains.annotations.NotNull;
 
 public interface IBindingConfiguration {
 
@@ -38,7 +40,8 @@ public interface IBindingConfiguration {
    *          the Metaschema to generate a package name for
    * @return a Java package name
    */
-  String getPackageNameForMetaschema(IMetaschema metaschema);
+  @NotNull 
+  String getPackageNameForMetaschema(@NotNull IMetaschema metaschema);
 
   /**
    * Generates a Java class name for the provided field or assembly definition.
@@ -47,7 +50,11 @@ public interface IBindingConfiguration {
    *          the definition to generate the Java class name for
    * @return a Java class name
    */
-  String getClassName(INamedModelDefinition definition);
+  @NotNull 
+  String getClassName(@NotNull INamedModelDefinition definition);
+
+  @NotNull 
+  String getClassName(@NotNull IMetaschema metaschema);
 
   /**
    * Get the Java class name of the base class to use for the class associated with the provided
@@ -57,5 +64,5 @@ public interface IBindingConfiguration {
    *          a definition that may be built as a class
    * @return the name of the base class or {@code null} if no base class is to be used
    */
-  String getQualifiedBaseClassName(INamedModelDefinition definition);
+  String getQualifiedBaseClassName(@NotNull INamedModelDefinition definition);
 }

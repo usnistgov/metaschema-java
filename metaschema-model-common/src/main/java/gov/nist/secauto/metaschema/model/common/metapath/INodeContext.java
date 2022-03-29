@@ -32,9 +32,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 public interface INodeContext {
@@ -48,12 +47,13 @@ public interface INodeContext {
   INodeItem getContextNodeItem();
 
   /**
-   * Get the Metaschema flags associated this node.
+   * Get the Metaschema flags associated this node. The resulting collection is expected to be
+   * ordered, with the results in document order.
    * 
-   * @return a mapping of flag effective name to the flag
+   * @return a collection of flags
    */
   @NotNull
-  Map<@NotNull String, ? extends IFlagNodeItem> getFlags();
+  Collection<@NotNull ? extends IFlagNodeItem> getFlags();
 
   /**
    * Lookup a Metaschema flag on this node by it's effective name.
@@ -62,9 +62,7 @@ public interface INodeContext {
    *          the effective name of the flag
    * @return the flag with the matching effective name or {@code null} if no match was found
    */
-  default IFlagNodeItem getFlagByName(@NotNull String name) {
-    return getFlags().get(name);
-  }
+  IFlagNodeItem getFlagByName(@NotNull String name);
 
   /**
    * Get the Metaschema flags associated with this node as a stream.
@@ -74,23 +72,21 @@ public interface INodeContext {
   @SuppressWarnings("null")
   @NotNull
   default Stream<? extends IFlagNodeItem> flags() {
-    return getFlags().values().stream();
+    return getFlags().stream();
   }
 
   /**
-   * Get the Metaschema model items (i.e., fields, assemblies) associated this node.
+   * Get the Metaschema model items (i.e., fields, assemblies) associated this node. A given model
+   * instance can be multi-valued, so the value of each instance will be a list. The resulting
+   * collection is expected to be ordered, with the results in document order.
    * 
-   * @return a mapping of flag effective name to the list of matching model items
+   * @return a collection of list(s), with each list containing the items for a given model instance
    */
   @NotNull
-  Map<@NotNull String, ? extends List<@NotNull ? extends IModelNodeItem>> getModelItems();
+  Collection<@NotNull ? extends List<@NotNull ? extends IModelNodeItem>> getModelItems();
 
-  @SuppressWarnings("null")
   @NotNull
-  default List<@NotNull ? extends IModelNodeItem> getModelItemsByName(String name) {
-    List<@NotNull ? extends IModelNodeItem> items = getModelItems().get(name);
-    return items == null ? Collections.emptyList() : items;
-  }
+  List<@NotNull ? extends IModelNodeItem> getModelItemsByName(String name);
 
   /**
    * Get the Metaschema model items (i.e., fields, assemblies) associated this node as a stream.
@@ -100,7 +96,7 @@ public interface INodeContext {
   @SuppressWarnings("null")
   @NotNull
   default Stream<? extends IModelNodeItem> modelItems() {
-    return getModelItems().values().stream().flatMap(list -> list.stream());
+    return getModelItems().stream().flatMap(list -> list.stream());
   }
 
   //

@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundInstance;
 
 public interface IFieldClassBinding extends IClassBinding, IBoundFieldDefinition {
 
@@ -36,7 +35,7 @@ public interface IFieldClassBinding extends IClassBinding, IBoundFieldDefinition
   IBoundFlagInstance getJsonValueKeyFlagInstance();
 
   /**
-   * Get the {@link IBoundInstance} that represents the Metaschema BoundField's value.
+   * Get the instance for the fiel'd value.
    * 
    * @return the value property
    */

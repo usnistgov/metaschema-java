@@ -27,10 +27,10 @@
 package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -80,7 +80,8 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
   @NotNull
   private final Map<@NotNull IJavaTypeAdapter<?>, String> datatypeToTypeMap = new HashMap<>();
   @NotNull
-  private final Map<@NotNull INamedDefinition, String> definitionToNameMap = new HashMap<>();
+  private final Map<gov.nist.secauto.metaschema.model.common.INamedDefinition, String> definitionToNameMap
+      = new HashMap<>();
 
   @Override
   public Set<String> getUsedTypes() {
@@ -102,12 +103,12 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
   }
 
   @Override
-  public String getTypeNameForDefinition(@NotNull INamedDefinition definition, @NotNull IGenerationState<?,?> state) {
+  public String getTypeNameForDefinition(@NotNull INamedDefinition definition, @NotNull IGenerationState<?, ?> state) {
     String retval = definitionToNameMap.get(definition);
     if (retval == null) {
       StringBuilder builder = new StringBuilder()
           .append(toCamelCase(definition.getContainingMetaschema().getShortName()));
-  
+
       if (state.isInline(definition)) {
         builder.append(toCamelCase(definition.getEffectiveName()));
       } else {
@@ -117,7 +118,7 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
       builder
           .append(toCamelCase(definition.getModelType().name()))
           .append("Type");
-  
+
       retval = builder.toString();
       definitionToNameMap.put(definition, retval);
     }
@@ -135,7 +136,7 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
    * @return the unique type name
    */
   private CharSequence getTypeContext(@NotNull INamedDefinition definition,
-      @NotNull IMetaschema childMetaschema, @NotNull IGenerationState<?,?> state) {
+      @NotNull IMetaschema childMetaschema, @NotNull IGenerationState<?, ?> state) {
     StringBuilder builder = new StringBuilder();
     if (definition.isInline()) {
       INamedInstance inlineInstance = definition.getInlineInstance();

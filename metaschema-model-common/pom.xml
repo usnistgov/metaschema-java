@@ -36,6 +36,10 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.google.auto.service</groupId>
+			<artifactId>auto-service</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4-runtime</artifactId>
 		</dependency>
@@ -186,6 +190,16 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>com.google.auto.service</groupId>
+						<artifactId>auto-service</artifactId>
+						<version>${dependency.auto-service.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<!-- <plugin> <groupId>com.khubla.antlr</groupId> <artifactId>antlr4test-maven-plugin</artifactId> 
 				<configuration> <verbose>false</verbose> <showTree>false</showTree> <entryPoint>auxilary</entryPoint> 

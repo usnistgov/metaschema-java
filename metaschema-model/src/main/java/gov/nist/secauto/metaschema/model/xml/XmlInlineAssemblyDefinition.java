@@ -26,9 +26,20 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.model.IXmlMetaschema;
+import gov.nist.secauto.metaschema.model.common.AbstractAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IInlineNamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
@@ -40,22 +51,13 @@ import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.definitions.IInlineDefinition;
-import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.instances.AbstractAssemblyInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlAssemblyInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlChoiceInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlFieldInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlNamedModelInstance;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -79,7 +81,7 @@ public class XmlInlineAssemblyDefinition
    */
   public XmlInlineAssemblyDefinition(
       @NotNull InlineAssemblyDefinitionType xmlAssembly,
-      @NotNull IXmlAssemblyDefinition parent) {
+      @NotNull IAssemblyDefinition parent) {
     super(parent);
     this.xmlAssembly = xmlAssembly;
     this.assemblyDefinition = new InternalAssemblyDefinition();
@@ -99,6 +101,7 @@ public class XmlInlineAssemblyDefinition
     return assemblyDefinition;
   }
 
+  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlAssembly().getName();
@@ -156,6 +159,7 @@ public class XmlInlineAssemblyDefinition
     return retval;
   }
 
+  @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
     return getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : null;
@@ -165,7 +169,7 @@ public class XmlInlineAssemblyDefinition
    * The corresponding definition for the local flag instance.
    */
   public class InternalAssemblyDefinition
-      implements IXmlAssemblyDefinition, IInlineDefinition<XmlInlineAssemblyDefinition> {
+      implements IAssemblyDefinition, IInlineNamedDefinition<XmlInlineAssemblyDefinition> {
     private XmlFlagContainerSupport flagContainer;
     private XmlModelContainerSupport modelContainer;
     private IAssemblyConstraintSupport constraints;
@@ -176,7 +180,7 @@ public class XmlInlineAssemblyDefinition
     }
 
     @Override
-    public IXmlAssemblyInstance getInlineInstance() {
+    public XmlInlineAssemblyDefinition getInlineInstance() {
       return XmlInlineAssemblyDefinition.this;
     }
 
@@ -185,6 +189,7 @@ public class XmlInlineAssemblyDefinition
       return getXmlAssembly().isSetFormalName() ? getXmlAssembly().getFormalName() : null;
     }
 
+    @SuppressWarnings("null")
     @Override
     public MarkupLine getDescription() {
       return getXmlAssembly().isSetDescription()
@@ -224,127 +229,172 @@ public class XmlInlineAssemblyDefinition
     }
 
     @Override
-    public IXmlFlagInstance getJsonKeyFlagInstance() {
-      IXmlFlagInstance retval = null;
+    public IFlagInstance getJsonKeyFlagInstance() {
+      IFlagInstance retval = null;
       if (hasJsonKey()) {
         retval = getFlagInstanceByName(getXmlAssembly().getJsonKey().getFlagRef());
       }
       return retval;
     }
 
-    @Override
-    public XmlInlineAssemblyDefinition getDefiningInstance() {
-      return XmlInlineAssemblyDefinition.this;
-    }
-
-    protected synchronized void initFlagContainer() {
-      if (flagContainer == null) {
-        flagContainer = new XmlFlagContainerSupport(getXmlAssembly(), this);
+    /**
+     * Lazy initialize the flags associated with this definition.
+     * 
+     * @return the flag container instance
+     */
+    @SuppressWarnings("null")
+    protected XmlFlagContainerSupport initFlagContainer() {
+      synchronized (this) {
+        if (flagContainer == null) {
+          flagContainer = new XmlFlagContainerSupport(getXmlAssembly(), this);
+        }
+        return flagContainer;
       }
     }
 
-    @Override
-    public Map<@NotNull String, ? extends IXmlFlagInstance> getFlagInstanceMap() {
-      initFlagContainer();
-      return flagContainer.getFlagInstanceMap();
+    @NotNull
+    private Map<@NotNull String, ? extends IFlagInstance> getFlagInstanceMap() {
+      return initFlagContainer().getFlagInstanceMap();
     }
 
-    protected synchronized void initModelContainer() {
-      if (modelContainer == null) {
-        modelContainer = new XmlModelContainerSupport(getXmlAssembly(), this);
+    @Override
+    public IFlagInstance getFlagInstanceByName(String name) {
+      return getFlagInstanceMap().get(name);
+    }
+
+    @SuppressWarnings("null")
+    @Override
+    public Collection<@NotNull ? extends IFlagInstance> getFlagInstances() {
+      return getFlagInstanceMap().values();
+    }
+
+    /**
+     * Lazy initialize the model associated with this definition.
+     * 
+     * @return the flag container instance
+     */
+    @SuppressWarnings("null")
+    protected XmlModelContainerSupport initModelContainer() {
+      synchronized (this) {
+        if (modelContainer == null) {
+          modelContainer = new XmlModelContainerSupport(getXmlAssembly(), this);
+        }
+        return modelContainer;
       }
     }
 
-    @Override
-    public Map<@NotNull String, ? extends IXmlNamedModelInstance> getNamedModelInstanceMap() {
-      initModelContainer();
-      return modelContainer.getNamedModelInstanceMap();
+    private Map<@NotNull String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
+      return initModelContainer().getNamedModelInstanceMap();
     }
 
     @Override
-    public Map<@NotNull String, ? extends IXmlFieldInstance> getFieldInstanceMap() {
-      initModelContainer();
-      return modelContainer.getFieldInstanceMap();
+    public @Nullable INamedModelInstance getModelInstanceByName(String name) {
+      return getNamedModelInstanceMap().get(name);
+    }
+
+    @SuppressWarnings("null")
+    @Override
+    public @NotNull Collection<@NotNull ? extends INamedModelInstance> getNamedModelInstances() {
+      return getNamedModelInstanceMap().values();
+    }
+
+    private Map<@NotNull String, ? extends IFieldInstance> getFieldInstanceMap() {
+      return initModelContainer().getFieldInstanceMap();
     }
 
     @Override
-    public Map<@NotNull String, ? extends IXmlAssemblyInstance> getAssemblyInstanceMap() {
-      initModelContainer();
-      return modelContainer.getAssemblyInstanceMap();
+    public IFieldInstance getFieldInstanceByName(String name) {
+      return getFieldInstanceMap().get(name);
+    }
+
+    @SuppressWarnings("null")
+    @Override
+    public Collection<@NotNull ? extends IFieldInstance> getFieldInstances() {
+      return getFieldInstanceMap().values();
+    }
+
+    private Map<@NotNull String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
+      return initModelContainer().getAssemblyInstanceMap();
     }
 
     @Override
-    public List<@NotNull ? extends IXmlChoiceInstance> getChoiceInstances() {
-      initModelContainer();
-      return modelContainer.getChoiceInstances();
+    public IAssemblyInstance getAssemblyInstanceByName(String name) {
+      return getAssemblyInstanceMap().get(name);
+    }
+
+    @SuppressWarnings("null")
+    @Override
+    public Collection<@NotNull ? extends IAssemblyInstance> getAssemblyInstances() {
+      return getAssemblyInstanceMap().values();
+    }
+
+    @Override
+    public List<@NotNull ? extends IChoiceInstance> getChoiceInstances() {
+      return initModelContainer().getChoiceInstances();
     }
 
     @Override
     public List<@NotNull ? extends IModelInstance> getModelInstances() {
-      initModelContainer();
-      return modelContainer.getModelInstances();
+      return initModelContainer().getModelInstances();
     }
 
     /**
      * Used to generate the instances for the constraints in a lazy fashion when the constraints are
      * first accessed.
+     * 
+     * @return the constraints instance
      */
-    protected synchronized void checkModelConstraints() {
-      if (constraints == null) {
-        if (getXmlAssembly().isSetConstraint()) {
-          constraints = new AssemblyConstraintSupport(getXmlAssembly().getConstraint());
-        } else {
-          constraints = IAssemblyConstraintSupport.NULL_CONSTRAINT;
+    protected IAssemblyConstraintSupport initModelConstraints() {
+      synchronized (this) {
+        if (constraints == null) {
+          if (getXmlAssembly().isSetConstraint()) {
+            constraints = new AssemblyConstraintSupport(getXmlAssembly().getConstraint());
+          } else {
+            constraints = IAssemblyConstraintSupport.NULL_CONSTRAINT;
+          }
         }
+        return constraints;
       }
     }
 
     @Override
     public List<? extends IConstraint> getConstraints() {
-      checkModelConstraints();
-      return constraints.getConstraints();
+      return initModelConstraints().getConstraints();
     }
 
     @Override
     public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
-      checkModelConstraints();
-      return constraints.getAllowedValuesContraints();
+      return initModelConstraints().getAllowedValuesContraints();
     }
 
     @Override
     public List<? extends IMatchesConstraint> getMatchesConstraints() {
-      checkModelConstraints();
-      return constraints.getMatchesConstraints();
+      return initModelConstraints().getMatchesConstraints();
     }
 
     @Override
     public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-      checkModelConstraints();
-      return constraints.getIndexHasKeyConstraints();
+      return initModelConstraints().getIndexHasKeyConstraints();
     }
 
     @Override
     public List<? extends IExpectConstraint> getExpectConstraints() {
-      checkModelConstraints();
-      return constraints.getExpectConstraints();
+      return initModelConstraints().getExpectConstraints();
     }
 
     @Override
     public List<? extends IIndexConstraint> getIndexConstraints() {
-      checkModelConstraints();
-      return constraints.getIndexContraints();
+      return initModelConstraints().getIndexContraints();
     }
 
     @Override
     public List<? extends IUniqueConstraint> getUniqueConstraints() {
-      checkModelConstraints();
-      return constraints.getUniqueConstraints();
+      return initModelConstraints().getUniqueConstraints();
     }
 
     @Override
     public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
-      checkModelConstraints();
-      return constraints.getHasCardinalityConstraints();
+      return initModelConstraints().getHasCardinalityConstraints();
     }
 
     @Override
@@ -353,8 +403,8 @@ public class XmlInlineAssemblyDefinition
     }
 
     @Override
-    public @NotNull IXmlMetaschema getContainingMetaschema() {
-      return getContainingDefinition().getContainingMetaschema();
+    public IMetaschema getContainingMetaschema() {
+      return XmlInlineAssemblyDefinition.super.getContainingDefinition().getContainingMetaschema();
     }
   }
 }

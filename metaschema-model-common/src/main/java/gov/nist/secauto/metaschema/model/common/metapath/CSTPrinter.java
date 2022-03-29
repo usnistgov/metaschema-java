@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
@@ -35,7 +36,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintStream;
 import java.util.List;
-import java.util.Objects;
 
 public class CSTPrinter {
   @NotNull
@@ -49,7 +49,7 @@ public class CSTPrinter {
    *          the stream to print to
    */
   public CSTPrinter(@NotNull PrintStream outputStream) {
-    this.outputStream = Objects.requireNonNull(outputStream, "outputStream");
+    this.outputStream = ObjectUtils.requireNonNull(outputStream, "outputStream");
   }
 
   /**

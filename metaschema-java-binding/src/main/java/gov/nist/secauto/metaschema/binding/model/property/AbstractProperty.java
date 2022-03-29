@@ -27,97 +27,30 @@
 package gov.nist.secauto.metaschema.binding.model.property;
 
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
-public abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> implements IBoundInstance {
-  @NotNull
-  private final Field field;
+public abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> implements IBoundNamedInstance {
   @NotNull
   private final CLASS_BINDING parentClassBinding;
 
   /**
    * Construct a new bound instance based on a Java property.
    * 
-   * @param field
-   *          the Java field to bind to
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */
-  public AbstractProperty(@NotNull Field field, @NotNull CLASS_BINDING parentClassBinding) {
+  public AbstractProperty(@NotNull CLASS_BINDING parentClassBinding) {
     this.parentClassBinding = parentClassBinding;
-    this.field = field;
   }
 
   @Override
-  public Field getField() {
-    return field;
-  }
-
-  @Override
-  public Type getType() {
-    return ObjectUtils.notNull(getField().getGenericType());
+  public CLASS_BINDING getContainingDefinition() {
+    return getParentClassBinding();
   }
 
   @Override
   public CLASS_BINDING getParentClassBinding() {
     return parentClassBinding;
-  }
-
-  @Override
-  public String getJavaPropertyName() {
-    return ObjectUtils.notNull(field.getName());
-  }
-
-  @Override
-  public Class<?> getRawType() {
-    Type type = getType();
-    return ObjectUtils.notNull(
-        (Class<?>) (type instanceof ParameterizedType ? ((ParameterizedType) type).getRawType() : type));
-  }
-
-  @Override
-  public Class<?> getItemType() {
-    return (Class<?>) getType();
-  }
-
-  @Override
-  public void setValue(Object obj, Object value) {
-    boolean accessable = field.canAccess(obj);
-    field.setAccessible(true); // NOPMD - intentional
-    try {
-      field.set(obj, value);
-    } catch (IllegalArgumentException | IllegalAccessException ex) {
-      throw new IllegalArgumentException(
-          String.format("Unable to set the value of field '%s' in class '%s'.", field.getName(),
-              field.getDeclaringClass().getName()),
-          ex);
-    } finally {
-      field.setAccessible(accessable); // NOPMD - intentional
-    }
-  }
-
-  @Override
-  public Object getValue(Object obj) {
-    boolean accessable = field.canAccess(obj);
-    field.setAccessible(true); // NOPMD - intentional
-    Object retval;
-    try {
-      Object result = field.get(obj);
-      retval = result;
-    } catch (IllegalArgumentException | IllegalAccessException ex) {
-      throw new IllegalArgumentException(
-          String.format("Unable to get the value of field '%s' in class '%s'.", field.getName(),
-              field.getDeclaringClass().getName()),
-          ex);
-    } finally {
-      field.setAccessible(accessable); // NOPMD - intentional
-    }
-    return retval;
   }
 }

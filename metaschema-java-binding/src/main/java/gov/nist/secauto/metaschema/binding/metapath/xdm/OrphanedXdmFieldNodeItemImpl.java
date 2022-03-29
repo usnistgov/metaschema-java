@@ -26,38 +26,63 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
+import gov.nist.secauto.metaschema.binding.model.IBoundFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
+import java.util.stream.Stream;
 
-// TODO: remove this?
 class OrphanedXdmFieldNodeItemImpl
-    extends AbstractBoundXdmFieldNodeItem<IBoundFieldInstance> {
+    extends AbstractBoundXdmFieldNodeItem {
+  @NotNull
+  private final IBoundFieldDefinition definition;
   private final URI baseUri;
 
   public OrphanedXdmFieldNodeItemImpl(
-      @NotNull IBoundFieldInstance instance,
+      @NotNull IBoundFieldDefinition definition,
       @NotNull Object value,
       int position,
       URI baseUri) {
-    super(instance, value, position);
+    super(value, position);
+    this.definition = definition;
     this.baseUri = baseUri;
   }
 
   @Override
-  public IBoundXdmAssemblyNodeItem getParentNodeItem() {
+  public IFieldInstance getInstance() {
+    // there is no instance
     return null;
   }
 
   @Override
-  public IBoundXdmAssemblyNodeItem getParentContentNodeItem() {
+  public IBoundFieldDefinition getDefinition() {
+    return definition;
+  }
+
+  @Override
+  public IAssemblyNodeItem getParentNodeItem() {
+    // there is no parent
+    return null;
+  }
+
+  @Override
+  public IAssemblyNodeItem getParentContentNodeItem() {
+    // there is no parent
     return null;
   }
 
   @Override
   public URI getBaseUri() {
     return baseUri;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Stream<@NotNull ? extends INodeItem> getPathStream() {
+    return Stream.of(this);
   }
 }

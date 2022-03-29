@@ -26,16 +26,18 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-public interface IFlagNodeItem extends IAtomicValuedNodeItem, IFlagPathSegment {
+public interface IFlagNodeItem extends IAtomicValuedNodeItem {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.FLAG;
@@ -43,11 +45,6 @@ public interface IFlagNodeItem extends IAtomicValuedNodeItem, IFlagPathSegment {
 
   @Override
   default IFlagNodeItem getContextNodeItem() {
-    return this;
-  }
-
-  @Override
-  default IFlagPathSegment getPathSegment() {
     return this;
   }
 
@@ -66,11 +63,25 @@ public interface IFlagNodeItem extends IAtomicValuedNodeItem, IFlagPathSegment {
   @Override
   IFlagDefinition getDefinition();
 
+  @Override
+  IFlagInstance getInstance();
+
+  /**
+   * Flags do not have flag items. This call should return an empty collection.
+   */
+  @SuppressWarnings("null")
+  @Override
+  default Collection<@NotNull ? extends IFlagNodeItem> getFlags() {
+    // a flag does not have flags
+    return Collections.emptyList();
+  }
+
   /**
    * Flags do not have flag items. This call should return {@code null}.
    */
   @Override
   default IFlagNodeItem getFlagByName(@NotNull String name) {
+    // a flag does not have flags
     return null;
   }
 
@@ -80,7 +91,18 @@ public interface IFlagNodeItem extends IAtomicValuedNodeItem, IFlagPathSegment {
   @SuppressWarnings("null")
   @Override
   default @NotNull Stream<? extends IFlagNodeItem> flags() {
+    // a flag does not have flags
     return Stream.empty();
+  }
+
+  /**
+   * Flags do not have model items. This call should return an empty collection.
+   */
+  @SuppressWarnings("null")
+  @Override
+  default @NotNull Collection<@NotNull ? extends List<@NotNull ? extends IModelNodeItem>> getModelItems() {
+    // a flag does not have model items
+    return Collections.emptyList();
   }
 
   /**
@@ -89,6 +111,7 @@ public interface IFlagNodeItem extends IAtomicValuedNodeItem, IFlagPathSegment {
   @SuppressWarnings("null")
   @Override
   default @NotNull List<@NotNull ? extends IModelNodeItem> getModelItemsByName(String name) {
+    // a flag does not have model items
     return Collections.emptyList();
   }
 
@@ -99,6 +122,17 @@ public interface IFlagNodeItem extends IAtomicValuedNodeItem, IFlagPathSegment {
   @NotNull
   @Override
   default Stream<? extends IModelNodeItem> modelItems() {
+    // a flag does not have model items
     return Stream.empty();
+  }
+
+  @Override
+  default @NotNull String format(@NotNull IPathFormatter formatter) {
+    return formatter.formatFlag(this);
+  }
+
+  @Override
+  default <RESULT, CONTEXT> RESULT accept(@NotNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitFlag(this, context);
   }
 }

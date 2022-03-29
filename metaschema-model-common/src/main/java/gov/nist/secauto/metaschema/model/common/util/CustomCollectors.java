@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -92,6 +93,16 @@ public final class CustomCollectors {
   @FunctionalInterface
   public interface DuplicateHandler<K, V> {
     @NotNull
-    V handle(K key, V value1, V value2);
+    V handle(K key, @NotNull V value1, V value2);
+  }
+
+  @NotNull
+  public static <T> BinaryOperator<T> useFirstMapper() {
+    return (value1, value2) -> value1;
+  }
+
+  @NotNull
+  public static <T> BinaryOperator<T> useLastMapper() {
+    return (value1, value2) -> value2;
   }
 }

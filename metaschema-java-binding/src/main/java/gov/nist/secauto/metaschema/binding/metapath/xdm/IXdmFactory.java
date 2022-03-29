@@ -26,13 +26,19 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IBoundFieldDefinition;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
-import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
+import gov.nist.secauto.metaschema.binding.model.RootAssemblyDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -42,42 +48,30 @@ public interface IXdmFactory {
   IXdmFactory INSTANCE = new DefaultXdmFactory();
 
   @NotNull
-  IBoundXdmAssemblyNodeItem newAssemblyNodeItem(@NotNull IBoundAssemblyInstance instance, @NotNull Object value,
-      int position,
-      @NotNull IBoundXdmAssemblyNodeItem parentNodeItem);
-
-  @NotNull
-  IBoundXdmAssemblyNodeItem newAssemblyNodeItem(@NotNull IBoundAssemblyInstance instance, @NotNull Object value,
-      int position,
-      @NotNull URI baseUri);
-
-  @NotNull
-  IBoundXdmFieldNodeItem newFieldNodeItem(@NotNull IBoundFieldInstance instance, @NotNull Object value, int position,
-      @NotNull IBoundXdmAssemblyNodeItem parentNodeItem);
-
-  @NotNull
-  IBoundXdmFlagNodeItem newFlagNodeItem(@NotNull IBoundFlagInstance instance, @NotNull Object value,
-      @NotNull IBoundXdmModelNodeItem parentNodeItem);
-
-  @NotNull
-  IBoundXdmDocumentNodeItem newDocumentNodeItem(@NotNull IAssemblyClassBinding definition, @NotNull Object value,
+  IDocumentNodeItem newDocumentNodeItem(@NotNull RootAssemblyDefinition definition, @NotNull Object value,
       @NotNull URI documentUri);
 
   @NotNull
-  IBoundXdmDocumentNodeItem newDocumentNodeItem(@NotNull Object value, @NotNull IBindingContext bindingContext,
-      @NotNull URI documentUri);
+  IAssemblyNodeItem newAssemblyNodeItem(@NotNull IBoundAssemblyInstance instance, @NotNull Object value,
+      int position, @NotNull IAssemblyNodeItem parentNodeItem);
 
   @NotNull
-  IBoundXdmAssemblyNodeItem newRelativeAssemblyNodeItem(@NotNull IAssemblyClassBinding definition,
-      @NotNull Object value,
-      @NotNull URI baseUri);
-  //
-  // @NotNull
-  // IBoundXdmFieldNodeItem newRelativeFieldNodeItem(@NotNull IFieldClassBinding definition, @NotNull
-  // Object value,
-  // @NotNull URI baseUri);
+  IAssemblyNodeItem newAssemblyNodeItem(@NotNull IAssemblyClassBinding definition, @NotNull Object value,
+      URI baseUri);
 
   @NotNull
-  IBoundXdmNodeItem newNodeItem(@NotNull IClassBinding definition, @NotNull Object boundObject, @NotNull URI baseUri,
+  IFieldNodeItem newFieldNodeItem(@NotNull IBoundFieldInstance instance, @NotNull Object value, int position,
+      @NotNull IAssemblyNodeItem parentNodeItem);
+
+  @NotNull
+  IFieldNodeItem newFieldNodeItem(@NotNull IBoundFieldDefinition definition, @NotNull Object value,
+      URI baseUri);
+
+  @NotNull
+  IFlagNodeItem newFlagNodeItem(@NotNull IBoundFlagInstance instance, @NotNull Object value,
+      @NotNull IModelNodeItem parentNodeItem);
+
+  @NotNull
+  INodeItem newNodeItem(@NotNull IClassBinding definition, @NotNull Object boundObject, @NotNull URI baseUri,
       boolean rootNode);
 }

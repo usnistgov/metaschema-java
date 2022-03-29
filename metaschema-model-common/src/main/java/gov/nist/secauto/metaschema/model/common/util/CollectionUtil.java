@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.util;
 
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -125,6 +127,13 @@ public final class CollectionUtil {
       throw new IllegalStateException(message);
     }
     return collection;
+  }
+
+
+  @SuppressWarnings("null")
+  public static @NotNull Collection<@NotNull ? extends IMetaschema>
+      unmodifiableCollection(Collection<@NotNull ? extends IMetaschema> values) {
+    return Collections.unmodifiableCollection(values);
   }
 
   @NotNull

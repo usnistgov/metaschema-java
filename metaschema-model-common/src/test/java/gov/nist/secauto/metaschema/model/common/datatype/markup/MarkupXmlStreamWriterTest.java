@@ -65,7 +65,7 @@ class MarkupXmlStreamWriterTest {
     visitor.collect(ms.getDocument());
     // System.out.println(visitor.getAst());
 
-    MarkupXmlStreamWriter writer = new MarkupXmlStreamWriter(namespace, ms instanceof MarkupMultiline);
+    MarkupXmlStreamWriter writer = new MarkupXmlStreamWriter(namespace, true);
 
     XMLOutputFactory2 factory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
     factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);

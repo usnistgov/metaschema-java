@@ -23,30 +23,32 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.test;
 
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
+import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.UuidAdapter;
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@MetaschemaAssembly(rootName = "root")
+@MetaschemaAssembly(rootName = "root", metaschema = TestMetaschema.class)
 public class RootBoundAssembly {
   @BoundFlag(useName = "uuid", defaultValue = "374dd648-b247-483c-afd8-a66ba8876070", typeAdapter = UuidAdapter.class)
-  private UUID uuid;
+  private UUID uuid; // NOPMD - intentional
 
   /**
    * An optional singleton simple field.
    */
   @BoundField(useName = "simple-singleton-field",
       typeAdapter = StringAdapter.class)
-  private String simpleSingletonField;
+  private String simpleSingletonField; // NOPMD - intentional
 
   /**
    * A required keyed assembly.
@@ -56,15 +58,15 @@ public class RootBoundAssembly {
       maxOccurs = -1,
       groupName = "keyed-field-items",
       inJson = JsonGroupAsBehavior.KEYED)
-  private Map<String, FlaggedBoundField> keyedField;  
+  private Map<String, FlaggedBoundField> keyedField; // NOPMD - intentional
 
   /**
    * A required singleton or array assembly.
    */
-  @BoundField(useName = "singleton-or-array-assembly",
+  @BoundAssembly(useName = "singleton-or-array-assembly",
       minOccurs = 1,
       maxOccurs = -1,
       groupName = "singleton-or-array-assembly-items",
       inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
-  private List<OnlyModelBoundAssembly> singletonOrArrayAssembly;
+  private List<OnlyModelBoundAssembly> singletonOrArrayAssembly; // NOPMD - intentional
 }

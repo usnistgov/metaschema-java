@@ -23,8 +23,8 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 /**
  * Support for loading Metaschema information from an XML-based Metaschema model.
  */
-
 package gov.nist.secauto.metaschema.model;

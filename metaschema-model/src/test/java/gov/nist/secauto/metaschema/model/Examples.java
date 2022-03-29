@@ -26,34 +26,39 @@
 
 package gov.nist.secauto.metaschema.model;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URI;
 
-@SuppressWarnings("PMD")
 class Examples {
 
   @Test
   void testLoadMetaschema() throws MetaschemaException, IOException {
     MetaschemaLoader loader = new MetaschemaLoader();
-    IMetaschema metaschema = loader.loadMetaschema(URI.create(
+
+    URI metaschemaUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
-    System.out.println(metaschema.getShortName());
+    IMetaschema metaschema = loader.loadMetaschema(metaschemaUri);
+    assertNotNull(metaschema, "metaschema not found");
   }
 
   @Test
   void testExamineAssemblyDefinitionByName() throws MetaschemaException, IOException {
     MetaschemaLoader loader = new MetaschemaLoader();
-    IMetaschema metaschema = loader.loadMetaschema(URI.create(
+    URI metaschemaUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
+    IMetaschema metaschema = loader.loadMetaschema(metaschemaUri);
 
     IAssemblyDefinition definition = metaschema.getScopedAssemblyDefinitionByName("property");
-    System.out.println(definition.getName());
+    assertNotNull(definition, "definition not found");
   }
 
 }

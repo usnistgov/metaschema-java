@@ -14,11 +14,11 @@
 		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.YesNoType</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="meta:JsonGroupAsBehaviorType"
-		javaname="gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior">
+		javaname="gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior">
 		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.JsonGroupAsBehaviorType</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="meta:XmlGroupAsBehaviorType"
-		javaname="gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior">
+		javaname="gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior">
 		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.XmlGroupAsBehaviorType</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="meta:ScopeType"

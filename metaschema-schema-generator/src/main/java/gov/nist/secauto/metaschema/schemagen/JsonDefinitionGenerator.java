@@ -29,16 +29,16 @@ package gov.nist.secauto.metaschema.schemagen;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.JsonSchemaGenerator.GenerationState;
 
@@ -166,7 +166,7 @@ public class JsonDefinitionGenerator {
     if (flags.isEmpty() || (jsonKeyFlag != null && flags.size() == 1)) {
       // field is a simple value if there are no flags or if the only flag is a JSON key
       definitionNode.put("$ref",
-          datatypeManager.getJsonDefinitionRefForDatatype(definition.getDatatype()));
+          datatypeManager.getJsonDefinitionRefForDatatype(definition.getJavaTypeAdapter()));
     } else {
       definitionNode.put("type", "object");
 
@@ -203,7 +203,7 @@ public class JsonDefinitionGenerator {
           additionalPropertiesNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
           // the type of the additional properties must be the datatype of the field value
           additionalPropertiesNode.put("$ref",
-              datatypeManager.getJsonDefinitionRefForDatatype(definition.getDatatype()));
+              datatypeManager.getJsonDefinitionRefForDatatype(definition.getJavaTypeAdapter()));
         }
 
         additionalPropertiesNode.put("minProperties", properties.getRequired().size() + 1);
@@ -218,7 +218,8 @@ public class JsonDefinitionGenerator {
       @NotNull IFlagDefinition definition,
       @NotNull ObjectNode definitionNode,
       @NotNull GenerationState state) {
-    definitionNode.put("$ref", state.getDatatypeManager().getJsonDefinitionRefForDatatype(definition.getDatatype()));
+    definitionNode.put("$ref",
+        state.getDatatypeManager().getJsonDefinitionRefForDatatype(definition.getJavaTypeAdapter()));
   }
 
 }

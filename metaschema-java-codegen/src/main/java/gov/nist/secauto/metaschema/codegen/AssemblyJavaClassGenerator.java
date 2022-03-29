@@ -35,12 +35,12 @@ import gov.nist.secauto.metaschema.codegen.property.IPropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.ModelInstancePropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
 import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IModelContainer;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IModelContainer;
+import gov.nist.secauto.metaschema.model.common.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -88,6 +88,9 @@ public class AssemblyJavaClassGenerator
     retval.addAll(super.buildClass(builder, className));
 
     AnnotationSpec.Builder metaschemaAssembly = AnnotationSpec.builder(MetaschemaAssembly.class);
+
+    applyCommonProperties(metaschemaAssembly);
+
     IAssemblyDefinition definition = getDefinition();
     if (definition.isRoot()) {
       metaschemaAssembly.addMember("rootName", "$S", definition.getRootName());

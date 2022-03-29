@@ -145,13 +145,8 @@ public class JsonSchemaContentValidator
     }
 
     @Override
-    public boolean isPassing() {
-      return findings.isEmpty();
-    }
-
-    @Override
     public IConstraint.Level getHighestSeverity() {
-      return isPassing() ? IConstraint.Level.INFORMATIONAL : IConstraint.Level.ERROR;
+      return findings.isEmpty() ? IConstraint.Level.INFORMATIONAL : IConstraint.Level.ERROR;
     }
 
     @Override

@@ -44,6 +44,7 @@ import java.math.MathContext;
 
 public class DecimalAdapter
     extends AbstractJavaTypeAdapter<BigDecimal, IDecimalItem> {
+  public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
   @NotNull
   private static final BigDecimal DECIMAL_BOOLEAN_TRUE = new BigDecimal("1.0");
   @NotNull
@@ -61,7 +62,7 @@ public class DecimalAdapter
 
   @Override
   public BigDecimal parse(String value) throws IllegalArgumentException {
-    return new BigDecimal(value, MathContext.DECIMAL64);
+    return new BigDecimal(value, MATH_CONTEXT);
   }
 
   @Override

@@ -45,7 +45,8 @@ public class QTagHtmlNodeRenderer implements HtmlNodeRenderer {
     return Collections.singleton(new HtmlNodeRendererHandler<>("q", Element.class, this::renderMarkdown));
   }
 
-  private void renderMarkdown(Element element, HtmlNodeConverterContext context, HtmlMarkdownWriter out) {
+  private void renderMarkdown(Element element, HtmlNodeConverterContext context,
+      @SuppressWarnings("unused") HtmlMarkdownWriter out) {
     context.wrapTextNodes(element, "\"", element.nextElementSibling() != null);
   }
 

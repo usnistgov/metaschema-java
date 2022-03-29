@@ -36,18 +36,9 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.IClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.info.ClassDataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.IModelPropertyInfo;
 import gov.nist.secauto.metaschema.binding.model.property.info.IPropertyCollector;
-import gov.nist.secauto.metaschema.binding.model.property.info.JavaTypeAdapterDataTypeHandler;
-import gov.nist.secauto.metaschema.binding.model.property.info.ListPropertyInfo;
-import gov.nist.secauto.metaschema.binding.model.property.info.MapPropertyInfo;
-import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyInfo;
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
@@ -57,13 +48,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -82,72 +68,14 @@ public abstract class AbstractNamedModelProperty // NOPMD - intentional
    * Construct a new bound model instance based on a Java property. The name of the property is bound
    * to the name of the instance.
    * 
-   * @param field
-   *          the Java field to bind to
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */
-  protected AbstractNamedModelProperty(@NotNull IAssemblyClassBinding parentClassBinding, @NotNull Field field) {
-    super(field, parentClassBinding);
+  protected AbstractNamedModelProperty(@NotNull IAssemblyClassBinding parentClassBinding) {
+    super(parentClassBinding);
   }
-
-  @Override
-  public IMetaschema getContainingMetaschema() { // NOPMD - remove when implemented
-    // TODO: implement
-    return null;
-  }
-
-  protected abstract IJavaTypeAdapter<?> getJavaTypeAdapter();
-
-  @Override
-  public Class<?> getItemType() {
-    return getPropertyInfo().getItemType();
-  }
-
-  @NotNull
-  protected IModelPropertyInfo newPropertyInfo() { // NOPMD - cyclomatic complexity is unavoidable
-    // create the property info
-    Type type = getField().getGenericType();
-
-    IModelPropertyInfo retval;
-    if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      if (!(type instanceof ParameterizedType)) {
-        switch (getJsonGroupAsBehavior()) {
-        case KEYED:
-          throw new IllegalStateException(
-              String.format("The field '%s' on class '%s' has data type of '%s'," + " but should have a type of '%s'.",
-                  getField().getName(), getParentClassBinding().getBoundClass().getName(),
-                  getField().getType().getName(), Map.class.getName()));
-        case LIST:
-        case SINGLETON_OR_LIST:
-          throw new IllegalStateException(
-              String.format("The field '%s' on class '%s' has data type of '%s'," + " but should have a type of '%s'.",
-                  getField().getName(), getParentClassBinding().getBoundClass().getName(),
-                  getField().getType().getName(), List.class.getName()));
-        default:
-          // this should not occur
-          throw new IllegalStateException(getJsonGroupAsBehavior().name());
-        }
-      }
-
-      // collection case
-      if (JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())) {
-        retval = new MapPropertyInfo(this);
-      } else {
-        retval = new ListPropertyInfo(this);
-      }
-    } else {
-      // single value case
-      if (type instanceof ParameterizedType) {
-        throw new IllegalStateException(String.format(
-            "The field '%s' on class '%s' has a data parmeterized type of '%s',"
-                + " but the occurance is not multi-valued.",
-            getField().getName(), getParentClassBinding().getBoundClass().getName(), getField().getType().getName()));
-      }
-      retval = new SingletonPropertyInfo(this);
-    }
-    return retval;
-  }
+//
+//  protected abstract IJavaTypeAdapter<?> getJavaTypeAdapter();
   //
   // @Override
   // public Stream<INodeItem> newNodeItems(Object value, List<IPathSegment> precedingPath) {
@@ -176,8 +104,9 @@ public abstract class AbstractNamedModelProperty // NOPMD - intentional
    * @return the property information for the bound property
    */
   @SuppressWarnings("null")
+  @Override
   @NotNull
-  protected IModelPropertyInfo getPropertyInfo() {
+  public IModelPropertyInfo getPropertyInfo() {
     synchronized (this) {
       if (propertyInfo == null) {
         propertyInfo = newPropertyInfo();
@@ -191,25 +120,7 @@ public abstract class AbstractNamedModelProperty // NOPMD - intentional
     return getPropertyInfo().getItemsFromValue(value);
   }
 
-  protected IDataTypeHandler newDataTypeHandler() {
-    IDataTypeHandler retval;
-    // get the binding supplier
-    IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
-    if (adapter == null) {
-      IClassBinding classBinding
-          = getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
-      if (classBinding != null) {
-        retval = new ClassDataTypeHandler(classBinding, this);
-      } else {
-        throw new IllegalStateException(
-            String.format("Unable to parse type '%s', which is not a known bound class or data type",
-                getPropertyInfo().getItemType()));
-      }
-    } else {
-      retval = new JavaTypeAdapterDataTypeHandler(adapter, this);
-    }
-    return retval;
-  }
+  protected abstract IDataTypeHandler newDataTypeHandler();
 
   @Override
   public IDataTypeHandler getDataTypeHandler() {
@@ -271,7 +182,7 @@ public abstract class AbstractNamedModelProperty // NOPMD - intentional
     IModelPropertyInfo info = getPropertyInfo();
     info.readValue(collector, parentInstance, context);
 
-    JsonUtil.assertCurrent(context.getReader(), Set.of(JsonToken.FIELD_NAME, JsonToken.END_OBJECT));
+    JsonUtil.assertCurrent(context.getReader(), JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
 
     return collector.getValue();
   }
@@ -329,7 +240,6 @@ public abstract class AbstractNamedModelProperty // NOPMD - intentional
       return false; // NOPMD - intentional
     }
 
-    boolean handled = false;
     QName currentStart = parentName;
     XMLStreamWriter2 writer = context.getWriter();
     QName groupQName = getXmlGroupAsQName();
@@ -337,18 +247,15 @@ public abstract class AbstractNamedModelProperty // NOPMD - intentional
       // write the grouping element
       writer.writeStartElement(groupQName.getNamespaceURI(), groupQName.getLocalPart());
       currentStart = groupQName;
-      handled = true;
     }
 
-    // There are zero or more named values based on cardinality
-    if (getPropertyInfo().writeValue(parentInstance, currentStart, context)) {
-      handled = true;
-    }
+    // There are one or more named values based on cardinality
+    getPropertyInfo().writeValue(value, currentStart, context);
 
     if (groupQName != null) {
       writer.writeEndElement();
     }
-    return handled;
+    return true;
   }
   //
   // @Override

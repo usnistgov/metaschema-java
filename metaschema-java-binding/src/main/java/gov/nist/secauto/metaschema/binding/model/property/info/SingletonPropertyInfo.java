@@ -26,13 +26,9 @@
 
 package gov.nist.secauto.metaschema.binding.model.property.info;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
@@ -41,7 +37,6 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -49,12 +44,13 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 public class SingletonPropertyInfo
-    extends AbstractModelPropertyInfo<Type> {
+    extends AbstractModelPropertyInfo {
 
   public SingletonPropertyInfo(@NotNull IBoundNamedModelInstance property) {
     super(property);
   }
 
+  @SuppressWarnings("null")
   @Override
   public List<?> getItemsFromValue(Object value) {
     return value == null ? List.of() : List.of(value);
@@ -65,8 +61,8 @@ public class SingletonPropertyInfo
       throws IOException {
     IBoundNamedModelInstance property = getProperty();
 
-    JsonParser parser = context.getReader();
-
+    // JsonParser parser = context.getReader();
+    //
     // boolean isObject = JsonToken.START_OBJECT.equals(parser.currentToken()); // TODO: is this object
     // check needed?
     // if (isObject) {
@@ -97,7 +93,7 @@ public class SingletonPropertyInfo
 
   @Override
   public Class<?> getItemType() {
-    return (Class<?>) getType();
+    return (Class<?>) getProperty().getRawType();
   }
 
   @Override
@@ -106,12 +102,9 @@ public class SingletonPropertyInfo
   }
 
   @Override
-  public boolean writeValue(Object parentInstance, QName parentName, IXmlWritingContext context)
+  public void writeValue(@NotNull Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
-    IBoundNamedModelInstance property = getProperty();
-    Object value = property.getValue(parentInstance);
-    // TODO: does this need to happen if the value is NULL?
-    return property.writeItem(value, parentName, context);
+    getProperty().writeItem(value, parentName, context);
   }
 
   @Override

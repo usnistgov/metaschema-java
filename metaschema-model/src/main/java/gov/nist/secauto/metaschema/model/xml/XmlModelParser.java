@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
-import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.instances.IXmlAssemblyInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlChoiceInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlFieldInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlNamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
 import gov.nist.secauto.metaschema.model.xmlbeans.AssemblyDocument;
 import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceDocument;
 import gov.nist.secauto.metaschema.model.xmlbeans.FieldDocument;
@@ -42,26 +42,22 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class XmlModelParser {
-  private Map<@NotNull String, IXmlNamedModelInstance> namedModelInstances;
-  private Map<@NotNull String, IXmlFieldInstance> fieldInstances;
-  private Map<@NotNull String, IXmlAssemblyInstance> assemblyInstances;
+  private Map<@NotNull String, INamedModelInstance> namedModelInstances;
+  private Map<@NotNull String, IFieldInstance> fieldInstances;
+  private Map<@NotNull String, IAssemblyInstance> assemblyInstances;
   private List<@NotNull ? extends IModelInstance> modelInstances;
 
-  public XmlModelParser() {
-    // TODO Auto-generated constructor stub
-  }
-
   // TODO: move back to calling location
-  void parseChoice(XmlObject xmlObject, @NotNull IXmlAssemblyDefinition parent) {
+  void parseChoice(XmlObject xmlObject, @NotNull IAssemblyDefinition parent) {
     XmlCursor cursor = xmlObject.newCursor();
     cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
         + "$this/m:assembly|$this/m:define-assembly|$this/m:field"
@@ -70,7 +66,7 @@ class XmlModelParser {
   }
 
   // TODO: move back to calling location
-  void parseModel(XmlObject xmlObject, @NotNull IXmlAssemblyDefinition parent) {
+  void parseModel(XmlObject xmlObject, @NotNull IAssemblyDefinition parent) {
     // handle the model
     XmlCursor cursor = xmlObject.newCursor();
     cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
@@ -80,75 +76,94 @@ class XmlModelParser {
     parseInternal(cursor, parent);
   }
 
-  private void parseInternal(XmlCursor cursor, @NotNull IXmlAssemblyDefinition parent) {
-    Map<@NotNull String, IXmlFieldInstance> fieldInstances = new LinkedHashMap<>();
-    Map<@NotNull String, IXmlAssemblyInstance> assemblyInstances = new LinkedHashMap<>();
-    List<IModelInstance> modelInstances = new ArrayList<>(cursor.getSelectionCount());
-    List<@NotNull IXmlNamedModelInstance> namedModelInstances = new LinkedList<>();
+  @SuppressWarnings("null")
+  @NotNull
+  protected <S> Stream<S> append(@NotNull Stream<S> original, @NotNull S item) {
+    Stream<S> newStream = Stream.of(item).sequential();
+    return Stream.concat(original, newStream);
+  }
+
+  @SuppressWarnings("null")
+  private void parseInternal(XmlCursor cursor, @NotNull IAssemblyDefinition parent) {
+
+    // ensure the streams are treated as sequential, since concatenated streams will only be sequential
+    // if both streams are sequential
+    Stream<IFieldInstance> fieldInstances = Stream.empty();
+    fieldInstances = fieldInstances.sequential();
+    Stream<IAssemblyInstance> assemblyInstances = Stream.empty();
+    assemblyInstances = assemblyInstances.sequential();
+    Stream<INamedModelInstance> namedModelInstances = Stream.empty();
+    namedModelInstances = namedModelInstances.sequential();
+    Stream<IModelInstance> modelInstances = Stream.empty();
+    modelInstances = modelInstances.sequential();
 
     while (cursor.toNextSelection()) {
       XmlObject obj = cursor.getObject();
       if (obj instanceof FieldDocument.Field) {
-        IXmlFieldInstance field = new XmlFieldInstance((FieldDocument.Field) obj, parent);
-        fieldInstances.put(field.getEffectiveName(), field);
-        modelInstances.add(field);
-        namedModelInstances.add(field);
+        XmlFieldInstance field
+            = new XmlFieldInstance((FieldDocument.Field) obj, parent); // NOPMD - intentional
+        fieldInstances = append(fieldInstances, field);
+        namedModelInstances = append(namedModelInstances, field);
+        modelInstances = append(modelInstances, field);
       } else if (obj instanceof InlineFieldDefinitionType) {
-        IXmlFieldInstance field = new XmlInlineFieldDefinition((InlineFieldDefinitionType) obj, parent);
-        fieldInstances.put(field.getEffectiveName(), field);
-        modelInstances.add(field);
-        namedModelInstances.add(field);
+        XmlInlineFieldDefinition field
+            = new XmlInlineFieldDefinition((InlineFieldDefinitionType) obj, parent); // NOPMD - intentional
+        fieldInstances = append(fieldInstances, field);
+        namedModelInstances = append(namedModelInstances, field);
+        modelInstances = append(modelInstances, field);
       } else if (obj instanceof AssemblyDocument.Assembly) {
-        IXmlAssemblyInstance assembly = new XmlAssemblyInstance((AssemblyDocument.Assembly) obj, parent);
-        assemblyInstances.put(assembly.getEffectiveName(), assembly);
-        modelInstances.add(assembly);
-        namedModelInstances.add(assembly);
+        XmlAssemblyInstance assembly
+            = new XmlAssemblyInstance((AssemblyDocument.Assembly) obj, parent); // NOPMD - intentional
+        assemblyInstances = append(assemblyInstances, assembly);
+        namedModelInstances = append(namedModelInstances, assembly);
+        modelInstances = append(modelInstances, assembly);
       } else if (obj instanceof InlineAssemblyDefinitionType) {
-        IXmlAssemblyInstance assembly = new XmlInlineAssemblyDefinition((InlineAssemblyDefinitionType) obj, parent);
-        assemblyInstances.put(assembly.getEffectiveName(), assembly);
-        modelInstances.add(assembly);
-        namedModelInstances.add(assembly);
+        XmlInlineAssemblyDefinition assembly
+            = new XmlInlineAssemblyDefinition((InlineAssemblyDefinitionType) obj, parent); // NOPMD - intentional
+        assemblyInstances = append(assemblyInstances, assembly);
+        namedModelInstances = append(namedModelInstances, assembly);
+        modelInstances = append(modelInstances, assembly);
       } else if (obj instanceof ChoiceDocument.Choice) {
-        IXmlChoiceInstance choice = new XmlChoiceInstance((ChoiceDocument.Choice) obj, parent);
-        assemblyInstances.putAll(choice.getAssemblyInstanceMap());
-        fieldInstances.putAll(choice.getFieldInstanceMap());
-        modelInstances.add(choice);
+        XmlChoiceInstance choice
+            = new XmlChoiceInstance((ChoiceDocument.Choice) obj, parent); // NOPMD - intentional
+        // assemblyInstances.putAll(choice.getAssemblyInstanceMap());
+        // fieldInstances..putAll(choice.getFieldInstanceMap());
+        modelInstances = append(modelInstances, choice);
       }
     }
 
-    this.fieldInstances
-        = fieldInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(fieldInstances);
-
-    this.assemblyInstances
-        = assemblyInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(assemblyInstances);
-
-    this.modelInstances
-        = modelInstances.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(modelInstances);
-
-    if (namedModelInstances.isEmpty()) {
-      this.namedModelInstances = Collections.emptyMap();
-    } else {
-      // TODO: build this in one pass
-      this.namedModelInstances = Collections.unmodifiableMap(
-          namedModelInstances.stream().collect(Collectors.toMap(IXmlNamedModelInstance::getEffectiveName, v -> v)));
-    }
+    this.fieldInstances = fieldInstances
+        .collect(Collectors.toMap(IFieldInstance::getEffectiveName, Function.identity(),
+            CustomCollectors.useFirstMapper(), LinkedHashMap::new));
+    this.assemblyInstances = assemblyInstances
+        .collect(Collectors.toMap(IAssemblyInstance::getEffectiveName, Function.identity(),
+            CustomCollectors.useFirstMapper(), LinkedHashMap::new));
+    this.modelInstances = modelInstances
+        .collect(Collectors.toUnmodifiableList());
+    this.namedModelInstances = namedModelInstances
+        .collect(Collectors.toMap(INamedModelInstance::getEffectiveName, Function.identity(),
+            CustomCollectors.useFirstMapper(), LinkedHashMap::new));
   }
 
+  @SuppressWarnings("null")
   @NotNull
-  public Map<@NotNull String, ? extends IXmlNamedModelInstance> getNamedModelInstances() {
-    return namedModelInstances == null ? Collections.emptyMap() : namedModelInstances;
-  }
-
-  @NotNull
-  public Map<@NotNull String, ? extends IXmlFieldInstance> getFieldInstances() {
+  public Map<@NotNull String, ? extends IFieldInstance> getFieldInstances() {
     return fieldInstances == null ? Collections.emptyMap() : fieldInstances;
   }
 
+  @SuppressWarnings("null")
   @NotNull
-  public Map<@NotNull String, ? extends IXmlAssemblyInstance> getAssemblyInstances() {
+  public Map<@NotNull String, ? extends IAssemblyInstance> getAssemblyInstances() {
     return assemblyInstances == null ? Collections.emptyMap() : assemblyInstances;
   }
 
+  @SuppressWarnings("null")
+  @NotNull
+  public Map<@NotNull String, ? extends INamedModelInstance> getNamedModelInstances() {
+    return namedModelInstances == null ? Collections.emptyMap() : namedModelInstances;
+  }
+
+  @SuppressWarnings("null")
   @NotNull
   protected List<@NotNull ? extends IModelInstance> getModelInstances() {
     return modelInstances == null ? Collections.emptyList() : modelInstances;

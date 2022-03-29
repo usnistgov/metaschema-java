@@ -26,9 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.model.IXmlMetaschema;
+import gov.nist.secauto.metaschema.model.common.AbstractFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IInlineNamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
@@ -39,20 +46,13 @@ import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.definitions.IInlineDefinition;
-import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.definitions.IXmlFieldDefinition;
-import gov.nist.secauto.metaschema.model.instances.AbstractFieldInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlFieldInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -71,7 +71,7 @@ public class XmlInlineFieldDefinition
    * @param parent
    *          the parent assembly definition
    */
-  public XmlInlineFieldDefinition(@NotNull InlineFieldDefinitionType xmlField, @NotNull IXmlAssemblyDefinition parent) {
+  public XmlInlineFieldDefinition(@NotNull InlineFieldDefinitionType xmlField, @NotNull IAssemblyDefinition parent) {
     super(parent);
     this.xmlField = xmlField;
     this.fieldDefinition = new InternalFieldDefinition();
@@ -93,14 +93,14 @@ public class XmlInlineFieldDefinition
   }
 
   @Override
-  public IXmlMetaschema getContainingMetaschema() {
+  public IMetaschema getContainingMetaschema() {
     return getContainingDefinition().getContainingMetaschema();
   }
 
   @Override
   public boolean isInXmlWrapped() {
     boolean retval;
-    if (MetaschemaDataTypeProvider.MARKUP_MULTILINE.equals(getDefinition().getDatatype())) {
+    if (MetaschemaDataTypeProvider.MARKUP_MULTILINE.equals(getDefinition().getJavaTypeAdapter())) {
       // default value
       retval = MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
       if (getXmlField().isSetInXml()) {
@@ -113,6 +113,7 @@ public class XmlInlineFieldDefinition
     return retval;
   }
 
+  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlField().getName();
@@ -170,6 +171,7 @@ public class XmlInlineFieldDefinition
     return retval;
   }
 
+  @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
     return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
@@ -178,7 +180,7 @@ public class XmlInlineFieldDefinition
   /**
    * The corresponding definition for the local flag instance.
    */
-  public class InternalFieldDefinition implements IXmlFieldDefinition, IInlineDefinition<XmlInlineFieldDefinition> {
+  public class InternalFieldDefinition implements IFieldDefinition, IInlineNamedDefinition<XmlInlineFieldDefinition> {
     private XmlFlagContainerSupport flagContainer;
     private IValueConstraintSupport constraints;
 
@@ -188,7 +190,7 @@ public class XmlInlineFieldDefinition
     }
 
     @Override
-    public IXmlFieldInstance getInlineInstance() {
+    public XmlInlineFieldDefinition getInlineInstance() {
       return XmlInlineFieldDefinition.this;
     }
 
@@ -197,6 +199,7 @@ public class XmlInlineFieldDefinition
       return getXmlField().isSetFormalName() ? getXmlField().getFormalName() : null;
     }
 
+    @SuppressWarnings("null")
     @Override
     public MarkupLine getDescription() {
       return getXmlField().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlField().getDescription())
@@ -218,16 +221,10 @@ public class XmlInlineFieldDefinition
       return getName();
     }
 
+    @SuppressWarnings("null")
     @Override
-    public IJavaTypeAdapter<?> getDatatype() {
-      IJavaTypeAdapter<?> retval;
-      if (getXmlField().isSetAsType()) {
-        retval = getXmlField().getAsType();
-      } else {
-        // the default
-        retval = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
-      }
-      return retval;
+    public IJavaTypeAdapter<?> getJavaTypeAdapter() {
+      return getXmlField().isSetAsType() ? getXmlField().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
     }
 
     @Override
@@ -253,7 +250,7 @@ public class XmlInlineFieldDefinition
       }
 
       if (retval == null || retval.isEmpty()) {
-        retval = getDatatype().getDefaultJsonValueKey();
+        retval = getJavaTypeAdapter().getDefaultJsonValueKey();
       }
       return retval;
     }
@@ -264,21 +261,34 @@ public class XmlInlineFieldDefinition
           : MetaschemaModelConstants.DEFAULT_FIELD_COLLAPSIBLE;
     }
 
-    @Override
-    public XmlInlineFieldDefinition getDefiningInstance() {
-      return XmlInlineFieldDefinition.this;
-    }
-
-    protected synchronized void initFlagContainer() {
-      if (flagContainer == null) {
-        flagContainer = new XmlFlagContainerSupport(getXmlField(), this);
+    /**
+     * Lazy initialize the flag instances associated with this definition.
+     * 
+     * @return the flag container
+     */
+    protected XmlFlagContainerSupport initFlagContainer() {
+      synchronized (this) {
+        if (flagContainer == null) {
+          flagContainer = new XmlFlagContainerSupport(getXmlField(), this);
+        }
+        return flagContainer;
       }
     }
 
+    @NotNull
+    private Map<@NotNull String, ? extends IFlagInstance> getFlagInstanceMap() {
+      return initFlagContainer().getFlagInstanceMap();
+    }
+
     @Override
-    public Map<@NotNull String, ? extends IXmlFlagInstance> getFlagInstanceMap() {
-      initFlagContainer();
-      return flagContainer.getFlagInstanceMap();
+    public @Nullable IFlagInstance getFlagInstanceByName(String name) {
+      return getFlagInstanceMap().get(name);
+    }
+
+    @SuppressWarnings("null")
+    @Override
+    public @NotNull Collection<@NotNull ? extends IFlagInstance> getFlagInstances() {
+      return getFlagInstanceMap().values();
     }
 
     @Override
@@ -287,8 +297,8 @@ public class XmlInlineFieldDefinition
     }
 
     @Override
-    public IXmlFlagInstance getJsonKeyFlagInstance() {
-      IXmlFlagInstance retval = null;
+    public IFlagInstance getJsonKeyFlagInstance() {
+      IFlagInstance retval = null;
       if (hasJsonKey()) {
         retval = getFlagInstanceByName(getXmlField().getJsonKey().getFlagRef());
       }
@@ -298,51 +308,48 @@ public class XmlInlineFieldDefinition
     /**
      * Used to generate the instances for the constraints in a lazy fashion when the constraints are
      * first accessed.
+     * 
+     * @return the constraints instance
      */
-    protected synchronized void checkModelConstraints() {
-      if (constraints == null) {
-        if (getXmlField().isSetConstraint()) {
-          constraints = new ValueConstraintSupport(getXmlField().getConstraint());
-        } else {
-          constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+    @SuppressWarnings("null")
+    @NotNull
+    protected IValueConstraintSupport initModelConstraints() {
+      synchronized (this) {
+        if (constraints == null) {
+          if (getXmlField().isSetConstraint()) {
+            constraints = new ValueConstraintSupport(getXmlField().getConstraint());
+          } else {
+            constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+          }
         }
+        return constraints;
       }
     }
 
-    /**
-     * Get the constraints container in a lazy fashion.
-     * 
-     * @return the constraints container
-     */
-    @NotNull
-    protected IValueConstraintSupport getConstraintSupport() {
-      checkModelConstraints();
-      return constraints;
-    }
 
     @Override
     public List<@NotNull ? extends IConstraint> getConstraints() {
-      return getConstraintSupport().getConstraints();
+      return initModelConstraints().getConstraints();
     }
 
     @Override
     public List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
-      return getConstraintSupport().getAllowedValuesContraints();
+      return initModelConstraints().getAllowedValuesContraints();
     }
 
     @Override
     public List<@NotNull ? extends IMatchesConstraint> getMatchesConstraints() {
-      return getConstraintSupport().getMatchesConstraints();
+      return initModelConstraints().getMatchesConstraints();
     }
 
     @Override
     public List<@NotNull ? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-      return getConstraintSupport().getIndexHasKeyConstraints();
+      return initModelConstraints().getIndexHasKeyConstraints();
     }
 
     @Override
     public List<@NotNull ? extends IExpectConstraint> getExpectConstraints() {
-      return getConstraintSupport().getExpectConstraints();
+      return initModelConstraints().getExpectConstraints();
     }
 
     @Override
@@ -351,8 +358,8 @@ public class XmlInlineFieldDefinition
     }
 
     @Override
-    public @NotNull IXmlMetaschema getContainingMetaschema() {
-      return getContainingDefinition().getContainingMetaschema();
+    public IMetaschema getContainingMetaschema() {
+      return XmlInlineFieldDefinition.super.getContainingDefinition().getContainingMetaschema();
     }
 
   }

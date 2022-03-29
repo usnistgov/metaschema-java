@@ -26,37 +26,63 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
+import java.util.stream.Stream;
 
 class OrphanedXdmAssemblyNodeItemImpl
-    extends AbstractBoundXdmAssemblyNodeItem<IBoundAssemblyInstance> {
+    extends AbstractBoundXdmAssemblyNodeItem {
+  @NotNull
+  private final IAssemblyClassBinding definition;
   private final URI baseUri;
 
   public OrphanedXdmAssemblyNodeItemImpl(
-      @NotNull IBoundAssemblyInstance instance,
+      @NotNull IAssemblyClassBinding definition,
       @NotNull Object value,
       int position,
       URI baseUri) {
-    super(instance, value, position);
+    super(value, position);
+    this.definition = definition;
     this.baseUri = baseUri;
   }
 
   @Override
-  public IBoundXdmAssemblyNodeItem getParentNodeItem() {
+  public IAssemblyInstance getInstance() {
+    // there is no instance
     return null;
   }
 
   @Override
-  public IBoundXdmAssemblyNodeItem getParentContentNodeItem() {
+  public IAssemblyClassBinding getDefinition() {
+    return definition;
+  }
+
+  @Override
+  public IAssemblyNodeItem getParentNodeItem() {
+    // there is no parent
+    return null;
+  }
+
+  @Override
+  public IAssemblyNodeItem getParentContentNodeItem() {
+    // there is no parent
     return null;
   }
 
   @Override
   public URI getBaseUri() {
     return baseUri;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Stream<@NotNull ? extends INodeItem> getPathStream() {
+    return Stream.of(this);
   }
 }

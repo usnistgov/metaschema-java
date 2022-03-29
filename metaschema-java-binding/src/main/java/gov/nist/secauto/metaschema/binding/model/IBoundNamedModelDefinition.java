@@ -27,14 +27,13 @@
 package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.Map;
 
-public interface IBoundNamedModelDefinition extends INamedModelDefinition, IBoundNamedDefinition {
+public interface IBoundNamedModelDefinition extends INamedModelDefinition {
   /**
    * Retrieve the {@link IClassBinding} associated with the node item.
    * 
@@ -43,16 +42,8 @@ public interface IBoundNamedModelDefinition extends INamedModelDefinition, IBoun
   IClassBinding getClassBinding();
   
   @Override
-  default IBoundFlagInstance getFlagInstanceByName(String name) {
-    return getFlagInstanceMap().get(name);
-  }
+  IBoundFlagInstance getFlagInstanceByName(String name);
 
   @Override
-  Map<@NotNull String, ? extends IBoundFlagInstance> getFlagInstanceMap();
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<@NotNull ? extends IBoundFlagInstance> getFlagInstances() {
-    return getFlagInstanceMap().values();
-  }
+  Collection<@NotNull ? extends IBoundFlagInstance> getFlagInstances();
 }

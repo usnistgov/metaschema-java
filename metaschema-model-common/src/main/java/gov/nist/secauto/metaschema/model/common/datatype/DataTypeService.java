@@ -59,7 +59,7 @@ public class DataTypeService {
 
   public synchronized IJavaTypeAdapter<?>
       getJavaTypeAdapterByClass(@SuppressWarnings("rawtypes") Class<? extends IJavaTypeAdapter> clazz) {
-    return (IJavaTypeAdapter<?>) libraryByClass.get(clazz);
+    return libraryByClass.get(clazz);
   }
 
   /**

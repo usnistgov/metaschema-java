@@ -29,15 +29,19 @@ package gov.nist.secauto.metaschema.binding.model.property;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.info.ClassDataTypeHandler;
+import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
+import java.util.Locale;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -48,16 +52,20 @@ public abstract class AbstractAssemblyProperty
     extends AbstractNamedModelProperty
     implements IBoundAssemblyInstance {
 
-  public AbstractAssemblyProperty(IAssemblyClassBinding parentClassBinding, Field field) {
-    super(parentClassBinding, field);
+  public AbstractAssemblyProperty(@NotNull IAssemblyClassBinding parentClassBinding) {
+    super(parentClassBinding);
   }
 
-  @SuppressWarnings("PMD")
   @Override
-  protected IJavaTypeAdapter<?> getJavaTypeAdapter() {
-    // an assembly property is always associated with a bound class, so there will never be a class
-    // binding
-    return null;
+  protected IDataTypeHandler newDataTypeHandler() {
+    IClassBinding classBinding
+        = getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
+    if (classBinding == null) {
+      throw new IllegalStateException(
+          String.format("Unable to parse type '%s', which is not a known bound class or data type",
+              getPropertyInfo().getItemType()));
+    }
+    return new ClassDataTypeHandler(classBinding, this);
   }
 
   @Override
@@ -73,7 +81,7 @@ public abstract class AbstractAssemblyProperty
     if (event.isStartElement() && getXmlQName().equals(event.asStartElement().getName())) {
       // Consume the start element
       event = eventReader.nextEvent();
-      StartElement propertyStartElement = event.asStartElement();
+      StartElement propertyStartElement = ObjectUtils.notNull(event.asStartElement());
 
       // consume the value
       retval = getDataTypeHandler().get(parentInstance, propertyStartElement, context);
@@ -85,7 +93,7 @@ public abstract class AbstractAssemblyProperty
   }
 
   @Override
-  public boolean writeItem(Object item, QName parentName, IXmlWritingContext context)
+  public void writeItem(Object item, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     XMLStreamWriter2 writer = context.getWriter();
 
@@ -99,8 +107,6 @@ public abstract class AbstractAssemblyProperty
 
     // write the end element
     writer.writeEndElement();
-
-    return true;
   }
 
   @Override
@@ -108,10 +114,13 @@ public abstract class AbstractAssemblyProperty
     return getParentClassBinding();
   }
 
+  @SuppressWarnings("null")
   @Override
   public String toCoordinates() {
-    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(), getName(),
-        getParentClassBinding().getBoundClass().getName(), getField().getName());
+    return String.format("%s Instance(%s): %s",
+        getModelType().name().toLowerCase(Locale.ROOT),
+        getParentClassBinding().getBoundClass().getName(),
+        getName());
   }
 
   @Override

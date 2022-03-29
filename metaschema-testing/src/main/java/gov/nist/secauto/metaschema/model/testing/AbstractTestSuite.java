@@ -145,8 +145,8 @@ public abstract class AbstractTestSuite {
                   throw e;
                 }
               });
-            } catch (IOException e) {
-              throw new RuntimeException("Failed to delete collection: " + path, e);
+            } catch (IOException ex) {
+              throw new IllegalStateException("Failed to delete collection: " + path, ex);
             }
           }
         }));

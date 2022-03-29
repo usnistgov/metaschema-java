@@ -61,15 +61,14 @@ public class DateWithTZAdapter
   public ZonedDateTime parse(String value) throws IllegalArgumentException {
     String parseValue = value;
     Matcher matcher = DATE_TIMEZONE.matcher(value);
-    if (matcher.matches()) {
-      parseValue = String.format("%sT00:00:00%s", matcher.group(1), matcher.group(2));
-      try {
-        return ZonedDateTime.from(DateFormats.DATE_TIME_WITH_TZ.parse(parseValue));
-      } catch (DateTimeParseException ex) {
-        throw new IllegalArgumentException(ex.getLocalizedMessage(), ex);
-      }
-    } else {
-      throw new  IllegalArgumentException("Invalid date: "+value);
+    if (!matcher.matches()) {
+      throw new IllegalArgumentException("Invalid date: " + value);
+    }
+    parseValue = String.format("%sT00:00:00%s", matcher.group(1), matcher.group(2));
+    try {
+      return ZonedDateTime.from(DateFormats.DATE_TIME_WITH_TZ.parse(parseValue));
+    } catch (DateTimeParseException ex) {
+      throw new IllegalArgumentException(ex.getLocalizedMessage(), ex);
     }
   }
 

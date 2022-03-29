@@ -46,7 +46,7 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
   @NotNull
   protected String newCardinalityMinimumViolationMessage(
       @NotNull ICardinalityConstraint constraint,
-      @NotNull INodeItem node,
+      @SuppressWarnings("unused") @NotNull INodeItem node,
       @NotNull ISequence<? extends INodeItem> targets) {
     // TODO: render the item paths instead of the expression
     return String.format(
@@ -58,7 +58,7 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
   @NotNull
   protected String newCardinalityMaximumViolationMessage(
       @NotNull ICardinalityConstraint constraint,
-      @NotNull INodeItem node,
+      @SuppressWarnings("unused") @NotNull INodeItem node,
       @NotNull ISequence<? extends INodeItem> targets) {
     // TODO: render the item paths instead of the expression
     return String.format(
@@ -70,7 +70,7 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
   @NotNull
   protected String newIndexDuplicateKeyViolationMessage(
       @NotNull IIndexConstraint constraint,
-      @NotNull INodeItem node,
+      @SuppressWarnings("unused") @NotNull INodeItem node,
       @NotNull INodeItem oldItem,
       @NotNull INodeItem target) {
     // TODO: render the key paths
@@ -81,8 +81,8 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
   @SuppressWarnings("null")
   @NotNull
   protected String newUniqueKeyViolationMessage(
-      @NotNull IUniqueConstraint constraint,
-      @NotNull INodeItem node,
+      @SuppressWarnings("unused") @NotNull IUniqueConstraint constraint,
+      @SuppressWarnings("unused") @NotNull INodeItem node,
       @NotNull INodeItem oldItem,
       @NotNull INodeItem target) {
     // TODO: render the key paths
@@ -94,7 +94,7 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
   @NotNull
   protected String newMatchPatternViolationMessage(
       @NotNull IMatchesConstraint constraint,
-      @NotNull INodeItem node,
+      @SuppressWarnings("unused") @NotNull INodeItem node,
       @NotNull INodeItem target,
       @NotNull String value) {
     return String.format("Value '%s' did not match the pattern '%s' at path '%s'",
@@ -107,7 +107,7 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
   @NotNull
   protected String newMatchDatatypeViolationMessage(
       @NotNull IMatchesConstraint constraint,
-      @NotNull INodeItem node,
+      @SuppressWarnings("unused") @NotNull INodeItem node,
       @NotNull INodeItem target,
       @NotNull String value) {
     IJavaTypeAdapter<?> adapter = constraint.getDataType();
@@ -119,7 +119,7 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
   @NotNull
   protected CharSequence newExpectViolationMessage(
       @NotNull IExpectConstraint constraint,
-      @NotNull INodeItem node,
+      @SuppressWarnings("unused") @NotNull INodeItem node,
       @NotNull INodeItem target,
       @NotNull DynamicContext dynamicContext) {
     CharSequence message;

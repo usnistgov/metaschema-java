@@ -30,15 +30,14 @@ import com.ctc.wstx.stax.WstxInputFactory;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmDocumentNodeItem;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.RootAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.AutoCloser;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.jetbrains.annotations.NotNull;
@@ -91,7 +90,7 @@ public class DefaultXmlDeserializer<CLASS>
   }
 
   @Override
-  protected IBoundXdmNodeItem deserializeToNodeItemInternal(Reader reader, URI documentUri) throws IOException {
+  protected INodeItem deserializeToNodeItemInternal(Reader reader, URI documentUri) throws IOException {
     try (AutoCloser<XMLEventReader2, XMLStreamException> closer
         = new AutoCloser<>(newXMLEventReader2(reader), event -> event.close())) {
       return parseXmlInternal(closer.getObject(), documentUri);
@@ -101,7 +100,7 @@ public class DefaultXmlDeserializer<CLASS>
   }
 
   @NotNull
-  protected IBoundXdmDocumentNodeItem parseXmlInternal(XMLEventReader2 reader, @NotNull URI documentUri)
+  protected IDocumentNodeItem parseXmlInternal(XMLEventReader2 reader, @NotNull URI documentUri)
       throws IOException, XMLStreamException {
 
     IAssemblyClassBinding classBinding = getClassBinding();
@@ -112,6 +111,8 @@ public class DefaultXmlDeserializer<CLASS>
 
     DefaultXmlParsingContext parsingContext = new DefaultXmlParsingContext(reader, new DefaultXmlProblemHandler());
 
-    return IXdmFactory.INSTANCE.newDocumentNodeItem(classBinding, classBinding.readRoot(parsingContext), documentUri);
+    RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
+    
+    return IXdmFactory.INSTANCE.newDocumentNodeItem(root, root.readRoot(parsingContext), documentUri);
   }
 }

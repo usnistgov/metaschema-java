@@ -31,13 +31,14 @@ import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.io.IBoundLoader;
 import gov.nist.secauto.metaschema.binding.io.IDeserializer;
 import gov.nist.secauto.metaschema.binding.io.ISerializer;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidationHandler;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -204,7 +205,7 @@ public interface IBindingContext {
   <CLASS> CLASS copyBoundObject(@NotNull CLASS other, Object parentInstance) throws BindingException;
 
   /**
-   * Wraps a bound object in an {@link IBoundXdmNodeItem} for use in the Metapath engine.
+   * Wraps a bound object in an {@link INodeItem} for use in the Metapath engine.
    * 
    * @param boundObject
    *          the bound object to wrap
@@ -215,12 +216,13 @@ public interface IBindingContext {
    *           if the provided class is not bound to a Metaschema assembly or field
    * @see MetapathExpression
    */
-  default IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, @NotNull URI baseUri) {
+  // TODO: add method to IAssemblyInstance, etc to do this instead
+  default INodeItem toNodeItem(@NotNull Object boundObject, @NotNull URI baseUri) {
     return toNodeItem(boundObject, baseUri, false);
   }
 
   /**
-   * Wraps a bound object in an {@link IBoundXdmNodeItem} for use in the Metapath engine.
+   * Wraps a bound object in an {@link INodeItem} for use in the Metapath engine.
    * 
    * @param boundObject
    *          the bound object to wrap
@@ -233,22 +235,26 @@ public interface IBindingContext {
    *           if the provided class is not bound to a Metaschema assembly or field
    * @see MetapathExpression
    */
-  IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, @NotNull URI baseUri, boolean rootNode);
+  // TODO: add method to IAssemblyInstance, etc to do this instead
+  INodeItem toNodeItem(@NotNull Object boundObject, @NotNull URI baseUri, boolean rootNode);
 
   /**
-   * Perform constraint validation on the provided bound object.
+   * Perform constraint validation on the provided bound object represented as an {@link INodeItem}.
+   * The bound object can be turned into a {@link INodeItem} using {@link #toNodeItem(Object, URI)}.
    * 
-   * @param boundObject
-   *          the bound object to validate
-   * @param baseUri
-   *          the base URI of the bound object, which may be used to resolve relative URIs
-   * @param rootNode
-   *          if {@code true}, the bound object will be considered at the root of a node tree
-   * @param handler
-   *          an optional handler used as a callback to handle constraint violation events
+   * @param nodeItem
+   *          the node item to validate
+   * @return the validation result
    * @throws IllegalArgumentException
    *           if the provided class is not bound to a Metaschema assembly or field
    */
-  void validate(@NotNull Object boundObject, @NotNull URI baseUri, boolean rootNode,
-      IConstraintValidationHandler handler);
+  IValidationResult validate(@NotNull INodeItem nodeItem);
+
+  /**
+   * Get the Metaschema instance identified by the provided class.
+   * @param clazz the Metaschema class
+   * @return the Metaschema instance
+   */
+  @NotNull
+  IMetaschema getMetaschemaInstanceByClass(@NotNull Class<? extends AbstractBoundMetaschema> clazz);
 }

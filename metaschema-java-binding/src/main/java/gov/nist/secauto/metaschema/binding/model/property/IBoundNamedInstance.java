@@ -26,11 +26,192 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.model.IBoundNamedDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
+import com.fasterxml.jackson.core.JsonToken;
 
-public interface IBoundNamedInstance extends IBoundInstance, INamedInstance {
+import gov.nist.secauto.metaschema.binding.io.BindingException;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
+import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
+import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
+import gov.nist.secauto.metaschema.binding.model.property.info.IPropertyCollector;
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
 
-  @Override
-  IBoundNamedDefinition getDefinition();
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
+
+public interface IBoundNamedInstance extends INamedInstance {
+
+  /**
+   * Get the {@link IClassBinding} for the Java class within which this property exists.
+   * 
+   * @return the containing class's binding
+   */
+  @NotNull
+  IClassBinding getParentClassBinding();
+
+  // /**
+  // * Gets the bound Java field associated with this property.
+  // *
+  // * @return the Java field
+  // */
+  // @NotNull
+  // Field getField();
+  //
+  // /**
+  // * Returns the property name, not the field or method name.
+  // *
+  // * @return the name in the pattern "somePropertyName"
+  // */
+  // @NotNull
+  // String getJavaPropertyName();
+
+  /**
+   * Get the actual Java type of the underlying bound object.
+   * @return the Java type of the bound object
+   */
+  Type getType();
+
+  /**
+   * Get the type of the bound object. This may be the same as the what is returned by
+   * {@link #getItemType()}, or may be a Java collection class.
+   * 
+   * @return the raw type of the bound object
+   */
+  Class<?> getRawType();
+
+  /**
+   * Get the item type of the bound object. An item type is the primative or specialized type that
+   * represents that data associated with this binding.
+   * 
+   * @return the item type of the bound object
+   */
+  @NotNull
+  Class<?> getItemType();
+
+  /**
+   * Set the provided value on the provided object. The provided object must be of the item's type
+   * associated with this property.
+   * 
+   * @param parentInstance
+   *          the object
+   * @param value
+   *          a value, which may be a simple {@link Type} or a {@link ParameterizedType} for a
+   *          collection
+   */
+  void setValue(@NotNull Object parentInstance, Object value);
+
+  /**
+   * Get the current value from the provided object. The provided object must be of the item's type
+   * associated with this property.
+   * 
+   * @param parentInstance
+   *          the object
+   * @return the value if set, or {@code null} otherwise
+   */
+  Object getValue(@NotNull Object parentInstance);
+
+  @NotNull
+  IPropertyCollector newPropertyCollector();
+
+  /**
+   * Read JSON data associated with this property and apply it to the provided {@code objectInstance}
+   * on which this property exists.
+   * <p>
+   * The parser's current token is expected to be the {@link JsonToken#FIELD_NAME} for the field value
+   * being parsed.
+   * <p>
+   * After parsing the parser's current token will be the next token after the field's value.
+   * 
+   * @param objectInstance
+   *          an instance of the class on which this property exists
+   * @param context
+   *          the JSON parsing context
+   * @return {@code true} if the property was parsed, or {@code false} if the data did not contain
+   *         information for this property
+   * @throws IOException
+   *           if there was an error when reading JSON data
+   */
+  boolean read(@NotNull Object objectInstance, @NotNull IJsonParsingContext context) throws IOException;
+
+  /**
+   * Read JSON data associated with this property and return it.
+   * <p>
+   * The parser's current token is expected to be the {@link JsonToken#FIELD_NAME} for the field value
+   * being parsed.
+   * <p>
+   * After parsing the parser's current token will be the next token after the field's value.
+   * 
+   * @param context
+   *          the JSON parsing context
+   * @return the instance value or {@code null} if no data was available to read
+   * @throws IOException
+   *           if there was an error when reading JSON data
+   */
+  Object read(@NotNull IJsonParsingContext context) throws IOException;
+
+  /**
+   * Read the XML data associated with this property and apply it to the provided
+   * {@code objectInstance} on which this property exists.
+   * 
+   * @param objectInstance
+   *          an instance of the class on which this property exists
+   * @param parent
+   *          the containing XML element that was previously parsed
+   * @param context
+   *          the XML parsing context
+   * @return {@code true} if the property was parsed, or {@code false} if the data did not contain
+   *         information for this property
+   * @throws IOException
+   *           if there was an error when reading XML data
+   * @throws XMLStreamException
+   *           if there was an error generating an {@link XMLEvent} from the XML
+   */
+  boolean read(@NotNull Object objectInstance, @NotNull StartElement parent, @NotNull IXmlParsingContext context)
+      throws IOException, XMLStreamException;
+
+  // /**
+  // * Get a supplier that can continually parse the underlying stream loading multiple values.
+  // *
+  // * @param context
+  // * @return
+  // * @throws BindingException
+  // */
+  // IJsonBindingSupplier getJsonItemSupplier(IBindingContext context)
+  // throws BindingException;
+  //
+  // /**
+  // * Get a supplier that can continually parse the underlying stream loading multiple values.
+  // *
+  // * @param context
+  // * @return
+  // * @throws BindingException
+  // */
+  // IXmlBindingSupplier getXmlItemSupplier(IBindingContext context)
+  // throws BindingException;
+
+  boolean write(@NotNull Object parentInstance, @NotNull QName parentName, @NotNull IXmlWritingContext context)
+      throws XMLStreamException, IOException;
+
+  void write(@NotNull Object parentInstance, @NotNull IJsonWritingContext context) throws IOException;
+
+  /**
+   * Copy this instance from one parent object to another.
+   * 
+   * @param fromInstance
+   *          the object to copy from
+   * @param toInstance
+   *          the object to copy to
+   * @throws BindingException
+   *           if an error occurred while processing the object bindings
+   */
+  void copyBoundObject(@NotNull Object fromInstance, @NotNull Object toInstance) throws BindingException;
 }

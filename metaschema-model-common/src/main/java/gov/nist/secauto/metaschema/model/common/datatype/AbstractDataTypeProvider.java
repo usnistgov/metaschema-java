@@ -41,6 +41,14 @@ public class AbstractDataTypeProvider implements IDataTypeProvider {
     return Collections.unmodifiableMap(library);
   }
 
+  /**
+   * Register the provided {@code adapter} with the type system.
+   * 
+   * @param adapter
+   *          the adapter to register
+   * @throws IllegalArgumentException
+   *           if another type adapter is already bound to the same name
+   */
   protected void registerDatatype(@NotNull IJavaTypeAdapter<?> adapter)
       throws IllegalArgumentException {
     String name = adapter.getName();
@@ -48,10 +56,20 @@ public class AbstractDataTypeProvider implements IDataTypeProvider {
     registerDatatypeByName(name, adapter);
   }
 
+  /**
+   * Register the provided {@code adapter} with the type system using the provided {@code name}.
+   * 
+   * @param name
+   *          the type name to register
+   * @param adapter
+   *          the adapter to register
+   * @throws IllegalArgumentException
+   *           if another type adapter is already bound to the same name
+   */
   protected void registerDatatypeByName(@NotNull String name, @NotNull IJavaTypeAdapter<?> adapter)
       throws IllegalArgumentException {
     IJavaTypeAdapter<?> duplicate;
-    synchronized(this) {
+    synchronized (this) {
       duplicate = library.put(name, adapter);
     }
     if (duplicate != null) {

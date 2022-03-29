@@ -34,9 +34,10 @@ import java.util.Set;
 public class DefaultDefinitionBindingConfiguration implements IMutableDefinitionBindingConfiguration {
   private String className;
   private String baseClassName;
-  private Set<String> interfacesToImplement = new HashSet<>();
+  private final Set<String> interfacesToImplement = new HashSet<>();
 
   public DefaultDefinitionBindingConfiguration() {
+    // used for default configurations
   }
 
   public DefaultDefinitionBindingConfiguration(IDefinitionBindingConfiguration oldConfig) {

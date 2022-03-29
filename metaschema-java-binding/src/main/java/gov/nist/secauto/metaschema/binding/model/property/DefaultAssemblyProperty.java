@@ -29,9 +29,8 @@ package gov.nist.secauto.metaschema.binding.model.property;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
-import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -39,17 +38,22 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 
 public class DefaultAssemblyProperty
-    extends AbstractAssemblyProperty {
+    extends AbstractAssemblyProperty
+    implements IBoundJavaCollectionField {
 
+  @NotNull
+  private final Field field;
   @NotNull
   private final BoundAssembly assembly;
 
-  public static DefaultAssemblyProperty createInstance(IAssemblyClassBinding parentClassBinding, Field field) {
+  public static DefaultAssemblyProperty createInstance(@NotNull IAssemblyClassBinding parentClassBinding,
+      @NotNull Field field) {
     return new DefaultAssemblyProperty(parentClassBinding, field);
   }
 
-  protected DefaultAssemblyProperty(IAssemblyClassBinding parentClassBinding, Field field) {
-    super(parentClassBinding, field);
+  protected DefaultAssemblyProperty(@NotNull IAssemblyClassBinding parentClassBinding, @NotNull Field field) {
+    super(parentClassBinding);
+    this.field = ObjectUtils.requireNonNull(field, "field");
     if (field.isAnnotationPresent(BoundAssembly.class)) {
       this.assembly = ObjectUtils.notNull(field.getAnnotation(BoundAssembly.class));
     } else {
@@ -58,15 +62,18 @@ public class DefaultAssemblyProperty
     }
   }
 
+  @Override
+  public Field getField() {
+    return field;
+  }
+
   protected BoundAssembly getAssemblyAnnotation() {
     return assembly;
   }
 
-  @SuppressWarnings("null")
   @Override
   public IAssemblyClassBinding getDefinition() {
-    IDataTypeHandler handler = getDataTypeHandler();
-    return (IAssemblyClassBinding) handler.getClassBinding();
+    return getDefinition().getClassBinding();
   }
 
   @Override

@@ -26,26 +26,18 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IValuedNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractBoundXdmValuedNodeItem<INSTANCE extends IBoundNamedInstance>
-    implements IBoundXdmNodeItem, IValuedNodeItem {
+public abstract class AbstractBoundXdmValuedNodeItem
+    implements IValuedNodeItem {
 
-  @NotNull
-  private final INSTANCE instance;
   @NotNull
   private final Object value;
 
-  public AbstractBoundXdmValuedNodeItem(@NotNull INSTANCE instance, @NotNull Object value) {
-    this.instance = instance;
+  public AbstractBoundXdmValuedNodeItem(@NotNull Object value) {
     this.value = value;
-  }
-
-  public INSTANCE getInstance() {
-    return instance;
   }
 
   @Override

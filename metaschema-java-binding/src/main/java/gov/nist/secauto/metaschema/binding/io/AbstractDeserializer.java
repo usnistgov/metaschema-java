@@ -27,11 +27,11 @@
 package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -56,9 +56,9 @@ public abstract class AbstractDeserializer<CLASS>
   }
 
   @Override
-  public IBoundXdmNodeItem deserializeToNodeItem(Reader reader, URI documentUri) throws IOException {
+  public INodeItem deserializeToNodeItem(Reader reader, URI documentUri) throws IOException {
 
-    IBoundXdmNodeItem nodeItem;
+    INodeItem nodeItem;
     try {
       nodeItem = deserializeToNodeItemInternal(reader, documentUri);
     } catch (Exception ex) { // NOPMD - this is intentional
@@ -88,6 +88,6 @@ public abstract class AbstractDeserializer<CLASS>
    *           if an error occurred while reading data from the stream
    */
   @NotNull
-  protected abstract IBoundXdmNodeItem deserializeToNodeItemInternal(@NotNull Reader reader, @NotNull URI documentUri)
+  protected abstract INodeItem deserializeToNodeItemInternal(@NotNull Reader reader, @NotNull URI documentUri)
       throws IOException;
 }

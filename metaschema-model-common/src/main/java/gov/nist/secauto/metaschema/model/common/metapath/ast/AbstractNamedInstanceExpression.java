@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.IInstance;
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -101,10 +101,10 @@ public abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeI
 
   }
 
-  private static class WildcardMatcher implements Predicate<@NotNull IInstance> {
+  private static class WildcardMatcher implements Predicate<gov.nist.secauto.metaschema.model.common.IInstance> {
 
     @Override
-    public boolean test(@NotNull IInstance instance) {
+    public boolean test(IInstance instance) {
       boolean retval = false;
       if (instance instanceof INamedInstance) {
         retval = true;

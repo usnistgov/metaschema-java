@@ -59,6 +59,15 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.Wildcard;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Used to support processing a Metapath expression based on the visitor pattern. Each type of
+ * expression node in the Metapath abstract syntax tree (AST) is represented.
+ *
+ * @param <RESULT>
+ *          the result of processing any node
+ * @param <CONTEXT>
+ *          additional state to pass between nodes visited
+ */
 public interface IExpressionVisitor<RESULT, CONTEXT> {
 
   RESULT visitAddition(@NotNull Addition expr, CONTEXT context);

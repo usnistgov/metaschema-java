@@ -32,8 +32,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 import org.jetbrains.annotations.NotNull;
 
 class StringItemImpl
-    extends AbstractStringItem
-    implements IStringItem {
+    extends AbstractStringItem {
 
   public StringItemImpl(@NotNull String value) {
     super(value);

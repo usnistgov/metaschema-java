@@ -26,29 +26,28 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFieldPathSegment;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedNodeItem, IFieldPathSegment {
+public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedNodeItem {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.FIELD;
   }
-  @Override
-  default IFieldNodeItem getContextNodeItem() {
-    return this;
-  }
+
   @Override
   IAssemblyNodeItem getParentNodeItem();
 
   @Override
-  default IFieldPathSegment getPathSegment() {
+  default IFieldNodeItem getContextNodeItem() {
     return this;
   }
 
@@ -59,6 +58,19 @@ public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedNodeItem, I
 
   @Override
   IFieldDefinition getDefinition();
+
+  @Override
+  IFieldInstance getInstance();
+
+  /**
+   * Fields do not have model items. This call should return an empty collection.
+   */
+  @SuppressWarnings("null")
+  @Override
+  default @NotNull Collection<@NotNull ? extends List<@NotNull ? extends IModelNodeItem>> getModelItems() {
+    // a flag does not have model items
+    return Collections.emptyList();
+  }
 
   /**
    * Fields do not have model items. This call should return an empty list.
@@ -77,5 +89,15 @@ public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedNodeItem, I
   @Override
   default Stream<? extends IModelNodeItem> modelItems() {
     return Stream.empty();
+  }
+
+  @Override
+  default @NotNull String format(@NotNull IPathFormatter formatter) {
+    return formatter.formatField(this);
+  }
+
+  @Override
+  default <RESULT, CONTEXT> RESULT accept(@NotNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitField(this, context);
   }
 }

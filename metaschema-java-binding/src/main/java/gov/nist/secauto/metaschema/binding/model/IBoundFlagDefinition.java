@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 
-public interface IBoundFlagDefinition extends IFlagDefinition, IBoundNamedDefinition {
+public interface IBoundFlagDefinition extends IFlagDefinition {
 
 }

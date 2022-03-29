@@ -43,6 +43,7 @@ import com.vladsch.flexmark.util.misc.Extension;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,8 +52,11 @@ import java.util.Objects;
 
 public class FlexmarkFactory {
   private static final Logger LOGGER = LogManager.getLogger(FlexmarkFactory.class);
+
+  @NotNull
   private static final FlexmarkFactory INSTANCE = new FlexmarkFactory();
 
+  @NotNull
   private static final Map<String, String> TYPOGRAPHIC_REPLACEMENT_MAP = new HashMap<>();
 
   static {
@@ -77,6 +81,7 @@ public class FlexmarkFactory {
     TYPOGRAPHIC_REPLACEMENT_MAP.put("&emdash;", "—");
   }
 
+  @NotNull
   public static FlexmarkFactory instance() {
     return INSTANCE;
   }
@@ -86,10 +91,12 @@ public class FlexmarkFactory {
   private Formatter formatter;
   private FlexmarkHtmlConverter htmlConverter;
 
+  @NotNull 
   public Document fromHtml(@NotNull String html) {
     return fromHtml(html, null, null);
   }
 
+  @NotNull 
   public Document fromHtml(@NotNull String html, FlexmarkHtmlConverter htmlParser, Parser markdownParser) {
     Objects.requireNonNull(html, "html");
 
@@ -103,10 +110,12 @@ public class FlexmarkFactory {
     return fromMarkdown(markdown, effectiveMarkdownParser);
   }
 
+  @NotNull 
   public Document fromMarkdown(String markdown) {
     return fromMarkdown(markdown, getMarkdownParser());
   }
 
+  @NotNull 
   public Document fromMarkdown(String markdown, Parser parser) {
     Objects.requireNonNull(markdown, "markdown");
     Objects.requireNonNull(parser, "parser");
@@ -115,7 +124,7 @@ public class FlexmarkFactory {
   }
 
   @SuppressWarnings("null")
-  protected void applyOptions(BuilderBase<?> builder) {
+  protected void applyOptions(@NotNull BuilderBase<?> builder) {
     builder.set(Parser.FENCED_CODE_CONTENT_BLOCK, true);
     // GitHub-flavored tables
     builder.set(TablesExtension.COLUMN_SPANS, false);
@@ -145,6 +154,8 @@ public class FlexmarkFactory {
     builder.extensions(extensions);
   }
 
+  @SuppressWarnings("null")
+  @NotNull 
   public Parser getMarkdownParser() {
     synchronized (this) {
       if (markdownParser == null) {
@@ -154,7 +165,9 @@ public class FlexmarkFactory {
     }
   }
 
+  @NotNull 
   public Parser newMarkdownParser(DataHolder options) {
+    @NotNull 
     Parser.Builder builder;
     if (options != null) {
       builder = Parser.builder(options);
@@ -166,6 +179,7 @@ public class FlexmarkFactory {
     return builder.build();
   }
 
+  @NotNull 
   public HtmlRenderer getHtmlRenderer() {
     synchronized (this) {
       if (htmlRenderer == null) {
@@ -175,6 +189,7 @@ public class FlexmarkFactory {
     }
   }
 
+  @NotNull 
   public HtmlRenderer newHtmlRenderer(DataHolder options) {
     HtmlRenderer.Builder builder;
     if (options != null) {
@@ -187,6 +202,7 @@ public class FlexmarkFactory {
     return builder.build();
   }
 
+  @NotNull 
   public Formatter getFormatter() {
     synchronized (this) {
       if (formatter == null) {
@@ -196,6 +212,7 @@ public class FlexmarkFactory {
     }
   }
 
+  @NotNull 
   public Formatter newFormatter(DataHolder options) {
     Formatter.Builder builder;
     if (options != null) {
@@ -208,6 +225,7 @@ public class FlexmarkFactory {
     return builder.build();
   }
 
+  @NotNull 
   public FlexmarkHtmlConverter getFlexmarkHtmlConverter() {
     synchronized (this) {
       if (htmlConverter == null) {
@@ -217,7 +235,8 @@ public class FlexmarkFactory {
     }
   }
 
-  public FlexmarkHtmlConverter newFlexmarkHtmlConverter(DataHolder options) {
+  @NotNull 
+  public FlexmarkHtmlConverter newFlexmarkHtmlConverter(@Nullable DataHolder options) {
     FlexmarkHtmlConverter.Builder builder;
     if (options != null) {
       builder = FlexmarkHtmlConverter.builder(options);

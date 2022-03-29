@@ -36,12 +36,15 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
+import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.model.property.info.IPropertyCollector;
 import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
@@ -58,23 +61,42 @@ import javax.xml.stream.events.StartElement;
 
 public class DefaultFieldValueProperty
     extends AbstractProperty<IFieldClassBinding>
-    implements IBoundFieldValueInstance {
+    implements IBoundFieldValueInstance, IBoundJavaField {
   private static final Logger LOGGER = LogManager.getLogger(DefaultFieldValueProperty.class);
 
+  @NotNull
+  private final Field field;
+  @NotNull
   private final BoundFieldValue fieldValue;
   @NotNull
   private final IJavaTypeAdapter<?> javaTypeAdapter;
 
   public DefaultFieldValueProperty(@NotNull IFieldClassBinding fieldClassBinding, @NotNull Field field) {
-    super(field, fieldClassBinding);
+    super(fieldClassBinding);
+    this.field = ObjectUtils.requireNonNull(field, "field");
     this.fieldValue = ObjectUtils.requireNonNull(field.getAnnotation(BoundFieldValue.class));
-    this.javaTypeAdapter = ObjectUtils.requireNonNull(
-        fieldClassBinding.getBindingContext().getJavaTypeAdapterInstance(
-            ObjectUtils.notNull(fieldValue.typeAdapter())));
+    
+    Class<? extends IJavaTypeAdapter<?>> adapterClass = ObjectUtils.notNull(fieldValue.typeAdapter());
+    if (NullJavaTypeAdapter.class.equals(adapterClass)) {
+      this.javaTypeAdapter = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
+    } else {
+      this.javaTypeAdapter = ObjectUtils.requireNonNull(
+          fieldClassBinding.getBindingContext().getJavaTypeAdapterInstance(adapterClass));
+    }
+  }
+
+  @Override
+  public @NotNull Field getField() {
+    return field;
   }
 
   protected BoundFieldValue getFieldValueAnnotation() {
     return fieldValue;
+  }
+
+  @Override
+  public @NotNull IFieldClassBinding getDefinition() {
+    return getParentClassBinding();
   }
 
   @Override
@@ -89,6 +111,12 @@ public class DefaultFieldValueProperty
   @Override
   public IJavaTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
+  }
+
+  @Override
+  public String getUseName() {
+    // TODO: implement?
+    return null;
   }
 
   @Override
@@ -127,7 +155,6 @@ public class DefaultFieldValueProperty
         String fieldName = ObjectUtils.notNull(parser.currentName());
         jsonValueKey.setValue(objectInstance, jsonValueKey.readValueFromString(fieldName));
       } else {
-        // advance past the property name
         String valueKeyName = getJsonValueKeyName();
         String fieldName = parser.getCurrentName();
         if (!fieldName.equals(valueKeyName)) {
@@ -135,8 +162,9 @@ public class DefaultFieldValueProperty
               String.format("Expecteded to parse the value property named '%s', but found a property named '%s'.",
                   valueKeyName, fieldName));
         }
-        parser.nextToken();
       }
+      // advance past the property name
+      parser.nextToken();
 
       Object retval = readInternal(context);
       setValue(objectInstance, retval);
@@ -224,11 +252,6 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public IFieldClassBinding getContainingDefinition() {
-    return getParentClassBinding();
-  }
-
-  @Override
   public @NotNull ModelType getModelType() {
     // TODO: is this right? Is there a way to not make this derived from a property?
     return ModelType.FIELD;
@@ -241,15 +264,15 @@ public class DefaultFieldValueProperty
   }
 
   @Override
-  public IMetaschema getContainingMetaschema() {
-    // TODO: implement
-    return null;
-  }
-
-  @Override
   public void copyBoundObject(Object fromInstance, Object toInstance) {
     Object value = getValue(fromInstance);
     IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
     setValue(toInstance, value == null ? null : adapter.copy(value));
+  }
+
+  @Override
+  public @NotNull IInstanceSet evaluateMetapathInstances(@NotNull MetapathExpression expression) {
+    // TODO implement
+    throw new UnsupportedOperationException();
   }
 }

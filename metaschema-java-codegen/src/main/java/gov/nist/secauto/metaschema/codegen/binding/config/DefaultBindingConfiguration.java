@@ -34,11 +34,12 @@ import gov.nist.secauto.metaschema.codegen.xmlbeans.MetaschemaBindingsType;
 import gov.nist.secauto.metaschema.codegen.xmlbeans.ModelBindingType;
 import gov.nist.secauto.metaschema.codegen.xmlbeans.ObjectDefinitionBindingType;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
 import org.apache.xmlbeans.XmlException;
 import org.glassfish.jaxb.core.api.impl.NameConverter;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +53,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class DefaultBindingConfiguration implements IBindingConfiguration {
-  private Map<String, String> namespaceToPackageNameMap = new HashMap<>();
+  private final Map<String, String> namespaceToPackageNameMap = new HashMap<>();
   // metaschema location -> ModelType -> Definition Name -> IBindingConfiguration
   private final Map<String, MetaschemaBindingConfiguration> metaschemaUrlToMetaschemaBindingConfigurationMap
       = new HashMap<>();
@@ -91,6 +92,12 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
       retval = NameConverter.standard.toClassName(definition.getName());
     }
     return retval;
+  }
+
+  @Override
+  public @NotNull String getClassName(@NotNull IMetaschema metaschema) {
+    // TODO: make this configurable
+    return NameConverter.standard.toClassName(metaschema.getShortName()+"Metaschema");
   }
 
   /**

@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.freemarker.support;
 
-import gov.nist.secauto.metaschema.model.UsedDefinitionModelWalker;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.common.UsedDefinitionModelWalker;
 
 import org.jetbrains.annotations.NotNull;
 

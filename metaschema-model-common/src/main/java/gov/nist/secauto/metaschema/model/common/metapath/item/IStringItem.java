@@ -46,4 +46,11 @@ public interface IStringItem extends IAnyAtomicItem {
   default IStringItem newStringItem() {
     return this;
   }
+
+  @NotNull
+  default IIntegerItem compare(@NotNull IStringItem other) {
+    String leftString = this.asString();
+    String rightString = other.asString();
+    return IIntegerItem.valueOf(leftString.compareTo(rightString));
+  }
 }

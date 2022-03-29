@@ -53,4 +53,19 @@ public abstract class AbstractIntegerItem
   public BigInteger asInteger() {
     return getValue();
   }
+
+  @SuppressWarnings("null")
+  @Override
+  public IIntegerItem abs() {
+    BigInteger value = getValue();
+    int signum = value.signum();
+    
+    IIntegerItem retval;
+    if (signum > -1) {
+      retval = this;
+    } else {
+      retval = IIntegerItem.valueOf(getValue().abs());
+    }
+    return retval;
+  }
 }

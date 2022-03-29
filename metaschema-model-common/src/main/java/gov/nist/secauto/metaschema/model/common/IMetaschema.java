@@ -28,10 +28,6 @@ package gov.nist.secauto.metaschema.model.common;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +35,9 @@ import org.jetbrains.annotations.Nullable;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The API for accessing information about a given Metaschema.
@@ -62,12 +60,24 @@ import java.util.Map;
  * {@link #getFlagDefinitions()}, along with similarly named accessors.
  */
 public interface IMetaschema {
+  static <DEF extends IDefinition> Predicate<@NotNull DEF> allNonLocalDefinitions() {
+    return definition -> {
+      return ModuleScopeEnum.INHERITED.equals(definition.getModuleScope())
+          || ModelType.ASSEMBLY.equals(definition.getModelType()) && ((IAssemblyDefinition) definition).isRoot();
+    };
+  }
+
+  static <DEF extends IDefinition> Predicate<@NotNull DEF> allRootAssemblyDefinitions() {
+    return definition -> {
+      return ModelType.ASSEMBLY.equals(definition.getModelType()) && ((IAssemblyDefinition) definition).isRoot();
+    };
+  }
+
   /**
    * Retrieves the location where the Metaschema was loaded from.
    * 
-   * @return the location
+   * @return the location, or {@code null} if this information is not available
    */
-  @NotNull
   URI getLocation();
 
   /**
@@ -95,7 +105,7 @@ public interface IMetaschema {
   MarkupMultiline getRemarks();
 
   /**
-   * Retrieves the short name for the Metaschema, which provides a textual identifier for the
+   * Retrieves the unique short name for the Metaschema, which provides a textual identifier for the
    * Metaschema instance.
    * 
    * @return the short name
@@ -112,7 +122,7 @@ public interface IMetaschema {
   URI getXmlNamespace();
 
   /**
-   * Retrieve the JSON base URI associated with the Metaschema.
+   * Retrieve the JSON schema base URI associated with the Metaschema.
    * 
    * @return the base URI
    */
@@ -122,72 +132,90 @@ public interface IMetaschema {
   /**
    * Retrieves all Metaschema imported by this Metaschema.
    * 
-   * @return a mapping of locations to Metaschema
+   * @return a list of imported Metaschema
    */
   @NotNull
-  Map<@NotNull URI, ? extends IMetaschema> getImportedMetaschemaMap();
+  List<@NotNull ? extends IMetaschema> getImportedMetaschemas();
 
-  @SuppressWarnings("null")
-  @NotNull
-  default Collection<@NotNull ? extends IMetaschema> getImportedMetaschemas() {
-    return getImportedMetaschemaMap().values();
-  }
-
-  @NotNull
-  Map<@NotNull String, ? extends IMetaschema> getImportedMetaschemaByShortNames();
-
-  default IMetaschema getImportedMetaschemaByShortName(@NotNull String name) {
-    return getImportedMetaschemaByShortNames().get(name);
-  }
+  /**
+   * Retrieve the imported Metaschema with the specified name, if it exists.
+   * 
+   * @param name
+   *          the short name of the Metschema to retrieve
+   * @return the imported Metaschema or {@code null} if it doesn't exist
+   */
+  @Nullable
+  IMetaschema getImportedMetaschemaByShortName(String name);
 
   /**
    * Retrieves the top-level assembly definitions in this Metaschema.
    * 
-   * @return a mapping of name to assembly definition
+   * @return the collection of assembly definitions
    */
   @NotNull
-  Map<@NotNull String, ? extends IAssemblyDefinition> getAssemblyDefinitionMap();
+  Collection<@NotNull ? extends IAssemblyDefinition> getAssemblyDefinitions();
 
-  @SuppressWarnings("null")
-  @NotNull
-  default Collection<@NotNull ? extends IAssemblyDefinition> getAssemblyDefinitions() {
-    return getAssemblyDefinitionMap().values();
-  }
+  /**
+   * Retrieves the top-level assembly definition in this Metaschema with the matching name, if it
+   * exists.
+   * 
+   * @param name
+   *          the definition name
+   * 
+   * @return the matching assembly definition, or {@code null} if none match
+   */
+  @Nullable
+  IAssemblyDefinition getAssemblyDefinitionByName(@NotNull String name);
 
   /**
    * Retrieves the top-level field definitions in this Metaschema.
    * 
-   * @return a mapping of name to field definition
+   * @return the collection of field definitions
    */
-  Map<String, ? extends IFieldDefinition> getFieldDefinitionMap();
-
-  @SuppressWarnings("null")
   @NotNull
-  default Collection<@NotNull ? extends IFieldDefinition> getFieldDefinitions() {
-    return getFieldDefinitionMap().values();
-  }
+  Collection<@NotNull ? extends IFieldDefinition> getFieldDefinitions();
+
+  /**
+   * Retrieves the top-level field definition in this Metaschema with the matching name, if it exists.
+   * 
+   * @param name
+   *          the definition name
+   * 
+   * @return the matching field definition, or {@code null} if none match
+   */
+  @Nullable
+  IFieldDefinition getFieldDefinitionByName(@NotNull String name);
 
   /**
    * Retrieves the top-level assembly and field definitions in this Metaschema.
    * 
    * @return a listing of assembly and field definitions
    */
+  @SuppressWarnings("null")
   @NotNull
-  List<@NotNull ? extends IFlaggedDefinition> getAssemblyAndFieldDefinitions();
+  default List<@NotNull ? extends INamedModelDefinition> getAssemblyAndFieldDefinitions() {
+    return Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())
+        .collect(Collectors.toList());
+  }
 
   /**
    * Retrieves the top-level flag definitions in this Metaschema.
    * 
-   * @return a mapping of name to flag definition
+   * @return the collection of flag definitions
    */
   @NotNull
-  Map<@NotNull String, ? extends IFlagDefinition> getFlagDefinitionMap();
+  Collection<@NotNull ? extends IFlagDefinition> getFlagDefinitions();
 
-  @SuppressWarnings("null")
-  @NotNull
-  default Collection<@NotNull ? extends IFlagDefinition> getFlagDefinitions() {
-    return getFlagDefinitionMap().values();
-  }
+  /**
+   * Retrieves the top-level flag definition in this Metaschema with the matching name, if it exists.
+   * 
+   * @param name
+   *          the definition name
+   * 
+   * @return the matching flag definition, or {@code null} if none match
+   */
+  @Nullable
+  IFlagDefinition getFlagDefinitionByName(@NotNull String name);
 
   /**
    * Retrieves the information elements matching the path.
@@ -208,12 +236,13 @@ public interface IMetaschema {
    *          the name of the assembly to find
    * @return the assembly definition
    */
+  @Nullable
   default IAssemblyDefinition getScopedAssemblyDefinitionByName(@NotNull String name) {
     // first try local/global top-level definitions from current metaschema
-    IAssemblyDefinition retval = getAssemblyDefinitionMap().get(name);
+    IAssemblyDefinition retval = getAssemblyDefinitionByName(name);
     if (retval == null) {
       // try global definitions from imported metaschema
-      retval = getExportedAssemblyDefinitionMap().get(name);
+      retval = getExportedAssemblyDefinitionByName(name);
     }
     return retval;
   }
@@ -227,12 +256,13 @@ public interface IMetaschema {
    *          the name of the field definition to find
    * @return the field definition
    */
+  @Nullable
   default IFieldDefinition getScopedFieldDefinitionByName(@NotNull String name) {
     // first try local/global top-level definitions from current metaschema
-    IFieldDefinition retval = getFieldDefinitionMap().get(name);
+    IFieldDefinition retval = getFieldDefinitionByName(name);
     if (retval == null) {
       // try global definitions from imported metaschema
-      retval = getExportedFieldDefinitionMap().get(name);
+      retval = getExportedFieldDefinitionByName(name);
     }
     return retval;
   }
@@ -246,98 +276,104 @@ public interface IMetaschema {
    *          the name of the flag definition to find
    * @return the flag definition
    */
+  @Nullable
   default IFlagDefinition getScopedFlagDefinitionByName(@NotNull String name) {
     // first try local/global top-level definitions from current metaschema
-    IFlagDefinition retval = getFlagDefinitionMap().get(name);
+    IFlagDefinition retval = getFlagDefinitionByName(name);
     if (retval == null) {
       // try global definitions from imported metaschema
-      retval = getExportedFlagDefinitionMap().get(name);
+      retval = getExportedFlagDefinitionByName(name);
     }
     return retval;
   }
 
   /**
-   * Retrieves a mapping of the root name to top-level assembly definitions that are marked as roots
-   * from the current Metaschema.
-   * 
-   * @return a map of root names to assembly definitions marked as root
-   */
-  @NotNull
-  Map<@NotNull String, ? extends IAssemblyDefinition> getRootAssemblyDefinitionMap();
-
-  /**
    * Retrieves the top-level assembly definitions that are marked as roots from the current
    * Metaschema.
    * 
-   * @return a map of root names to assembly definitions marked as root
+   * @return a listing of assembly definitions marked as root
    */
   @SuppressWarnings("null")
   @NotNull
   default Collection<@NotNull ? extends IAssemblyDefinition> getRootAssemblyDefinitions() {
-    return getRootAssemblyDefinitionMap().values();
+    return getExportedAssemblyDefinitions().stream()
+        .filter(allRootAssemblyDefinitions())
+        .collect(Collectors.toList());
   }
 
   /**
-   * Retrieve the top-level flag definitions that are marked global in this metaschema or in any
-   * imported Metaschema. The resulting map is built by adding global definitions from each imported
-   * metaschema in order of import, then adding global definitions from the current Metaschema. Such a
-   * map is built in this way for each imported Metaschema in the chain. Values for clashing keys will
-   * be replaced in this order, giving preference to the "closest" definition
-   * 
-   * @return a mapping of name to flag definition
-   */
-  @NotNull
-  Map<@NotNull String, ? extends IFlagDefinition> getExportedFlagDefinitionMap();
-
-  @SuppressWarnings("null")
-  @NotNull
-  default Collection<@NotNull ? extends IFlagDefinition> getExportedFlagDefinitions() {
-    return getExportedFlagDefinitionMap().values();
-  }
-
-  /**
-   * Retrieve the top-level field definitions that are marked global in this metaschema or in any
-   * imported Metaschema. The resulting map is built by adding global definitions from each imported
-   * metaschema in order of import, then adding global definitions from the current Metaschema. Such a
-   * map is built in this way for each imported Metaschema in the chain. Values for clashing keys will
-   * be replaced in this order, giving preference to the "closest" definition
-   * 
-   * @return a mapping of name to field definition
-   */
-  @NotNull
-  Map<@NotNull String, ? extends IFieldDefinition> getExportedFieldDefinitionMap();
-
-  @SuppressWarnings("null")
-  @NotNull
-  default Collection<@NotNull ? extends IFieldDefinition> getExportedFieldDefinitions() {
-    return getExportedFieldDefinitionMap().values();
-  }
-
-  /**
-   * Retrieve the top-level assembly definitions that are marked global in this metaschema or in any
-   * imported Metaschema. The resulting map is built by adding global definitions from each imported
-   * metaschema in order of import, then adding global definitions from the current Metaschema. Such a
-   * map is built in this way for each imported Metaschema in the chain. Values for clashing keys will
-   * be replaced in this order, giving preference to the "closest" definition
-   * 
-   * @return a mapping of name to assembly definition
-   */
-  @NotNull
-  Map<@NotNull String, ? extends IAssemblyDefinition> getExportedAssemblyDefinitionMap();
-
-  /**
-   * Retrieve the top-level assembly definitions that are marked global in this metaschema or in any
+   * Retrieve the top-level flag definitions that are marked global in this Metaschema or in any
    * imported Metaschema. The resulting collection is built by adding global definitions from each
-   * imported metaschema in order of import, then adding global definitions from the current
+   * imported Metaschema in order of import, then adding global definitions from the current
+   * Metaschema. Such a map is built in this way for each imported Metaschema in the chain. Values for
+   * clashing keys will be replaced in this order, giving preference to the "closest" definition.
+   * 
+   * @return the collection of exported flag definitions
+   */
+  @NotNull
+  Collection<@NotNull ? extends IFlagDefinition> getExportedFlagDefinitions();
+
+  /**
+   * Retrieves the exported named flag definition, if it exists.
+   * <p>
+   * For information about how flag definitions are exported see
+   * {@link #getExportedFlagDefinitions()}.
+   * 
+   * @param name
+   *          the definition name
+   * @return the flag definition, or {@code null} if it doesn't exist.
+   */
+  @Nullable
+  IFlagDefinition getExportedFlagDefinitionByName(String name);
+
+  /**
+   * Retrieve the top-level field definitions that are marked global in this Metaschema or in any
+   * imported Metaschema. The resulting collection is built by adding global definitions from each
+   * imported Metaschema in order of import, then adding global definitions from the current
+   * Metaschema. Such a map is built in this way for each imported Metaschema in the chain. Values for
+   * clashing keys will be replaced in this order, giving preference to the "closest" definition
+   * 
+   * @return the collection of exported field definitions
+   */
+  @NotNull
+  Collection<@NotNull ? extends IFieldDefinition> getExportedFieldDefinitions();
+
+  /**
+   * Retrieves the exported named field definition, if it exists.
+   * <p>
+   * For information about how field definitions are exported see
+   * {@link #getExportedFieldDefinitions()}.
+   * 
+   * @param name
+   *          the definition name
+   * @return the field definition, or {@code null} if it doesn't exist.
+   */
+  @Nullable
+  IFieldDefinition getExportedFieldDefinitionByName(String name);
+
+  /**
+   * Retrieve the top-level assembly definitions that are marked global in this Metaschema or in any
+   * imported Metaschema. The resulting collection is built by adding global definitions from each
+   * imported Metaschema in order of import, then adding global definitions from the current
    * Metaschema. This collection is built in this way for each imported Metaschema in the chain. Items
    * with duplicate names will be replaced in this order, giving preference to the "closest"
    * definition
    * 
-   * @return a mapping of name to assembly definition
+   * @return the collection of exported assembly definitions
    */
-  @SuppressWarnings("null")
   @NotNull
-  default Collection<@NotNull ? extends IAssemblyDefinition> getExportedAssemblyDefinitions() {
-    return getExportedAssemblyDefinitionMap().values();
-  }
+  Collection<@NotNull ? extends IAssemblyDefinition> getExportedAssemblyDefinitions();
+
+  /**
+   * Retrieves the exported named assembly definition, if it exists.
+   * <p>
+   * For information about how assembly definitions are exported see
+   * {@link #getExportedFieldDefinitions()}.
+   * 
+   * @param name
+   *          the definition name
+   * @return the assembly definition, or {@code null} if it doesn't exist.
+   */
+  @Nullable
+  IAssemblyDefinition getExportedAssemblyDefinitionByName(String name);
 }

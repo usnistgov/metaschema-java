@@ -26,11 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
+import gov.nist.secauto.metaschema.model.common.AbstractFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.definitions.IXmlNamedModelDefinition;
-import gov.nist.secauto.metaschema.model.instances.AbstractFlagInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.FlagDocument;
 
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +52,7 @@ public class XmlFlagInstance
    * @param parent
    *          the field definition this object is an instance of
    */
-  public XmlFlagInstance(@NotNull FlagDocument.Flag xmlFlag, @NotNull IXmlNamedModelDefinition parent) {
+  public XmlFlagInstance(@NotNull FlagDocument.Flag xmlFlag, @NotNull INamedModelDefinition parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
   }
@@ -65,10 +68,12 @@ public class XmlFlagInstance
 
   @Override
   public IFlagDefinition getDefinition() {
-    return getContainingDefinition().getContainingMetaschema()
-        .getScopedFlagDefinitionByName(getName());
+    // this will always be not null
+    return ObjectUtils.notNull(getContainingDefinition().getContainingMetaschema()
+        .getScopedFlagDefinitionByName(getName()));
   }
 
+  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlFlag().getRef();
@@ -79,6 +84,7 @@ public class XmlFlagInstance
     return null;
   }
 
+  @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
     return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
@@ -101,5 +107,10 @@ public class XmlFlagInstance
   @Override
   public String getUseName() {
     return getXmlFlag().isSetUseName() ? getXmlFlag().getUseName() : getDefinition().getUseName();
+  }
+  
+  @Override
+  public INodeItem newNodeItem(@NotNull Object value, @NotNull IModelNodeItem parent) {
+    throw new UnsupportedOperationException("A bound object is not available");
   }
 }

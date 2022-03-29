@@ -29,69 +29,13 @@ package gov.nist.secauto.metaschema.binding.model;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.binding.io.json.IJsonProblemHandler;
-import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-import javax.xml.stream.XMLStreamException;
-
 public interface IAssemblyClassBinding extends IClassBinding, IBoundAssemblyDefinition {
 
-  /**
-   * Parses JSON into a bound object. This assembly must be a root assembly for which a call to
-   * {@link IAssemblyClassBinding#isRoot()} will return {@code true}.
-   * <p>
-   * This method expects the parser's current token to be:
-   * <ul>
-   * <li>{@code null} indicating that the parser has not yet parsed a JSON node;</li>
-   * <li>a {@link JsonToken#START_OBJECT} which represents the object wrapper containing the root
-   * field,</li>
-   * <li>a {@link JsonToken#FIELD_NAME} representing the root field to parse, or</li>
-   * <li>a peer field to the root field that will be handled by the
-   * {@link IJsonProblemHandler#handleUnknownRootProperty(IAssemblyClassBinding, String, IJsonParsingContext)}
-   * method.</li>
-   * </ul>
-   * <p>
-   * After parsing the current token will be:
-   * <ul>
-   * <li>the next token after the {@link JsonToken#END_OBJECT} corresponding to the initial
-   * {@link JsonToken#START_OBJECT} parsed by this method;</li>
-   * <li>the next token after the {@link JsonToken#END_OBJECT} for the root field's value; or</li>
-   * <li>the next token after all fields and associated values have been parsed looking for the root
-   * field. This next token will be the {@link JsonToken#END_OBJECT} for the object containing the
-   * fields. In this case the method will throw an {@link IOException} indicating the root was not
-   * found.</li>
-   * </ul>
-   * 
-   * @param context
-   *          the JSON parser
-   * @return the bound object instance representing the JSON object
-   * @throws IOException
-   *           if an error occurred while reading the JSON
-   */
-  @NotNull
-  Object readRoot(@NotNull IJsonParsingContext context) throws IOException;
-
-  /**
-   * Parses XML into a bound object. This assembly must be a root assembly for which a call to
-   * {@link IAssemblyClassBinding#isRoot()} will return {@code true}.
-   * 
-   * @param context
-   *          the XML parser
-   * @return the bound object instance representing the JSON object
-   * @throws XMLStreamException
-   *           if an error occurred while parsing into XML
-   * @throws IOException
-   *           if an error occurred while reading the input
-   */
-  // TODO: merge the XMLStreamException into IOException
-  @NotNull
-  Object readRoot(@NotNull IXmlParsingContext context) throws XMLStreamException, IOException;
 
   /**
    * Parses JSON into a bound object.
@@ -116,33 +60,4 @@ public interface IAssemblyClassBinding extends IClassBinding, IBoundAssemblyDefi
    */
   @NotNull
   Object readObject(@NotNull IJsonParsingContext context) throws IOException;
-
-  /**
-   * Writes data in a bound object to JSON. This assembly must be a root assembly for which a call to
-   * {@link IAssemblyClassBinding#isRoot()} will return {@code true}.
-   * 
-   * @param instance
-   *          the bound object
-   * @param context
-   *          the JSON serializer
-   * @throws IOException
-   *           if an error occurred while reading the JSON
-   */
-  void writeRoot(@NotNull Object instance, @NotNull IJsonWritingContext context) throws IOException;
-
-  /**
-   * Writes data in a bound object to XML. This assembly must be a root assembly for which a call to
-   * {@link IAssemblyClassBinding#isRoot()} will return {@code true}.
-   * 
-   * @param instance
-   *          the bound object
-   * @param context
-   *          the XML serializer
-   * @throws XMLStreamException
-   *           if an error occurred while parsing into XML
-   * @throws IOException
-   *           if an error occurred while writing the output
-   */
-  // TODO: merge the XMLStreamException into IOException
-  void writeRoot(@NotNull Object instance, @NotNull IXmlWritingContext context) throws XMLStreamException, IOException;
 }

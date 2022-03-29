@@ -27,11 +27,13 @@
 package gov.nist.secauto.metaschema.binding.validation;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmDocumentNodeItem;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.model.common.constraint.AbstractFindingCollectingConstraintValidationHandler;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.validation.AbstractContentValidator;
@@ -48,6 +50,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+// TODO: consider moving this to model if we can find a way to eliminate the need for the binding context
 public class ConstraintContentValidator
     extends AbstractContentValidator {
   @NotNull
@@ -58,25 +61,32 @@ public class ConstraintContentValidator
   }
 
   @NotNull
-  public IBindingContext getBindingContext() {
+  protected IBindingContext getBindingContext() {
     return bindingContext;
-  }
-
-  @NotNull
-  public IValidationResult validate(@NotNull IBoundXdmNodeItem nodeItem) {
-    BindingConstraintValidationHandler handler = new BindingConstraintValidationHandler();
-
-    getBindingContext().validate(nodeItem, nodeItem.getBaseUri(), true, handler);
-
-    return handler;
   }
 
   @Override
   public IValidationResult validate(@NotNull InputStream is, @NotNull URI documentUri) throws IOException {
-    IBoundXdmDocumentNodeItem nodeItem = getBindingContext().newBoundLoader().loadAsNodeItem(is, documentUri);
+    IDocumentNodeItem nodeItem = getBindingContext().newBoundLoader().loadAsNodeItem(is, documentUri);
     return validate(nodeItem);
   }
 
+  @NotNull
+  public IValidationResult validate(@NotNull INodeItem nodeItem) {
+    StaticContext staticContext = new StaticContext();
+    DynamicContext dynamicContext = staticContext.newDynamicContext();
+    dynamicContext.setDocumentLoader(getBindingContext().newBoundLoader());
+    DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext);
+
+    BindingConstraintValidationHandler result = new BindingConstraintValidationHandler();
+    validator.setConstraintValidationHandler(result);
+
+    nodeItem.validate(validator);
+    validator.finalizeValidation();
+
+    return result;
+  }
+  
   public static class BindingConstraintValidationHandler
       extends AbstractFindingCollectingConstraintValidationHandler implements IValidationResult {
     @NotNull
@@ -107,13 +117,6 @@ public class ConstraintContentValidator
         highestLevel = constraint.getLevel();
       }
     }
-
-    @Override
-    public boolean isPassing() {
-      // TODO Auto-generated method stub
-      return false;
-    }
-
   }
 
   public static class ConstraintValidationFinding implements IValidationFinding { // NOPMD - intentional

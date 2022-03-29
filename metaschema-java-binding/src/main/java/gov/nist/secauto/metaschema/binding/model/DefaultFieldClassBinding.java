@@ -30,6 +30,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
+import gov.nist.secauto.metaschema.binding.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.CollapseKeyBuilder;
@@ -41,13 +42,11 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
-import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultFieldValueProperty;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.binding.model.property.info.ListPropertyCollector;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
@@ -211,8 +210,7 @@ public class DefaultFieldClassBinding
   protected void initializeFlagInstance(IBoundFlagInstance instance) {
     super.initializeFlagInstance(instance);
 
-    java.lang.reflect.Field field = instance.getField();
-    if (field.isAnnotationPresent(JsonFieldValueKeyFlag.class)) {
+    if (instance.isJsonValueKey()) {
       this.jsonValueKeyFlagInstance = instance;
     }
   }
@@ -272,7 +270,7 @@ public class DefaultFieldClassBinding
       // JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
       // This could be an empty assembly signified by a END_OBJECT, or a series of properties signified by
       // a FIELD_NAME
-      JsonUtil.assertCurrent(jsonParser, Set.of(JsonToken.FIELD_NAME, JsonToken.END_OBJECT));
+      JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
     }
 
     List<@NotNull Object> retval;
@@ -359,7 +357,7 @@ public class DefaultFieldClassBinding
       } else {
         // This could be an empty assembly signified by a END_OBJECT, or a series of properties signified by
         // a FIELD_NAME
-        JsonUtil.assertCurrent(jsonParser, Set.of(JsonToken.FIELD_NAME, JsonToken.END_OBJECT));
+        JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
 
         boolean parsedValueKey = false;
         // now parse each property until the end object is reached
@@ -429,7 +427,7 @@ public class DefaultFieldClassBinding
 
       if (properties.isEmpty()) {
         // this is the next field or the end of the containing object of this field
-        JsonUtil.assertCurrent(jsonParser, Set.of(JsonToken.FIELD_NAME, JsonToken.END_OBJECT));
+        JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
       } else {
         // this is the current end element, but we are not responsible for parsing it.
         JsonUtil.assertCurrent(jsonParser, JsonToken.END_OBJECT);
@@ -477,12 +475,12 @@ public class DefaultFieldClassBinding
 
     Map<@NotNull String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
 
-    Map<IBoundInstance, Supplier<? extends Object>> parsedProperties = new HashMap<>(); // NOPMD - intentional
+    Map<IBoundNamedInstance, Supplier<? extends Object>> parsedProperties = new HashMap<>(); // NOPMD - intentional
 
     JsonParser jsonParser = context.getReader(); // NOPMD - intentional
     // This could be an empty assembly signified by a END_OBJECT, or a series of properties signified by
     // a FIELD_NAME
-    JsonUtil.assertCurrent(jsonParser, Set.of(JsonToken.FIELD_NAME, JsonToken.END_OBJECT));
+    JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
 
     if (jsonKey != null) {
       // if there is a json key, the first field will be the key
@@ -582,8 +580,8 @@ public class DefaultFieldClassBinding
 
         callBeforeDeserialize(item, parentInstance);
 
-        for (Map.Entry<IBoundInstance, Supplier<? extends Object>> entry : parsedProperties.entrySet()) {
-          IBoundInstance property = entry.getKey();
+        for (Map.Entry<IBoundNamedInstance, Supplier<? extends Object>> entry : parsedProperties.entrySet()) {
+          IBoundNamedInstance property = entry.getKey();
           Supplier<? extends Object> supplier = entry.getValue();
 
           property.setValue(item, supplier.get());
@@ -605,8 +603,8 @@ public class DefaultFieldClassBinding
 
           fieldValue.setValue(item, value);
 
-          for (Map.Entry<IBoundInstance, Supplier<? extends Object>> entry : parsedProperties.entrySet()) {
-            IBoundInstance property = entry.getKey();
+          for (Map.Entry<IBoundNamedInstance, Supplier<? extends Object>> entry : parsedProperties.entrySet()) {
+            IBoundNamedInstance property = entry.getKey();
             Supplier<? extends Object> supplier = entry.getValue();
 
             property.setValue(item, supplier.get());
@@ -753,7 +751,7 @@ public class DefaultFieldClassBinding
   }
 
   @Override
-  public IJavaTypeAdapter<?> getDatatype() {
+  public IJavaTypeAdapter<?> getJavaTypeAdapter() {
     return getFieldValue().getJavaTypeAdapter();
   }
 
@@ -805,5 +803,11 @@ public class DefaultFieldClassBinding
     super.copyBoundObjectInternal(fromInstance, toInstance);
 
     getFieldValue().copyBoundObject(fromInstance, toInstance);
+  }
+
+
+  @Override
+  protected Class<? extends AbstractBoundMetaschema> getMetaschemaClass() {
+    return getMetaschemaFieldAnnotation().metaschema();
   }
 }

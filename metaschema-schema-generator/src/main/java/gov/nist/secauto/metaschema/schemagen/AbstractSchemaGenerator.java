@@ -26,16 +26,16 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ModelWalker;
 
@@ -64,7 +64,7 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
 
   private static class ChoiceInlineStrategy implements IInlineStrategy {
     @NotNull
-    private final Map<@NotNull INamedDefinition, Boolean> definitionInlinedMap;
+    private final Map<gov.nist.secauto.metaschema.model.common.INamedDefinition, Boolean> definitionInlinedMap;
 
     public ChoiceInlineStrategy(@NotNull Collection<@NotNull ? extends INamedDefinition> definitions) {
       ChoiceModelWalker walker = new ChoiceModelWalker();
@@ -84,11 +84,12 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
   private static class ChoiceModelWalker
       extends ModelWalker<@NotNull Integer> {
     @NotNull
-    private final Map<@NotNull INamedDefinition, Boolean> definitionInlinedMap = new HashMap<>(); // NOPMD - intentional
-    private final Stack<@NotNull INamedDefinition> visitStack = new Stack<>();
+    private final Map<gov.nist.secauto.metaschema.model.common.INamedDefinition, Boolean> definitionInlinedMap
+        = new HashMap<>(); // NOPMD - intentional
+    private final Stack<gov.nist.secauto.metaschema.model.common.INamedDefinition> visitStack = new Stack<>();
 
     @NotNull
-    protected Map<@NotNull INamedDefinition, Boolean> getDefinitionInlinedMap() {
+    protected Map<gov.nist.secauto.metaschema.model.common.INamedDefinition, Boolean> getDefinitionInlinedMap() {
       return CollectionUtil.unmodifiableMap(definitionInlinedMap);
     }
 

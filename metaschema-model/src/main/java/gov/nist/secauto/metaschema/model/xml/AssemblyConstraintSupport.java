@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstra
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.DefineAssemblyConstraintsType;
 import gov.nist.secauto.metaschema.model.xmlbeans.HasCardinalityConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedAllowedValuesType;
@@ -47,25 +48,45 @@ import gov.nist.secauto.metaschema.model.xmlbeans.ScopedMatchesConstraintType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Provides support for parsing and maintaining a set of Metaschema constraints. Constraints are
+ * parsed from XML.
+ */
 public class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
+  @NotNull
   private static final String PATH = "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
       + "$this/m:allowed-values|$this/m:index|$this/m:index-has-key|$this/m:is-unique|"
       + "$this/m:has-cardinality|$this/m:matches|$this/m:expect";
+  @NotNull
   private final List<AbstractConstraint> constraints;
+  @NotNull
   private final List<DefaultAllowedValuesConstraint> allowedValuesConstraints;
+  @NotNull
   private final List<DefaultMatchesConstraint> matchesConstraints;
+  @NotNull
   private final List<DefaultIndexHasKeyConstraint> indexHasKeyConstraints;
+  @NotNull
   private final List<DefaultExpectConstraint> expectConstraints;
+  @NotNull
   private final List<DefaultIndexConstraint> indexConstraints;
+  @NotNull
   private final List<DefaultUniqueConstraint> uniqueConstraints;
+  @NotNull
   private final List<DefaultCardinalityConstraint> cardinalityConstraints;
 
-  public AssemblyConstraintSupport(DefineAssemblyConstraintsType xmlConstraints) {
+  /**
+   * Generate a set of constraints from the provided XMLBeans instance.
+   * 
+   * @param xmlConstraints
+   *          the XMLBeans instance
+   */
+  public AssemblyConstraintSupport(DefineAssemblyConstraintsType xmlConstraints) { // NOPMD - unavoidable
     XmlCursor cursor = xmlConstraints.newCursor();
     cursor.selectPath(PATH);
 
@@ -113,21 +134,25 @@ public class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
         expectConstraints.add(constraint);
       }
     }
-    this.constraints = constraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(constraints);
-    this.allowedValuesConstraints = allowedValuesConstraints.isEmpty() ? Collections.emptyList()
-        : Collections.unmodifiableList(allowedValuesConstraints);
-    this.matchesConstraints
-        = matchesConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(matchesConstraints);
-    this.indexHasKeyConstraints = indexHasKeyConstraints.isEmpty() ? Collections.emptyList()
-        : Collections.unmodifiableList(indexHasKeyConstraints);
-    this.expectConstraints
-        = expectConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(expectConstraints);
-    this.indexConstraints
-        = indexConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(indexConstraints);
-    this.uniqueConstraints
-        = uniqueConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(uniqueConstraints);
-    this.cardinalityConstraints = cardinalityConstraints.isEmpty() ? Collections.emptyList()
-        : Collections.unmodifiableList(cardinalityConstraints);
+    this.constraints = ObjectUtils.notNull(
+        constraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(constraints));
+    this.allowedValuesConstraints = ObjectUtils.notNull(
+        allowedValuesConstraints.isEmpty() ? Collections.emptyList()
+            : Collections.unmodifiableList(allowedValuesConstraints));
+    this.matchesConstraints = ObjectUtils.notNull(
+        matchesConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(matchesConstraints));
+    this.indexHasKeyConstraints = ObjectUtils.notNull(
+        indexHasKeyConstraints.isEmpty() ? Collections.emptyList()
+            : Collections.unmodifiableList(indexHasKeyConstraints));
+    this.expectConstraints = ObjectUtils.notNull(
+        expectConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(expectConstraints));
+    this.indexConstraints = ObjectUtils.notNull(
+        indexConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(indexConstraints));
+    this.uniqueConstraints = ObjectUtils.notNull(
+        uniqueConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(uniqueConstraints));
+    this.cardinalityConstraints = ObjectUtils.notNull(
+        cardinalityConstraints.isEmpty() ? Collections.emptyList()
+            : Collections.unmodifiableList(cardinalityConstraints));
   }
 
   @Override

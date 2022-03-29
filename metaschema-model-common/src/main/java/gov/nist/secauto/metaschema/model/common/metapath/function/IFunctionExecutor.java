@@ -52,6 +52,8 @@ public interface IFunctionExecutor {
    * @param focus
    *          the current focus
    * @return a sequence containing the result of the execution
+   * @throws MetapathException
+   *           if an error occurred while executing the function
    */
   @NotNull
   ISequence<?> execute(@NotNull IFunction function, @NotNull List<@NotNull ISequence<?>> arguments,

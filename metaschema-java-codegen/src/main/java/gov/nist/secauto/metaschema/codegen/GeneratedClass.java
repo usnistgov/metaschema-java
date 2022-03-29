@@ -34,12 +34,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 
-public class GeneratedClass {
+public class GeneratedClass implements IGeneratedClass {
   @NotNull
   private final Path classFile;
   @NotNull
   private final ClassName className;
-  private final boolean rootClass;
 
   /**
    * Construct a new class information object for a generated class.
@@ -48,40 +47,21 @@ public class GeneratedClass {
    *          the file the class was written to
    * @param className
    *          the type info for the class
-   * @param rootClass
-   *          {@code true} if the class is a root assembly, or {@code false} otherwise
    */
-  public GeneratedClass(@NotNull Path classFile, @NotNull ClassName className, boolean rootClass) {
+  public GeneratedClass(@NotNull Path classFile, @NotNull ClassName className) {
     this.classFile = ObjectUtils.requireNonNull(classFile, "classFile");
     this.className = ObjectUtils.requireNonNull(className, "className");
-    this.rootClass = rootClass;
   }
 
-  /**
-   * The file the class was written to.
-   * 
-   * @return the class file
-   */
+  @Override
+  @NotNull
   public Path getClassFile() {
     return classFile;
   }
 
-  /**
-   * The type info for the class.
-   * 
-   * @return the class's type info
-   */
+  @Override
+  @NotNull
   public ClassName getClassName() {
     return className;
-  }
-
-  /**
-   * Indicates if the class represents a root Metaschema assembly which can be the top-level
-   * element/property of an XML, JSON, or YAML instance.
-   * 
-   * @return {@code true} if the class is a root assembly, or {@code false} otherwise
-   */
-  public boolean isRootClass() {
-    return rootClass;
   }
 }

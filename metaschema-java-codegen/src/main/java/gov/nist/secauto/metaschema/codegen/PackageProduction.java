@@ -27,10 +27,15 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import com.squareup.javapoet.ClassName;
+import com.vladsch.flexmark.formatter.Formatter;
+import com.vladsch.flexmark.util.sequence.LineAppendable;
 
+import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaPackage;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlNs;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlNsForm;
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupText;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -40,13 +45,15 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 public class PackageProduction {
   private final String javaPackage;
   private final URI xmlNamespace;
-  private final GeneratedClass packageInfoClass;
+  private final GeneratedDefinitionClass packageInfoClass;
 
-  public PackageProduction(@NotNull String javaPackage, @NotNull URI xmlNamespace, @NotNull Path targetDirectory)
+  public PackageProduction(@NotNull String javaPackage, @NotNull URI xmlNamespace,
+      @NotNull List<MetaschemaProduction> metaschemaProductions, @NotNull Path targetDirectory)
       throws IOException {
     this.javaPackage = javaPackage;
     this.xmlNamespace = xmlNamespace;
@@ -55,7 +62,25 @@ public class PackageProduction {
     Path packageInfo = targetDirectory.resolve(packagePath + "/package-info.java");
 
     try (PrintWriter writer = new PrintWriter(
-        Files.newBufferedWriter(packageInfo, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING))) {
+        Files.newBufferedWriter(packageInfo, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
+            StandardOpenOption.TRUNCATE_EXISTING))) {
+      writer.format("@%1$s(metaschemas = {%n", MetaschemaPackage.class.getName());
+
+      boolean first = true;
+      for (MetaschemaProduction metaschemaProduction : metaschemaProductions) {
+        if (first) {
+          first = false;
+        } else {
+          writer.format(",%n");
+        }
+
+        GeneratedClass generatedMetaschema = metaschemaProduction.getGeneratedMetaschema();
+
+        writer.format("  %1$s.class", generatedMetaschema.getClassName().canonicalName());
+      }
+
+      writer.format("})%n");
+
       writer.format(
           "@%1$s(namespace = \"%2$s\", xmlns = {@%3$s(prefix = \"\", namespace = \"%2$s\")},"
               + " xmlElementFormDefault = %4$s.QUALIFIED)%n",
@@ -63,7 +88,19 @@ public class PackageProduction {
       writer.format("package %s;%n", javaPackage);
     }
 
-    this.packageInfoClass = new GeneratedClass(packageInfo, ClassName.get(javaPackage, "package-info"), false);
+    this.packageInfoClass
+        = new GeneratedDefinitionClass(packageInfo, ClassName.get(javaPackage, "package-info"), false);
+  }
+
+  public static String formatMarkdown(@NotNull IMarkupText markup) {
+    Formatter.Builder builder = Formatter.builder();
+    builder.set(Formatter.FORMAT_FLAGS, LineAppendable.F_WHITESPACE_REMOVAL);
+    // builder.set(Formatter.ESCAPE_SPECIAL_CHARS, false);
+    Formatter formatter = builder.build();
+    String markdown = markup.toMarkdown(formatter).trim();
+    markdown = markdown.replace("\\&", "&");
+    markdown = markdown.replace("\"", "\\\"");
+    return markdown;
   }
 
   public String getJavaPackage() {
@@ -76,9 +113,10 @@ public class PackageProduction {
 
   /**
    * Get the generated package-info class associated with this package.
+   * 
    * @return the package-info class
    */
-  public GeneratedClass getGeneratedClass() {
+  public GeneratedDefinitionClass getGeneratedClass() {
     return packageInfoClass;
   }
 }

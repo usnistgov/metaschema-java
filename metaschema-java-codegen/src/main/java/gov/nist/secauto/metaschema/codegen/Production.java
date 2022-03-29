@@ -28,9 +28,7 @@ package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -39,45 +37,50 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 public class Production {
 
-  private final Map<IMetaschema, MetaschemaProduction> metaschemaToProductionMap = new HashMap<>();
-  private final Map<String, PackageProduction> packageNameToProductionMap = new HashMap<>();
+  private final Map<IMetaschema, MetaschemaProduction> metaschemaToProductionMap // NOPMD - immutable
+      = new HashMap<>();
+  private final Map<String, PackageProduction> packageNameToProductionMap // NOPMD - immutable
+      = new HashMap<>();
 
-  public static Production of(@NotNull IMetaschema metaschema, @NotNull ITypeResolver typeResolver,
+  public static Production of( // NOPMD - intentional name
+      @NotNull IMetaschema metaschema,
+      @NotNull ITypeResolver typeResolver,
       @NotNull Path targetDirectory) throws IOException {
     return of(Collections.singleton(metaschema), typeResolver, targetDirectory);
   }
 
-  public static Production of(@NotNull Collection<? extends IMetaschema> metaschemas,
-      @NotNull ITypeResolver typeResolver, @NotNull Path targetDirectory) throws IOException {
+  public static Production of( // NOPMD - intentional name
+      @NotNull Collection<? extends IMetaschema> metaschemas,
+      @NotNull ITypeResolver typeResolver,
+      @NotNull Path targetDirectory) throws IOException {
     Production retval = new Production();
     for (IMetaschema metaschema : metaschemas) {
       processMetaschema(metaschema, retval, typeResolver, targetDirectory);
     }
 
-    Map<String, URI> packageNameToXmlNamespaceMap = retval.getMetaschemaProductions().stream()
-        .map(meta -> Pair.of(meta.getPackageName(), meta.getMetaschema().getXmlNamespace()))
-        .collect(
-            CustomCollectors.toMap(
-                pair -> pair.getLeft(),
-                pair -> pair.getRight(),
-                (javaPackage, ns1, ns2) -> {
-                  if (ns1.equals(ns2)) {
-                    return ns1;
-                  }
-                  throw new IllegalStateException(
-                      String.format(
-                          "The package %s is associated with the XML namespaces '%s' and '%s'."
-                              + " A package must be associated with a single XML namespace.",
-                          javaPackage, ns1, ns2));
-                }));
+    Map<String, PackageMetadata> packageNameToPackageMetadataMap = new HashMap<>(); // NOPMD - no concurrency
+    for (MetaschemaProduction metaschemaProduction : retval.getMetaschemaProductions()) {
+      String packageName = metaschemaProduction.getPackageName();
 
-    for (Map.Entry<String, URI> entry : packageNameToXmlNamespaceMap.entrySet()) {
-      retval.addPackage(entry.getKey(), entry.getValue(), targetDirectory);
+      PackageMetadata metadata = packageNameToPackageMetadataMap.get(packageName);
+      if (metadata == null) {
+        metadata = new PackageMetadata(metaschemaProduction); // NOPMD - intentional
+        packageNameToPackageMetadataMap.put(metadata.getPackageName(), metadata);
+      } else {
+        metadata.addMetaschema(metaschemaProduction);
+      }
+    }
+
+    for (PackageMetadata metadata : packageNameToPackageMetadataMap.values()) {
+      retval.addPackage(metadata.getPackageName(), metadata.getXmlNamespace(), metadata.getMetaschemaProductions(),
+          targetDirectory);
     }
     return retval;
   }
@@ -94,20 +97,19 @@ public class Production {
   }
 
   public MetaschemaProduction addMetaschema(@NotNull IMetaschema metaschema, @NotNull ITypeResolver typeResolver,
-      @NotNull Path targetDirectory) {
+      @NotNull Path targetDirectory) throws IOException {
     MetaschemaProduction retval = metaschemaToProductionMap.get(metaschema);
     if (retval == null) {
       metaschemaToProductionMap.put(metaschema, new MetaschemaProduction(metaschema, typeResolver, targetDirectory));
     }
+
     return retval;
   }
 
   public PackageProduction addPackage(@NotNull String javaPackage, @NotNull URI xmlNamespace,
-      @NotNull Path targetDirectory) throws IOException {
-    PackageProduction retval = packageNameToProductionMap.get(javaPackage);
-    if (retval == null) {
-      packageNameToProductionMap.put(javaPackage, new PackageProduction(javaPackage, xmlNamespace, targetDirectory));
-    }
+      @NotNull List<MetaschemaProduction> metaschemaProductions, @NotNull Path targetDirectory) throws IOException {
+    PackageProduction retval = new PackageProduction(javaPackage, xmlNamespace, metaschemaProductions, targetDirectory);
+    packageNameToProductionMap.put(javaPackage, retval);
     return retval;
   }
 
@@ -135,5 +137,40 @@ public class Production {
             .flatMap(metaschema -> metaschema.getGeneratedClasses()),
         getPackageProductions().stream()
             .flatMap(javaPackage -> Stream.of(javaPackage.getGeneratedClass())));
+  }
+
+  private static class PackageMetadata {
+    private final String packageName;
+    private final URI xmlNamespace;
+    private final List<MetaschemaProduction> metaschemaProductions = new LinkedList<>();
+
+    public PackageMetadata(@NotNull MetaschemaProduction metaschemaProduction) {
+      packageName = metaschemaProduction.getPackageName();
+      xmlNamespace = metaschemaProduction.getMetaschema().getXmlNamespace();
+      metaschemaProductions.add(metaschemaProduction);
+    }
+
+    protected String getPackageName() {
+      return packageName;
+    }
+
+    protected URI getXmlNamespace() {
+      return xmlNamespace;
+    }
+
+    protected List<MetaschemaProduction> getMetaschemaProductions() {
+      return metaschemaProductions;
+    }
+
+    private void addMetaschema(@NotNull MetaschemaProduction metaschemaProduction) {
+      URI nextXmlNamespace = metaschemaProduction.getMetaschema().getXmlNamespace();
+      if (!xmlNamespace.equals(nextXmlNamespace)) {
+        String.format(
+            "The package %s is associated with the XML namespaces '%s' and '%s'."
+                + " A package must be associated with a single XML namespace.",
+            getPackageName(), getXmlNamespace().toASCIIString(), nextXmlNamespace.toASCIIString());
+      }
+      metaschemaProductions.add(metaschemaProduction);
+    }
   }
 }

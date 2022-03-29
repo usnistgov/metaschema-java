@@ -33,7 +33,6 @@ public final class ObjectUtils {
     // disable construction
   }
 
-  @SuppressWarnings("null")
   public static <T> @NotNull T notNull(T obj) {
     assert obj != null;
     return obj;

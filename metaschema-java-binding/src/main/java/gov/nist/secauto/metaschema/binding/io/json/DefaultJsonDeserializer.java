@@ -33,9 +33,10 @@ import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.binding.io.Feature;
 import gov.nist.secauto.metaschema.binding.io.IConfiguration;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.RootAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -82,9 +83,9 @@ public class DefaultJsonDeserializer<CLASS>
   }
 
   @Override
-  protected IBoundXdmNodeItem deserializeToNodeItemInternal(@NotNull Reader reader, @NotNull URI documentUri)
+  protected INodeItem deserializeToNodeItemInternal(@NotNull Reader reader, @NotNull URI documentUri)
       throws IOException {
-    IBoundXdmNodeItem retval;
+    INodeItem retval;
     try (JsonParser parser = newJsonParser(reader)) {
       DefaultJsonParsingContext parsingContext = new DefaultJsonParsingContext(parser, new DefaultJsonProblemHandler());
       IAssemblyClassBinding classBinding = getClassBinding();
@@ -92,9 +93,11 @@ public class DefaultJsonDeserializer<CLASS>
 
       if (classBinding.isRoot()
           && configuration.isFeatureEnabled(Feature.DESERIALIZE_JSON_ROOT_PROPERTY)) {
+        
+        RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
         // now parse the root property
         @SuppressWarnings("unchecked")
-        CLASS value = ObjectUtils.requireNonNull((CLASS) classBinding.readRoot(parsingContext));
+        CLASS value = ObjectUtils.requireNonNull((CLASS) root.readRoot(parsingContext));
 
         // // we should be at the end object
         // JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
@@ -102,11 +105,11 @@ public class DefaultJsonDeserializer<CLASS>
         // // advance past the end object
         // JsonToken end = parser.nextToken();
 
-        retval = IXdmFactory.INSTANCE.newDocumentNodeItem(classBinding, value, documentUri);
+        retval = IXdmFactory.INSTANCE.newDocumentNodeItem(root, value, documentUri);
       } else {
         @SuppressWarnings("unchecked")
         CLASS value = ObjectUtils.requireNonNull((CLASS) classBinding.readObject(parsingContext));
-        retval = IXdmFactory.INSTANCE.newRelativeAssemblyNodeItem(classBinding, value, documentUri);
+        retval = IXdmFactory.INSTANCE.newAssemblyNodeItem(classBinding, value, documentUri);
       }
       return retval;
     }

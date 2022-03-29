@@ -44,6 +44,7 @@ import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -51,7 +52,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -59,25 +59,22 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 public class MapPropertyInfo
-    extends AbstractModelPropertyInfo<ParameterizedType> {
+    extends AbstractModelPropertyInfo {
 
+  @SuppressWarnings("null")
   @Override
   public Collection<?> getItemsFromValue(Object value) {
     return value == null ? List.of() : ((Map<?, ?>) value).values();
   }
 
-  public MapPropertyInfo(IBoundNamedModelInstance property) {
+  public MapPropertyInfo(@NotNull IBoundNamedModelInstance property) {
     super(property);
-    if (!Map.class.isAssignableFrom(property.getRawType())) {
-      throw new IllegalArgumentException(String.format(
-          "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
-          property.getField().getName(), property.getParentClassBinding().getBoundClass().getName(),
-          property.getField().getType().getName(), Map.class.getName()));
-    }
   }
 
+  @SuppressWarnings("null")
+  @NotNull
   public Class<?> getKeyType() {
-    ParameterizedType actualType = getType();
+    ParameterizedType actualType = (ParameterizedType) getProperty().getType();
     // this is a Map so the first generic type is the key
     return (Class<?>) actualType.getActualTypeArguments()[0];
   }
@@ -87,8 +84,10 @@ public class MapPropertyInfo
     return getValueType();
   }
 
+  @SuppressWarnings("null")
+  @NotNull
   public Class<?> getValueType() {
-    ParameterizedType actualType = getType();
+    ParameterizedType actualType = (ParameterizedType) getProperty().getType();
     // this is a Map so the second generic type is the value
     return (Class<?>) actualType.getActualTypeArguments()[1];
   }
@@ -101,7 +100,7 @@ public class MapPropertyInfo
   @Override
   public void readValue(IPropertyCollector collector, Object parentInstance, IJsonParsingContext context)
       throws IOException {
-    JsonParser jsonParser = context.getReader();
+    JsonParser jsonParser = context.getReader(); // NOPMD - intentional
 
     // A map value is always wrapped in a START_OBJECT, since fields are used for the keys
     JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
@@ -118,7 +117,7 @@ public class MapPropertyInfo
 
       // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all items have been
       // read
-      JsonUtil.assertCurrent(jsonParser, Set.of(JsonToken.FIELD_NAME, JsonToken.END_OBJECT));
+      JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
     }
 
     // A map value will always end with an end object, which needs to be consumed
@@ -153,21 +152,21 @@ public class MapPropertyInfo
   }
 
   @Override
-  public boolean writeValue(Object parentInstance, QName parentName, IXmlWritingContext context)
+  public void writeValue(Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     IBoundNamedModelInstance property = getProperty();
     @SuppressWarnings("unchecked")
-    Map<@NotNull String, ? extends Object> items
-        = (Map<@NotNull String, ? extends Object>) property.getValue(parentInstance);
+    Map<@NotNull String, ? extends Object> items = (Map<@NotNull String, ? extends Object>) value;
     for (Object item : items.values()) {
       property.writeItem(ObjectUtils.notNull(item), parentName, context);
     }
-    return true;
   }
 
   public static class MapPropertyCollector implements IPropertyCollector {
 
+    @NotNull
     private final Map<String, Object> map = new LinkedHashMap<>();
+    @Nullable
     private final IBoundFlagInstance jsonKey;
 
     protected MapPropertyCollector(IBoundNamedModelInstance property) {
@@ -199,27 +198,24 @@ public class MapPropertyInfo
     }
 
     @Override
-    public Object getValue() {
+    public Map<String, Object> getValue() {
       return map;
     }
   }
 
   @Override
   public void writeValue(Object parentInstance, IJsonWritingContext context) throws IOException {
-    Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
+    Collection<@NotNull ? extends Object> items = getItemsFromParentInstance(parentInstance);
 
-    if (items.isEmpty()) {
-      // nothing to write
-      return;
+    if (!items.isEmpty()) {
+      JsonGenerator writer = context.getWriter();
+
+      writer.writeStartObject();
+
+      getProperty().getDataTypeHandler().writeItems(items, false, context);
+
+      writer.writeEndObject();
     }
-
-    JsonGenerator writer = context.getWriter();
-
-    writer.writeStartObject();
-
-    getProperty().getDataTypeHandler().writeItems(items, false, context);
-
-    writer.writeEndObject();
   }
 
   @Override

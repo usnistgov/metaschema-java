@@ -31,7 +31,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundInstance;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.binding.model.property.info.IJsonBindingSupplier;
 
 import java.io.IOException;
@@ -76,8 +76,8 @@ public class DefaultJsonProblemHandler implements IJsonProblemHandler {
 
   // TODO: implement this
   @Override
-  public Map<IBoundInstance, IJsonBindingSupplier> handleMissingFields(IClassBinding classBinding,
-      Map<String, IBoundInstance> missingPropertyBindings, IJsonParsingContext context) throws BindingException {
+  public Map<IBoundNamedInstance, IJsonBindingSupplier> handleMissingFields(IClassBinding classBinding,
+      Map<String, IBoundNamedInstance> missingPropertyBindings, IJsonParsingContext context) throws BindingException {
     return Collections.emptyMap();
   }
 

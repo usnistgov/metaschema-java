@@ -39,6 +39,19 @@ import java.util.stream.Stream;
  */
 public interface IPathSegment {
   /**
+   * Get the path for this node item using the provided formatter.
+   * 
+   * @param formatter
+   *          the path formatter to use to produce the path
+   * 
+   * @return the formatted path
+   */
+  @NotNull
+  default String toPath(@NotNull IPathFormatter formatter) {
+    return formatter.format(this);
+  }
+
+  /**
    * Apply formatting for the path segment. This is a visitor pattern that will be called to format
    * each segment in a larger path.
    * 
@@ -66,7 +79,7 @@ public interface IPathSegment {
    * @return a stream of path segments in descending order
    */
   @NotNull
-  Stream<? extends IPathSegment> getPathStream();
+  Stream<@NotNull ? extends IPathSegment> getPathStream();
 
   /**
    * Get the value associated with the path segment.

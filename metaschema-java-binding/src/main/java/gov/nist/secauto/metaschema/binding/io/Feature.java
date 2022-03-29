@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 
 /**
  * Configuration options for serialization and deserialization of bound objects.

@@ -46,6 +46,7 @@ public class ModelInitializationException
    * cause is not initialized, and may subsequently be initialized by a call to {@link #initCause}.
    */
   public ModelInitializationException() {
+    // No message
   }
 
   /**

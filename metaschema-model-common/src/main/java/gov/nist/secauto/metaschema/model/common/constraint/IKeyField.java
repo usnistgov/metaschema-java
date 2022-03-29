@@ -29,9 +29,13 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.regex.Pattern;
 
 public interface IKeyField {
+  @NotNull
   MetapathExpression getTarget();
 
   /**
@@ -40,6 +44,7 @@ public interface IKeyField {
    * 
    * @return a pattern to use to get the value or {@code null} if the full value is to be used
    */
+  @Nullable
   Pattern getPattern();
 
   /**
@@ -47,5 +52,6 @@ public interface IKeyField {
    * 
    * @return markup text or {@code null} if no text is provided
    */
+  @Nullable
   MarkupMultiline getRemarks();
 }

@@ -26,14 +26,17 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IBoundAssemblyDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,58 +44,63 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractBoundXdmAssemblyNodeItem<INSTANCE extends IBoundAssemblyInstance>
-    extends AbstractBoundXdmModelNodeItem<INSTANCE>
-    implements IBoundXdmAssemblyNodeItem {
+public abstract class AbstractBoundXdmAssemblyNodeItem
+    extends AbstractBoundXdmModelNodeItem
+    implements IAssemblyNodeItem {
 
-  private Map<String, List<IBoundXdmModelNodeItem>> modelItems;
+  private Map<@NotNull String, List<@NotNull ? extends IModelNodeItem>> modelItems;
 
-  public AbstractBoundXdmAssemblyNodeItem(@NotNull INSTANCE instance, @NotNull Object value, int position) {
-    super(instance, value, position);
+  public AbstractBoundXdmAssemblyNodeItem(@NotNull Object value, int position) {
+    super(value, position);
   }
 
   @Override
-  public IAssemblyClassBinding getClassBinding() {
-    return getDefinition().getClassBinding();
-  }
+  public abstract IBoundAssemblyDefinition getDefinition();
 
+  @SuppressWarnings("null")
   @Override
-  public IBoundAssemblyDefinition getDefinition() {
-    return getInstance().getDefinition();
+  public Collection<@NotNull List<@NotNull ? extends IModelNodeItem>> getModelItems() {
+    return initModelItems().values();
   }
 
+  @SuppressWarnings("null")
   @Override
-  public Map<String, List<IBoundXdmModelNodeItem>> getModelItems() {
-    initModelItems();
-    return modelItems;
+  public List<@NotNull ? extends IModelNodeItem> getModelItemsByName(String name) {
+    List<@NotNull ? extends IModelNodeItem> result = initModelItems().get(name);
+    return result == null ? CollectionUtil.emptyList() : result;
   }
 
-  protected synchronized void initModelItems() {
-    if (this.modelItems == null) {
-      Map<String, List<IBoundXdmModelNodeItem>> modelItems = new LinkedHashMap<>();
-      Object parentValue = getValue();
-      for (IBoundNamedModelInstance instance : getDefinition().getNamedModelInstances()) {
+  protected Map<@NotNull String, List<@NotNull ? extends IModelNodeItem>> initModelItems() {
+    synchronized (this) {
+      if (this.modelItems == null) {
+        Map<@NotNull String, List<@NotNull ? extends IModelNodeItem>> modelItems = new LinkedHashMap<>();
 
-        Object instanceValue = instance.getValue(parentValue);
-        Stream<? extends Object> itemValues = instance.getItemValues(instanceValue).stream();
-        AtomicInteger index = new AtomicInteger();
-        List<IBoundXdmModelNodeItem> items = itemValues.map(itemValue -> {
-          IBoundXdmModelNodeItem item;
-          if (instance instanceof IBoundAssemblyInstance) {
-            item = IXdmFactory.INSTANCE.newAssemblyNodeItem((IBoundAssemblyInstance) instance, itemValue,
-                index.incrementAndGet(), this);
-          } else if (instance instanceof IBoundFieldInstance) {
-            item = IXdmFactory.INSTANCE.newFieldNodeItem((IBoundFieldInstance) instance, itemValue,
-                index.incrementAndGet(),
-                this);
-          } else {
-            throw new UnsupportedOperationException("unsupported instance type: " + instance.getClass().getName());
-          }
-          return item;
-        }).collect(Collectors.toList());
-        modelItems.put(instance.getEffectiveName(), items);
+        Object parentValue = getValue();
+        for (IBoundNamedModelInstance instance : getDefinition().getNamedModelInstances()) {
+
+          Object instanceValue = instance.getValue(parentValue);
+          Stream<@NotNull ? extends Object> itemValues = instance.getItemValues(instanceValue).stream();
+          AtomicInteger index = new AtomicInteger();
+          List<@NotNull ? extends IModelNodeItem> items = itemValues.map(itemValue -> {
+            @NotNull
+            IModelNodeItem item;
+            if (instance instanceof IBoundAssemblyInstance) {
+              item = IXdmFactory.INSTANCE.newAssemblyNodeItem((IBoundAssemblyInstance) instance, itemValue,
+                  index.incrementAndGet(), this);
+            } else if (instance instanceof IBoundFieldInstance) {
+              item = IXdmFactory.INSTANCE.newFieldNodeItem((IBoundFieldInstance) instance, itemValue,
+                  index.incrementAndGet(),
+                  this);
+            } else {
+              throw new UnsupportedOperationException("unsupported instance type: " + instance.getClass().getName());
+            }
+            return item;
+          }).collect(Collectors.toList());
+          modelItems.put(instance.getEffectiveName(), items);
+        }
+        this.modelItems = CollectionUtil.unmodifiableMap(modelItems);
       }
-      this.modelItems = modelItems;
     }
+    return this.modelItems;
   }
 }

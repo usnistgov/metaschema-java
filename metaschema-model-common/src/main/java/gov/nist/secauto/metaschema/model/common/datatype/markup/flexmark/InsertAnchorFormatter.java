@@ -50,6 +50,7 @@ public class InsertAnchorFormatter implements NodeFormatter {
         : Collections.emptySet();
   }
 
+  @SuppressWarnings("unused")
   protected void render(InsertAnchorNode node, NodeFormatterContext context, MarkdownWriter markdown) {
     if (options.enableRendering) {
       markdown.append("{{ insert: ");

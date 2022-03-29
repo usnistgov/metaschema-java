@@ -27,11 +27,11 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlaggedDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -48,13 +48,21 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MetaschemaProduction {
+  @NotNull
   private final IMetaschema metaschema;
+  @NotNull
+  private final GeneratedClass generatedMetaschema;
+  @NotNull
   private final Map<IFlaggedDefinition, DefinitionProduction> definitionProductions;
+  @NotNull
   private final String packageName;
 
   public MetaschemaProduction(@NotNull IMetaschema metaschema, @NotNull ITypeResolver typeResolver,
-      @NotNull Path targetDirectory) {
+      @NotNull Path targetDirectory) throws IOException {
     this.metaschema = metaschema;
+
+    MetaschemaClassGenerator generator = new MetaschemaClassGenerator(metaschema, typeResolver);
+    this.generatedMetaschema = generator.generateClass(targetDirectory);
 
     Set<String> classNames = new HashSet<>();
     this.definitionProductions = metaschema.getAssemblyAndFieldDefinitions().stream()
@@ -76,7 +84,7 @@ public class MetaschemaProduction {
         .filter(Objects::nonNull)
         .map(classGenerator -> {
           INamedModelDefinition definition = classGenerator.getDefinition();
-          GeneratedClass generatedClass;
+          GeneratedDefinitionClass generatedClass;
           try {
             generatedClass = classGenerator.generateClass(targetDirectory);
           } catch (RuntimeException ex) {
@@ -108,6 +116,11 @@ public class MetaschemaProduction {
   }
 
   @NotNull
+  public GeneratedClass getGeneratedMetaschema() {
+    return generatedMetaschema;
+  }
+
+  @NotNull
   public Collection<? extends IFlaggedDefinition> getGlobalDefinitions() {
     return Collections.unmodifiableCollection(definitionProductions.keySet());
   }
@@ -121,7 +134,9 @@ public class MetaschemaProduction {
   }
 
   public Stream<GeneratedClass> getGeneratedClasses() {
-    return  getDefinitionProductions().stream()
-        .flatMap(definition -> Stream.of(definition.getGeneratedClass()));
+    return Stream.concat(
+        Stream.of(getGeneratedMetaschema()),
+        getDefinitionProductions().stream()
+            .flatMap(definition -> Stream.of(definition.getGeneratedClass())));
   }
 }

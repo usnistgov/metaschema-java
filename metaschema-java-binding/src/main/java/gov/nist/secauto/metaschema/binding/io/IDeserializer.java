@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -144,7 +144,7 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
    */
   @NotNull
   default CLASS deserialize(@NotNull Reader reader, @NotNull URI documentUri) throws IOException {
-    IBoundXdmNodeItem nodeItem = deserializeToNodeItem(reader, documentUri);
+    INodeItem nodeItem = deserializeToNodeItem(reader, documentUri);
     return nodeItem.toBoundObject();
   }
 
@@ -160,7 +160,7 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
    *           if an error occurred while reading data from the stream
    */
   @NotNull
-  default IBoundXdmNodeItem deserializeToNodeItem(@NotNull InputStream is, @NotNull URI documentUri)
+  default INodeItem deserializeToNodeItem(@NotNull InputStream is, @NotNull URI documentUri)
       throws IOException {
     return deserializeToNodeItem(new InputStreamReader(is), documentUri);
   }
@@ -177,5 +177,5 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
    *           if an error occurred while reading data from the stream
    */
   @NotNull
-  IBoundXdmNodeItem deserializeToNodeItem(@NotNull Reader reader, @NotNull URI documentUri) throws IOException;
+  INodeItem deserializeToNodeItem(@NotNull Reader reader, @NotNull URI documentUri) throws IOException;
 }

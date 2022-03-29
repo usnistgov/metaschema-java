@@ -26,12 +26,17 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.metapath.function.ArithmeticFunctionException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
 public interface INumericItem extends IAnyAtomicItem {
 
@@ -58,4 +63,89 @@ public interface INumericItem extends IAnyAtomicItem {
 
   boolean toEffectiveBoolean();
 
+  /**
+   * Get the absolute value of the item.
+   * 
+   * @return this item negated if this item is negative, or the item otherwise
+   */
+  @NotNull
+  INumericItem abs();
+
+  /**
+   * Round the value to the whole number closest to positive infinity.
+   * 
+   * @return the rounded value
+   */
+  @NotNull
+  IIntegerItem ceiling();
+
+  /**
+   * Round the value to the whole number closest to negative infinity.
+   * 
+   * @return the rounded value
+   */
+  @NotNull
+  IIntegerItem floor();
+
+  @NotNull
+  default INumericItem round() {
+    return round(IIntegerItem.ZERO);
+  }
+
+  @NotNull
+  default INumericItem round(@NotNull IIntegerItem precisionItem) {
+    int precision;
+    try {
+      precision = FunctionUtils.asInteger(precisionItem);
+    } catch (ArithmeticException ex) {
+      throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR,
+          "Numeric operation overflow/underflow.", ex);
+    }
+    INumericItem retval;
+    if (precision >= 0) {
+      // round to precision decimal places
+      if (this instanceof IIntegerItem) {
+        retval = this;
+      } else {
+        // IDecimalItem
+        BigDecimal value = this.asDecimal();
+        if (value.signum() == -1) {
+          retval = IDecimalItem.valueOf(
+              ObjectUtils.notNull(
+                  value.round(new MathContext(precision + value.precision() - value.scale(), RoundingMode.HALF_DOWN))));
+        } else {
+          retval = IDecimalItem.valueOf(
+              ObjectUtils.notNull(
+                  value.round(new MathContext(precision + value.precision() - value.scale(), RoundingMode.HALF_UP))));
+        }
+      }
+    } else if (precision < 0) {
+      // round to a power of 10
+      BigInteger value = this.asInteger();
+      BigInteger divisor = BigInteger.TEN.pow(0 - precision);
+
+      @NotNull
+      BigInteger result;
+      if (divisor.compareTo(value.abs()) > 0) {
+        result =  ObjectUtils.notNull(BigInteger.ZERO);
+      } else {
+        BigInteger remainder = value.mod(divisor);
+        BigInteger lessRemainder = value.subtract(remainder);
+        BigInteger halfDivisor = divisor.divide(BigInteger.TWO);
+        result = ObjectUtils.notNull(
+            remainder.compareTo(halfDivisor) >= 0 ? lessRemainder.add(divisor) : lessRemainder);
+      }
+      retval = IIntegerItem.valueOf(result);
+    } else {
+      // precision == 0
+      if (this instanceof IIntegerItem) {
+        retval = this;
+      } else {
+        BigDecimal value = this.asDecimal();
+        retval = IDecimalItem.valueOf(
+            ObjectUtils.notNull(value.round(new MathContext(1, RoundingMode.CEILING))));
+      }
+    }
+    return retval;
+  }
 }

@@ -26,25 +26,30 @@
 
 package gov.nist.secauto.metaschema.codegen;
 
-import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlaggedDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
 public class DefinitionProduction {
 
+  @NotNull
   private final IFlaggedDefinition definition;
-  private final GeneratedClass generatedClass;
+  @NotNull
+  private final GeneratedDefinitionClass generatedClass;
 
-  public DefinitionProduction(@NotNull IFlaggedDefinition definition, @NotNull GeneratedClass generatedClass) {
+  public DefinitionProduction(@NotNull IFlaggedDefinition definition,
+      @NotNull GeneratedDefinitionClass generatedClass) {
     this.definition = definition;
     this.generatedClass = generatedClass;
   }
 
+  @NotNull
   public IFlaggedDefinition getDefinition() {
     return definition;
   }
 
-  public GeneratedClass getGeneratedClass() {
+  @NotNull
+  public GeneratedDefinitionClass getGeneratedClass() {
     return generatedClass;
   }
 }

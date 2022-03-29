@@ -26,37 +26,167 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function.library;
 
-import gov.nist.secauto.metaschema.model.common.metapath.function.AbstractFunctionLibrary;
+import com.google.auto.service.AutoService;
 
+import gov.nist.secauto.metaschema.model.common.metapath.function.AbstractFunctionLibrary;
+import gov.nist.secauto.metaschema.model.common.metapath.function.CastFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionLibrary;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INcNameItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INonNegativeIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IPositiveIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+
+@AutoService(IFunctionLibrary.class)
 public class DefaultFunctionLibrary
     extends AbstractFunctionLibrary {
 
-  public DefaultFunctionLibrary() {
-    // registerFunction(FnBaseUriFunction.SIGNATURE_NO_ARG);
-    // registerFunction(FnBaseUriFunction.SIGNATURE_ONE_ARG);
-    registerFunction(FnBaseUriFunction.SIGNATURE_NO_ARG);
-    registerFunction(FnBaseUriFunction.SIGNATURE_ONE_ARG);
-    registerFunction(FnDocFunction.SIGNATURE);
-    registerFunction(FnDocumentUriFunction.SIGNATURE_NO_ARG);
-    registerFunction(FnDocumentUriFunction.SIGNATURE_ONE_ARG);
-    registerFunction(FnExistsFunction.SIGNATURE);
-    registerFunction(FnNotFunction.SIGNATURE);
-    registerFunction(FnResolveUriFunction.SIGNATURE_ONE_ARG);
-    registerFunction(FnResolveUriFunction.SIGNATURE_TWO_ARG);
-    registerFunction(FnStartsWithFunction.SIGNATURE);
-    registerFunction(FnStaticBaseUriFunction.SIGNATURE);
+  /**
+   * Initialize the built-in function library.
+   */
+  public DefaultFunctionLibrary() { // NOPMD - intentional
+    // https://www.w3.org/TR/xpath-functions-31/#func-abs
+    registerFunction(NumericFunction.signature("abs", INumericItem::abs));
+    // https://www.w3.org/TR/xpath-functions-31/#func-adjust-dateTime-to-timezone
+    // https://www.w3.org/TR/xpath-functions-31/#func-adjust-date-to-timezone
+    // https://www.w3.org/TR/xpath-functions-31/#func-adjust-time-to-timezone
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-avg
+    // https://www.w3.org/TR/xpath-functions-31/#func-base-uri
+    registerFunction(FnBaseUri.SIGNATURE_NO_ARG);
+    registerFunction(FnBaseUri.SIGNATURE_ONE_ARG);
+    // https://www.w3.org/TR/xpath-functions-31/#func-boolean
+    registerFunction(FnBoolean.SIGNATURE);
+    // https://www.w3.org/TR/xpath-functions-31/#func-ceiling
+    registerFunction(NumericFunction.signature("ceiling", INumericItem::ceiling));
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-compare
+    registerFunction(FnCompare.SIGNATURE);
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-concat
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-contains
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-count
+    // https://www.w3.org/TR/xpath-functions-31/#func-current-date
+    // https://www.w3.org/TR/xpath-functions-31/#func-current-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-current-time
+    // https://www.w3.org/TR/xpath-functions-31/#func-data
+    registerFunction(FnData.SIGNATURE_NO_ARG);
+    registerFunction(FnData.SIGNATURE_ONE_ARG);
+    // https://www.w3.org/TR/xpath-functions-31/#func-day-from-date
+    // https://www.w3.org/TR/xpath-functions-31/#func-day-from-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-days-from-duration
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-deep-equal
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-distinct-values
+    // https://www.w3.org/TR/xpath-functions-31/#func-doc
+    registerFunction(FnDoc.SIGNATURE);
+    // https://www.w3.org/TR/xpath-functions-31/#func-doc-available
+    // https://www.w3.org/TR/xpath-functions-31/#func-document-uri
+    registerFunction(FnDocumentUri.SIGNATURE_NO_ARG);
+    registerFunction(FnDocumentUri.SIGNATURE_ONE_ARG);
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-empty
+    // https://www.w3.org/TR/xpath-functions-31/#func-encode-for-uri
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-ends-with
+    // https://www.w3.org/TR/xpath-functions-31/#func-exactly-one
+    // https://www.w3.org/TR/xpath-functions-31/#func-exists
+    registerFunction(FnExists.SIGNATURE);
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-false
+    // https://www.w3.org/TR/xpath-functions-31/#func-floor
+    registerFunction(NumericFunction.signature("floor", INumericItem::floor));
+    // https://www.w3.org/TR/xpath-functions-31/#func-format-date
+    // https://www.w3.org/TR/xpath-functions-31/#func-format-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-format-integer
+    // https://www.w3.org/TR/xpath-functions-31/#func-format-number
+    // https://www.w3.org/TR/xpath-functions-31/#func-format-time
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-generate-id
+    // https://www.w3.org/TR/xpath-functions-31/#func-has-children
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-head
+    // https://www.w3.org/TR/xpath-functions-31/#func-hours-from-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-hours-from-duration
+    // https://www.w3.org/TR/xpath-functions-31/#func-hours-from-time
+    // https://www.w3.org/TR/xpath-functions-31/#func-implicit-timezone
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-index-of
+    // https://www.w3.org/TR/xpath-functions-31/#func-innermost
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-insert-before
+    // https://www.w3.org/TR/xpath-functions-31/#func-iri-to-uri
+    // https://www.w3.org/TR/xpath-functions-31/#func-last
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-lower-case
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-matches
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-max
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-min
+    // https://www.w3.org/TR/xpath-functions-31/#func-minutes-from-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-minutes-from-duration
+    // https://www.w3.org/TR/xpath-functions-31/#func-minutes-from-time
+    // https://www.w3.org/TR/xpath-functions-31/#func-month-from-date
+    // https://www.w3.org/TR/xpath-functions-31/#func-month-from-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-months-from-duration
+    // https://www.w3.org/TR/xpath-functions-31/#func-normalize-space
+    // https://www.w3.org/TR/xpath-functions-31/#func-normalize-unicode
+    // https://www.w3.org/TR/xpath-functions-31/#func-not
+    registerFunction(FnNot.SIGNATURE);
+    // https://www.w3.org/TR/xpath-functions-31/#func-number
+    // https://www.w3.org/TR/xpath-functions-31/#func-one-or-more
+    // https://www.w3.org/TR/xpath-functions-31/#func-outermost
+    // https://www.w3.org/TR/xpath-functions-31/#func-parse-ietf-date
+    // https://www.w3.org/TR/xpath-functions-31/#func-path
+    // https://www.w3.org/TR/xpath-functions-31/#func-position
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-remove
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-replace
+    // https://www.w3.org/TR/xpath-functions-31/#func-resolve-uri
+    registerFunction(FnResolveUri.SIGNATURE_ONE_ARG);
+    registerFunction(FnResolveUri.SIGNATURE_TWO_ARG);
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-reverse
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-root
+    // https://www.w3.org/TR/xpath-functions-31/#func-round
+    registerFunction(FnRound.signature());
+    registerFunction(FnRound.signatureWithPrecision());
+    // https://www.w3.org/TR/xpath-functions-31/#func-round-half-to-even
+    // https://www.w3.org/TR/xpath-functions-31/#func-seconds-from-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-seconds-from-duration
+    // https://www.w3.org/TR/xpath-functions-31/#func-seconds-from-time
+    // https://www.w3.org/TR/xpath-functions-31/#func-starts-with
+    registerFunction(FnStartsWith.SIGNATURE);
+    // https://www.w3.org/TR/xpath-functions-31/#func-static-base-uri
+    registerFunction(FnStaticBaseUri.SIGNATURE);
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-string-join
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-string-length
+    // https://www.w3.org/TR/xpath-functions-31/#func-subsequence
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-substring
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-substring-after
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-substring-before
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-sum
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-tail
+    // https://www.w3.org/TR/xpath-functions-31/#func-timezone-from-date
+    // https://www.w3.org/TR/xpath-functions-31/#func-timezone-from-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-timezone-from-time
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-tokenize
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-translate
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-true
+    // https://www.w3.org/TR/xpath-functions-31/#func-unparsed-text
+    // https://www.w3.org/TR/xpath-functions-31/#func-unparsed-text-available
+    // https://www.w3.org/TR/xpath-functions-31/#func-unparsed-text-lines
+    // P1: https://www.w3.org/TR/xpath-functions-31/#func-upper-case
+    // https://www.w3.org/TR/xpath-functions-31/#func-year-from-date
+    // https://www.w3.org/TR/xpath-functions-31/#func-year-from-dateTime
+    // https://www.w3.org/TR/xpath-functions-31/#func-years-from-duration
+    // https://www.w3.org/TR/xpath-functions-31/#func-zero-or-one
 
     // casting functions
-    registerFunction(CastToBooleanFunction.SIGNATURE);
-    registerFunction(CastToDateFunction.SIGNATURE);
-    registerFunction(CastToDateTimeFunction.SIGNATURE);
-    registerFunction(CastToDecimalFunction.SIGNATURE);
-    registerFunction(CastToDurationFunction.SIGNATURE);
-    registerFunction(CastToIntegerFunction.SIGNATURE);
-    registerFunction(CastToNcNameFunction.SIGNATURE);
-    registerFunction(CastToNonNegativeInteger.SIGNATURE);
-    registerFunction(CastToPositiveIntegerFunction.SIGNATURE);
-    registerFunction(CastToStringFunction.SIGNATURE);
+    registerFunction(CastFunction.signature("cast-boolean", IBooleanItem.class, IBooleanItem::cast));
+    registerFunction(CastFunction.signature("cast-date", IDateItem.class, IDateItem::cast));
+    registerFunction(CastFunction.signature("cast-date-time", IDateTimeItem.class, IDateTimeItem::cast));
+    registerFunction(CastFunction.signature("cast-decimal", IDecimalItem.class, IDecimalItem::cast));
+    registerFunction(CastFunction.signature("cast-duration", IDurationItem.class, IDurationItem::cast));
+    registerFunction(CastFunction.signature("cast-integer", IIntegerItem.class, IIntegerItem::cast));
+    registerFunction(CastFunction.signature("cast-ncname", INcNameItem.class, INcNameItem::cast));
+    registerFunction(
+        CastFunction.signature("cast-non-negative-integer", INonNegativeIntegerItem.class,
+            INonNegativeIntegerItem::cast));
+    registerFunction(
+        CastFunction.signature("cast-positive-integer", IPositiveIntegerItem.class, IPositiveIntegerItem::cast));
+    registerFunction(CastFunction.signature("cast-string", IStringItem.class, IStringItem::cast));
   }
 
 }

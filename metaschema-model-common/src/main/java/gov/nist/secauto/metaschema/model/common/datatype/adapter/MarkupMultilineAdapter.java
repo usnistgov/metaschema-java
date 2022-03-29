@@ -66,7 +66,6 @@ public class MarkupMultilineAdapter
     return true;
   }
 
-  @SuppressWarnings("null")
   @Override
   public MarkupMultiline parse(String value) {
     return MarkupMultiline.fromMarkdown(value);

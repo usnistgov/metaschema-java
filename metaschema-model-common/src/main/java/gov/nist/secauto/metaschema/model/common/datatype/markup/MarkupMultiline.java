@@ -30,18 +30,42 @@ import com.vladsch.flexmark.util.ast.Document;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.FlexmarkFactory;
 
+import org.jetbrains.annotations.NotNull;
+
 public class MarkupMultiline
     extends AbstractMarkupString<MarkupMultiline> {
 
-  public static MarkupMultiline fromHtml(String html) {
+  /**
+   * Convert the provided HTML string into markup.
+   * 
+   * @param html
+   *          the HTML
+   * @return the multiline markup instance
+   */
+  @NotNull
+  public static MarkupMultiline fromHtml(@NotNull String html) {
     return new MarkupMultiline(FlexmarkFactory.instance().fromHtml(html));
   }
 
-  public static MarkupMultiline fromMarkdown(String markdown) {
+  /**
+   * Convert the provided markdown string into markup.
+   * 
+   * @param markdown
+   *          the markup
+   * @return the multiline markup instance
+   */
+  @NotNull
+  public static MarkupMultiline fromMarkdown(@NotNull String markdown) {
     return new MarkupMultiline(FlexmarkFactory.instance().fromMarkdown(markdown));
   }
 
-  public MarkupMultiline(Document astNode) {
+  /**
+   * Construct a new multiline markup instance.
+   * 
+   * @param astNode
+   *          the parsed markup AST
+   */
+  public MarkupMultiline(@NotNull Document astNode) {
     super(astNode);
   }
 

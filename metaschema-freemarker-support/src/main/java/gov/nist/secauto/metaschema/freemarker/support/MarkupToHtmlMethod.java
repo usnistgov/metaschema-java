@@ -61,8 +61,6 @@ public class MarkupToHtmlMethod implements TemplateMethodModelEx {
           IMarkupText.class.getName()));
     }
 
-    String namespace = DeepUnwrap.unwrap((TemplateModel) arguments.get(1)).toString();
-
     String prefix = null;
     if (arguments.size() == 3) {
       prefix = DeepUnwrap.unwrap((TemplateModel) arguments.get(2)).toString();
@@ -76,6 +74,7 @@ public class MarkupToHtmlMethod implements TemplateMethodModelEx {
     }
 
     IMarkupText text = (IMarkupText) markupObject;
+    String namespace = DeepUnwrap.unwrap((TemplateModel) arguments.get(1)).toString();
 
     MarkupXmlStreamWriter writingVisitor = new MarkupXmlStreamWriter(namespace, text instanceof MarkupMultiline);
 

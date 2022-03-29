@@ -32,12 +32,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import gov.nist.secauto.metaschema.model.UsedDefinitionModelWalker;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.UsedDefinitionModelWalker;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -100,7 +100,7 @@ public class JsonSchemaGenerator
 
     generateDefinitions(definitions, state);
 
-    Set<@NotNull IAssemblyDefinition> rootAssemblies = new LinkedHashSet<>();
+    Set<gov.nist.secauto.metaschema.model.common.IAssemblyDefinition> rootAssemblies = new LinkedHashSet<>();
 
     for (IDefinition definition : definitions) {
       if (definition instanceof IAssemblyDefinition) {
@@ -142,7 +142,7 @@ public class JsonSchemaGenerator
   }
 
   protected void generateRootProperties(
-      @NotNull Set<@NotNull IAssemblyDefinition> rootAssemblies,
+      @NotNull Set<gov.nist.secauto.metaschema.model.common.IAssemblyDefinition> rootAssemblies,
       @NotNull GenerationState state) throws IOException {
     JsonGenerator writer = state.getWriter();
     // generate root properties

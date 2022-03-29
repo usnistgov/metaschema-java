@@ -38,8 +38,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmDocumentNodeItem;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
@@ -129,7 +129,7 @@ public class DefaultBoundLoader implements IBoundLoader {
 
   // TODO: consolidate this with the similar load class
   @Override
-  public IBoundXdmDocumentNodeItem loadAsNodeItem(InputStream is, URI documentUri) throws IOException {
+  public IDocumentNodeItem loadAsNodeItem(InputStream is, URI documentUri) throws IOException {
     BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES);
     bis.mark(LOOK_AHEAD_BYTES);
 
@@ -163,11 +163,11 @@ public class DefaultBoundLoader implements IBoundLoader {
   }
 
   @NotNull
-  protected <CLASS> IBoundXdmDocumentNodeItem loadAsNodeItem(@NotNull IDeserializer<CLASS> deserializer,
+  protected <CLASS> IDocumentNodeItem loadAsNodeItem(@NotNull IDeserializer<CLASS> deserializer,
       @NotNull InputStream is,
       @NotNull URI documentUri)
       throws IOException {
-    return (IBoundXdmDocumentNodeItem) deserializer.deserializeToNodeItem(is, documentUri);
+    return (IDocumentNodeItem) deserializer.deserializeToNodeItem(is, documentUri);
   }
 
   @Override
@@ -193,7 +193,7 @@ public class DefaultBoundLoader implements IBoundLoader {
   protected <CLASS> CLASS loadAsObject(@NotNull IDeserializer<CLASS> deserializer, @NotNull InputStream is,
       @NotNull URI documentUri)
       throws IOException {
-    IBoundXdmNodeItem nodeItem = loadAsNodeItem(deserializer, is, documentUri);
+    INodeItem nodeItem = loadAsNodeItem(deserializer, is, documentUri);
     return nodeItem.toBoundObject();
   }
 

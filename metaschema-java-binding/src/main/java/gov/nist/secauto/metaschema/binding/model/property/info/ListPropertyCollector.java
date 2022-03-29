@@ -35,7 +35,7 @@ public class ListPropertyCollector
   private final List<Object> collection;
 
   public ListPropertyCollector() {
-    this.collection = new LinkedList<Object>();
+    this.collection = new LinkedList<>();
   }
 
   @Override

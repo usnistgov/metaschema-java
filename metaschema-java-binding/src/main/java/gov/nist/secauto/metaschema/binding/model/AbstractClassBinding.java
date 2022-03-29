@@ -26,25 +26,26 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
+import gov.nist.secauto.metaschema.binding.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
-import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.binding.model.property.DefaultFlagProperty;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -76,6 +77,7 @@ public abstract class AbstractClassBinding implements IClassBinding {
   private final Class<?> clazz;
   private final Method beforeDeserializeMethod;
   private final Method afterDeserializeMethod;
+  private IMetaschema metaschema;
   private Map<@NotNull String, IBoundFlagInstance> flagInstances;
   private IBoundFlagInstance jsonKeyFlag;
 
@@ -147,10 +149,23 @@ public abstract class AbstractClassBinding implements IClassBinding {
     return ModuleScopeEnum.INHERITED;
   }
 
+  protected abstract Class<? extends AbstractBoundMetaschema> getMetaschemaClass();
+
+  @SuppressWarnings("null")
+  @NotNull
+  protected IMetaschema initMetaschema() {
+    synchronized (this) {
+      if (metaschema == null) {
+        Class<? extends AbstractBoundMetaschema> metaschemaClass = getMetaschemaClass();
+        metaschema = getBindingContext().getMetaschemaInstanceByClass(metaschemaClass);
+      }
+      return metaschema;
+    }
+  }
+
   @Override
-  public IMetaschema getContainingMetaschema() { // NOPMD - remove after implementation
-    // TODO: implement
-    return null;
+  public IMetaschema getContainingMetaschema() {
+    return initMetaschema();
   }
 
   @Override
@@ -208,7 +223,7 @@ public abstract class AbstractClassBinding implements IClassBinding {
 
           if (field.isAnnotationPresent(BoundFlag.class)) {
             IBoundFlagInstance flagBinding
-                = new DefaultFlagProperty(field, this, bindingContext); // NOPMD - intentional
+                = new DefaultFlagProperty(field, this); // NOPMD - intentional
             initializeFlagInstance(flagBinding);
             flags.put(flagBinding.getEffectiveName(), flagBinding);
           }
@@ -226,16 +241,25 @@ public abstract class AbstractClassBinding implements IClassBinding {
    *          the flag instance to process
    */
   protected void initializeFlagInstance(IBoundFlagInstance instance) {
-    Field field = instance.getField();
-    if (field.isAnnotationPresent(JsonKey.class)) {
+    if (instance.isJsonKey()) {
       this.jsonKeyFlag = instance;
     }
   }
 
-  @Override
-  public Map<@NotNull String, IBoundFlagInstance> getFlagInstanceMap() {
+  private Map<@NotNull String, IBoundFlagInstance> getFlagInstanceMap() {
     // check that the flag instances are lazy loaded
     return initalizeFlagInstances();
+  }
+
+  @Override
+  public @Nullable IBoundFlagInstance getFlagInstanceByName(String name) {
+    return getFlagInstanceMap().get(name);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public @NotNull Collection<@NotNull ? extends IBoundFlagInstance> getFlagInstances() {
+    return getFlagInstanceMap().values();
   }
 
   @Override

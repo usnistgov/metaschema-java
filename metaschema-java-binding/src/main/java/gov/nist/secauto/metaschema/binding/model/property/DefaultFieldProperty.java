@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IBoundFieldDefinition;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
@@ -34,11 +33,14 @@ import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
 import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
-import gov.nist.secauto.metaschema.binding.model.property.info.IModelPropertyInfo;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
@@ -46,25 +48,27 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class DefaultFieldProperty
-    extends AbstractFieldProperty {
+    extends AbstractFieldProperty
+    implements IBoundJavaCollectionField {
 
   @NotNull
-  private final BoundField field;
+  private final Field field;
+  @NotNull
+  private final BoundField fieldAnnotation;
+  @NotNull
   private final IJavaTypeAdapter<?> javaTypeAdapter;
   private IBoundFieldDefinition definition;
   private IValueConstraintSupport constraints;
@@ -75,10 +79,11 @@ public class DefaultFieldProperty
   }
 
   public DefaultFieldProperty(@NotNull IAssemblyClassBinding parentClassBinding, @NotNull Field field) {
-    super(parentClassBinding, field);
+    super(parentClassBinding);
+    this.field = ObjectUtils.requireNonNull(field, "field");
 
     if (field.isAnnotationPresent(BoundField.class)) {
-      this.field = ObjectUtils.notNull(field.getAnnotation(BoundField.class));
+      this.fieldAnnotation = ObjectUtils.notNull(field.getAnnotation(BoundField.class));
     } else {
       throw new IllegalArgumentException(String.format("BoundField '%s' on class '%s' is missing the '%s' annotation.",
           field.getName(), parentClassBinding.getBoundClass().getName(), BoundField.class.getName()));
@@ -86,37 +91,37 @@ public class DefaultFieldProperty
 
     Class<? extends IJavaTypeAdapter<?>> adapterClass = ObjectUtils.notNull(getFieldAnnotation().typeAdapter());
     if (NullJavaTypeAdapter.class.equals(adapterClass)) {
-      javaTypeAdapter = null;
+      javaTypeAdapter = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
     } else {
       javaTypeAdapter = ObjectUtils.requireNonNull(
-          getParentClassBinding().getBindingContext().getJavaTypeAdapterInstance(adapterClass));
-
-      IModelPropertyInfo propertyInfo = getPropertyInfo();
-      Class<?> itemType = propertyInfo.getItemType();
-      if (!itemType.equals(javaTypeAdapter.getJavaClass())) {
-        throw new IllegalStateException(
-            String.format("Property '%s' on class '%s' has the '%s' type adapter configured," +
-                " but the field's item type '%s' does not match the adapter's type '%s'.",
-                getName(),
-                getContainingDefinition().getBoundClass().getName(),
-                javaTypeAdapter.getClass().getName(),
-                itemType.getName(),
-                javaTypeAdapter.getJavaClass().getName()));
-      }
+          parentClassBinding.getBindingContext().getJavaTypeAdapterInstance(adapterClass));
     }
+
+    Class<?> itemType = getItemType();
+    // the item type must either match the type adapter or be a bound field
+    if (!itemType.isAnnotationPresent(MetaschemaField.class) && !itemType.equals(javaTypeAdapter.getJavaClass())) {
+      throw new IllegalStateException(
+          String.format("Property '%s' on class '%s' has the '%s' type adapter configured," +
+              " but the field's item type '%s' does not match the adapter's type '%s'.",
+              getName(),
+              getContainingDefinition().getBoundClass().getName(),
+              javaTypeAdapter.getClass().getName(),
+              itemType.getName(),
+              javaTypeAdapter.getJavaClass().getName()));
+    }
+  }
+
+  @Override
+  public @NotNull Field getField() {
+    return field;
   }
 
   @NotNull
   public BoundField getFieldAnnotation() {
-    return field;
+    return fieldAnnotation;
   }
 
-  @Override
-  public IFieldClassBinding getClassBinding() {
-    return getDefinition().getClassBinding();
-  }
-
-  @Override
+  @NotNull
   protected IJavaTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
@@ -202,8 +207,8 @@ public class DefaultFieldProperty
 
   private class ScalarFieldDefinition implements IBoundFieldDefinition {
     @Override
-    public IJavaTypeAdapter<?> getDatatype() {
-      return ObjectUtils.notNull(getJavaTypeAdapter());
+    public IJavaTypeAdapter<?> getJavaTypeAdapter() {
+      return ObjectUtils.notNull(DefaultFieldProperty.this.getJavaTypeAdapter());
     }
 
     @Override
@@ -237,8 +242,15 @@ public class DefaultFieldProperty
     }
 
     @Override
-    public Map<String, ? extends IBoundFlagInstance> getFlagInstanceMap() {
-      return CollectionUtil.emptyMap();
+    public IBoundFlagInstance getFlagInstanceByName(String name) {
+      // scalar fields do not have flags
+      return null;
+    }
+
+    @SuppressWarnings("null")
+    @Override
+    public Collection<@NotNull ? extends IBoundFlagInstance> getFlagInstances() {
+      return CollectionUtil.emptyList();
     }
 
     @Override
@@ -264,7 +276,7 @@ public class DefaultFieldProperty
     @Override
     public String getJsonValueKeyName() {
       // this will never be used
-      return getDatatype().getDefaultJsonValueKey();
+      return getJavaTypeAdapter().getDefaultJsonValueKey();
     }
 
     @Override
@@ -303,11 +315,6 @@ public class DefaultFieldProperty
     }
 
     @Override
-    public IBindingContext getBindingContext() {
-      return getContainingDefinition().getBindingContext();
-    }
-
-    @Override
     public String getFormalName() {
       // TODO: implement
       return null;
@@ -326,15 +333,14 @@ public class DefaultFieldProperty
     }
 
     @Override
-    public IMetaschema getContainingMetaschema() {
-      // TODO: implement
+    public IFieldClassBinding getClassBinding() {
+      // there is no field class binding, since this is a scalar field
       return null;
     }
 
     @Override
-    public IFieldClassBinding getClassBinding() {
-      // there is no field class binding, since this is a scalar field
-      return null;
+    public IMetaschema getContainingMetaschema() {
+      return DefaultFieldProperty.this.getContainingMetaschema();
     }
   }
 }

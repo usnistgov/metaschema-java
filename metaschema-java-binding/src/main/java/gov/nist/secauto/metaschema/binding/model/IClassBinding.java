@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.binding.model;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
+import gov.nist.secauto.metaschema.binding.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
@@ -37,6 +38,7 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedInstance;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.codehaus.stax2.XMLStreamReader2;
@@ -56,7 +58,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 public interface IClassBinding extends IBoundNamedModelDefinition {
-  @Override
+  @NotNull
   IBindingContext getBindingContext();
 
   /**
@@ -79,7 +81,8 @@ public interface IClassBinding extends IBoundNamedModelDefinition {
    * @return a collection of properties
    */
   @NotNull
-  Map<@NotNull String, ? extends IBoundNamedInstance> getNamedInstances(Predicate<IBoundFlagInstance> flagFilter);
+  Map<@NotNull String, ? extends IBoundNamedInstance>
+      getNamedInstances(@Nullable Predicate<IBoundFlagInstance> flagFilter);
 
   /**
    * Reads a JSON/YAML object storing the associated data in the Java object {@code parentInstance}.
@@ -102,7 +105,8 @@ public interface IClassBinding extends IBoundNamedModelDefinition {
    */
   // TODO: check if a boolean return value is needed
   @NotNull
-  List<Object> readItem(@Nullable Object parentInstance, boolean requiresJsonKey, @NotNull IJsonParsingContext context)
+  List<@NotNull Object> readItem(@Nullable Object parentInstance, boolean requiresJsonKey,
+      @NotNull IJsonParsingContext context)
       throws IOException;
 
   /**

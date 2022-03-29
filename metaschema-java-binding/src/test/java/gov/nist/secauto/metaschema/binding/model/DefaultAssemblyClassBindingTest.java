@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import com.fasterxml.jackson.core.JsonParseException;
 
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 
 import org.junit.jupiter.api.Test;
 
@@ -47,10 +48,12 @@ class DefaultAssemblyClassBindingTest
         = new File(getClass().getClassLoader().getResource("content/minimal.json").getFile());
     try (BufferedReader reader = Files.newBufferedReader(testContent.toPath())) {
       IJsonParsingContext context = newJsonParsingContext(reader);
-      IAssemblyClassBinding rootAssembly = getRootAssemblyClassBinding();
+      IAssemblyClassBinding classBinding = getRootAssemblyClassBinding();
 
-      Object root = rootAssembly.readRoot(context);
-      assertNotNull(root, "root was null");
+      RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
+      
+      Object value = root.readRoot(context);
+      assertNotNull(value, "root was null");
     }
   }
 
@@ -60,11 +63,20 @@ class DefaultAssemblyClassBindingTest
         = new File(getClass().getClassLoader().getResource("content/collapse.json").getFile());
     try (BufferedReader reader = Files.newBufferedReader(testContent.toPath())) {
       IJsonParsingContext context = newJsonParsingContext(reader);
-      IAssemblyClassBinding rootAssembly = getRootAssemblyClassBinding();
+      IAssemblyClassBinding classBinding = getRootAssemblyClassBinding();
 
-      Object root = rootAssembly.readRoot(context);
-      assertNotNull(root, "root was null");
+      RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
+      
+      Object value = root.readRoot(context);
+      assertNotNull(value, "root was null");
     }
+  }
+
+  @Test
+  void testMetaschema() {
+    IAssemblyClassBinding classBinding = getRootAssemblyClassBinding();
+    IMetaschema metaschema = classBinding.getContainingMetaschema();
+    assertNotNull(metaschema, "metaschema was null");
   }
 
   // @Test
@@ -79,7 +91,7 @@ class DefaultAssemblyClassBindingTest
   // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
   //
   // IAssemblyClassBinding classBinding = getAssemblyClassBinding();
-  // IBoundAssemblyInstance root = new RootDefinitionAssemblyProperty(classBinding);
+  // IBoundAssemblyInstance root = new RootAssemblyDefinition(classBinding);
   // BoundClass obj = (BoundClass) root.read(jsonParsingContext);
   //
   // assertEquals(JsonToken.END_OBJECT, jsonParser.currentToken());
@@ -135,7 +147,7 @@ class DefaultAssemblyClassBindingTest
   // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
   //
   // IAssemblyClassBinding classBinding = getAssemblyClassBinding();
-  // IBoundAssemblyInstance root = new RootDefinitionAssemblyProperty(classBinding);
+  // IBoundAssemblyInstance root = new RootAssemblyDefinition(classBinding);
   // BoundClass obj = (BoundClass) root.read(jsonParsingContext);
   //
   // assertEquals(JsonToken.END_OBJECT, jsonParser.currentToken());

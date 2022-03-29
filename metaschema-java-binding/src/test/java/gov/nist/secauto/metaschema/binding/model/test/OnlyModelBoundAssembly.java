@@ -26,19 +26,20 @@
 
 package gov.nist.secauto.metaschema.binding.model.test;
 
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
+import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
 
 import java.util.List;
 import java.util.Map;
 
-@MetaschemaAssembly
-public class OnlyModelBoundAssembly {
-  /* ================
-   * = simple field =
-   * ================
+@SuppressWarnings("PMD")
+@MetaschemaAssembly(metaschema = TestMetaschema.class)
+public class OnlyModelBoundAssembly { // NOPMD - intentional
+  /*
+   * ================ = simple field = ================
    */
   /**
    * An optional singleton simple field.
@@ -86,9 +87,8 @@ public class OnlyModelBoundAssembly {
       inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
   private List<String> simpleSingletonOrArrayField;
 
-  /* =================
-   * = flagged field =
-   * =================
+  /*
+   * ================= = flagged field = =================
    */
   /**
    * An optional singleton flagged field.
@@ -131,9 +131,8 @@ public class OnlyModelBoundAssembly {
       inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
   private List<FlaggedBoundField> flaggedSingletonOrArrayField;
 
-  /* =============================
-   * = flagged collapsible field =
-   * =============================
+  /*
+   * ============================= = flagged collapsible field = =============================
    */
   /**
    * An optional singleton flagged field.
@@ -176,20 +175,19 @@ public class OnlyModelBoundAssembly {
       inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
   private List<CollapsibleFlaggedBoundField> collapsibleSingletonOrArrayField;
 
-  /* ==============
-   * = assemblies =
-   * ==============
+  /*
+   * ============== = assemblies = ==============
    */
   /**
    * An optional singleton assembly.
    */
-  @BoundField(useName = "singleton-assembly")
+  @BoundAssembly(useName = "singleton-assembly")
   private EmptyBoundAssembly singletonAssembly;
 
   /**
    * An optional array assembly.
    */
-  @BoundField(useName = "array-assembly",
+  @BoundAssembly(useName = "array-assembly",
       maxOccurs = -1,
       groupName = "array-assembly-items",
       inJson = JsonGroupAsBehavior.LIST)
@@ -198,7 +196,7 @@ public class OnlyModelBoundAssembly {
   /**
    * An optional singleton or array assembly.
    */
-  @BoundField(useName = "singleton-or-array-assembly",
+  @BoundAssembly(useName = "singleton-or-array-assembly",
       maxOccurs = -1,
       groupName = "singleton-or-array-assembly-items",
       inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST)
@@ -206,7 +204,7 @@ public class OnlyModelBoundAssembly {
   /**
    * An optional keyed assembly.
    */
-  @BoundField(useName = "keyed-assembly",
+  @BoundAssembly(useName = "keyed-assembly",
       maxOccurs = -1,
       groupName = "keyed-assembly-items",
       inJson = JsonGroupAsBehavior.KEYED)

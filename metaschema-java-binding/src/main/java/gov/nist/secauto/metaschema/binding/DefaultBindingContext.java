@@ -38,7 +38,6 @@ import gov.nist.secauto.metaschema.binding.io.xml.DefaultXmlDeserializer;
 import gov.nist.secauto.metaschema.binding.io.xml.DefaultXmlSerializer;
 import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlDeserializer;
 import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlSerializer;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
 import gov.nist.secauto.metaschema.binding.model.DefaultAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.DefaultFieldClassBinding;
@@ -46,12 +45,12 @@ import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidationHandler;
+import gov.nist.secauto.metaschema.binding.validation.ConstraintContentValidator;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -84,6 +83,8 @@ public class DefaultBindingContext implements IBindingContext {
   private static DefaultBindingContext singleton;
 
   @NotNull
+  private final Map<Class<?>, IMetaschema> metaschemasByClass = new HashMap<>(); // NOPMD - intentional
+  @NotNull
   private final Map<Class<?>, IClassBinding> classBindingsByClass = new HashMap<>(); // NOPMD - intentional
   @NotNull
   private final Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> javaTypeAdapterMap // NOPMD - intentional
@@ -105,6 +106,19 @@ public class DefaultBindingContext implements IBindingContext {
    */
   protected DefaultBindingContext() {
     // only allow extended classes
+  }
+
+  @Override
+  public IMetaschema getMetaschemaInstanceByClass(Class<? extends AbstractBoundMetaschema> clazz) {
+    IMetaschema retval;
+    synchronized (this) {
+      retval = metaschemasByClass.get(clazz);
+      if (retval == null) {
+        retval = AbstractBoundMetaschema.createInstance(clazz, this);
+        metaschemasByClass.put(clazz, retval);
+      }
+    }
+    return retval;
   }
 
   @Override
@@ -180,7 +194,6 @@ public class DefaultBindingContext implements IBindingContext {
     default:
       throw new UnsupportedOperationException(String.format("Unsupported format '%s'", format));
     }
-
     return retval;
   }
 
@@ -276,7 +289,7 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode) {
+  public INodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode) {
     IClassBinding classBinding = getClassBinding(boundObject.getClass());
     if (classBinding == null) {
       throw new IllegalStateException(
@@ -286,19 +299,8 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public void validate(@NotNull Object boundObject, URI baseUri, boolean rootNode,
-      IConstraintValidationHandler handler) {
-    IBoundXdmNodeItem nodeItem = toNodeItem(boundObject, baseUri, rootNode);
-
-    StaticContext staticContext = new StaticContext();
-    DynamicContext dynamicContext = staticContext.newDynamicContext();
-    dynamicContext.setDocumentLoader(newBoundLoader());
-    DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext);
-    if (handler != null) {
-      validator.setConstraintValidationHandler(handler);
-    }
-    nodeItem.validate(validator);
-    validator.finalizeValidation();
+  public IValidationResult validate(@NotNull INodeItem nodeItem) {
+    return new ConstraintContentValidator(this).validate(nodeItem);
   }
 
 }

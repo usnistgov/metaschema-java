@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
@@ -38,11 +39,11 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -272,7 +273,7 @@ public class DefaultFunction
 
       for (IItem item : sequence.asList()) {
         if (atomize) {
-          item = XPathFunctions.fnDataItem(item);
+          item = FnData.fnDataItem(item);
 
           if (IUntypedAtomicItem.class.isInstance(item)) { // NOPMD
             // TODO: apply cast to atomic type
@@ -303,7 +304,6 @@ public class DefaultFunction
     try {
       List<@NotNull ISequence<?>> convertedArguments = convertArguments(this, arguments);
 
-      new HashMap<>();
       CallingContext callingContext;
       ISequence<?> result;
       if (isDeterministic()) {
@@ -342,12 +342,15 @@ public class DefaultFunction
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     DefaultFunction other = (DefaultFunction) obj;
     return Objects.equals(getArguments(), other.getArguments()) && Objects.equals(handler, other.handler)
         && Objects.equals(getName(), other.getName()) && Objects.equals(properties, other.properties)
@@ -361,13 +364,9 @@ public class DefaultFunction
 
   @Override
   public String toSignature() {
-    StringBuilder builder = new StringBuilder();
-
-    // name
-    builder.append(getName());
-
-    // arguments
-    builder.append("(");
+    StringBuilder builder = new StringBuilder()
+        .append(getName()) // name
+        .append("("); // arguments
 
     List<IArgument> arguments = getArguments();
     if (arguments.isEmpty()) {
@@ -379,19 +378,20 @@ public class DefaultFunction
         builder.append(", ...");
       }
     }
-    builder.append(") as ");
 
-    // return type
-    builder.append(getResult().toSignature());
+    builder.append(") as ")
+        .append(getResult().toSignature());// return type
 
     return builder.toString();
   }
 
+  @NotNull
   public CallingContext newCallingContext(@NotNull List<@NotNull ISequence<?>> arguments, @NotNull INodeContext focus) {
     return new CallingContext(arguments, focus);
   }
 
   public class CallingContext {
+    @Nullable
     private final INodeItem contextNodeItem;
     @NotNull
     private final List<@NotNull ISequence<?>> arguments;
@@ -405,10 +405,12 @@ public class DefaultFunction
       this.arguments = arguments;
     }
 
+    @NotNull
     protected DefaultFunction getFunction() {
       return DefaultFunction.this;
     }
 
+    @Nullable
     public INodeItem getContextNodeItem() {
       return contextNodeItem;
     }
@@ -429,15 +431,19 @@ public class DefaultFunction
 
     @Override
     public boolean equals(Object obj) {
-      if (this == obj)
+      if (this == obj) {
         return true;
-      if (obj == null)
+      }
+      if (obj == null) {
         return false;
-      if (getClass() != obj.getClass())
+      }
+      if (getClass() != obj.getClass()) {
         return false;
+      }
       CallingContext other = (CallingContext) obj;
-      if (!getFunction().equals(other.getFunction()))
+      if (!getFunction().equals(other.getFunction())) {
         return false;
+      }
       return Objects.equals(arguments, other.arguments) && Objects.equals(contextNodeItem, other.contextNodeItem);
     }
   }

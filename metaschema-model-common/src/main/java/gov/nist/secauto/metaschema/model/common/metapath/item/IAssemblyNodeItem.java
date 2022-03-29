@@ -26,22 +26,23 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
-public interface IAssemblyNodeItem extends IModelNodeItem, IAssemblyPathSegment {
+import org.jetbrains.annotations.NotNull;
+
+public interface IAssemblyNodeItem extends IModelNodeItem {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.ASSEMBLY;
   }
 
   @Override
-  default IAssemblyPathSegment getPathSegment() {
-    return this;
-  }
+  IAssemblyDefinition getDefinition();
 
   @Override
-  IAssemblyDefinition getDefinition();
+  IAssemblyInstance getInstance();
 
   @Override
   default IAssemblyNodeItem getContextNodeItem() {
@@ -51,5 +52,15 @@ public interface IAssemblyNodeItem extends IModelNodeItem, IAssemblyPathSegment 
   @Override
   default IAssemblyNodeItem getNodeItem() {
     return this;
+  }
+
+  @Override
+  default @NotNull String format(@NotNull IPathFormatter formatter) {
+    return formatter.formatAssembly(this);
+  }
+
+  @Override
+  default <RESULT, CONTEXT> RESULT accept(@NotNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitAssembly(this, context);
   }
 }

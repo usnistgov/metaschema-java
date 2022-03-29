@@ -26,97 +26,102 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Provides a common, abstract implementation of a {@link IMetaschema}.
  */
-public abstract class AbstractMetaschema implements IMetaschema {
+public abstract class AbstractMetaschema
+    implements IMetaschema {
   private static final Logger LOGGER = LogManager.getLogger(AbstractMetaschema.class);
 
   @NotNull
-  private final URI location;
-  @NotNull
-  private final Map<@NotNull URI, ? extends IMetaschema> importedMetaschemaByUri;
-  @NotNull
-  private final Map<@NotNull String, ? extends IMetaschema> importedMetaschemaByName;
+  private final List<@NotNull ? extends IMetaschema> importedMetaschemas;
   private Map<@NotNull String, IFlagDefinition> exportedFlagDefinitions;
   private Map<@NotNull String, IFieldDefinition> exportedFieldDefinitions;
   private Map<@NotNull String, IAssemblyDefinition> exportedAssemblyDefinitions;
 
-  /**
-   * Constructs a new {@link IMetaschema} instance.
-   * 
-   * @param metaschemaResource
-   *          the resource to load the Metaschema from
-   * @param importedMetaschema
-   *          all previously imported Metaschema that this Metaschema might import
-   */
-  @SuppressWarnings("null")
-  public AbstractMetaschema(
-      @NotNull URI metaschemaResource,
-      @NotNull Map<@NotNull URI, ? extends IMetaschema> importedMetaschema) {
-    Objects.requireNonNull(metaschemaResource, "metaschemaResource");
-    Objects.requireNonNull(importedMetaschema, "importedMetaschema");
-    this.location = metaschemaResource;
-    this.importedMetaschemaByUri = Collections.unmodifiableMap(importedMetaschema);
-    this.importedMetaschemaByName = Collections.unmodifiableMap(
-        importedMetaschema.values().stream().collect(Collectors.toMap(IMetaschema::getShortName, Function.identity())));
-    LOGGER.trace("Creating metaschema '{}'", metaschemaResource);
+  public AbstractMetaschema(@NotNull List<@NotNull ? extends IMetaschema> importedMetaschemas) {
+    this.importedMetaschemas
+        = CollectionUtil.unmodifiableList(ObjectUtils.requireNonNull(importedMetaschemas, "importedMetaschema"));
   }
 
   @Override
-  public Map<@NotNull URI, ? extends IMetaschema> getImportedMetaschemaMap() {
-    return importedMetaschemaByUri;
+  public @NotNull List<@NotNull ? extends IMetaschema> getImportedMetaschemas() {
+    return importedMetaschemas;
+  }
+
+  protected Map<@NotNull String, ? extends IMetaschema> getImportedMetaschemaByShortNames() {
+    return importedMetaschemas.stream().collect(Collectors.toMap(IMetaschema::getShortName, Function.identity()));
   }
 
   @Override
-  public Map<@NotNull String, ? extends IMetaschema> getImportedMetaschemaByShortNames() {
-    return importedMetaschemaByName;
+  public IMetaschema getImportedMetaschemaByShortName(String name) {
+    return getImportedMetaschemaByShortNames().get(name);
   }
 
   @SuppressWarnings("null")
   @Override
-  public Map<@NotNull String, ? extends IFlagDefinition> getExportedFlagDefinitionMap() {
-    return Collections.unmodifiableMap(exportedFlagDefinitions);
+  public Collection<@NotNull ? extends IFlagDefinition> getExportedFlagDefinitions() {
+    return getExportedFlagDefinitionMap().values();
+  }
+
+  @Override
+  public @Nullable IFlagDefinition getExportedFlagDefinitionByName(String name) {
+    return getExportedFlagDefinitionMap().get(name);
+  }
+
+  protected Map<@NotNull String, ? extends IFlagDefinition> getExportedFlagDefinitionMap() {
+    initExports();
+    return exportedFlagDefinitions;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Map<@NotNull String, ? extends IFieldDefinition> getExportedFieldDefinitionMap() {
-    return Collections.unmodifiableMap(exportedFieldDefinitions);
+  public Collection<@NotNull ? extends IFieldDefinition> getExportedFieldDefinitions() {
+    return getExportedFieldDefinitionMap().values();
+  }
+
+  @Override
+  public IFieldDefinition getExportedFieldDefinitionByName(String name) {
+    return getExportedFieldDefinitionMap().get(name);
+  }
+
+  protected Map<@NotNull String, ? extends IFieldDefinition> getExportedFieldDefinitionMap() {
+    initExports();
+    return exportedFieldDefinitions;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Map<@NotNull String, ? extends IAssemblyDefinition> getExportedAssemblyDefinitionMap() {
-    return Collections.unmodifiableMap(exportedAssemblyDefinitions);
+  public Collection<@NotNull ? extends IAssemblyDefinition> getExportedAssemblyDefinitions() {
+    return getExportedAssemblyDefinitionMap().values();
   }
 
-  private static class ExportedDefinitionsFilter<DEF extends IDefinition> implements Predicate<@NotNull DEF> {
-    @Override
-    public boolean test(@NotNull DEF definition) {
-      return ModuleScopeEnum.INHERITED.equals(definition.getModuleScope())
-          || ModelType.ASSEMBLY.equals(definition.getModelType()) && ((IAssemblyDefinition) definition).isRoot();
-    }
+  @Override
+  public IAssemblyDefinition getExportedAssemblyDefinitionByName(String name) {
+    return getExportedAssemblyDefinitionMap().get(name);
+  }
+
+  protected Map<@NotNull String, ? extends IAssemblyDefinition> getExportedAssemblyDefinitionMap() {
+    initExports();
+    return exportedAssemblyDefinitions;
   }
 
   @Override
@@ -125,57 +130,88 @@ public abstract class AbstractMetaschema implements IMetaschema {
     throw new UnsupportedOperationException();
   }
 
-  private static <DEF extends IDefinition> void addToMap(@NotNull Collection<@NotNull ? extends DEF> items,
-      @NotNull Map<@NotNull String, DEF> existingMap) {
-    for (DEF item : items) {
-      DEF oldItem = existingMap.put(item.getName(), item);
-      if (oldItem != null && oldItem != item && LOGGER.isWarnEnabled()) {
-        LOGGER.warn("The {} '{}' from metaschema '{}' is shadowing '{}' from metaschema '{}'",
-            item.getModelType().name().toLowerCase(Locale.ROOT), item.getName(),
-            item.getContainingMetaschema().getShortName(),
-            oldItem.getName(), oldItem.getContainingMetaschema().getShortName());
-      }
-    }
-  }
-
   /**
    * Processes the definitions exported by the Metaschema, saving a list of all exported by specific
    * model types.
-   * 
-   * @throws MetaschemaException
-   *           if a parsing error occurs
    */
-  @SuppressWarnings("null")
-  protected void processExportedDefinitions() throws MetaschemaException {
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("Processing metaschema '{}'", this.getLocation());
-    }
+  protected void initExports() {
+    synchronized (this) {
 
-    this.exportedFlagDefinitions = new LinkedHashMap<>();
-    this.exportedFieldDefinitions = new LinkedHashMap<>();
-    this.exportedAssemblyDefinitions = new LinkedHashMap<>();
+      if (exportedFlagDefinitions == null) {
+        // Populate the stream with the definitions from this metaschema
+        Predicate<gov.nist.secauto.metaschema.model.common.IDefinition> filter = IMetaschema.allNonLocalDefinitions();
+        Stream<@NotNull ? extends IFlagDefinition> flags = getFlagDefinitions().stream()
+            .filter(filter);
+        Stream<@NotNull ? extends IFieldDefinition> fields = getFieldDefinitions().stream()
+            .filter(filter);
+        Stream<@NotNull ? extends IAssemblyDefinition> assemblies = getAssemblyDefinitions().stream()
+            .filter(filter);
 
-    // handle definitions from any included metaschema first
-    if (!getImportedMetaschemas().isEmpty()) {
-      for (IMetaschema metaschema : getImportedMetaschemas()) {
-        addToMap(metaschema.getExportedFlagDefinitions(), this.exportedFlagDefinitions);
-        addToMap(metaschema.getExportedFieldDefinitions(), this.exportedFieldDefinitions);
-        addToMap(metaschema.getExportedAssemblyDefinitions(), this.exportedAssemblyDefinitions);
+        // handle definitions from any included metaschema
+        if (!getImportedMetaschemas().isEmpty()) {
+          @SuppressWarnings("null")
+          Stream<@NotNull ? extends IFlagDefinition> importedFlags = Stream.empty();
+          @SuppressWarnings("null")
+          Stream<@NotNull ? extends IFieldDefinition> importedFields = Stream.empty();
+          @SuppressWarnings("null")
+          Stream<@NotNull ? extends IAssemblyDefinition> importedAssemblies = Stream.empty();
+
+          for (IMetaschema metaschema : getImportedMetaschemas()) {
+            importedFlags = Stream.concat(importedFlags, metaschema.getExportedFlagDefinitions().stream());
+            importedFields = Stream.concat(importedFields, metaschema.getExportedFieldDefinitions().stream());
+            importedAssemblies
+                = Stream.concat(importedAssemblies, metaschema.getExportedAssemblyDefinitions().stream());
+          }
+
+          flags = Stream.concat(importedFlags, flags);
+          fields = Stream.concat(importedFields, fields);
+          assemblies = Stream.concat(importedAssemblies, assemblies);
+        }
+
+        // Build the maps. Definitions from this Metaschema will take priority, with shadowing being
+        // reported when a definition from this Metaschema has the same name as an imported one
+        @SuppressWarnings("null")
+        Map<@NotNull String, IFlagDefinition> exportedFlagDefinitions = flags.collect(
+            CustomCollectors.toMap(
+                IFlagDefinition::getName,
+                Function.identity(),
+                AbstractMetaschema::handleShadowedDefinitions));
+        @SuppressWarnings("null")
+        Map<@NotNull String, IFieldDefinition> exportedFieldDefinitions = fields.collect(
+            CustomCollectors.toMap(
+                IFieldDefinition::getName,
+                Function.identity(),
+                AbstractMetaschema::handleShadowedDefinitions));
+        @SuppressWarnings("null")
+        Map<@NotNull String, IAssemblyDefinition> exportedAssemblyDefinitions = assemblies.collect(
+            CustomCollectors.toMap(
+                IAssemblyDefinition::getName,
+                Function.identity(),
+                AbstractMetaschema::handleShadowedDefinitions));
+
+        this.exportedFlagDefinitions = exportedFlagDefinitions.isEmpty()
+            ? CollectionUtil.emptyMap()
+            : CollectionUtil.unmodifiableMap(exportedFlagDefinitions);
+        this.exportedFieldDefinitions = exportedFieldDefinitions.isEmpty()
+            ? CollectionUtil.emptyMap()
+            : CollectionUtil.unmodifiableMap(exportedFieldDefinitions);
+        this.exportedAssemblyDefinitions = exportedAssemblyDefinitions.isEmpty()
+            ? CollectionUtil.emptyMap()
+            : CollectionUtil.unmodifiableMap(exportedAssemblyDefinitions);
       }
     }
-
-    // now handle top-level definitions from this metaschema. Start first with filtering for globals,
-    // then add these to the maps
-    addToMap(getFlagDefinitions().stream().filter(new ExportedDefinitionsFilter<>()).collect(Collectors.toList()),
-        this.exportedFlagDefinitions);
-    addToMap(getFieldDefinitions().stream().filter(new ExportedDefinitionsFilter<>()).collect(Collectors.toList()),
-        this.exportedFieldDefinitions);
-    addToMap(getAssemblyDefinitions().stream().filter(new ExportedDefinitionsFilter<>()).collect(Collectors.toList()),
-        this.exportedAssemblyDefinitions);
   }
 
-  @Override
-  public URI getLocation() {
-    return location;
+  private static <DEF extends IDefinition> DEF handleShadowedDefinitions(
+      @SuppressWarnings("unused") @NotNull String key, @NotNull DEF oldDef, @NotNull DEF newDef) {
+    if (oldDef != newDef && LOGGER.isWarnEnabled()) {
+      LOGGER.warn("The {} '{}' from metaschema '{}' is shadowing '{}' from metaschema '{}'",
+          newDef.getModelType().name().toLowerCase(Locale.ROOT),
+          newDef.getName(),
+          newDef.getContainingMetaschema().getShortName(),
+          oldDef.getName(),
+          oldDef.getContainingMetaschema().getShortName());
+    }
+    return newDef;
   }
 }

@@ -26,15 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common.util;
 
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IModelInstance;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -127,33 +127,7 @@ public abstract class ModelWalker<DATA> {
       walkModelInstances(assembly.getModelInstances(), data);
     }
   }
-  /**
-   * Will walk the provided model definition.
-   * 
-   * @param definition
-   *          the definition to walk
-   */
-  public void walkDefinition(@NotNull IDefinition definition) {
-    walkDefinition(definition, getDefaultData());
-  }
 
-  /**
-   * Will walk the provided model definition.
-   * 
-   * @param definition
-   *          the definition to walk
-   * @param data
-   *          additional state information to operate on
-   */
-  public void walkDefinition(@NotNull IDefinition definition, DATA data) {
-    if (definition instanceof IAssemblyDefinition) {
-      walk((IAssemblyDefinition) definition, data);
-    } else if (definition instanceof IFieldDefinition) {
-      walk((IFieldDefinition) definition, data);
-    } else if (definition instanceof IFlagDefinition) {
-      walk((IFlagDefinition) definition, data);
-    }
-  }
   /**
    * Will visit the provided metaschema flag instance, and then walk the associated flag definition.
    * 
@@ -209,6 +183,34 @@ public abstract class ModelWalker<DATA> {
   public void walk(@NotNull IChoiceInstance instance, DATA data) {
     if (visit(instance, data)) {
       walkModelInstances(instance.getModelInstances(), data);
+    }
+  }
+
+  /**
+   * Will walk the provided model definition.
+   * 
+   * @param definition
+   *          the definition to walk
+   */
+  public void walkDefinition(@NotNull IDefinition definition) {
+    walkDefinition(definition, getDefaultData());
+  }
+
+  /**
+   * Will walk the provided model definition.
+   * 
+   * @param definition
+   *          the definition to walk
+   * @param data
+   *          additional state information to operate on
+   */
+  public void walkDefinition(@NotNull IDefinition definition, DATA data) {
+    if (definition instanceof IAssemblyDefinition) {
+      walk((IAssemblyDefinition) definition, data);
+    } else if (definition instanceof IFieldDefinition) {
+      walk((IFieldDefinition) definition, data);
+    } else if (definition instanceof IFlagDefinition) {
+      walk((IFlagDefinition) definition, data);
     }
   }
 

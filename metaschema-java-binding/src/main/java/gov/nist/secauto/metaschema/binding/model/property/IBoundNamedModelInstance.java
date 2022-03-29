@@ -32,10 +32,11 @@ import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
+import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IBoundNamedModelDefinition;
-import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
+import gov.nist.secauto.metaschema.binding.model.property.info.IModelPropertyInfo;
+import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,15 +54,18 @@ import javax.xml.stream.events.XMLEvent;
  * This marker interface provides common methods for interacting with bound object values.
  */
 public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedModelInstance {
-  /**
-   * Retrieve the {@link IClassBinding} associated with the instance.
-   * 
-   * @return the class binding or {@code null} if the instance is not a bound class
-   */
-  IClassBinding getClassBinding();
+  
+  @Override
+  IAssemblyClassBinding getParentClassBinding();
 
   @Override
   IBoundNamedModelDefinition getDefinition();
+
+  @NotNull
+  IModelPropertyInfo newPropertyInfo();
+
+  @NotNull
+  IModelPropertyInfo getPropertyInfo();
 
   @NotNull
   IDataTypeHandler getDataTypeHandler();
@@ -113,7 +117,7 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
   List<@NotNull Object> readItem(@Nullable Object parentInstance, boolean requiresJsonKey,
       @NotNull IJsonParsingContext context) throws IOException;
 
-  boolean writeItem(@NotNull Object item, @NotNull QName parentName, @NotNull IXmlWritingContext context)
+  void writeItem(@NotNull Object itemValue, @NotNull QName parentName, @NotNull IXmlWritingContext context)
       throws XMLStreamException, IOException;
 
   @NotNull

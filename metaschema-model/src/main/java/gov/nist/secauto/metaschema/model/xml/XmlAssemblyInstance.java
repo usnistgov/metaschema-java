@@ -26,13 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
+import gov.nist.secauto.metaschema.model.common.AbstractAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.instances.AbstractAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.AssemblyDocument;
 
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +54,7 @@ public class XmlAssemblyInstance
    * @param parent
    *          the assembly definition this object is an instance of
    */
-  public XmlAssemblyInstance(@NotNull AssemblyDocument.Assembly xmlAssembly, @NotNull IXmlAssemblyDefinition parent) {
+  public XmlAssemblyInstance(@NotNull AssemblyDocument.Assembly xmlAssembly, @NotNull IAssemblyDefinition parent) {
     super(parent);
     this.xmlAssembly = xmlAssembly;
   }
@@ -70,10 +70,12 @@ public class XmlAssemblyInstance
 
   @Override
   public IAssemblyDefinition getDefinition() {
-    return getContainingDefinition().getContainingMetaschema()
-        .getScopedAssemblyDefinitionByName(getName());
+    // This will always be not null
+    return ObjectUtils.notNull(getContainingMetaschema()
+        .getScopedAssemblyDefinitionByName(getName()));
   }
 
+  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlAssembly().getRef();
@@ -131,6 +133,7 @@ public class XmlAssemblyInstance
     return retval;
   }
 
+  @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
     return getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : null;

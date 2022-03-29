@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.binding.model.property;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.binding.model.IBoundFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 public interface IBoundFlagInstance extends IBoundNamedInstance, IFlagInstance {
-
   @Override
   IBoundFlagDefinition getDefinition();
 
@@ -56,9 +55,8 @@ public interface IBoundFlagInstance extends IBoundNamedInstance, IFlagInstance {
    * @param value
    *          the bound flag value, which may be {@code null}
    * @return the bound flag value as a string, or {@code null} if the flag is not defined
-   * @throws IOException
    */
-  String getValueAsString(Object value) throws IOException;
+  String getValueAsString(Object value);
 
   /**
    * Write the provided value as a JSON property.

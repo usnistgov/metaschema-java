@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.context.IProblemHandler;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundInstance;
+import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.binding.model.property.info.IJsonBindingSupplier;
 
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +65,7 @@ public interface IJsonProblemHandler extends IProblemHandler {
    * @throws BindingException
    *           if an unhandled binding error has occurred for any reason
    */
-  Map<IBoundInstance, IJsonBindingSupplier> handleMissingFields(@NotNull IClassBinding classBinding,
-      @NotNull Map<String, IBoundInstance> missingPropertyBindings, @NotNull IJsonParsingContext context)
+  Map<IBoundNamedInstance, IJsonBindingSupplier> handleMissingFields(@NotNull IClassBinding classBinding,
+      @NotNull Map<String, IBoundNamedInstance> missingPropertyBindings, @NotNull IJsonParsingContext context)
       throws BindingException;
 }

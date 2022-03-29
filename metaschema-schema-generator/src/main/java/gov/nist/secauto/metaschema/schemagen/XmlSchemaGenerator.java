@@ -28,25 +28,25 @@ package gov.nist.secauto.metaschema.schemagen;
 
 import com.ctc.wstx.stax.WstxOutputFactory;
 
-import gov.nist.secauto.metaschema.model.UsedDefinitionModelWalker;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.INamedValuedDefinition;
 import gov.nist.secauto.metaschema.model.common.ModelType;
+import gov.nist.secauto.metaschema.model.common.UsedDefinitionModelWalker;
+import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.INamedValuedDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import net.sf.saxon.s9api.Processor;
@@ -154,8 +154,9 @@ public class XmlSchemaGenerator
       writer.writeDefaultNamespace(targetNS);
       writer.writeNamespace("vc", NS_XML_SCHEMA_VERSIONING);
 
-      Collection<@NotNull IAssemblyDefinition> rootAssemblyDefinitions = new LinkedList<>();
-      Set<@NotNull INamedDefinition> globalDefinitions = new LinkedHashSet<>();
+      Collection<gov.nist.secauto.metaschema.model.common.IAssemblyDefinition> rootAssemblyDefinitions
+          = new LinkedList<>();
+      Set<gov.nist.secauto.metaschema.model.common.INamedDefinition> globalDefinitions = new LinkedHashSet<>();
       for (INamedDefinition definition : definitions) {
         String xmlNS = definition.getContainingMetaschema().getXmlNamespace().toASCIIString();
 
@@ -166,7 +167,7 @@ public class XmlSchemaGenerator
           // this definition is not in this schema's namespace
           continue;
         }
-        
+
         if (definition instanceof IAssemblyDefinition && ((IAssemblyDefinition) definition).isRoot()) {
           IAssemblyDefinition assemblyDefinition = (IAssemblyDefinition) definition;
           rootAssemblyDefinitions.add(assemblyDefinition);
@@ -334,7 +335,7 @@ public class XmlSchemaGenerator
     } // otherwise the metadata will appear on the element ref
 
     state.addComment(definition, "AssemblyDefinitionComplexType");
-    
+
     Collection<@NotNull ? extends IModelInstance> modelInstances = definition.getModelInstances();
     if (!modelInstances.isEmpty()) {
       writer.writeStartElement("xs", "sequence", NS_XML_SCHEMA);
@@ -374,7 +375,7 @@ public class XmlSchemaGenerator
       generateMetadata(definition, state);
     } // otherwise the metadata will appear on the element ref
 
-    IJavaTypeAdapter<?> datatype = definition.getDatatype();
+    IJavaTypeAdapter<?> datatype = definition.getJavaTypeAdapter();
     String xmlContentType;
     if (datatype.isXmlMixed()) {
       xmlContentType = "complexContent";
@@ -428,7 +429,7 @@ public class XmlSchemaGenerator
     case FIELD: {
       IFieldInstance fieldInstance = (IFieldInstance) modelInstance;
       if (!fieldInstance.isInXmlWrapped()
-          && fieldInstance.getDefinition().getDatatype().isUnrappedValueAllowedInXml()) {
+          && fieldInstance.getDefinition().getJavaTypeAdapter().isUnrappedValueAllowedInXml()) {
         generateUnwrappedFieldInstance(fieldInstance, grouped, state);
       } else {
         generateNamedModelInstance(fieldInstance, grouped, state);
@@ -522,7 +523,7 @@ public class XmlSchemaGenerator
       builder.append(state.getNSPrefix(namespace));
       builder.append(':');
     }
-    builder.append(state.getDatatypeManager().getTypeNameForDatatype(definition.getDatatype()));
+    builder.append(state.getDatatypeManager().getTypeNameForDatatype(definition.getJavaTypeAdapter()));
     return builder.toString();
   }
 
@@ -725,7 +726,7 @@ public class XmlSchemaGenerator
     }
 
     generateInstanceMetadata(instance, inline, state);
-    
+
     state.addComment(definition, "FlagInstance");
 
     if (inline) {
@@ -801,7 +802,7 @@ public class XmlSchemaGenerator
 
     public void addComment(@NotNull INamedDefinition definition, @NotNull String context) throws XMLStreamException {
       getWriter().writeComment(generateComment(definition, context));
-      
+
     }
   }
 }

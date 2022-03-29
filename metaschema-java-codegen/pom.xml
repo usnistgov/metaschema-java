@@ -27,10 +27,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>metaschema-java-binding-annotations</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>metaschema-java-binding</artifactId>
 		</dependency>
 		<dependency>

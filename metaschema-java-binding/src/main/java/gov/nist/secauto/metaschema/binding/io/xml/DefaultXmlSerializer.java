@@ -31,9 +31,11 @@ import com.ctc.wstx.stax.WstxOutputFactory;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.RootAssemblyDefinition;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -45,7 +47,7 @@ public class DefaultXmlSerializer<CLASS>
     extends AbstractSerializer<CLASS> {
   private XMLOutputFactory2 xmlOutputFactory;
 
-  public DefaultXmlSerializer(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
+  public DefaultXmlSerializer(@NotNull IBindingContext bindingContext, @NotNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
@@ -60,13 +62,13 @@ public class DefaultXmlSerializer<CLASS>
     }
   }
 
-  protected void setXMLOutputFactory(XMLOutputFactory2 xmlOutputFactory) {
+  protected void setXMLOutputFactory(@NotNull XMLOutputFactory2 xmlOutputFactory) {
     synchronized (this) {
       this.xmlOutputFactory = xmlOutputFactory;
     }
   }
 
-  protected XMLStreamWriter2 newXMLStreamWriter(Writer writer) throws IOException {
+  protected XMLStreamWriter2 newXMLStreamWriter(@NotNull Writer writer) throws IOException {
     try {
       XMLStreamWriter2 streamWriter = (XMLStreamWriter2) getXMLOutputFactory().createXMLStreamWriter(writer);
       streamWriter = new IndentingXmlStreamWriter2(streamWriter);
@@ -84,7 +86,9 @@ public class DefaultXmlSerializer<CLASS>
       IAssemblyClassBinding classBinding = getClassBinding();
       IXmlWritingContext writingContext = new DefaultXmlWritingContext(streamWriter);
 
-      classBinding.writeRoot(data, writingContext);
+      RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
+      
+      root.writeRoot(data, writingContext);
 
     } catch (XMLStreamException ex) {
       caughtException = new IOException(ex);

@@ -31,9 +31,7 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Type;
-
-public abstract class AbstractModelPropertyInfo<TYPE extends Type>
+public abstract class AbstractModelPropertyInfo
     implements IModelPropertyInfo {
 
   @NotNull
@@ -46,11 +44,5 @@ public abstract class AbstractModelPropertyInfo<TYPE extends Type>
   @Override
   public IBoundNamedModelInstance getProperty() {
     return property;
-  }
-
-  @SuppressWarnings("unchecked")
-  @NotNull
-  protected TYPE getType() {
-    return (TYPE) getProperty().getType();
   }
 }

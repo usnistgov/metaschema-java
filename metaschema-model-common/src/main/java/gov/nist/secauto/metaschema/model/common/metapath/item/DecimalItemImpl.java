@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
 class DecimalItemImpl
     extends AbstractNumericItem<BigDecimal>
@@ -68,6 +69,24 @@ class DecimalItemImpl
   @Override
   public BigInteger asInteger() {
     return getValue().toBigInteger();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public INumericItem abs() {
+    return new DecimalItemImpl(getValue().abs());
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public IIntegerItem ceiling() {
+    return IIntegerItem.valueOf(getValue().setScale(0, RoundingMode.CEILING).toBigIntegerExact());
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public IIntegerItem floor() {
+    return IIntegerItem.valueOf(getValue().setScale(0, RoundingMode.FLOOR).toBigIntegerExact());
   }
 
   @Override

@@ -43,6 +43,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
+// TODO: make all read and write methods take the value, not the parent instance as an argument
 public interface IModelPropertyInfo {
   /**
    * Get the associated property for which this info is for.
@@ -54,7 +55,7 @@ public interface IModelPropertyInfo {
 
   /**
    * Get the type of the bound object.
-   * 
+   *
    * @return the raw type of the bound object
    */
   @NotNull
@@ -86,7 +87,21 @@ public interface IModelPropertyInfo {
       @NotNull IXmlParsingContext context)
       throws IOException, XMLStreamException;
 
-  boolean writeValue(@NotNull Object parentInstance, @NotNull QName parentName, @NotNull IXmlWritingContext context)
+  /**
+   * Write a {@code value} that is not {@code null}.
+   * 
+   * @param value
+   *          the value to write
+   * @param parentName
+   *          the XML qualified name of the parent element to write
+   * @param context
+   *          the XML serialization context
+   * @throws XMLStreamException
+   *           if an error occurred while generating XML events
+   * @throws IOException
+   *           if an error occurred while writing to the output stream
+   */
+  void writeValue(@NotNull Object value, @NotNull QName parentName, @NotNull IXmlWritingContext context)
       throws XMLStreamException, IOException;
 
   void writeValue(@NotNull Object parentInstance, @NotNull IJsonWritingContext context) throws IOException;

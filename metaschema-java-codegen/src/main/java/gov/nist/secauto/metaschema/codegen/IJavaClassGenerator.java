@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.codegen;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -55,7 +55,7 @@ public interface IJavaClassGenerator {
    *           if a build error occurred while generating the class
    */
   @NotNull
-  GeneratedClass generateClass(@NotNull Path dir) throws IOException;
+  GeneratedDefinitionClass generateClass(@NotNull Path dir) throws IOException;
 
   /**
    * This method is responsible for generating the Java class using a builder that is returned for

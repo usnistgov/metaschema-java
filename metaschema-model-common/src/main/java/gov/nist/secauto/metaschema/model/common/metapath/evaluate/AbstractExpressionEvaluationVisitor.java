@@ -93,11 +93,13 @@ public class AbstractExpressionEvaluationVisitor implements IExpressionEvaluatio
     return result;
   }
 
+  @SuppressWarnings("unused")
   protected <ITEM_TYPE extends IItem> boolean shouldVisitNextChild(IExpression expr, ISequence<ITEM_TYPE> result,
       INodeContext context) {
     return true;
   }
 
+  @SuppressWarnings("unused")
   @NotNull
   protected <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> aggregateResult(@NotNull ISequence<ITEM_TYPE> result,
       @NotNull ISequence<?> childResult) {

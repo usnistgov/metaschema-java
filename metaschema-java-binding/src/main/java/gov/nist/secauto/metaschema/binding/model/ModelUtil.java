@@ -122,6 +122,9 @@ public final class ModelUtil {
       if (packageClass.isAnnotationPresent(XmlSchema.class)) {
         XmlSchema xmlSchema = ObjectUtils.notNull(packageClass.getAnnotation(XmlSchema.class));
         retval = xmlSchema.namespace();
+        if ("##none".equals(retval)) {
+          retval = "";
+        }
       } else {
         throw new IllegalArgumentException(
             String.format("Package '%s' is missing the '%s' annotation.", packageClass.getName(),

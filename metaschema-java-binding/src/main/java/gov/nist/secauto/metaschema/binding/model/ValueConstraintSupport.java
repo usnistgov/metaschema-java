@@ -121,7 +121,7 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
    * @param propertyAnnotation
    *          the annotation where the constraints are defined
    */
-  public ValueConstraintSupport(@NotNull BoundField propertyAnnotation) {// NOPMD - intentional
+  public ValueConstraintSupport(@NotNull BoundField propertyAnnotation) { // NOPMD - intentional
     List<AbstractConstraint> constraints = new LinkedList<>();
 
     List<DefaultAllowedValuesConstraint> allowedValuesConstraints
@@ -173,7 +173,7 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
    * @param classAnnotation
    *          the annotation where the constraints are defined
    */
-  public ValueConstraintSupport(@NotNull MetaschemaField classAnnotation) {// NOPMD - intentional
+  public ValueConstraintSupport(@NotNull MetaschemaField classAnnotation) { // NOPMD - intentional
     List<AbstractConstraint> constraints = new LinkedList<>();
 
     List<DefaultAllowedValuesConstraint> allowedValuesConstraints

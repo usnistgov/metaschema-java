@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>21-SNAPSHOT</version>
+		<version>20</version>
 	</parent>
 	<groupId>gov.nist.secauto.metaschema</groupId>
 	<artifactId>metaschema-framework</artifactId>
@@ -116,6 +116,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<dependency.antlr4.version>4.9.2</dependency.antlr4.version>
+		<dependency.auto-service.version>1.0.1</dependency.auto-service.version>
 		<dependency.commons-lang3.version>3.11</dependency.commons-lang3.version>
 		<dependency.commons-collections4.version>4.4</dependency.commons-collections4.version>
 		<dependency.commons-io.version>2.8.0</dependency.commons-io.version>
@@ -166,11 +167,6 @@
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>metaschema-java-binding-annotations</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
 				<artifactId>metaschema-freemarker-support</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -190,6 +186,12 @@
 				<version>${project.version}</version>
 			</dependency>
 
+			<dependency>
+				<groupId>com.google.auto.service</groupId>
+				<artifactId>auto-service</artifactId>
+				<version>${dependency.auto-service.version}</version>
+				<scope>provided</scope>
+			</dependency>
 			<dependency>
 				<groupId>org.apache.xmlbeans</groupId>
 				<artifactId>xmlbeans</artifactId>
@@ -719,7 +721,6 @@
 
 	<modules>
 		<module>metaschema-model</module>
-		<module>metaschema-java-binding-annotations</module>
 		<module>metaschema-java-codegen</module>
 		<module>metaschema-maven-plugin</module>
 		<module>metaschema-java-binding</module>

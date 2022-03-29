@@ -187,11 +187,6 @@ public class XmlSchemaContentValidator extends AbstractContentValidator {
     }
 
     @Override
-    public boolean isPassing() {
-      return getHighestSeverity().ordinal() < Level.ERROR.ordinal();
-    }
-
-    @Override
     public Level getHighestSeverity() {
       return highestSeverity;
     }

@@ -66,7 +66,8 @@ public interface IModelElement {
   /**
    * Retrieves the Metaschema instance that contains for the information element's declaration.
    * 
-   * @return the Metaschema instance or {@code null} if it is unknown
+   * @return the Metaschema instance
    */
+  @NotNull
   IMetaschema getContainingMetaschema();
 }

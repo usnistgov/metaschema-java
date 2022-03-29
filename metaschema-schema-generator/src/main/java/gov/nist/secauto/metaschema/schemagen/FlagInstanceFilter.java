@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +44,7 @@ public class FlagInstanceFilter {
   public static Collection<@NotNull ? extends IFlagInstance> filterFlags(
       @NotNull Collection<@NotNull ? extends IFlagInstance> flags,
       IFlagInstance jsonKeyFlag) {
-    Predicate<@NotNull IFlagInstance> filter = null;
+    Predicate<gov.nist.secauto.metaschema.model.common.IFlagInstance> filter = null;
 
     // determine if we need to filter a JSON key
     if (jsonKeyFlag != null) {
@@ -58,7 +58,7 @@ public class FlagInstanceFilter {
       @NotNull Collection<@NotNull ? extends IFlagInstance> flags,
       IFlagInstance jsonKeyFlag,
       IFlagInstance jsonValueKeyFlag) {
-    Predicate<@NotNull IFlagInstance> filter = null;
+    Predicate<gov.nist.secauto.metaschema.model.common.IFlagInstance> filter = null;
 
     // determine if we need to filter a JSON key
     if (jsonKeyFlag != null) {
@@ -67,7 +67,8 @@ public class FlagInstanceFilter {
 
     // determine if we need to filter a JSON value key
     if (jsonValueKeyFlag != null) {
-      Predicate<@NotNull IFlagInstance> jsonValueKeyFilter = filterFlag(jsonValueKeyFlag);
+      Predicate<gov.nist.secauto.metaschema.model.common.IFlagInstance> jsonValueKeyFilter
+          = filterFlag(jsonValueKeyFlag);
       if (filter == null) {
         filter = jsonValueKeyFilter;
       } else {
@@ -79,14 +80,15 @@ public class FlagInstanceFilter {
   }
 
   @NotNull
-  protected static Predicate<@NotNull IFlagInstance> filterFlag(@NotNull IFlagInstance flagToFilter) {
+  protected static Predicate<gov.nist.secauto.metaschema.model.common.IFlagInstance>
+      filterFlag(@NotNull IFlagInstance flagToFilter) {
     return flag -> flag != flagToFilter;
   }
 
   @NotNull
   protected static Collection<@NotNull ? extends IFlagInstance> applyFilter(
       @NotNull Collection<@NotNull ? extends IFlagInstance> flags,
-      Predicate<@NotNull IFlagInstance> filter) {
+      Predicate<gov.nist.secauto.metaschema.model.common.IFlagInstance> filter) {
     Collection<@NotNull ? extends IFlagInstance> retval;
     if (filter == null) {
       retval = flags;

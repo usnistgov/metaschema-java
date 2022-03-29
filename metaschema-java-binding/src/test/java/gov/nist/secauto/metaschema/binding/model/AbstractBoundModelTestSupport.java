@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model;
 
 import com.ctc.wstx.stax.WstxInputFactory;
@@ -30,6 +31,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 
+import gov.nist.secauto.metaschema.binding.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
@@ -39,6 +41,8 @@ import gov.nist.secauto.metaschema.binding.model.test.FlaggedBoundAssembly;
 import gov.nist.secauto.metaschema.binding.model.test.FlaggedBoundField;
 import gov.nist.secauto.metaschema.binding.model.test.OnlyModelBoundAssembly;
 import gov.nist.secauto.metaschema.binding.model.test.RootBoundAssembly;
+import gov.nist.secauto.metaschema.binding.model.test.TestMetaschema;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 
@@ -99,7 +103,19 @@ public class AbstractBoundModelTestSupport {
     });
     return retval;
   }
-  
+
+  @NotNull
+  protected IMetaschema registerMetaschema(@NotNull Class<? extends AbstractBoundMetaschema> clazz) {
+    IMetaschema retval = AbstractBoundMetaschema.createInstance(clazz, bindingContext);
+    context.checking(new Expectations() {
+      { // NOPMD - intentional
+        allowing(bindingContext).getMetaschemaInstanceByClass(clazz);
+        will(returnValue(retval));
+      }
+    });
+    return retval;
+  }
+
   @NotNull
   protected IAssemblyClassBinding getRootAssemblyClassBinding() {
     /**
@@ -118,7 +134,9 @@ public class AbstractBoundModelTestSupport {
     registerAssemblyBinding(FlaggedBoundAssembly.class);
     registerFieldBinding(FlaggedBoundField.class);
     registerAssemblyBinding(OnlyModelBoundAssembly.class);
-    return registerAssemblyBinding(RootBoundAssembly.class);
+    IAssemblyClassBinding retval = registerAssemblyBinding(RootBoundAssembly.class);
+    registerMetaschema(TestMetaschema.class);
+    return retval;
   }
 
   @NotNull
@@ -128,7 +146,7 @@ public class AbstractBoundModelTestSupport {
     XMLEventReader2 parser = (XMLEventReader2) factory.createXMLEventReader(reader);
 
     IXmlParsingContext retval = context.mock(IXmlParsingContext.class);
-    
+
     context.checking(new Expectations() {
       { // NOPMD - intentional
         allowing(retval).getReader();
@@ -141,7 +159,7 @@ public class AbstractBoundModelTestSupport {
   @NotNull
   protected IJsonParsingContext newJsonParsingContext(Reader reader) throws JsonParseException, IOException {
     JsonFactory factory = new JsonFactory();
-    JsonParser jsonParser = factory.createParser(reader);
+    JsonParser jsonParser = factory.createParser(reader); // NOPMD - reader not owned by this method
 
     IJsonParsingContext retval = context.mock(IJsonParsingContext.class);
 

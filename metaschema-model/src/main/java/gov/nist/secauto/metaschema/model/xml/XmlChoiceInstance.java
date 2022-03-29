@@ -26,18 +26,20 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
+import gov.nist.secauto.metaschema.model.common.AbstractChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
-import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.instances.AbstractChoiceInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlAssemblyInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlChoiceInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlFieldInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlNamedModelInstance;
 import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceDocument;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +59,7 @@ public class XmlChoiceInstance
    */
   public XmlChoiceInstance(
       @NotNull ChoiceDocument.Choice xmlChoice,
-      @NotNull IXmlAssemblyDefinition containingAssembly) {
+      @NotNull IAssemblyDefinition containingAssembly) {
     super(containingAssembly);
     this.xmlChoice = xmlChoice;
 
@@ -79,6 +81,10 @@ public class XmlChoiceInstance
     return xmlChoice;
   }
 
+  /**
+   * Lazy initialize the model for this choice.
+   */
+  @SuppressWarnings("null")
   protected void initModelContainer() {
     synchronized (this) {
       if (modelContainer == null) {
@@ -87,26 +93,56 @@ public class XmlChoiceInstance
     }
   }
 
-  @Override
-  public Map<@NotNull String, ? extends IXmlNamedModelInstance> getNamedModelInstanceMap() {
+  private Map<@NotNull String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
     initModelContainer();
     return modelContainer.getNamedModelInstanceMap();
   }
 
   @Override
-  public Map<@NotNull String, ? extends IXmlFieldInstance> getFieldInstanceMap() {
+  public @Nullable INamedModelInstance getModelInstanceByName(String name) {
+    return getNamedModelInstanceMap().get(name);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public @NotNull Collection<@NotNull ? extends INamedModelInstance> getNamedModelInstances() {
+    return getNamedModelInstanceMap().values();
+  }
+
+  private Map<@NotNull String, ? extends IFieldInstance> getFieldInstanceMap() {
     initModelContainer();
     return modelContainer.getFieldInstanceMap();
   }
 
   @Override
-  public Map<@NotNull String, ? extends IXmlAssemblyInstance> getAssemblyInstanceMap() {
+  public IFieldInstance getFieldInstanceByName(String name) {
+    return getFieldInstanceMap().get(name);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Collection<@NotNull ? extends IFieldInstance> getFieldInstances() {
+    return getFieldInstanceMap().values();
+  }
+
+  private Map<@NotNull String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
     initModelContainer();
     return modelContainer.getAssemblyInstanceMap();
   }
 
   @Override
-  public List<@NotNull ? extends IXmlChoiceInstance> getChoiceInstances() {
+  public IAssemblyInstance getAssemblyInstanceByName(String name) {
+    return getAssemblyInstanceMap().get(name);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Collection<@NotNull ? extends IAssemblyInstance> getAssemblyInstances() {
+    return getAssemblyInstanceMap().values();
+  }
+
+  @Override
+  public List<@NotNull ? extends IChoiceInstance> getChoiceInstances() {
     initModelContainer();
     return modelContainer.getChoiceInstances();
   }

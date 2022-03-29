@@ -26,16 +26,12 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
+import gov.nist.secauto.metaschema.binding.model.IBoundAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 
 public interface IBoundAssemblyInstance extends IBoundNamedModelInstance, IAssemblyInstance {
-  
-  @Override
-  default IAssemblyClassBinding getClassBinding() {
-    return getDefinition();
-  }
+
 
   @Override
-  IAssemblyClassBinding getDefinition();
+  IBoundAssemblyDefinition getDefinition();
 }

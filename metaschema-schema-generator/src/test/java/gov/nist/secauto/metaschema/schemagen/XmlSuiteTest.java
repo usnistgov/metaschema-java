@@ -117,4 +117,15 @@ public class XmlSuiteTest
         List.of(
             contentCase(Format.JSON, "choice-multiple_test_multiple_PASS.json", true)));
   }
+
+  @Test
+  @SuppressWarnings("null")
+  void testJsonValueKey() throws IOException, MetaschemaException {
+    doTest(
+        "json-value-key/",
+        "json-value-key-field_metaschema.xml",
+        "json-value-key-field",
+        List.of(
+            contentCase(Format.JSON, "json-value-key-field_test_valid_PASS.json", true)));
+  }
 }

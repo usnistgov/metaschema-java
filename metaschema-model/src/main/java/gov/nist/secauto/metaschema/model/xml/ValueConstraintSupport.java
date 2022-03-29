@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexHasKeyCon
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.AllowedValuesType;
 import gov.nist.secauto.metaschema.model.xmlbeans.DefineFieldConstraintsType;
 import gov.nist.secauto.metaschema.model.xmlbeans.DefineFlagConstraintsType;
@@ -46,22 +47,34 @@ import gov.nist.secauto.metaschema.model.xmlbeans.ScopedMatchesConstraintType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ValueConstraintSupport implements IValueConstraintSupport {
+public class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - intentional
   private static final String PATH = "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
       + "$this/m:allowed-values|$this/m:matches|$this/m:index-has-key|$this/m:expect";
 
+  @NotNull
   private final List<AbstractConstraint> constraints;
+  @NotNull
   private final List<DefaultAllowedValuesConstraint> allowedValuesConstraints;
+  @NotNull
   private final List<DefaultMatchesConstraint> matchesConstraints;
+  @NotNull
   private final List<DefaultIndexHasKeyConstraint> indexHasKeyConstraints;
+  @NotNull
   private final List<DefaultExpectConstraint> expectConstraints;
 
-  public ValueConstraintSupport(DefineFlagConstraintsType xmlConstraints) {
+  /**
+   * Generate a set of constraints from the provided XMLBeans instance.
+   * 
+   * @param xmlConstraints
+   *          the XMLBeans instance
+   */
+  public ValueConstraintSupport(@NotNull DefineFlagConstraintsType xmlConstraints) { // NOPMD - intentional
     XmlCursor cursor = xmlConstraints.newCursor();
     cursor.selectPath(PATH);
 
@@ -92,18 +105,27 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
         expectConstraints.add(constraint);
       }
     }
-    this.constraints = constraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(constraints);
-    this.allowedValuesConstraints = allowedValuesConstraints.isEmpty() ? Collections.emptyList()
-        : Collections.unmodifiableList(allowedValuesConstraints);
-    this.matchesConstraints
-        = matchesConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(matchesConstraints);
-    this.indexHasKeyConstraints = indexHasKeyConstraints.isEmpty() ? Collections.emptyList()
-        : Collections.unmodifiableList(indexHasKeyConstraints);
-    this.expectConstraints
-        = expectConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(expectConstraints);
+    this.constraints = ObjectUtils.notNull(
+        constraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(constraints));
+    this.allowedValuesConstraints = ObjectUtils.notNull(
+        allowedValuesConstraints.isEmpty() ? Collections.emptyList()
+            : Collections.unmodifiableList(allowedValuesConstraints));
+    this.matchesConstraints = ObjectUtils.notNull(
+        matchesConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(matchesConstraints));
+    this.indexHasKeyConstraints = ObjectUtils.notNull(
+        indexHasKeyConstraints.isEmpty() ? Collections.emptyList()
+            : Collections.unmodifiableList(indexHasKeyConstraints));
+    this.expectConstraints = ObjectUtils.notNull(
+        expectConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(expectConstraints));
   }
 
-  public ValueConstraintSupport(DefineFieldConstraintsType xmlConstraints) {
+  /**
+   * Generate a set of constraints from the provided XMLBeans instance.
+   * 
+   * @param xmlConstraints
+   *          the XMLBeans instance
+   */
+  public ValueConstraintSupport(@NotNull DefineFieldConstraintsType xmlConstraints) { // NOPMD - intentional
     XmlCursor cursor = xmlConstraints.newCursor();
     cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
         + "$this/m:allowed-values|$this/m:matches|$this/m:index-has-key|$this/m:expect");
@@ -135,15 +157,17 @@ public class ValueConstraintSupport implements IValueConstraintSupport {
         expectConstraints.add(constraint);
       }
     }
-    this.constraints = constraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(constraints);
-    this.allowedValuesConstraints = allowedValuesConstraints.isEmpty() ? Collections.emptyList()
-        : Collections.unmodifiableList(allowedValuesConstraints);
-    this.matchesConstraints
-        = matchesConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(matchesConstraints);
-    this.indexHasKeyConstraints = indexHasKeyConstraints.isEmpty() ? Collections.emptyList()
-        : Collections.unmodifiableList(indexHasKeyConstraints);
-    this.expectConstraints
-        = expectConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(expectConstraints);
+    this.constraints = ObjectUtils.notNull(
+        constraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(constraints));
+    this.allowedValuesConstraints = ObjectUtils.notNull(
+        allowedValuesConstraints.isEmpty() ? Collections.emptyList()
+            : Collections.unmodifiableList(allowedValuesConstraints));
+    this.matchesConstraints = ObjectUtils.notNull(
+        matchesConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(matchesConstraints));
+    this.indexHasKeyConstraints = ObjectUtils.notNull(indexHasKeyConstraints.isEmpty() ? Collections.emptyList()
+        : Collections.unmodifiableList(indexHasKeyConstraints));
+    this.expectConstraints = ObjectUtils.notNull(
+        expectConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(expectConstraints));
   }
 
   @Override

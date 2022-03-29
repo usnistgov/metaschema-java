@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
-import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.instances.IXmlAssemblyInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlChoiceInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlFieldInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlNamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceDocument.Choice;
 
 import org.apache.xmlbeans.XmlObject;
@@ -44,51 +44,87 @@ import java.util.stream.Collectors;
 public class XmlModelContainerSupport {
 
   @NotNull
-  private final Map<@NotNull String, ? extends IXmlFieldInstance> fieldInstances;
-  @NotNull
-  private final Map<@NotNull String, ? extends IXmlAssemblyInstance> assemblyInstances;
-  @NotNull
-  private final Map<@NotNull String, ? extends IXmlNamedModelInstance> namedModelInstances;
-  @NotNull
   private final List<@NotNull ? extends IModelInstance> modelInstances;
+  @NotNull
+  private final Map<@NotNull String, ? extends INamedModelInstance> namedModelInstances;
+  @NotNull
+  private final Map<@NotNull String, ? extends IFieldInstance> fieldInstances;
+  @NotNull
+  private final Map<@NotNull String, ? extends IAssemblyInstance> assemblyInstances;
 
-  public XmlModelContainerSupport(@NotNull XmlObject xmlContent, @NotNull IXmlAssemblyDefinition containingAssembly) {
+  /**
+   * Construct a new model container.
+   * 
+   * @param xmlContent
+   *          the XMLBeans content to parse
+   * @param containingAssembly
+   *          the assembly containing this model
+   */
+  public XmlModelContainerSupport(@NotNull XmlObject xmlContent, @NotNull IAssemblyDefinition containingAssembly) {
     XmlModelParser parser = new XmlModelParser();
     if (xmlContent instanceof Choice) {
       parser.parseChoice(xmlContent, containingAssembly);
     } else {
       parser.parseModel(xmlContent, containingAssembly);
     }
+    this.modelInstances = parser.getModelInstances();
     this.namedModelInstances = parser.getNamedModelInstances();
     this.fieldInstances = parser.getFieldInstances();
     this.assemblyInstances = parser.getAssemblyInstances();
-    this.modelInstances = parser.getModelInstances();
   }
 
-  @NotNull
-  public Map<@NotNull String, ? extends IXmlNamedModelInstance> getNamedModelInstanceMap() {
-    return namedModelInstances;
-  }
-
-  @NotNull
-  public Map<@NotNull String, ? extends IXmlFieldInstance> getFieldInstanceMap() {
-    return fieldInstances;
-  }
-
-  @NotNull
-  public Map<@NotNull String, ? extends IXmlAssemblyInstance> getAssemblyInstanceMap() {
-    return assemblyInstances;
-  }
-
-  @NotNull
-  public List<@NotNull ? extends IXmlChoiceInstance> getChoiceInstances() {
-    // this shouldn't get called all that often, so this is better than allocating memory
-    return getModelInstances().stream().filter(obj -> obj instanceof IXmlChoiceInstance)
-        .map(obj -> (IXmlChoiceInstance) obj).collect(Collectors.toList());
-  }
-
+  /**
+   * Get a listing of all model instances.
+   * 
+   * @return the listing
+   */
   @NotNull
   public List<@NotNull ? extends IModelInstance> getModelInstances() {
     return modelInstances;
+  }
+
+  /**
+   * Get a mapping of all named model instances, mapped from their effective name to the instance.
+   * 
+   * @return the mapping
+   */
+  @NotNull
+  public Map<@NotNull String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
+    return namedModelInstances;
+  }
+
+  /**
+   * Get a mapping of all field instances, mapped from their effective name to the instance.
+   * 
+   * @return the mapping
+   */
+  @NotNull
+  public Map<@NotNull String, ? extends IFieldInstance> getFieldInstanceMap() {
+    return fieldInstances;
+  }
+
+  /**
+   * Get a mapping of all assembly instances, mapped from their effective name to the instance.
+   * 
+   * @return the mapping
+   */
+  @NotNull
+  public Map<@NotNull String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
+    return assemblyInstances;
+  }
+
+  /**
+   * Get a listing of all choice instances.
+   * 
+   * @return the listing
+   */
+  @SuppressWarnings("null")
+  @NotNull
+  public List<@NotNull ? extends IChoiceInstance> getChoiceInstances() {
+    // this shouldn't get called all that often, so this is better than allocating memory
+    return getModelInstances().stream()
+        .filter(obj -> obj instanceof IChoiceInstance)
+        .map(obj -> (IChoiceInstance) obj)
+        .collect(Collectors.toList());
   }
 }

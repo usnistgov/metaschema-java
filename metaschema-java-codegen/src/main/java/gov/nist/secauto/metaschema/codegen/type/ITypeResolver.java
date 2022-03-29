@@ -29,11 +29,20 @@ package gov.nist.secauto.metaschema.codegen.type;
 import com.squareup.javapoet.ClassName;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
 public interface ITypeResolver {
+  /**
+   * Get the name of the class associated with the provided metaschema.
+   * 
+   * @param metaschema
+   *          a metaschema that will be built as a class
+   * @return the class name information for the metaschema
+   */
+  ClassName getClassName(IMetaschema metaschema);
+
   /**
    * Get the name of the class associated with the provided definition.
    * 

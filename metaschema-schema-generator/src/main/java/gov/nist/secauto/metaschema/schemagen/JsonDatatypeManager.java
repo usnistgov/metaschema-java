@@ -31,8 +31,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
+import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -111,7 +111,8 @@ public class JsonDatatypeManager
 
   @SuppressWarnings("null")
   @NotNull
-  protected String getJsonDefinitionRefForDefinition(@NotNull INamedDefinition definition, @NotNull IGenerationState<?,?> state) {
+  protected String getJsonDefinitionRefForDefinition(@NotNull INamedDefinition definition,
+      @NotNull IGenerationState<?, ?> state) {
     return new StringBuilder()
         .append("#/definitions/")
         .append(getTypeNameForDefinition(definition, state))

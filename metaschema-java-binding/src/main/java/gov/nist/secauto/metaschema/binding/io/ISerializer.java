@@ -109,5 +109,5 @@ public interface ISerializer<CLASS> extends IMutableConfiguration {
    * @throws IOException
    *           if an error occurred while writing data to the stream
    */
-  void serialize(CLASS data, Writer writer) throws IOException;
+  void serialize(@NotNull CLASS data, @NotNull Writer writer) throws IOException;
 }

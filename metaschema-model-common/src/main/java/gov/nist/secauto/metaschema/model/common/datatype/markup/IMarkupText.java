@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.markup;
 
+import com.vladsch.flexmark.formatter.Formatter;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 
@@ -53,13 +54,10 @@ public interface IMarkupText {
   @NotNull
   String toMarkdown();
 
-  @NotNull
-  String toMarkdownYaml();
+  String toMarkdown(Formatter formatter);
 
   @NotNull
-  default List<gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode> getInserts() {
-    return getInserts(insert -> true);
-  }
+  String toMarkdownYaml();
 
   /**
    * Retrieve all nodes contained within this markup text as a stream.
@@ -68,6 +66,11 @@ public interface IMarkupText {
    */
   @NotNull
   Stream<Node> getNodesAsStream();
+
+  @NotNull
+  default List<gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode> getInserts() {
+    return getInserts(insert -> true);
+  }
 
   /**
    * Retrieve all insert statements that are contained within this markup text that match the provided

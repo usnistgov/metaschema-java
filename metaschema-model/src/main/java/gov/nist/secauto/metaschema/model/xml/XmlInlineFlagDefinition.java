@@ -26,7 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.model.IXmlMetaschema;
+import gov.nist.secauto.metaschema.model.common.AbstractFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.IInlineNamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
@@ -39,11 +43,8 @@ import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.definitions.IInlineDefinition;
-import gov.nist.secauto.metaschema.model.definitions.IXmlFlagDefinition;
-import gov.nist.secauto.metaschema.model.definitions.IXmlNamedModelDefinition;
-import gov.nist.secauto.metaschema.model.instances.AbstractFlagInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineFlagDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
@@ -66,7 +67,7 @@ public class XmlInlineFlagDefinition
    * @param parent
    *          the parent definition, which must be a definition type that can contain flags.
    */
-  public XmlInlineFlagDefinition(@NotNull InlineFlagDefinitionType xmlFlag, @NotNull IXmlNamedModelDefinition parent) {
+  public XmlInlineFlagDefinition(@NotNull InlineFlagDefinitionType xmlFlag, @NotNull INamedModelDefinition parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
     this.flagDefinition = new InternalFlagDefinition();
@@ -76,6 +77,7 @@ public class XmlInlineFlagDefinition
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.
    */
+  @SuppressWarnings("null")
   protected void checkModelConstraints() {
     synchronized (this) {
       if (constraints == null) {
@@ -103,10 +105,11 @@ public class XmlInlineFlagDefinition
   }
 
   @Override
-  public IXmlMetaschema getContainingMetaschema() {
+  public IMetaschema getContainingMetaschema() {
     return getContainingDefinition().getContainingMetaschema();
   }
 
+  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlFlag().getName();
@@ -127,15 +130,21 @@ public class XmlInlineFlagDefinition
     return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : MetaschemaModelConstants.DEFAULT_FLAG_REQUIRED;
   }
 
+  @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
     return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
   }
 
+  @Override
+  public INodeItem newNodeItem(@NotNull Object value, @NotNull IModelNodeItem parent) {
+    throw new UnsupportedOperationException("A bound object is not available");
+  }
+
   /**
    * The corresponding definition for the local flag instance.
    */
-  public class InternalFlagDefinition implements IXmlFlagDefinition, IInlineDefinition<XmlInlineFlagDefinition> {
+  public class InternalFlagDefinition implements IFlagDefinition, IInlineNamedDefinition<XmlInlineFlagDefinition> {
 
     @Override
     public boolean isInline() {
@@ -143,7 +152,7 @@ public class XmlInlineFlagDefinition
     }
 
     @Override
-    public IXmlFlagInstance getInlineInstance() {
+    public XmlInlineFlagDefinition getInlineInstance() {
       return XmlInlineFlagDefinition.this;
     }
 
@@ -167,27 +176,17 @@ public class XmlInlineFlagDefinition
       return getXmlFlag().isSetFormalName() ? getXmlFlag().getFormalName() : null;
     }
 
+    @SuppressWarnings("null")
     @Override
     public MarkupLine getDescription() {
       return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription())
           : null;
     }
 
+    @SuppressWarnings("null")
     @Override
-    public IJavaTypeAdapter<?> getDatatype() {
-      IJavaTypeAdapter<?> retval;
-      if (getXmlFlag().isSetAsType()) {
-        retval = getXmlFlag().getAsType();
-      } else {
-        // the default
-        retval = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
-      }
-      return retval;
-    }
-
-    @Override
-    public XmlInlineFlagDefinition getDefiningInstance() {
-      return XmlInlineFlagDefinition.this;
+    public IJavaTypeAdapter<?> getJavaTypeAdapter() {
+      return getXmlFlag().isSetAsType() ? getXmlFlag().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
     }
 
     @Override
@@ -226,8 +225,8 @@ public class XmlInlineFlagDefinition
     }
 
     @Override
-    public IXmlMetaschema getContainingMetaschema() {
-      return XmlInlineFlagDefinition.this.getContainingMetaschema();
+    public IMetaschema getContainingMetaschema() {
+      return XmlInlineFlagDefinition.super.getContainingDefinition().getContainingMetaschema();
     }
   }
 }

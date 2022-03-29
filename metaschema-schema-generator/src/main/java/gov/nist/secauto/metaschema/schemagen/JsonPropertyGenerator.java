@@ -30,15 +30,15 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IInstance;
+import gov.nist.secauto.metaschema.model.common.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.JsonSchemaGenerator.GenerationState;
@@ -87,7 +87,7 @@ public class JsonPropertyGenerator {
     String propertyName = definition.getJsonValueKeyName();
     properties.addProperty(propertyName,
         ObjectUtils.notNull(JsonNodeFactory.instance.objectNode()
-            .put("$ref", state.getDatatypeManager().getJsonDefinitionRefForDatatype(definition.getDatatype()))));
+            .put("$ref", state.getDatatypeManager().getJsonDefinitionRefForDatatype(definition.getJavaTypeAdapter()))));
     properties.addRequired(propertyName);
   }
 
@@ -105,7 +105,7 @@ public class JsonPropertyGenerator {
   public static ObjectNode generateCollapsibleFieldValueType(
       @NotNull IFieldDefinition definition,
       @NotNull GenerationState state) {
-    String definitionRef = state.getDatatypeManager().getJsonDefinitionRefForDatatype(definition.getDatatype());
+    String definitionRef = state.getDatatypeManager().getJsonDefinitionRefForDatatype(definition.getJavaTypeAdapter());
 
     ObjectNode retval = JsonNodeFactory.instance.objectNode();
     ArrayNode oneOf = retval.putArray("oneOf");
@@ -178,7 +178,7 @@ public class JsonPropertyGenerator {
 
         instanceJsonObject.putObject("propertyNames")
             .put("$ref",
-                datatypeManager.getJsonDefinitionRefForDatatype(jsonKey.getDefinition().getDatatype()));
+                datatypeManager.getJsonDefinitionRefForDatatype(jsonKey.getDefinition().getJavaTypeAdapter()));
         // TODO: is this correct?
         @SuppressWarnings("null")
         @NotNull
@@ -208,7 +208,8 @@ public class JsonPropertyGenerator {
     state.addComment(instance.getDefinition(), "InstancePropertyDefinitionOrRef", instanceNode);
 
     if (!state.isInline(instance.getDefinition())) {
-      String definitionRef = state.getDatatypeManager().getJsonDefinitionRefForDefinition(instance.getDefinition(), state);
+      String definitionRef
+          = state.getDatatypeManager().getJsonDefinitionRefForDefinition(instance.getDefinition(), state);
       instanceNode.put("$ref", definitionRef);
     } else {
       JsonDefinitionGenerator.generateDefinition(instance.getDefinition(), instanceNode, state);

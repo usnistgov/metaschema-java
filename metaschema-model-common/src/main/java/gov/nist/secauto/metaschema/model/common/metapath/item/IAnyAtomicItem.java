@@ -38,9 +38,9 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
   }
 
   /**
-   * Get the textual value of the item's "wrapped" value.
+   * Get the item's string value.
    * 
-   * @return the textual value of the item's "wrapped" value
+   * @return the string value value of the item
    */
   @SuppressWarnings("null")
   @NotNull

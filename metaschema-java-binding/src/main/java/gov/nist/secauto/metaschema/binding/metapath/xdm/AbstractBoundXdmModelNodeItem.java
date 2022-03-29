@@ -26,49 +26,64 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
+import gov.nist.secauto.metaschema.binding.model.IBoundNamedModelDefinition;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public abstract class AbstractBoundXdmModelNodeItem<INSTANCE extends IBoundNamedModelInstance>
-    extends AbstractBoundXdmValuedNodeItem<INSTANCE>
-    implements IBoundXdmModelNodeItem {
+public abstract class AbstractBoundXdmModelNodeItem
+    extends AbstractBoundXdmValuedNodeItem
+    implements IModelNodeItem {
 
   private final int position;
-  private Map<String, IBoundXdmFlagNodeItem> flags;
+  private Map<String, IFlagNodeItem> flags;
 
-  public AbstractBoundXdmModelNodeItem(@NotNull INSTANCE instance, @NotNull Object value, int position) {
-    super(instance, value);
+  public AbstractBoundXdmModelNodeItem(@NotNull Object value, int position) {
+    super(value);
     this.position = position;
   }
+
+  @Override
+  public abstract IBoundNamedModelDefinition getDefinition();
 
   @Override
   public int getPosition() {
     return position;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public Map<String, ? extends IBoundXdmFlagNodeItem> getFlags() {
-    initFlags();
-    return flags;
+  public Collection<@NotNull ? extends IFlagNodeItem> getFlags() {
+    return initFlags().values();
   }
 
-  protected synchronized void initFlags() {
-    if (this.flags == null) {
-      Map<String, IBoundXdmFlagNodeItem> flags = new LinkedHashMap<>();
-      Object parentValue = getValue();
-      for (IBoundFlagInstance instance : getDefinition().getFlagInstances()) {
-        Object instanceValue = instance.getValue(parentValue);
-        if (instanceValue != null) {
-          IBoundXdmFlagNodeItem item = IXdmFactory.INSTANCE.newFlagNodeItem(instance, instanceValue, this);
-          flags.put(instance.getEffectiveName(), item);
+  @Override
+  public IFlagNodeItem getFlagByName(@NotNull String name) {
+    return initFlags().get(name);
+  }
+
+  protected Map<String, IFlagNodeItem> initFlags() {
+    synchronized (this) {
+      if (this.flags == null) {
+        Map<String, IFlagNodeItem> flags = new LinkedHashMap<>();
+        Object parentValue = getValue();
+        for (IBoundFlagInstance instance : getDefinition().getFlagInstances()) {
+          Object instanceValue = instance.getValue(parentValue);
+          if (instanceValue != null) {
+            IFlagNodeItem item = IXdmFactory.INSTANCE.newFlagNodeItem(instance, instanceValue, this);
+            flags.put(instance.getEffectiveName(), item);
+          }
         }
+        this.flags = CollectionUtil.unmodifiableMap(flags);
       }
-      this.flags = flags;
     }
+    return this.flags;
   }
 }

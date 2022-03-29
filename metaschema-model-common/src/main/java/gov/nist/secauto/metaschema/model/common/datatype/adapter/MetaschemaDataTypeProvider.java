@@ -26,10 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import com.google.auto.service.AutoService;
+
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeProvider;
+import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeProvider;
 
 import org.jetbrains.annotations.NotNull;
 
+@AutoService(IDataTypeProvider.class)
 public class MetaschemaDataTypeProvider
     extends AbstractDataTypeProvider {
   @NotNull

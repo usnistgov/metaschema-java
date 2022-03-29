@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
@@ -33,9 +36,6 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ModelWalker;
 
 public abstract class ConstraintVisitingModelWalker<DATA>
@@ -48,31 +48,105 @@ public abstract class ConstraintVisitingModelWalker<DATA>
     return retval;
   }
 
-  protected void visit(IAssemblyDefinition def, IAllowedValuesConstraint constraint, DATA data) { // NOPMD - intentional
+  /**
+   * A callback called when visiting the {@code constraint} associated with {@code def}.
+   * 
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IAssemblyDefinition definition, IAllowedValuesConstraint constraint, DATA data) { // NOPMD -
+                                                                                                         // intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IAssemblyDefinition def, ICardinalityConstraint constraint, DATA data) { // NOPMD - intentional
+  /**
+   * A callback called when visiting the {@code constraint} associated with {@code def}.
+   * 
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IAssemblyDefinition definition, ICardinalityConstraint constraint, DATA data) { // NOPMD -
+                                                                                                       // intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IAssemblyDefinition def, IExpectConstraint constraint, DATA data) { // NOPMD - intentional
+  /**
+   * A callback called when visiting the {@code constraint} associated with {@code def}.
+   * 
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IAssemblyDefinition definition, IExpectConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IAssemblyDefinition def, IIndexConstraint constraint, DATA data) { // NOPMD - intentional
+  /**
+   * A callback called when visiting the {@code constraint} associated with {@code def}.
+   * 
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IAssemblyDefinition definition, IIndexConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IAssemblyDefinition def, IIndexHasKeyConstraint constraint, DATA data) { // NOPMD - intentional
+  /**
+   * A callback called when visiting the {@code constraint} associated with {@code def}.
+   * 
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IAssemblyDefinition definition, IIndexHasKeyConstraint constraint, // NOPMD - intentional
+      DATA data) {
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IAssemblyDefinition def, IMatchesConstraint constraint, DATA data) { // NOPMD - intentional
+  /**
+   * A callback called when visiting the {@code constraint} associated with {@code def}.
+   * 
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IAssemblyDefinition definition, IMatchesConstraint constraint, // NOPMD - intentional
+      DATA data) {
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IAssemblyDefinition def, IUniqueConstraint constraint, DATA data) { // NOPMD - intentional
+  /**
+   * A callback called when visiting the {@code constraint} associated with {@code def}.
+   * 
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IAssemblyDefinition definition, IUniqueConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
@@ -83,19 +157,61 @@ public abstract class ConstraintVisitingModelWalker<DATA>
     return retval;
   }
 
-  protected void visit(IFieldDefinition def, IAllowedValuesConstraint constraint, DATA data) { // NOPMD - intentional
+  /**
+   * A callback called when visiting the {@code constraint} associated with {@code def}.
+   * 
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IFieldDefinition definition, IAllowedValuesConstraint constraint, // NOPMD - intentional
+      DATA data) {
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IFieldDefinition def, IExpectConstraint constraint, DATA data) { // NOPMD - intentional
+  /**
+   * A callback called when visiting the {@code constraint} associated with {@code def}.
+   * 
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IFieldDefinition definition, IExpectConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IFieldDefinition def, IIndexHasKeyConstraint constraint, DATA data) { // NOPMD - intentional
+  /**
+   * A callback called when visiting the {@code constraint} associated with {@code def}.
+   * 
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IFieldDefinition definition, IIndexHasKeyConstraint constraint, // NOPMD - intentional
+      DATA data) {
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IFieldDefinition def, IMatchesConstraint constraint, DATA data) { // NOPMD - intentional
+  /**
+   * A callback called when visiting the {@code constraint} associated with {@code def}.
+   * 
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IFieldDefinition definition, IMatchesConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
@@ -104,85 +220,151 @@ public abstract class ConstraintVisitingModelWalker<DATA>
     walkConstraints(def, data);
   }
 
-  protected void visit(IFlagDefinition def, IAllowedValuesConstraint constraint, DATA data) { // NOPMD - intentional
+  /**
+   * A callback called when visiting the {@code constraint} associated with {@code def}.
+   * 
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IFlagDefinition definition, IAllowedValuesConstraint constraint, // NOPMD - intentional
+      DATA data) {
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IFlagDefinition def, IExpectConstraint constraint, DATA data) { // NOPMD - intentional
+  /**
+   * A callback called when visiting the {@code constraint} associated with {@code def}.
+   * 
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IFlagDefinition definition, IExpectConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IFlagDefinition def, IIndexHasKeyConstraint constraint, DATA data) { // NOPMD - intentional
+  /**
+   * A callback called when visiting the {@code constraint} associated with {@code def}.
+   * 
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IFlagDefinition definition, IIndexHasKeyConstraint constraint, // NOPMD - intentional
+      DATA data) {
     // subclasses may override this method to process the constraint
   }
 
-  protected void visit(IFlagDefinition def, IMatchesConstraint constraint, DATA data) { // NOPMD - intentional
+  /**
+   * A callback called when visiting the {@code constraint} associated with {@code def}.
+   * 
+   * @param definition
+   *          the definition the constraint is associated with
+   * @param constraint
+   *          the constraint associated with the definition
+   * @param data
+   *          other data to use for processing
+   */
+  protected void visit(IFlagDefinition definition, IMatchesConstraint constraint, DATA data) { // NOPMD - intentional
     // subclasses may override this method to process the constraint
   }
 
-  protected void walkConstraints(IAssemblyDefinition def, DATA data) {
-    for (IAllowedValuesConstraint constraint : def.getAllowedValuesContraints()) {
-      visit(def, constraint, data);
+  /**
+   * Walk the constraints associated with the {@code definition}.
+   * 
+   * @param definition
+   *          the definition the constraints to walk are associated with
+   * @param data
+   *          other data to use for processing
+   */
+  protected void walkConstraints(IAssemblyDefinition definition, DATA data) {
+    for (IAllowedValuesConstraint constraint : definition.getAllowedValuesContraints()) {
+      visit(definition, constraint, data);
     }
 
-    for (IMatchesConstraint constraint : def.getMatchesConstraints()) {
-      visit(def, constraint, data);
+    for (IMatchesConstraint constraint : definition.getMatchesConstraints()) {
+      visit(definition, constraint, data);
     }
 
-    for (IExpectConstraint constraint : def.getExpectConstraints()) {
-      visit(def, constraint, data);
+    for (IExpectConstraint constraint : definition.getExpectConstraints()) {
+      visit(definition, constraint, data);
     }
 
-    for (IUniqueConstraint constraint : def.getUniqueConstraints()) {
-      visit(def, constraint, data);
+    for (IUniqueConstraint constraint : definition.getUniqueConstraints()) {
+      visit(definition, constraint, data);
     }
 
-    for (IIndexConstraint constraint : def.getIndexConstraints()) {
-      visit(def, constraint, data);
+    for (IIndexConstraint constraint : definition.getIndexConstraints()) {
+      visit(definition, constraint, data);
     }
 
-    for (IIndexHasKeyConstraint constraint : def.getIndexHasKeyConstraints()) {
-      visit(def, constraint, data);
+    for (IIndexHasKeyConstraint constraint : definition.getIndexHasKeyConstraints()) {
+      visit(definition, constraint, data);
     }
 
-    for (ICardinalityConstraint constraint : def.getHasCardinalityConstraints()) {
-      visit(def, constraint, data);
-    }
-  }
-
-  protected void walkConstraints(IFieldDefinition def, DATA data) {
-    for (IAllowedValuesConstraint constraint : def.getAllowedValuesContraints()) {
-      visit(def, constraint, data);
-    }
-
-    for (IMatchesConstraint constraint : def.getMatchesConstraints()) {
-      visit(def, constraint, data);
-    }
-
-    for (IExpectConstraint constraint : def.getExpectConstraints()) {
-      visit(def, constraint, data);
-    }
-
-    for (IIndexHasKeyConstraint constraint : def.getIndexHasKeyConstraints()) {
-      visit(def, constraint, data);
+    for (ICardinalityConstraint constraint : definition.getHasCardinalityConstraints()) {
+      visit(definition, constraint, data);
     }
   }
 
-  protected void walkConstraints(IFlagDefinition def, DATA data) {
-    for (IAllowedValuesConstraint constraint : def.getAllowedValuesContraints()) {
-      visit(def, constraint, data);
+  /**
+   * Walk the constraints associated with the {@code definition}.
+   * 
+   * @param definition
+   *          the definition the constraints to walk are associated with
+   * @param data
+   *          other data to use for processing
+   */
+  protected void walkConstraints(IFieldDefinition definition, DATA data) {
+    for (IAllowedValuesConstraint constraint : definition.getAllowedValuesContraints()) {
+      visit(definition, constraint, data);
     }
 
-    for (IMatchesConstraint constraint : def.getMatchesConstraints()) {
-      visit(def, constraint, data);
+    for (IMatchesConstraint constraint : definition.getMatchesConstraints()) {
+      visit(definition, constraint, data);
     }
 
-    for (IExpectConstraint constraint : def.getExpectConstraints()) {
-      visit(def, constraint, data);
+    for (IExpectConstraint constraint : definition.getExpectConstraints()) {
+      visit(definition, constraint, data);
     }
 
-    for (IIndexHasKeyConstraint constraint : def.getIndexHasKeyConstraints()) {
-      visit(def, constraint, data);
+    for (IIndexHasKeyConstraint constraint : definition.getIndexHasKeyConstraints()) {
+      visit(definition, constraint, data);
+    }
+  }
+
+  /**
+   * Walk the constraints associated with the {@code definition}.
+   * 
+   * @param definition
+   *          the definition the constraints to walk are associated with
+   * @param data
+   *          other data to use for processing
+   */
+  protected void walkConstraints(IFlagDefinition definition, DATA data) {
+    for (IAllowedValuesConstraint constraint : definition.getAllowedValuesContraints()) {
+      visit(definition, constraint, data);
+    }
+
+    for (IMatchesConstraint constraint : definition.getMatchesConstraints()) {
+      visit(definition, constraint, data);
+    }
+
+    for (IExpectConstraint constraint : definition.getExpectConstraints()) {
+      visit(definition, constraint, data);
+    }
+
+    for (IIndexHasKeyConstraint constraint : definition.getIndexHasKeyConstraints()) {
+      visit(definition, constraint, data);
     }
   }
 

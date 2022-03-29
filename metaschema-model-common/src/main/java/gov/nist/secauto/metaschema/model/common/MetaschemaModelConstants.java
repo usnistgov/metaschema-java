@@ -26,9 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
-
 public final class MetaschemaModelConstants {
   public static final boolean DEFAULT_FLAG_REQUIRED = false;
   public static final boolean DEFAULT_FIELD_IN_XML_WRAPPED = true;

@@ -57,10 +57,10 @@ class MetaschemaPathEvaluationVisitorTest {
     MetaschemaPathEvaluationVisitor visitor
         = new MetaschemaPathEvaluationVisitor(new StaticContext().newDynamicContext());
     ISequence<IBooleanItem> result = visitor.visit(path.getASTNode(), ObjectUtils.notNull(nodeContext));
-    assertNotNull(result);
-    assertTrue(!result.isEmpty());
-    assertEquals(1, result.size());
-    assertEquals(true, result.asList().iterator().next().toBoolean());
+    assertNotNull(result, "null result");
+    assertTrue(!result.isEmpty(), "result was empty");
+    assertEquals(1, result.size(), "unexpected size");
+    assertEquals(true, result.asList().iterator().next().toBoolean(), "unexpected result");
   }
 
 }

@@ -29,14 +29,16 @@ package gov.nist.secauto.metaschema.binding.model;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Map;
 
+// TODO: Integrate this into the IAssemblyClassBinding
 public interface IBoundAssemblyDefinition extends IBoundNamedModelDefinition, IAssemblyDefinition {
+  //TODO: Remove this when integrating into IAssemblyClassBinding
   @NotNull
   @Override
   IAssemblyClassBinding getClassBinding();
@@ -58,7 +60,6 @@ public interface IBoundAssemblyDefinition extends IBoundNamedModelDefinition, IA
 
   // align the return value with the extended marker interface
 
-  @Override
   Map<@NotNull String, ? extends IBoundNamedModelInstance> getNamedModelInstanceMap();
 
   @SuppressWarnings("null")
@@ -67,10 +68,8 @@ public interface IBoundAssemblyDefinition extends IBoundNamedModelDefinition, IA
     return getNamedModelInstanceMap().values();
   }
 
-  @Override
   Map<@NotNull String, ? extends IBoundFieldInstance> getFieldInstanceMap();
 
-  @Override
   Map<@NotNull String, ? extends IBoundAssemblyInstance> getAssemblyInstanceMap();
 
   @Override

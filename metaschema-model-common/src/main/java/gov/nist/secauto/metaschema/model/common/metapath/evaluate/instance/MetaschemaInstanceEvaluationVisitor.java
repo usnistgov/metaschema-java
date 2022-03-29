@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance;
 
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import gov.nist.secauto.metaschema.model.common.IInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ContextItem;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
@@ -73,30 +73,37 @@ public class MetaschemaInstanceEvaluationVisitor
   }
 
   @Override
+  protected IInstanceSet aggregateResult(IInstanceSet result, IInstanceSet nextResult) {
+    return nextResult;
+  }
+
+  @Override
+  protected IInstanceSet defaultResult() {
+    return null;
+  }
+
+  @Override
   public IInstanceSet visitRootDoubleSlashPath(RootDoubleSlashPath expr, IMetaschemaContext context) {
     if (isallowedRoot()) {
       return context.search(this, expr.getNode(), context);
-    } else {
-      throw new UnsupportedOperationException("root searching is not supported");
     }
+    throw new UnsupportedOperationException("root searching is not supported");
   }
 
   @Override
   public IInstanceSet visitRootSlashOnlyPath(RootSlashOnlyPath expr, IMetaschemaContext context) {
     if (isallowedRoot()) {
       return IInstanceSet.EMPTY_INSTANCE_SET;
-    } else {
-      throw new UnsupportedOperationException("root searching is not supported");
     }
+    throw new UnsupportedOperationException("root searching is not supported");
   }
 
   @Override
   public IInstanceSet visitRootSlashPath(RootSlashPath expr, IMetaschemaContext context) {
     if (isallowedRoot()) {
       return expr.getNode().accept(this, context);
-    } else {
-      throw new UnsupportedOperationException("root searching is not supported");
     }
+    throw new UnsupportedOperationException("root searching is not supported");
   }
 
   @Override
@@ -187,5 +194,4 @@ public class MetaschemaInstanceEvaluationVisitor
   public IInstanceSet visitUnion(Union expr, IMetaschemaContext context) {
     return buildUnion(expr.getChildren(), context);
   }
-
 }

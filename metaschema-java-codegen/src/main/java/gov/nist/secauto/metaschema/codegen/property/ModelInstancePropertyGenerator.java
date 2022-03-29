@@ -36,16 +36,16 @@ import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.codegen.AssemblyJavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -149,7 +149,7 @@ public class ModelInstancePropertyGenerator
       IFieldInstance fieldInstance = (IFieldInstance) modelInstance;
       IFieldDefinition fieldDefinition = (IFieldDefinition) definition;
 
-      IJavaTypeAdapter<?> valueDataType = fieldDefinition.getDatatype();
+      IJavaTypeAdapter<?> valueDataType = fieldDefinition.getJavaTypeAdapter();
 
       if (MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
         fieldAnnoation.addMember("inXmlWrapped", "$L", fieldInstance.isInXmlWrapped());
@@ -210,7 +210,7 @@ public class ModelInstancePropertyGenerator
     if (instance instanceof IFieldInstance) {
       IFieldInstance fieldInstance = (IFieldInstance) instance;
       if (fieldInstance.isSimple()) {
-        IJavaTypeAdapter<?> dataType = fieldInstance.getDefinition().getDatatype();
+        IJavaTypeAdapter<?> dataType = fieldInstance.getDefinition().getJavaTypeAdapter();
         // this is a simple value
         item = ClassName.get(dataType.getJavaClass());
       } else {

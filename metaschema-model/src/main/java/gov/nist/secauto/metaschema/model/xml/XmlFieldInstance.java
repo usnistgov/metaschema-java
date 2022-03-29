@@ -26,14 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
+import gov.nist.secauto.metaschema.model.common.AbstractFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
-import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.instances.AbstractFieldInstance;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.FieldDocument;
 
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +56,7 @@ public class XmlFieldInstance
    * @param parent
    *          the field definition this object is an instance of
    */
-  public XmlFieldInstance(@NotNull FieldDocument.Field xmlField, @NotNull IXmlAssemblyDefinition parent) {
+  public XmlFieldInstance(@NotNull FieldDocument.Field xmlField, @NotNull IAssemblyDefinition parent) {
     super(parent);
     this.xmlField = xmlField;
   }
@@ -72,13 +72,14 @@ public class XmlFieldInstance
 
   @Override
   public IFieldDefinition getDefinition() {
-    return getContainingDefinition().getContainingMetaschema().getScopedFieldDefinitionByName(getName());
+    // this will always be not null
+    return ObjectUtils.notNull(getContainingMetaschema().getScopedFieldDefinitionByName(getName()));
   }
 
   @Override
   public boolean isInXmlWrapped() {
     boolean retval;
-    if (MetaschemaDataTypeProvider.MARKUP_MULTILINE.equals(getDefinition().getDatatype())) {
+    if (getDefinition().getJavaTypeAdapter().isUnrappedValueAllowedInXml()) {
       // default value
       retval = MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
       if (getXmlField().isSetInXml()) {
@@ -91,6 +92,7 @@ public class XmlFieldInstance
     return retval;
   }
 
+  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlField().getRef();
@@ -158,6 +160,7 @@ public class XmlFieldInstance
     return retval;
   }
 
+  @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
     return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;

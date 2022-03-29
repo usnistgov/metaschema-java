@@ -30,8 +30,9 @@ import gov.nist.secauto.metaschema.binding.DefaultBindingContext;
 import gov.nist.secauto.metaschema.binding.IBindingMatcher;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.codegen.Production;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -56,8 +57,8 @@ public class DynamicBindingContext
           IAssemblyDefinition definition = (IAssemblyDefinition) definitionProduction.getDefinition();
           try {
             @SuppressWarnings("unchecked")
-            Class<IAssemblyClassBinding> clazz = (Class<IAssemblyClassBinding>) classLoader
-                .loadClass(definitionProduction.getGeneratedClass().getClassName().reflectionName());
+            Class<IAssemblyClassBinding> clazz = ObjectUtils.notNull((Class<IAssemblyClassBinding>) classLoader
+                .loadClass(definitionProduction.getGeneratedClass().getClassName().reflectionName()));
             return new DynamicBindingMatcher(definition, clazz);
           } catch (ClassNotFoundException ex) {
             throw new IllegalStateException(ex);
@@ -82,11 +83,13 @@ public class DynamicBindingContext
       return clazz;
     }
 
+    @SuppressWarnings("null")
     @NotNull
     protected QName getRootQName() {
       return getDefinition().getRootXmlQName();
     }
 
+    @SuppressWarnings("null")
     @NotNull
     protected String getRootJsonName() {
       return getDefinition().getRootJsonName();

@@ -27,24 +27,15 @@
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
 import gov.nist.secauto.metaschema.binding.model.IBoundFieldDefinition;
-import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IValuedDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Map;
-
-public abstract class AbstractBoundXdmFieldNodeItem<INSTANCE extends IBoundFieldInstance>
-    extends AbstractBoundXdmModelNodeItem<INSTANCE>
-    implements IBoundXdmFieldNodeItem {
+public abstract class AbstractBoundXdmFieldNodeItem
+    extends AbstractBoundXdmModelNodeItem
+    implements IFieldNodeItem {
 
   /**
    * Used to cache this object as an atomic item.
@@ -52,46 +43,21 @@ public abstract class AbstractBoundXdmFieldNodeItem<INSTANCE extends IBoundField
   private IAnyAtomicItem atomicItem;
 
   public AbstractBoundXdmFieldNodeItem(
-      @NotNull INSTANCE instance,
       @NotNull Object value,
       int position) {
-    super(instance, value, position);
+    super(value, position);
   }
 
-  @NotNull
-  protected IAnyAtomicItem initAtomicItem() {
-    synchronized (this) {
-      if (this.atomicItem == null) {
-        IDefinition definition = getInstance().getDefinition();
-        if (definition instanceof IValuedDefinition) {
-          IJavaTypeAdapter<?> type = ((IValuedDefinition) definition).getDatatype();
-          this.atomicItem = type.newItem(getValue());
-        } else {
-          throw new InvalidTypeFunctionMetapathException(InvalidTypeFunctionMetapathException.NODE_HAS_NO_TYPED_VALUE,
-              String.format("the node type '%s' does not have a typed value", this.getItemName()));
-        }
-      }
-    }
-    return ObjectUtils.notNull(this.atomicItem);
-  }
+  @Override
+  public abstract IBoundFieldDefinition getDefinition();
 
   @Override
   public IAnyAtomicItem toAtomicItem() {
-    return initAtomicItem();
-  }
-
-  @Override
-  public Map<@NotNull String, ? extends List<@NotNull ? extends IBoundXdmModelNodeItem>> getModelItems() {
-    return CollectionUtil.emptyMap();
-  }
-
-  @Override
-  public IFieldClassBinding getClassBinding() {
-    return getDefinition().getClassBinding();
-  }
-
-  @Override
-  public IBoundFieldDefinition getDefinition() {
-    return getInstance().getDefinition();
+    synchronized (this) {
+      if (atomicItem == null) {
+        atomicItem = getDefinition().getJavaTypeAdapter().newItem(getValue());
+      }
+    }
+    return ObjectUtils.notNull(this.atomicItem);
   }
 }

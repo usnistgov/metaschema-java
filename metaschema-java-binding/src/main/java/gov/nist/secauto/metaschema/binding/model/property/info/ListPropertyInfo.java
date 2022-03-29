@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
@@ -55,21 +55,15 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 public class ListPropertyInfo
-    extends AbstractModelPropertyInfo<ParameterizedType> {
+    extends AbstractModelPropertyInfo {
 
-  public ListPropertyInfo(IBoundNamedModelInstance property) {
+  public ListPropertyInfo(@NotNull IBoundNamedModelInstance property) {
     super(property);
-    if (!List.class.isAssignableFrom(property.getRawType())) {
-      throw new IllegalArgumentException(String.format(
-          "The field '%s' on class '%s' has data type '%s', which is not the expected '%s' derived data type.",
-          property.getField().getName(), property.getParentClassBinding().getBoundClass().getName(),
-          property.getField().getType().getName(), List.class.getName()));
-    }
   }
 
   @Override
   public Class<?> getItemType() {
-    ParameterizedType actualType = getType();
+    ParameterizedType actualType = (ParameterizedType)getProperty().getType();
     // this is a List so there is only a single generic type
     return ObjectUtils.notNull((Class<?>) actualType.getActualTypeArguments()[0]);
   }
@@ -126,7 +120,6 @@ public class ListPropertyInfo
       throws IOException {
     JsonParser parser = context.getReader(); // NOPMD - intentional
 
-    boolean parseArray = true;
     if (JsonGroupAsBehavior.SINGLETON_OR_LIST.equals(getProperty().getJsonGroupAsBehavior())
         && !JsonToken.START_ARRAY.equals(parser.currentToken())) {
       // boolean isObject = JsonToken.START_OBJECT.equals(parser.currentToken());
@@ -173,14 +166,13 @@ public class ListPropertyInfo
   }
 
   @Override
-  public boolean writeValue(Object parentInstance, QName parentName, IXmlWritingContext context)
+  public void writeValue(Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     IBoundNamedModelInstance property = getProperty();
-    List<@NotNull ? extends Object> items = getItemsFromParentInstance(parentInstance);
+    List<@NotNull ? extends Object> items = getItemsFromValue(value);
     for (Object item : items) {
       property.writeItem(item, parentName, context);
     }
-    return true;
   }
 
   @Override

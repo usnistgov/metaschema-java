@@ -28,8 +28,8 @@
 			<artifactId>metaschema-model-common</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>metaschema-java-binding-annotations</artifactId>
+			<groupId>com.google.auto.service</groupId>
+			<artifactId>auto-service</artifactId>
 		</dependency>
 
 		<dependency>

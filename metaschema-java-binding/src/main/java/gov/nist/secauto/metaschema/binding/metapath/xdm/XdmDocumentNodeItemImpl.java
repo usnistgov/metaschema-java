@@ -26,36 +26,40 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.IClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
-import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
-import gov.nist.secauto.metaschema.model.common.metapath.item.NodeItemType;
+import gov.nist.secauto.metaschema.binding.model.RootAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IRootAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-class XdmDocumentNodeItemImpl implements IBoundXdmDocumentNodeItem {
+class XdmDocumentNodeItemImpl implements IDocumentNodeItem {
   @NotNull
-  private final IBoundXdmRootAssemblyNodeItem rootNodeItem;
+  private final IRootAssemblyNodeItem root;
   @NotNull
   private final URI documentUri;
+  @NotNull
+  private final Map<@NotNull String, ? extends List<@NotNull ? extends IAssemblyNodeItem>> rootMap;
 
   public XdmDocumentNodeItemImpl(
-      @NotNull RootDefinitionAssemblyProperty instance,
+      @NotNull RootAssemblyDefinition root,
       @NotNull Object rootValue,
       @NotNull URI documentUri) {
-    this.rootNodeItem = new XdmRootAssemblyNodeItemImpl(instance, rootValue, this);
+    this.root = new XdmRootAssemblyNodeItemImpl(root, rootValue, this);
     this.documentUri = documentUri;
+    this.rootMap = CollectionUtil.singletonMap(ObjectUtils.notNull(root.getRootName()),
+        ObjectUtils.notNull(CollectionUtil.singletonList(this.root)));
   }
 
   @Override
-  public IBoundXdmDocumentNodeItem getContextNodeItem() {
+  public IDocumentNodeItem getContextNodeItem() {
     return this;
   }
 
@@ -65,31 +69,22 @@ class XdmDocumentNodeItemImpl implements IBoundXdmDocumentNodeItem {
   }
 
   @Override
-  public IAssemblyClassBinding getClassBinding() {
-    return getRootAssemblyNodeItem().getClassBinding();
-  }
-
-  @Override
   @NotNull
-  public IBoundXdmRootAssemblyNodeItem getRootAssemblyNodeItem() {
-    return rootNodeItem;
+  public IRootAssemblyNodeItem getRootAssemblyNodeItem() {
+    return root;
   }
 
+  @SuppressWarnings("null")
   @Override
-  @NotNull
-  public IBoundXdmRootAssemblyNodeItem getRootAssemblyPathSegment() {
-    return rootNodeItem;
+  public Collection<@NotNull ? extends List<@NotNull ? extends IAssemblyNodeItem>> getModelItems() {
+    return rootMap.values();
   }
 
+  @SuppressWarnings("null")
   @Override
-  public Map<@NotNull String, ? extends IBoundXdmFlagNodeItem> getFlags() {
-    return Collections.emptyMap();
-  }
-
-  @Override
-  public Map<@NotNull String, ? extends List<@NotNull ? extends IBoundXdmModelNodeItem>> getModelItems() {
-    IBoundXdmAssemblyNodeItem nodeItem = getRootAssemblyNodeItem();
-    return Collections.singletonMap(nodeItem.getInstance().getEffectiveName(), Collections.singletonList(nodeItem));
+  public List<@NotNull ? extends IAssemblyNodeItem> getModelItemsByName(String name) {
+    List<@NotNull ? extends IAssemblyNodeItem> result =  rootMap.get(name);
+    return result == null ? CollectionUtil.emptyList() : result;
   }
 
 }

@@ -26,44 +26,63 @@
 
 package gov.nist.secauto.metaschema.binding.metapath.xdm;
 
-import gov.nist.secauto.metaschema.binding.model.property.RootDefinitionAssemblyProperty;
+import gov.nist.secauto.metaschema.binding.model.IRootAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.RootAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IRootAssemblyNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
 class XdmRootAssemblyNodeItemImpl
-    extends
-    AbstractBoundXdmAssemblyNodeItem<RootDefinitionAssemblyProperty>
-    implements IBoundXdmRootAssemblyNodeItem {
+    extends AbstractBoundXdmAssemblyNodeItem
+    implements IRootAssemblyNodeItem {
 
   @NotNull
-  private final IBoundXdmDocumentNodeItem parent;
+  private final RootAssemblyDefinition definition;
+  @NotNull
+  private final IDocumentNodeItem parent;
 
   public XdmRootAssemblyNodeItemImpl(
-      @NotNull RootDefinitionAssemblyProperty instance,
+      @NotNull RootAssemblyDefinition definition,
       @NotNull Object value,
-      @NotNull IBoundXdmDocumentNodeItem parent) {
-    super(instance, value, 1);
+      @NotNull IDocumentNodeItem parent) {
+    super(value, 1);
+    this.definition = definition;
     this.parent = parent;
   }
 
   @Override
-  public IBoundXdmDocumentNodeItem getDocumentNodeItem() {
+  public IAssemblyInstance getInstance() {
+    // there is no instance
+    return null;
+  }
+
+  @Override
+  public IRootAssemblyClassBinding getDefinition() {
+    return definition;
+  }
+
+  @Override
+  public IDocumentNodeItem getDocumentNodeItem() {
     return parent;
   }
 
   @Override
-  public IBoundXdmDocumentNodeItem getParentNodeItem() {
+  public IDocumentNodeItem getParentNodeItem() {
     return parent;
   }
 
   @Override
-  public IBoundXdmRootAssemblyNodeItem getContextNodeItem() {
+  public IAssemblyNodeItem getParentContentNodeItem() {
+    // there is no parent
+    return null;
+  }
+
+  @Override
+  public IRootAssemblyNodeItem getContextNodeItem() {
     return this;
   }
 
-  @Override
-  public @NotNull IDocumentNodeItem getDocumentPathSegment() {
-    return getDocumentNodeItem();
-  }
 }

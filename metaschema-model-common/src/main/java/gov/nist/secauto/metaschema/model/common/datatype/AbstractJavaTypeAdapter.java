@@ -52,7 +52,9 @@ import javax.xml.stream.events.XMLEvent;
  * of all Java type adapter implementations.
  * 
  * @param <TYPE>
- *          the Java type this adapter supports
+ *          the raw Java type this adapter supports
+ * @param <ITEM_TYPE>
+ *          the metapath item type corresponding to the raw Java type supported by the adapter
  */
 public abstract class AbstractJavaTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomicItem>
     implements IJavaTypeAdapter<TYPE> {

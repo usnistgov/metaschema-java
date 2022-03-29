@@ -29,8 +29,12 @@ package gov.nist.secauto.metaschema.binding.model.property;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IClassBinding;
+import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
+import gov.nist.secauto.metaschema.binding.model.property.info.ClassDataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.binding.model.property.info.IXmlBindingSupplier;
+import gov.nist.secauto.metaschema.binding.model.property.info.JavaTypeAdapterDataTypeHandler;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -41,7 +45,6 @@ import org.codehaus.stax2.XMLStreamWriter2;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Locale;
 
 import javax.xml.namespace.QName;
@@ -53,8 +56,28 @@ public abstract class AbstractFieldProperty
     extends AbstractNamedModelProperty
     implements IBoundFieldInstance {
 
-  public AbstractFieldProperty(@NotNull IAssemblyClassBinding parentClassBinding, @NotNull Field field) {
-    super(parentClassBinding, field);
+  public AbstractFieldProperty(@NotNull IAssemblyClassBinding parentClassBinding) {
+    super(parentClassBinding);
+  }
+
+  @Override
+  protected IDataTypeHandler newDataTypeHandler() {
+    Class<?> itemClass = getItemType();
+
+    IDataTypeHandler retval;
+    if (itemClass.isAnnotationPresent(MetaschemaField.class)) {
+      IClassBinding classBinding
+          = getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
+      if (classBinding == null) {
+        throw new IllegalStateException(
+            String.format("Unable to parse type '%s', which is not a known bound class or data type",
+                getPropertyInfo().getItemType()));
+      }
+      retval = new ClassDataTypeHandler(classBinding, this);
+    } else {
+      retval = new JavaTypeAdapterDataTypeHandler(this);
+    }
+    return retval;
   }
 
   @Override
@@ -65,7 +88,7 @@ public abstract class AbstractFieldProperty
       XMLEvent event = eventReader.peek();
       if (event.isStartElement()) {
         QName qname = ObjectUtils.notNull(event.asStartElement().getName());
-        IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
+        IJavaTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
         retval = !isInXmlWrapped() && adapter.isUnrappedValueAllowedInXml() && adapter.canHandleQName(qname);
       }
     }
@@ -79,9 +102,9 @@ public abstract class AbstractFieldProperty
     IXmlBindingSupplier supplier = getDataTypeHandler();
 
     // figure out if we need to parse the wrapper or not
-    IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
+    IJavaTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
     boolean parseWrapper = true;
-    if (adapter != null && !isInXmlWrapped() && adapter.isUnrappedValueAllowedInXml()) {
+    if (!isInXmlWrapped() && adapter.isUnrappedValueAllowedInXml()) {
       parseWrapper = false;
     }
 
@@ -99,7 +122,8 @@ public abstract class AbstractFieldProperty
       if (event.isStartElement() && getXmlQName().equals(event.asStartElement().getName())) {
         // Consume the start element
         currentStart
-            = XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.START_ELEMENT, getXmlQName()).asStartElement();
+            = ObjectUtils.notNull(
+                XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.START_ELEMENT, getXmlQName()).asStartElement());
       } else {
         parse = false;
       }
@@ -119,7 +143,7 @@ public abstract class AbstractFieldProperty
   }
 
   @Override
-  public boolean writeItem(Object item, QName parentName, IXmlWritingContext context)
+  public void writeItem(Object item, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     // figure out how to parse the item
     IDataTypeHandler handler = getDataTypeHandler();
@@ -143,7 +167,6 @@ public abstract class AbstractFieldProperty
     if (writeWrapper) {
       writer.writeEndElement();
     }
-    return true;
   }
 
   @Override
@@ -154,8 +177,10 @@ public abstract class AbstractFieldProperty
   @SuppressWarnings("null")
   @Override
   public String toCoordinates() {
-    return String.format("%s Instance(%s): %s:%s", getModelType().name().toLowerCase(Locale.ROOT), getName(),
-        getParentClassBinding().getBoundClass().getName(), getField().getName());
+    return String.format("%s Instance(%s): %s",
+        getModelType().name().toLowerCase(Locale.ROOT),
+        getParentClassBinding().getBoundClass().getName(),
+        getName());
   }
 
   @Override

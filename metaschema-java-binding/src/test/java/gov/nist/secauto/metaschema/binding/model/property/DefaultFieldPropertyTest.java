@@ -37,18 +37,24 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
+import gov.nist.secauto.metaschema.binding.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.binding.model.annotations.Metaschema;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 
 import org.codehaus.stax2.XMLEventReader2;
+import org.jetbrains.annotations.NotNull;
 import org.jmock.Expectations;
 import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
@@ -56,6 +62,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -262,10 +269,51 @@ class DefaultFieldPropertyTest {
     assertIterableEquals(Collections.singleton("field2value"), obj.getField2());
   }
 
+  @Metaschema
+  public static class TestMetaschema
+      extends AbstractBoundMetaschema {
+
+    public TestMetaschema(@NotNull List<@NotNull ? extends IMetaschema> importedMetaschema, @NotNull IBindingContext bindingContext) {
+      super(importedMetaschema, bindingContext);
+    }
+
+    @Override
+    public MarkupLine getName() {
+      return MarkupLine.fromMarkdown("Test Metaschema");
+    }
+
+    @Override
+    public String getVersion() {
+      return "1.0";
+    }
+
+    @Override
+    public MarkupMultiline getRemarks() {
+      return null;
+    }
+
+    @Override
+    public @NotNull String getShortName() {
+      return "test-metaschema";
+    }
+
+    @Override
+    public @NotNull URI getXmlNamespace() {
+      return URI.create("https://csrc.nist.gov/ns/test/xml");
+    }
+
+    @Override
+    public @NotNull URI getJsonBaseUri() {
+      return URI.create("https://csrc.nist.gov/ns/test/json");
+    }
+
+  }
+
   @SuppressWarnings("PMD")
-  @MetaschemaAssembly
+  @MetaschemaAssembly(metaschema = TestMetaschema.class)
   public static class TestField {
-    @BoundField(typeAdapter = StringAdapter.class, inJson = JsonGroupAsBehavior.NONE, inXml = XmlGroupAsBehavior.UNGROUPED)
+    @BoundField(typeAdapter = StringAdapter.class, inJson = JsonGroupAsBehavior.NONE,
+        inXml = XmlGroupAsBehavior.UNGROUPED)
     private String field1;
 
     @BoundField(useName = "field2", groupName = "fields2", maxOccurs = -1, inXml = XmlGroupAsBehavior.GROUPED,

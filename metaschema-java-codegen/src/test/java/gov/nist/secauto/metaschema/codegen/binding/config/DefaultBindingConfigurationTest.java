@@ -29,9 +29,9 @@ package gov.nist.secauto.metaschema.codegen.binding.config;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.ModelType;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
 import org.jmock.Expectations;
 import org.jmock.junit5.JUnit5Mockery;
@@ -52,8 +52,8 @@ class DefaultBindingConfigurationTest {
 
   @RegisterExtension
   JUnit5Mockery context = new JUnit5Mockery();
-  private INamedModelDefinition definition = context.mock(INamedModelDefinition.class);
-  private IMetaschema metaschema = context.mock(IMetaschema.class);
+  private final INamedModelDefinition definition = context.mock(INamedModelDefinition.class);
+  private final IMetaschema metaschema = context.mock(IMetaschema.class);
 
   @Test
   void testLoader() throws MalformedURLException, IOException, MetaschemaException {

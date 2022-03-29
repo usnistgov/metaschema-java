@@ -26,21 +26,14 @@
 
 package gov.nist.secauto.metaschema.binding.model.property;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-
-import gov.nist.secauto.metaschema.binding.IBindingContext;
-import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
-import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
-import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.IBoundFlagDefinition;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.ModelUtil;
 import gov.nist.secauto.metaschema.binding.model.ValueConstraintSupport;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
-import gov.nist.secauto.metaschema.binding.model.property.info.IPropertyCollector;
-import gov.nist.secauto.metaschema.binding.model.property.info.SingletonPropertyCollector;
+import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFlag;
+import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
@@ -50,34 +43,29 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.codehaus.stax2.XMLStreamWriter2;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Supplier;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.StartElement;
 
 public class DefaultFlagProperty
-    extends AbstractNamedProperty<IClassBinding>
-    implements IBoundFlagInstance {
+    extends AbstractFlagProperty implements IBoundJavaField {
   // private static final Logger logger = LogManager.getLogger(DefaultFlagProperty.class);
+  @NotNull
+  private final Field field;
   @NotNull
   private final BoundFlag flag;
   @NotNull
   private final IJavaTypeAdapter<?> javaTypeAdapter;
   private InternalFlagDefinition definition;
-  private IValueConstraintSupport constraints;
 
   /**
    * Construct a new bound flag instance based on a Java property. The name of the property is bound
@@ -87,15 +75,24 @@ public class DefaultFlagProperty
    *          the Java field to bind to
    * @param parentClassBinding
    *          the class binding for the field's containing class
-   * @param bindingContext
-   *          the binding context to use for resolving bound types
    */
-  public DefaultFlagProperty(@NotNull Field field, @NotNull IClassBinding parentClassBinding,
-      @NotNull IBindingContext bindingContext) {
-    super(field, parentClassBinding);
+  public DefaultFlagProperty(@NotNull Field field, @NotNull IClassBinding parentClassBinding) {
+    super(parentClassBinding);
+    this.field = ObjectUtils.requireNonNull(field, "field");
     this.flag = ObjectUtils.requireNonNull(field.getAnnotation(BoundFlag.class));
-    this.javaTypeAdapter = ObjectUtils.notNull(
-        bindingContext.getJavaTypeAdapterInstance(ObjectUtils.notNull(this.flag.typeAdapter())));
+
+    Class<? extends IJavaTypeAdapter<?>> adapterClass = ObjectUtils.notNull(this.flag.typeAdapter());
+    if (NullJavaTypeAdapter.class.equals(adapterClass)) {
+      this.javaTypeAdapter = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
+    } else {
+      this.javaTypeAdapter = ObjectUtils.requireNonNull(
+          parentClassBinding.getBindingContext().getJavaTypeAdapterInstance(adapterClass));
+    }
+  }
+
+  @Override
+  public @NotNull Field getField() {
+    return field;
   }
 
   @NotNull
@@ -103,15 +100,15 @@ public class DefaultFlagProperty
     return flag;
   }
 
-  // @Override
-  // public boolean isJsonKey() {
-  // return getField().isAnnotationPresent(JsonKey.class);
-  // }
+  @Override
+  public boolean isJsonKey() {
+    return getField().isAnnotationPresent(JsonKey.class);
+  }
 
-  // @Override
-  // public boolean isJsonValueKey() {
-  // return getField().isAnnotationPresent(JsonFieldValueKeyFlag.class);
-  // }
+  @Override
+  public boolean isJsonValueKey() {
+    return getField().isAnnotationPresent(JsonFieldValueKeyFlag.class);
+  }
 
   @Override
   public boolean isRequired() {
@@ -119,7 +116,7 @@ public class DefaultFlagProperty
   }
 
   @NotNull
-  public IJavaTypeAdapter<?> getJavaTypeAdapter() {
+  protected IJavaTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
 
@@ -131,126 +128,6 @@ public class DefaultFlagProperty
   @Override
   public String getXmlNamespace() {
     return ModelUtil.resolveOptionalNamespace(getFlagAnnotation().namespace(), getParentClassBinding());
-  }
-
-  /**
-   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
-   * first accessed.
-   */
-  protected void checkModelConstraints() {
-    synchronized (this) {
-      if (constraints == null) {
-        constraints = new ValueConstraintSupport(this.getFlagAnnotation());
-      }
-    }
-  }
-
-  @Override
-  public boolean read(Object parentInstance, StartElement parent, IXmlParsingContext context) throws IOException {
-
-    // when reading an attribute:
-    // - "parent" will contain the attributes to read
-    // - the event reader "peek" will be on the end element or the next start element
-    boolean handled = false;
-    Attribute attribute = parent.getAttributeByName(getXmlQName());
-    if (attribute != null) {
-      // get the attribute value
-      Object value = getJavaTypeAdapter().parse(ObjectUtils.notNull(attribute.getValue()));
-      // apply the value to the parentObject
-      setValue(parentInstance, value);
-
-      handled = true;
-    }
-    return handled;
-  }
-
-  @Override
-  public IPropertyCollector newPropertyCollector() {
-    return new SingletonPropertyCollector();
-  }
-
-  @Override
-  protected Object readInternal(Object parentInstance, IJsonParsingContext context) throws IOException {
-    JsonParser parser = context.getReader();// NOPMD - intentional
-
-    // advance past the property name
-    parser.nextFieldName();
-
-    // parse the value
-    return readValueAndSupply(context).get();
-  }
-
-  // TODO: implement collector?
-  @Override
-  public Object readValueFromString(String value) throws IOException {
-    return getJavaTypeAdapter().parse(value);
-  }
-
-  @Override
-  public Supplier<?> readValueAndSupply(String value) throws IOException {
-    return getJavaTypeAdapter().parseAndSupply(value);
-  }
-
-  @Override
-  public Supplier<?> readValueAndSupply(IJsonParsingContext context) throws IOException {
-    return getJavaTypeAdapter().parseAndSupply(context.getReader());
-  }
-
-  @Override
-  public boolean write(Object instance, QName parentName, IXmlWritingContext context)
-      throws XMLStreamException, IOException {
-    Object objectValue = getValue(instance);
-    String value = objectValue == null ? null : getJavaTypeAdapter().asString(objectValue);
-
-    if (value != null) {
-      QName name = getXmlQName();
-      XMLStreamWriter2 writer = context.getWriter();
-      if (name.getNamespaceURI().isEmpty()) {
-        writer.writeAttribute(name.getLocalPart(), value);
-      } else {
-        writer.writeAttribute(name.getNamespaceURI(), name.getLocalPart(), value);
-      }
-    }
-    return true;
-  }
-
-  @Override
-  public void write(Object instance, IJsonWritingContext context) throws IOException {
-    JsonGenerator writer = context.getWriter(); // NOPMD - intentional
-
-    Object value = getValue(instance);
-    if (value != null) {
-      // write the field name
-      writer.writeFieldName(getJsonName());
-
-      // write the value
-      writeValue(value, context);
-    }
-  }
-
-  @Override
-  public String getValueAsString(Object value) throws IOException {
-    return value == null ? null : getJavaTypeAdapter().asString(value);
-  }
-
-  @Override
-  public void writeValue(@NotNull Object value, IJsonWritingContext context) throws IOException {
-    getJavaTypeAdapter().writeJsonValue(value, context.getWriter());
-  }
-
-  @Override
-  public IClassBinding getContainingDefinition() {
-    return getParentClassBinding();
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public String toCoordinates() {
-    return String.format("%s Instance(%s): %s:%s",
-        getModelType().name().toLowerCase(Locale.ROOT),
-        getName(),
-        getParentClassBinding().getBoundClass().getName(),
-        getField().getName());
   }
 
   @Override
@@ -269,23 +146,42 @@ public class DefaultFlagProperty
     return definition;
   }
 
-  @Override
-  public IMetaschema getContainingMetaschema() {
-    // TODO: implement
-    return null;
-  }
+
 
   @Override
-  public void copyBoundObject(Object fromInstance, Object toInstance) {
-    Object value = getValue(fromInstance);
-    IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
-    setValue(toInstance, value == null ? null : adapter.copy(value));
+  public @NotNull IInstanceSet evaluateMetapathInstances(@NotNull MetapathExpression expression) {
+    throw new UnsupportedOperationException();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public String toCoordinates() {
+    return String.format("%s Instance(%s): %s:%s",
+        getModelType().name().toLowerCase(Locale.ROOT),
+        getName(),
+        getParentClassBinding().getBoundClass().getName(),
+        getField().getName());
   }
 
   private class InternalFlagDefinition implements IBoundFlagDefinition {
+    private IValueConstraintSupport constraints;
+
+
+    /**
+     * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+     * first accessed.
+     */
+    protected void checkModelConstraints() {
+      synchronized (this) {
+        if (constraints == null) {
+          constraints = new ValueConstraintSupport(getFlagAnnotation());
+        }
+      }
+    }
+
     @Override
-    public IJavaTypeAdapter<?> getDatatype() {
-      return getJavaTypeAdapter();
+    public IJavaTypeAdapter<?> getJavaTypeAdapter() {
+      return DefaultFlagProperty.this.getJavaTypeAdapter();
     }
 
     @Override
@@ -349,11 +245,6 @@ public class DefaultFlagProperty
     }
 
     @Override
-    public IBindingContext getBindingContext() {
-      return getParentClassBinding().getBindingContext();
-    }
-
-    @Override
     public String getFormalName() {
       // TODO: implement
       return null;
@@ -373,8 +264,7 @@ public class DefaultFlagProperty
 
     @Override
     public IMetaschema getContainingMetaschema() {
-      // TODO: implement
-      return null;
+      return DefaultFlagProperty.this.getContainingMetaschema();
     }
   }
 

@@ -182,7 +182,7 @@ public class CollapseKeyBuilder {
     private Integer hashCode;
 
     public CollapseKey(Object... flagValues) {
-      this.flagValues = flagValues;
+      this.flagValues = Arrays.copyOf(flagValues, flagValues.length);
     }
 
     protected Object[] getFlagValues() {
