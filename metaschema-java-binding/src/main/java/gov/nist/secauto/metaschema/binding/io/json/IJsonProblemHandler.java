@@ -27,11 +27,11 @@
 package gov.nist.secauto.metaschema.binding.io.json;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.IProblemHandler;
+import gov.nist.secauto.metaschema.binding.io.IProblemHandler;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedInstance;
-import gov.nist.secauto.metaschema.binding.model.property.info.IJsonBindingSupplier;
+import gov.nist.secauto.metaschema.binding.model.IJsonBindingSupplier;
 
 import org.jetbrains.annotations.NotNull;
 

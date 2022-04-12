@@ -43,7 +43,7 @@ import org.jetbrains.annotations.Nullable;
 import java.net.URI;
 import java.util.List;
 
-public class FnResolveUri {
+public final class FnResolveUri {
   @NotNull
   static final IFunction SIGNATURE_ONE_ARG = IFunction.builder()
       .name("resolve-uri")
@@ -80,6 +80,10 @@ public class FnResolveUri {
       .returnZeroOrOne()
       .functionHandler(FnResolveUri::executeTwoArg)
       .build();
+
+  private FnResolveUri() {
+    // disable construction
+  }
 
   @SuppressWarnings("unused")
   @NotNull

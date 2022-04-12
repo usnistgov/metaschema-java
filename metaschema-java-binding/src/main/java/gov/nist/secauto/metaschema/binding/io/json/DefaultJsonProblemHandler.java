@@ -30,9 +30,9 @@ import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedInstance;
-import gov.nist.secauto.metaschema.binding.model.property.info.IJsonBindingSupplier;
+import gov.nist.secauto.metaschema.binding.model.IJsonBindingSupplier;
 
 import java.io.IOException;
 import java.util.Collections;

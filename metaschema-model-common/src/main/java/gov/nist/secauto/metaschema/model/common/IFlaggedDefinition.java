@@ -44,6 +44,7 @@ import java.util.List;
 public interface IFlaggedDefinition extends IDefinition {
   /**
    * Identifies if the field has flags or not.
+   * 
    * @return {@code true} if the field has not flags, or false otherwise
    */
   default boolean isSimple() {

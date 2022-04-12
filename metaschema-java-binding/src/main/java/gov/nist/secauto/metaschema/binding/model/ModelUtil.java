@@ -37,37 +37,6 @@ public final class ModelUtil {
     // disable construction
   }
 
-  // public static <T, R> List<R> deepCopyList(T parent, Class<R> clazz, List<R> parameter, boolean
-  // useEmpty) {
-  // List<R> retval;
-  // if (parameter == null) {
-  // retval = null;
-  // } else if (useEmpty && parameter.isEmpty()) {
-  // retval = Collections.emptyList();
-  // } else {
-  // // get the copy constructor
-  // final Constructor<R> constructor;
-  // try {
-  // constructor = clazz.getConstructor(clazz);
-  // } catch (NoSuchMethodException | SecurityException ex) {
-  // throw new RuntimeException(ex);
-  // }
-  //
-  // retval = parameter.stream()
-  // .filter(Objects::nonNull)
-  // .map(item -> {
-  // try {
-  // return constructor.newInstance(item);
-  // } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-  // | InvocationTargetException ex) {
-  // throw new RuntimeException(ex);
-  // }
-  // })
-  // .collect(Collectors.toCollection(ArrayList::new));
-  // }
-  // return retval;
-  // }
-
   /**
    * Resolves a provided local name value. If the value is {@code null} or "##default", then the
    * provided default value will be used instead. If the value is "##none", then the value will be
@@ -103,7 +72,7 @@ public final class ModelUtil {
 
   /**
    * Resolves a provided namespace value. If the value is {@code null} or "##default", then the
-   * provided default value will be used instead. If the value is {@code null} or "##default", then a
+   * provided default value will be used instead. If the value is {@code null} or "##none", then a
    * {@code null} value will be used if allowNone is {@code true}. Otherwise, the value is returned.
    * 
    * @param value
@@ -117,19 +86,8 @@ public final class ModelUtil {
   private static String resolveNamespace(String value, IClassBinding classBinding, boolean allowNone) {
     String retval;
     if (value == null || "##default".equals(value)) {
-      // get namespace from package-info
-      Package packageClass = classBinding.getBoundClass().getPackage();
-      if (packageClass.isAnnotationPresent(XmlSchema.class)) {
-        XmlSchema xmlSchema = ObjectUtils.notNull(packageClass.getAnnotation(XmlSchema.class));
-        retval = xmlSchema.namespace();
-        if ("##none".equals(retval)) {
-          retval = "";
-        }
-      } else {
-        throw new IllegalArgumentException(
-            String.format("Package '%s' is missing the '%s' annotation.", packageClass.getName(),
-                XmlSchema.class.getName()));
-      }
+      // get namespace from the metaschema
+      retval = classBinding.getContainingMetaschema().getXmlNamespace().toASCIIString();
     } else if (allowNone && "##none".equals(value)) {
       retval = null; // NOPMD - intentional
     } else {

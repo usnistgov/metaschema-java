@@ -31,6 +31,12 @@ import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The base class of all format-specific serializers.
+ *
+ * @param <CLASS>
+ *          the bound class to serialize from
+ */
 public abstract class AbstractSerializer<CLASS>
     extends AbstractSerializationBase
     implements ISerializer<CLASS> {

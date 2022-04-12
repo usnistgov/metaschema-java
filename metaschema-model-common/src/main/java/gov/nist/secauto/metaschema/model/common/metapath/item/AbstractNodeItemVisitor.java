@@ -71,7 +71,7 @@ public abstract class AbstractNodeItemVisitor<RESULT, CONTEXT> implements INodeI
   }
 
   @SuppressWarnings("unused")
-  protected boolean shouldVisitNextChild(@NotNull IModelNodeItem item,RESULT result, CONTEXT context) {
+  protected boolean shouldVisitNextChild(@NotNull IModelNodeItem item, RESULT result, CONTEXT context) {
     // this is the default behavior, which can be overridden
     return true;
   }

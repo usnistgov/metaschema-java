@@ -38,7 +38,7 @@ import javax.xml.stream.XMLStreamException;
 
 public class XmlProseCompositDatatypeProvider
     extends CompositeDatatypeProvider {
-  
+
   private final XmlProseBaseDatatypeProvider proseBaseProvider = new XmlProseBaseDatatypeProvider();
 
   public XmlProseCompositDatatypeProvider(List<@NotNull IDatatypeProvider> proxiedProviders) {
@@ -48,7 +48,7 @@ public class XmlProseCompositDatatypeProvider
   @Override
   public @NotNull Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes,
       @NotNull XMLStreamWriter2 writer) throws XMLStreamException {
-    Set<@NotNull String> result =  super.generateDatatypes(requiredTypes, writer);
+    Set<@NotNull String> result = super.generateDatatypes(requiredTypes, writer);
 
     if (!result.isEmpty()) {
       // apply core markup types

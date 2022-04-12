@@ -97,10 +97,14 @@ public abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExp
   /**
    * Determines if a given {@code childExpr} should be visited.
    * 
-   * @param parent the parent expression of the child
-   * @param child the child expression that can be visited
-   * @param result the current result of evaluating any previous children
-   * @param context additional state to pass between nodes visited
+   * @param parent
+   *          the parent expression of the child
+   * @param child
+   *          the child expression that can be visited
+   * @param result
+   *          the current result of evaluating any previous children
+   * @param context
+   *          additional state to pass between nodes visited
    * @return {@code true} if the child should be visited, or {@code false} otherwise
    */
   protected boolean shouldVisitNextChild(@NotNull IExpression parent, @NotNull IExpression child, RESULT result,

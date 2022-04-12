@@ -87,7 +87,7 @@ public class DefaultXmlSerializer<CLASS>
       IXmlWritingContext writingContext = new DefaultXmlWritingContext(streamWriter);
 
       RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
-      
+
       root.writeRoot(data, writingContext);
 
     } catch (XMLStreamException ex) {

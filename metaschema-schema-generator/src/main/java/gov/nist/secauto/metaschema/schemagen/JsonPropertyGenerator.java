@@ -55,7 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class JsonPropertyGenerator {
+public final class JsonPropertyGenerator {
   private JsonPropertyGenerator() {
     // disable construction
   }

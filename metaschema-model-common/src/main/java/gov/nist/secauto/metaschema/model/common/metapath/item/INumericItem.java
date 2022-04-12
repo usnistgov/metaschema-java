@@ -127,7 +127,7 @@ public interface INumericItem extends IAnyAtomicItem {
       @NotNull
       BigInteger result;
       if (divisor.compareTo(value.abs()) > 0) {
-        result =  ObjectUtils.notNull(BigInteger.ZERO);
+        result = ObjectUtils.notNull(BigInteger.ZERO);
       } else {
         BigInteger remainder = value.mod(divisor);
         BigInteger lessRemainder = value.subtract(remainder);

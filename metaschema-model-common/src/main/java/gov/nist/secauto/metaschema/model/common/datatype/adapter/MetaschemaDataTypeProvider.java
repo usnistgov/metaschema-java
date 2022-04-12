@@ -123,6 +123,6 @@ public class MetaschemaDataTypeProvider
     registerDatatypeByName("email", EMAIL_ADDRESS);
     registerDatatypeByName("nonNegativeInteger", NON_NEGATIVE_INTEGER);
     registerDatatypeByName("positiveInteger", POSITIVE_INTEGER);
-    
+
   }
 }

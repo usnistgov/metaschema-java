@@ -40,7 +40,7 @@ public interface IBindingConfiguration {
    *          the Metaschema to generate a package name for
    * @return a Java package name
    */
-  @NotNull 
+  @NotNull
   String getPackageNameForMetaschema(@NotNull IMetaschema metaschema);
 
   /**
@@ -50,10 +50,10 @@ public interface IBindingConfiguration {
    *          the definition to generate the Java class name for
    * @return a Java class name
    */
-  @NotNull 
+  @NotNull
   String getClassName(@NotNull INamedModelDefinition definition);
 
-  @NotNull 
+  @NotNull
   String getClassName(@NotNull IMetaschema metaschema);
 
   /**

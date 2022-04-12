@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.binding.io.Feature;
 import gov.nist.secauto.metaschema.binding.io.IConfiguration;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
+import gov.nist.secauto.metaschema.binding.metapath.item.IXdmFactory;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.RootAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
@@ -93,7 +93,7 @@ public class DefaultJsonDeserializer<CLASS>
 
       if (classBinding.isRoot()
           && configuration.isFeatureEnabled(Feature.DESERIALIZE_JSON_ROOT_PROPERTY)) {
-        
+
         RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
         // now parse the root property
         @SuppressWarnings("unchecked")

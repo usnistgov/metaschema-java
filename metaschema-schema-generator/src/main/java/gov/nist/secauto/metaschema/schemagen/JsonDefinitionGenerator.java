@@ -47,7 +47,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.Collection;
 
-public class JsonDefinitionGenerator {
+public final class JsonDefinitionGenerator {
   private JsonDefinitionGenerator() {
     // disable construction
   }

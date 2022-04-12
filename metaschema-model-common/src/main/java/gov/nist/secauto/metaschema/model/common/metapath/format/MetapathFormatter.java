@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IRootAssemblyNodeI
 
 import org.jetbrains.annotations.NotNull;
 
-class MetapathFormatter implements IPathFormatter {
+public class MetapathFormatter implements IPathFormatter {
 
   @NotNull
   protected String getEffectiveName(INodeItem nodeItem) {

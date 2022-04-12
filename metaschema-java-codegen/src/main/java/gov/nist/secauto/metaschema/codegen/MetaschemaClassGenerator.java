@@ -154,13 +154,14 @@ public class MetaschemaClassGenerator {
 
     builder.addMethod(
         MethodSpec.constructorBuilder()
-          .addModifiers(Modifier.PUBLIC)
-          .addParameter(
-              ParameterizedTypeName.get(ClassName.get(List.class), WildcardTypeName.subtypeOf(IMetaschema.class).box()),
-              "importedMetaschema")
-          .addParameter(IBindingContext.class, "bindingContext")
-          .addStatement("super($N, $N)", "importedMetaschema", "bindingContext")
-          .build());
+            .addModifiers(Modifier.PUBLIC)
+            .addParameter(
+                ParameterizedTypeName.get(ClassName.get(List.class),
+                    WildcardTypeName.subtypeOf(IMetaschema.class).box()),
+                "importedMetaschema")
+            .addParameter(IBindingContext.class, "bindingContext")
+            .addStatement("super($N, $N)", "importedMetaschema", "bindingContext")
+            .build());
     builder.addMethod(
         MethodSpec.methodBuilder("getName")
             .addAnnotation(Override.class)

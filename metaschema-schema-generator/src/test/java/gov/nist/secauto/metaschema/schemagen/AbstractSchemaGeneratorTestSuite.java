@@ -76,7 +76,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
   protected static final Function<@NotNull Path, @NotNull JsonSchemaContentValidator> JSON_CONTENT_VALIDATOR_PROVIDER;
   @NotNull
   protected static final Function<@NotNull Path, @NotNull XmlSchemaContentValidator> XML_CONTENT_VALIDATOR_PROVIDER;
-  
+
   static {
     SCHEMA_GENERATION_CONFIG = new DefaultMutableConfiguration()
         .enableFeature(Feature.INLINE_DEFINITIONS)
@@ -123,7 +123,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
       }
     };
     XML_CONTENT_VALIDATOR_PROVIDER = xmlContentValidatorProvider;
-    
+
     @SuppressWarnings("null")
     @NotNull
     Function<@NotNull Path, @NotNull JsonSchemaContentValidator> jsonContentValidatorProvider = (path) -> {
@@ -189,15 +189,15 @@ public abstract class AbstractSchemaGeneratorTestSuite
     default:
       throw new IllegalStateException();
     }
-    
+
     DynamicBindingContext context = produceDynamicBindingContext(metaschema, generationDir);
     for (ContentCase contentCase : contentCases) {
       Path contentPath = collectionPath.resolve(contentCase.getName());
-      
+
       if (!getRequiredContentFormat().equals(contentCase.getActualFormat())) {
         contentPath = convertContent(contentPath.toUri(), generationDir, context);
       }
-      
+
       assertEquals(contentCase.isValid(),
           validate(getContentValidatorSupplier().apply(schemaPath), contentPath),
           "validation did not match expectation");
@@ -209,9 +209,9 @@ public abstract class AbstractSchemaGeneratorTestSuite
   }
 
   protected static class ContentCase {
-    @NotNull 
+    @NotNull
     private final String name;
-    @NotNull 
+    @NotNull
     private final Format actualFormat;
     private final boolean valid;
 
@@ -221,12 +221,12 @@ public abstract class AbstractSchemaGeneratorTestSuite
       this.valid = valid;
     }
 
-    @NotNull 
+    @NotNull
     public String getName() {
       return name;
     }
 
-    @NotNull 
+    @NotNull
     public Format getActualFormat() {
       return actualFormat;
     }

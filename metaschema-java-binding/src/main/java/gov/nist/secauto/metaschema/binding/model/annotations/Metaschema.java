@@ -38,6 +38,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Metaschema {
   Class<?>[] fields() default {};
+
   Class<?>[] assemblies() default {};
+
   Class<? extends AbstractBoundMetaschema>[] imports() default {};
 }

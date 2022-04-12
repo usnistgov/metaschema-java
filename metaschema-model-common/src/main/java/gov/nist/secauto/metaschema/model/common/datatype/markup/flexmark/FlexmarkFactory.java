@@ -91,12 +91,12 @@ public class FlexmarkFactory {
   private Formatter formatter;
   private FlexmarkHtmlConverter htmlConverter;
 
-  @NotNull 
+  @NotNull
   public Document fromHtml(@NotNull String html) {
     return fromHtml(html, null, null);
   }
 
-  @NotNull 
+  @NotNull
   public Document fromHtml(@NotNull String html, FlexmarkHtmlConverter htmlParser, Parser markdownParser) {
     Objects.requireNonNull(html, "html");
 
@@ -110,12 +110,12 @@ public class FlexmarkFactory {
     return fromMarkdown(markdown, effectiveMarkdownParser);
   }
 
-  @NotNull 
+  @NotNull
   public Document fromMarkdown(String markdown) {
     return fromMarkdown(markdown, getMarkdownParser());
   }
 
-  @NotNull 
+  @NotNull
   public Document fromMarkdown(String markdown, Parser parser) {
     Objects.requireNonNull(markdown, "markdown");
     Objects.requireNonNull(parser, "parser");
@@ -155,7 +155,7 @@ public class FlexmarkFactory {
   }
 
   @SuppressWarnings("null")
-  @NotNull 
+  @NotNull
   public Parser getMarkdownParser() {
     synchronized (this) {
       if (markdownParser == null) {
@@ -165,9 +165,9 @@ public class FlexmarkFactory {
     }
   }
 
-  @NotNull 
+  @NotNull
   public Parser newMarkdownParser(DataHolder options) {
-    @NotNull 
+    @NotNull
     Parser.Builder builder;
     if (options != null) {
       builder = Parser.builder(options);
@@ -179,7 +179,7 @@ public class FlexmarkFactory {
     return builder.build();
   }
 
-  @NotNull 
+  @NotNull
   public HtmlRenderer getHtmlRenderer() {
     synchronized (this) {
       if (htmlRenderer == null) {
@@ -189,7 +189,7 @@ public class FlexmarkFactory {
     }
   }
 
-  @NotNull 
+  @NotNull
   public HtmlRenderer newHtmlRenderer(DataHolder options) {
     HtmlRenderer.Builder builder;
     if (options != null) {
@@ -202,7 +202,7 @@ public class FlexmarkFactory {
     return builder.build();
   }
 
-  @NotNull 
+  @NotNull
   public Formatter getFormatter() {
     synchronized (this) {
       if (formatter == null) {
@@ -212,7 +212,7 @@ public class FlexmarkFactory {
     }
   }
 
-  @NotNull 
+  @NotNull
   public Formatter newFormatter(DataHolder options) {
     Formatter.Builder builder;
     if (options != null) {
@@ -225,7 +225,7 @@ public class FlexmarkFactory {
     return builder.build();
   }
 
-  @NotNull 
+  @NotNull
   public FlexmarkHtmlConverter getFlexmarkHtmlConverter() {
     synchronized (this) {
       if (htmlConverter == null) {
@@ -235,7 +235,7 @@ public class FlexmarkFactory {
     }
   }
 
-  @NotNull 
+  @NotNull
   public FlexmarkHtmlConverter newFlexmarkHtmlConverter(@Nullable DataHolder options) {
     FlexmarkHtmlConverter.Builder builder;
     if (options != null) {

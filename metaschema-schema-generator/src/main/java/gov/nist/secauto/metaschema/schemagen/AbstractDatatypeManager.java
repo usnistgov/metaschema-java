@@ -43,38 +43,38 @@ import java.util.Set;
 
 public abstract class AbstractDatatypeManager implements IDatatypeManager {
   @NotNull
-  private static final Map<String, String> datatypeTranslationMap = new LinkedHashMap<>();
+  private static final Map<String, String> DATATYPE_TRANSLATION_MAP = new LinkedHashMap<>();
 
   static {
-    datatypeTranslationMap.put("base64", "Base64Datatype");
-    datatypeTranslationMap.put("boolean", "BooleanDatatype");
-    datatypeTranslationMap.put("date", "DateDatatype");
-    datatypeTranslationMap.put("date-with-timezone", "DateWithTimezoneDatatype");
-    datatypeTranslationMap.put("date-time", "DateTimeDatatype");
-    datatypeTranslationMap.put("date-time-with-timezone", "DateTimeWithTimezoneDatatype");
-    datatypeTranslationMap.put("day-time-duration", "DayTimeDurationDatatype");
-    datatypeTranslationMap.put("decimal", "DecimalDatatype");
-    datatypeTranslationMap.put("email-address", "EmailAddressDatatype");
-    datatypeTranslationMap.put("hostname", "HostnameDatatype");
-    datatypeTranslationMap.put("integer", "IntegerDatatype");
-    datatypeTranslationMap.put("ip-v4-address", "IPV4AddressDatatype");
-    datatypeTranslationMap.put("ip-v6-address", "IPV6AddressDatatype");
-    datatypeTranslationMap.put("markup-line", "MarkupLineDatatype");
-    datatypeTranslationMap.put("markup-multiline", "MarkupMultilineDatatype");
-    datatypeTranslationMap.put("non-negative-integer", "NonNegativeIntegerDatatype");
-    datatypeTranslationMap.put("positive-integer", "PositiveIntegerDatatype");
-    datatypeTranslationMap.put("string", "StringDatatype");
-    datatypeTranslationMap.put("token", "TokenDatatype");
-    datatypeTranslationMap.put("uri", "URIDatatype");
-    datatypeTranslationMap.put("uri-reference", "URIReferenceDatatype");
-    datatypeTranslationMap.put("uuid", "UUIDDatatype");
-    datatypeTranslationMap.put("year-month-duration", "YearMonthDurationDatatype");
+    DATATYPE_TRANSLATION_MAP.put("base64", "Base64Datatype");
+    DATATYPE_TRANSLATION_MAP.put("boolean", "BooleanDatatype");
+    DATATYPE_TRANSLATION_MAP.put("date", "DateDatatype");
+    DATATYPE_TRANSLATION_MAP.put("date-with-timezone", "DateWithTimezoneDatatype");
+    DATATYPE_TRANSLATION_MAP.put("date-time", "DateTimeDatatype");
+    DATATYPE_TRANSLATION_MAP.put("date-time-with-timezone", "DateTimeWithTimezoneDatatype");
+    DATATYPE_TRANSLATION_MAP.put("day-time-duration", "DayTimeDurationDatatype");
+    DATATYPE_TRANSLATION_MAP.put("decimal", "DecimalDatatype");
+    DATATYPE_TRANSLATION_MAP.put("email-address", "EmailAddressDatatype");
+    DATATYPE_TRANSLATION_MAP.put("hostname", "HostnameDatatype");
+    DATATYPE_TRANSLATION_MAP.put("integer", "IntegerDatatype");
+    DATATYPE_TRANSLATION_MAP.put("ip-v4-address", "IPV4AddressDatatype");
+    DATATYPE_TRANSLATION_MAP.put("ip-v6-address", "IPV6AddressDatatype");
+    DATATYPE_TRANSLATION_MAP.put("markup-line", "MarkupLineDatatype");
+    DATATYPE_TRANSLATION_MAP.put("markup-multiline", "MarkupMultilineDatatype");
+    DATATYPE_TRANSLATION_MAP.put("non-negative-integer", "NonNegativeIntegerDatatype");
+    DATATYPE_TRANSLATION_MAP.put("positive-integer", "PositiveIntegerDatatype");
+    DATATYPE_TRANSLATION_MAP.put("string", "StringDatatype");
+    DATATYPE_TRANSLATION_MAP.put("token", "TokenDatatype");
+    DATATYPE_TRANSLATION_MAP.put("uri", "URIDatatype");
+    DATATYPE_TRANSLATION_MAP.put("uri-reference", "URIReferenceDatatype");
+    DATATYPE_TRANSLATION_MAP.put("uuid", "UUIDDatatype");
+    DATATYPE_TRANSLATION_MAP.put("year-month-duration", "YearMonthDurationDatatype");
   }
 
   @SuppressWarnings("null")
   @NotNull
   protected static Map<String, String> getDatatypeTranslationMap() {
-    return Collections.unmodifiableMap(datatypeTranslationMap);
+    return Collections.unmodifiableMap(DATATYPE_TRANSLATION_MAP);
   }
 
   @NotNull

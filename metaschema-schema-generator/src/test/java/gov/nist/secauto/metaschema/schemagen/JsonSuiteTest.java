@@ -91,8 +91,8 @@ public class JsonSuiteTest
         List.of(
             contentCase(Format.JSON, "datatypes-uuid_test_valid_PASS.json", true)));
   }
-  
-//  @Disabled
+
+  // @Disabled
   @SuppressWarnings("null")
   @Test
   void testChoice() throws IOException, MetaschemaException {

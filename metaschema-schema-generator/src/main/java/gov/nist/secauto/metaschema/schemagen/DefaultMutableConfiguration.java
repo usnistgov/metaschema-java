@@ -33,13 +33,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class DefaultMutableConfiguration implements IMutableConfiguration {
+public final class DefaultMutableConfiguration implements IMutableConfiguration {
   @NotNull
   private final EnumMap<@NotNull Feature, Boolean> features;
 
   public DefaultMutableConfiguration() {
     this.features = new EnumMap<>(Feature.class);
-    
+
     // Set defaults
     disableFeature(Feature.INLINE_DEFINITIONS);
     disableFeature(Feature.INLINE_CHOICE_DEFINITIONS);
@@ -50,25 +50,25 @@ public class DefaultMutableConfiguration implements IMutableConfiguration {
   }
 
   @Override
-  public DefaultMutableConfiguration enableFeature(Feature feature) {
+  public final DefaultMutableConfiguration enableFeature(Feature feature) {
     features.put(feature, Boolean.TRUE);
     return this;
   }
 
   @Override
-  public DefaultMutableConfiguration disableFeature(Feature feature) {
+  public final DefaultMutableConfiguration disableFeature(Feature feature) {
     features.put(feature, Boolean.FALSE);
     return this;
   }
 
   @Override
-  public boolean isFeatureEnabled(Feature feature) {
+  public final boolean isFeatureEnabled(Feature feature) {
     Boolean state = features.get(feature);
     return state == null ? false : state;
   }
 
   @Override
-  public Map<@NotNull Feature, Boolean> getFeatureSettings() {
+  public final Map<@NotNull Feature, Boolean> getFeatureSettings() {
     return CollectionUtil.unmodifiableMap(features);
   }
 }

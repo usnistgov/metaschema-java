@@ -48,16 +48,32 @@ abstract class AbstractSerializationBase implements IMutableConfiguration {
     this.configuration = new DefaultMutableConfiguration();
   }
 
+  /**
+   * Retrieve the binding context associated with the serializer.
+   * 
+   * @return the binding context
+   */
   @NotNull
   protected IBindingContext getBindingContext() {
     return bindingContext;
   }
 
+  /**
+   * Retrieve the bound class information associated with the assembly that the
+   * serializer/deserializer will write/read data from.
+   * 
+   * @return the class binding for the Metaschema assembly
+   */
   @NotNull
   protected IAssemblyClassBinding getClassBinding() {
     return classBinding;
   }
 
+  /**
+   * Get the current configuration of the serializer/deserializer.
+   * 
+   * @return the configuration
+   */
   @NotNull
   protected IConfiguration getConfiguration() {
     return configuration;

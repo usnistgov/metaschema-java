@@ -43,8 +43,8 @@ public enum Feature {
    */
   DESERIALIZE_JSON_ROOT_PROPERTY,
   /**
-   * If enabled, generate document level constructs in the underlying data format (e.g. XML
-   * declarations).
+   * If enabled, generate document level constructs in the underlying data format, such as XML
+   * declarations.
    */
   SERIALIZE_ROOT;
 }

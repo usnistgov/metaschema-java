@@ -129,7 +129,6 @@ public final class CollectionUtil {
     return collection;
   }
 
-
   @SuppressWarnings("null")
   public static @NotNull Collection<@NotNull ? extends IMetaschema>
       unmodifiableCollection(Collection<@NotNull ? extends IMetaschema> values) {
@@ -159,26 +158,26 @@ public final class CollectionUtil {
   }
 
   @SuppressWarnings("null")
-  @NotNull 
+  @NotNull
   public static <T> List<T> singletonList(@NotNull T instance) {
     return Collections.singletonList(instance);
   }
 
   @SuppressWarnings("null")
   @NotNull
-  public static <K,V> Map<K, V> emptyMap() {
+  public static <K, V> Map<K, V> emptyMap() {
     return Collections.emptyMap();
   }
 
   @SuppressWarnings("null")
-  @NotNull 
-  public static <K,V> Map<K,V> singletonMap(@NotNull K key, @NotNull V value) {
+  @NotNull
+  public static <K, V> Map<K, V> singletonMap(@NotNull K key, @NotNull V value) {
     return Collections.singletonMap(key, value);
   }
 
   @SuppressWarnings("null")
   @NotNull
-  public static <K,V> Map<K,V> unmodifiableMap(@NotNull Map<K,V> map) {
+  public static <K, V> Map<K, V> unmodifiableMap(@NotNull Map<K, V> map) {
     return Collections.unmodifiableMap(map);
   }
 }

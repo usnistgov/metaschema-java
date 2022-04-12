@@ -80,8 +80,6 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
   /**
    * Read data from the {@link Path} into a bound class instance.
    * 
-   * @param data
-   *          the instance data
    * @param path
    *          the file to read from
    * @return the instance data

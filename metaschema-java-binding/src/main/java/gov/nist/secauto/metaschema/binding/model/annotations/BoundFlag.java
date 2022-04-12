@@ -30,10 +30,6 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValues;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import java.lang.annotation.Documented;

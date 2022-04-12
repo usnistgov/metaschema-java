@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,13 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public interface IBoundNamedModelDefinition extends INamedModelDefinition {
-  /**
-   * Retrieve the {@link IClassBinding} associated with the node item.
-   * 
-   * @return the class binding or {@code null} if the node is not a bound class
-   */
-  IClassBinding getClassBinding();
-  
+
   @Override
   IBoundFlagInstance getFlagInstanceByName(String name);
 

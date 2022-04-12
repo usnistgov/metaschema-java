@@ -93,7 +93,6 @@ public interface IRootAssemblyClassBinding extends IAssemblyClassBinding, IRootA
   // TODO: merge the XMLStreamException into IOException
   @NotNull
   Object readRoot(@NotNull IXmlParsingContext context) throws XMLStreamException, IOException;
-  
 
   /**
    * Writes data in a bound object to JSON. This assembly must be a root assembly for which a call to

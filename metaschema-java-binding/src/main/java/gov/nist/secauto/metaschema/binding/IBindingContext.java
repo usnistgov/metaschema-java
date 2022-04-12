@@ -252,7 +252,9 @@ public interface IBindingContext {
 
   /**
    * Get the Metaschema instance identified by the provided class.
-   * @param clazz the Metaschema class
+   * 
+   * @param clazz
+   *          the Metaschema class
    * @return the Metaschema instance
    */
   @NotNull

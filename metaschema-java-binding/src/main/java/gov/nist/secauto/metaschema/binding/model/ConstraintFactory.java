@@ -26,16 +26,16 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
+import gov.nist.secauto.metaschema.binding.model.annotations.AllowedValue;
+import gov.nist.secauto.metaschema.binding.model.annotations.AllowedValues;
+import gov.nist.secauto.metaschema.binding.model.annotations.Expect;
+import gov.nist.secauto.metaschema.binding.model.annotations.HasCardinality;
+import gov.nist.secauto.metaschema.binding.model.annotations.Index;
+import gov.nist.secauto.metaschema.binding.model.annotations.IndexHasKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.IsUnique;
+import gov.nist.secauto.metaschema.binding.model.annotations.KeyField;
+import gov.nist.secauto.metaschema.binding.model.annotations.Matches;
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValue;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValues;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.HasCardinality;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Index;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IsUnique;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.KeyField;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValue;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultCardinalityConstraint;

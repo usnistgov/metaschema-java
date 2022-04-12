@@ -81,12 +81,15 @@ public final class FnDocumentUri {
       INodeItem focus) {
 
     INodeItem item = focus;
-    if (!(item instanceof IDocumentNodeItem)) {
-      return ISequence.empty();
-    }
 
-    IAnyUriItem uri = fnDocumentUri((IDocumentNodeItem) item);
-    return ISequence.of(uri);
+    ISequence<IAnyUriItem> retval;
+    if (item instanceof IDocumentNodeItem) {
+      IAnyUriItem uri = fnDocumentUri((IDocumentNodeItem) item);
+      retval = ISequence.of(uri);
+    } else {
+      retval = ISequence.empty();
+    }
+    return retval;
   }
 
   @SuppressWarnings("unused")
@@ -99,18 +102,24 @@ public final class FnDocumentUri {
     ISequence<? extends INodeItem> arg = FunctionUtils.asType(arguments.get(0));
 
     INodeItem item = FunctionUtils.getFirstItem(arg, true);
-    if (item == null || !(item instanceof IDocumentNodeItem)) {
-      return ISequence.empty();
-    }
 
-    IAnyUriItem uri = fnDocumentUri((IDocumentNodeItem) item);
-    return ISequence.of(uri);
+    ISequence<IAnyUriItem> retval;
+    if (item == null) {
+      retval = ISequence.empty();
+    } else if (item instanceof IDocumentNodeItem) {
+      IAnyUriItem uri = fnDocumentUri((IDocumentNodeItem) item);
+      retval = ISequence.of(uri);
+    } else {
+      retval = ISequence.empty();
+    }
+    return retval;
   }
 
   /**
    * Get the URI of the document.
    * <p>
-   * Based on the XPath 3.1 <a href="https://www.w3.org/TR/xpath-functions-31/#func-document-uri">fn:document-uri</a>
+   * Based on the XPath 3.1
+   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-document-uri">fn:document-uri</a>
    * function.
    * 
    * @param document

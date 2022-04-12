@@ -29,13 +29,31 @@ package gov.nist.secauto.metaschema.binding.model;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Collection;
 
-public interface IAssemblyClassBinding extends IClassBinding, IBoundAssemblyDefinition {
+/**
+ * Represents a Metaschema assembly bound to a Java plain old java object (POJO) class.
+ */
+public interface IAssemblyClassBinding extends IClassBinding, IAssemblyDefinition {
+  @Override
+  IBoundFieldInstance getFieldInstanceByName(String name);
 
+  @Override
+  IBoundAssemblyInstance getAssemblyInstanceByName(String name);
+
+  @Override
+  IBoundNamedModelInstance getModelInstanceByName(String name);
+
+  @Override
+  Collection<@NotNull ? extends IBoundNamedModelInstance> getModelInstances();
+
+  @Override
+  Collection<@NotNull ? extends IBoundNamedModelInstance> getNamedModelInstances();
 
   /**
    * Parses JSON into a bound object.
@@ -52,8 +70,6 @@ public interface IAssemblyClassBinding extends IClassBinding, IBoundAssemblyDefi
    * 
    * @param context
    *          the JSON parser
-   * @param instance
-   *          the bound object to read data into
    * @return the bound object instance representing the JSON object
    * @throws IOException
    *           if an error occurred while reading the JSON

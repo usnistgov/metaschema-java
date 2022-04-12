@@ -129,13 +129,13 @@ public class AbstractBoundModelTestSupport {
     /**
      * Setup bound classes
      */
+    registerMetaschema(TestMetaschema.class);
     registerFieldBinding(CollapsibleFlaggedBoundField.class);
     registerAssemblyBinding(EmptyBoundAssembly.class);
     registerAssemblyBinding(FlaggedBoundAssembly.class);
     registerFieldBinding(FlaggedBoundField.class);
     registerAssemblyBinding(OnlyModelBoundAssembly.class);
     IAssemblyClassBinding retval = registerAssemblyBinding(RootBoundAssembly.class);
-    registerMetaschema(TestMetaschema.class);
     return retval;
   }
 

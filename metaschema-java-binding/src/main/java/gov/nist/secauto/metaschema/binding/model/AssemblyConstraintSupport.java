@@ -26,14 +26,14 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
+import gov.nist.secauto.metaschema.binding.model.annotations.AllowedValues;
+import gov.nist.secauto.metaschema.binding.model.annotations.Expect;
+import gov.nist.secauto.metaschema.binding.model.annotations.HasCardinality;
+import gov.nist.secauto.metaschema.binding.model.annotations.Index;
+import gov.nist.secauto.metaschema.binding.model.annotations.IndexHasKey;
+import gov.nist.secauto.metaschema.binding.model.annotations.IsUnique;
+import gov.nist.secauto.metaschema.binding.model.annotations.Matches;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValues;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.HasCardinality;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Index;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IsUnique;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
 import gov.nist.secauto.metaschema.model.common.constraint.AbstractConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultCardinalityConstraint;
@@ -53,7 +53,7 @@ import java.util.List;
 /**
  * Support for constraints on Metaschema assembly bound objects.
  */
-public class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
+class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
   private final List<AbstractConstraint> constraints;
   private final List<DefaultAllowedValuesConstraint> allowedValuesConstraints;
   private final List<DefaultMatchesConstraint> matchesConstraints;

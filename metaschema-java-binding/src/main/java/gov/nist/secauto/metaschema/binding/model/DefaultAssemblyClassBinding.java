@@ -42,13 +42,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-import gov.nist.secauto.metaschema.binding.model.property.DefaultAssemblyProperty;
-import gov.nist.secauto.metaschema.binding.model.property.DefaultFieldProperty;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
@@ -212,8 +205,9 @@ public class DefaultAssemblyClassBinding
     return Collections.unmodifiableCollection(retval);
   }
 
-  protected Stream<@NotNull IBoundNamedModelInstance> getModelInstanceFieldStream(Class<?> clazz) {
-    Stream<@NotNull IBoundNamedModelInstance> superInstances;
+  protected Stream<gov.nist.secauto.metaschema.binding.model.IBoundNamedModelInstance>
+      getModelInstanceFieldStream(Class<?> clazz) {
+    Stream<gov.nist.secauto.metaschema.binding.model.IBoundNamedModelInstance> superInstances;
     Class<?> superClass = clazz.getSuperclass();
     if (superClass == null) {
       superInstances = Stream.empty();
@@ -258,19 +252,26 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public DefaultAssemblyClassBinding getClassBinding() {
-    return this;
-  }
-
-  @Override
   public Collection<@NotNull ? extends IBoundNamedModelInstance> getModelInstances() {
     return getNamedModelInstances();
   }
 
   @Override
-  public Map<@NotNull String, ? extends IBoundNamedModelInstance> getNamedModelInstanceMap() {
+  public IBoundNamedModelInstance getModelInstanceByName(String name) {
+    return getNamedModelInstanceMap().get(name);
+  }
+
+  @SuppressWarnings("null")
+  @NotNull
+  private Map<@NotNull String, ? extends IBoundNamedModelInstance> getNamedModelInstanceMap() {
     initalizeModelInstances();
     return modelInstances;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Collection<@NotNull ? extends IBoundNamedModelInstance> getNamedModelInstances() {
+    return getNamedModelInstanceMap().values();
   }
 
   @Override
@@ -285,8 +286,8 @@ public class DefaultAssemblyClassBinding
                 LinkedHashMap::new)));
   }
 
-  @Override
-  public Map<@NotNull String, ? extends IBoundFieldInstance> getFieldInstanceMap() {
+  @NotNull
+  private Map<@NotNull String, ? extends IBoundFieldInstance> getFieldInstanceMap() {
     return ObjectUtils.notNull(getNamedModelInstances().stream()
         .filter(instance -> instance instanceof IBoundFieldInstance)
         .map(instance -> (IBoundFieldInstance) instance)
@@ -296,13 +297,19 @@ public class DefaultAssemblyClassBinding
             LinkedHashMap::new)));
   }
 
+  @SuppressWarnings("null")
   @Override
-  public @NotNull Collection<@NotNull ? extends IFieldInstance> getFieldInstances() {
+  public Collection<@NotNull ? extends IFieldInstance> getFieldInstances() {
     return getFieldInstanceMap().values();
   }
 
   @Override
-  public Map<@NotNull String, ? extends IBoundAssemblyInstance> getAssemblyInstanceMap() {
+  public IBoundFieldInstance getFieldInstanceByName(String name) {
+    return getFieldInstanceMap().get(name);
+  }
+
+  @NotNull
+  private Map<@NotNull String, ? extends IBoundAssemblyInstance> getAssemblyInstanceMap() {
     return ObjectUtils.notNull(getNamedModelInstances().stream()
         .filter(instance -> instance instanceof IBoundAssemblyInstance)
         .map(instance -> (IBoundAssemblyInstance) instance)
@@ -316,6 +323,11 @@ public class DefaultAssemblyClassBinding
   @Override
   public @NotNull Collection<@NotNull ? extends IAssemblyInstance> getAssemblyInstances() {
     return getAssemblyInstanceMap().values();
+  }
+
+  @Override
+  public IBoundAssemblyInstance getAssemblyInstanceByName(String name) {
+    return getAssemblyInstanceMap().get(name);
   }
 
   @Override
@@ -383,7 +395,6 @@ public class DefaultAssemblyClassBinding
     checkModelConstraints();
     return constraints.getHasCardinalityConstraints();
   }
-
 
   @Override
   public Object readObject(IJsonParsingContext context) throws IOException {
@@ -534,7 +545,6 @@ public class DefaultAssemblyClassBinding
 
     JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
   }
-
 
   /**
    * Serializes the provided instance in JSON.

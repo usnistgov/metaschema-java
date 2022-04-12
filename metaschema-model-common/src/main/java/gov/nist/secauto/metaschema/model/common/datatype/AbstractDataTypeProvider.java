@@ -37,8 +37,10 @@ public class AbstractDataTypeProvider implements IDataTypeProvider {
 
   @SuppressWarnings("null")
   @Override
-  public synchronized Map<String, ? extends IJavaTypeAdapter<?>> getJavaTypeAdapters() {
-    return Collections.unmodifiableMap(library);
+  public Map<String, ? extends IJavaTypeAdapter<?>> getJavaTypeAdapters() {
+    synchronized (this) {
+      return Collections.unmodifiableMap(library);
+    }
   }
 
   /**

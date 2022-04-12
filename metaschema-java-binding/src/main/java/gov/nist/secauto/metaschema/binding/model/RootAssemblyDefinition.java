@@ -38,15 +38,9 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
-import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
@@ -209,18 +203,18 @@ public class RootAssemblyDefinition
   }
 
   @Override
-  public IAssemblyClassBinding getClassBinding() {
-    return getRootDefinition().getClassBinding();
-  }
-
-  @Override
   public Collection<@NotNull ? extends IBoundNamedModelInstance> getModelInstances() {
     return getRootDefinition().getModelInstances();
   }
 
   @Override
-  public Map<@NotNull String, ? extends IBoundNamedModelInstance> getNamedModelInstanceMap() {
-    return getRootDefinition().getNamedModelInstanceMap();
+  public Collection<@NotNull ? extends IBoundNamedModelInstance> getNamedModelInstances() {
+    return getRootDefinition().getNamedModelInstances();
+  }
+
+  @Override
+  public IBoundNamedModelInstance getModelInstanceByName(String name) {
+    return getRootDefinition().getModelInstanceByName(name);
   }
 
   @Override
@@ -234,23 +228,23 @@ public class RootAssemblyDefinition
   }
 
   @Override
-  public Map<@NotNull String, ? extends IBoundFieldInstance> getFieldInstanceMap() {
-    return getRootDefinition().getFieldInstanceMap();
-  }
-
-  @Override
   public Collection<@NotNull ? extends IFieldInstance> getFieldInstances() {
     return getRootDefinition().getFieldInstances();
   }
 
   @Override
-  public Map<@NotNull String, ? extends IBoundAssemblyInstance> getAssemblyInstanceMap() {
-    return getRootDefinition().getAssemblyInstanceMap();
+  public IBoundFieldInstance getFieldInstanceByName(String name) {
+    return getRootDefinition().getFieldInstanceByName(name);
   }
 
   @Override
   public Collection<@NotNull ? extends IAssemblyInstance> getAssemblyInstances() {
     return getRootDefinition().getAssemblyInstances();
+  }
+
+  @Override
+  public IBoundAssemblyInstance getAssemblyInstanceByName(String name) {
+    return getRootDefinition().getAssemblyInstanceByName(name);
   }
 
   @Override

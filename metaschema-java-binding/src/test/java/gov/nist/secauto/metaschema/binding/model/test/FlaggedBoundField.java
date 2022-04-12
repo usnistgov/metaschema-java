@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding.model.test;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
@@ -41,7 +42,7 @@ public class FlaggedBoundField {
 
   @BoundFlag(useName = "field-other-flag", typeAdapter = BooleanAdapter.class)
   private String other; // NOPMD - intentional
-  
+
   @BoundFieldValue(name = "field-value", typeAdapter = StringAdapter.class)
   private String _value; // NOPMD - intentional
 }

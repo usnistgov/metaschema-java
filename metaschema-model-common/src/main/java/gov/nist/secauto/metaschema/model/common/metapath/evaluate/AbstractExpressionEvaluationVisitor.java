@@ -115,7 +115,7 @@ public class AbstractExpressionEvaluationVisitor implements IExpressionEvaluatio
   @Override
   public <T extends IItem> ISequence<T> visit(IExpression expr, INodeContext context) {
     ISequence<?> retval = expr.accept(this, context);
-    return (ISequence<T>)retval;
+    return (ISequence<T>) retval;
   }
 
   @Override

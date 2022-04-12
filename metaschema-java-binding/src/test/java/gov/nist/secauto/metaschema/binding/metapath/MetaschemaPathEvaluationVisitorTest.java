@@ -49,7 +49,7 @@ class MetaschemaPathEvaluationVisitorTest {
   Mockery context = new JUnit5Mockery();
 
   @Mock
-  INodeContext nodeContext; 
+  INodeContext nodeContext;
 
   @Test
   void test() {

@@ -67,7 +67,7 @@ public abstract class AbstractBoundMetaschema
     }
 
     Metaschema metaschemaAnnotation = clazz.getAnnotation(Metaschema.class);
-    
+
     List<@NotNull IMetaschema> importedMetaschemas;
     if (metaschemaAnnotation.imports().length > 0) {
       importedMetaschemas = new ArrayList<>(metaschemaAnnotation.imports().length);

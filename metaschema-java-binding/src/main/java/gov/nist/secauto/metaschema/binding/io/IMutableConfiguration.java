@@ -28,10 +28,16 @@ package gov.nist.secauto.metaschema.binding.io;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * This mutable view of a serializer or deserializer configuration allows for changes to be made in
+ * the underlying configuration.
+ */
 public interface IMutableConfiguration extends IConfiguration {
   /**
    * Turn on the provided feature.
-   * @param feature the feature to turn on
+   * 
+   * @param feature
+   *          the feature to turn on
    * @return the updated configuration
    */
   @NotNull
@@ -39,7 +45,9 @@ public interface IMutableConfiguration extends IConfiguration {
 
   /**
    * Turn off the provided feature.
-   * @param feature the feature to turn off
+   * 
+   * @param feature
+   *          the feature to turn off
    * @return the updated configuration
    */
   @NotNull

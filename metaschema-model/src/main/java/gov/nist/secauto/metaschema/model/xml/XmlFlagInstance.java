@@ -108,7 +108,7 @@ public class XmlFlagInstance
   public String getUseName() {
     return getXmlFlag().isSetUseName() ? getXmlFlag().getUseName() : getDefinition().getUseName();
   }
-  
+
   @Override
   public INodeItem newNodeItem(@NotNull Object value, @NotNull IModelNodeItem parent) {
     throw new UnsupportedOperationException("A bound object is not available");

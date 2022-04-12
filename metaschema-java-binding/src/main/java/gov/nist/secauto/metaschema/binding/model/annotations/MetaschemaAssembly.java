@@ -30,13 +30,6 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.binding.AbstractBoundMetaschema;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValues;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.HasCardinality;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Index;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.IsUnique;
-import gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

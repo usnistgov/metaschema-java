@@ -31,7 +31,9 @@ import org.jetbrains.annotations.NotNull;
 public interface IMutableConfiguration extends IConfiguration {
   /**
    * Turn on the provided feature.
-   * @param feature the feature to turn on
+   * 
+   * @param feature
+   *          the feature to turn on
    * @return the updated configuration
    */
   @NotNull
@@ -39,7 +41,9 @@ public interface IMutableConfiguration extends IConfiguration {
 
   /**
    * Turn off the provided feature.
-   * @param feature the feature to turn off
+   * 
+   * @param feature
+   *          the feature to turn off
    * @return the updated configuration
    */
   @NotNull

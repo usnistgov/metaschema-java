@@ -87,12 +87,15 @@ public final class FnData {
       INodeItem focus) {
 
     INodeItem item = focus;
-    if (item == null) {
-      return ISequence.empty();
-    }
 
-    IAnyAtomicItem data = fnDataItem(item);
-    return ISequence.of(data);
+    ISequence<IAnyAtomicItem> retval;
+    if (item == null) {
+      retval = ISequence.empty();
+    } else {
+      IAnyAtomicItem data = fnDataItem(item);
+      retval = ISequence.of(data);
+    }
+    return retval;
   }
 
   @SuppressWarnings("unused")

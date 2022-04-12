@@ -347,7 +347,9 @@ public interface IJavaTypeAdapter<TYPE> {
 
   /**
    * Determines if the datatype uses mixed text and element content in XML.
-   * @return {@code true} if the datatype uses mixed text and element content in XML, or {@code false} otherwise
+   * 
+   * @return {@code true} if the datatype uses mixed text and element content in XML, or {@code false}
+   *         otherwise
    */
   boolean isXmlMixed();
 }

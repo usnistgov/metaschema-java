@@ -97,7 +97,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   @Override
   public @NotNull String getClassName(@NotNull IMetaschema metaschema) {
     // TODO: make this configurable
-    return NameConverter.standard.toClassName(metaschema.getShortName()+"Metaschema");
+    return NameConverter.standard.toClassName(metaschema.getShortName() + "Metaschema");
   }
 
   /**

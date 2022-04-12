@@ -37,8 +37,8 @@ public enum Feature {
   INLINE_DEFINITIONS,
   /**
    * If enabled, child definitions of a choice that are defined inline will be generated as inline
-   * types. If disabled, child definitions of a choice will always be generated as global types. This option
-   * will only be used if {@link #INLINE_DEFINITIONS} is also enabled.
+   * types. If disabled, child definitions of a choice will always be generated as global types. This
+   * option will only be used if {@link #INLINE_DEFINITIONS} is also enabled.
    */
   INLINE_CHOICE_DEFINITIONS,
 }

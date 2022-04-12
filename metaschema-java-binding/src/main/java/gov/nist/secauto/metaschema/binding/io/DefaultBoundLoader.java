@@ -59,7 +59,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 /**
- * A default implementation of a {@link IBoundLoader}.
+ * A default implementation of an {@link IBoundLoader}.
  */
 public class DefaultBoundLoader implements IBoundLoader {
   public static final int LOOK_AHEAD_BYTES = 32_768;

@@ -43,12 +43,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.binding.model.property.DefaultFieldValueProperty;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldValueInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedInstance;
-import gov.nist.secauto.metaschema.binding.model.property.info.ListPropertyCollector;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
@@ -193,11 +187,6 @@ public class DefaultFieldClassBinding
   @Override
   public IBoundFieldInstance getInlineInstance() {
     return null;
-  }
-
-  @Override
-  public DefaultFieldClassBinding getClassBinding() {
-    return this;
   }
 
   @Override
@@ -804,7 +793,6 @@ public class DefaultFieldClassBinding
 
     getFieldValue().copyBoundObject(fromInstance, toInstance);
   }
-
 
   @Override
   protected Class<? extends AbstractBoundMetaschema> getMetaschemaClass() {

@@ -132,7 +132,7 @@ public abstract class AbstractFreemarkerGenerator implements IFreemarkerGenerato
     cfg.setSharedVariable("statics", staticModels);
 
     // Create the root hash. We use a Map here, but it could be a JavaBean too.
-    Map<String, Object> root = new HashMap<>(); //NOPMD - Freemarker templates run in a single thread
+    Map<String, Object> root = new HashMap<>(); // NOPMD - Freemarker templates run in a single thread
 
     // add metaschema model
     root.put("metaschema", metaschema);

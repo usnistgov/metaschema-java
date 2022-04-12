@@ -125,7 +125,7 @@ public abstract class AbstractJavaClassGenerator<DEFINITION extends INamedModelD
   protected void applyCommonProperties(@NotNull AnnotationSpec.Builder annotation) {
     DEFINITION definition = getDefinition();
     IMetaschema metaschema = definition.getContainingMetaschema();
-    
+
     annotation.addMember("metaschema", "$T.class", getTypeResolver().getClassName(metaschema));
   }
 

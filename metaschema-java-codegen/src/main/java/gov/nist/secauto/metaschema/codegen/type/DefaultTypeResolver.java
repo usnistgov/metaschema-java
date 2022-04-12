@@ -50,7 +50,7 @@ public class DefaultTypeResolver implements ITypeResolver {
   private final Map<INamedModelDefinition, ClassName> definitionToTypeMap = new HashMap<>();
   private final Map<IMetaschema, ClassName> metaschemaToTypeMap = new HashMap<>();
 
-  @NotNull 
+  @NotNull
   private final IBindingConfiguration bindingConfiguration;
 
   public DefaultTypeResolver(@NotNull IBindingConfiguration bindingConfiguration) {
@@ -87,7 +87,7 @@ public class DefaultTypeResolver implements ITypeResolver {
     ClassName retval = metaschemaToTypeMap.get(metaschema);
     if (retval == null) {
       String packageName = getBindingConfiguration().getPackageNameForMetaschema(metaschema);
-  
+
       String className = getBindingConfiguration().getClassName(metaschema);
       String classNameBase = className;
       int index = 1;
@@ -96,7 +96,7 @@ public class DefaultTypeResolver implements ITypeResolver {
       }
       addClassName(packageName, className);
       retval = ClassName.get(packageName, className);
-      
+
       metaschemaToTypeMap.put(metaschema, retval);
     }
     return retval;
@@ -110,7 +110,7 @@ public class DefaultTypeResolver implements ITypeResolver {
     }
     return classNames.contains(className);
   }
-  
+
   protected boolean addClassName(@NotNull String packageOrTypeName, @NotNull String className) {
     Set<String> classNames = packageToClassNamesMap.get(packageOrTypeName);
     if (classNames == null) {
@@ -157,7 +157,7 @@ public class DefaultTypeResolver implements ITypeResolver {
     }
     return retval;
   }
-  
+
   @Override
   public String getPackageName(@NotNull IMetaschema metaschema) {
     return bindingConfiguration.getPackageNameForMetaschema(metaschema);

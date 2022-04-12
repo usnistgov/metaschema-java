@@ -61,7 +61,7 @@ public interface IIntegerItem extends IDecimalItem {
   @NotNull
   static IIntegerItem valueOf(@NotNull BigInteger value) {
     int signum = value.signum();
-    
+
     IIntegerItem retval;
     if (signum == -1) { // negative
       retval = new IntegerItemImpl(value);
@@ -77,15 +77,15 @@ public interface IIntegerItem extends IDecimalItem {
   static IIntegerItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.INTEGER.cast(item);
   }
-  
+
   @Override
   IIntegerItem abs();
-  
+
   @Override
   default IIntegerItem ceiling() {
     return this;
   }
-  
+
   @Override
   default IIntegerItem floor() {
     return this;

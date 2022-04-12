@@ -30,6 +30,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+/**
+ * The base feature interface for getting the configuration of serializers or deserializers. This
+ * provides an immutable view of the current configuration.
+ */
 public interface IConfiguration {
   /**
    * Determines if a specific serialization/deserialization feature is enabled.

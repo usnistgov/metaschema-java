@@ -59,7 +59,7 @@ public abstract class AbstractIntegerItem
   public IIntegerItem abs() {
     BigInteger value = getValue();
     int signum = value.signum();
-    
+
     IIntegerItem retval;
     if (signum > -1) {
       retval = this;

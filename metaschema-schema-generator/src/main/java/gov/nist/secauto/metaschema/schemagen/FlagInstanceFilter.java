@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class FlagInstanceFilter {
+public final class FlagInstanceFilter {
   private FlagInstanceFilter() {
     // disable construction
   }

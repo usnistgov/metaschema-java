@@ -52,7 +52,7 @@ public final class ObjectUtils {
   @NotNull
   public static <T> T requireNonNull(T obj) {
     if (obj == null) {
-      throw new NullPointerException(); //NOPMD
+      throw new NullPointerException(); // NOPMD
     }
     return obj;
   }
@@ -74,7 +74,7 @@ public final class ObjectUtils {
   @NotNull
   public static <T> T requireNonNull(T obj, @NotNull String message) {
     if (obj == null) {
-      throw new NullPointerException(message); //NOPMD
+      throw new NullPointerException(message); // NOPMD
     }
     return obj;
   }

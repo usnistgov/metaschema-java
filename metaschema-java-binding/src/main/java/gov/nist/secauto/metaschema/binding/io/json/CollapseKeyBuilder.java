@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.binding.io.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
+import gov.nist.secauto.metaschema.binding.model.IBoundFieldValueInstance;
+import gov.nist.secauto.metaschema.binding.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldValueInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
 
 import java.io.IOException;
 import java.util.ArrayList;

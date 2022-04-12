@@ -75,11 +75,13 @@ public class FnCompare {
     IStringItem comparand2 = FunctionUtils.getFirstItem(
         FunctionUtils.asType(arguments.get(1)), true);
 
+    ISequence<IIntegerItem> retval;
     if (comparand1 == null || comparand2 == null) {
-      return ISequence.empty();
+      retval = ISequence.empty();
+    } else {
+      IIntegerItem result = comparand1.compare(comparand2);
+      retval = ISequence.of(result);
     }
-
-    IIntegerItem result = comparand1.compare(comparand2);
-    return ISequence.of(result);
+    return retval;
   }
 }

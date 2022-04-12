@@ -48,7 +48,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-public class XmlSchemaContentValidator extends AbstractContentValidator {
+public class XmlSchemaContentValidator
+    extends AbstractContentValidator {
   private final Schema schema;
 
   @SuppressWarnings("null")

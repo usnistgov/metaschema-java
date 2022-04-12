@@ -84,12 +84,15 @@ public final class FnBaseUri {
       INodeItem focus) {
 
     INodeItem item = focus;
-    if (item == null) {
-      return ISequence.empty();
-    }
 
-    IAnyUriItem uri = fnBaseUri(item);
-    return ISequence.of(uri);
+    ISequence<IAnyUriItem> retval;
+    if (item == null) {
+      retval = ISequence.empty();
+    } else {
+      IAnyUriItem uri = fnBaseUri(item);
+      retval = ISequence.of(uri);
+    }
+    return retval;
   }
 
   @SuppressWarnings("unused")
@@ -102,12 +105,15 @@ public final class FnBaseUri {
     ISequence<? extends INodeItem> arg = FunctionUtils.asType(arguments.get(0));
 
     INodeItem item = FunctionUtils.getFirstItem(arg, true);
-    if (item == null) {
-      return ISequence.empty();
-    }
 
-    IAnyUriItem uri = fnBaseUri(item);
-    return ISequence.of(uri);
+    ISequence<IAnyUriItem> retval;
+    if (item == null) {
+      retval = ISequence.empty();
+    } else {
+      IAnyUriItem uri = fnBaseUri(item);
+      retval = ISequence.of(uri);
+    }
+    return retval;
   }
 
   /**
@@ -123,7 +129,7 @@ public final class FnBaseUri {
   public static IAnyUriItem fnBaseUri(INodeItem nodeItem) {
     IAnyUriItem retval;
     if (nodeItem == null) {
-      retval = null;
+      retval = null; // NOPMD - intentional
     } else {
       URI baseUri = nodeItem.getBaseUri();
       retval = baseUri == null ? null : IAnyUriItem.valueOf(baseUri);

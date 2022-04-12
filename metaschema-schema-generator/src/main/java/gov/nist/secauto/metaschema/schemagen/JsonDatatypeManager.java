@@ -48,8 +48,8 @@ import java.util.stream.Stream;
 
 public class JsonDatatypeManager
     extends AbstractDatatypeManager {
-  private static final JsonNode jsonDatatypes;
-  private static final Map<String, String> jsonDatatypeDependencyMap = new HashMap<>();
+  private static final JsonNode JSON_DATA;
+  private static final Map<String, String> DATATYPE_DEPENDENCY_MAP = new HashMap<>();
   private static final Pattern DEFINITION_REF_PATTERN = Pattern.compile("^#/definitions/(.+)$");
   private static final Map<String, JsonNode> JSON_DATATYPES = new HashMap<>();
 
@@ -57,14 +57,14 @@ public class JsonDatatypeManager
     try (InputStream is
         = MetaschemaLoader.class.getClassLoader().getResourceAsStream("schema/json/metaschema-datatypes.json")) {
       ObjectMapper objectMapper = new ObjectMapper();
-      jsonDatatypes = objectMapper.readTree(is);
+      JSON_DATA = objectMapper.readTree(is);
     } catch (IOException ex) {
       throw new IllegalStateException(ex);
     }
 
     // analyze datatypes for dependencies
     for (String ref : getDatatypeTranslationMap().values()) {
-      JsonNode refNode = jsonDatatypes.at("/definitions/" + ref);
+      JsonNode refNode = JSON_DATA.at("/definitions/" + ref);
       if (!refNode.isMissingNode()) {
         JSON_DATATYPES.put(ref, refNode);
 
@@ -73,7 +73,7 @@ public class JsonDatatypeManager
           Matcher matcher = DEFINITION_REF_PATTERN.matcher(refKeyword.asText());
           if (matcher.matches()) {
             String dependency = matcher.group(1);
-            jsonDatatypeDependencyMap.put(ref, dependency);
+            DATATYPE_DEPENDENCY_MAP.put(ref, dependency);
           }
         }
       }
@@ -81,7 +81,7 @@ public class JsonDatatypeManager
   }
 
   public static JsonNode getJsonDatatypes() {
-    return jsonDatatypes;
+    return JSON_DATA;
   }
 
   public void generateDatatypes(@NotNull ObjectNode definitionsObject) throws IOException {
@@ -90,7 +90,7 @@ public class JsonDatatypeManager
     for (String datatype : CollectionUtil.toIterable(requiredJsonDatatypes.stream()
         .flatMap(datatype -> {
           Stream<String> result;
-          String dependency = jsonDatatypeDependencyMap.get(datatype);
+          String dependency = DATATYPE_DEPENDENCY_MAP.get(datatype);
           if (dependency == null) {
             result = Stream.of(datatype);
           } else {

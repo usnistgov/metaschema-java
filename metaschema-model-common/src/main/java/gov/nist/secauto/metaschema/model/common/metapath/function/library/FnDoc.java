@@ -75,19 +75,22 @@ public final class FnDoc {
     ISequence<? extends IStringItem> arg = FunctionUtils.asType(arguments.get(0));
 
     IItem item = FunctionUtils.getFirstItem(arg, true);
-    if (item == null) {
-      return ISequence.empty();
-    }
 
-    return ISequence.of(fnDoc(FunctionUtils.asType(item), dynamicContext));
+    ISequence<IDocumentNodeItem> retval;
+    if (item == null) {
+      retval = ISequence.empty();
+    } else {
+      retval = ISequence.of(fnDoc(FunctionUtils.asType(item), dynamicContext));
+    }
+    return retval;
   }
 
   /**
    * Dynamically load the document associated with the URI, and return a {@link IDocumentNodeItem}
    * containing the result.
    * <p>
-   * Based on the XPath 3.1
-   * <a href="https://www.w3.org/TR/xpath-functions-31/#func-doc">fn:doc</a> function.
+   * Based on the XPath 3.1 <a href="https://www.w3.org/TR/xpath-functions-31/#func-doc">fn:doc</a>
+   * function.
    * 
    * @param uri
    *          the resource to load the data from
@@ -117,9 +120,9 @@ public final class FnDoc {
 
     try {
       return context.getDocumentLoader().loadAsNodeItem(ObjectUtils.notNull(documentUri.toURL()));
-    } catch (IOException e) {
+    } catch (IOException ex) {
       throw new DocumentFunctionException(DocumentFunctionException.ERROR_RETRIEVING_RESOURCE, String
-          .format("Unable to retrieve the resource identified by the URI '%s'.", documentUri.toString()));
+          .format("Unable to retrieve the resource identified by the URI '%s'.", documentUri.toString()), ex);
     }
   }
 }

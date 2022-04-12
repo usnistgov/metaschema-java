@@ -48,12 +48,12 @@ public class DefaultJsonSerializer<CLASS>
     super(bindingContext, classBinding);
   }
 
-  @NotNull 
+  @NotNull
   protected JsonFactory getJsonFactoryInstance() {
     return JsonFactoryFactory.instance();
   }
 
-  @NotNull 
+  @NotNull
   protected JsonFactory getJsonFactory() {
     synchronized (this) {
       if (jsonFactory == null) {
@@ -81,9 +81,9 @@ public class DefaultJsonSerializer<CLASS>
     try (JsonGenerator generator = newJsonGenerator(writer)) {
       IAssemblyClassBinding classBinding = getClassBinding();
       IJsonWritingContext writingContext = new DefaultJsonWritingContext(generator);
-      
+
       RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
-      
+
       root.writeRoot(data, writingContext);
     }
   }

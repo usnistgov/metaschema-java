@@ -51,7 +51,7 @@ class DefaultAssemblyClassBindingTest
       IAssemblyClassBinding classBinding = getRootAssemblyClassBinding();
 
       RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
-      
+
       Object value = root.readRoot(context);
       assertNotNull(value, "root was null");
     }
@@ -66,7 +66,7 @@ class DefaultAssemblyClassBindingTest
       IAssemblyClassBinding classBinding = getRootAssemblyClassBinding();
 
       RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
-      
+
       Object value = root.readRoot(context);
       assertNotNull(value, "root was null");
     }

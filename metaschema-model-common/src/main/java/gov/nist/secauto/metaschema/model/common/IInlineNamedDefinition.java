@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.model.common;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A trait indicating that the implementation is a localized definition that is
- * declared in-line as an instance.
+ * A trait indicating that the implementation is a localized definition that is declared in-line as
+ * an instance.
  * 
  * @param <INSTANCE>
  *          the associated instance type

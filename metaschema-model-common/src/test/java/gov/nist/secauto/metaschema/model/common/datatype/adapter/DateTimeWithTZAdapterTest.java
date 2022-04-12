@@ -39,7 +39,7 @@ class DateTimeWithTZAdapterTest {
 
   @ParameterizedTest
   @ValueSource(strings = { "2020-12-20T14:47:48.623-05:00" })
-  void testParse(@NotNull String value)  {
+  void testParse(@NotNull String value) {
     ZonedDateTime obj = adapter.parse(value);
     assertNotNull(obj);
   }

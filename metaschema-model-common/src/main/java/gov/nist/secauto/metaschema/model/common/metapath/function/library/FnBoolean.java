@@ -133,7 +133,7 @@ public final class FnBoolean {
    * @return the effective boolean value
    */
   public static boolean fnBooleanAsPrimitive(@NotNull IItem item) {
-    boolean retval = false;
+    boolean retval;
     if (item instanceof IBooleanItem) {
       retval = ((IBooleanItem) item).toBoolean();
     } else if (item instanceof IStringItem) {

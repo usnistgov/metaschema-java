@@ -326,7 +326,6 @@ public class XmlInlineFieldDefinition
       }
     }
 
-
     @Override
     public List<@NotNull ? extends IConstraint> getConstraints() {
       return initModelConstraints().getConstraints();

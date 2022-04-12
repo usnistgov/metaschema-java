@@ -34,7 +34,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 
-public class GeneratedDefinitionClass extends GeneratedClass {
+public class GeneratedDefinitionClass
+    extends GeneratedClass {
   private final boolean rootClass;
 
   /**

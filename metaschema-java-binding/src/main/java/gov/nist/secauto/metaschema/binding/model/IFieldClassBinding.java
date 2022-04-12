@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldValueInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
-
+/**
+ * Represents a Metaschema field bound to a Java plain old java object (POJO) class.
+ */
 public interface IFieldClassBinding extends IClassBinding, IBoundFieldDefinition {
 
   @Override
