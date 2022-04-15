@@ -34,8 +34,8 @@ import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.codegen.property.FieldValuePropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.property.IPropertyGenerator;
 import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,8 +49,9 @@ public class FieldJavaClassGenerator
     extends AbstractJavaClassGenerator<IFieldDefinition> {
   private static final Logger LOGGER = LogManager.getLogger(FieldJavaClassGenerator.class);
 
+  @NotNull
   private final FieldValuePropertyGenerator fieldValueInstance;
-  private boolean hasJsonValueKeyFlag = false;
+  private final boolean jsonValueKeyFlag;
 
   /**
    * Constructs a new class generator based on the provided field definition.
@@ -63,7 +64,7 @@ public class FieldJavaClassGenerator
   public FieldJavaClassGenerator(@NotNull IFieldDefinition definition, @NotNull ITypeResolver typeResolver) {
     super(definition, typeResolver);
     this.fieldValueInstance = newFieldValueInstance();
-    this.hasJsonValueKeyFlag = definition.hasJsonValueKeyFlagInstance();
+    this.jsonValueKeyFlag = definition.hasJsonValueKeyFlagInstance();
   }
 
   @Override
@@ -73,11 +74,15 @@ public class FieldJavaClassGenerator
   }
 
   @Override
-  protected Set<INamedModelDefinition> buildClass(TypeSpec.Builder builder, ClassName className) throws IOException {
+  protected Set<INamedModelDefinition> buildClass(@NotNull TypeSpec.Builder builder, @NotNull ClassName className)
+      throws IOException {
     Set<INamedModelDefinition> retval = new HashSet<>();
     retval.addAll(super.buildClass(builder, className));
 
     AnnotationSpec.Builder metaschemaField = AnnotationSpec.builder(MetaschemaField.class);
+
+    applyCommonProperties(metaschemaField);
+
     boolean isCollapsible = false;
     if (getDefinition().isCollapsible()) {
       if (getDefinition().hasJsonKey()) {
@@ -103,6 +108,7 @@ public class FieldJavaClassGenerator
    * 
    * @return the field's value property instance, or {@code null} if the field's data type is "empty"
    */
+  @NotNull
   public FieldValuePropertyGenerator getFieldValueInstance() {
     return fieldValueInstance;
   }
@@ -114,7 +120,7 @@ public class FieldJavaClassGenerator
    * @return {@code true} if a JSON "value key" is configured, or {@code false} otherwise
    */
   public boolean hasJsonValueKeyFlag() {
-    return hasJsonValueKeyFlag;
+    return jsonValueKeyFlag;
   }
 
   /**
@@ -123,6 +129,7 @@ public class FieldJavaClassGenerator
    * 
    * @return the new property generator
    */
+  @NotNull
   protected final FieldValuePropertyGenerator newFieldValueInstance() {
     FieldValuePropertyGenerator retval = new FieldValuePropertyGenerator(this);
     addPropertyGenerator(retval);

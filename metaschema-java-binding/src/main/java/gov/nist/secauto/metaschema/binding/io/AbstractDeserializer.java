@@ -27,13 +27,13 @@
 package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -51,13 +51,19 @@ public abstract class AbstractDeserializer<CLASS>
    * @param classBinding
    *          the bound class information for the Java type this deserializer is operating on
    */
-  protected AbstractDeserializer(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
+  protected AbstractDeserializer(@NotNull IBindingContext bindingContext, @NotNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
   @Override
-  public IBoundXdmNodeItem deserializeToNodeItem(Reader reader, @Nullable URI documentUri) throws IOException {
-    IBoundXdmNodeItem nodeItem = deserializeToNodeItemInternal(reader, documentUri);
+  public INodeItem deserializeToNodeItem(Reader reader, URI documentUri) throws IOException {
+
+    INodeItem nodeItem;
+    try {
+      nodeItem = deserializeToNodeItemInternal(reader, documentUri);
+    } catch (Exception ex) { // NOPMD - this is intentional
+      throw new IOException(ex);
+    }
 
     if (isValidating()) {
       StaticContext staticContext = new StaticContext();
@@ -70,6 +76,18 @@ public abstract class AbstractDeserializer<CLASS>
     return nodeItem;
   }
 
-  protected abstract IBoundXdmNodeItem deserializeToNodeItemInternal(Reader reader, @Nullable URI documentUri)
+  /**
+   * This abstract method delegates parsing to the concrete implementation.
+   * 
+   * @param reader
+   *          the reader instance to read data from
+   * @param documentUri
+   *          the URI of the document that is being read
+   * @return a new node item containing the read contents
+   * @throws IOException
+   *           if an error occurred while reading data from the stream
+   */
+  @NotNull
+  protected abstract INodeItem deserializeToNodeItemInternal(@NotNull Reader reader, @NotNull URI documentUri)
       throws IOException;
 }

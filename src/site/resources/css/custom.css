@@ -1,7 +1,6 @@
 /* adjust for nist header */
-.navbar-fixed-top {
-    top: 45px;
-    position: absolute;
+.fixed-top {
+    position: ;
 }
 /* reset back to bootswatch */
 body {

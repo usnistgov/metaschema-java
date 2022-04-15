@@ -44,11 +44,6 @@ public interface IEmailAddressItem extends IStringItem {
   }
 
   @Override
-  default IEmailAddressItem toAtomicItem() {
-    return this;
-  }
-
-  @Override
   default IEmailAddressItem newStringItem() {
     return this;
   }

@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.evaluate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.IDocumentLoader;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
@@ -42,7 +42,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.Or;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.RootSlashOnlyPath;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Step;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ValueComparison;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IFlagPathSegment;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
@@ -258,7 +257,6 @@ class MetaschemaPathEvaluationVisitorTest {
     MetaschemaPathEvaluationVisitor visitor = newMetaschemaPathEvaluationVisitor();
 
     IModelNodeItem nodeContext = context.mock(IModelNodeItem.class);
-    IFlagPathSegment segment = context.mock(IFlagPathSegment.class);
     IFlagInstance instance = context.mock(IFlagInstance.class);
     IFlagNodeItem flagNode = context.mock(IFlagNodeItem.class);
 
@@ -270,12 +268,10 @@ class MetaschemaPathEvaluationVisitorTest {
         will(returnValue(nodeContext));
         allowing(nodeContext).getNodeItemType();
         will(returnValue(NodeItemType.ASSEMBLY));
-        allowing(nodeContext).getPathSegment();
-        will(returnValue(segment));
         allowing(nodeContext).getFlagByName(flagName);
         will(returnValue(flagNode));
 
-        allowing(segment).getInstance();
+        allowing(flagNode).getInstance();
         will(returnValue(instance));
 
         allowing(instance).getEffectiveName();

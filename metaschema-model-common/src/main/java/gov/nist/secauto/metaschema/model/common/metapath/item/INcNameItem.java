@@ -43,11 +43,6 @@ public interface INcNameItem extends IStringItem {
   }
 
   @Override
-  default INcNameItem toAtomicItem() {
-    return this;
-  }
-
-  @Override
   default INcNameItem newStringItem() {
     return this;
   }

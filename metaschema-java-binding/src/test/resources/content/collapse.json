@@ -1,0 +1,33 @@
+{ 
+	"root": {
+		"keyed-field-items": {
+			"key1": {
+				"field-value": "value1"
+			} 
+		},
+		"singleton-or-array-assembly-items": {
+		 	"simple-required-singleton-field": "required-value1",
+		 	"simple-required-array-field-items": [  "array-value1", "array-value2" ],
+		 	"flagged-required-singleton-field" : {
+		 		"field-required-flag": "id1",
+		 		"field-value": "field value 1"
+		 	},
+		 	"flagged-required-array-field-items": [
+		 		{ 
+			 		"field-required-flag": "id2",
+			 		"field-value": "field value 2"
+		 		} 
+		 	],
+		 	"collapsible-required-singleton-field": {
+		 		"field-required-flag": "id3",
+		 		"field-value": "field value 3"
+		 	},
+		 	"collapsible-required-array-field-items": [
+		 		{ 
+			 		"field-required-flag": "collapse-id1",
+			 		"field-value": [  "collapse1", "collapse2" ]
+		 		} 
+		 	]
+		}
+	}
+}

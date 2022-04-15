@@ -26,9 +26,10 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,8 +51,14 @@ import java.nio.file.Path;
  *          the Java type into which data can be read
  */
 public interface IDeserializer<CLASS> extends IMutableConfiguration {
+  /**
+   * Determine if the serializer is performing validation.
+   * 
+   * @return {@code true} if the serializer is performing content validation, or {@code false}
+   *         otherwise
+   */
   default boolean isValidating() {
-    return isFeatureEnabled(Feature.DESERIALIZE_VALIDATE);
+    return isFeatureEnabled(Feature.DESERIALIZE_VALIDATE_CONSTRAINTS);
   }
 
   /**
@@ -65,15 +72,14 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
    * @throws IOException
    *           if an error occurred while reading data from the stream
    */
-  default CLASS deserialize(InputStream is, @Nullable URI documentUri) throws IOException {
+  @NotNull
+  default CLASS deserialize(@NotNull InputStream is, @NotNull URI documentUri) throws IOException {
     return deserialize(new InputStreamReader(is), documentUri);
   }
 
   /**
    * Read data from the {@link Path} into a bound class instance.
    * 
-   * @param data
-   *          the instance data
    * @param path
    *          the file to read from
    * @return the instance data
@@ -81,10 +87,10 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
    *           if an error occurred while writing data to the file indicated by the {@code path}
    *           parameter
    */
-  default CLASS deserialize(Path path) throws IOException {
+  @NotNull
+  default CLASS deserialize(@NotNull Path path) throws IOException {
     try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-      CLASS retval = deserialize(reader, path.toUri());
-      return retval;
+      return deserialize(ObjectUtils.notNull(reader), ObjectUtils.notNull(path.toUri()));
     }
   }
 
@@ -97,8 +103,9 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
    * @throws IOException
    *           if an error occurred while reading data from the stream
    */
-  default CLASS deserialize(File file) throws IOException {
-    return deserialize(file.toPath());
+  @NotNull
+  default CLASS deserialize(@NotNull File file) throws IOException {
+    return deserialize(ObjectUtils.notNull(file.toPath()));
   }
 
   /**
@@ -110,11 +117,14 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
    * @return the instance data
    * @throws IOException
    *           if an error occurred while reading data from the stream
+   * @throws URISyntaxException
+   *           if the provided URL is not formatted strictly according to to RFC2396 and cannot be
+   *           converted to a URI.
    */
-  default CLASS deserialize(URL url) throws IOException, URISyntaxException {
+  @NotNull
+  default CLASS deserialize(@NotNull URL url) throws IOException, URISyntaxException {
     try (InputStream in = url.openStream()) {
-      CLASS retval = deserialize(in, url.toURI());
-      return retval;
+      return deserialize(ObjectUtils.notNull(in), ObjectUtils.notNull(url.toURI()));
     }
   }
 
@@ -130,8 +140,9 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
    * @throws IOException
    *           if an error occurred while reading data from the stream
    */
-  default CLASS deserialize(Reader reader, @Nullable URI documentUri) throws IOException {
-    IBoundXdmNodeItem nodeItem = deserializeToNodeItem(reader, documentUri);
+  @NotNull
+  default CLASS deserialize(@NotNull Reader reader, @NotNull URI documentUri) throws IOException {
+    INodeItem nodeItem = deserializeToNodeItem(reader, documentUri);
     return nodeItem.toBoundObject();
   }
 
@@ -146,7 +157,9 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
    * @throws IOException
    *           if an error occurred while reading data from the stream
    */
-  default IBoundXdmNodeItem deserializeToNodeItem(InputStream is, @Nullable URI documentUri) throws IOException {
+  @NotNull
+  default INodeItem deserializeToNodeItem(@NotNull InputStream is, @NotNull URI documentUri)
+      throws IOException {
     return deserializeToNodeItem(new InputStreamReader(is), documentUri);
   }
 
@@ -161,5 +174,6 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration {
    * @throws IOException
    *           if an error occurred while reading data from the stream
    */
-  IBoundXdmNodeItem deserializeToNodeItem(Reader reader, @Nullable URI documentUri) throws IOException;
+  @NotNull
+  INodeItem deserializeToNodeItem(@NotNull Reader reader, @NotNull URI documentUri) throws IOException;
 }

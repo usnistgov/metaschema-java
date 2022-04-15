@@ -33,8 +33,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
@@ -385,9 +387,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * @throws XMLStreamException
    *           if an error occurred while looking at the next event
    */
-  public static boolean isNextEventStartElement(XMLEventReader2 reader, QName name) throws XMLStreamException { // NO_UCD
-                                                                                                                // (unused
-                                                                                                                // code)
+  public static boolean isNextEventStartElement(XMLEventReader2 reader, QName name) throws XMLStreamException {
     XMLEvent nextEvent = reader.peek();
     return nextEvent.isStartElement() && name.equals(nextEvent.asStartElement().getName());
   }
@@ -401,8 +401,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * @throws XMLStreamException
    *           if an error occurred while looking at the next event
    */
-  public static boolean isNextEventEndDocument(XMLEventReader2 reader) throws XMLStreamException { // NO_UCD (unused
-                                                                                                   // code)
+  public static boolean isNextEventEndDocument(XMLEventReader2 reader) throws XMLStreamException {
     return reader.peek().isEndDocument();
   }
 
@@ -463,7 +462,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * @throws XMLStreamException
    *           if an error occurred while looking at the next event
    */
-  public static void assertNext(XMLEventReader2 reader, int presumedEventType) throws XMLStreamException { // NO_UCD (unused code)
+  public static void assertNext(XMLEventReader2 reader, int presumedEventType)
+      throws XMLStreamException {
     assertNext(reader, presumedEventType, null);
   }
 
@@ -504,5 +504,31 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     builder.append("', instead found ")
         .append(toString(retval));
     return builder;
+  }
+
+  /**
+   * Skips events specified by {@code events}.
+   * 
+   * @param reader
+   *          the event reader
+   * @param events
+   *          the events to skip
+   * @return the next non-mataching event returned by {@link XMLEventReader2#peek()}, or {@code null}
+   *         if there was no next event
+   * @throws XMLStreamException
+   *           if an error occurred while reading
+   */
+  public static XMLEvent skipEvents(XMLEventReader2 reader, int... events) throws XMLStreamException {
+    Set<Integer> skipEvents = IntStream.of(events).boxed().collect(Collectors.toSet());
+
+    XMLEvent nextEvent = null;
+    while (reader.hasNext()) {
+      nextEvent = reader.peek();
+      if (!skipEvents.contains(nextEvent.getEventType())) {
+        break;
+      }
+      reader.nextEvent();
+    }
+    return nextEvent;
   }
 }

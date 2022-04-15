@@ -1,0 +1,24 @@
+<xb:config
+	xmlns:test="http://csrc.nist.gov/ns/metaschema/test-suite/1.0"
+	xmlns:xb="http://xml.apache.org/xmlbeans/2004/02/xbean/config"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xml.apache.org/xmlbeans/2004/02/xbean/config
+                      http://svn.apache.org/viewvc/xmlbeans/trunk/src/main/schema/config/xmlconfig.xsd?view=co">
+	<xb:namespace
+		uri="http://csrc.nist.gov/ns/metaschema/test-suite/1.0">
+		<xb:package>gov.nist.secauto.metaschema.model.testing.xmlbeans</xb:package>
+	</xb:namespace>
+
+	<xb:usertype name="test:GenerationResultType"
+		javaname="java.lang.Boolean">
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.testing.xmlbeans.handler.GenerationResultType</xb:staticHandler>
+	</xb:usertype>
+	<xb:usertype name="test:ValidationResultType"
+		javaname="java.lang.Boolean">
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.testing.xmlbeans.handler.ValidationResultType</xb:staticHandler>
+	</xb:usertype>
+	<xb:usertype name="test:FormatType"
+		javaname="gov.nist.secauto.metaschema.binding.io.Format">
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.testing.xmlbeans.handler.FormatType</xb:staticHandler>
+	</xb:usertype>
+</xb:config>

@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 /**
- * Provides interfaces, abstract implementation classes, and excptions that are used in Metaschema
+ * Provides interfaces, abstract implementation classes, and exceptions that are used in Metaschema
  * APIs.
  */
 

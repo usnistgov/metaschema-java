@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance;
 
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
+import gov.nist.secauto.metaschema.model.common.IInstance;
 
 import java.util.Collections;
 import java.util.List;

@@ -28,27 +28,30 @@ package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfiguration;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
-import gov.nist.secauto.metaschema.model.UsedDefinitionModelWalker;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.common.UsedDefinitionModelWalker;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
+// TODO: make this test do some testing or delete it
 class JavaGeneratorTest {
-  // @TempDir
-  // File generationDir;
-  File generationDir = new File("target/generated-sources/metaschema");
+  @TempDir
+  Path generationDir;
+  // Path generationDir = Paths.get("target/generated-sources/metaschema");
 
   @Disabled
   @Test
@@ -67,6 +70,7 @@ class JavaGeneratorTest {
     }
 
     DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
+
     JavaGenerator.generate(metaschema, generationDir, bindingConfiguration);
 
     ConstraintValidatingModelWalker walker = new ConstraintValidatingModelWalker();

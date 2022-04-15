@@ -35,12 +35,6 @@ public class MetaschemaException
   private static final long serialVersionUID = 1L;
 
   /**
-   * Create a new Metaschema exception.
-   */
-  public MetaschemaException() {
-  }
-
-  /**
    * Create a new Metaschema exception with a provided message.
    * 
    * @param message

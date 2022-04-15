@@ -49,6 +49,7 @@ public class FindingCollectingConstraintValidationHandler
     return highestLevel;
   }
 
+  @Override
   protected void newFinding(
       @NotNull IConstraint constraint,
       @NotNull INodeItem node,

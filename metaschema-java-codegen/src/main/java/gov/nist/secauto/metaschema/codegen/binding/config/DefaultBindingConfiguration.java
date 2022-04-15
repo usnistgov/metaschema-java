@@ -34,11 +34,12 @@ import gov.nist.secauto.metaschema.codegen.xmlbeans.MetaschemaBindingsType;
 import gov.nist.secauto.metaschema.codegen.xmlbeans.ModelBindingType;
 import gov.nist.secauto.metaschema.codegen.xmlbeans.ObjectDefinitionBindingType;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
 import org.apache.xmlbeans.XmlException;
 import org.glassfish.jaxb.core.api.impl.NameConverter;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,22 +47,16 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class DefaultBindingConfiguration implements IBindingConfiguration {
-  private Map<String, String> namespaceToPackageNameMap = new HashMap<>();
+  private final Map<String, String> namespaceToPackageNameMap = new HashMap<>();
   // metaschema location -> ModelType -> Definition Name -> IBindingConfiguration
   private final Map<String, MetaschemaBindingConfiguration> metaschemaUrlToMetaschemaBindingConfigurationMap
       = new HashMap<>();
-
-  /**
-   * Create a new binding configuration.
-   */
-  public DefaultBindingConfiguration() {
-
-  }
 
   @Override
   public String getPackageNameForMetaschema(IMetaschema metaschema) {
@@ -97,6 +92,12 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
       retval = NameConverter.standard.toClassName(definition.getName());
     }
     return retval;
+  }
+
+  @Override
+  public @NotNull String getClassName(@NotNull IMetaschema metaschema) {
+    // TODO: make this configurable
+    return NameConverter.standard.toClassName(metaschema.getShortName() + "Metaschema");
   }
 
   /**
@@ -137,7 +138,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   protected String getPackageNameForNamespace(String namespace) {
     String packageName = namespaceToPackageNameMap.get(namespace);
     if (packageName == null) {
-      packageName = NameConverter.standard.toPackageName(namespace.toString());
+      packageName = NameConverter.standard.toPackageName(namespace);
     }
     return packageName;
   }
@@ -201,6 +202,11 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
     return retval;
   }
 
+  public void load(Path file) throws MalformedURLException, IOException, MetaschemaException {
+    URL resource = file.toUri().toURL();
+    load(resource);
+  }
+
   public void load(File file) throws MalformedURLException, IOException, MetaschemaException {
     URL resource = file.toURI().toURL();
     load(resource);
@@ -262,6 +268,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
       String name = fieldBinding.getName();
       IDefinitionBindingConfiguration config = metaschemaConfig.getFieldDefinitionBindingConfig(name);
       config = processDefinitionBindingConfiguration(config, fieldBinding);
+      metaschemaConfig.addFieldDefinitionBindingConfig(name, config);
     }
   }
 

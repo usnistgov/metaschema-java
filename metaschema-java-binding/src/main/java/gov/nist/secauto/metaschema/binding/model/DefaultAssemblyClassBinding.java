@@ -30,6 +30,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
+import gov.nist.secauto.metaschema.binding.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
@@ -37,17 +38,13 @@ import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
-import gov.nist.secauto.metaschema.binding.model.annotations.Field;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-import gov.nist.secauto.metaschema.binding.model.property.DefaultAssemblyProperty;
-import gov.nist.secauto.metaschema.binding.model.property.DefaultFieldProperty;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundAssemblyInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedInstance;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundNamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
@@ -57,14 +54,14 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
-import gov.nist.secauto.metaschema.model.common.instance.IChoiceInstance;
-import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.stax2.XMLEventReader2;
-import org.codehaus.stax2.XMLStreamWriter2;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -82,19 +79,22 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 
 public class DefaultAssemblyClassBinding
     extends AbstractClassBinding
     implements IAssemblyClassBinding {
   private static final Logger LOGGER = LogManager.getLogger(DefaultAssemblyClassBinding.class);
 
+  private final MetaschemaAssembly metaschemaAssembly;
+  private Map<@NotNull String, IBoundNamedModelInstance> modelInstances;
+  private final QName xmlRootQName;
+  private IAssemblyConstraintSupport constraints;
+
   /**
-   * Create a new {@link IClassBinding} for a Java bean annotated with the {@link Assembly}
+   * Create a new {@link IClassBinding} for a Java bean annotated with the {@link BoundAssembly}
    * annotation.
    * 
    * @param clazz
@@ -103,17 +103,14 @@ public class DefaultAssemblyClassBinding
    *          the Metaschema binding environment context
    * @return the Metaschema assembly binding for the class
    */
-  public static DefaultAssemblyClassBinding createInstance(Class<?> clazz, IBindingContext bindingContext) {
+  @NotNull
+  public static DefaultAssemblyClassBinding createInstance(@NotNull Class<?> clazz,
+      @NotNull IBindingContext bindingContext) {
     return new DefaultAssemblyClassBinding(clazz, bindingContext);
   }
 
-  private final MetaschemaAssembly metaschemaAssembly;
-  private Map<String, IBoundNamedModelInstance> modelInstances;
-  private final QName xmlRootQName;
-  private IAssemblyConstraintSupport constraints;
-
   /**
-   * Construct a new {@link IClassBinding} for a Java bean annotated with the {@link Assembly}
+   * Construct a new {@link IClassBinding} for a Java bean annotated with the {@link BoundAssembly}
    * annotation.
    * 
    * @param clazz
@@ -121,27 +118,20 @@ public class DefaultAssemblyClassBinding
    * @param bindingContext
    *          the class binding context for which this class is participating
    */
-  @SuppressWarnings("PMD")
-  protected DefaultAssemblyClassBinding(Class<?> clazz, IBindingContext bindingContext) {
+  protected DefaultAssemblyClassBinding(@NotNull Class<?> clazz, @NotNull IBindingContext bindingContext) {
     super(clazz, bindingContext);
     Objects.requireNonNull(clazz, "clazz");
     if (!clazz.isAnnotationPresent(MetaschemaAssembly.class)) {
       throw new IllegalArgumentException(
-          String.format("Class '%s' is missing the '%' annotation.", clazz.getName(),
-              MetaschemaAssembly.class.getName()));
+          String.format("Class '%s' is missing the '%s' annotation.",
+              clazz.getName(),
+              MetaschemaAssembly.class.getName())); // NOPMD
     }
-    this.metaschemaAssembly = clazz.getAnnotation(MetaschemaAssembly.class);
-    String namespace = ModelUtil.resolveNamespace(this.metaschemaAssembly.rootNamespace(), this, false);
+    this.metaschemaAssembly = ObjectUtils.notNull(clazz.getAnnotation(MetaschemaAssembly.class));
+    String namespace = ObjectUtils.notNull(ModelUtil.resolveNamespace(this.metaschemaAssembly.rootNamespace(), this));
     String localName = ModelUtil.resolveLocalName(this.metaschemaAssembly.rootName(), null);
-    if (localName != null) {
-      if (namespace != null) {
-        this.xmlRootQName = new QName(namespace, localName);
-      } else {
-        this.xmlRootQName = new QName(localName);
-      }
-    } else {
-      this.xmlRootQName = null;
-    }
+
+    this.xmlRootQName = localName == null ? null : new QName(namespace, localName);
   }
 
   /**
@@ -152,6 +142,16 @@ public class DefaultAssemblyClassBinding
    */
   public MetaschemaAssembly getMetaschemaAssemblyAnnotation() {
     return metaschemaAssembly;
+  }
+
+  @Override
+  public boolean isInline() {
+    return false;
+  }
+
+  @Override
+  public IBoundAssemblyInstance getInlineInstance() {
+    return null;
   }
 
   @Override
@@ -191,7 +191,7 @@ public class DefaultAssemblyClassBinding
     }
 
     for (java.lang.reflect.Field field : fields) {
-      if (!field.isAnnotationPresent(Assembly.class) && !field.isAnnotationPresent(Field.class)) {
+      if (!field.isAnnotationPresent(BoundAssembly.class) && !field.isAnnotationPresent(BoundField.class)) {
         // skip fields that aren't a field or assembly instance
         continue;
       }
@@ -205,81 +205,146 @@ public class DefaultAssemblyClassBinding
     return Collections.unmodifiableCollection(retval);
   }
 
+  protected Stream<gov.nist.secauto.metaschema.binding.model.IBoundNamedModelInstance>
+      getModelInstanceFieldStream(Class<?> clazz) {
+    Stream<gov.nist.secauto.metaschema.binding.model.IBoundNamedModelInstance> superInstances;
+    Class<?> superClass = clazz.getSuperclass();
+    if (superClass == null) {
+      superInstances = Stream.empty();
+    } else {
+      // get instances from superclass
+      superInstances = getModelInstanceFieldStream(superClass);
+    }
+
+    return Stream.concat(superInstances, Arrays.stream(clazz.getDeclaredFields())
+        // skip this field, since it is ignored
+        .filter(field -> !field.isAnnotationPresent(Ignore.class))
+        .map(field -> newModelInstance(field))
+        // skip fields that aren't a field or assembly instance
+        .filter(Objects::nonNull)
+        .map(ObjectUtils::notNull));
+  }
+
+  protected IBoundNamedModelInstance newModelInstance(@NotNull java.lang.reflect.Field field) {
+    IBoundNamedModelInstance retval = null;
+    if (field.isAnnotationPresent(BoundAssembly.class)) {
+      retval = DefaultAssemblyProperty.createInstance(this, field);
+    } else if (field.isAnnotationPresent(BoundField.class)) {
+      retval = DefaultFieldProperty.createInstance(this, field);
+      // modelInstances.put(instance.getEffectiveName(), instance);
+    }
+    // TODO: handle choice
+    return retval;
+  }
+
   /**
    * Initialize the flag instances for this class.
    */
-  protected synchronized void initalizeModelInstances() {
-    if (this.modelInstances == null) {
-      Map<String, IBoundNamedModelInstance> modelInstances = new LinkedHashMap<>();
-      for (java.lang.reflect.Field field : getModelInstanceFields(getBoundClass())) {
-
-        Assembly assemblyAnnotation = field.getAnnotation(Assembly.class);
-        if (assemblyAnnotation == null) {
-          Field fieldAnnotation = field.getAnnotation(Field.class);
-          if (fieldAnnotation != null) {
-            DefaultFieldProperty instance = DefaultFieldProperty.createInstance(this, field);
-            modelInstances.put(instance.getEffectiveName(), instance);
-          }
-        } else {
-          DefaultAssemblyProperty instance = DefaultAssemblyProperty.createInstance(this, field);
-          modelInstances.put(instance.getEffectiveName(), instance);
-        }
+  protected void initalizeModelInstances() {
+    synchronized (this) {
+      if (this.modelInstances == null) {
+        this.modelInstances = getModelInstanceFieldStream(getBoundClass())
+            .collect(Collectors.toMap(instance -> instance.getEffectiveName(), Function.identity(),
+                CustomCollectors.useLastMapper(),
+                LinkedHashMap::new));
       }
-      this.modelInstances
-          = modelInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(modelInstances);
     }
   }
 
   @Override
-  public DefaultAssemblyClassBinding getClassBinding() {
-    return this;
-  }
-
-  @Override
-  public Collection<? extends IBoundNamedModelInstance> getModelInstances() {
+  public Collection<@NotNull ? extends IBoundNamedModelInstance> getModelInstances() {
     return getNamedModelInstances();
   }
 
   @Override
-  public Map<String, ? extends IBoundNamedModelInstance> getNamedModelInstanceMap() {
+  public IBoundNamedModelInstance getModelInstanceByName(String name) {
+    return getNamedModelInstanceMap().get(name);
+  }
+
+  @SuppressWarnings("null")
+  @NotNull
+  private Map<@NotNull String, ? extends IBoundNamedModelInstance> getNamedModelInstanceMap() {
     initalizeModelInstances();
     return modelInstances;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public Map<String, ? extends IBoundNamedInstance> getNamedInstances(Predicate<IBoundFlagInstance> flagFilter) {
-    return Stream.concat(super.getNamedInstances(flagFilter).values().stream(), getModelInstances().stream())
-        .collect(Collectors.toMap(IBoundNamedInstance::getJsonName, Function.identity()));
+  public Collection<@NotNull ? extends IBoundNamedModelInstance> getNamedModelInstances() {
+    return getNamedModelInstanceMap().values();
   }
 
   @Override
-  public Map<String, ? extends IBoundFieldInstance> getFieldInstanceMap() {
-    return Collections.unmodifiableMap(
-        getNamedModelInstances().stream().filter(x -> x instanceof IBoundFieldInstance)
-            .map(x -> (IBoundFieldInstance) x)
-            .collect(Collectors.toMap(IBoundFieldInstance::getEffectiveName, Function.identity())));
+  public Map<@NotNull String, ? extends IBoundNamedInstance>
+      getNamedInstances(Predicate<IBoundFlagInstance> flagFilter) {
+    return ObjectUtils.notNull(Stream.concat(
+        super.getNamedInstances(flagFilter).values().stream()
+            .map(ObjectUtils::notNull),
+        getNamedModelInstances().stream())
+        .collect(
+            Collectors.toMap(instance -> instance.getJsonName(), Function.identity(), CustomCollectors.useLastMapper(),
+                LinkedHashMap::new)));
+  }
+
+  @NotNull
+  private Map<@NotNull String, ? extends IBoundFieldInstance> getFieldInstanceMap() {
+    return ObjectUtils.notNull(getNamedModelInstances().stream()
+        .filter(instance -> instance instanceof IBoundFieldInstance)
+        .map(instance -> (IBoundFieldInstance) instance)
+        .map(ObjectUtils::notNull)
+        .collect(Collectors.toMap(IBoundFieldInstance::getEffectiveName, Function.identity(),
+            CustomCollectors.useLastMapper(),
+            LinkedHashMap::new)));
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Collection<@NotNull ? extends IFieldInstance> getFieldInstances() {
+    return getFieldInstanceMap().values();
   }
 
   @Override
-  public Map<String, ? extends IBoundAssemblyInstance> getAssemblyInstanceMap() {
-    return Collections.unmodifiableMap(getNamedModelInstances().stream()
-        .filter(x -> x instanceof IBoundAssemblyInstance).map(x -> (IBoundAssemblyInstance) x)
-        .collect(Collectors.toMap(IBoundAssemblyInstance::getEffectiveName, Function.identity())));
+  public IBoundFieldInstance getFieldInstanceByName(String name) {
+    return getFieldInstanceMap().get(name);
+  }
+
+  @NotNull
+  private Map<@NotNull String, ? extends IBoundAssemblyInstance> getAssemblyInstanceMap() {
+    return ObjectUtils.notNull(getNamedModelInstances().stream()
+        .filter(instance -> instance instanceof IBoundAssemblyInstance)
+        .map(instance -> (IBoundAssemblyInstance) instance)
+        .map(ObjectUtils::notNull)
+        .collect(Collectors.toMap(IBoundAssemblyInstance::getEffectiveName, Function.identity(),
+            CustomCollectors.useLastMapper(),
+            LinkedHashMap::new)));
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public @NotNull Collection<@NotNull ? extends IAssemblyInstance> getAssemblyInstances() {
+    return getAssemblyInstanceMap().values();
+  }
+
+  @Override
+  public IBoundAssemblyInstance getAssemblyInstanceByName(String name) {
+    return getAssemblyInstanceMap().get(name);
   }
 
   @Override
   public List<? extends IChoiceInstance> getChoiceInstances() {
     // choices are not exposed by this API
-    return Collections.emptyList();
+    return CollectionUtil.emptyList();
   }
 
   /**
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.
    */
-  protected synchronized void checkModelConstraints() {
-    if (constraints == null) {
-      constraints = new AssemblyConstraintSupport(this);
+  protected void checkModelConstraints() {
+    synchronized (this) {
+      if (constraints == null) {
+        constraints = new AssemblyConstraintSupport(this);
+      }
     }
   }
 
@@ -331,94 +396,23 @@ public class DefaultAssemblyClassBinding
     return constraints.getHasCardinalityConstraints();
   }
 
-  // TODO: this is unused, remove it
   @Override
-  public Object readRoot(IXmlParsingContext context) throws XMLStreamException, BindingException, IOException {
+  public Object readObject(IJsonParsingContext context) throws IOException {
+    JsonParser parser = context.getReader(); // NOPMD - intentional
 
-    QName rootQName = getRootXmlQName();
-    XMLEventReader2 eventReader = context.getReader();
+    JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
 
-    if (eventReader.peek().isStartDocument()) {
-      eventReader.next();
+    try {
+      Object instance = newInstance();
+
+      readInternal(instance, null, context);
+
+      // advance past the end object
+      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
+      return instance;
+    } catch (BindingException ex) {
+      throw new IOException(String.format("Failed to parse JSON object for '%s'", getBoundClass().getName()), ex);
     }
-
-    XmlEventUtil.skipWhitespace(eventReader);
-
-    XmlEventUtil.assertNext(eventReader, XMLEvent.START_ELEMENT, rootQName);
-
-    Object instance = newInstance();
-
-    callBeforeDeserialize(instance, null);
-
-    StartElement rootStart = eventReader.nextEvent().asStartElement();
-    readInternal(null, instance, rootStart, context);
-
-    XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.END_ELEMENT, rootQName);
-
-    callAfterDeserialize(instance, null);
-
-    return instance;
-  }
-
-  @Override
-  public Object readRoot(IJsonParsingContext context) throws BindingException, IOException {
-    String[] ignoreFieldsArray = getMetaschemaAssemblyAnnotation().ignoreRootJsonProperties();
-
-    Set<String> ignoreRootFields;
-    if (ignoreFieldsArray == null || ignoreFieldsArray.length == 0) {
-      ignoreRootFields = Collections.emptySet();
-    } else {
-      ignoreRootFields = new HashSet<>(Arrays.asList(ignoreFieldsArray));
-    }
-
-    String rootFieldName = getRootJsonName();
-    JsonToken token;
-    JsonParser parser = context.getReader();
-
-    // first read the initial START_OBJECT
-    JsonUtil.consumeAndAssert(parser, JsonToken.START_OBJECT);
-
-    Object instance = newInstance();
-
-    callBeforeDeserialize(instance, null);
-
-    boolean foundRoot = false;
-    while (!JsonToken.END_OBJECT.equals(token = parser.nextToken())) {
-      if (!JsonToken.FIELD_NAME.equals(token)) {
-        throw new BindingException(String.format("Expected FIELD_NAME token, found '%s'", token.toString()));
-      }
-
-      String fieldName = parser.currentName();
-      if (fieldName.equals(rootFieldName)) {
-        foundRoot = true;
-        // process the object value, bound to the requested class
-        JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-        JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-        readInternal(null, instance, context);
-
-      } else if (ignoreRootFields.contains(fieldName)) {
-        // ignore the field
-        JsonUtil.skipNextValue(parser);
-      } else {
-        if (!context.getProblemHandler().handleUnknownRootProperty(instance, this, fieldName, context)) {
-          LOGGER.warn("Skipping unhandled top-level JSON field '{}'.", fieldName);
-          JsonUtil.skipNextValue(parser);
-        }
-      }
-    }
-
-    JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
-
-    // advance past the end object
-    parser.nextToken();
-
-    if (!foundRoot) {
-      throw new BindingException(String.format("Failed to find root field '%s'.", rootFieldName));
-    }
-
-    callAfterDeserialize(instance, null);
-
-    return instance;
   }
 
   @Override
@@ -435,35 +429,57 @@ public class DefaultAssemblyClassBinding
     for (IBoundNamedModelInstance property : unhandledProperties) {
       // use the default value of the collector
       property.setValue(instance, property.newPropertyCollector().getValue());
-
     }
   }
 
   @Override
-  public List<Object> readItem(Object parentInstance, IJsonParsingContext context) throws IOException {
+  public List<Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
+      throws IOException {
+
+    JsonUtil.assertCurrent(context.getReader(), JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
+
     try {
       Object instance = newInstance();
-  
-      callBeforeDeserialize(instance, parentInstance);
-  
-      readInternal(parentInstance, instance, context);
-  
-      callAfterDeserialize(instance, parentInstance);
-  
-      return Collections.singletonList(instance);
+
+      readInternal(instance, parentInstance, context);
+
+      return CollectionUtil.singletonList(instance);
     } catch (BindingException ex) {
       throw new IOException(ex);
     }
   }
 
-  protected void readInternal(@SuppressWarnings("unused") Object parentInstance, Object instance,
-      IJsonParsingContext context) throws IOException {
-    JsonParser jsonParser = context.getReader();
+  /**
+   * Parses the JSON field contents related to the bound assembly.
+   * <p>
+   * This method expects the parser's current token to be at the first field name to parse.
+   * <p>
+   * After parsing the current token will be the token at the end object immediately after all the
+   * fields and values.
+   * 
+   * @param instance
+   *          the bound object to read data into
+   * @param parentInstance
+   *          the parent object used for deserialization callbacks
+   * @param context
+   *          the JSON parser
+   * @throws IOException
+   *           if an error occurred while reading the JSON
+   */
+  protected void readInternal(@NotNull Object instance, @Nullable Object parentInstance,
+      @NotNull IJsonParsingContext context) throws IOException {
+    JsonParser parser = context.getReader(); // NOPMD - intentional
 
-    JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME);
+    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
+
+    try {
+      callBeforeDeserialize(instance, parentInstance);
+    } catch (BindingException ex) {
+      throw new IOException("an error occured calling the beforeDeserialize() method");
+    }
 
     IBoundFlagInstance jsonKey = getJsonKeyFlagInstance();
-    Map<String, ? extends IBoundNamedInstance> properties;
+    Map<@NotNull String, ? extends IBoundNamedInstance> properties;
     if (jsonKey == null) {
       properties = getNamedInstances(null);
     } else {
@@ -472,19 +488,21 @@ public class DefaultAssemblyClassBinding
       });
 
       // if there is a json key, the first field will be the key
-      String key = jsonParser.getCurrentName();
-      // advance past the FIELD_NAME
-      jsonParser.nextToken();
+      String key = ObjectUtils.notNull(parser.getCurrentName());
+
       Object value = jsonKey.readValueFromString(key);
       jsonKey.setValue(instance, value.toString());
 
+      // advance past the FIELD_NAME
       // next the value will be a start object
-      JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
+      JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
+      //
+      // JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_OBJECT);
     }
 
     Set<String> handledProperties = new HashSet<>();
-    while (!JsonToken.END_OBJECT.equals(jsonParser.currentToken())) {
-      String propertyName = jsonParser.getCurrentName();
+    while (!JsonToken.END_OBJECT.equals(parser.currentToken())) {
+      String propertyName = parser.getCurrentName();
       IBoundNamedInstance property = properties.get(propertyName);
 
       boolean handled = false;
@@ -497,64 +515,35 @@ public class DefaultAssemblyClassBinding
       } else {
         if (LOGGER.isWarnEnabled()) {
           LOGGER.warn("Unrecognized property named '{}' at '{}'", propertyName,
-              JsonUtil.toString(jsonParser.getCurrentLocation()));
+              JsonUtil.toString(parser.getCurrentLocation()));
         }
-        JsonUtil.assertAndAdvance(jsonParser, JsonToken.FIELD_NAME);
-        JsonUtil.skipNextValue(jsonParser);
+        JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
+        JsonUtil.skipNextValue(parser);
       }
     }
 
     // set undefined properties
-    for (Map.Entry<String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
+    // TODO: re-implement this by removing the parsed properties from the properties map to speed up
+    for (Map.Entry<@NotNull String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
       if (!handledProperties.contains(entry.getKey())) {
         // use the default value of the collector
-        IBoundNamedInstance property = entry.getValue();
+        IBoundNamedInstance property = ObjectUtils.notNull(entry.getValue());
         property.setValue(instance, property.newPropertyCollector().getValue());
       }
     }
 
     if (jsonKey != null) {
       // read the END_OBJECT for the JSON key value
-      JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_OBJECT);
-    }
-  }
-
-  @Override
-  public void writeRoot(Object instance, IXmlWritingContext context) throws XMLStreamException, IOException {
-
-    XMLStreamWriter2 writer = context.getWriter();
-
-    writer.writeStartDocument("UTF-8", "1.0");
-
-    QName rootQName = getRootXmlQName();
-
-    NamespaceContext nsContext = writer.getNamespaceContext();
-    String prefix = nsContext.getPrefix(rootQName.getNamespaceURI());
-    if (prefix == null) {
-      prefix = "";
+      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
     }
 
-    writer.writeStartElement(prefix, rootQName.getLocalPart(), rootQName.getNamespaceURI());
+    try {
+      callAfterDeserialize(instance, parentInstance);
+    } catch (BindingException ex) {
+      throw new IOException("an error occured calling the afterDeserialize() method");
+    }
 
-    writeItem(instance, rootQName, context);
-
-    writer.writeEndElement();
-  }
-
-  @Override
-  public void writeRoot(Object instance, IJsonWritingContext context) throws IOException {
-
-    JsonGenerator writer = context.getWriter();
-
-    // first read the initial START_OBJECT
-    writer.writeStartObject();
-
-    writer.writeFieldName(getRootJsonName());
-
-    writeInternal(instance, true, context);
-
-    // end of root object
-    writer.writeEndObject();
+    JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
   }
 
   /**
@@ -571,16 +560,17 @@ public class DefaultAssemblyClassBinding
    * @throws NullPointerException
    *           if there is a JSON key configured and the key property's value is {@code null}
    */
-  protected void writeInternal(Object instance, boolean writeObjectWrapper, IJsonWritingContext context)
+  protected void writeInternal(@NotNull Object instance, boolean writeObjectWrapper,
+      @NotNull IJsonWritingContext context)
       throws IOException {
-    JsonGenerator writer = context.getWriter();
+    JsonGenerator writer = context.getWriter(); // NOPMD - intentional
 
     if (writeObjectWrapper) {
       writer.writeStartObject();
     }
 
     IBoundFlagInstance jsonKey = getJsonKeyFlagInstance();
-    Map<String, ? extends IBoundNamedInstance> properties;
+    Map<@NotNull String, ? extends IBoundNamedInstance> properties;
     if (jsonKey == null) {
       properties = getNamedInstances(null);
     } else {
@@ -589,7 +579,8 @@ public class DefaultAssemblyClassBinding
       });
 
       // if there is a json key, the first field will be the key
-      String key = jsonKey.getValueAsString(instance);
+      Object flagValue = jsonKey.getValue(instance);
+      String key = jsonKey.getValueAsString(flagValue);
       if (key == null) {
         throw new IOException(new NullPointerException("Null key value"));
       }
@@ -600,7 +591,7 @@ public class DefaultAssemblyClassBinding
     }
 
     for (IBoundNamedInstance property : properties.values()) {
-      property.write(instance, context);
+      ObjectUtils.notNull(property).write(instance, context);
     }
 
     if (jsonKey != null) {
@@ -622,7 +613,8 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper, IJsonWritingContext context)
+  public void writeItems(Collection<@NotNull ? extends Object> items, boolean writeObjectWrapper,
+      IJsonWritingContext context)
       throws IOException {
     for (Object item : items) {
       writeInternal(item, writeObjectWrapper, context);
@@ -640,7 +632,7 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public String getName() {
-    return isRoot() ? getRootName() : super.getName();
+  protected Class<? extends AbstractBoundMetaschema> getMetaschemaClass() {
+    return getMetaschemaAssemblyAnnotation().metaschema();
   }
 }

@@ -37,7 +37,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInst
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IMetaschemaContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.MetaschemaInstanceEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
-import gov.nist.secauto.metaschema.model.common.metapath.function.XPathFunctions;
+import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnBoolean;
+import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
@@ -129,7 +130,7 @@ public class MetapathExpression {
     Object retval;
     switch (resultType) {
     case BOOLEAN:
-      retval = XPathFunctions.fnBoolean(result).toBoolean();
+      retval = FnBoolean.fnBoolean(result).toBoolean();
       break;
     case NODE:
       retval = FunctionUtils.getFirstItem(result, false);
@@ -143,7 +144,7 @@ public class MetapathExpression {
       break;
     case STRING:
       IItem item = FunctionUtils.getFirstItem(result, false);
-      retval = item == null ? "" : XPathFunctions.fnDataItem(item).asString();
+      retval = item == null ? "" : FnData.fnDataItem(item).asString();
       break;
     default:
       throw new UnsupportedOperationException(String.format("unsupported result type '%s'", resultType.name()));

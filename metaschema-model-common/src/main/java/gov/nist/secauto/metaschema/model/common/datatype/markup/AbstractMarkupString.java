@@ -75,22 +75,27 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   }
 
   @Override
-  public void toHtmlAsStream(OutputStream os, String namespace, String prefix) throws XMLStreamException {
-
-    String effectiveNamespace = namespace == null ? DEFAULT_HTML_NS : namespace;
-    String effectivePrefix = prefix == null ? DEFAULT_HTML_PREFIX : prefix;
-
+  public void toHtmlAsStream(@NotNull XMLStreamWriter2 xmlStreamWriter, String namespace)
+      throws XMLStreamException {
     MarkupXmlStreamWriter writingVisitor
-        = new MarkupXmlStreamWriter(effectiveNamespace, this instanceof MarkupMultiline);
+        = new MarkupXmlStreamWriter(namespace, this instanceof MarkupMultiline);
+    writingVisitor.visitChildren(getDocument(), xmlStreamWriter);
+    xmlStreamWriter.flush();
+  }
 
+  @Override
+  public void toHtmlAsStream(OutputStream os, String namespace, String prefix) throws XMLStreamException {
     XMLOutputFactory2 factory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
     factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
     XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
+
+    String effectiveNamespace = namespace == null ? DEFAULT_HTML_NS : namespace;
+    String effectivePrefix = prefix == null ? DEFAULT_HTML_PREFIX : prefix;
     NamespaceContext nsContext = MergedNsContext.construct(xmlStreamWriter.getNamespaceContext(),
         List.of(NamespaceEventImpl.constructNamespace(null, effectivePrefix, effectiveNamespace)));
     xmlStreamWriter.setNamespaceContext(nsContext);
-    writingVisitor.visitChildren(getDocument(), xmlStreamWriter);
-    xmlStreamWriter.flush();
+
+    toHtmlAsStream(xmlStreamWriter, effectiveNamespace);
   }
 
   @Override
@@ -109,7 +114,8 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   }
 
   @NotNull
-  protected String toMarkdown(Formatter formatter) {
+  @Override
+  public String toMarkdown(Formatter formatter) {
     return formatter.render(getDocument());
   }
 

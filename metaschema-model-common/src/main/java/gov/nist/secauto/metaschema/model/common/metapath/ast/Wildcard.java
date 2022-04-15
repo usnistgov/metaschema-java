@@ -37,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-public class Wildcard implements INameExpression<IStringItem> {
+public class Wildcard implements IExpression {
 
   @SuppressWarnings("null")
   @Override

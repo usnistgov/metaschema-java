@@ -26,9 +26,164 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.freemarker.support.AbstractFreemarkerGenerator;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ModelWalker;
 
-public abstract class AbstractSchemaGenerator
-    extends AbstractFreemarkerGenerator
-    implements SchemaGenerator {
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+
+public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
+
+  @NotNull
+  protected IInlineStrategy newInlineStrategy(@NotNull IConfiguration configuration,
+      @NotNull Collection<@NotNull ? extends INamedDefinition> definitions) {
+    IInlineStrategy retval;
+    if (!configuration.isFeatureEnabled(Feature.INLINE_DEFINITIONS)) {
+      retval = IInlineStrategy.NONE_INLINE;
+    } else if (configuration.isFeatureEnabled(Feature.INLINE_CHOICE_DEFINITIONS)) {
+      retval = IInlineStrategy.DEFINED_AS_INLINE;
+    } else {
+      retval = new ChoiceInlineStrategy(definitions);
+    }
+    return retval;
+  }
+
+  private static class ChoiceInlineStrategy implements IInlineStrategy {
+    @NotNull
+    private final Map<gov.nist.secauto.metaschema.model.common.INamedDefinition, Boolean> definitionInlinedMap;
+
+    public ChoiceInlineStrategy(@NotNull Collection<@NotNull ? extends INamedDefinition> definitions) {
+      ChoiceModelWalker walker = new ChoiceModelWalker();
+      for (INamedDefinition definition : definitions) {
+        walker.walkDefinition(definition);
+      }
+      definitionInlinedMap = walker.getDefinitionInlinedMap();
+    }
+
+    @Override
+    public boolean isInline(@NotNull INamedDefinition definition) {
+      Boolean inlined = definitionInlinedMap.get(definition);
+      return inlined == null ? false : inlined;
+    }
+  }
+
+  private static class ChoiceModelWalker
+      extends ModelWalker<@NotNull Integer> {
+    @NotNull
+    private final Map<gov.nist.secauto.metaschema.model.common.INamedDefinition, Boolean> definitionInlinedMap
+        = new HashMap<>(); // NOPMD - intentional
+    private final Stack<gov.nist.secauto.metaschema.model.common.INamedDefinition> visitStack = new Stack<>();
+
+    @NotNull
+    protected Map<gov.nist.secauto.metaschema.model.common.INamedDefinition, Boolean> getDefinitionInlinedMap() {
+      return CollectionUtil.unmodifiableMap(definitionInlinedMap);
+    }
+
+    /**
+     * Update the inline status based on the following logic.
+     * <p>
+     * If the current status is {@code null} or {@code true}, then use the provided inline status.
+     * <p>
+     * Otherwise, keep the status as-is.
+     * 
+     * @param definition
+     *          the target definition
+     * @param inline
+     *          the status to update to
+     */
+    protected void updateInlineStatus(@NotNull INamedDefinition definition, boolean inline) {
+      Boolean value = definitionInlinedMap.get(definition);
+
+      if (value == null || (value && value != inline)) {
+        definitionInlinedMap.put(definition, inline);
+      } // or leave it as-is
+    }
+
+    @Override
+    protected Integer getDefaultData() {
+      return 0;
+    }
+
+    private boolean isChoiceSibling(@NotNull INamedInstance instance) {
+      INamedModelDefinition containingDefinition = instance.getContainingDefinition();
+      return containingDefinition instanceof IAssemblyDefinition
+          && !((IAssemblyDefinition) containingDefinition).getChoiceInstances().isEmpty();
+    }
+
+    @Override
+    protected boolean visit(@NotNull IFlagInstance instance, @NotNull Integer data) {
+      if (isChoiceSibling(instance)) {
+        // choice siblings must not be inline
+        updateInlineStatus(instance.getDefinition(), false);
+      }
+      return true;
+    }
+
+    @Override
+    protected boolean visit(@NotNull IFieldInstance instance, @NotNull Integer data) {
+      if (isChoiceSibling(instance)) {
+        // choice siblings must not be inline
+        updateInlineStatus(instance.getDefinition(), false);
+      }
+      return true;
+    }
+
+    @Override
+    protected boolean visit(@NotNull IAssemblyInstance instance, @NotNull Integer data) {
+      if (isChoiceSibling(instance)) {
+        // choice siblings must not be inline
+        updateInlineStatus(instance.getDefinition(), false);
+      }
+      return true;
+    }
+
+    @Override
+    protected void visit(@NotNull IFlagDefinition def, @NotNull Integer choiceDepth) {
+      updateInlineStatus(def, def.isInline());
+    }
+
+    @Override
+    protected boolean visit(@NotNull IFieldDefinition def, @NotNull Integer choiceDepth) {
+      boolean inline = def.isInline() && choiceDepth == 0;
+      updateInlineStatus(def, inline);
+      return true;
+    }
+
+    @Override
+    protected boolean visit(@NotNull IAssemblyDefinition def, @NotNull Integer choiceDepth) {
+      boolean inline = def.isInline() && choiceDepth == 0;
+      updateInlineStatus(def, inline);
+      return true;
+    }
+
+    @Override
+    public void walk(@NotNull IAssemblyDefinition def, @NotNull Integer choiceDepth) {
+      if (!visitStack.contains(def)) {
+        visitStack.push(def);
+        // ignore depth on children, since they can make their own decision
+        super.walk(def, 0);
+        visitStack.pop();
+      }
+    }
+
+    @Override
+    public void walk(@NotNull IChoiceInstance instance, @NotNull Integer choiceDepth) {
+      int newDepth = choiceDepth.intValue() + 1;
+      super.walk(instance, newDepth);
+    }
+  }
 }

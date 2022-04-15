@@ -26,11 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.util;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
-import gov.nist.secauto.metaschema.model.UsedDefinitionModelWalker;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
+import gov.nist.secauto.metaschema.model.common.UsedDefinitionModelWalker;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,6 +57,7 @@ class UsedDefinitionModelWalkerTest {
 
     Collection<@NotNull ? extends IDefinition> definitions
         = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
+    assertFalse(definitions.isEmpty(), "no definitions found");
 
     if (LOGGER.isDebugEnabled()) {
       for (IDefinition definition : definitions) {

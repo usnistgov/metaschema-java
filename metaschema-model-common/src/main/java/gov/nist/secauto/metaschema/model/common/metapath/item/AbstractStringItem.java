@@ -41,8 +41,4 @@ public abstract class AbstractStringItem
     return getValue();
   }
 
-  @Override
-  public String toString() {
-    return asString();
-  }
 }

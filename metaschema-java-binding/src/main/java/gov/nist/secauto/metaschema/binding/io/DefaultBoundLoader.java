@@ -38,8 +38,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmDocumentNodeItem;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
@@ -59,9 +59,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 /**
- * A default implementation of a {@link IBoundLoader}.
+ * A default implementation of an {@link IBoundLoader}.
  */
-public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
+public class DefaultBoundLoader implements IBoundLoader {
   public static final int LOOK_AHEAD_BYTES = 32_768;
   @NotNull
   private static final JsonFactory JSON_FACTORY = new JsonFactory();
@@ -81,10 +81,10 @@ public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
    * @param bindingContext
    *          the Metaschema binding context to use to load Java types
    */
-  public DefaultBoundLoader(IBindingContext bindingContext) {
+  public DefaultBoundLoader(@NotNull IBindingContext bindingContext) {
     this.bindingContext = bindingContext;
     this.configuration = new DefaultMutableConfiguration();
-    this.configuration.enableFeature(Feature.DESERIALIZE_ROOT);
+    this.configuration.enableFeature(Feature.DESERIALIZE_JSON_ROOT_PROPERTY);
   }
 
   @Override
@@ -103,7 +103,7 @@ public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
   }
 
   @Override
-  public Map<Feature, Boolean> getFeatureSettings() {
+  public Map<@NotNull Feature, Boolean> getFeatureSettings() {
     return configuration.getFeatureSettings();
   }
 
@@ -129,7 +129,7 @@ public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
 
   // TODO: consolidate this with the similar load class
   @Override
-  public IBoundXdmDocumentNodeItem loadAsNodeItem(InputStream is, URI documentUri) throws IOException {
+  public IDocumentNodeItem loadAsNodeItem(InputStream is, URI documentUri) throws IOException {
     BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES);
     bis.mark(LOOK_AHEAD_BYTES);
 
@@ -163,22 +163,22 @@ public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
   }
 
   @NotNull
-  protected <CLASS> IBoundXdmDocumentNodeItem loadAsNodeItem(@NotNull IDeserializer<CLASS> deserializer,
+  protected <CLASS> IDocumentNodeItem loadAsNodeItem(@NotNull IDeserializer<CLASS> deserializer,
       @NotNull InputStream is,
       @NotNull URI documentUri)
       throws IOException {
-    return (IBoundXdmDocumentNodeItem) deserializer.deserializeToNodeItem(is, documentUri);
+    return (IDocumentNodeItem) deserializer.deserializeToNodeItem(is, documentUri);
   }
 
   @Override
   public <CLASS> CLASS load(Class<CLASS> clazz, InputStream is, URI documentUri) throws IOException {
     // we cannot close this stream, since it will cause the underlying stream to be closed
     BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES);
-    bis.mark(LOOK_AHEAD_BYTES);
 
-    DataFormatMatcher matcher = matchFormat(bis);
-
+    DataFormatMatcher matcher;
     try {
+      bis.mark(LOOK_AHEAD_BYTES);
+      matcher = matchFormat(bis);
       bis.reset();
     } catch (IOException ex) {
       throw new IOException("Unable to reset input stream before parsing", ex);
@@ -193,7 +193,7 @@ public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
   protected <CLASS> CLASS loadAsObject(@NotNull IDeserializer<CLASS> deserializer, @NotNull InputStream is,
       @NotNull URI documentUri)
       throws IOException {
-    IBoundXdmNodeItem nodeItem = loadAsNodeItem(deserializer, is, documentUri);
+    INodeItem nodeItem = loadAsNodeItem(deserializer, is, documentUri);
     return nodeItem.toBoundObject();
   }
 
@@ -296,12 +296,14 @@ public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
 
   protected Class<?> detectModelJsonClass(@NotNull JsonParser parser) throws IOException {
     Class<?> retval = null;
-    JsonUtil.consumeAndAssert(parser, JsonToken.START_OBJECT);
+    JsonUtil.advanceAndAssert(parser, JsonToken.START_OBJECT);
     outer: while (JsonToken.FIELD_NAME.equals(parser.nextToken())) {
       String name = parser.getCurrentName();
       switch (name) {
       case "$schema":
-        JsonUtil.skipNextValue(parser);
+        // do nothing
+        parser.nextToken();
+        // JsonUtil.skipNextValue(parser);
         break;
       default:
         retval = getBoundClassForJsonName(name);
@@ -311,6 +313,7 @@ public class DefaultBoundLoader implements IBoundLoader, IMutableConfiguration {
     return retval;
   }
 
+  @NotNull
   protected <CLASS> IDeserializer<CLASS> getDeserializer(@NotNull Class<CLASS> clazz, @NotNull Format format,
       @NotNull IConfiguration config) {
     IDeserializer<CLASS> retval = getBindingContext().newDeserializer(format, clazz);

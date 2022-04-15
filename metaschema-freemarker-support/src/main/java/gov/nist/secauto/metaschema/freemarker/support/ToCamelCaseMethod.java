@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.freemarker.support;
 
 import java.util.List;
+import java.util.Locale;
 
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModelException;
@@ -44,10 +45,10 @@ public class ToCamelCaseMethod implements TemplateMethodModelEx {
     StringBuilder builder = new StringBuilder();
     for (String segment : text.split("\\p{Punct}")) {
       if (segment.length() > 0) {
-        builder.append(segment.substring(0, 1).toUpperCase());
+        builder.append(segment.substring(0, 1).toUpperCase(Locale.ROOT));
       }
       if (segment.length() > 1) {
-        builder.append(segment.substring(1).toLowerCase());
+        builder.append(segment.substring(1).toLowerCase(Locale.ROOT));
       }
     }
     return builder.toString();

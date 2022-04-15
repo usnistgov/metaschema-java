@@ -28,6 +28,10 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * This marker interface identifies a valued {@link IItem} type that has an associated
+ * {@link IAnyAtomicItem} value.
+ */
 public interface IAtomicValuedItem extends IValuedItem {
 
   /**

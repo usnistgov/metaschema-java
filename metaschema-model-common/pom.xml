@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
@@ -21,18 +23,22 @@
 
 	<description>A simple metaschema-model-common.</description>
 
-	<!-- 	<repositories> -->
-	<!-- 		<repository> -->
-	<!-- 			<snapshots> -->
-	<!-- 				<enabled>false</enabled> -->
-	<!-- 			</snapshots> -->
-	<!-- 			<id>central</id> -->
-	<!-- 			<name>bintray</name> -->
-	<!-- 			<url>https://jcenter.bintray.com</url> -->
-	<!-- 		</repository> -->
-	<!-- 	</repositories> -->
+	<!-- <repositories> -->
+	<!-- <repository> -->
+	<!-- <snapshots> -->
+	<!-- <enabled>false</enabled> -->
+	<!-- </snapshots> -->
+	<!-- <id>central</id> -->
+	<!-- <name>bintray</name> -->
+	<!-- <url>https://jcenter.bintray.com</url> -->
+	<!-- </repository> -->
+	<!-- </repositories> -->
 
 	<dependencies>
+		<dependency>
+			<groupId>com.google.auto.service</groupId>
+			<artifactId>auto-service</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4-runtime</artifactId>
@@ -49,6 +55,15 @@
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-yaml</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.erosb</groupId>
+			<artifactId>everit-json-schema</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>com.vladsch.flexmark</groupId>
 			<artifactId>flexmark</artifactId>
@@ -115,15 +130,11 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.jetbrains</groupId>
-			<artifactId>annotations</artifactId>
-		</dependency>
-		<!-- 		<dependency> -->
-		<!-- 			<groupId>org.eclipse.jdt</groupId> -->
-		<!-- 			<artifactId>org.eclipse.jdt.annotation</artifactId> -->
-		<!-- 			<scope>provided</scope> -->
-		<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.eclipse.jdt</groupId> -->
+		<!-- <artifactId>org.eclipse.jdt.annotation</artifactId> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-params</artifactId>
@@ -152,7 +163,7 @@
 					<artifactId>maven-pmd-plugin</artifactId>
 					<configuration>
 						<excludeRoots>
-							<excludeRoot>${project.build.directory}/generated-sources/antlr4</excludeRoot>
+							<excludeRoot>target/generated-sources/antlr4</excludeRoot>
 						</excludeRoots>
 					</configuration>
 				</plugin>
@@ -180,27 +191,21 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--
 			<plugin>
-				<groupId>com.khubla.antlr</groupId>
-				<artifactId>antlr4test-maven-plugin</artifactId>
-				<configuration>
-					<verbose>false</verbose>
-					<showTree>false</showTree>
-					<entryPoint>auxilary</entryPoint>
-					<grammarName>metapath10</grammarName>
-					<packageName />
-					<exampleFiles>examples/</exampleFiles>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test</goal>
-						</goals>
-					</execution>
-				</executions>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>com.google.auto.service</groupId>
+						<artifactId>auto-service</artifactId>
+						<version>${dependency.auto-service.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
--->
+			<!-- <plugin> <groupId>com.khubla.antlr</groupId> <artifactId>antlr4test-maven-plugin</artifactId> 
+				<configuration> <verbose>false</verbose> <showTree>false</showTree> <entryPoint>auxilary</entryPoint> 
+				<grammarName>metapath10</grammarName> <packageName /> <exampleFiles>examples/</exampleFiles> 
+				</configuration> <executions> <execution> <goals> <goal>test</goal> </goals> 
+				</execution> </executions> </plugin> -->
 		</plugins>
 	</build>
 </project>

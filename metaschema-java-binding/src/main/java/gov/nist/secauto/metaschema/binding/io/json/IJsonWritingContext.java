@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.binding.io.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import gov.nist.secauto.metaschema.binding.io.context.IWritingContext;
+import gov.nist.secauto.metaschema.binding.io.IWritingContext;
 
 public interface IJsonWritingContext extends IWritingContext<JsonGenerator> {
 }

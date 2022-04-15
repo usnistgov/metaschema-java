@@ -93,11 +93,13 @@ public class AbstractExpressionEvaluationVisitor implements IExpressionEvaluatio
     return result;
   }
 
+  @SuppressWarnings("unused")
   protected <ITEM_TYPE extends IItem> boolean shouldVisitNextChild(IExpression expr, ISequence<ITEM_TYPE> result,
       INodeContext context) {
     return true;
   }
 
+  @SuppressWarnings("unused")
   @NotNull
   protected <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> aggregateResult(@NotNull ISequence<ITEM_TYPE> result,
       @NotNull ISequence<?> childResult) {
@@ -109,10 +111,11 @@ public class AbstractExpressionEvaluationVisitor implements IExpressionEvaluatio
     return ISequence.empty();
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public ISequence<?> visit(IExpression expr, INodeContext context) {
+  public <T extends IItem> ISequence<T> visit(IExpression expr, INodeContext context) {
     ISequence<?> retval = expr.accept(this, context);
-    return retval;
+    return (ISequence<T>) retval;
   }
 
   @Override

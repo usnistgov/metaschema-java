@@ -36,25 +36,63 @@ public final class DatatypesHandler {
     // disable construction
   }
 
-  public static IJavaTypeAdapter<?> decodeFieldDatatypesType(SimpleValue target) {
-    return decode(target);
+  /**
+   * Given an XMLBeans value, return the {@link IJavaTypeAdapter} instance with the given name, as
+   * determined by {@link IJavaTypeAdapter#getName()}.
+   * 
+   * @param value
+   *          the name of the data type
+   * @return the data type instance
+   */
+  public static IJavaTypeAdapter<?> decodeFieldDatatypesType(SimpleValue value) {
+    return decode(value);
   }
 
+  /**
+   * Given a data type instance, set the name of the data type, as determined by
+   * {@link IJavaTypeAdapter#getName()}, in the provided target XMLBeans value.
+   * 
+   * @param datatype
+   *          the data type instance
+   * @param target
+   *          XMLBeans value to apply the name to
+   */
   public static void encodeFieldDatatypesType(IJavaTypeAdapter<?> datatype, SimpleValue target) {
     encode(datatype, target);
   }
 
-  public static IJavaTypeAdapter<?> decodeSimpleDatatypesType(SimpleValue target) {
-    return decode(target);
+  /**
+   * Given an XMLBeans value, return the {@link IJavaTypeAdapter} instance with the given name, as
+   * determined by {@link IJavaTypeAdapter#getName()}.
+   * 
+   * @param value
+   *          the name of the data type
+   * @return the data type instance
+   */
+  public static IJavaTypeAdapter<?> decodeSimpleDatatypesType(SimpleValue value) {
+    return decode(value);
   }
 
+  /**
+   * Given a data type instance, set the name of the data type, as determined by
+   * {@link IJavaTypeAdapter#getName()}, in the provided target XMLBeans value.
+   * 
+   * @param datatype
+   *          the data type instance
+   * @param target
+   *          XMLBeans value to apply the name to
+   */
   public static void encodeSimpleDatatypesType(IJavaTypeAdapter<?> datatype, SimpleValue target) {
     encode(datatype, target);
   }
 
   private static IJavaTypeAdapter<?> decode(SimpleValue target) {
     String name = target.getStringValue();
-    return DataTypeService.getInstance().getJavaTypeAdapterByName(name);
+    IJavaTypeAdapter<?> retval = DataTypeService.getInstance().getJavaTypeAdapterByName(name);
+    if (retval == null) {
+      throw new IllegalStateException("Unable to find data type: " + name);
+    }
+    return retval;
   }
 
   private static void encode(IJavaTypeAdapter<?> datatype, SimpleValue target) {

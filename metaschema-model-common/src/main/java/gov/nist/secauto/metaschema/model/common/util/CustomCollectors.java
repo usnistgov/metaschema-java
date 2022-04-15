@@ -28,7 +28,11 @@ package gov.nist.secauto.metaschema.model.common.util;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -57,5 +61,48 @@ public final class CustomCollectors {
           String.join(", ", list.subList(0, last)),
           list.get(last));
     };
+  }
+
+  public static <T, K, V> Collector<T, ?, Map<K, V>> toMap(
+      @NotNull Function<? super T, ? extends K> keyMapper,
+      @NotNull Function<? super T, ? extends V> valueMapper,
+      @NotNull DuplicateHandler<K, V> duplicateHander) {
+    return Collector.of(
+        HashMap::new,
+        (map, item) -> {
+          K key = keyMapper.apply(item);
+          V value = Objects.requireNonNull(valueMapper.apply(item));
+          V oldValue = map.get(key);
+          if (oldValue != null) {
+            value = duplicateHander.handle(key, oldValue, value);
+          }
+          map.put(key, value);
+        },
+        (map1, map2) -> {
+          map2.forEach((key, value) -> {
+            V oldValue = map1.get(key);
+            if (oldValue != null) {
+              value = duplicateHander.handle(key, oldValue, value);
+            }
+            map1.put(key, value);
+          });
+          return map1;
+        });
+  }
+
+  @FunctionalInterface
+  public interface DuplicateHandler<K, V> {
+    @NotNull
+    V handle(K key, @NotNull V value1, V value2);
+  }
+
+  @NotNull
+  public static <T> BinaryOperator<T> useFirstMapper() {
+    return (value1, value2) -> value1;
+  }
+
+  @NotNull
+  public static <T> BinaryOperator<T> useLastMapper() {
+    return (value1, value2) -> value2;
   }
 }

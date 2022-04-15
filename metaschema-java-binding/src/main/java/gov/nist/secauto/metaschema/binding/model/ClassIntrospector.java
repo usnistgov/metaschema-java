@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public final class ClassIntrospector {
+final class ClassIntrospector {
   private ClassIntrospector() {
     // disable construction
   }

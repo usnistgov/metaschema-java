@@ -26,6 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.IModelInstance;
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
@@ -38,28 +48,21 @@ import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IModelInstance;
-import gov.nist.secauto.metaschema.model.definitions.IXmlAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.instances.IXmlAssemblyInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlChoiceInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlFieldInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
-import gov.nist.secauto.metaschema.model.instances.IXmlNamedModelInstance;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
+public class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - intentional
 
   @NotNull
   private final GlobalAssemblyDefinitionType xmlAssembly;
   @NotNull
-  private final XmlMetaschema metaschema;
+  private final IMetaschema metaschema;
   private XmlFlagContainerSupport flagContainer;
   private XmlModelContainerSupport modelContainer;
   private IAssemblyConstraintSupport constraints;
@@ -84,60 +87,107 @@ public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
    * 
    * @return the underlying XML data
    */
+  @NotNull
   protected GlobalAssemblyDefinitionType getXmlAssembly() {
     return xmlAssembly;
   }
 
   @Override
-  public boolean isGlobal() {
-    return true;
-  }
-
-  @Override
-  public XmlMetaschema getContainingMetaschema() {
+  public IMetaschema getContainingMetaschema() {
     return metaschema;
   }
 
-  @SuppressWarnings("null")
-  protected synchronized void initFlagContainer() {
-    if (flagContainer == null) {
-      flagContainer = new XmlFlagContainerSupport(getXmlAssembly(), this);
+  /**
+   * Lazy initialize the flag instances associated with this definition.
+   * 
+   * @return the flag container
+   */
+  protected XmlFlagContainerSupport initFlagContainer() {
+    synchronized (this) {
+      if (flagContainer == null) {
+        flagContainer = new XmlFlagContainerSupport(getXmlAssembly(), this);
+      }
+      return flagContainer;
     }
   }
 
+  @NotNull
+  private Map<@NotNull String, ? extends IFlagInstance> getFlagInstanceMap() {
+    return initFlagContainer().getFlagInstanceMap();
+  }
+
   @Override
-  public Map<@NotNull String, ? extends IXmlFlagInstance> getFlagInstanceMap() {
-    initFlagContainer();
-    return flagContainer.getFlagInstanceMap();
+  public IFlagInstance getFlagInstanceByName(String name) {
+    return getFlagInstanceMap().get(name);
   }
 
   @SuppressWarnings("null")
-  protected synchronized void initModelContainer() {
-    if (modelContainer == null) {
-      modelContainer = new XmlModelContainerSupport(getXmlAssembly(), this);
+  @Override
+  public Collection<@NotNull ? extends IFlagInstance> getFlagInstances() {
+    return getFlagInstanceMap().values();
+  }
+
+  /**
+   * Lazy initialize the model instances associated with this definition.
+   */
+  protected void initModelContainer() {
+    synchronized (this) {
+      if (modelContainer == null) {
+        modelContainer = new XmlModelContainerSupport(getXmlAssembly(), this);
+      }
     }
   }
 
-  @Override
-  public Map<@NotNull String, ? extends IXmlNamedModelInstance> getNamedModelInstanceMap() {
+  private Map<@NotNull String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
     initModelContainer();
     return modelContainer.getNamedModelInstanceMap();
   }
 
   @Override
-  public Map<@NotNull String, ? extends IXmlFieldInstance> getFieldInstanceMap() {
+  public @Nullable INamedModelInstance getModelInstanceByName(String name) {
+    return getNamedModelInstanceMap().get(name);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public @NotNull Collection<@NotNull ? extends INamedModelInstance> getNamedModelInstances() {
+    return getNamedModelInstanceMap().values();
+  }
+
+  private Map<@NotNull String, ? extends IFieldInstance> getFieldInstanceMap() {
     initModelContainer();
     return modelContainer.getFieldInstanceMap();
   }
 
   @Override
-  public Map<@NotNull String, ? extends IXmlAssemblyInstance> getAssemblyInstanceMap() {
+  public IFieldInstance getFieldInstanceByName(String name) {
+    return getFieldInstanceMap().get(name);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Collection<@NotNull ? extends IFieldInstance> getFieldInstances() {
+    return getFieldInstanceMap().values();
+  }
+
+  private Map<@NotNull String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
     initModelContainer();
     return modelContainer.getAssemblyInstanceMap();
   }
 
   @Override
-  public List<@NotNull ? extends IXmlChoiceInstance> getChoiceInstances() {
+  public IAssemblyInstance getAssemblyInstanceByName(String name) {
+    return getAssemblyInstanceMap().get(name);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Collection<@NotNull ? extends IAssemblyInstance> getAssemblyInstances() {
+    return getAssemblyInstanceMap().values();
+  }
+
+  @Override
+  public List<@NotNull ? extends IChoiceInstance> getChoiceInstances() {
     initModelContainer();
     return modelContainer.getChoiceInstances();
   }
@@ -152,12 +202,14 @@ public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.
    */
-  protected synchronized void checkModelConstraints() {
-    if (constraints == null) {
-      if (getXmlAssembly().isSetConstraint()) {
-        constraints = new AssemblyConstraintSupport(getXmlAssembly().getConstraint());
-      } else {
-        constraints = IAssemblyConstraintSupport.NULL_CONSTRAINT;
+  protected void checkModelConstraints() {
+    synchronized (this) {
+      if (constraints == null) {
+        if (getXmlAssembly().isSetConstraint()) {
+          constraints = new AssemblyConstraintSupport(getXmlAssembly().getConstraint());
+        } else {
+          constraints = IAssemblyConstraintSupport.NULL_CONSTRAINT;
+        }
       }
     }
   }
@@ -210,6 +262,16 @@ public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
     return constraints.getHasCardinalityConstraints();
   }
 
+  @Override
+  public boolean isInline() {
+    return false;
+  }
+
+  @Override
+  public INamedInstance getInlineInstance() {
+    return null;
+  }
+
   @SuppressWarnings("null")
   @Override
   public String getName() {
@@ -222,18 +284,15 @@ public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
   }
 
   @Override
-  public String getXmlNamespace() {
-    return getContainingMetaschema().getXmlNamespace().toString();
-  }
-
-  @Override
   public String getFormalName() {
-    return getXmlAssembly().getFormalName();
+    return getXmlAssembly().isSetFormalName() ? getXmlAssembly().getFormalName() : null;
   }
 
+  @SuppressWarnings("null")
   @Override
   public MarkupLine getDescription() {
-    return MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription());
+    return getXmlAssembly().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription())
+        : null;
   }
 
   @Override
@@ -245,7 +304,7 @@ public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
   public IFlagInstance getJsonKeyFlagInstance() {
     IFlagInstance retval = null;
     if (hasJsonKey()) {
-      retval = getFlagInstanceByName(getXmlAssembly().getJsonKey().getFlagName());
+      retval = getFlagInstanceByName(getXmlAssembly().getJsonKey().getFlagRef());
     }
     return retval;
   }
@@ -263,13 +322,10 @@ public class XmlGlobalAssemblyDefinition implements IXmlAssemblyDefinition {
   @SuppressWarnings("null")
   @Override
   public ModuleScopeEnum getModuleScope() {
-    ModuleScopeEnum retval = IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
-    if (getXmlAssembly().isSetScope()) {
-      retval = getXmlAssembly().getScope();
-    }
-    return retval;
+    return getXmlAssembly().isSetScope() ? getXmlAssembly().getScope() : IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
   }
 
+  @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
     return getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : null;

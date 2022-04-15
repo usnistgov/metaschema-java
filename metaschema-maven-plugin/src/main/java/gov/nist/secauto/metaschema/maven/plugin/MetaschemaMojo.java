@@ -44,7 +44,6 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -403,7 +402,7 @@ public class MetaschemaMojo
 
       try {
         getLog().info("Generating Java classes in: " + getOutputDirectory().getPath());
-        JavaGenerator.generate(metaschemaCollection, getOutputDirectory(), bindingConfiguration);
+        JavaGenerator.generate(metaschemaCollection, getOutputDirectory().toPath(), bindingConfiguration);
       } catch (IOException ex) {
         throw new MojoExecutionException("Creation of Java classes failed.", ex);
       }
@@ -411,7 +410,8 @@ public class MetaschemaMojo
       // create the stale file
       staleFileDirectory.mkdirs();
       try (OutputStream os
-          = Files.newOutputStream(staleFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
+          = Files.newOutputStream(staleFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE,
+              StandardOpenOption.TRUNCATE_EXISTING)) {
         os.close();
         getLog().info("Created stale file: " + staleFile);
       } catch (IOException ex) {

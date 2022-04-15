@@ -27,39 +27,15 @@
 package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-public class ModelUtil {
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-  // public static <T, R> List<R> deepCopyList(T parent, Class<R> clazz, List<R> parameter, boolean
-  // useEmpty) {
-  // List<R> retval;
-  // if (parameter == null) {
-  // retval = null;
-  // } else if (useEmpty && parameter.isEmpty()) {
-  // retval = Collections.emptyList();
-  // } else {
-  // // get the copy constructor
-  // final Constructor<R> constructor;
-  // try {
-  // constructor = clazz.getConstructor(clazz);
-  // } catch (NoSuchMethodException | SecurityException ex) {
-  // throw new RuntimeException(ex);
-  // }
-  //
-  // retval = parameter.stream()
-  // .filter(Objects::nonNull)
-  // .map(item -> {
-  // try {
-  // return constructor.newInstance(item);
-  // } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-  // | InvocationTargetException ex) {
-  // throw new RuntimeException(ex);
-  // }
-  // })
-  // .collect(Collectors.toCollection(ArrayList::new));
-  // }
-  // return retval;
-  // }
+public final class ModelUtil {
+  private ModelUtil() {
+    // disable construction
+  }
 
   /**
    * Resolves a provided local name value. If the value is {@code null} or "##default", then the
@@ -77,16 +53,26 @@ public class ModelUtil {
     if (value == null || "##default".equals(value)) {
       retval = defaultValue;
     } else if ("##none".equals(value)) {
-      retval = null;
+      retval = null; // NOPMD - intentional
     } else {
       retval = value;
     }
     return retval;
   }
 
+  @Nullable
+  public static String resolveOptionalNamespace(String annotationValue, IClassBinding classBinding) {
+    return resolveNamespace(annotationValue, classBinding, true);
+  }
+
+  @NotNull
+  public static String resolveNamespace(String annotationValue, IClassBinding classBinding) {
+    return ObjectUtils.notNull(resolveNamespace(annotationValue, classBinding, false));
+  }
+
   /**
    * Resolves a provided namespace value. If the value is {@code null} or "##default", then the
-   * provided default value will be used instead. If the value is {@code null} or "##default", then a
+   * provided default value will be used instead. If the value is {@code null} or "##none", then a
    * {@code null} value will be used if allowNone is {@code true}. Otherwise, the value is returned.
    * 
    * @param value
@@ -95,20 +81,15 @@ public class ModelUtil {
    *          a class with the {@link XmlSchema} annotation
    * @param allowNone
    *          if the "##none" value is honored
-   * @return the resolved value
+   * @return the resolved value or {@code null} if no namespace is defined
    */
-  public static String resolveNamespace(String value, IClassBinding classBinding, boolean allowNone) {
+  private static String resolveNamespace(String value, IClassBinding classBinding, boolean allowNone) {
     String retval;
     if (value == null || "##default".equals(value)) {
-      // get namespace from package-info
-      XmlSchema xmlSchema = classBinding.getBoundClass().getPackage().getAnnotation(XmlSchema.class);
-      if (xmlSchema == null) {
-        retval = "";
-      } else {
-        retval = xmlSchema.namespace();
-      }
+      // get namespace from the metaschema
+      retval = classBinding.getContainingMetaschema().getXmlNamespace().toASCIIString();
     } else if (allowNone && "##none".equals(value)) {
-      retval = null;
+      retval = null; // NOPMD - intentional
     } else {
       retval = value;
     }

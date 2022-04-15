@@ -26,11 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+
 import org.jetbrains.annotations.NotNull;
 
 public interface IValuedItem extends IItem {
   /**
-   * Get the item's "wrapped" value.
+   * Get the item's "wrapped" value. This "wrapped" value may be a Java type managed by a
+   * {@link IJavaTypeAdapter} or a primitive type provided by the Java standard library.
    * 
    * @return the value
    */

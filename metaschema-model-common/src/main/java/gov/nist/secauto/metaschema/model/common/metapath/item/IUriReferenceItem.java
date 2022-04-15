@@ -44,9 +44,4 @@ public interface IUriReferenceItem extends IAnyUriItem {
       throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.URI_REFERENCE.cast(item);
   }
-
-  @Override
-  default IUriReferenceItem toAtomicItem() {
-    return this;
-  }
 }

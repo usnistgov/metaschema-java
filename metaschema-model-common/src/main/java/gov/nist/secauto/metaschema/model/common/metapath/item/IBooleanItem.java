@@ -59,4 +59,9 @@ public interface IBooleanItem extends IAnyAtomicItem {
   }
 
   public boolean toBoolean();
+
+  @NotNull
+  default IBooleanItem negate() {
+    return this.toBoolean() ? FALSE : TRUE;
+  }
 }

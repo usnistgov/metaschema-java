@@ -26,65 +26,59 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.format;
 
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IRootAssemblyNodeItem;
+
 import org.jetbrains.annotations.NotNull;
 
-import java.util.stream.Collectors;
+public class MetapathFormatter implements IPathFormatter {
 
-class MetapathFormatter implements IPathFormatter {
-
-  public MetapathFormatter() {
-  }
-
-  protected String getEffectiveName(IDefinitionPathSegment segment) {
-    return segment.getInstance().getEffectiveName();
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public String format(IPathSegment segment) {
-    return segment.getPathStream().map(pathSegment -> {
-      return pathSegment.format(this);
-    }).collect(Collectors.joining("/"));
+  @NotNull
+  protected String getEffectiveName(INodeItem nodeItem) {
+    INamedInstance instance = nodeItem.getInstance();
+    return instance == null ? nodeItem.getDefinition().getEffectiveName() : instance.getEffectiveName();
   }
 
   @Override
-  public @NotNull String formatPathSegment(@NotNull IDocumentPathSegment segment) {
-    // this will result in a slash being generated using the join
+  public String formatDocument(IDocumentNodeItem document) {
+    // this will result in a slash being generated using the join in the format method
     return "";
   }
 
   @Override
-  public String formatPathSegment(IFlagPathSegment segment) {
-    return "@" + getEffectiveName(segment);
+  public String formatRootAssembly(@NotNull IRootAssemblyNodeItem root) {
+    return root.getDefinition().getRootName();
   }
 
   @Override
-  public String formatPathSegment(IFieldPathSegment segment) {
-    return formatModelPathSegment(segment);
+  public String formatAssembly(@NotNull IAssemblyNodeItem assembly) {
+    // TODO: does it make sense to use this for an intermediate that has no parent?
+    return formatModelPathSegment(assembly);
   }
 
-  @SuppressWarnings("null")
   @Override
-  public String formatPathSegment(IAssemblyPathSegment segment) {
-    String retval;
-    if (segment instanceof IRootAssemblyPathSegment) {
-      StringBuilder builder = new StringBuilder();
-      builder.append(getEffectiveName(segment));
-      retval = builder.toString();
-    } else {
-      // TODO: does it make sense to use this for an intermediate that has no parent?
-      retval = formatModelPathSegment(segment);
-    }
-    return retval;
+  public String formatField(IFieldNodeItem field) {
+    return formatModelPathSegment(field);
+  }
+
+  @Override
+  public String formatFlag(IFlagNodeItem flag) {
+    return "@" + getEffectiveName(flag);
   }
 
   @SuppressWarnings("null")
   @NotNull
-  protected String formatModelPathSegment(IModelPositionalPathSegment segment) {
-    StringBuilder builder = new StringBuilder(getEffectiveName(segment));
-    builder.append('[');
-    builder.append(segment.getPosition());
-    builder.append(']');
+  protected String formatModelPathSegment(IModelNodeItem item) {
+    StringBuilder builder = new StringBuilder(getEffectiveName(item))
+        .append('[')
+        .append(item.getPosition())
+        .append(']');
     return builder.toString();
   }
 }

@@ -58,6 +58,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("PMD")
 final class ConstraintFactory {
   private ConstraintFactory() {
     // disable
@@ -66,6 +67,7 @@ final class ConstraintFactory {
   static Map<String, DefaultAllowedValue> toAllowedValues(AllowedValuesType xmlConstraint) {
     Map<String, DefaultAllowedValue> allowedValues = new LinkedHashMap<>(xmlConstraint.sizeOfEnumArray());
     for (EnumDocument.Enum1 xmlEnum : xmlConstraint.getEnumList()) {
+      @SuppressWarnings("null")
       DefaultAllowedValue allowedValue
           = new DefaultAllowedValue(xmlEnum.getValue(), MarkupStringConverter.toMarkupString(xmlEnum));
       allowedValues.put(allowedValue.getValue(), allowedValue);
@@ -81,6 +83,7 @@ final class ConstraintFactory {
     return newAllowedValuesConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE);
   }
 
+  @SuppressWarnings("null")
   static DefaultAllowedValuesConstraint newAllowedValuesConstraint(AllowedValuesType xmlConstraint,
       MetapathExpression target) {
     return new DefaultAllowedValuesConstraint(
@@ -99,6 +102,7 @@ final class ConstraintFactory {
     return newMatchesConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE);
   }
 
+  @SuppressWarnings("null")
   static DefaultMatchesConstraint newMatchesConstraint(MatchesConstraintType xmlConstraint, MetapathExpression target) {
     return new DefaultMatchesConstraint(xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
         xmlConstraint.isSetLevel() ? xmlConstraint.getLevel() : IConstraint.DEFAULT_LEVEL,
@@ -111,6 +115,7 @@ final class ConstraintFactory {
   static List<DefaultKeyField> newKeyFields(KeyConstraintType xmlConstraint) {
     List<DefaultKeyField> keyFields = new ArrayList<>(xmlConstraint.sizeOfKeyFieldArray());
     for (KeyConstraintType.KeyField xmlKeyField : xmlConstraint.getKeyFieldList()) {
+      @SuppressWarnings("null")
       DefaultKeyField keyField
           = new DefaultKeyField(xmlKeyField.getTarget(), xmlKeyField.isSetPattern() ? xmlKeyField.getPattern() : null,
               xmlKeyField.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlKeyField.getRemarks()) : null);
@@ -119,6 +124,7 @@ final class ConstraintFactory {
     return Collections.unmodifiableList(keyFields);
   }
 
+  @SuppressWarnings("null")
   static DefaultUniqueConstraint newUniqueConstraint(ScopedKeyConstraintType xmlConstraint) {
     return new DefaultUniqueConstraint(
         xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
@@ -127,6 +133,7 @@ final class ConstraintFactory {
         xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
   }
 
+  @SuppressWarnings("null")
   static DefaultIndexConstraint newIndexConstraint(ScopedIndexConstraintType xmlConstraint) {
     return new DefaultIndexConstraint(
         xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
@@ -146,6 +153,7 @@ final class ConstraintFactory {
 
   }
 
+  @SuppressWarnings("null")
   static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(IndexHasKeyConstraintType xmlConstraint,
       MetapathExpression target) {
     return new DefaultIndexHasKeyConstraint(
@@ -164,6 +172,7 @@ final class ConstraintFactory {
     return newExpectConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE);
   }
 
+  @SuppressWarnings("null")
   static DefaultExpectConstraint newExpectConstraint(ExpectConstraintType xmlConstraint, MetapathExpression target) {
     return new DefaultExpectConstraint(
         xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
@@ -174,6 +183,7 @@ final class ConstraintFactory {
         xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
   }
 
+  @SuppressWarnings("null")
   static DefaultCardinalityConstraint newCardinalityConstraint(HasCardinalityConstraintType xmlConstraint) {
     return new DefaultCardinalityConstraint(
         xmlConstraint.isSetId() ? xmlConstraint.getId() : null,

@@ -43,25 +43,13 @@ public final class DateFormats {
   public static final DateTimeFormatter DATE_TIME_WITHOUT_TZ;
 
   static {
-    // dateWithOptionalTZ = new DateTimeFormatterBuilder()
-    // .appendPattern("yyyy-MM-dd")
-    // .optionalStart()
-    // .appendPattern("XXX")
-    // .optionalEnd()
-    // .toFormatter();
     DATE_WITH_TZ = new DateTimeFormatterBuilder()
-        .appendPattern("yyyy-MM-ddXXX")
+        .appendPattern("yyyy-MM-dd")
+        .appendPattern("XXX")
         .toFormatter();
     DATE_WITHOUT_TZ = new DateTimeFormatterBuilder()
         .appendPattern("yyyy-MM-dd")
         .toFormatter();
-    // dateTimeWithOptionalTZ = new DateTimeFormatterBuilder()
-    // .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
-    // .optionalStart()
-    // .appendFraction(NANO_OF_SECOND, 0, 9, true)
-    // .appendPattern("XXX")
-    // .optionalEnd()
-    // .toFormatter();
     DATE_TIME_WITH_TZ = new DateTimeFormatterBuilder()
         .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
         .optionalStart()

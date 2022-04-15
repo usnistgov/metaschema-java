@@ -62,6 +62,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
@@ -71,7 +72,10 @@ import org.jetbrains.annotations.NotNull;
 
 public interface IExpressionEvaluationVisitor {
   /**
-   * Visit the provided expression and evaluate it against the node context;
+   * Visit the provided expression and evaluate it against the node context.
+   * 
+   * @param <T>
+   *          the type of the items contained in the sequence
    * 
    * @param expr
    *          the expression to evaluate
@@ -80,7 +84,7 @@ public interface IExpressionEvaluationVisitor {
    * @return the matching sequence of nodes or an empty sequence if no nodes match
    */
   @NotNull
-  ISequence<?> visit(@NotNull IExpression expr, @NotNull INodeContext context);
+  <T extends IItem> ISequence<T> visit(@NotNull IExpression expr, @NotNull INodeContext context);
 
   @NotNull
   ISequence<? extends IAnyAtomicItem> visitAddition(@NotNull Addition expr, @NotNull INodeContext context);

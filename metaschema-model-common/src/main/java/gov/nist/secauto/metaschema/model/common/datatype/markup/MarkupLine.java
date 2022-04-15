@@ -34,6 +34,8 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.FlexmarkFactory;
 
+import org.jetbrains.annotations.NotNull;
+
 public class MarkupLine
     extends AbstractMarkupString<MarkupLine> {
   private static final Parser MARKDOWN_PARSER;
@@ -48,10 +50,12 @@ public class MarkupLine
     MARKDOWN_PARSER = FlexmarkFactory.instance().newMarkdownParser(options);
   }
 
+  @NotNull
   public static MarkupLine fromHtml(String html) {
     return new MarkupLine(FlexmarkFactory.instance().fromHtml(html, null, MARKDOWN_PARSER));
   }
 
+  @NotNull
   public static MarkupLine fromMarkdown(String markdown) {
     return new MarkupLine(FlexmarkFactory.instance().fromMarkdown(markdown));
   }

@@ -35,8 +35,8 @@ import com.squareup.javapoet.TypeSpec;
 import gov.nist.secauto.metaschema.codegen.IJavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.ClassUtils;
 import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
 import org.jetbrains.annotations.NotNull;
 

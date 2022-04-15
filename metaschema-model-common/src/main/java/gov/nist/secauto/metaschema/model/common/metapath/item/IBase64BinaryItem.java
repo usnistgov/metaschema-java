@@ -48,9 +48,4 @@ public interface IBase64BinaryItem extends IAnyAtomicItem {
 
   @Override
   ByteBuffer getValue();
-
-  @Override
-  default IBase64BinaryItem toAtomicItem() {
-    return this;
-  }
 }

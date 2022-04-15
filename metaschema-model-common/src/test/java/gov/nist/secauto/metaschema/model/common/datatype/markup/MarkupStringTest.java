@@ -78,8 +78,6 @@ class MarkupStringTest {
   @Test
   void markupLineFromMarkdownTest() {
     String markdown = "Some \\**more* **text** and a param: {{ insert: param, insert }}.";
-    String html
-        = "<p>Some *<em>more</em> <strong>text</strong> and a param: <insert type=\"param\" id-ref=\"insert\" />.</p>";
 
     MarkupLine ms = MarkupLine.fromMarkdown(markdown);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
@@ -166,6 +164,10 @@ class MarkupStringTest {
     }
 
     assertEquals(markdown, ms.toMarkdown());
+
+    String html
+        = "<p>Some *<em>more</em> <strong>text</strong> and a param: <insert type=\"param\" id-ref=\"insert\" />.</p>";
+
     assertEquals(html, ms.toHtml());
   }
 
@@ -292,7 +294,7 @@ class MarkupStringTest {
   }
 
   @Test
-  void pCodeMarkdown() {
+  void paragraphCodeMarkdown() {
     String html = "<p>Example<code>**some** *code*</code></p>";
     String markdown = "Example`**some** *code*`";
     MarkupMultiline ms = MarkupMultiline.fromHtml(html);
@@ -315,7 +317,6 @@ class MarkupStringTest {
   @Test
   void testEntityRoundTrip() throws XMLStreamException {
     String markdown = "hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).";
-    String html = "<p>hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).</p>";
 
     MarkupLine ms = MarkupLine.fromMarkdown(markdown);
     AstCollectingVisitor visitor = new AstCollectingVisitor();
@@ -334,6 +335,8 @@ class MarkupStringTest {
     // System.out.println(ms.toMarkdown());
 
     assertEquals(markdown, ms.toMarkdown());
+
+    String html = "<p>hijacked was used (e.g., the &lt;CTRL&gt; + &lt;ALT&gt; + &lt;DEL&gt; keys).</p>";
     assertEquals(html, ms.toHtml().trim());
 
     MarkupXmlStreamWriter writer = newMarkupXmlStreamWriter(true);
@@ -349,7 +352,6 @@ class MarkupStringTest {
   @Test
   void testAposRoundTrip() throws XMLStreamException {
     String markdown = "a user’s identity";
-    String html = "<p>a user’s identity</p>";
 
     // test from Markdown source
     MarkupLine ms = MarkupLine.fromMarkdown(markdown);
@@ -369,6 +371,8 @@ class MarkupStringTest {
     // System.out.println(ms.toMarkdown());
 
     assertEquals(markdown, ms.toMarkdown());
+
+    String html = "<p>a user’s identity</p>";
     assertEquals(html, ms.toHtml().trim());
 
     MarkupXmlStreamWriter writer = newMarkupXmlStreamWriter(true);

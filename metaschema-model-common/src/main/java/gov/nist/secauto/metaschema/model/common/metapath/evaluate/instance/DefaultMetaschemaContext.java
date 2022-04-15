@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance;
 
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
-import gov.nist.secauto.metaschema.model.common.instance.RootAssemblyDefinitionInstance;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IInstance;
+import gov.nist.secauto.metaschema.model.common.RootAssemblyDefinitionInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;

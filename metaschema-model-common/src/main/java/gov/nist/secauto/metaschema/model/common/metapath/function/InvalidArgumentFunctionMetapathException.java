@@ -32,6 +32,7 @@ public class InvalidArgumentFunctionMetapathException
     extends AbstractCodedMetapathException {
 
   public static final int INVALID_VALUE_FOR_CAST = 1;
+  public static final int INVALID_ARGUMENT_TO_RESOLVE_URI = 2;
   public static final int INVALID_ARGUMENT_TYPE = 6;
 
   /**

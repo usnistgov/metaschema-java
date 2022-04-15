@@ -41,7 +41,7 @@ public class NonNegativeIntegerAdapter
 
   @Override
   public String getName() {
-    return "nonNegativeInteger";
+    return "non-negative-integer";
   }
 
   @SuppressWarnings("null")

@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
@@ -24,16 +26,13 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>metaschema-model-common</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
 			<artifactId>xmlbeans</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>xml-resolver</groupId>
-			<artifactId>xml-resolver</artifactId>
-			<type>jar</type>
-			<scope>compile</scope>
+			<groupId>org.xmlresolver</groupId>
+			<artifactId>xmlresolver</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -49,9 +48,12 @@
 			<resource>
 				<directory>${project.build.directory}/generated-resources/xmlbeans</directory>
 			</resource>
+			<resource>
+				<directory>${project.build.directory}/generated-resources/schema</directory>
+			</resource>
 		</resources>
-		<!-- 		<sourceDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceDirectory> -->
-		<!--     <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory> -->
+		<!-- <sourceDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceDirectory> -->
+		<!-- <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory> -->
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -59,7 +61,8 @@
 					<artifactId>maven-pmd-plugin</artifactId>
 					<configuration>
 						<excludeRoots>
-							<excludeRoot>${project.build.directory}/generated-sources/xmlbeans</excludeRoot>
+							<excludeRoot>target/generated-sources/xmlbeans</excludeRoot>
+							<!-- <excludeRoot>target/generated-test-sources/metaschema</excludeRoot> -->
 						</excludeRoots>
 					</configuration>
 				</plugin>
@@ -74,15 +77,9 @@
 					</configuration>
 				</plugin>
 
-				<!--
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<configuration>
-						<excludePackageNames>gov.nist.itl.metaschema.model.m4.xml:gov.nist.itl.metaschema.model.m4.xml.impl</excludePackageNames>
-					</configuration>
-				</plugin>
--->
+				<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-javadoc-plugin</artifactId> 
+					<configuration> <excludePackageNames>gov.nist.itl.metaschema.model.m4.xml:gov.nist.itl.metaschema.model.m4.xml.impl</excludePackageNames> 
+					</configuration> </plugin> -->
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -90,18 +87,57 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>copy-resources</id>
+						<id>copy-schema-resources</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/schema/xsd</outputDirectory>
+							<outputDirectory>${project.build.directory}/generated-resources/schema/schema</outputDirectory>
 							<resources>
 								<resource>
-									<directory>metaschema/toolchains/xslt-M4/validate</directory>
+									<directory>metaschema/schema</directory>
 									<includes>
-										<include>metaschema.xsd</include>
+										<include>**/*.xsd</include>
+										<include>**/*.json</include>
+									</includes>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-supporting-xml-schema-resources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/generated-resources/schema/schema/xml</outputDirectory>
+							<resources>
+								<resource>
+									<directory>metaschema/support/xml</directory>
+									<includes>
+										<include>**/*</include>
+									</includes>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-supporting-json-schema-resources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/generated-resources/schema/schema/json</outputDirectory>
+							<resources>
+								<resource>
+									<directory>metaschema/support/json</directory>
+									<includes>
+										<include>**/*</include>
 									</includes>
 									<filtering>false</filtering>
 								</resource>
@@ -121,15 +157,14 @@
 							<goal>compile</goal>
 						</goals>
 						<configuration>
-							<sourceDir>${project.build.directory}/schema/xsd</sourceDir>
+							<sourceDir>${project.basedir}/metaschema/schema/xml</sourceDir>
+							<!-- <sourceSchemas>metaschema.xsd</sourceSchemas> -->
 							<javaTargetDir>${project.build.directory}/generated-sources/xmlbeans</javaTargetDir>
 							<xmlConfigs>${project.basedir}/src/main/xsdconfig/metaschema-M4.xsdconfig</xmlConfigs>
 							<classTargetDir>${project.basedir}/target/generated-resources/xmlbeans</classTargetDir>
 							<name>metaschema</name>
 							<partialMethods>ALL,-XGET,-XSET,-XGET_ARRAY,-XSET_ARRAY,-XGET_IDX,-XSET_IDX</partialMethods>
-							<!--
-							<repackage>gov.nist.secauto.metaschema.model.xmlbeans</repackage>
--->
+							<!-- <repackage>gov.nist.secauto.metaschema.model.xmlbeans</repackage> -->
 						</configuration>
 					</execution>
 				</executions>
@@ -139,7 +174,7 @@
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>add-source</id>
+						<id>add-xmlbeans-source</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>add-source</goal>

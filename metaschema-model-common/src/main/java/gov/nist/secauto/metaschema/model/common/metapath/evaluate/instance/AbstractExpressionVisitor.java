@@ -59,24 +59,34 @@ import gov.nist.secauto.metaschema.model.common.metapath.ast.ValueComparison;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.Wildcard;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
+/**
+ * Provides base support for processing a Metapath expression based on the visitor pattern.
+ * 
+ * @param <RESULT>
+ *          the result of processing any node
+ * @param <CONTEXT>
+ *          additional state to pass between nodes visited
+ */
+public abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpressionVisitor<RESULT, CONTEXT> {
 
-public class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpressionVisitor<RESULT, CONTEXT> {
-
-  @Nullable
+  /**
+   * Visit each child expression of the provided {@code expr}, aggregating the results.
+   * 
+   * @param expr
+   *          the expression whoose children should be visited
+   * @param context
+   *          used to pass additional state
+   * @return the aggegated result
+   */
   protected RESULT visitChildren(@NotNull IExpression expr, CONTEXT context) {
-    @Nullable
     RESULT result = defaultResult();
 
-    for (Iterator<@NotNull ? extends IExpression> itr = expr.getChildren().iterator(); itr.hasNext();) {
-      if (!shouldVisitNextChild(expr, result, context)) {
+    for (IExpression childExpr : expr.getChildren()) {
+      if (!shouldVisitNextChild(expr, childExpr, result, context)) {
         break;
       }
 
-      @SuppressWarnings("null")
-      IExpression childExpr = itr.next();
       RESULT childResult = childExpr.accept(this, context);
       result = aggregateResult(result, childResult);
     }
@@ -84,19 +94,28 @@ public class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpressionVi
     return result;
   }
 
-  protected boolean shouldVisitNextChild(@NotNull IExpression expr, @Nullable RESULT result, CONTEXT context) {
+  /**
+   * Determines if a given {@code childExpr} should be visited.
+   * 
+   * @param parent
+   *          the parent expression of the child
+   * @param child
+   *          the child expression that can be visited
+   * @param result
+   *          the current result of evaluating any previous children
+   * @param context
+   *          additional state to pass between nodes visited
+   * @return {@code true} if the child should be visited, or {@code false} otherwise
+   */
+  protected boolean shouldVisitNextChild(@NotNull IExpression parent, @NotNull IExpression child, RESULT result,
+      CONTEXT context) {
+    // allow visitation of the child
     return true;
   }
 
-  @Nullable
-  protected RESULT aggregateResult(@Nullable RESULT result, @Nullable RESULT nextResult) {
-    return nextResult;
-  }
+  protected abstract RESULT aggregateResult(RESULT result, RESULT nextResult);
 
-  @Nullable
-  protected RESULT defaultResult() {
-    return null;
-  }
+  protected abstract RESULT defaultResult();
 
   @Override
   public RESULT visitAddition(Addition expr, CONTEXT context) {

@@ -27,10 +27,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>metaschema-java-binding-annotations</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>metaschema-java-binding</artifactId>
 		</dependency>
 		<dependency>
@@ -46,6 +42,11 @@
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
 		</dependency>
 
 		<dependency>
@@ -83,7 +84,7 @@
 					<artifactId>maven-pmd-plugin</artifactId>
 					<configuration>
 						<excludeRoots>
-							<excludeRoot>${project.build.directory}/generated-sources/xmlbeans</excludeRoot>
+							<excludeRoot>target/generated-sources/xmlbeans</excludeRoot>
 						</excludeRoots>
 					</configuration>
 				</plugin>

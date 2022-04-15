@@ -31,18 +31,18 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeName;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.Flag;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.codegen.IJavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFlaggedDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -61,14 +61,14 @@ public class FlagPropertyGenerator
     this.instance = instance;
 
     IFlagDefinition definition = instance.getDefinition();
-    this.dataType = definition.getDatatype();
+    this.dataType = definition.getJavaTypeAdapter();
   }
 
   protected IFlagInstance getInstance() {
     return instance;
   }
 
-  public IJavaTypeAdapter<?> getDataType() {
+  protected IJavaTypeAdapter<?> getJavaTypeAdapter() {
     return dataType;
   }
 
@@ -79,7 +79,7 @@ public class FlagPropertyGenerator
 
   @Override
   protected TypeName getJavaType() {
-    return ClassName.get(getDataType().getJavaClass());
+    return ClassName.get(getJavaTypeAdapter().getJavaClass());
   }
 
   @Override
@@ -90,13 +90,13 @@ public class FlagPropertyGenerator
   @Override
   protected Set<INamedModelDefinition> buildField(FieldSpec.Builder builder) {
     AnnotationSpec.Builder annotation
-        = AnnotationSpec.builder(Flag.class).addMember("useName", "$S", instance.getEffectiveName());
+        = AnnotationSpec.builder(BoundFlag.class).addMember("useName", "$S", instance.getEffectiveName());
 
     if (getInstance().isRequired()) {
       annotation.addMember("required", "$L", true);
     }
 
-    IJavaTypeAdapter<?> valueDataType = getDataType();
+    IJavaTypeAdapter<?> valueDataType = getJavaTypeAdapter();
     annotation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
 
     AnnotationUtils.applyAllowedValuesConstraints(annotation,

@@ -28,11 +28,13 @@ package gov.nist.secauto.metaschema.model.xml;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineType;
-import gov.nist.secauto.metaschema.model.xmlbeans.MarkupMultilineType;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineDatatype;
+import gov.nist.secauto.metaschema.model.xmlbeans.MarkupMultilineDatatype;
 
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlTokenSource;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -52,7 +54,8 @@ public final class MarkupStringConverter {
    * @throws IllegalArgumentException
    *           if the {@code content} argument contains malformed markup
    */
-  public static MarkupLine toMarkupString(MarkupLineType content) {
+  @NotNull
+  public static MarkupLine toMarkupString(@NotNull MarkupLineDatatype content) {
     String html = processHTML(content);
     return MarkupLine.fromHtml(html);
   }
@@ -66,8 +69,8 @@ public final class MarkupStringConverter {
    * @throws IllegalArgumentException
    *           if the {@code content} argument contains malformed markup
    */
-  public static MarkupMultiline
-      toMarkupString(MarkupMultilineType content) {
+  @NotNull
+  public static MarkupMultiline toMarkupString(@NotNull MarkupMultilineDatatype content) {
     String html = processHTML(content);
     return MarkupMultiline.fromHtml(html);
   }
@@ -81,7 +84,8 @@ public final class MarkupStringConverter {
    * @throws IllegalArgumentException
    *           if the {@code content} argument contains malformed markup
    */
-  protected static String processHTML(XmlTokenSource content) {
+  @NotNull
+  private static String processHTML(XmlTokenSource content) {
     XmlOptions options = new XmlOptions();
     options.setSaveInner();
     options.setSaveUseOpenFrag();
@@ -91,6 +95,7 @@ public final class MarkupStringConverter {
     } catch (IOException e) {
       throw new IllegalArgumentException(e);
     }
-    return writer.toString().replaceFirst("^<frag\\:fragment[^>]+>", "").replaceFirst("</frag\\:fragment>$", "");
+    return ObjectUtils.notNull(
+        writer.toString().replaceFirst("^<frag\\:fragment[^>]+>", "").replaceFirst("</frag\\:fragment>$", ""));
   }
 }

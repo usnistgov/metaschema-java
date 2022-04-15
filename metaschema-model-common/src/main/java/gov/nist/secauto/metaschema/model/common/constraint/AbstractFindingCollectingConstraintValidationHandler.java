@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
@@ -30,10 +31,11 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,6 +44,7 @@ public abstract class AbstractFindingCollectingConstraintValidationHandler
   @NotNull
   private IPathFormatter pathFormatter = IPathFormatter.METAPATH_PATH_FORMATER;
 
+  @Override
   @NotNull
   public IPathFormatter getPathFormatter() {
     return pathFormatter;
@@ -57,14 +60,14 @@ public abstract class AbstractFindingCollectingConstraintValidationHandler
       @NotNull INodeItem node,
       @NotNull List<? extends INodeItem> targets,
       @NotNull CharSequence message,
-      Throwable cause);
+      @Nullable Throwable cause);
 
   @Override
   public void handleCardinalityMinimumViolation(
       @NotNull ICardinalityConstraint constraint,
       @NotNull INodeItem node,
       @NotNull ISequence<? extends INodeItem> targets) {
-    newFinding(constraint, node, Collections.unmodifiableList(targets.asList()),
+    newFinding(constraint, node, CollectionUtil.unmodifiableList(targets.asList()),
         newCardinalityMinimumViolationMessage(constraint, node, targets), null);
   }
 
@@ -73,7 +76,7 @@ public abstract class AbstractFindingCollectingConstraintValidationHandler
       @NotNull ICardinalityConstraint constraint,
       @NotNull INodeItem node,
       @NotNull ISequence<? extends INodeItem> targets) {
-    newFinding(constraint, node, Collections.unmodifiableList(targets.asList()),
+    newFinding(constraint, node, CollectionUtil.unmodifiableList(targets.asList()),
         newCardinalityMaximumViolationMessage(constraint, node, targets), null);
   }
 
@@ -83,7 +86,8 @@ public abstract class AbstractFindingCollectingConstraintValidationHandler
       @NotNull INodeItem node,
       @NotNull INodeItem oldItem,
       @NotNull INodeItem target) {
-    newFinding(constraint, node, Collections.singletonList(target), newIndexDuplicateKeyViolationMessage(constraint, node, oldItem, target), null);
+    newFinding(constraint, node, CollectionUtil.singletonList(target),
+        newIndexDuplicateKeyViolationMessage(constraint, node, oldItem, target), null);
   }
 
   @Override
@@ -92,7 +96,8 @@ public abstract class AbstractFindingCollectingConstraintValidationHandler
       @NotNull INodeItem node,
       @NotNull INodeItem oldItem,
       @NotNull INodeItem target) {
-    newFinding(constraint, node, Collections.singletonList(target), newUniqueKeyViolationMessage(constraint, node, oldItem, target), null);
+    newFinding(constraint, node, CollectionUtil.singletonList(target),
+        newUniqueKeyViolationMessage(constraint, node, oldItem, target), null);
   }
 
   @SuppressWarnings("null")
@@ -102,7 +107,7 @@ public abstract class AbstractFindingCollectingConstraintValidationHandler
       @NotNull INodeItem node,
       @NotNull INodeItem target,
       @NotNull MetapathException cause) {
-    newFinding(constraint, node, Collections.singletonList(target), cause.getLocalizedMessage(), cause);
+    newFinding(constraint, node, CollectionUtil.singletonList(target), cause.getLocalizedMessage(), cause);
   }
 
   @Override
@@ -111,7 +116,8 @@ public abstract class AbstractFindingCollectingConstraintValidationHandler
       @NotNull INodeItem node,
       @NotNull INodeItem target,
       @NotNull String value) {
-    newFinding(constraint, node, Collections.singletonList(target), newMatchPatternViolationMessage(constraint, node, target, value), null);
+    newFinding(constraint, node, CollectionUtil.singletonList(target),
+        newMatchPatternViolationMessage(constraint, node, target, value), null);
   }
 
   @Override
@@ -121,7 +127,8 @@ public abstract class AbstractFindingCollectingConstraintValidationHandler
       @NotNull INodeItem target,
       @NotNull String value,
       @NotNull IllegalArgumentException cause) {
-    newFinding(constraint, node, Collections.singletonList(target), newMatchDatatypeViolationMessage(constraint, node, target, value), cause);
+    newFinding(constraint, node, CollectionUtil.singletonList(target),
+        newMatchDatatypeViolationMessage(constraint, node, target, value), cause);
   }
 
   @Override
@@ -130,7 +137,8 @@ public abstract class AbstractFindingCollectingConstraintValidationHandler
       @NotNull INodeItem node,
       @NotNull INodeItem target,
       @NotNull DynamicContext dynamicContext) {
-    newFinding(constraint, node, Collections.singletonList(target), newExpectViolationMessage(constraint, node, target, dynamicContext), null);
+    newFinding(constraint, node, CollectionUtil.singletonList(target),
+        newExpectViolationMessage(constraint, node, target, dynamicContext), null);
   }
 
 }

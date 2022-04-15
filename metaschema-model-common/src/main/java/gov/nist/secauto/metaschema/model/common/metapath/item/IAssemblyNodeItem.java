@@ -26,8 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IAssemblyPathSegment;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
+
+import org.jetbrains.annotations.NotNull;
 
 public interface IAssemblyNodeItem extends IModelNodeItem {
   @Override
@@ -36,8 +39,28 @@ public interface IAssemblyNodeItem extends IModelNodeItem {
   }
 
   @Override
-  IAssemblyPathSegment getPathSegment();
+  IAssemblyDefinition getDefinition();
 
   @Override
-  IAssemblyDefinition getDefinition();
+  IAssemblyInstance getInstance();
+
+  @Override
+  default IAssemblyNodeItem getContextNodeItem() {
+    return this;
+  }
+
+  @Override
+  default IAssemblyNodeItem getNodeItem() {
+    return this;
+  }
+
+  @Override
+  default @NotNull String format(@NotNull IPathFormatter formatter) {
+    return formatter.formatAssembly(this);
+  }
+
+  @Override
+  default <RESULT, CONTEXT> RESULT accept(@NotNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitAssembly(this, context);
+  }
 }

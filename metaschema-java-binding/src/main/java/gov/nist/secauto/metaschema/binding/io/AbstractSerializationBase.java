@@ -28,31 +28,53 @@ package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.Objects;
 
 abstract class AbstractSerializationBase implements IMutableConfiguration {
+  @NotNull
   private final IBindingContext bindingContext;
+  @NotNull
   private final IAssemblyClassBinding classBinding;
+  @NotNull
   private final IMutableConfiguration configuration;
 
   protected AbstractSerializationBase(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
-    Objects.requireNonNull(bindingContext, "bindingContext");
-    Objects.requireNonNull(classBinding, "classBinding");
-    this.bindingContext = bindingContext;
-    this.classBinding = classBinding;
+    this.bindingContext = ObjectUtils.requireNonNull(bindingContext, "bindingContext");
+    this.classBinding = ObjectUtils.requireNonNull(classBinding, "classBinding");
     this.configuration = new DefaultMutableConfiguration();
   }
 
+  /**
+   * Retrieve the binding context associated with the serializer.
+   * 
+   * @return the binding context
+   */
+  @NotNull
   protected IBindingContext getBindingContext() {
     return bindingContext;
   }
 
+  /**
+   * Retrieve the bound class information associated with the assembly that the
+   * serializer/deserializer will write/read data from.
+   * 
+   * @return the class binding for the Metaschema assembly
+   */
+  @NotNull
   protected IAssemblyClassBinding getClassBinding() {
     return classBinding;
   }
 
+  /**
+   * Get the current configuration of the serializer/deserializer.
+   * 
+   * @return the configuration
+   */
+  @NotNull
   protected IConfiguration getConfiguration() {
     return configuration;
   }
@@ -73,7 +95,7 @@ abstract class AbstractSerializationBase implements IMutableConfiguration {
   }
 
   @Override
-  public Map<Feature, Boolean> getFeatureSettings() {
+  public Map<@NotNull Feature, Boolean> getFeatureSettings() {
     return configuration.getFeatureSettings();
   }
 }

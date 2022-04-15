@@ -63,8 +63,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
-import gov.nist.secauto.metaschema.model.common.metapath.function.XPathFunctions;
-import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnNotFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnBoolean;
+import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
+import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnNot;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
@@ -118,7 +119,7 @@ public class MetaschemaPathEvaluationVisitor
     boolean retval = true;
     for (IExpression child : expr.getChildren()) {
       ISequence<?> result = child.accept(this, context);
-      if (!XPathFunctions.fnBooleanAsPrimative(result)) {
+      if (!FnBoolean.fnBooleanAsPrimitive(result)) {
         retval = false;
         break;
       }
@@ -131,7 +132,7 @@ public class MetaschemaPathEvaluationVisitor
     boolean retval = false;
     for (IExpression child : expr.getChildren()) {
       ISequence<?> result = child.accept(this, context);
-      if (XPathFunctions.fnBooleanAsPrimative(result)) {
+      if (FnBoolean.fnBooleanAsPrimitive(result)) {
         retval = true;
         break;
       }
@@ -150,8 +151,8 @@ public class MetaschemaPathEvaluationVisitor
       return ISequence.empty();
     }
 
-    IAnyAtomicItem left = XPathFunctions.fnDataItem(leftItem);
-    IAnyAtomicItem right = XPathFunctions.fnDataItem(rightItem);
+    IAnyAtomicItem left = FnData.fnDataItem(leftItem);
+    IAnyAtomicItem right = FnData.fnDataItem(rightItem);
     IComparison.Operator operator = expr.getOperator();
 
     try {
@@ -168,28 +169,34 @@ public class MetaschemaPathEvaluationVisitor
     if (left instanceof IStringItem || right instanceof IStringItem) {
       switch (operator) {
       case EQ:
-        retval = OperationFunctions.opNumericEqual(XPathFunctions.fnCompare((IStringItem) left, (IStringItem) right),
+        retval = OperationFunctions.opNumericEqual(
+            ((IStringItem) left).compare((IStringItem) right),
             IIntegerItem.ZERO);
         break;
       case GE:
         retval = OperationFunctions.opNumericGreaterThan(
-            XPathFunctions.fnCompare((IStringItem) left, (IStringItem) right), IIntegerItem.NEGATIVE_ONE);
+            ((IStringItem) left).compare((IStringItem) right),
+            IIntegerItem.NEGATIVE_ONE);
         break;
       case GT:
-        retval = OperationFunctions
-            .opNumericGreaterThan(XPathFunctions.fnCompare((IStringItem) left, (IStringItem) right), IIntegerItem.ZERO);
+        retval = OperationFunctions.opNumericGreaterThan(
+            ((IStringItem) left).compare((IStringItem) right),
+            IIntegerItem.ZERO);
         break;
       case LE:
-        retval = OperationFunctions.opNumericLessThan(XPathFunctions.fnCompare((IStringItem) left, (IStringItem) right),
+        retval = OperationFunctions.opNumericLessThan(
+            ((IStringItem) left).compare((IStringItem) right),
             IIntegerItem.ONE);
         break;
       case LT:
-        retval = OperationFunctions.opNumericLessThan(XPathFunctions.fnCompare((IStringItem) left, (IStringItem) right),
+        retval = OperationFunctions.opNumericLessThan(
+            ((IStringItem) left).compare((IStringItem) right),
             IIntegerItem.ZERO);
         break;
       case NE:
-        retval = FnNotFunction.fnNot(OperationFunctions
-            .opNumericEqual(XPathFunctions.fnCompare((IStringItem) left, (IStringItem) right), IIntegerItem.ZERO));
+        retval = FnNot.fnNot(OperationFunctions.opNumericEqual(
+            ((IStringItem) left).compare((IStringItem) right),
+            IIntegerItem.ZERO));
         break;
       default:
         throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
@@ -218,7 +225,7 @@ public class MetaschemaPathEvaluationVisitor
         retval = OperationFunctions.opNumericLessThan((INumericItem) left, (INumericItem) right);
         break;
       case NE:
-        retval = FnNotFunction.fnNot(OperationFunctions.opNumericEqual((INumericItem) left, (INumericItem) right));
+        retval = FnNot.fnNot(OperationFunctions.opNumericEqual((INumericItem) left, (INumericItem) right));
         break;
       default:
         throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
@@ -247,7 +254,7 @@ public class MetaschemaPathEvaluationVisitor
         retval = OperationFunctions.opBooleanLessThan((IBooleanItem) left, (IBooleanItem) right);
         break;
       case NE:
-        retval = FnNotFunction.fnNot(OperationFunctions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right));
+        retval = FnNot.fnNot(OperationFunctions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right));
         break;
       default:
         throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
@@ -276,7 +283,7 @@ public class MetaschemaPathEvaluationVisitor
         retval = OperationFunctions.opDateTimeLessThan((IDateTimeItem) left, (IDateTimeItem) right);
         break;
       case NE:
-        retval = FnNotFunction.fnNot(OperationFunctions.opDateTimeEqual((IDateTimeItem) left, (IDateTimeItem) right));
+        retval = FnNot.fnNot(OperationFunctions.opDateTimeEqual((IDateTimeItem) left, (IDateTimeItem) right));
         break;
       default:
         throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
@@ -305,7 +312,7 @@ public class MetaschemaPathEvaluationVisitor
         retval = OperationFunctions.opDateLessThan((IDateItem) left, (IDateItem) right);
         break;
       case NE:
-        retval = FnNotFunction.fnNot(OperationFunctions.opDateEqual((IDateItem) left, (IDateItem) right));
+        retval = FnNot.fnNot(OperationFunctions.opDateEqual((IDateItem) left, (IDateItem) right));
         break;
       default:
         throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
@@ -375,7 +382,7 @@ public class MetaschemaPathEvaluationVisitor
         break;
       }
       case NE:
-        retval = FnNotFunction.fnNot(OperationFunctions.opDurationEqual((IDurationItem) left, (IDurationItem) right));
+        retval = FnNot.fnNot(OperationFunctions.opDurationEqual((IDurationItem) left, (IDurationItem) right));
         break;
       default:
         throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
@@ -406,7 +413,7 @@ public class MetaschemaPathEvaluationVisitor
         retval = OperationFunctions.opBase64BinaryLessThan((IBase64BinaryItem) left, (IBase64BinaryItem) right);
         break;
       case NE:
-        retval = FnNotFunction
+        retval = FnNot
             .fnNot(OperationFunctions.opBase64BinaryEqual((IBase64BinaryItem) left, (IBase64BinaryItem) right));
         break;
       default:
@@ -423,8 +430,8 @@ public class MetaschemaPathEvaluationVisitor
   @Override
   public @NotNull ISequence<? extends IBooleanItem> visitGeneralComparison(@NotNull GeneralComparison expr,
       @NotNull INodeContext context) {
-    ISequence<? extends IAnyAtomicItem> leftItems = XPathFunctions.fnData(expr.getLeft().accept(this, context));
-    ISequence<? extends IAnyAtomicItem> rightItems = XPathFunctions.fnData(expr.getRight().accept(this, context));
+    ISequence<? extends IAnyAtomicItem> leftItems = FnData.fnData(expr.getLeft().accept(this, context));
+    ISequence<? extends IAnyAtomicItem> rightItems = FnData.fnData(expr.getRight().accept(this, context));
     IComparison.Operator operator = expr.getOperator();
 
     IBooleanItem retval = IBooleanItem.FALSE;
@@ -486,12 +493,11 @@ public class MetaschemaPathEvaluationVisitor
 
   @Override
   public ISequence<?> visitRootSlashPath(RootSlashPath expr, INodeContext context) {
-    if (context.getContextNodeItem() instanceof IDocumentNodeItem) {
-
-      return expr.getNode().accept(this, context);
-    } else {
+    if (!(context.getContextNodeItem() instanceof IDocumentNodeItem)) {
       throw new UnsupportedOperationException("root searching is not supported on non-document nodes");
     }
+
+    return expr.getNode().accept(this, context);
   }
 
   @Override
@@ -558,7 +564,7 @@ public class MetaschemaPathEvaluationVisitor
         } else {
           INodeContext childContext = (INodeContext) item;
           ISequence<?> predicateResult = predicateExpr.accept(this, childContext);
-          bool = XPathFunctions.fnBoolean(predicateResult).toBoolean();
+          bool = FnBoolean.fnBoolean(predicateResult).toBoolean();
         }
         return bool;
       }).anyMatch(x -> !x);
@@ -618,7 +624,7 @@ public class MetaschemaPathEvaluationVisitor
     ISequence<? extends INodeItem> leftResult
         = (ISequence<? extends INodeItem>) left.accept(this, context);
 
-    Stream<? extends INodeItem> result = (Stream<? extends INodeItem>) leftResult.asStream()
+    Stream<? extends INodeItem> result = leftResult.asStream()
         .flatMap(item -> {
           // evaluate the right path in the context of the left
           return search(expr.getRight(), item);
@@ -759,7 +765,7 @@ public class MetaschemaPathEvaluationVisitor
       if (item == null) {
         return ISequence.empty();
       }
-      leftItem = XPathFunctions.fnDataItem(item);
+      leftItem = FnData.fnDataItem(item);
     }
 
     ISequence<?> rightSequence = expr.getRight().accept(this, context);
@@ -769,7 +775,7 @@ public class MetaschemaPathEvaluationVisitor
       if (item == null) {
         return ISequence.empty();
       }
-      rightItem = XPathFunctions.fnDataItem(item);
+      rightItem = FnData.fnDataItem(item);
     }
 
     IAnyAtomicItem retval = null;
@@ -836,7 +842,7 @@ public class MetaschemaPathEvaluationVisitor
       if (item == null) {
         return ISequence.empty();
       }
-      leftItem = XPathFunctions.fnDataItem(item);
+      leftItem = FnData.fnDataItem(item);
     }
 
     ISequence<?> rightSequence = expr.getRight().accept(this, context);
@@ -846,7 +852,7 @@ public class MetaschemaPathEvaluationVisitor
       if (item == null) {
         return ISequence.empty();
       }
-      rightItem = XPathFunctions.fnDataItem(item);
+      rightItem = FnData.fnDataItem(item);
     }
 
     IAnyAtomicItem retval = null;
@@ -910,7 +916,7 @@ public class MetaschemaPathEvaluationVisitor
       if (item == null) {
         return ISequence.empty();
       }
-      leftItem = XPathFunctions.fnDataItem(item);
+      leftItem = FnData.fnDataItem(item);
     }
 
     ISequence<?> rightSequence = expr.getRight().accept(this, context);
@@ -920,7 +926,7 @@ public class MetaschemaPathEvaluationVisitor
       if (item == null) {
         return ISequence.empty();
       }
-      rightItem = XPathFunctions.fnDataItem(item);
+      rightItem = FnData.fnDataItem(item);
     }
 
     IAnyAtomicItem retval = null;
@@ -969,7 +975,7 @@ public class MetaschemaPathEvaluationVisitor
       if (item == null) {
         return ISequence.empty();
       }
-      leftItem = XPathFunctions.fnDataItem(item);
+      leftItem = FnData.fnDataItem(item);
     }
 
     ISequence<?> rightSequence = expr.getRight().accept(this, context);
@@ -979,7 +985,7 @@ public class MetaschemaPathEvaluationVisitor
       if (item == null) {
         return ISequence.empty();
       }
-      rightItem = XPathFunctions.fnDataItem(item);
+      rightItem = FnData.fnDataItem(item);
     }
 
     IAnyAtomicItem retval = null;
@@ -1068,9 +1074,9 @@ public class MetaschemaPathEvaluationVisitor
     StringBuilder builder = new StringBuilder();
     for (IExpression child : expr.getChildren()) {
       ISequence<?> result = child.accept(this, context);
-      XPathFunctions.fnData(result).asStream().forEachOrdered(item -> {
+      FnData.fnData(result).asStream().forEachOrdered(item -> {
         // TODO: is this right to concat all sequence members?
-        builder.append(((IAnyAtomicItem) item).asString());
+        builder.append(item.asString());
       });
     }
     return ISequence.of(IStringItem.valueOf(builder.toString()));
@@ -1094,12 +1100,15 @@ public class MetaschemaPathEvaluationVisitor
     return function.execute(arguments, getDynamicContext(), context);
   }
 
+  @SuppressWarnings("null")
   @Override
   public ISequence<?> visitMetapath(Metapath expr, INodeContext context) {
-    return ISequence.of(expr.getChildren().stream().flatMap(child -> {
-      ISequence<?> result = child.accept(this, context);
-      return result.asStream();
-    }));
+    return ISequence.of(expr.getChildren().stream()
+        .flatMap(child -> {
+          @NotNull
+          ISequence<?> result = child.accept(this, context);
+          return result.asStream();
+        }));
   }
 
   @Override
@@ -1108,6 +1117,7 @@ public class MetaschemaPathEvaluationVisitor
     return childExpr.accept(this, context);
   }
 
+  @SuppressWarnings("null")
   @Override
   public ISequence<?> visitUnion(Union expr, INodeContext context) {
     return ISequence.of(expr.getChildren().stream().flatMap(child -> {

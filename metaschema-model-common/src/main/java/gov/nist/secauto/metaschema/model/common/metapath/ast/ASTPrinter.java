@@ -73,7 +73,7 @@ public class ASTPrinter
 
   @Override
   protected String defaultResult() {
-    return super.defaultResult();
+    return "";
   }
 
   protected String appendNode(IExpression expr, String childResult) {

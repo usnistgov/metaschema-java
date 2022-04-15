@@ -26,13 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IDocumentPathSegment;
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
-import java.util.Map;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.stream.Stream;
 
 public interface IDocumentNodeItem extends INodeItem {
   @Override
@@ -46,10 +49,30 @@ public interface IDocumentNodeItem extends INodeItem {
    * @return the root assembly
    */
   @NotNull
-  IAssemblyNodeItem getRootAssemblyNodeItem();
+  IRootAssemblyNodeItem getRootAssemblyNodeItem();
 
   @Override
-  IDocumentPathSegment getPathSegment();
+  default IModelNodeItem getParentContentNodeItem() {
+    // there is no parent
+    return null;
+  }
+
+  @Override
+  default INodeItem getParentNodeItem() {
+    // there is no parent
+    return null;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default Stream<@NotNull ? extends IDocumentNodeItem> getPathStream() {
+    return Stream.of(this);
+  }
+
+  @Override
+  default IDocumentNodeItem getNodeItem() {
+    return this;
+  }
 
   /**
    * Get the URI associated with this document.
@@ -66,14 +89,44 @@ public interface IDocumentNodeItem extends INodeItem {
   }
 
   /**
-   * Document nodes do not have flags. This must return an empty map.
+   * Documents do not have flag items. This call should return an empty collection.
+   */
+  @SuppressWarnings("null")
+  @Override
+  default Collection<@NotNull ? extends IFlagNodeItem> getFlags() {
+    // a document does not have flags
+    return Collections.emptyList();
+  }
+
+  /**
+   * Documents do not have flag items. This call should return {@code null}.
    */
   @Override
-  Map<@NotNull String, ? extends IFlagNodeItem> getFlags();
+  default IFlagNodeItem getFlagByName(@NotNull String name) {
+    // a document does not have flags
+    return null;
+  }
+
+  /**
+   * Documents do not have flag items. This call should return an empty stream.
+   */
+  @SuppressWarnings("null")
+  @Override
+  default @NotNull Stream<? extends IFlagNodeItem> flags() {
+    // a document does not have flags
+    return Stream.empty();
+  }
 
   @Override
-  default INamedDefinition getDefinition() {
+  default IRootAssemblyDefinition getDefinition() {
     return getRootAssemblyNodeItem().getDefinition();
+  }
+
+  // TODO: eliminate this method
+  @Override
+  default INamedInstance getInstance() {
+    // a document does not have an instance
+    return null;
   }
 
   @SuppressWarnings("unchecked")
@@ -81,4 +134,15 @@ public interface IDocumentNodeItem extends INodeItem {
   default <CLASS> @NotNull CLASS toBoundObject() {
     return (CLASS) getRootAssemblyNodeItem().getValue();
   }
+
+  @Override
+  default @NotNull String format(@NotNull IPathFormatter formatter) {
+    return formatter.formatDocument(this);
+  }
+
+  @Override
+  default <RESULT, CONTEXT> RESULT accept(@NotNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+    return visitor.visitDocument(this, context);
+  }
+
 }

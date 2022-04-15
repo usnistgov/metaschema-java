@@ -30,13 +30,17 @@ import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
+import gov.nist.secauto.metaschema.binding.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundInstance;
+import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 
 public final class JsonUtil {
   private static final Logger LOGGER = LogManager.getLogger(JsonUtil.class);
@@ -113,7 +117,7 @@ public final class JsonUtil {
     JsonToken currentToken = parser.getCurrentToken();
 
     boolean retval;
-    switch (startToken) {
+    switch (startToken) { // NOPMD - intentional fall through
     case START_OBJECT:
       retval = JsonToken.END_OBJECT.equals(currentToken);
       break;
@@ -135,37 +139,58 @@ public final class JsonUtil {
     return retval;
   }
 
-  public static void assertCurrent(JsonParser parser, JsonToken expectedToken) {
-    JsonToken token = parser.currentToken();
-    assert expectedToken.equals(token) : getAssertMessage(expectedToken, token, parser.getCurrentLocation());
+  public static void assertCurrent(@NotNull JsonParser parser, @NotNull JsonToken... expectedTokens) {
+    JsonToken current = parser.currentToken();
+    assert Arrays.stream(expectedTokens).anyMatch(expected -> expected.equals(current)) : getAssertMessage(
+        Arrays.asList(expectedTokens), parser.currentToken(), parser.getCurrentLocation());
   }
 
-  public static JsonToken assertAndAdvance(JsonParser parser, JsonToken expectedToken) throws IOException {
+  public static void assertCurrentIsFieldValue(@NotNull JsonParser parser) {
+    JsonToken token = parser.currentToken();
+    assert token.isStructStart() || token.isScalarValue() : String.format(
+        "Expected a START_OBJECT, START_ARRAY, or VALUE_xxx token, but found JsonToken '%s' at '%s'.",
+        token,
+        JsonUtil.toString(parser.getCurrentLocation()));
+  }
+
+  public static JsonToken assertAndAdvance(@NotNull JsonParser parser, @NotNull JsonToken expectedToken)
+      throws IOException {
     JsonToken token = parser.currentToken();
     assert expectedToken.equals(token) : getAssertMessage(expectedToken, token, parser.getCurrentLocation());
     return parser.nextToken();
   }
 
-  public static JsonToken consumeAndAssert(JsonParser parser, JsonToken expectedToken)
+  public static JsonToken advanceAndAssert(@NotNull JsonParser parser, @NotNull JsonToken expectedToken)
       throws IOException {
     JsonToken token = parser.nextToken();
     assert expectedToken.equals(token) : getAssertMessage(expectedToken, token, parser.getCurrentLocation());
     return token;
   }
 
-  public static String getAssertMessage(JsonToken expected, JsonToken actual, JsonLocation location) {
+  @NotNull
+  public static String getAssertMessage(@NotNull JsonToken expected, JsonToken actual, @NotNull JsonLocation location) {
     return String.format("Expected JsonToken '%s', but found JsonToken '%s' at '%s'.",
         expected,
         actual,
         JsonUtil.toString(location));
   }
 
-  public static String toLocationContext(JsonParser parser, IClassBinding classBinding,
-      IBoundInstance property) {
+  @NotNull
+  public static String getAssertMessage(@NotNull Collection<@NotNull JsonToken> expected, JsonToken actual,
+      @NotNull JsonLocation location) {
+    return String.format("Expected JsonToken(s) '%s', but found JsonToken '%s' at '%s'.",
+        expected.stream().map(token -> token.name()).collect(CustomCollectors.joiningWithOxfordComma("and")),
+        actual,
+        JsonUtil.toString(location));
+  }
+
+  @NotNull
+  public static String toLocationContext(@NotNull JsonParser parser, @NotNull IClassBinding classBinding,
+      IBoundNamedInstance property) {
     StringBuilder builder = new StringBuilder(64);
     builder
         .append("property '")
-        .append(property.getJavaPropertyName())
+        .append(property.getEffectiveName())
         .append("' on class '")
         .append(classBinding.getBoundClass().getName())
         .append("' at location '");

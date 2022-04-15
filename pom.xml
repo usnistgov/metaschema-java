@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
@@ -114,26 +116,28 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<dependency.antlr4.version>4.9.2</dependency.antlr4.version>
+		<dependency.auto-service.version>1.0.1</dependency.auto-service.version>
 		<dependency.commons-lang3.version>3.11</dependency.commons-lang3.version>
 		<dependency.commons-collections4.version>4.4</dependency.commons-collections4.version>
-		<dependency.commons-io.version>2.6</dependency.commons-io.version>
+		<dependency.commons-io.version>2.8.0</dependency.commons-io.version>
 		<dependency.eclipse-jdt-annotation.version>2.2.600</dependency.eclipse-jdt-annotation.version>
 		<dependency.everit-json.version>1.14.0</dependency.everit-json.version>
 		<dependency.flexmark.version>0.62.2</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.30</dependency.freemarker.version>
 		<dependency.jackson.version>2.13.1</dependency.jackson.version>
 		<dependency.jaxb.version>3.0.0</dependency.jaxb.version>
+		<dependency.jaxen.version>1.2.0</dependency.jaxen.version>
 		<dependency.jetbrains-annotation.version>16.0.2</dependency.jetbrains-annotation.version>
 		<dependency.junit5.version>5.8.2</dependency.junit5.version>
 		<dependency.junit5-platform-launcher.version>1.8.2</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.17.1</dependency.log4j2.version>
 		<dependency.moxy.version>3.0.0</dependency.moxy.version>
+		<dependency.saxon.version>11.2</dependency.saxon.version>
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
 		<dependency.woodstox.version>6.2.7</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.0.3</dependency.xmlbeans.version>
-	
-		
-		<!-- <dependency.xmlbeans.version>4.0.0</dependency.xmlbeans.version> -->
+		<dependency.xmlresolver.version>4.2.0</dependency.xmlresolver.version>
+
 		<plugin.license.version>4.0.rc1</plugin.license.version>
 		<plugin.antlr4test.version>1.17</plugin.antlr4test.version>
 		<plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
@@ -163,11 +167,6 @@
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>metaschema-java-binding-annotations</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
 				<artifactId>metaschema-freemarker-support</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -181,11 +180,33 @@
 				<artifactId>metaschema-java-schemagen</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>metaschema-testing</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
+			<dependency>
+				<groupId>com.google.auto.service</groupId>
+				<artifactId>auto-service</artifactId>
+				<version>${dependency.auto-service.version}</version>
+				<scope>provided</scope>
+			</dependency>
 			<dependency>
 				<groupId>org.apache.xmlbeans</groupId>
 				<artifactId>xmlbeans</artifactId>
 				<version>${dependency.xmlbeans.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jdom</groupId>
+				<artifactId>jdom2</artifactId>
+				<version>2.0.6.1</version>
+			</dependency>
+			<dependency>
+				<!-- For JDOM2 XPath support -->
+				<groupId>jaxen</groupId>
+				<artifactId>jaxen</artifactId>
+				<version>${dependency.jaxen.version}</version>
 			</dependency>
 
 			<dependency>
@@ -209,6 +230,18 @@
 				<groupId>org.codehaus.woodstox</groupId>
 				<artifactId>stax2-api</artifactId>
 				<version>${dependency.stax2-api.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>net.sf.saxon</groupId>
+				<artifactId>Saxon-HE</artifactId>
+				<version>${dependency.saxon.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.xmlresolver</groupId>
+						<artifactId>xmlresolver</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<dependency>
@@ -296,11 +329,15 @@
 			</dependency>
 
 			<dependency>
-				<groupId>xml-resolver</groupId>
-				<artifactId>xml-resolver</artifactId>
-				<version>1.2</version>
-				<type>jar</type>
-				<scope>compile</scope>
+				<groupId>org.xmlresolver</groupId>
+				<artifactId>xmlresolver</artifactId>
+				<version>${dependency.xmlresolver.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>xml-apis</groupId>
+						<artifactId>xml-apis</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
@@ -347,14 +384,9 @@
 				<version>${dependency.jetbrains-annotation.version}</version>
 				<scope>provided</scope>
 			</dependency>
-			<!--
-			<dependency>
-				<groupId>org.eclipse.jdt</groupId>
-				<artifactId>org.eclipse.jdt.annotation</artifactId>
-				<version>>${dependency.eclipse-jdt-annotation.version}</version>
-				<scope>provided</scope>
-			</dependency>
-		-->
+			<!-- <dependency> <groupId>org.eclipse.jdt</groupId> <artifactId>org.eclipse.jdt.annotation</artifactId> 
+				<version>>${dependency.eclipse-jdt-annotation.version}</version> <scope>provided</scope> 
+				</dependency> -->
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-api</artifactId>
@@ -389,14 +421,17 @@
 	</dependencyManagement>
 	<dependencies>
 		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<!-- <dependency> -->
 		<!-- <groupId>org.junit.platform</groupId> -->
@@ -571,11 +606,8 @@
 								<configuration>
 									<fail>true</fail>
 									<rules>
-										<!--
-										<reactorModuleConvergence>
-											<ignoreModuleDependencies>true</ignoreModuleDependencies>
-										</reactorModuleConvergence>
--->
+										<!-- <reactorModuleConvergence> <ignoreModuleDependencies>true</ignoreModuleDependencies> 
+											</reactorModuleConvergence> -->
 										<banDuplicateClasses>
 											<scopes>
 												<scope>compile</scope>
@@ -689,15 +721,13 @@
 
 	<modules>
 		<module>metaschema-model</module>
-		<module>metaschema-java-binding-annotations</module>
 		<module>metaschema-java-codegen</module>
 		<module>metaschema-maven-plugin</module>
 		<module>metaschema-java-binding</module>
 		<module>metaschema-model-common</module>
-		<!--
-		<module>metaschema-schema-generator</module>
-		<module>metaschema-documentation-generator</module>
 		<module>metaschema-freemarker-support</module>
--->
+		<module>metaschema-schema-generator</module>
+		<!-- <module>metaschema-documentation-generator</module> -->
+		<module>metaschema-testing</module>
 	</modules>
 </project>

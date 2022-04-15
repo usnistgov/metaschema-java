@@ -26,16 +26,17 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.model.definitions.IXmlNamedModelDefinition;
-import gov.nist.secauto.metaschema.model.instances.IXmlFlagInstance;
-import gov.nist.secauto.metaschema.model.xml.XmlLocalAssemblyDefinition.InternalAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.xml.XmlLocalFieldDefinition.InternalFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.xmlbeans.FlagDocument;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFieldDefinitionType;
-import gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType;
-import gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType;
-import gov.nist.secauto.metaschema.model.xmlbeans.LocalFlagDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType;
+import gov.nist.secauto.metaschema.model.xmlbeans.InlineFlagDefinitionType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -48,92 +49,118 @@ import java.util.Map;
 public class XmlFlagContainerSupport {
 
   @NotNull
-  private final Map<@NotNull String, IXmlFlagInstance> flagInstances;
+  private final Map<@NotNull String, IFlagInstance> flagInstances;
 
+  /**
+   * Generate a set of constraints from the provided XMLBeans instance.
+   * 
+   * @param xmlField
+   *          the XMLBeans instance
+   * @param container
+   *          the field containing the flag
+   */
   public XmlFlagContainerSupport(
       @NotNull GlobalFieldDefinitionType xmlField,
-      @NotNull IXmlNamedModelDefinition container) {
+      @NotNull IFieldDefinition container) {
     // handle flags
     if (xmlField.getFlagList().size() > 0 || xmlField.getDefineFlagList().size() > 0) {
       this.flagInstances = parseLocalFlags(xmlField, container);
     } else {
-      @SuppressWarnings("null")
-      @NotNull
-      Map<@NotNull String, IXmlFlagInstance> flags = Collections.emptyMap();
-      this.flagInstances = flags;
+      this.flagInstances = CollectionUtil.emptyMap();
     }
   }
 
+  /**
+   * Generate a set of constraints from the provided XMLBeans instance.
+   * 
+   * @param xmlField
+   *          the XMLBeans instance
+   * @param container
+   *          the field containing the flag
+   */
+  public XmlFlagContainerSupport(
+      @NotNull InlineFieldDefinitionType xmlField,
+      @NotNull IFieldDefinition container) {
+    // handle flags
+    if (xmlField.getFlagList().size() > 0 || xmlField.getDefineFlagList().size() > 0) {
+      this.flagInstances = parseLocalFlags(xmlField, container);
+    } else {
+      this.flagInstances = CollectionUtil.emptyMap();
+    }
+  }
+
+  /**
+   * Generate a set of constraints from the provided XMLBeans instance.
+   * 
+   * @param xmlAssembly
+   *          the XMLBeans instance
+   * @param container
+   *          the assembly containing the flag
+   */
   public XmlFlagContainerSupport(
       @NotNull GlobalAssemblyDefinitionType xmlAssembly,
-      @NotNull IXmlNamedModelDefinition container) {
+      @NotNull IAssemblyDefinition container) {
     // handle flags
     if (xmlAssembly.getFlagList().size() > 0 || xmlAssembly.getDefineFlagList().size() > 0) {
       this.flagInstances = parseLocalFlags(xmlAssembly, container);
     } else {
-      @SuppressWarnings("null")
-      @NotNull
-      Map<@NotNull String, IXmlFlagInstance> flags = Collections.emptyMap();
-      this.flagInstances = flags;
+      this.flagInstances = CollectionUtil.emptyMap();
     }
   }
 
+  /**
+   * Generate a set of constraints from the provided XMLBeans instance.
+   * 
+   * @param xmlAssembly
+   *          the XMLBeans instance
+   * @param container
+   *          the assembly containing the flag
+   */
   public XmlFlagContainerSupport(
-      @NotNull LocalAssemblyDefinitionType xmlAssembly,
-      @NotNull InternalAssemblyDefinition container) {
+      @NotNull InlineAssemblyDefinitionType xmlAssembly,
+      @NotNull IAssemblyDefinition container) {
     // handle flags
     if (xmlAssembly.getFlagList().size() > 0 || xmlAssembly.getDefineFlagList().size() > 0) {
       this.flagInstances = parseLocalFlags(xmlAssembly, container);
     } else {
-      @SuppressWarnings("null")
-      @NotNull
-      Map<@NotNull String, IXmlFlagInstance> flags = Collections.emptyMap();
-      this.flagInstances = flags;
+      this.flagInstances = CollectionUtil.emptyMap();
     }
   }
 
-  public XmlFlagContainerSupport(
-      @NotNull LocalFieldDefinitionType xmlField,
-      @NotNull InternalFieldDefinition container) {
-    // handle flags
-    if (xmlField.getFlagList().size() > 0 || xmlField.getDefineFlagList().size() > 0) {
-      this.flagInstances = parseLocalFlags(xmlField, container);
-    } else {
-      @SuppressWarnings("null")
-      @NotNull
-      Map<@NotNull String, IXmlFlagInstance> flags = Collections.emptyMap();
-      this.flagInstances = flags;
-    }
-  }
-
+  /**
+   * Get a mapping of flag effective name to flag instance.
+   * 
+   * @return the mapping of flag effective name to flag instance
+   */
   @NotNull
-  public Map<@NotNull String, ? extends IXmlFlagInstance> getFlagInstanceMap() {
+  public Map<@NotNull String, ? extends IFlagInstance> getFlagInstanceMap() {
     return flagInstances;
   }
 
   @NotNull
-  public static Map<@NotNull String, IXmlFlagInstance> parseLocalFlags(@NotNull XmlObject xmlObject,
-      @NotNull IXmlNamedModelDefinition parent) {
+  private static Map<@NotNull String, IFlagInstance> parseLocalFlags(@NotNull XmlObject xmlObject,
+      @NotNull INamedModelDefinition parent) {
     // handle flags
     XmlCursor cursor = xmlObject.newCursor();
     cursor.selectPath(
         "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';" + "$this/m:flag|$this/m:define-flag");
 
-    Map<@NotNull String, IXmlFlagInstance> flagInstances = new LinkedHashMap<>();
+    Map<@NotNull String, IFlagInstance> flagInstances = new LinkedHashMap<>(); // NOPMD - intentional
     while (cursor.toNextSelection()) {
       XmlObject obj = cursor.getObject();
       if (obj instanceof FlagDocument.Flag) {
-        IXmlFlagInstance flagInstance = new XmlFlagInstance((FlagDocument.Flag) obj, parent);
+        XmlFlagInstance flagInstance = new XmlFlagInstance((FlagDocument.Flag) obj, parent); // NOPMD - intentional
         flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
-      } else if (obj instanceof LocalFlagDefinitionType) {
-        IXmlFlagInstance flagInstance = new XmlLocalFlagDefinition((LocalFlagDefinitionType) obj, parent);
+      } else if (obj instanceof InlineFlagDefinitionType) {
+        XmlInlineFlagDefinition flagInstance
+            = new XmlInlineFlagDefinition((InlineFlagDefinitionType) obj, parent); // NOPMD - intentional
         flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
       }
     }
 
     @SuppressWarnings("null")
     @NotNull
-    Map<@NotNull String, IXmlFlagInstance> retval
+    Map<@NotNull String, IFlagInstance> retval
         = flagInstances.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagInstances);
     return retval;
   }

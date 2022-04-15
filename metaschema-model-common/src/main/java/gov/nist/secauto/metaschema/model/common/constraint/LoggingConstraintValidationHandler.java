@@ -46,6 +46,7 @@ public class LoggingConstraintValidationHandler
   @NotNull
   private IPathFormatter pathFormatter = IPathFormatter.METAPATH_PATH_FORMATER;
 
+  @Override
   @NotNull
   public IPathFormatter getPathFormatter() {
     return pathFormatter;
@@ -79,6 +80,7 @@ public class LoggingConstraintValidationHandler
     return retval;
   }
 
+  @Override
   protected String toPath(@NotNull INodeItem nodeItem) {
     return nodeItem.toPath(getPathFormatter());
   }

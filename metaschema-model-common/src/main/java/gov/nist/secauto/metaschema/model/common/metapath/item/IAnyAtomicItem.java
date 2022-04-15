@@ -32,13 +32,21 @@ import org.jetbrains.annotations.NotNull;
 
 public interface IAnyAtomicItem extends IAtomicValuedItem {
 
+  @Override
+  default @NotNull IAnyAtomicItem toAtomicItem() {
+    return this;
+  }
+
   /**
-   * Get the textual value of the item's "wrapped" value.
+   * Get the item's string value.
    * 
-   * @return the textual value of the item's "wrapped" value
+   * @return the string value value of the item
    */
+  @SuppressWarnings("null")
   @NotNull
-  String asString();
+  default String asString() {
+    return getValue().toString();
+  }
 
   /**
    * Get a new {@link IStringItem} based on the the textual value of the item's "wrapped" value.

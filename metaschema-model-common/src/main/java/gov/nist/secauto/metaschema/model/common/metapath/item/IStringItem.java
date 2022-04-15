@@ -43,12 +43,14 @@ public interface IStringItem extends IAnyAtomicItem {
   }
 
   @Override
-  default IStringItem toAtomicItem() {
+  default IStringItem newStringItem() {
     return this;
   }
 
-  @Override
-  default IStringItem newStringItem() {
-    return this;
+  @NotNull
+  default IIntegerItem compare(@NotNull IStringItem other) {
+    String leftString = this.asString();
+    String rightString = other.asString();
+    return IIntegerItem.valueOf(leftString.compareTo(rightString));
   }
 }

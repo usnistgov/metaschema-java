@@ -32,20 +32,20 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.Assembly;
-import gov.nist.secauto.metaschema.binding.model.annotations.Field;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.codegen.AssemblyJavaClassGenerator;
 import gov.nist.secauto.metaschema.codegen.support.AnnotationUtils;
-import gov.nist.secauto.metaschema.model.common.ModelConstants;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
-import gov.nist.secauto.metaschema.model.common.instance.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -122,9 +122,9 @@ public class ModelInstancePropertyGenerator
     AnnotationSpec.Builder fieldAnnoation;
     INamedModelInstance modelInstance = getModelInstance();
     if (modelInstance instanceof IFieldInstance) {
-      fieldAnnoation = AnnotationSpec.builder(Field.class);
+      fieldAnnoation = AnnotationSpec.builder(BoundField.class);
     } else if (modelInstance instanceof IAssemblyInstance) {
-      fieldAnnoation = AnnotationSpec.builder(Assembly.class);
+      fieldAnnoation = AnnotationSpec.builder(BoundAssembly.class);
     } else {
       throw new UnsupportedOperationException(String.format("Model instance '%s' of type '%s' is not supported.",
           modelInstance.getName(), modelInstance.getClass().getName()));
@@ -133,28 +133,31 @@ public class ModelInstancePropertyGenerator
     fieldAnnoation.addMember("useName", "$S", modelInstance.getEffectiveName());
 
     INamedModelDefinition definition = modelInstance.getDefinition();
-    if (definition instanceof IFieldDefinition && ((IFieldDefinition) definition).isSimple()) {
-      // do not generate a child class
-    } else if (!definition.isGlobal()) {
-      // this is a local definition that must be built as a child class
+    if (definition.isInline() && !(definition instanceof IFieldDefinition && definition.isSimple())) {
+      // this is an inline definition that must be built as a child class
       retval.add(definition);
     }
 
-    fieldAnnoation.addMember("namespace", "$S", modelInstance.getXmlNamespace());
+    String namespace = modelInstance.getXmlNamespace();
+    if (namespace == null) {
+      fieldAnnoation.addMember("namespace", "$S", "##none");
+    } else if (!modelInstance.getContainingMetaschema().getXmlNamespace().toASCIIString().equals(namespace)) {
+      fieldAnnoation.addMember("namespace", "$S", namespace);
+    } // otherwise use the ##default
 
     if (modelInstance instanceof IFieldInstance) {
       IFieldInstance fieldInstance = (IFieldInstance) modelInstance;
       IFieldDefinition fieldDefinition = (IFieldDefinition) definition;
 
-      IJavaTypeAdapter<?> valueDataType = fieldDefinition.getDatatype();
+      IJavaTypeAdapter<?> valueDataType = fieldDefinition.getJavaTypeAdapter();
 
-      if (ModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
+      if (MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
         fieldAnnoation.addMember("inXmlWrapped", "$L", fieldInstance.isInXmlWrapped());
       }
       if (fieldInstance.isSimple()) {
         // this is a simple field, without flags
-        // we need to add the FieldValue annotation to the property
-        fieldAnnoation.addMember("valueName", "$S", fieldDefinition.getJsonValueKeyName());
+        // we need to add the BoundFieldValue annotation to the property
+        // fieldAnnoation.addMember("valueName", "$S", fieldDefinition.getJsonValueKeyName());
 
         fieldAnnoation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
 
@@ -166,18 +169,24 @@ public class ModelInstancePropertyGenerator
     }
 
     int minOccurs = modelInstance.getMinOccurs();
-    if (minOccurs != ModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
+    if (minOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
       fieldAnnoation.addMember("minOccurs", "$L", minOccurs);
     }
 
     int maxOccurs = modelInstance.getMaxOccurs();
-    if (maxOccurs != ModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
+    if (maxOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
       fieldAnnoation.addMember("maxOccurs", "$L", maxOccurs);
     }
 
     if (maxOccurs == -1 || maxOccurs > 1) {
       fieldAnnoation.addMember("groupName", "$S", getInstanceName());
-      fieldAnnoation.addMember("groupNamespace", "$S", modelInstance.getGroupAsXmlNamespace());
+
+      String groupAsNamespace = modelInstance.getGroupAsXmlNamespace();
+      if (groupAsNamespace == null) {
+        fieldAnnoation.addMember("groupNamespace", "$S", "##none");
+      } else if (!modelInstance.getContainingMetaschema().getXmlNamespace().toASCIIString().equals(groupAsNamespace)) {
+        fieldAnnoation.addMember("groupNamespace", "$S", groupAsNamespace);
+      } // otherwise use the ##default
 
       JsonGroupAsBehavior jsonGroupAsBehavior = modelInstance.getJsonGroupAsBehavior();
       assert jsonGroupAsBehavior != null;
@@ -201,7 +210,7 @@ public class ModelInstancePropertyGenerator
     if (instance instanceof IFieldInstance) {
       IFieldInstance fieldInstance = (IFieldInstance) instance;
       if (fieldInstance.isSimple()) {
-        IJavaTypeAdapter<?> dataType = fieldInstance.getDefinition().getDatatype();
+        IJavaTypeAdapter<?> dataType = fieldInstance.getDefinition().getJavaTypeAdapter();
         // this is a simple value
         item = ClassName.get(dataType.getJavaClass());
       } else {

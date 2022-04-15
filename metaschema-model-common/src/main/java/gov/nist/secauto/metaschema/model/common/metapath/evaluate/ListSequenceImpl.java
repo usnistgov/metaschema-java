@@ -75,6 +75,7 @@ class ListSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> 
     return items.size();
   }
 
+  @Override
   public boolean equals(Object other) {
     if (other == this) {
       return true;

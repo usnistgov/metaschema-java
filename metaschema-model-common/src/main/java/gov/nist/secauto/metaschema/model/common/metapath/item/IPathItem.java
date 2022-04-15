@@ -26,9 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.definition.INamedDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
+import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -52,12 +51,19 @@ public interface IPathItem extends IItem {
   INamedDefinition getDefinition();
 
   /**
-   * Get the path segment for this item.
+   * Retrieve the instance associated with this path segment.
    * 
-   * @return the path segment
+   * @return the instance of the segment, or {@code null} if it doesn't have one
    */
-  @NotNull
-  IPathSegment getPathSegment();
+  INamedInstance getInstance();
+
+  // /**
+  // * Get the path segment for this item.
+  // *
+  // * @return the path segment
+  // */
+  // @NotNull
+  // IPathSegment getPathSegment();
 
   // Stream<IPathSegment> getPathStream();
 
@@ -68,14 +74,4 @@ public interface IPathItem extends IItem {
   // * @return a list of nodes
   // */
   // List<? extends IPathItem> getNodePath();
-
-  /**
-   * Get the path for this node item using the provided formatter.
-   * 
-   * @return the formatted path
-   */
-  @NotNull
-  default String toPath(@NotNull IPathFormatter formatter) {
-    return formatter.format(getPathSegment());
-  }
 }

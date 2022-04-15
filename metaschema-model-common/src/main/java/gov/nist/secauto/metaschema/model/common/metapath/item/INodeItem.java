@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
@@ -34,12 +35,15 @@ import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaPathEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
+import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
+import gov.nist.secauto.metaschema.model.common.validation.ValidatingNodeItemVisitor;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
+import java.util.stream.Stream;
 
-public interface INodeItem extends IPathItem, INodeContext {
+public interface INodeItem extends IPathItem, INodeContext, IPathSegment {
 
   /**
    * Get the type of node item this is.
@@ -108,11 +112,40 @@ public interface INodeItem extends IPathItem, INodeContext {
   }
 
   /**
+   * A visitor callback.
+   * 
+   * @param <RESULT>
+   *          the type of the visitor result
+   * @param <CONTEXT>
+   *          the type of the context parameter
+   * @param visitor
+   *          the calling visitor
+   * @param context
+   *          a parameter used to pass contextual information between visitors
+   * @return the visitor result
+   */
+  <RESULT, CONTEXT> RESULT accept(@NotNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
+
+  /**
+   * Perform constraint validation on this node (and its children) using the provided validator.
+   * 
+   * @param validator
+   *          the validator instance to use for performing validation
+   */
+  default void validate(IConstraintValidator validator) {
+    new ValidatingNodeItemVisitor().visit(this, validator);
+  }
+
+  /**
    * Retrieve the parent node item if it exists.
    * 
    * @return the parent node item, or {@code null} if this node item has no known parent
    */
+  // TODO: Should this be IModelNodeItem?
   INodeItem getParentNodeItem();
+
+  @Override
+  Stream<@NotNull ? extends INodeItem> getPathStream();
 
   /**
    * Retrieve the parent content node item if it exists. A content node is a non-document node.

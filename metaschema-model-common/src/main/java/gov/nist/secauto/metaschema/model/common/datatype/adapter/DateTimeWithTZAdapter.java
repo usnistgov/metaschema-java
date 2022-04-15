@@ -44,7 +44,7 @@ public class DateTimeWithTZAdapter
 
   @Override
   public String getName() {
-    return "dateTime-with-timezone";
+    return "date-time-with-timezone";
   }
 
   @SuppressWarnings("null")

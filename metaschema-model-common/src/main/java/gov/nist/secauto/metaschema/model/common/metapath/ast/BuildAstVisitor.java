@@ -119,6 +119,8 @@ public class BuildAstVisitor
    * 
    * @param <CONTEXT>
    *          the context type to parse
+   * @param <EXPRESSION>
+   *          the child expression type
    * @param context
    *          the context instance
    * @param step
@@ -130,35 +132,36 @@ public class BuildAstVisitor
    * @return the left expression or the supplied expression for a collection
    */
   @NotNull
-  protected <CONTEXT extends ParserRuleContext, NODE extends IExpression> IExpression handleNAiryCollection(
-      @NotNull CONTEXT context, int step, @NotNull BiFunction<@NotNull CONTEXT, @NotNull Integer, @NotNull NODE> parser,
-      @NotNull java.util.function.Function<@NotNull List<NODE>, @NotNull IExpression> supplier) {
+  protected <CONTEXT extends ParserRuleContext, EXPRESSION extends IExpression> IExpression handleNAiryCollection(
+      @NotNull CONTEXT context, int step,
+      @NotNull BiFunction<@NotNull CONTEXT, @NotNull Integer, @NotNull EXPRESSION> parser,
+      @NotNull java.util.function.Function<@NotNull List<EXPRESSION>, @NotNull IExpression> supplier) {
     int numChildren = context.getChildCount();
 
     @NotNull
     IExpression retval;
     if (numChildren == 0) {
       throw new IllegalStateException("there should always be a child expression");
-    } else {
-      ParseTree leftTree = context.getChild(0);
-      @SuppressWarnings({ "unchecked", "null" })
-      @NotNull
-      NODE leftResult = (NODE) leftTree.accept(this);
+    }
 
-      if (numChildren == 1) {
-        retval = leftResult;
-      } else {
-        List<NODE> children = new ArrayList<>(numChildren - 1 / step);
-        children.add(leftResult);
-        for (int i = 1; i < numChildren; i = i + step) {
-          @SuppressWarnings("null")
-          NODE result = parser.apply(context, i);
-          children.add(result);
-        }
+    ParseTree leftTree = context.getChild(0);
+    @SuppressWarnings({ "unchecked", "null" })
+    @NotNull
+    EXPRESSION leftResult = (EXPRESSION) leftTree.accept(this);
+
+    if (numChildren == 1) {
+      retval = leftResult;
+    } else {
+      List<EXPRESSION> children = new ArrayList<>(numChildren - 1 / step);
+      children.add(leftResult);
+      for (int i = 1; i < numChildren; i = i + step) {
         @SuppressWarnings("null")
-        IExpression result = supplier.apply(children);
-        retval = result;
+        EXPRESSION result = parser.apply(context, i);
+        children.add(result);
       }
+      @SuppressWarnings("null")
+      IExpression result = supplier.apply(children);
+      retval = result;
     }
     return retval;
   }

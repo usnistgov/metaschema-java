@@ -85,6 +85,7 @@ class StreamSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE
     return asList().size();
   }
 
+  @Override
   public boolean equals(Object other) {
     if (other == this) {
       return true;

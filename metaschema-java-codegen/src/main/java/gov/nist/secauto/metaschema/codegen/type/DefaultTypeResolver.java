@@ -29,12 +29,14 @@ package gov.nist.secauto.metaschema.codegen.type;
 import com.squareup.javapoet.ClassName;
 
 import gov.nist.secauto.metaschema.codegen.binding.config.IBindingConfiguration;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.definitions.ILocalDefinition;
+import gov.nist.secauto.metaschema.model.common.IInlineNamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jaxb.core.api.impl.NameConverter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,36 +48,80 @@ public class DefaultTypeResolver implements ITypeResolver {
 
   private final Map<String, Set<String>> packageToClassNamesMap = new HashMap<>();
   private final Map<INamedModelDefinition, ClassName> definitionToTypeMap = new HashMap<>();
+  private final Map<IMetaschema, ClassName> metaschemaToTypeMap = new HashMap<>();
 
+  @NotNull
   private final IBindingConfiguration bindingConfiguration;
 
-  public DefaultTypeResolver(IBindingConfiguration bindingConfiguration) {
+  public DefaultTypeResolver(@NotNull IBindingConfiguration bindingConfiguration) {
     this.bindingConfiguration = bindingConfiguration;
   }
 
+  protected IBindingConfiguration getBindingConfiguration() {
+    return bindingConfiguration;
+  }
+
   @Override
-  public ClassName getClassName(INamedModelDefinition definition) {
+  public ClassName getClassName(@NotNull INamedModelDefinition definition) {
     ClassName retval = definitionToTypeMap.get(definition);
     if (retval == null) {
-      String packageName = bindingConfiguration.getPackageNameForMetaschema(definition.getContainingMetaschema());
-      if (definition.isGlobal()) {
-        String className = generateClassName(packageName, definition);
-        retval = ClassName.get(packageName, className);
-      } else {
+      String packageName = getBindingConfiguration().getPackageNameForMetaschema(definition.getContainingMetaschema());
+      if (definition.isInline()) {
         // this is a local definition, which means a child class needs to be generated
         INamedModelDefinition parentDefinition
-            = ((ILocalDefinition<?>) definition).getDefiningInstance().getContainingDefinition();
+            = ((IInlineNamedDefinition<?>) definition).getInlineInstance().getContainingDefinition();
         ClassName parentClassName = getClassName(parentDefinition);
         String name = generateClassName(parentClassName.canonicalName(), definition);
         retval = parentClassName.nestedClass(name);
+      } else {
+        String className = generateClassName(packageName, definition);
+        retval = ClassName.get(packageName, className);
       }
       definitionToTypeMap.put(definition, retval);
     }
     return retval;
   }
 
-  private String generateClassName(String packageOrTypeName, INamedModelDefinition definition) {
-    String className = bindingConfiguration.getClassName(definition);
+  @Override
+  public ClassName getClassName(IMetaschema metaschema) {
+    ClassName retval = metaschemaToTypeMap.get(metaschema);
+    if (retval == null) {
+      String packageName = getBindingConfiguration().getPackageNameForMetaschema(metaschema);
+
+      String className = getBindingConfiguration().getClassName(metaschema);
+      String classNameBase = className;
+      int index = 1;
+      while (isClassNameClash(packageName, className)) {
+        className = classNameBase + Integer.toString(index);
+      }
+      addClassName(packageName, className);
+      retval = ClassName.get(packageName, className);
+
+      metaschemaToTypeMap.put(metaschema, retval);
+    }
+    return retval;
+  }
+
+  protected boolean isClassNameClash(@NotNull String packageOrTypeName, @NotNull String className) {
+    Set<String> classNames = packageToClassNamesMap.get(packageOrTypeName);
+    if (classNames == null) {
+      classNames = new HashSet<>();
+      packageToClassNamesMap.put(packageOrTypeName, classNames);
+    }
+    return classNames.contains(className);
+  }
+
+  protected boolean addClassName(@NotNull String packageOrTypeName, @NotNull String className) {
+    Set<String> classNames = packageToClassNamesMap.get(packageOrTypeName);
+    if (classNames == null) {
+      classNames = new HashSet<>();
+      packageToClassNamesMap.put(packageOrTypeName, classNames);
+    }
+    return classNames.add(className);
+  }
+
+  private String generateClassName(@NotNull String packageOrTypeName, @NotNull INamedModelDefinition definition) {
+    String className = getBindingConfiguration().getClassName(definition);
 
     Set<String> classNames = packageToClassNamesMap.get(packageOrTypeName);
     if (classNames == null) {
@@ -83,7 +129,7 @@ public class DefaultTypeResolver implements ITypeResolver {
       packageToClassNamesMap.put(packageOrTypeName, classNames);
     }
 
-    if (classNames.contains(className)) {
+    if (isClassNameClash(packageOrTypeName, className)) {
       if (LOGGER.isWarnEnabled()) {
         LOGGER.warn(String.format("Class name '%s' in metaschema '%s' conflicts with a previously used class name.",
             className, definition.getContainingMetaschema().getLocation()));
@@ -95,10 +141,10 @@ public class DefaultTypeResolver implements ITypeResolver {
 
     String classNameBase = className;
     int index = 1;
-    while (classNames.contains(className)) {
+    while (isClassNameClash(packageOrTypeName, className)) {
       className = classNameBase + Integer.toString(index);
     }
-    classNames.add(className);
+    addClassName(packageOrTypeName, className);
     return className;
   }
 
@@ -110,5 +156,10 @@ public class DefaultTypeResolver implements ITypeResolver {
       retval = ClassName.bestGuess(className);
     }
     return retval;
+  }
+
+  @Override
+  public String getPackageName(@NotNull IMetaschema metaschema) {
+    return bindingConfiguration.getPackageNameForMetaschema(metaschema);
   }
 }

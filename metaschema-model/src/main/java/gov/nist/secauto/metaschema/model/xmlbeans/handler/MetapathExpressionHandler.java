@@ -26,7 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.xmlbeans.handler;
 
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.xmlbeans.SimpleValue;
 import org.apache.xmlbeans.XmlCursor;
@@ -39,25 +41,32 @@ public final class MetapathExpressionHandler {
     // disable
   }
 
-  public static MetapathExpression decodeMetaschemaPathType(SimpleValue obj) {
-    String value = obj.getStringValue();
+  /**
+   * Compile a Metapath expression for the provided expression value.
+   * 
+   * @param value
+   *          the Metapath as a string value
+   * @return the compiled Metapath
+   */
+  public static MetapathExpression decodeMetaschemaPathType(SimpleValue value) {
+    String path = ObjectUtils.notNull(value.getStringValue());
     try {
-      return MetapathExpression.compile(value);
-    } catch (Exception ex) {
-      StringBuilder builder = new StringBuilder();
-      builder.append("Error parsing metapath '");
-      builder.append(value);
-      builder.append("'");
+      return MetapathExpression.compile(path);
+    } catch (MetapathException ex) {
+      StringBuilder builder = new StringBuilder(32)
+          .append("Error parsing metapath '")
+          .append(value)
+          .append('\'');
 
-      XmlCursor cursor = obj.newCursor();
+      XmlCursor cursor = value.newCursor();
       cursor.toParent();
       XmlBookmark bookmark = cursor.getBookmark(XmlLineNumber.class);
       if (bookmark != null) {
         XmlLineNumber lineNumber = (XmlLineNumber) bookmark;
-        builder.append(" at location ");
-        builder.append(lineNumber.getLine());
-        builder.append(':');
-        builder.append(lineNumber.getColumn());
+        builder.append(" at location ")
+            .append(lineNumber.getLine())
+            .append(':')
+            .append(lineNumber.getColumn());
       }
       XmlValueNotSupportedException exNew
           = new XmlValueNotSupportedException(builder.toString());
@@ -66,7 +75,18 @@ public final class MetapathExpressionHandler {
     }
   }
 
-  public static void encodeMetaschemaPathType(MetapathExpression targetValue, SimpleValue target) {
-    throw new UnsupportedOperationException();
+  /**
+   * Given a Metapath expression, set the string value to the raw path provided by
+   * {@link MetapathExpression#getPath()}.
+   * 
+   * @param expression
+   *          a compiled Metapath expression
+   * @param target
+   *          the target string value
+   */
+  public static void encodeMetaschemaPathType(MetapathExpression expression, SimpleValue target) {
+    if (expression != null) {
+      target.setStringValue(expression.getPath());
+    }
   }
 }

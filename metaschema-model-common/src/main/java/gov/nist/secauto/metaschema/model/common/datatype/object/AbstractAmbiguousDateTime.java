@@ -45,14 +45,14 @@ import java.time.ZonedDateTime;
  */
 public abstract class AbstractAmbiguousDateTime<TYPE extends AbstractAmbiguousDateTime<TYPE>>
     extends AbstractDatatype<TYPE, ZonedDateTime> {
-  private boolean hasTimeZone;
+  private final boolean timeZone;
 
   public AbstractAmbiguousDateTime(@NotNull ZonedDateTime value, boolean hasTimeZone) {
     super(value);
-    this.hasTimeZone = hasTimeZone;
+    this.timeZone = hasTimeZone;
   }
 
   public boolean hasTimeZone() {
-    return hasTimeZone;
+    return timeZone;
   }
 }

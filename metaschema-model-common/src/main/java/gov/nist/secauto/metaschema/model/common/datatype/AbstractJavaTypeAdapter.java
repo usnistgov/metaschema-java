@@ -52,7 +52,9 @@ import javax.xml.stream.events.XMLEvent;
  * of all Java type adapter implementations.
  * 
  * @param <TYPE>
- *          the Java type this adapter supports
+ *          the raw Java type this adapter supports
+ * @param <ITEM_TYPE>
+ *          the metapath item type corresponding to the raw Java type supported by the adapter
  */
 public abstract class AbstractJavaTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomicItem>
     implements IJavaTypeAdapter<TYPE> {
@@ -99,6 +101,11 @@ public abstract class AbstractJavaTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
 
   @Override
   public boolean isUnrappedValueAllowedInXml() {
+    return false;
+  }
+
+  @Override
+  public boolean isXmlMixed() {
     return false;
   }
 
@@ -170,7 +177,7 @@ public abstract class AbstractJavaTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
 
   @Override
   public void writeJsonValue(Object value, JsonGenerator generator) throws IOException {
-    generator.writeString(value.toString());
+    generator.writeString(asString(value));
   }
 
   @Override

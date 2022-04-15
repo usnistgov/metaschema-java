@@ -9,16 +9,16 @@
 		<xb:package>gov.nist.secauto.metaschema.model.xmlbeans</xb:package>
 	</xb:namespace>
 
-	<xb:usertype name="meta:BooleanType"
+	<xb:usertype name="meta:YesNoType"
 		javaname="java.lang.Boolean">
-		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.BooleanType</xb:staticHandler>
+		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.YesNoType</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="meta:JsonGroupAsBehaviorType"
-		javaname="gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior">
+		javaname="gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior">
 		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.JsonGroupAsBehaviorType</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="meta:XmlGroupAsBehaviorType"
-		javaname="gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior">
+		javaname="gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior">
 		<xb:staticHandler>gov.nist.secauto.metaschema.model.xmlbeans.handler.XmlGroupAsBehaviorType</xb:staticHandler>
 	</xb:usertype>
 	<xb:usertype name="meta:ScopeType"

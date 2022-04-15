@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.docsgen;
 
-import gov.nist.secauto.metaschema.freemarker.support.FreemarkerGenerator;
+import gov.nist.secauto.metaschema.freemarker.support.IFreemarkerGenerator;
 
-public interface DocumentationGenerator extends FreemarkerGenerator {
+public interface DocumentationGenerator extends IFreemarkerGenerator {
 }

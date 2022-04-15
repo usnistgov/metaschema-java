@@ -73,6 +73,7 @@ class SingletonSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_T
     return 1;
   }
 
+  @Override
   public boolean equals(Object other) {
     if (other == this) {
       return true;

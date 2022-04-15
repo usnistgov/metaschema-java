@@ -38,19 +38,19 @@ import gov.nist.secauto.metaschema.binding.io.xml.DefaultXmlDeserializer;
 import gov.nist.secauto.metaschema.binding.io.xml.DefaultXmlSerializer;
 import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlDeserializer;
 import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlSerializer;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IBoundXdmNodeItem;
-import gov.nist.secauto.metaschema.binding.metapath.xdm.IXdmFactory;
+import gov.nist.secauto.metaschema.binding.metapath.item.ConstraintContentValidator;
+import gov.nist.secauto.metaschema.binding.metapath.item.IXdmFactory;
 import gov.nist.secauto.metaschema.binding.model.DefaultAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.DefaultFieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidationHandler;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -82,16 +82,15 @@ import javax.xml.namespace.QName;
 public class DefaultBindingContext implements IBindingContext {
   private static DefaultBindingContext singleton;
 
-  private final Map<Class<?>, IClassBinding> classBindingsByClass // NOPMD synchronization is handled in the methods
-                                                                  // accessing this field
+  @NotNull
+  private final Map<Class<?>, IMetaschema> metaschemasByClass = new HashMap<>(); // NOPMD - intentional
+  @NotNull
+  private final Map<Class<?>, IClassBinding> classBindingsByClass = new HashMap<>(); // NOPMD - intentional
+  @NotNull
+  private final Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> javaTypeAdapterMap // NOPMD - intentional
       = new HashMap<>();
-  private final Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> javaTypeAdapterMap // NOPMD
-                                                                                                  // synchronization is
-                                                                                                  // handled in the
-                                                                                                  // methods accessing
-                                                                                                  // this field
-      = new HashMap<>();
-  private final List<IBindingMatcher> bindingMatchers = new LinkedList<>();
+  @NotNull
+  private final List<@NotNull IBindingMatcher> bindingMatchers = new LinkedList<>();
 
   public static DefaultBindingContext instance() {
     synchronized (DefaultBindingContext.class) {
@@ -110,6 +109,19 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
+  public IMetaschema getMetaschemaInstanceByClass(Class<? extends AbstractBoundMetaschema> clazz) {
+    IMetaschema retval;
+    synchronized (this) {
+      retval = metaschemasByClass.get(clazz);
+      if (retval == null) {
+        retval = AbstractBoundMetaschema.createInstance(clazz, this);
+        metaschemasByClass.put(clazz, retval);
+      }
+    }
+    return retval;
+  }
+
+  @Override
   public IClassBinding getClassBinding(@NotNull Class<?> clazz) {
     IClassBinding retval;
     synchronized (this) {
@@ -125,9 +137,7 @@ public class DefaultBindingContext implements IBindingContext {
                   + " since it is missing a '%s' or '%s' annotation.",
               clazz.getName(), MetaschemaAssembly.class.getName(), MetaschemaField.class.getName()));
         }
-        if (retval != null) {
-          classBindingsByClass.put(clazz, retval);
-        }
+        classBindingsByClass.put(clazz, retval);
       }
     }
     return retval;
@@ -138,7 +148,7 @@ public class DefaultBindingContext implements IBindingContext {
       getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz) {
     IJavaTypeAdapter<?> instance;
     synchronized (this) {
-      instance =  javaTypeAdapterMap.get(clazz);
+      instance = javaTypeAdapterMap.get(clazz);
       if (instance == null) {
         Constructor<TYPE> constructor;
         try {
@@ -156,7 +166,7 @@ public class DefaultBindingContext implements IBindingContext {
       }
     }
     @SuppressWarnings("unchecked")
-    TYPE retval = (TYPE)instance;
+    TYPE retval = (TYPE) instance;
     return retval;
   }
 
@@ -184,7 +194,6 @@ public class DefaultBindingContext implements IBindingContext {
     default:
       throw new UnsupportedOperationException(String.format("Unsupported format '%s'", format));
     }
-
     return retval;
   }
 
@@ -195,8 +204,10 @@ public class DefaultBindingContext implements IBindingContext {
    */
   @Override
   public <CLASS> IDeserializer<CLASS> newDeserializer(@NotNull Format format, @NotNull Class<CLASS> clazz) {
-    Objects.requireNonNull(format, "format");
     IAssemblyClassBinding classBinding = (IAssemblyClassBinding) getClassBinding(clazz);
+    if (classBinding == null) {
+      throw new IllegalStateException(String.format("A binding for class '%s' was not found.", clazz.getName()));
+    }
 
     IDeserializer<CLASS> retval;
     switch (format) {
@@ -223,12 +234,17 @@ public class DefaultBindingContext implements IBindingContext {
     }
   }
 
-  protected synchronized List<IBindingMatcher> getBindingMatchers() {
-    return Collections.unmodifiableList(bindingMatchers);
+  @NotNull
+  protected List<@NotNull ? extends IBindingMatcher> getBindingMatchers() {
+    synchronized (this) {
+      return CollectionUtil.unmodifiableList(bindingMatchers);
+    }
   }
 
-  public synchronized Map<Class<?>, IClassBinding> getClassBindingsByClass() {
-    return Collections.unmodifiableMap(classBindingsByClass);
+  public Map<Class<?>, IClassBinding> getClassBindingsByClass() {
+    synchronized (this) {
+      return Collections.unmodifiableMap(classBindingsByClass);
+    }
   }
 
   public Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> getJavaTypeAdaptersByClass() {
@@ -273,25 +289,18 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public IBoundXdmNodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode) {
-    IClassBinding binding = getClassBinding(boundObject.getClass());
-    return IXdmFactory.INSTANCE.newNodeItem(binding, boundObject, baseUri, rootNode);
+  public INodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode) {
+    IClassBinding classBinding = getClassBinding(boundObject.getClass());
+    if (classBinding == null) {
+      throw new IllegalStateException(
+          String.format("A binding for class '%s' was not found.", boundObject.getClass().getName()));
+    }
+    return IXdmFactory.INSTANCE.newNodeItem(classBinding, boundObject, baseUri, rootNode);
   }
 
   @Override
-  public void validate(@NotNull Object boundObject, URI baseUri, boolean rootNode,
-      IConstraintValidationHandler handler) {
-    IBoundXdmNodeItem nodeItem = toNodeItem(boundObject, baseUri, rootNode);
-
-    StaticContext staticContext = new StaticContext();
-    DynamicContext dynamicContext = staticContext.newDynamicContext();
-    dynamicContext.setDocumentLoader(newBoundLoader());
-    DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext);
-    if (handler != null) {
-      validator.setConstraintValidationHandler(handler);
-    }
-    nodeItem.validate(validator);
-    validator.finalizeValidation();
+  public IValidationResult validate(@NotNull INodeItem nodeItem) {
+    return new ConstraintContentValidator(this).validate(nodeItem);
   }
 
 }

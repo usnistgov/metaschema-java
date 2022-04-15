@@ -33,6 +33,9 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.RootAssemblyDefinition;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -41,14 +44,16 @@ public class DefaultJsonSerializer<CLASS>
     extends AbstractSerializer<CLASS> {
   private JsonFactory jsonFactory;
 
-  public DefaultJsonSerializer(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
+  public DefaultJsonSerializer(@NotNull IBindingContext bindingContext, @NotNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
+  @NotNull
   protected JsonFactory getJsonFactoryInstance() {
     return JsonFactoryFactory.instance();
   }
 
+  @NotNull
   protected JsonFactory getJsonFactory() {
     synchronized (this) {
       if (jsonFactory == null) {
@@ -76,7 +81,10 @@ public class DefaultJsonSerializer<CLASS>
     try (JsonGenerator generator = newJsonGenerator(writer)) {
       IAssemblyClassBinding classBinding = getClassBinding();
       IJsonWritingContext writingContext = new DefaultJsonWritingContext(generator);
-      classBinding.writeRoot(data, writingContext);
+
+      RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
+
+      root.writeRoot(data, writingContext);
     }
   }
 

@@ -27,8 +27,9 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.function.library.CastToDecimalFunction;
+import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
@@ -164,10 +165,10 @@ public final class FunctionUtils {
   @NotNull
   public static INumericItem toNumeric(@NotNull IItem item) throws TypeMetapathException {
     // atomize
-    IAnyAtomicItem atomicItem = XPathFunctions.fnDataItem(item);
+    IAnyAtomicItem atomicItem = FnData.fnDataItem(item);
 
     try {
-      return CastToDecimalFunction.castToDecimal(atomicItem);
+      return IDecimalItem.cast(atomicItem);
     } catch (InvalidValueForCastFunctionMetapathException ex) {
       throw new InvalidTypeMetapathException(ex.getLocalizedMessage(), ex);
     }

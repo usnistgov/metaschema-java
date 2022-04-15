@@ -26,7 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.xml;
 
-import gov.nist.secauto.metaschema.model.IXmlMetaschema;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
@@ -38,19 +41,17 @@ import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.definition.IDefinition;
-import gov.nist.secauto.metaschema.model.definitions.IXmlFlagDefinition;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFlagDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
+public class XmlGlobalFlagDefinition implements IFlagDefinition {
   @NotNull
   private final GlobalFlagDefinitionType xmlFlag;
   @NotNull
-  private final IXmlMetaschema metaschema;
+  private final IMetaschema metaschema;
   private IValueConstraintSupport constraints;
 
   /**
@@ -61,18 +62,13 @@ public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
    * @param metaschema
    *          the containing Metaschema
    */
-  public XmlGlobalFlagDefinition(@NotNull GlobalFlagDefinitionType xmlFlag, @NotNull IXmlMetaschema metaschema) {
+  public XmlGlobalFlagDefinition(@NotNull GlobalFlagDefinitionType xmlFlag, @NotNull IMetaschema metaschema) {
     this.xmlFlag = xmlFlag;
     this.metaschema = metaschema;
   }
 
   @Override
-  public boolean isGlobal() {
-    return true;
-  }
-
-  @Override
-  public IXmlMetaschema getContainingMetaschema() {
+  public IMetaschema getContainingMetaschema() {
     return metaschema;
   }
 
@@ -88,56 +84,65 @@ public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
   /**
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.
+   * 
+   * @return the constraints instance
    */
-  protected synchronized void checkModelConstraints() {
-    if (constraints == null) {
-      if (getXmlFlag().isSetConstraint()) {
-        constraints = new ValueConstraintSupport(getXmlFlag().getConstraint());
-      } else {
-        constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+  @SuppressWarnings("null")
+  protected IValueConstraintSupport initModelConstraints() {
+    synchronized (this) {
+      if (constraints == null) {
+        if (getXmlFlag().isSetConstraint()) {
+          constraints = new ValueConstraintSupport(getXmlFlag().getConstraint());
+        } else {
+          constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+        }
       }
+      return constraints;
     }
   }
 
   @Override
   public List<? extends IConstraint> getConstraints() {
-    checkModelConstraints();
-    return constraints.getConstraints();
+    return initModelConstraints().getConstraints();
   }
 
   @Override
   public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
-    checkModelConstraints();
-    return constraints.getAllowedValuesContraints();
+    return initModelConstraints().getAllowedValuesContraints();
   }
 
   @Override
   public List<? extends IMatchesConstraint> getMatchesConstraints() {
-    checkModelConstraints();
-    return constraints.getMatchesConstraints();
+    return initModelConstraints().getMatchesConstraints();
   }
 
   @Override
   public List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-    checkModelConstraints();
-    return constraints.getIndexHasKeyConstraints();
+    return initModelConstraints().getIndexHasKeyConstraints();
   }
 
   @Override
   public List<? extends IExpectConstraint> getExpectConstraints() {
-    checkModelConstraints();
-    return constraints.getExpectConstraints();
+    return initModelConstraints().getExpectConstraints();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public ModuleScopeEnum getModuleScope() {
+    return getXmlFlag().isSetScope() ? getXmlFlag().getScope() : IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
   }
 
   @Override
-  public ModuleScopeEnum getModuleScope() {
-    ModuleScopeEnum retval = IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
-    if (getXmlFlag().isSetScope()) {
-      retval = getXmlFlag().getScope();
-    }
-    return retval;
+  public boolean isInline() {
+    return false;
   }
 
+  @Override
+  public INamedInstance getInlineInstance() {
+    return null;
+  }
+
+  @SuppressWarnings("null")
   @Override
   public String getName() {
     return getXmlFlag().getName();
@@ -153,32 +158,23 @@ public class XmlGlobalFlagDefinition implements IXmlFlagDefinition {
   }
 
   @Override
-  public String getXmlNamespace() {
-    return getContainingMetaschema().getXmlNamespace().toString();
-  }
-
-  @Override
   public String getFormalName() {
-    return getXmlFlag().getFormalName();
+    return getXmlFlag().isSetFormalName() ? getXmlFlag().getFormalName() : null;
   }
 
+  @SuppressWarnings("null")
   @Override
   public MarkupLine getDescription() {
-    return MarkupStringConverter.toMarkupString(getXmlFlag().getDescription());
+    return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription()) : null;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public IJavaTypeAdapter<?> getDatatype() {
-    IJavaTypeAdapter<?> retval;
-    if (getXmlFlag().isSetAsType()) {
-      retval = getXmlFlag().getAsType();
-    } else {
-      // the default
-      retval = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
-    }
-    return retval;
+  public IJavaTypeAdapter<?> getJavaTypeAdapter() {
+    return getXmlFlag().isSetAsType() ? getXmlFlag().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
   }
 
+  @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
     return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;

@@ -27,24 +27,27 @@
 package gov.nist.secauto.metaschema.binding.io.json;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
-import gov.nist.secauto.metaschema.binding.io.context.IProblemHandler;
+import gov.nist.secauto.metaschema.binding.io.IProblemHandler;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.binding.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
-import gov.nist.secauto.metaschema.binding.model.property.IBoundInstance;
-import gov.nist.secauto.metaschema.binding.model.property.info.IJsonBindingSupplier;
+import gov.nist.secauto.metaschema.binding.model.IJsonBindingSupplier;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Map;
 
 public interface IJsonProblemHandler extends IProblemHandler {
-  boolean handleUnknownRootProperty(Object instance, IAssemblyClassBinding classBinding, String fieldName,
-      IJsonParsingContext parsingContext) throws BindingException, IOException;
+  boolean handleUnknownRootProperty(@NotNull IAssemblyClassBinding classBinding, @NotNull String fieldName,
+      @NotNull IJsonParsingContext parsingContext) throws IOException;
 
-  boolean canHandleUnknownProperty(IClassBinding classBinding, String propertyName, IJsonParsingContext parsingContext)
-      throws BindingException, IOException;
+  boolean canHandleUnknownProperty(@NotNull IClassBinding classBinding, @NotNull String propertyName,
+      @NotNull IJsonParsingContext parsingContext)
+      throws IOException;
 
-  boolean handleUnknownProperty(IClassBinding classBinding, String propertyName,
-      IJsonParsingContext parsingContext) throws BindingException, IOException;
+  boolean handleUnknownProperty(@NotNull IClassBinding classBinding, @NotNull String propertyName,
+      IJsonParsingContext parsingContext) throws IOException;
 
   /**
    * A callback used to handle bound properties for which no data was found when the content was
@@ -62,6 +65,7 @@ public interface IJsonProblemHandler extends IProblemHandler {
    * @throws BindingException
    *           if an unhandled binding error has occurred for any reason
    */
-  Map<IBoundInstance, IJsonBindingSupplier> handleMissingFields(IClassBinding classBinding,
-      Map<String, IBoundInstance> missingPropertyBindings, IJsonParsingContext context) throws BindingException;
+  Map<IBoundNamedInstance, IJsonBindingSupplier> handleMissingFields(@NotNull IClassBinding classBinding,
+      @NotNull Map<String, IBoundNamedInstance> missingPropertyBindings, @NotNull IJsonParsingContext context)
+      throws BindingException;
 }

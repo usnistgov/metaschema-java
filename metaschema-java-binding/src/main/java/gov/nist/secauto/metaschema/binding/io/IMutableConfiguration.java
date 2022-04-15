@@ -26,8 +26,30 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-public interface IMutableConfiguration extends IConfiguration {
-  IMutableConfiguration enableFeature(Feature feature);
+import org.jetbrains.annotations.NotNull;
 
-  IMutableConfiguration disableFeature(Feature feature);
+/**
+ * This mutable view of a serializer or deserializer configuration allows for changes to be made in
+ * the underlying configuration.
+ */
+public interface IMutableConfiguration extends IConfiguration {
+  /**
+   * Turn on the provided feature.
+   * 
+   * @param feature
+   *          the feature to turn on
+   * @return the updated configuration
+   */
+  @NotNull
+  IMutableConfiguration enableFeature(@NotNull Feature feature);
+
+  /**
+   * Turn off the provided feature.
+   * 
+   * @param feature
+   *          the feature to turn off
+   * @return the updated configuration
+   */
+  @NotNull
+  IMutableConfiguration disableFeature(@NotNull Feature feature);
 }

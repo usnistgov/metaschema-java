@@ -344,4 +344,12 @@ public interface IJavaTypeAdapter<TYPE> {
    * @return {@code true} if allowed, or {@code false} otherwise.
    */
   boolean isUnrappedValueAllowedInXml();
+
+  /**
+   * Determines if the datatype uses mixed text and element content in XML.
+   * 
+   * @return {@code true} if the datatype uses mixed text and element content in XML, or {@code false}
+   *         otherwise
+   */
+  boolean isXmlMixed();
 }

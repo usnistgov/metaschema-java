@@ -41,7 +41,7 @@ public class Base64Adapter
 
   @Override
   public String getName() {
-    return "base64Binary";
+    return "base64";
   }
 
   @SuppressWarnings("null")

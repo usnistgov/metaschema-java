@@ -26,17 +26,20 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance;
 
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
+import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IInstance;
+import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.instance.IInstance;
-import gov.nist.secauto.metaschema.model.common.instance.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.instance.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -48,7 +51,7 @@ public interface IInstanceSet {
 
   Collection<? extends IInstance> getInstances();
 
-  public static IInstanceSet newInstanceSet(IAssemblyDefinition definition) {
+  public static IInstanceSet newInstanceSet(@NotNull IAssemblyDefinition definition) {
     return new IInstanceSet() {
 
       @Override
@@ -65,9 +68,10 @@ public interface IInstanceSet {
             return getDefinition().getUseName();
           }
 
+          @SuppressWarnings("null")
           @Override
           public String getXmlNamespace() {
-            return getDefinition().getXmlNamespace();
+            return getDefinition().getContainingMetaschema().getXmlNamespace().toASCIIString();
           }
 
           @Override
@@ -119,18 +123,13 @@ public interface IInstanceSet {
           public IAssemblyDefinition getDefinition() {
             return definition;
           }
-
-          @Override
-          public IMetaschema getContainingMetaschema() {
-            return getDefinition().getContainingMetaschema();
-          }
         });
       }
 
     };
   }
 
-  public static IInstanceSet newInstanceSet(IFieldDefinition definition) {
+  public static IInstanceSet newInstanceSet(@NotNull IFieldDefinition definition) {
     return new IInstanceSet() {
 
       @Override
@@ -145,11 +144,6 @@ public interface IInstanceSet {
           @Override
           public String getUseName() {
             return getDefinition().getUseName();
-          }
-
-          @Override
-          public String getXmlNamespace() {
-            return getDefinition().getXmlNamespace();
           }
 
           @Override
@@ -206,19 +200,13 @@ public interface IInstanceSet {
           public boolean isInXmlWrapped() {
             return true;
           }
-
-          @Override
-          public IMetaschema getContainingMetaschema() {
-            return getDefinition().getContainingMetaschema();
-          }
-
         });
       }
 
     };
   }
 
-  public static IInstanceSet newInstanceSet(IFlagDefinition definition) {
+  public static IInstanceSet newInstanceSet(@NotNull IFlagDefinition definition) {
     return new IInstanceSet() {
 
       @Override
@@ -233,11 +221,6 @@ public interface IInstanceSet {
           @Override
           public String getUseName() {
             return getDefinition().getUseName();
-          }
-
-          @Override
-          public String getXmlNamespace() {
-            return getDefinition().getXmlNamespace();
           }
 
           @Override
@@ -266,8 +249,18 @@ public interface IInstanceSet {
           }
 
           @Override
-          public IMetaschema getContainingMetaschema() {
-            return getDefinition().getContainingMetaschema();
+          public INodeItem newNodeItem(@NotNull Object value, @NotNull IModelNodeItem parent) {
+            throw new UnsupportedOperationException("A bound object is not available");
+          }
+
+          @Override
+          public boolean isJsonKey() {
+            return false;
+          }
+
+          @Override
+          public boolean isJsonValueKey() {
+            return false;
           }
         });
       }

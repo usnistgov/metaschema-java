@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.io.xml;
 
-import gov.nist.secauto.metaschema.binding.io.context.IWritingContext;
+import gov.nist.secauto.metaschema.binding.io.IWritingContext;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 

@@ -42,7 +42,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public interface IFunction {
-  public enum FunctionProperty {
+  enum FunctionProperty {
     /**
      * Indicates that the function will produce identical results for the same arguments (see XPath 3.1
      * <a href="https://www.w3.org/TR/xpath-functions-31/#dt-deterministic">deterministic</a>). If not
@@ -172,11 +172,12 @@ public interface IFunction {
    */
   String toSignature();
 
-  public static Builder newBuilder() {
+  @NotNull
+  static Builder builder() {
     return new Builder();
   }
 
-  public static class Builder {
+  class Builder {
     private String name;
     @SuppressWarnings("null")
     @NotNull
@@ -185,16 +186,9 @@ public interface IFunction {
     private final List<@NotNull IArgument> arguments = new LinkedList<>();
     private Class<? extends IItem> returnType = IItem.class;
     private Occurrence returnOccurrence = Occurrence.ONE;
-    private IFunctionExecutor functionHandler = null;
+    private IFunctionExecutor functionHandler;
 
-    public Builder() {
-      this(null);
-    }
-
-    public Builder(String name) {
-      this.name = name;
-    }
-
+    @NotNull
     public Builder name(@NotNull String name) {
       Objects.requireNonNull(name, "name");
       if (name.isBlank()) {
@@ -204,36 +198,43 @@ public interface IFunction {
       return this;
     }
 
+    @NotNull
     public Builder deterministic() {
       properties.add(FunctionProperty.DETERMINISTIC);
       return this;
     }
 
+    @NotNull
     public Builder nonDeterministic() {
       properties.remove(FunctionProperty.DETERMINISTIC);
       return this;
     }
 
+    @NotNull
     public Builder contextDependent() {
       properties.add(FunctionProperty.CONTEXT_DEPENDENT);
       return this;
     }
 
+    @NotNull
     public Builder contextIndependent() {
       properties.remove(FunctionProperty.CONTEXT_DEPENDENT);
       return this;
     }
 
+    @NotNull
     public Builder focusDependent() {
       properties.add(FunctionProperty.FOCUS_DEPENDENT);
       return this;
     }
 
+    @NotNull
     public Builder focusIndependent() {
       properties.remove(FunctionProperty.FOCUS_DEPENDENT);
       return this;
     }
 
+    @NotNull
     public Builder allowUnboundedArity(boolean allow) {
       if (allow) {
         properties.add(FunctionProperty.UNBOUNDED_ARITY);
@@ -243,44 +244,53 @@ public interface IFunction {
       return this;
     }
 
+    @NotNull
     public Builder returnType(@NotNull Class<? extends IItem> type) {
       Objects.requireNonNull(type, "type");
       this.returnType = type;
       return this;
     }
 
+    @NotNull
     public Builder returnZeroOrOne() {
       return returnOccurrence(Occurrence.ZERO_OR_ONE);
     }
 
+    @NotNull
     public Builder returnOne() {
       return returnOccurrence(Occurrence.ONE);
     }
 
+    @NotNull
     public Builder returnZeroOrMore() {
       return returnOccurrence(Occurrence.ZERO_OR_MORE);
     }
 
+    @NotNull
     public Builder returnOneOrMore() {
       return returnOccurrence(Occurrence.ONE_OR_MORE);
     }
 
+    @NotNull
     public Builder returnOccurrence(@NotNull Occurrence occurrence) {
       Objects.requireNonNull(occurrence, "occurrence");
       this.returnOccurrence = occurrence;
       return this;
     }
 
+    @NotNull
     public Builder argument(@NotNull IArgument.Builder builder) {
       return argument(builder.build());
     }
 
+    @NotNull
     public Builder argument(@NotNull IArgument argument) {
       Objects.requireNonNull(argument, "argument");
       this.arguments.add(argument);
       return this;
     }
 
+    @NotNull
     public Builder functionHandler(@NotNull IFunctionExecutor handler) {
       Objects.requireNonNull(handler, "handler");
       this.functionHandler = handler;
@@ -309,6 +319,7 @@ public interface IFunction {
       }
     }
 
+    @NotNull
     public IFunction build() throws IllegalStateException {
       validate();
       ISequenceType sequenceType;

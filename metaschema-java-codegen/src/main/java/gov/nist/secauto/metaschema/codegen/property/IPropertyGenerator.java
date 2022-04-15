@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.codegen.property;
 import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
 import java.util.Set;
 

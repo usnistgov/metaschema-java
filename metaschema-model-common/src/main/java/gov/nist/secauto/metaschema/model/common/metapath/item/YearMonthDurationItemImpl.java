@@ -42,11 +42,6 @@ class YearMonthDurationItemImpl
   }
 
   @Override
-  public IYearMonthDurationItem toAtomicItem() {
-    return this;
-  }
-
-  @Override
   public YearMonthAdapter getJavaTypeAdapter() {
     return MetaschemaDataTypeProvider.YEAR_MONTH_DURATION;
   }

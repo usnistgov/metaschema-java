@@ -199,7 +199,7 @@ public final class OperationFunctions {
       throws ArithmeticFunctionException {
     int arg2Int;
     try {
-      arg2Int = FunctionUtils.asInteger(XPathFunctions.fnRound(arg2));
+      arg2Int = FunctionUtils.asInteger(arg2.round());
     } catch (ArithmeticException ex) {
       throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);
     }
@@ -216,7 +216,7 @@ public final class OperationFunctions {
       throws ArithmeticFunctionException {
     long arg2Long;
     try {
-      arg2Long = FunctionUtils.asLong(XPathFunctions.fnRound(arg2));
+      arg2Long = FunctionUtils.asLong(arg2.round());
     } catch (ArithmeticException ex) {
       throw new ArithmeticFunctionException(ArithmeticFunctionException.OVERFLOW_UNDERFLOW_ERROR, ex);
     }
@@ -252,7 +252,7 @@ public final class OperationFunctions {
     try {
       @SuppressWarnings("null")
       @NotNull
-      Duration duration = arg1.getValue().dividedBy(FunctionUtils.asLong(XPathFunctions.fnRound(arg2)));
+      Duration duration = arg1.getValue().dividedBy(FunctionUtils.asLong(arg2.round()));
       return IDayTimeDurationItem
           .valueOf(duration);
     } catch (ArithmeticException ex) {
@@ -263,8 +263,10 @@ public final class OperationFunctions {
   @NotNull
   public static IDecimalItem opDivideDayTimeDurationByDayTimeDuration(@NotNull IDayTimeDurationItem arg1,
       IDayTimeDurationItem arg2) {
-    return IDecimalItem.cast(opNumericDivide(IDecimalItem.valueOf(arg1.getValue().toSeconds()),
-        IDecimalItem.valueOf(arg1.getValue().toSeconds())));
+    return IDecimalItem.cast(
+        opNumericDivide(
+            IDecimalItem.valueOf(arg1.getValue().toSeconds()),
+            IDecimalItem.valueOf(arg2.getValue().toSeconds())));
   }
 
   @NotNull
@@ -308,24 +310,30 @@ public final class OperationFunctions {
   }
 
   @NotNull
-  public static IBooleanItem opDayTimeDurationGreaterThan(@NotNull IDayTimeDurationItem arg1,
+  public static IBooleanItem opDayTimeDurationGreaterThan(
+      @NotNull IDayTimeDurationItem arg1,
       @NotNull IDayTimeDurationItem arg2) {
-    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg1.getValue()) > 0);
+    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg2.getValue()) > 0);
   }
 
   @NotNull
-  public static IBooleanItem opBase64BinaryGreaterThan(@NotNull IBase64BinaryItem arg1,
+  public static IBooleanItem opBase64BinaryGreaterThan(
+      @NotNull IBase64BinaryItem arg1,
       @NotNull IBase64BinaryItem arg2) {
-    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg1.getValue()) > 0);
+    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg2.getValue()) > 0);
   }
 
   @NotNull
-  public static IBooleanItem opDateLessThan(@NotNull IDateItem arg1, @NotNull IDateItem arg2) {
+  public static IBooleanItem opDateLessThan(
+      @NotNull IDateItem arg1,
+      @NotNull IDateItem arg2) {
     return opDateTimeLessThan(IDateTimeItem.cast(arg1), IDateTimeItem.cast(arg2));
   }
 
   @NotNull
-  public static IBooleanItem opDateTimeLessThan(@NotNull IDateTimeItem arg1, @NotNull IDateTimeItem arg2) {
+  public static IBooleanItem opDateTimeLessThan(
+      @NotNull IDateTimeItem arg1,
+      @NotNull IDateTimeItem arg2) {
     return IBooleanItem.valueOf(arg1.asZonedDateTime().compareTo(arg2.asZonedDateTime()) < 0);
   }
 
@@ -340,14 +348,17 @@ public final class OperationFunctions {
   }
 
   @NotNull
-  public static IBooleanItem opDayTimeDurationLessThan(@NotNull IDayTimeDurationItem arg1,
+  public static IBooleanItem opDayTimeDurationLessThan(
+      @NotNull IDayTimeDurationItem arg1,
       @NotNull IDayTimeDurationItem arg2) {
-    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg1.getValue()) < 0);
+    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg2.getValue()) < 0);
   }
 
   @NotNull
-  public static IBooleanItem opBase64BinaryLessThan(@NotNull IBase64BinaryItem arg1, @NotNull IBase64BinaryItem arg2) {
-    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg1.getValue()) < 0);
+  public static IBooleanItem opBase64BinaryLessThan(
+      @NotNull IBase64BinaryItem arg1,
+      @NotNull IBase64BinaryItem arg2) {
+    return IBooleanItem.valueOf(arg1.getValue().compareTo(arg2.getValue()) < 0);
   }
 
   @NotNull

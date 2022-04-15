@@ -44,12 +44,6 @@ public abstract class AbstractIntegerItem
     return !BigInteger.ZERO.equals(getValue());
   }
 
-  @SuppressWarnings("null")
-  @Override
-  public String asString() {
-    return getValue().toString();
-  }
-
   @Override
   public BigDecimal asDecimal() {
     return new BigDecimal(getValue(), MathContext.DECIMAL64);
@@ -58,5 +52,20 @@ public abstract class AbstractIntegerItem
   @Override
   public BigInteger asInteger() {
     return getValue();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public IIntegerItem abs() {
+    BigInteger value = getValue();
+    int signum = value.signum();
+
+    IIntegerItem retval;
+    if (signum > -1) {
+      retval = this;
+    } else {
+      retval = IIntegerItem.valueOf(getValue().abs());
+    }
+    return retval;
   }
 }

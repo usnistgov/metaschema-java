@@ -26,8 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.metapath.format.IModelPositionalPathSegment;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 
 public interface IModelNodeItem extends IValuedNodeItem {
 
@@ -35,8 +34,16 @@ public interface IModelNodeItem extends IValuedNodeItem {
   IAssemblyNodeItem getParentContentNodeItem();
 
   @Override
-  IModelPositionalPathSegment getPathSegment();
+  INodeItem getParentNodeItem();
 
   @Override
   INamedModelDefinition getDefinition();
+
+  /**
+   * Retrieve the relative position of the associated instance in a collection of instances. A
+   * singleton instance will have a position value of {@code 1}.
+   * 
+   * @return a positive integer value designating this instance's position within a collection
+   */
+  int getPosition();
 }

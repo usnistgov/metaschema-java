@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import inet.ipaddr.ipv4.IPv4Address;
 
 class IPv4AddressItemImpl
-    extends AbstractUntypedAtomicItem<IPv4Address>
+    extends AbstractAnyAtomicItem<IPv4Address>
     implements IIPv4AddressItem {
 
   public IPv4AddressItemImpl(@NotNull IPv4Address value) {
@@ -45,10 +45,4 @@ class IPv4AddressItemImpl
   public IPv4AddressAdapter getJavaTypeAdapter() {
     return MetaschemaDataTypeProvider.IP_V4_ADDRESS;
   }
-
-  @Override
-  public IIPv4AddressItem toAtomicItem() {
-    return this;
-  }
-
 }

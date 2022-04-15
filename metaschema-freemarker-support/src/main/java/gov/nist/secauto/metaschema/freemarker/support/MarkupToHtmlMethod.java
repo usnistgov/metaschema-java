@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.freemarker.support;
 import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
 
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupText;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupXmlStreamWriter;
 
 import org.codehaus.stax2.XMLOutputFactory2;
@@ -54,15 +54,12 @@ public class MarkupToHtmlMethod implements TemplateMethodModelEx {
 
   @Override
   public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
-
     if (arguments.isEmpty() || arguments.size() < 2 || arguments.size() > 3) {
       throw new TemplateModelException(String.format(
           "This method requires a %s typed object argument, a namspace string argument, and may optionally have a"
               + " prefix string argument.",
           IMarkupText.class.getName()));
     }
-
-    String namespace = DeepUnwrap.unwrap((TemplateModel) arguments.get(1)).toString();
 
     String prefix = null;
     if (arguments.size() == 3) {
@@ -77,6 +74,7 @@ public class MarkupToHtmlMethod implements TemplateMethodModelEx {
     }
 
     IMarkupText text = (IMarkupText) markupObject;
+    String namespace = DeepUnwrap.unwrap((TemplateModel) arguments.get(1)).toString();
 
     MarkupXmlStreamWriter writingVisitor = new MarkupXmlStreamWriter(namespace, text instanceof MarkupMultiline);
 

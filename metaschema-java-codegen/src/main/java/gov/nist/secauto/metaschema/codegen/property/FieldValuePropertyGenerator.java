@@ -31,12 +31,12 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeName;
 
-import gov.nist.secauto.metaschema.binding.model.annotations.FieldValue;
+import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.codegen.FieldJavaClassGenerator;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.common.definition.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.definition.INamedModelDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +57,7 @@ public class FieldValuePropertyGenerator
   @Override
   public TypeName getJavaType() {
     return ClassName
-        .get(getClassGenerator().getDefinition().getDatatype().getJavaClass());
+        .get(getClassGenerator().getDefinition().getJavaTypeAdapter().getJavaClass());
   }
 
   @Override
@@ -78,16 +78,14 @@ public class FieldValuePropertyGenerator
   protected Set<INamedModelDefinition> buildField(FieldSpec.Builder builder) {
 
     IFieldDefinition definition = getClassGenerator().getDefinition();
-    AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(FieldValue.class);
+    AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(BoundFieldValue.class);
 
-    IJavaTypeAdapter<?> valueDataType = definition.getDatatype();
+    IJavaTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
 
     // a field object always has a single value
-    if (definition.hasJsonValueKeyFlagInstance()) {
-      // do nothing, the annotation will be on the flag
-    } else {
+    if (!definition.hasJsonValueKeyFlagInstance()) {
       fieldValue.addMember("name", "$S", definition.getJsonValueKeyName());
-    }
+    } // else do nothing, the annotation will be on the flag
 
     fieldValue.addMember("typeAdapter", "$T.class", valueDataType.getClass());
 

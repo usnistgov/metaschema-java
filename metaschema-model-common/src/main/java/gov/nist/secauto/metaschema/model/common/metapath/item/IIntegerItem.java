@@ -37,16 +37,16 @@ public interface IIntegerItem extends IDecimalItem {
 
   @SuppressWarnings("null")
   @NotNull
-  public static final IIntegerItem ONE = valueOf(BigInteger.ONE);
+  IIntegerItem ONE = valueOf(BigInteger.ONE);
   @SuppressWarnings("null")
   @NotNull
-  public static final IIntegerItem ZERO = valueOf(BigInteger.ZERO);
+  IIntegerItem ZERO = valueOf(BigInteger.ZERO);
   @SuppressWarnings("null")
   @NotNull
-  public static final IIntegerItem NEGATIVE_ONE = valueOf(BigInteger.ONE.negate());
+  IIntegerItem NEGATIVE_ONE = valueOf(BigInteger.ONE.negate());
 
   @NotNull
-  public static IIntegerItem valueOf(long value) {
+  static IIntegerItem valueOf(long value) {
     @SuppressWarnings("null")
     @NotNull
     BigInteger bigInteger = BigInteger.valueOf(value);
@@ -54,17 +54,40 @@ public interface IIntegerItem extends IDecimalItem {
   }
 
   @NotNull
-  public static IIntegerItem valueOf(@NotNull BigInteger value) {
-    return new IntegerItemImpl(value);
-  }
-
-  @NotNull
-  public static IIntegerItem valueOf(@NotNull String value) throws NumberFormatException {
+  static IIntegerItem valueOf(@NotNull String value) throws NumberFormatException {
     return valueOf(new BigInteger(value));
   }
 
   @NotNull
-  public static IIntegerItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+  static IIntegerItem valueOf(@NotNull BigInteger value) {
+    int signum = value.signum();
+
+    IIntegerItem retval;
+    if (signum == -1) { // negative
+      retval = new IntegerItemImpl(value);
+    } else if (signum == 0) { // zero
+      retval = INonNegativeIntegerItem.valueOf(value);
+    } else { // positive
+      retval = IPositiveIntegerItem.valueOf(value);
+    }
+    return retval;
+  }
+
+  @NotNull
+  static IIntegerItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.INTEGER.cast(item);
+  }
+
+  @Override
+  IIntegerItem abs();
+
+  @Override
+  default IIntegerItem ceiling() {
+    return this;
+  }
+
+  @Override
+  default IIntegerItem floor() {
+    return this;
   }
 }
