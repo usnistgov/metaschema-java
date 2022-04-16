@@ -124,7 +124,7 @@
 		<dependency.everit-json.version>1.14.0</dependency.everit-json.version>
 		<dependency.flexmark.version>0.62.2</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.30</dependency.freemarker.version>
-		<dependency.jackson.version>2.13.2</dependency.jackson.version>
+		<dependency.jackson.version>2.13.2.2</dependency.jackson.version>
 		<dependency.jaxb.version>3.0.0</dependency.jaxb.version>
 		<dependency.jaxen.version>1.2.0</dependency.jaxen.version>
 		<dependency.jetbrains-annotation.version>16.0.2</dependency.jetbrains-annotation.version>
