@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import gov.nist.secauto.metaschema.binding.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
@@ -372,6 +371,8 @@ abstract class AbstractClassBinding implements IClassBinding {
       flag.read(instance, start, context);
     }
     readBody(instance, start, context);
+
+    XmlEventUtil.skipWhitespace(context.getReader());
 
     XmlEventUtil.assertNext(context.getReader(), XMLEvent.END_ELEMENT, start.getName());
   }

@@ -35,10 +35,9 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.WildcardTypeName;
 
-import gov.nist.secauto.metaschema.binding.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
+import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.model.annotations.Metaschema;
-import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
@@ -55,7 +54,7 @@ import java.util.List;
 
 import javax.lang.model.element.Modifier;
 
-public class MetaschemaClassGenerator {
+class MetaschemaClassGenerator {
   @NotNull
   private final IMetaschema metaschema;
   @NotNull
@@ -66,10 +65,12 @@ public class MetaschemaClassGenerator {
     this.typeResolver = ObjectUtils.requireNonNull(typeResolver, "typeResolver");
   }
 
+  @NotNull
   protected IMetaschema getMetaschema() {
     return metaschema;
   }
 
+  @NotNull
   protected ITypeResolver getTypeResolver() {
     return typeResolver;
   }
@@ -80,19 +81,19 @@ public class MetaschemaClassGenerator {
   }
 
   @NotNull
-  public GeneratedClass generateClass(Path outputDir) throws IOException {
+  public IGeneratedClass generateClass(Path outputDir) throws IOException {
     ClassName className = getClassName();
 
     TypeSpec.Builder builder = generateClass(className);
 
     JavaFile javaFile = JavaFile.builder(className.packageName(), builder.build()).build();
-    Path classFile = javaFile.writeToPath(outputDir);
+    Path classFile = ObjectUtils.notNull(javaFile.writeToPath(outputDir));
 
-    return new GeneratedClass(classFile, className);
+    return new DefaultGeneratedClass(classFile, className);
   }
 
   @NotNull
-  protected TypeSpec.Builder generateClass(@NotNull ClassName className) throws IOException {
+  protected TypeSpec.Builder generateClass(@NotNull ClassName className) {
     // create the class
     TypeSpec.Builder builder = TypeSpec.classBuilder(className).addModifiers(Modifier.PUBLIC, Modifier.FINAL);
 

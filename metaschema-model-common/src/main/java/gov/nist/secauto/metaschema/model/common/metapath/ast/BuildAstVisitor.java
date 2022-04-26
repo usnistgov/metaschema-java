@@ -77,7 +77,6 @@ public class BuildAstVisitor
 
   /**
    * Parse the provided context as a simple trinary phrase, which will be one of the following.
-   * <p>
    * <ol>
    * <li><code>expr</code> for which the expr will be returned</li>
    * <li><code>left (operator right)*</code> for which a collection of the left and right members will
@@ -110,7 +109,6 @@ public class BuildAstVisitor
 
   /**
    * Parse the provided context as a simple trinary phrase, which will be one of the following.
-   * <p>
    * <ol>
    * <li><code>expr</code> for which the expr will be returned</li>
    * <li><code>left (operator right)*</code> for which a collection of the left and right members will
@@ -264,7 +262,6 @@ public class BuildAstVisitor
 
   /**
    * Parse the provided context as a simple trinary phrase, which will be one of the following.
-   * <p>
    * <ol>
    * <li><code>expr</code> for which the expr will be returned</li>
    * <li><code>left (operator right)*</code> for which a collection of the left and right members will

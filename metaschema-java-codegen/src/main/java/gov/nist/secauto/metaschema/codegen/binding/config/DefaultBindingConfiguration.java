@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.codegen.binding.config;
 
+import gov.nist.secauto.metaschema.codegen.ClassUtils;
 import gov.nist.secauto.metaschema.codegen.xmlbeans.JavaModelBindingType;
 import gov.nist.secauto.metaschema.codegen.xmlbeans.JavaObjectDefinitionBindingType;
 import gov.nist.secauto.metaschema.codegen.xmlbeans.MetaschemaBindingType;
@@ -33,13 +34,15 @@ import gov.nist.secauto.metaschema.codegen.xmlbeans.MetaschemaBindingsDocument;
 import gov.nist.secauto.metaschema.codegen.xmlbeans.MetaschemaBindingsType;
 import gov.nist.secauto.metaschema.codegen.xmlbeans.ModelBindingType;
 import gov.nist.secauto.metaschema.codegen.xmlbeans.ObjectDefinitionBindingType;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.xmlbeans.XmlException;
-import org.glassfish.jaxb.core.api.impl.NameConverter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,16 +64,44 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   @Override
   public String getPackageNameForMetaschema(IMetaschema metaschema) {
     URI namespace = metaschema.getXmlNamespace();
-    return getPackageNameForNamespace(namespace.toASCIIString());
+    return getPackageNameForNamespace(ObjectUtils.notNull(namespace.toASCIIString()));
   }
 
-  public IDefinitionBindingConfiguration getBindingConfigurationForDefinition(INamedModelDefinition definition) {
-    return getDefinitionBindingConfiguration(definition);
+  /**
+   * Retrieve the binding configuration for the provided {@code definition}.
+   * 
+   * @param definition
+   *          the definition to get the config for
+   * @return the binding configuration or {@code null} if there is not configuration
+   */
+  @Nullable
+  public IDefinitionBindingConfiguration
+      getBindingConfigurationForDefinition(@NotNull INamedModelDefinition definition) {
+    String metaschemaUri = ObjectUtils.notNull(definition.getContainingMetaschema().getLocation().toString());
+    String definitionName = definition.getName();
+
+    MetaschemaBindingConfiguration metaschemaConfig = getMetaschemaBindingConfiguration(metaschemaUri);
+
+    IDefinitionBindingConfiguration retval = null;
+    if (metaschemaConfig != null) {
+      switch (definition.getModelType()) {
+      case ASSEMBLY:
+        retval = metaschemaConfig.getAssemblyDefinitionBindingConfig(definitionName);
+        break;
+      case FIELD:
+        retval = metaschemaConfig.getFieldDefinitionBindingConfig(definitionName);
+        break;
+      default:
+        throw new UnsupportedOperationException(
+            String.format("Unsupported definition type '%s'", definition.getModelType()));
+      }
+    }
+    return retval;
   }
 
   @Override
   public String getQualifiedBaseClassName(INamedModelDefinition definition) {
-    IDefinitionBindingConfiguration config = getDefinitionBindingConfiguration(definition);
+    IDefinitionBindingConfiguration config = getBindingConfigurationForDefinition(definition);
 
     String retval = null;
     if (config != null) {
@@ -81,7 +112,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
 
   @Override
   public String getClassName(INamedModelDefinition definition) {
-    IDefinitionBindingConfiguration config = getDefinitionBindingConfiguration(definition);
+    IDefinitionBindingConfiguration config = getBindingConfigurationForDefinition(definition);
 
     String retval = null;
     if (config != null) {
@@ -89,7 +120,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
     }
 
     if (retval == null) {
-      retval = NameConverter.standard.toClassName(definition.getName());
+      retval = ClassUtils.toClassName(definition.getName());
     }
     return retval;
   }
@@ -97,7 +128,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   @Override
   public @NotNull String getClassName(@NotNull IMetaschema metaschema) {
     // TODO: make this configurable
-    return NameConverter.standard.toClassName(metaschema.getShortName() + "Metaschema");
+    return ClassUtils.toClassName(metaschema.getShortName() + "Metaschema");
   }
 
   /**
@@ -135,89 +166,97 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
    *          the namespace to generate a Java package name for
    * @return a Java package name
    */
-  protected String getPackageNameForNamespace(String namespace) {
+  @NotNull
+  protected String getPackageNameForNamespace(@NotNull String namespace) {
     String packageName = namespaceToPackageNameMap.get(namespace);
     if (packageName == null) {
-      packageName = NameConverter.standard.toPackageName(namespace);
+      packageName = ClassUtils.toPackageName(namespace);
     }
     return packageName;
   }
 
-  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(IMetaschema metaschema) {
-    String metaschemaUri = metaschema.getLocation().toString();
+  /**
+   * Get the binding configuration for the provided Metaschema.
+   * 
+   * @param metaschema
+   *          the Metaschema
+   * @return the configuration for the Metaschema or {@code null} if there is no configuration
+   */
+  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(@NotNull IMetaschema metaschema) {
+    String metaschemaUri = ObjectUtils.notNull(metaschema.getLocation().toString());
     return getMetaschemaBindingConfiguration(metaschemaUri);
 
   }
 
-  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(String metaschemaUri) {
+  /**
+   * Get the binding configuration for the Metaschema located at the provided {@code metaschemaUri}.
+   * 
+   * @param metaschemaUri
+   *          the location of the Metaschema
+   * @return the configuration for the Metaschema or {@code null} if there is no configuration
+   */
+  @Nullable
+  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(@NotNull String metaschemaUri) {
     return metaschemaUrlToMetaschemaBindingConfigurationMap.get(metaschemaUri);
   }
 
-  public MetaschemaBindingConfiguration addMetaschemaBindingConfiguration(String metaschemaUri,
-      MetaschemaBindingConfiguration config) {
+  /**
+   * Set the binding configuration for the Metaschema located at the provided {@code metaschemaUri}.
+   * 
+   * @param metaschemaUri
+   *          the location of the Metaschema
+   * @param config
+   *          the Metaschema binding configuration
+   * @return the old configuration for the Metaschema or {@code null} if there was no previous
+   *         configuration
+   */
+  public MetaschemaBindingConfiguration addMetaschemaBindingConfiguration(@NotNull String metaschemaUri,
+      @NotNull MetaschemaBindingConfiguration config) {
     Objects.requireNonNull(metaschemaUri, "metaschemaUri");
     Objects.requireNonNull(config, "config");
     return metaschemaUrlToMetaschemaBindingConfigurationMap.put(metaschemaUri, config);
   }
 
-  // public void addMManagedObjectBindingConfig(String metaschemaUri, String name,
-  // IMutableDefinitionBindingConfiguration managedObjectConfig) {
-  //
-  // Map<String, IMutableDefinitionBindingConfiguration> metaschemaConfigs
-  // = metaschemaUrlToObjectDefinitionMap.get(metaschemaUri);
-  // if (metaschemaConfigs == null) {
-  // metaschemaConfigs = new HashMap<>();
-  // metaschemaUrlToObjectDefinitionMap.put(metaschemaUri, metaschemaConfigs);
-  // }
-  //
-  // if (metaschemaConfigs.containsKey(name)) {
-  // throw new IllegalStateException(String.format(
-  // "Attempt to add an already existing binding configuration set for managed object '%s' in
-  // metaschema %s'.",
-  // name, metaschemaUri));
-  // }
-  // metaschemaConfigs.put(name, managedObjectConfig);
-  // }
-
-  protected IDefinitionBindingConfiguration getDefinitionBindingConfiguration(INamedModelDefinition definition) {
-    String metaschemaUri = definition.getContainingMetaschema().getLocation().toString();
-    String definitionName = definition.getName();
-
-    MetaschemaBindingConfiguration metaschemaConfig = getMetaschemaBindingConfiguration(metaschemaUri);
-
-    IDefinitionBindingConfiguration retval = null;
-    if (metaschemaConfig != null) {
-      switch (definition.getModelType()) {
-      case ASSEMBLY:
-        retval = metaschemaConfig.getAssemblyDefinitionBindingConfig(definitionName);
-        break;
-      case FIELD:
-        retval = metaschemaConfig.getFieldDefinitionBindingConfig(definitionName);
-        break;
-      default:
-        throw new UnsupportedOperationException(
-            String.format("Unsupported definition type '%s'", definition.getModelType()));
-      }
-    }
-    return retval;
-  }
-
-  public void load(Path file) throws MalformedURLException, IOException, MetaschemaException {
+  /**
+   * Load the binding configuration from the provided {@code file}.
+   * 
+   * @param file
+   *          the configuration resource
+   * @throws IOException
+   *           if an error occurred while reading the {@code file}
+   */
+  public void load(Path file) throws IOException {
     URL resource = file.toUri().toURL();
     load(resource);
   }
 
-  public void load(File file) throws MalformedURLException, IOException, MetaschemaException {
+  /**
+   * Load the binding configuration from the provided {@code file}.
+   * 
+   * @param file
+   *          the configuration resource
+   * @throws IOException
+   *           if an error occurred while reading the {@code file}
+   */
+  public void load(File file) throws IOException {
     URL resource = file.toURI().toURL();
     load(resource);
   }
 
-  public void load(URL resource) throws IOException, MetaschemaException {
+  /**
+   * Load the binding configuration from the provided {@code resource}.
+   * 
+   * @param resource
+   *          the configuration resource
+   * @throws IOException
+   *           if an error occurred while reading the {@code resource}
+   */
+  public void load(URL resource) throws IOException {
     MetaschemaBindingsDocument xml;
     try {
       xml = MetaschemaBindingsDocument.Factory.parse(resource);
     } catch (XmlException ex) {
-      throw new MetaschemaException(ex);
+      throw new IOException(ex);
     }
 
     MetaschemaBindingsType bindings = xml.getMetaschemaBindings();
@@ -230,7 +269,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
       try {
         processMetaschemaBindingConfig(resource, metaschema);
       } catch (MalformedURLException | URISyntaxException ex) {
-        throw new MetaschemaException(ex);
+        throw new IOException(ex);
       }
     }
   }
@@ -250,7 +289,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
       throws MalformedURLException, URISyntaxException {
     String href = metaschema.getHref();
     URL metaschemaUrl = new URL(configResource, href);
-    String metaschemaUri = metaschemaUrl.toURI().toString();
+    String metaschemaUri = ObjectUtils.notNull(metaschemaUrl.toURI().toString());
 
     MetaschemaBindingConfiguration metaschemaConfig = getMetaschemaBindingConfiguration(metaschemaUri);
     if (metaschemaConfig == null) {
@@ -258,22 +297,24 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
       addMetaschemaBindingConfiguration(metaschemaUri, metaschemaConfig);
     }
     for (ObjectDefinitionBindingType assemblyBinding : metaschema.getDefineAssemblyBindingList()) {
-      String name = assemblyBinding.getName();
+      String name = ObjectUtils.requireNonNull(assemblyBinding.getName());
       IDefinitionBindingConfiguration config = metaschemaConfig.getAssemblyDefinitionBindingConfig(name);
       config = processDefinitionBindingConfiguration(config, assemblyBinding);
       metaschemaConfig.addAssemblyDefinitionBindingConfig(name, config);
     }
 
     for (ObjectDefinitionBindingType fieldBinding : metaschema.getDefineFieldBindingList()) {
-      String name = fieldBinding.getName();
+      String name = ObjectUtils.requireNonNull(fieldBinding.getName());
       IDefinitionBindingConfiguration config = metaschemaConfig.getFieldDefinitionBindingConfig(name);
       config = processDefinitionBindingConfiguration(config, fieldBinding);
       metaschemaConfig.addFieldDefinitionBindingConfig(name, config);
     }
   }
 
+  @NotNull
   private IMutableDefinitionBindingConfiguration processDefinitionBindingConfiguration(
-      IDefinitionBindingConfiguration oldConfig, ObjectDefinitionBindingType objectDefinitionBinding) {
+      @Nullable IDefinitionBindingConfiguration oldConfig,
+      @NotNull ObjectDefinitionBindingType objectDefinitionBinding) {
     IMutableDefinitionBindingConfiguration config;
     if (oldConfig != null) {
       config = new DefaultDefinitionBindingConfiguration(oldConfig);
@@ -284,15 +325,15 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
     if (objectDefinitionBinding.isSetJava()) {
       JavaObjectDefinitionBindingType java = objectDefinitionBinding.getJava();
       if (java.isSetUseClassName()) {
-        config.setClassName(java.getUseClassName());
+        config.setClassName(ObjectUtils.notNull(java.getUseClassName()));
       }
 
       if (java.isSetExtendBaseClass()) {
-        config.setQualifiedBaseClassName(java.getExtendBaseClass());
+        config.setQualifiedBaseClassName(ObjectUtils.notNull(java.getExtendBaseClass()));
       }
 
       for (String interfaceName : java.getImplementInterfaceList()) {
-        config.addInterfaceToImplement(interfaceName);
+        config.addInterfaceToImplement(ObjectUtils.notNull(interfaceName));
       }
     }
     return config;
@@ -305,22 +346,60 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
     private MetaschemaBindingConfiguration() {
     }
 
-    public IDefinitionBindingConfiguration getAssemblyDefinitionBindingConfig(String name) {
+    /**
+     * Get the binding configuration for the {@link IAssemblyDefinition} with the provided {@code name}.
+     * 
+     * @param name
+     *          the definition name
+     * @return the definition's binding configuration or {@code null} if no configuration is provided
+     */
+    @Nullable
+    public IDefinitionBindingConfiguration getAssemblyDefinitionBindingConfig(@NotNull String name) {
       return assemblyBindingConfigs.get(name);
     }
 
-    public IDefinitionBindingConfiguration getFieldDefinitionBindingConfig(String name) {
+    /**
+     * Get the binding configuration for the {@link IFieldDefinition} with the provided {@code name}.
+     * 
+     * @param name
+     *          the definition name
+     * @return the definition's binding configuration or {@code null} if no configuration is provided
+     */
+    @Nullable
+    public IDefinitionBindingConfiguration getFieldDefinitionBindingConfig(@NotNull String name) {
       return fieldBindingConfigs.get(name);
     }
 
-    public IDefinitionBindingConfiguration addAssemblyDefinitionBindingConfig(String name,
-        IDefinitionBindingConfiguration managedObjectConfig) {
-      return assemblyBindingConfigs.put(name, managedObjectConfig);
+    /**
+     * Set the binding configuration for the {@link IAssemblyDefinition} with the provided {@code name}.
+     * 
+     * @param name
+     *          the definition name
+     * @param config
+     *          the new binding configuration for the definition
+     * @return the definition's old binding configuration or {@code null} if no configuration was
+     *         previously provided
+     */
+    @Nullable
+    public IDefinitionBindingConfiguration addAssemblyDefinitionBindingConfig(@NotNull String name,
+        @NotNull IDefinitionBindingConfiguration config) {
+      return assemblyBindingConfigs.put(name, config);
     }
 
-    public IDefinitionBindingConfiguration addFieldDefinitionBindingConfig(String name,
-        IDefinitionBindingConfiguration managedObjectConfig) {
-      return fieldBindingConfigs.put(name, managedObjectConfig);
+    /**
+     * Set the binding configuration for the {@link IFieldDefinition} with the provided {@code name}.
+     * 
+     * @param name
+     *          the definition name
+     * @param config
+     *          the new binding configuration for the definition
+     * @return the definition's old binding configuration or {@code null} if no configuration was
+     *         previously provided
+     */
+    @Nullable
+    public IDefinitionBindingConfiguration addFieldDefinitionBindingConfig(@NotNull String name,
+        @NotNull IDefinitionBindingConfiguration config) {
+      return fieldBindingConfigs.put(name, config);
     }
   }
 }

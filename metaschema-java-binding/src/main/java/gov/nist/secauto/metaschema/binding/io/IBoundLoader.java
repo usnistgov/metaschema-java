@@ -42,7 +42,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * A common interface for loader implementations.
+ * A common interface for loading Metaschema based instance resources.
  */
 public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
   @SuppressWarnings("null")

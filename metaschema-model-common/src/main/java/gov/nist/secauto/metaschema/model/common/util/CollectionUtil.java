@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.util;
 
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -130,14 +128,9 @@ public final class CollectionUtil {
   }
 
   @SuppressWarnings("null")
-  public static @NotNull Collection<@NotNull ? extends IMetaschema>
-      unmodifiableCollection(Collection<@NotNull ? extends IMetaschema> values) {
-    return Collections.unmodifiableCollection(values);
-  }
-
   @NotNull
-  public static <T> List<T> listOrEmpty(List<T> list) {
-    return list == null ? emptyList() : list;
+  public static <T> Collection<T> unmodifiableCollection(@NotNull Collection<T> values) {
+    return Collections.unmodifiableCollection(values);
   }
 
   @SuppressWarnings("null")
@@ -147,7 +140,25 @@ public final class CollectionUtil {
   }
 
   @SuppressWarnings("null")
-  public static <T> @NotNull List<T> emptyList() {
+  @NotNull
+  public static <T> Set<T> emptySet() {
+    return Collections.emptySet();
+  }
+
+  @SuppressWarnings("null")
+  @NotNull
+  public static <T> Set<T> unmodifiableSet(@NotNull Set<T> set) {
+    return Collections.unmodifiableSet(set);
+  }
+
+  @NotNull
+  public static <T> List<T> listOrEmpty(List<T> list) {
+    return list == null ? emptyList() : list;
+  }
+
+  @SuppressWarnings("null")
+  @NotNull
+  public static <T> List<T> emptyList() {
     return Collections.emptyList();
   }
 
@@ -159,7 +170,7 @@ public final class CollectionUtil {
 
   @SuppressWarnings("null")
   @NotNull
-  public static <T> List<T> singletonList(@NotNull T instance) {
+  public static <T> List<@NotNull T> singletonList(@NotNull T instance) {
     return Collections.singletonList(instance);
   }
 
@@ -171,7 +182,7 @@ public final class CollectionUtil {
 
   @SuppressWarnings("null")
   @NotNull
-  public static <K, V> Map<K, V> singletonMap(@NotNull K key, @NotNull V value) {
+  public static <K, V> Map<@NotNull K, V> singletonMap(@NotNull K key, @NotNull V value) {
     return Collections.singletonMap(key, value);
   }
 

@@ -26,11 +26,12 @@
 
 package gov.nist.secauto.metaschema.codegen.binding.config;
 
-public interface IMutableDefinitionBindingConfiguration extends IDefinitionBindingConfiguration {
-  void setClassName(String name);
+import org.jetbrains.annotations.NotNull;
 
-  void setQualifiedBaseClassName(String name);
+interface IMutableDefinitionBindingConfiguration extends IDefinitionBindingConfiguration {
+  void setClassName(@NotNull String name);
 
-  void addInterfaceToImplement(String name);
+  void setQualifiedBaseClassName(@NotNull String name);
 
+  void addInterfaceToImplement(@NotNull String name);
 }

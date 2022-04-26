@@ -33,6 +33,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Provides data that is the result of a completed content validation.
+ */
 public interface IValidationResult {
   @NotNull
   IValidationResult PASSING_RESULT = new IValidationResult() {

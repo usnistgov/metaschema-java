@@ -35,13 +35,47 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 
+/**
+ * A common interface for Metaschema related content validators.
+ */
 public interface IContentValidator {
+  /**
+   * Validate the resource at provided {@code path}.
+   * 
+   * @param path
+   *          the resource to validate
+   * @return the result of the validation
+   * @throws IOException
+   *           if an error occurred while performing validation
+   */
   @NotNull
   IValidationResult validate(@NotNull Path path) throws IOException;
 
+  /**
+   * Validate the resource at provided {@code path}.
+   * 
+   * @param url
+   *          the resource to validate
+   * @return the result of the validation
+   * @throws IOException
+   *           if an error occurred while performing validation
+   * @throws URISyntaxException
+   *           if there is a problem with the provided {@code url}
+   */
   @NotNull
   IValidationResult validate(@NotNull URL url) throws IOException, URISyntaxException;
 
+  /**
+   * Validate the resource associated with the provided input stream {@code is}.
+   * 
+   * @param is
+   *          the input stream to read content to validate from
+   * @param documentUri
+   *          the URI of the resource to validate
+   * @return the result of the validation
+   * @throws IOException
+   *           if an error occurred while performing validation
+   */
   @NotNull
   IValidationResult validate(@NotNull InputStream is, @NotNull URI documentUri) throws IOException;
 }

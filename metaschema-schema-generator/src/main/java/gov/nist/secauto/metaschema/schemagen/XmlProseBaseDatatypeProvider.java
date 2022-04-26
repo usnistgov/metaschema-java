@@ -28,16 +28,12 @@ package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import org.codehaus.stax2.XMLStreamWriter2;
 import org.jdom2.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import javax.xml.stream.XMLStreamException;
 
 public class XmlProseBaseDatatypeProvider
     extends AbstractXmlDatatypeProvider {
@@ -64,14 +60,5 @@ public class XmlProseBaseDatatypeProvider
             DATATYPE_NAME,
             items,
             CollectionUtil.emptyList()));
-  }
-
-  @Override
-  public @NotNull Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes,
-      @NotNull XMLStreamWriter2 writer) throws XMLStreamException {
-    writer.writeComment(" ================ ");
-    writer.writeComment(" prose base types ");
-    writer.writeComment(" ================ ");
-    return super.generateDatatypes(requiredTypes, writer);
   }
 }

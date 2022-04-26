@@ -74,7 +74,7 @@ class BindingConfigurationLoaderTest {
   }
 
   @Test
-  void test() throws MalformedURLException, IOException, MetaschemaException {
+  void test() throws MalformedURLException, IOException {
     File configFile = new File("src/main/metaschema-bindings/oscal-metaschema-bindings.xml");
     DefaultBindingConfiguration config = new DefaultBindingConfiguration();
     config.load(configFile);

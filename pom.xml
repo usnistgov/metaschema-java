@@ -124,10 +124,11 @@
 		<dependency.everit-json.version>1.14.0</dependency.everit-json.version>
 		<dependency.flexmark.version>0.62.2</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.30</dependency.freemarker.version>
-		<dependency.jackson.version>2.13.2.2</dependency.jackson.version>
+		<dependency.jackson.version>2.13.2</dependency.jackson.version>
+		<dependency.jackson-databind.version>2.13.2.2</dependency.jackson-databind.version>
 		<dependency.jaxb.version>3.0.0</dependency.jaxb.version>
 		<dependency.jaxen.version>1.2.0</dependency.jaxen.version>
-		<dependency.jetbrains-annotation.version>16.0.2</dependency.jetbrains-annotation.version>
+		<dependency.jetbrains-annotation.version>23.0.0</dependency.jetbrains-annotation.version>
 		<dependency.junit5.version>5.8.2</dependency.junit5.version>
 		<dependency.junit5-platform-launcher.version>1.8.2</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.17.1</dependency.log4j2.version>
@@ -297,7 +298,7 @@
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>${dependency.jackson.version}</version>
+				<version>${dependency.jackson-databind.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -533,8 +534,13 @@
 						</excludedEnvironmentVariables>
 					</configuration>
 				</plugin>
-
-
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<configuration>
+						<failOnWarnings>false</failOnWarnings>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -649,12 +655,6 @@
 									<report>aggregate</report>
 								</reports>
 							</reportSet>
-							<reportSet>
-								<id>default</id>
-								<reports>
-									<report>javadoc</report>
-								</reports>
-							</reportSet>
 						</reportSets>
 					</plugin>
 					<plugin>
@@ -662,16 +662,13 @@
 						<artifactId>maven-project-info-reports-plugin</artifactId>
 						<reportSets>
 							<reportSet>
+								<id>default</id>
 								<reports>
 									<report>summary</report>
 									<report>licenses</report>
 									<report>modules</report>
-									<report>team</report>
-									<report>mailing-lists</report>
-									<report>scm</report>
 									<report>issue-management</report>
 									<report>dependencies</report>
-									<report>dependency-info</report>
 									<report>dependency-convergence</report>
 									<report>dependency-management</report>
 									<report>plugins</report>

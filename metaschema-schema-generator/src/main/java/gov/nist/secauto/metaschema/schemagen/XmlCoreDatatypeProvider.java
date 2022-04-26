@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import org.codehaus.stax2.XMLStreamWriter2;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.filter.Filters;
@@ -40,11 +39,8 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import javax.xml.stream.XMLStreamException;
 
 public class XmlCoreDatatypeProvider
     extends AbstractXmlDatatypeProvider {
@@ -92,14 +88,5 @@ public class XmlCoreDatatypeProvider
               analyzeDependencies(element));
         }).collect(Collectors.toMap(content -> content.getTypeName(), Function.identity(), (e1, e2) -> e2,
             LinkedHashMap::new));
-  }
-
-  @Override
-  public @NotNull Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes,
-      @NotNull XMLStreamWriter2 writer) throws XMLStreamException {
-    writer.writeComment(" ===================== ");
-    writer.writeComment(" core metaschema types ");
-    writer.writeComment(" ===================== ");
-    return super.generateDatatypes(requiredTypes, writer);
   }
 }

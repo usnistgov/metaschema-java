@@ -26,24 +26,40 @@
 
 package gov.nist.secauto.metaschema.codegen.binding.config;
 
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 public class DefaultDefinitionBindingConfiguration implements IMutableDefinitionBindingConfiguration {
+  @Nullable
   private String className;
+  @Nullable
   private String baseClassName;
-  private final Set<String> interfacesToImplement = new HashSet<>();
+  @NotNull
+  private final Set<@NotNull String> interfacesToImplement = new HashSet<>();
 
+  /**
+   * Create a new definition binding configuration.
+   */
   public DefaultDefinitionBindingConfiguration() {
-    // used for default configurations
+    // empty configuration
   }
 
-  public DefaultDefinitionBindingConfiguration(IDefinitionBindingConfiguration oldConfig) {
-    this.className = oldConfig.getClassName();
-    this.baseClassName = oldConfig.getQualifiedBaseClassName();
-    this.interfacesToImplement.addAll(oldConfig.getInterfacesToImplement());
+  /**
+   * Create a new definition binding configuration based on a previous configuration.
+   * 
+   * @param config
+   *          the previous configuration
+   */
+  public DefaultDefinitionBindingConfiguration(@NotNull IDefinitionBindingConfiguration config) {
+    this.className = config.getClassName();
+    this.baseClassName = config.getQualifiedBaseClassName();
+    this.interfacesToImplement.addAll(config.getInterfacesToImplement());
   }
 
   @Override
@@ -67,9 +83,9 @@ public class DefaultDefinitionBindingConfiguration implements IMutableDefinition
   }
 
   @Override
-  public Collection<String> getInterfacesToImplement() {
-    return interfacesToImplement.isEmpty() ? Collections.emptySet()
-        : Collections.unmodifiableCollection(interfacesToImplement);
+  public Collection<@NotNull String> getInterfacesToImplement() {
+    return interfacesToImplement.isEmpty() ? CollectionUtil.emptySet()
+        : CollectionUtil.unmodifiableCollection(interfacesToImplement);
   }
 
   @Override

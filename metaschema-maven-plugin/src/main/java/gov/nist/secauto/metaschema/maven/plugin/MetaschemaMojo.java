@@ -394,7 +394,7 @@ public class MetaschemaMojo
         try {
           getLog().info("Loading binding configuration: " + config.getPath());
           bindingConfiguration.load(config);
-        } catch (IOException | MetaschemaException ex) {
+        } catch (IOException ex) {
           throw new MojoExecutionException(
               String.format("Unable to load binding configuration from '%s'.", config.getPath()), ex);
         }

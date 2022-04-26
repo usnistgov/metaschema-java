@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.model;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-import gov.nist.secauto.metaschema.model.xml.XmlMetaschema;
 import gov.nist.secauto.metaschema.model.xmlbeans.ImportDocument;
 import gov.nist.secauto.metaschema.model.xmlbeans.METASCHEMADocument;
 
@@ -65,6 +64,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+/**
+ * Provides methods to load a Metaschema expressed in XML.
+ * <p>
+ * Loaded Metaschema instances are cached to avoid the need to load them for every use. Any
+ * Metaschema imported is also loaded and cached automatically.
+ */
 public class MetaschemaLoader {
   private static final Logger LOGGER = LogManager.getLogger(MetaschemaLoader.class);
 

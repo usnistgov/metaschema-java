@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.binding.AbstractBoundMetaschema;
+import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

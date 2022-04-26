@@ -24,4 +24,8 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
+/**
+ * Provides content validation support.
+ */
+
 package gov.nist.secauto.metaschema.model.common.validation;

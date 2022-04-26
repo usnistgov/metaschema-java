@@ -39,6 +39,12 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
 
+/**
+ * The base class of all format-specific deserializers.
+ *
+ * @param <CLASS>
+ *          the bound class to deserialize to
+ */
 public abstract class AbstractDeserializer<CLASS>
     extends AbstractSerializationBase
     implements IDeserializer<CLASS> {

@@ -36,6 +36,7 @@ public interface IInstance extends IModelElement {
    * 
    * @return the Metaschema definition on which the instance was declared
    */
+  // TODO: Make this not null
   INamedModelDefinition getContainingDefinition();
 
   @Override

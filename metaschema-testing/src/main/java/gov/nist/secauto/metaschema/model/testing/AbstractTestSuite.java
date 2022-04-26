@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.io.ISerializer;
-import gov.nist.secauto.metaschema.codegen.Production;
-import gov.nist.secauto.metaschema.codegen.compile.MetaschemaCompilerHelper;
+import gov.nist.secauto.metaschema.codegen.IProduction;
+import gov.nist.secauto.metaschema.codegen.MetaschemaCompilerHelper;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
@@ -41,7 +41,7 @@ import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator.JsonValidationFinding;
 import gov.nist.secauto.metaschema.model.testing.xmlbeans.ContentCaseType;
 import gov.nist.secauto.metaschema.model.testing.xmlbeans.GenerateSchemaDocument.GenerateSchema;
-import gov.nist.secauto.metaschema.model.testing.xmlbeans.MetaschemaDocument.Metaschema;
+import gov.nist.secauto.metaschema.model.testing.xmlbeans.MetaschemaDocument;
 import gov.nist.secauto.metaschema.model.testing.xmlbeans.TestCollectionDocument.TestCollection;
 import gov.nist.secauto.metaschema.model.testing.xmlbeans.TestScenarioDocument.TestScenario;
 import gov.nist.secauto.metaschema.model.testing.xmlbeans.TestSuiteDocument;
@@ -118,6 +118,13 @@ public abstract class AbstractTestSuite {
     TestSuiteDocument directive = TestSuiteDocument.Factory.parse(testSuiteUrl, options);
 
     Path generationPath = getGenerationPath();
+    if (Files.exists(generationPath)) {
+      if (!Files.isDirectory(generationPath)) {
+        throw new JUnitException(String.format("Generation path '%s' exists and is not a directory", generationPath));
+      }
+    } else {
+      Files.createDirectories(generationPath);
+    }
     return directive.getTestSuite().getTestCollectionList().stream()
         .flatMap(collection -> Stream.of(generateCollection(collection, testSuiteUri, generationPath)));
   }
@@ -219,7 +226,7 @@ public abstract class AbstractTestSuite {
       throw new JUnitException("Unable to class generation directory", ex);
     }
 
-    Production production = MetaschemaCompilerHelper.compileMetaschema(metaschema, classDir);
+    IProduction production = MetaschemaCompilerHelper.compileMetaschema(metaschema, classDir);
     return new DynamicBindingContext(production,
         MetaschemaCompilerHelper.getClassLoader(classDir, Thread.currentThread().getContextClassLoader()));
   }
@@ -241,7 +248,7 @@ public abstract class AbstractTestSuite {
     }
 
     GenerateSchema generateSchema = scenario.getGenerateSchema();
-    Metaschema metaschemaDirective = generateSchema.getMetaschema();
+    MetaschemaDocument.Metaschema metaschemaDirective = generateSchema.getMetaschema();
     URI metaschemaUri = collectionUri.resolve(metaschemaDirective.getLocation());
 
     ExecutorService executor = Executors.newSingleThreadExecutor(); // NOPMD - intentional use of threads
@@ -414,6 +421,9 @@ public abstract class AbstractTestSuite {
 
   protected static boolean validate(@NotNull IContentValidator validator, @NotNull Path target) throws IOException {
     IValidationResult schemaValidationResult = validator.validate(target);
+    if (!schemaValidationResult.isPassing()) {
+      LOGGER.atError().log("Schema validation failed for: {}", target);
+    }
     return processValidationResult(schemaValidationResult);
   }
 

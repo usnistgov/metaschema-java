@@ -69,12 +69,4 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
   public String getTypeNameForDefinition(@NotNull INamedDefinition definition) {
     return getDatatypeManager().getTypeNameForDefinition(definition, this);
   }
-
-  protected String generateComment(@NotNull INamedDefinition definition, @NotNull String context) {
-    return String.format("%s %s: inline(%s:%s)",
-        context,
-        getTypeNameForDefinition(definition),
-        definition.isInline(),
-        isInline(definition));
-  }
 }

@@ -29,9 +29,9 @@ package gov.nist.secauto.metaschema.model.testing;
 import gov.nist.secauto.metaschema.binding.DefaultBindingContext;
 import gov.nist.secauto.metaschema.binding.IBindingMatcher;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.codegen.Production;
+import gov.nist.secauto.metaschema.codegen.IProduction;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.IFlaggedDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -41,11 +41,11 @@ import javax.xml.namespace.QName;
 public class DynamicBindingContext
     extends DefaultBindingContext {
 
-  public DynamicBindingContext(@NotNull Production production, ClassLoader classLoader) {
+  public DynamicBindingContext(@NotNull IProduction production, ClassLoader classLoader) {
     production.getDefinitionProductionsAsStream()
         .filter(definitionProduction -> {
           boolean retval = false;
-          IFlaggedDefinition definition = definitionProduction.getDefinition();
+          INamedModelDefinition definition = definitionProduction.getDefinition();
           if (definition instanceof IAssemblyDefinition) {
             IAssemblyDefinition assembly = (IAssemblyDefinition) definition;
             if (assembly.isRoot()) {

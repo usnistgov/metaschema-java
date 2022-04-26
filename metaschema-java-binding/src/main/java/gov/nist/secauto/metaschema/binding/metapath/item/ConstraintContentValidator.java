@@ -50,7 +50,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-// TODO: consider moving this to model if we can find a way to eliminate the need for the binding context
+/**
+ * A content validator that enforces Metaschema model constraints.
+ */
+// TODO: consider moving this to model if we can find a way to eliminate the need for the binding
+// context
 public class ConstraintContentValidator
     extends AbstractContentValidator {
   @NotNull
