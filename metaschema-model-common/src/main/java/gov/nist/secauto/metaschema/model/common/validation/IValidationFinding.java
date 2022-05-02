@@ -32,6 +32,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 
+/**
+ * Provides information about an individual finding that is the result of a completed content
+ * validation.
+ */
 public interface IValidationFinding {
   /**
    * Get the finding's severity.

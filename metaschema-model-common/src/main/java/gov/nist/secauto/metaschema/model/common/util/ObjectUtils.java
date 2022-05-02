@@ -28,6 +28,9 @@ package gov.nist.secauto.metaschema.model.common.util;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+import java.util.stream.Stream;
+
 public final class ObjectUtils {
   private ObjectUtils() {
     // disable construction
@@ -77,5 +80,11 @@ public final class ObjectUtils {
       throw new NullPointerException(message); // NOPMD
     }
     return obj;
+  }
+
+  @SuppressWarnings("null")
+  @NotNull
+  public static <T> Stream<@NotNull T> filterNull(T item) {
+    return Objects.nonNull(item) ? Stream.of(item) : Stream.empty();
   }
 }

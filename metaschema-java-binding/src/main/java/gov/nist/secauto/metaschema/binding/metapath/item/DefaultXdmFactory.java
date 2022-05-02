@@ -44,7 +44,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import java.net.URI;
 
 /**
- * A concrete implementation of the {@link IXdmFactory}.
+ * A concrete implementation of the {@link IXdmFactory} used to create various {@link INodeItem}
+ * instances for use in evaluating Metapath expressions.
  */
 public class DefaultXdmFactory implements IXdmFactory {
 

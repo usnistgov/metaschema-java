@@ -40,6 +40,7 @@ import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlDeserializer;
 import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlSerializer;
 import gov.nist.secauto.metaschema.binding.metapath.item.ConstraintContentValidator;
 import gov.nist.secauto.metaschema.binding.metapath.item.IXdmFactory;
+import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.model.DefaultAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.DefaultFieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;

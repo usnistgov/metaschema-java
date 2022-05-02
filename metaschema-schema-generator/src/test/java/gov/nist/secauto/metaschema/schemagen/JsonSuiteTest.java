@@ -44,7 +44,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -73,7 +72,7 @@ public class JsonSuiteTest
     return JSON_SCHEMA_PROVIDER;
   }
 
-  @Execution(ExecutionMode.CONCURRENT)
+  @Execution(ExecutionMode.SAME_THREAD)
   @DisplayName("JSON Schema Generation")
   @TestFactory
   public Stream<? extends DynamicNode> generateTests() {
@@ -81,26 +80,32 @@ public class JsonSuiteTest
   }
 
   @Disabled
-  @SuppressWarnings("null")
   @Test
   void testDatatypeUuid() throws IOException, MetaschemaException {
     doTest(
         "datatypes/",
         "datatypes-uuid_metaschema.xml",
         "test-schema",
-        List.of(
-            contentCase(Format.JSON, "datatypes-uuid_test_valid_PASS.json", true)));
+        contentCase(Format.JSON, "datatypes-uuid_test_valid_PASS.json", true));
   }
 
-  // @Disabled
-  @SuppressWarnings("null")
+  @Disabled
   @Test
   void testChoice() throws IOException, MetaschemaException {
     doTest(
         "choice/",
         "choice-multiple_metaschema.xml",
         "test-choice-schema",
-        List.of(
-            contentCase(Format.JSON, "choice-multiple_test_multiple_PASS.json", true)));
+        contentCase(Format.JSON, "choice-multiple_test_multiple_PASS.json", true));
+  }
+
+  @Test
+  void testDatatypeCharStrings() throws IOException, MetaschemaException {
+    doTest(
+        "datatypes/",
+        "charstrings_metaschema.xml",
+        "datatypes-charstrings-schema",
+        contentCase(Format.JSON, "charstrings_test_okay_PASS.json", true),
+        contentCase(Format.XML, "charstrings_test_okay_PASS.xml", true));
   }
 }

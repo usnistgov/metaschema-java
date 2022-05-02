@@ -34,7 +34,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IDefinition;
-import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.UsedDefinitionModelWalker;
@@ -199,15 +198,6 @@ public class JsonSchemaGenerator
 
     public GenerationState(@NotNull JsonGenerator writer, @NotNull IInlineStrategy inlineStrategy) {
       super(writer, new JsonDatatypeManager(), inlineStrategy);
-    }
-
-    public void addComment(@NotNull INamedDefinition definition, @NotNull String context,
-        @NotNull ObjectNode definitionContextNode) {
-      definitionContextNode.put("$comment", generateComment(definition, context));
-    }
-
-    public void addComment(@NotNull IFlagDefinition definition, @NotNull String context) throws IOException {
-      getWriter().writeStringField("$comment", generateComment(definition, context));
     }
   }
 }

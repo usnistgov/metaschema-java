@@ -27,9 +27,8 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.codegen.binding.config.IBindingConfiguration;
-import gov.nist.secauto.metaschema.codegen.type.DefaultTypeResolver;
-import gov.nist.secauto.metaschema.codegen.type.ITypeResolver;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,9 +37,11 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
 
+/**
+ * Provides methods for generating Java classes based on a single or a collection of Metaschemas.
+ */
 public final class JavaGenerator {
   private static final Logger LOGGER = LogManager.getLogger(JavaGenerator.class);
 
@@ -61,11 +62,11 @@ public final class JavaGenerator {
    * @throws IOException
    *           if a build error occurred while generating the class
    */
-  public static Production generate(
+  public static IProduction generate(
       @NotNull IMetaschema metaschema,
       @NotNull Path targetDir,
       @NotNull IBindingConfiguration bindingConfiguration) throws IOException {
-    return generate(Collections.singletonList(metaschema), targetDir, bindingConfiguration);
+    return generate(CollectionUtil.singletonList(metaschema), targetDir, bindingConfiguration);
   }
 
   /**
@@ -83,8 +84,8 @@ public final class JavaGenerator {
    *           if a build error occurred while generating the class
    */
   @NotNull
-  public static Production generate(
-      @NotNull Collection<? extends IMetaschema> metaschemas,
+  public static IProduction generate(
+      @NotNull Collection<@NotNull ? extends IMetaschema> metaschemas,
       @NotNull Path targetDirectory,
       @NotNull IBindingConfiguration bindingConfiguration) throws IOException {
     Objects.requireNonNull(metaschemas, "metaschemas");
@@ -96,6 +97,6 @@ public final class JavaGenerator {
 
     ITypeResolver typeResolver = new DefaultTypeResolver(bindingConfiguration);
 
-    return Production.of(metaschemas, typeResolver, targetDirectory);
+    return IProduction.of(metaschemas, typeResolver, targetDirectory);
   }
 }

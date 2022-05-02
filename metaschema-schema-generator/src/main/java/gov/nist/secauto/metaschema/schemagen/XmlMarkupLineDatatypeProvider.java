@@ -28,17 +28,13 @@ package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import org.codehaus.stax2.XMLStreamWriter2;
 import org.jdom2.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.xml.stream.XMLStreamException;
 
 public class XmlMarkupLineDatatypeProvider
     extends AbstractXmlDatatypeProvider {
@@ -67,14 +63,5 @@ public class XmlMarkupLineDatatypeProvider
                 .filter(element -> !("include".equals(element.getName())))
                 .collect(Collectors.toList()),
             CollectionUtil.emptyList()));
-  }
-
-  @Override
-  public @NotNull Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes,
-      @NotNull XMLStreamWriter2 writer) throws XMLStreamException {
-    writer.writeComment(" ================= ");
-    writer.writeComment(" markup line types ");
-    writer.writeComment(" ================= ");
-    return super.generateDatatypes(requiredTypes, writer);
   }
 }

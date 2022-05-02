@@ -96,8 +96,6 @@ public final class JsonDefinitionGenerator {
       definitionContextNode.put("$id", datatypeManager.getJsonDefinitionRefForDefinition(definition, state));
     }
 
-    state.addComment(definition, "Definition", definitionContextNode);
-
     generateTitle(definition, definitionContextNode);
     generateDescription(definition, definitionContextNode);
 

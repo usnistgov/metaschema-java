@@ -44,7 +44,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -87,7 +86,7 @@ public class XmlSuiteTest
     return XML_SCHEMA_PROVIDER;
   }
 
-  @Execution(ExecutionMode.CONCURRENT)
+  @Execution(ExecutionMode.SAME_THREAD)
   @DisplayName("XML Schema Generation")
   @TestFactory
   public Stream<? extends DynamicNode> generateTests() {
@@ -96,36 +95,52 @@ public class XmlSuiteTest
 
   @Disabled
   @Test
-  @SuppressWarnings("null")
   void testChoiceMultiple() throws IOException, MetaschemaException {
     doTest(
         "choice/",
         "choice-multiple_metaschema.xml",
         "choice-schema",
-        List.of(
-            contentCase(Format.JSON, "choice-multiple_test_multiple_PASS.json", true)));
+        contentCase(Format.JSON, "choice-multiple_test_multiple_PASS.json", true));
   }
 
   @Disabled
   @Test
-  @SuppressWarnings("null")
   void testCollapsibleMultiple() throws IOException, MetaschemaException {
     doTest(
         "collapsible/",
         "collapsible_metaschema.xml",
         "collapsible-schema",
-        List.of(
-            contentCase(Format.JSON, "choice-multiple_test_multiple_PASS.json", true)));
+        contentCase(Format.JSON, "collapsible_test_multiple_PASS.json", true),
+        contentCase(Format.JSON, "collapsible_test_singleton_PASS.json", true));
   }
 
+  @Disabled
   @Test
-  @SuppressWarnings("null")
-  void testJsonValueKey() throws IOException, MetaschemaException {
+  void testJsonValueKeyField() throws IOException, MetaschemaException {
     doTest(
         "json-value-key/",
         "json-value-key-field_metaschema.xml",
-        "json-value-key-field",
-        List.of(
-            contentCase(Format.JSON, "json-value-key-field_test_valid_PASS.json", true)));
+        "json-value-key-field-schema",
+        contentCase(Format.JSON, "json-value-key-field_test_valid_PASS.json", true));
+  }
+
+  @Disabled
+  @Test
+  void testJsonValueKeyLabel() throws IOException, MetaschemaException {
+    doTest(
+        "json-value-key/",
+        "json-value-key-field_metaschema.xml",
+        "json-value-key-field-schema",
+        contentCase(Format.JSON, "json-value-key-field_test_valid_PASS.json", true));
+  }
+
+  @Disabled
+  @Test
+  void testByKey() throws IOException, MetaschemaException {
+    doTest(
+        "group-as/",
+        "group-as-by-key_metaschema.xml",
+        "group-as-by-key-schema",
+        contentCase(Format.JSON, "group-as-by-key_test_valid_PASS.json", true));
   }
 }

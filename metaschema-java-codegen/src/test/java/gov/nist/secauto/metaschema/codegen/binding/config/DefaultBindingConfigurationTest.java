@@ -27,12 +27,14 @@
 package gov.nist.secauto.metaschema.codegen.binding.config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.ModelType;
 
+import org.jetbrains.annotations.NotNull;
 import org.jmock.Expectations;
 import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
@@ -56,7 +58,7 @@ class DefaultBindingConfigurationTest {
   private final IMetaschema metaschema = context.mock(IMetaschema.class);
 
   @Test
-  void testLoader() throws MalformedURLException, IOException, MetaschemaException {
+  void testLoader() throws MalformedURLException, IOException {
     File bindingConfigFile = new File("src/test/resources/metaschema/binding-config.xml");
 
     DefaultBindingConfiguration config = new DefaultBindingConfiguration();
@@ -77,7 +79,8 @@ class DefaultBindingConfigurationTest {
         will(returnValue(DEFINITION_NAME));
       }
     });
-    IDefinitionBindingConfiguration defConfig = config.getDefinitionBindingConfiguration(definition);
+    IDefinitionBindingConfiguration defConfig = config.getBindingConfigurationForDefinition(definition);
+    assertNotNull(defConfig);
     assertEquals(DEFINITION__CLASS_NAME, defConfig.getClassName());
   }
 

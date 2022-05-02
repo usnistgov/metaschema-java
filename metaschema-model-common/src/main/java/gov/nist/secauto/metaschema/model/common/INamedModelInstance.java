@@ -26,7 +26,36 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
+import org.jetbrains.annotations.Nullable;
+
 public interface INamedModelInstance extends INamedInstance, IModelInstance {
   @Override
   INamedModelDefinition getDefinition();
+
+  /**
+   * Indicates if a flag's value can be used as a property name in the containing object in JSON who's
+   * value will be the object containing the flag. In such cases, the flag will not appear in the
+   * object. This is only allowed if the flag is required, as determined by a {@code true} result from
+   * {@link IFlagInstance#isRequired()}. The {@link IFlagInstance} can be retrieved using
+   * {@link #getJsonKeyFlagInstance()}.
+   * 
+   * @return {@code true} if the flag's value can be used as a property name, or {@code false}
+   *         otherwise
+   * @see #getJsonKeyFlagInstance()
+   */
+  default boolean hasJsonKey() {
+    return getDefinition().hasJsonKey();
+  }
+
+  /**
+   * Retrieves the flag instance to use as as the property name for the containing object in JSON
+   * who's value will be the object containing the flag.
+   * 
+   * @return the flag instance if a JSON key is configured, or {@code null} otherwise
+   * @see #hasJsonKey()
+   */
+  @Nullable
+  default IFlagInstance getJsonKeyFlagInstance() {
+    return getDefinition().getJsonKeyFlagInstance();
+  }
 }

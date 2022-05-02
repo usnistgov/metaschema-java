@@ -54,7 +54,7 @@
   <define-field name="complex-field4">
     <formal-name>Complex Field 4</formal-name>
     <description>A complex field with a flag</description>
-    <json-key flag-name="id2"/>
+    <json-key flag-ref="id2"/>
     <define-flag name="id2">
       <formal-name>A flag</formal-name>
       <description>A simple flag</description>

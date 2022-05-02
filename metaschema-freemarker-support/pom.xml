@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>metaschema-framework</artifactId>
 		<groupId>gov.nist.secauto.metaschema</groupId>
+		<artifactId>metaschema-framework</artifactId>
 		<version>0.7.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>metaschema-freemarker-support</artifactId>
+	<packaging>jar</packaging>
 
-	<name>metaschema-freemarker-support</name>
+	<name>Metaschema Freemarker Support</name>
 	<description>Apache Freemarker metaschema utilities and support.</description>
 
 	<url>${site.url}${project.artifactId}/</url>
@@ -24,6 +27,10 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>metaschema-model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>metaschema-model-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>

@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface IBindingConfiguration {
 
@@ -44,7 +45,7 @@ public interface IBindingConfiguration {
   String getPackageNameForMetaschema(@NotNull IMetaschema metaschema);
 
   /**
-   * Generates a Java class name for the provided field or assembly definition.
+   * Get the Java class name for the provided field or assembly definition.
    * 
    * @param definition
    *          the definition to generate the Java class name for
@@ -53,6 +54,13 @@ public interface IBindingConfiguration {
   @NotNull
   String getClassName(@NotNull INamedModelDefinition definition);
 
+  /**
+   * Get the Java class name for the provided Metaschema.
+   * 
+   * @param metaschema
+   *          the Metaschema to generate the Java class name for
+   * @return a Java class name
+   */
   @NotNull
   String getClassName(@NotNull IMetaschema metaschema);
 
@@ -64,5 +72,6 @@ public interface IBindingConfiguration {
    *          a definition that may be built as a class
    * @return the name of the base class or {@code null} if no base class is to be used
    */
+  @Nullable
   String getQualifiedBaseClassName(@NotNull INamedModelDefinition definition);
 }

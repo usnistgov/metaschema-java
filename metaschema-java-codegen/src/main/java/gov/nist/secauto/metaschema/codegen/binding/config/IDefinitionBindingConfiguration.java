@@ -26,14 +26,18 @@
 
 package gov.nist.secauto.metaschema.codegen.binding.config;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collection;
 
-public interface IDefinitionBindingConfiguration {
+interface IDefinitionBindingConfiguration {
   /**
    * Get the class name to use for the generated class associated with this binding.
    * 
    * @return a class name
    */
+  @Nullable
   String getClassName();
 
   /**
@@ -41,6 +45,7 @@ public interface IDefinitionBindingConfiguration {
    * 
    * @return a full type, including the package
    */
+  @Nullable
   String getQualifiedBaseClassName();
 
   /**
@@ -48,5 +53,6 @@ public interface IDefinitionBindingConfiguration {
    * 
    * @return a list of fully qualified type names for interfaces
    */
-  Collection<String> getInterfacesToImplement();
+  @NotNull
+  Collection<@NotNull String> getInterfacesToImplement();
 }

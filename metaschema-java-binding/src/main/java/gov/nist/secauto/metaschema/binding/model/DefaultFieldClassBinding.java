@@ -30,7 +30,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import gov.nist.secauto.metaschema.binding.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.CollapseKeyBuilder;
@@ -170,7 +169,8 @@ public class DefaultFieldClassBinding
         java.lang.reflect.Field field = getFieldValueField(getBoundClass());
         if (field == null) {
           throw new IllegalArgumentException(
-              String.format("Class '%s' is missing the '%' annotation on one of its fields.", getBoundClass().getName(),
+              String.format("Class '%s' is missing the '%s' annotation on one of its fields.",
+                  getBoundClass().getName(),
                   BoundFieldValue.class.getName()));
         }
 

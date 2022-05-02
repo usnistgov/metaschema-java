@@ -42,6 +42,7 @@ public class TestUtils {
     return IDecimalItem.valueOf(new BigDecimal(value));
   }
 
+  @SuppressWarnings("null")
   public static IIntegerItem integer(int value) {
     return IIntegerItem.valueOf(BigInteger.valueOf(value));
   }

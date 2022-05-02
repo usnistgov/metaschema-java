@@ -33,7 +33,10 @@
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>metaschema-java-codegen</artifactId>
-			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>metaschema-model</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>

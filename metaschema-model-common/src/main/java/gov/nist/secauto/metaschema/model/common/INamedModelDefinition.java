@@ -26,8 +26,111 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.List;
+
 /**
  * This marker interface identifies a definition that is intended to be part of an Assembly's model.
+ * <p>
+ * These definitions contain flags, and potentially a simple value (for a field) or complex model
+ * contents (for an assembly).
  */
-public interface INamedModelDefinition extends INamedDefinition, IFlaggedDefinition {
+public interface INamedModelDefinition extends INamedDefinition {
+  /**
+   * Identifies if the field has flags or not.
+   * 
+   * @return {@code true} if the field has not flags, or false otherwise
+   */
+  default boolean isSimple() {
+    return getFlagInstances().isEmpty();
+  }
+
+  /**
+   * Retrieves a flag instance, by the flag's effective name, that is defined on the containing
+   * definition.
+   * 
+   * @param name
+   *          the flag's name
+   * @return the matching flag instance, or {@code null} if there is no flag matching the specified
+   *         name
+   */
+  @Nullable
+  IFlagInstance getFlagInstanceByName(String name);
+
+  /**
+   * Retrieves the flag instances for all flags defined on the containing definition.
+   * 
+   * @return the flags
+   */
+  @NotNull
+  Collection<@NotNull ? extends IFlagInstance> getFlagInstances();
+
+  /**
+   * Indicates if a flag's value can be used as a property name in the containing object in JSON who's
+   * value will be the object containing the flag. In such cases, the flag will not appear in the
+   * object. This is only allowed if the flag is required, as determined by a {@code true} result from
+   * {@link IFlagInstance#isRequired()}. The {@link IFlagInstance} can be retrieved using
+   * {@link #getJsonKeyFlagInstance()}.
+   * 
+   * @return {@code true} if the flag's value can be used as a property name, or {@code false}
+   *         otherwise
+   * @see #getJsonKeyFlagInstance()
+   */
+  // TODO: remove
+  boolean hasJsonKey();
+
+  /**
+   * Retrieves the flag instance to use as as the property name for the containing object in JSON
+   * who's value will be the object containing the flag.
+   * 
+   * @return the flag instance if a JSON key is configured, or {@code null} otherwise
+   * @see #hasJsonKey()
+   */
+  // TODO: remove
+  @Nullable
+  IFlagInstance getJsonKeyFlagInstance();
+
+  /**
+   * Retrieve the list of allowed value constraints that apply to this definition's descendant flag or
+   * field values.
+   * 
+   * @return the list of allowed value constraints
+   */
+  @NotNull
+  List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesContraints();
+
+  /**
+   * Retrieve the list of matches constraints that apply to this definition's descendant flag or field
+   * values.
+   * 
+   * @return the list of matches constraints
+   */
+  @NotNull
+  List<@NotNull ? extends IMatchesConstraint> getMatchesConstraints();
+
+  /**
+   * Retrieve the list of key reference constraints that apply to this definition's descendant flag or
+   * field values.
+   * 
+   * @return the list of key reference constraints
+   */
+  @NotNull
+  List<@NotNull ? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints();
+
+  /**
+   * Retrieve the list of expect constraints that apply to this definition's descendant flag or field
+   * values.
+   * 
+   * @return the list of expect constraints
+   */
+  @NotNull
+  List<@NotNull ? extends IExpectConstraint> getExpectConstraints();
 }

@@ -10,6 +10,7 @@
 	</parent>
 
 	<artifactId>metaschema-java-binding</artifactId>
+	<packaging>jar</packaging>
 
 	<name>Java Metaschema Data Binding</name>
 	<description>A Metaschema binding-based parser for Java objects supporting serialization of conformant XML, JSON, and YAML data.</description>
