@@ -42,7 +42,7 @@
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> inet.ipaddr.ipv6.IPv6Address;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">class</strong> <a name="IPv6AddressItemImpl" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IPv6AddressItemImpl.html#IPv6AddressItemImpl">IPv6AddressItemImpl</a>
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">extends</strong> AbstractUntypedAtomicItem&lt;IPv6Address&gt;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">extends</strong> AbstractAnyAtomicItem&lt;IPv6Address&gt;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">implements</strong> <a name="IIPv6AddressItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IIPv6AddressItem.html#IIPv6AddressItem">IIPv6AddressItem</a> {
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>    <strong class="jxr_keyword">public</strong> <a name="IPv6AddressItemImpl" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IPv6AddressItemImpl.html#IPv6AddressItemImpl">IPv6AddressItemImpl</a>(@NotNull IPv6Address value) {
@@ -53,13 +53,7 @@
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>    <strong class="jxr_keyword">public</strong> <a name="IPv6AddressAdapter" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/adapter/IPv6AddressAdapter.html#IPv6AddressAdapter">IPv6AddressAdapter</a> getJavaTypeAdapter() {
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      <strong class="jxr_keyword">return</strong> MetaschemaDataTypeProvider.IP_V6_ADDRESS;
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>    }
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>  
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>    @Override
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>    <strong class="jxr_keyword">public</strong> <a name="IIPv6AddressItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IIPv6AddressItem.html#IIPv6AddressItem">IIPv6AddressItem</a> toAtomicItem() {
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>;
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>    }
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>  
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>  }
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

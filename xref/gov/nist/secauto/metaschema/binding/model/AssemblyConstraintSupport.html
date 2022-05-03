@@ -34,14 +34,14 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.binding.model;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.constraint.AllowedValues;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.constraint.Expect;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.constraint.HasCardinality;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.constraint.Index;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.constraint.IndexHasKey;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.constraint.IsUnique;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.constraint.Matches;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.AllowedValues;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.Expect;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.HasCardinality;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.Index;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.IndexHasKey;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.IsUnique;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.Matches;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.AbstractConstraint;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValuesConstraint;
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.DefaultCardinalityConstraint;
@@ -61,7 +61,7 @@
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment"> * Support for constraints on Metaschema assembly bound objects.</em>
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="AssemblyConstraintSupport" href="../../../../../../gov/nist/secauto/metaschema/binding/model/AssemblyConstraintSupport.html#AssemblyConstraintSupport">AssemblyConstraintSupport</a> <strong class="jxr_keyword">implements</strong> <a name="IAssemblyConstraintSupport" href="../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IAssemblyConstraintSupport.html#IAssemblyConstraintSupport">IAssemblyConstraintSupport</a> {
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <strong class="jxr_keyword">class</strong> <a name="AssemblyConstraintSupport" href="../../../../../../gov/nist/secauto/metaschema/binding/model/AssemblyConstraintSupport.html#AssemblyConstraintSupport">AssemblyConstraintSupport</a> <strong class="jxr_keyword">implements</strong> <a name="IAssemblyConstraintSupport" href="../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IAssemblyConstraintSupport.html#IAssemblyConstraintSupport">IAssemblyConstraintSupport</a> {
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> List&lt;AbstractConstraint&gt; constraints;
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> List&lt;DefaultAllowedValuesConstraint&gt; allowedValuesConstraints;
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> List&lt;DefaultMatchesConstraint&gt; matchesConstraints;
@@ -77,7 +77,7 @@
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      List&lt;DefaultAllowedValuesConstraint&gt; allowedValuesConstraints
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>          = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(classAnnotation.allowedValues().length);
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">for</strong> (<a name="AllowedValues" href="../../../../../../gov/nist/secauto/metaschema/binding/model/annotations/constraint/AllowedValues.html#AllowedValues">AllowedValues</a> annotation : classAnnotation.allowedValues()) {
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">for</strong> (<a name="AllowedValues" href="../../../../../../gov/nist/secauto/metaschema/binding/model/annotations/AllowedValues.html#AllowedValues">AllowedValues</a> annotation : classAnnotation.allowedValues()) {
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>        <a name="DefaultAllowedValuesConstraint" href="../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultAllowedValuesConstraint.html#DefaultAllowedValuesConstraint">DefaultAllowedValuesConstraint</a> constraint = ConstraintFactory.newAllowedValuesConstraint(annotation);
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>        allowedValuesConstraints.add(constraint);
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>        constraints.add(constraint);
@@ -86,7 +86,7 @@
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>          : Collections.unmodifiableList(allowedValuesConstraints);
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>      List&lt;DefaultMatchesConstraint&gt; matchesConstraints = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(classAnnotation.matches().length);
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>      <strong class="jxr_keyword">for</strong> (<a name="Matches" href="../../../../../../gov/nist/secauto/metaschema/binding/model/annotations/constraint/Matches.html#Matches">Matches</a> annotation : classAnnotation.matches()) {
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>      <strong class="jxr_keyword">for</strong> (<a name="Matches" href="../../../../../../gov/nist/secauto/metaschema/binding/model/annotations/Matches.html#Matches">Matches</a> annotation : classAnnotation.matches()) {
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>        <a name="DefaultMatchesConstraint" href="../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultMatchesConstraint.html#DefaultMatchesConstraint">DefaultMatchesConstraint</a> constraint = ConstraintFactory.newMatchesConstraint(annotation);
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>        matchesConstraints.add(constraint);
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>        constraints.add(constraint);
@@ -95,7 +95,7 @@
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>          = matchesConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(matchesConstraints);
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>      List&lt;DefaultUniqueConstraint&gt; uniqueConstraints = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(classAnnotation.isUnique().length);
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>      <strong class="jxr_keyword">for</strong> (<a name="IsUnique" href="../../../../../../gov/nist/secauto/metaschema/binding/model/annotations/constraint/IsUnique.html#IsUnique">IsUnique</a> annotation : classAnnotation.isUnique()) {
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>      <strong class="jxr_keyword">for</strong> (<a name="IsUnique" href="../../../../../../gov/nist/secauto/metaschema/binding/model/annotations/IsUnique.html#IsUnique">IsUnique</a> annotation : classAnnotation.isUnique()) {
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>        <a name="DefaultUniqueConstraint" href="../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultUniqueConstraint.html#DefaultUniqueConstraint">DefaultUniqueConstraint</a> constraint = ConstraintFactory.newUniqueConstraint(annotation);
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>        uniqueConstraints.add(constraint);
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>        constraints.add(constraint);
@@ -104,7 +104,7 @@
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>          : Collections.unmodifiableList(uniqueConstraints);
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>  
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>      List&lt;DefaultIndexConstraint&gt; indexConstraints = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(classAnnotation.index().length);
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>      <strong class="jxr_keyword">for</strong> (<a name="Index" href="../../../../../../gov/nist/secauto/metaschema/binding/model/annotations/constraint/Index.html#Index">Index</a> annotation : classAnnotation.index()) {
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>      <strong class="jxr_keyword">for</strong> (<a name="Index" href="../../../../../../gov/nist/secauto/metaschema/binding/model/annotations/Index.html#Index">Index</a> annotation : classAnnotation.index()) {
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>       <a name="DefaultIndexConstraint" href="../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultIndexConstraint.html#DefaultIndexConstraint">DefaultIndexConstraint</a> constraint = ConstraintFactory.newIndexConstraint(annotation);
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>       indexConstraints.add(constraint);
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>       constraints.add(constraint);
@@ -113,7 +113,7 @@
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>         : Collections.unmodifiableList(indexConstraints);
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> 
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>     List&lt;DefaultIndexHasKeyConstraint&gt; indexHasKeyConstraints = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(classAnnotation.indexHasKey().length);
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>     <strong class="jxr_keyword">for</strong> (<a name="IndexHasKey" href="../../../../../../gov/nist/secauto/metaschema/binding/model/annotations/constraint/IndexHasKey.html#IndexHasKey">IndexHasKey</a> annotation : classAnnotation.indexHasKey()) {
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>     <strong class="jxr_keyword">for</strong> (<a name="IndexHasKey" href="../../../../../../gov/nist/secauto/metaschema/binding/model/annotations/IndexHasKey.html#IndexHasKey">IndexHasKey</a> annotation : classAnnotation.indexHasKey()) {
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>       <a name="DefaultIndexHasKeyConstraint" href="../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultIndexHasKeyConstraint.html#DefaultIndexHasKeyConstraint">DefaultIndexHasKeyConstraint</a> constraint = ConstraintFactory.newIndexHasKeyConstraint(annotation);
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>       indexHasKeyConstraints.add(constraint);
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>       constraints.add(constraint);
@@ -122,7 +122,7 @@
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>         : Collections.unmodifiableList(indexHasKeyConstraints);
 <a class="jxr_linenumber" name="L115" href="#L115">115</a> 
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>     List&lt;DefaultExpectConstraint&gt; expectConstraints = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(classAnnotation.expect().length);
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>     <strong class="jxr_keyword">for</strong> (<a name="Expect" href="../../../../../../gov/nist/secauto/metaschema/binding/model/annotations/constraint/Expect.html#Expect">Expect</a> annotation : classAnnotation.expect()) {
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>     <strong class="jxr_keyword">for</strong> (<a name="Expect" href="../../../../../../gov/nist/secauto/metaschema/binding/model/annotations/Expect.html#Expect">Expect</a> annotation : classAnnotation.expect()) {
 <a class="jxr_linenumber" name="L118" href="#L118">118</a>       <a name="DefaultExpectConstraint" href="../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultExpectConstraint.html#DefaultExpectConstraint">DefaultExpectConstraint</a> constraint = ConstraintFactory.newExpectConstraint(annotation);
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>       expectConstraints.add(constraint);
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>       constraints.add(constraint);
@@ -132,7 +132,7 @@
 <a class="jxr_linenumber" name="L124" href="#L124">124</a> 
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>     List&lt;DefaultCardinalityConstraint&gt; cardinalityConstraints
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>         = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(classAnnotation.hasCardinality().length);
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>     <strong class="jxr_keyword">for</strong> (<a name="HasCardinality" href="../../../../../../gov/nist/secauto/metaschema/binding/model/annotations/constraint/HasCardinality.html#HasCardinality">HasCardinality</a> annotation : classAnnotation.hasCardinality()) {
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>     <strong class="jxr_keyword">for</strong> (<a name="HasCardinality" href="../../../../../../gov/nist/secauto/metaschema/binding/model/annotations/HasCardinality.html#HasCardinality">HasCardinality</a> annotation : classAnnotation.hasCardinality()) {
 <a class="jxr_linenumber" name="L128" href="#L128">128</a>       <a name="DefaultCardinalityConstraint" href="../../../../../../gov/nist/secauto/metaschema/model/common/constraint/DefaultCardinalityConstraint.html#DefaultCardinalityConstraint">DefaultCardinalityConstraint</a> constraint = ConstraintFactory.newCardinalityConstraint(annotation);
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>       cardinalityConstraints.add(constraint);
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>       constraints.add(constraint);

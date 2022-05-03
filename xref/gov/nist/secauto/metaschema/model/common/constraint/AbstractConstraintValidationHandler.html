@@ -54,7 +54,7 @@
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>    @NotNull
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>    <strong class="jxr_keyword">protected</strong> String newCardinalityMinimumViolationMessage(
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>        @NotNull <a name="ICardinalityConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/ICardinalityConstraint.html#ICardinalityConstraint">ICardinalityConstraint</a> constraint,
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>        @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node,
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>        @SuppressWarnings(<span class="jxr_string">"unused"</span>) @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node,
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>        @NotNull ISequence&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt; targets) {
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      <em class="jxr_comment">// TODO: render the item paths instead of the expression</em>
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">return</strong> String.format(
@@ -66,7 +66,7 @@
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>    @NotNull
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>    <strong class="jxr_keyword">protected</strong> String newCardinalityMaximumViolationMessage(
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>        @NotNull <a name="ICardinalityConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/ICardinalityConstraint.html#ICardinalityConstraint">ICardinalityConstraint</a> constraint,
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>        @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node,
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>        @SuppressWarnings(<span class="jxr_string">"unused"</span>) @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node,
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>        @NotNull ISequence&lt;? <strong class="jxr_keyword">extends</strong> INodeItem&gt; targets) {
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      <em class="jxr_comment">// TODO: render the item paths instead of the expression</em>
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">return</strong> String.format(
@@ -78,7 +78,7 @@
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>    @NotNull
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>    <strong class="jxr_keyword">protected</strong> String newIndexDuplicateKeyViolationMessage(
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>        @NotNull <a name="IIndexConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IIndexConstraint.html#IIndexConstraint">IIndexConstraint</a> constraint,
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>        @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node,
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>        @SuppressWarnings(<span class="jxr_string">"unused"</span>) @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node,
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>        @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> oldItem,
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>        @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> target) {
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      <em class="jxr_comment">// TODO: render the key paths</em>
@@ -89,8 +89,8 @@
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>    @NotNull
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>    <strong class="jxr_keyword">protected</strong> String newUniqueKeyViolationMessage(
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>        @NotNull <a name="IUniqueConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IUniqueConstraint.html#IUniqueConstraint">IUniqueConstraint</a> constraint,
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>        @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node,
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>        @SuppressWarnings(<span class="jxr_string">"unused"</span>) @NotNull <a name="IUniqueConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IUniqueConstraint.html#IUniqueConstraint">IUniqueConstraint</a> constraint,
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>        @SuppressWarnings(<span class="jxr_string">"unused"</span>) @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node,
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>        @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> oldItem,
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>        @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> target) {
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>      <em class="jxr_comment">// TODO: render the key paths</em>
@@ -102,7 +102,7 @@
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>    @NotNull
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>    <strong class="jxr_keyword">protected</strong> String newMatchPatternViolationMessage(
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>        @NotNull <a name="IMatchesConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IMatchesConstraint.html#IMatchesConstraint">IMatchesConstraint</a> constraint,
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>        @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node,
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>        @SuppressWarnings(<span class="jxr_string">"unused"</span>) @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node,
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>        @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> target,
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>        @NotNull String value) {
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>     <strong class="jxr_keyword">return</strong> String.format(<span class="jxr_string">"Value '%s' did not match the pattern '%s' at path '%s'"</span>,
@@ -115,7 +115,7 @@
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>   @NotNull
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>   <strong class="jxr_keyword">protected</strong> String newMatchDatatypeViolationMessage(
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>       @NotNull <a name="IMatchesConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IMatchesConstraint.html#IMatchesConstraint">IMatchesConstraint</a> constraint,
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>       @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node,
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>       @SuppressWarnings(<span class="jxr_string">"unused"</span>) @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node,
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>       @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> target,
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>       @NotNull String value) {
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>     IJavaTypeAdapter&lt;?&gt; adapter = constraint.getDataType();
@@ -127,7 +127,7 @@
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>   @NotNull
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>   <strong class="jxr_keyword">protected</strong> CharSequence newExpectViolationMessage(
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>       @NotNull <a name="IExpectConstraint" href="../../../../../../../gov/nist/secauto/metaschema/model/common/constraint/IExpectConstraint.html#IExpectConstraint">IExpectConstraint</a> constraint,
-<a class="jxr_linenumber" name="L122" href="#L122">122</a>       @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node,
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>       @SuppressWarnings(<span class="jxr_string">"unused"</span>) @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> node,
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>       @NotNull <a name="INodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> target,
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>       @NotNull <a name="DynamicContext" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/DynamicContext.html#DynamicContext">DynamicContext</a> dynamicContext) {
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>     CharSequence message;

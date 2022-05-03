@@ -67,7 +67,7 @@
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">synchronized</strong> IJavaTypeAdapter&lt;?&gt;
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>        getJavaTypeAdapterByClass(@SuppressWarnings(<span class="jxr_string">"rawtypes"</span>) Class&lt;? <strong class="jxr_keyword">extends</strong> IJavaTypeAdapter&gt; clazz) {
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">return</strong> (IJavaTypeAdapter&lt;?&gt;) libraryByClass.get(clazz);
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">return</strong> libraryByClass.get(clazz);
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>    }
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>    <em class="jxr_javadoccomment">/**</em>
@@ -84,17 +84,20 @@
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      ServiceLoader.load(IDataTypeProvider.<strong class="jxr_keyword">class</strong>).stream()
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          .map(Provider&lt;IDataTypeProvider&gt;::get)
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>          .flatMap(provider -&gt; {
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>            <strong class="jxr_keyword">return</strong> provider.getJavaTypeAdapters().stream();
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>          }).forEach(adapter -&gt; {
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>            libraryByName.put(adapter.getName(), adapter);
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>            @SuppressWarnings(<span class="jxr_string">"rawtypes"</span>)
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>            Class&lt;? <strong class="jxr_keyword">extends</strong> IJavaTypeAdapter&gt; clazz = adapter.getClass();
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>            libraryByClass.put(clazz, adapter);
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>          });
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>      <strong class="jxr_keyword">this</strong>.libraryByName = libraryByName;
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>      <strong class="jxr_keyword">this</strong>.libraryByClass = libraryByClass;
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>    }
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>  }
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>            <strong class="jxr_keyword">return</strong> provider.getJavaTypeAdapters().entrySet().stream();
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>          }).forEach(entry -&gt; {
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>            String datatypeName = entry.getKey();
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>            @SuppressWarnings(<span class="jxr_string">"null"</span>)
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>            IJavaTypeAdapter&lt;?&gt; adapter = entry.getValue();
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>            libraryByName.put(datatypeName, adapter);
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>            @SuppressWarnings(<span class="jxr_string">"rawtypes"</span>)
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>            Class&lt;? <strong class="jxr_keyword">extends</strong> IJavaTypeAdapter&gt; clazz = adapter.getClass();
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>            libraryByClass.putIfAbsent(clazz, adapter);
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>          });
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">this</strong>.libraryByName = libraryByName;
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>      <strong class="jxr_keyword">this</strong>.libraryByClass = libraryByClass;
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>    }
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

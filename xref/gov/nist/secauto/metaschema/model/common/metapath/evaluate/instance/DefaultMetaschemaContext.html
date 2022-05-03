@@ -34,12 +34,12 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.definition.IAssemblyDefinition;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.instance.IAssemblyInstance;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.instance.IFieldInstance;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.instance.IFlagInstance;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.instance.IInstance;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.instance.RootAssemblyDefinitionInstance;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFieldInstance;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFlagInstance;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IInstance;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.RootAssemblyDefinitionInstance;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.ast.Flag;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance;
@@ -57,7 +57,7 @@
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>    <strong class="jxr_keyword">public</strong> <a name="DefaultMetaschemaContext" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/evaluate/instance/DefaultMetaschemaContext.html#DefaultMetaschemaContext">DefaultMetaschemaContext</a>(List&lt;? <strong class="jxr_keyword">extends</strong> IAssemblyDefinition&gt; rootDefinitions) {
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      List&lt;? <strong class="jxr_keyword">extends</strong> IInstance&gt; rootInstances
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>          = rootDefinitions.stream().map(x -&gt; <strong class="jxr_keyword">new</strong> <a name="RootAssemblyDefinitionInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/instance/RootAssemblyDefinitionInstance.html#RootAssemblyDefinitionInstance">RootAssemblyDefinitionInstance</a>(x)).collect(Collectors.toList());
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>          = rootDefinitions.stream().map(x -&gt; <strong class="jxr_keyword">new</strong> <a name="RootAssemblyDefinitionInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/RootAssemblyDefinitionInstance.html#RootAssemblyDefinitionInstance">RootAssemblyDefinitionInstance</a>(x)).collect(Collectors.toList());
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">this</strong>.instanceSet = <strong class="jxr_keyword">new</strong> <a name="DefaultInstanceSet" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/evaluate/instance/DefaultInstanceSet.html#DefaultInstanceSet">DefaultInstanceSet</a>(rootInstances);
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>    }
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  
@@ -94,12 +94,12 @@
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>    <strong class="jxr_keyword">protected</strong> Collection&lt;? <strong class="jxr_keyword">extends</strong> IInstance&gt; searchFlags(Collection&lt;? <strong class="jxr_keyword">extends</strong> IInstance&gt; instances,
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>        Predicate&lt;IInstance&gt; searchFilter) {
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>      Set&lt;IInstance&gt; retval = <strong class="jxr_keyword">new</strong> LinkedHashSet&lt;&gt;();
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">for</strong> (<a name="IInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/instance/IInstance.html#IInstance">IInstance</a> instance : instances) {
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">for</strong> (<a name="IInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/IInstance.html#IInstance">IInstance</a> instance : instances) {
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>        Collection&lt;? <strong class="jxr_keyword">extends</strong> IFlagInstance&gt; flags = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>        <strong class="jxr_keyword">if</strong> (instance instanceof <a name="IAssemblyInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/instance/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a>) {
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>          flags = ((<a name="IAssemblyInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/instance/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a>) instance).getDefinition().getFlagInstances();
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>        } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (instance instanceof <a name="IFieldInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/instance/IFieldInstance.html#IFieldInstance">IFieldInstance</a>) {
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>          flags = ((<a name="IFieldInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/instance/IFieldInstance.html#IFieldInstance">IFieldInstance</a>) instance).getDefinition().getFlagInstances();
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>        <strong class="jxr_keyword">if</strong> (instance instanceof <a name="IAssemblyInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a>) {
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>          flags = ((<a name="IAssemblyInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a>) instance).getDefinition().getFlagInstances();
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>        } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (instance instanceof <a name="IFieldInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldInstance.html#IFieldInstance">IFieldInstance</a>) {
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>          flags = ((<a name="IFieldInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/IFieldInstance.html#IFieldInstance">IFieldInstance</a>) instance).getDefinition().getFlagInstances();
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>        }
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>        <strong class="jxr_keyword">if</strong> (flags != <strong class="jxr_keyword">null</strong> &amp;&amp; !flags.isEmpty()) {
@@ -112,11 +112,11 @@
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>   <strong class="jxr_keyword">protected</strong> Collection&lt;? <strong class="jxr_keyword">extends</strong> IInstance&gt; searchModelInstances(Collection&lt;? <strong class="jxr_keyword">extends</strong> IInstance&gt; instances,
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>       Predicate&lt;IInstance&gt; searchFilter, <strong class="jxr_keyword">boolean</strong> recurse) {
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>     Set&lt;IInstance&gt; retval = <strong class="jxr_keyword">new</strong> LinkedHashSet&lt;&gt;();
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>     <strong class="jxr_keyword">for</strong> (<a name="IInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/instance/IInstance.html#IInstance">IInstance</a> instance : instances) {
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>     <strong class="jxr_keyword">for</strong> (<a name="IInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/IInstance.html#IInstance">IInstance</a> instance : instances) {
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>       <em class="jxr_comment">// get all instances</em>
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>       Collection&lt;? <strong class="jxr_keyword">extends</strong> IInstance&gt; modelInstances = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>       <strong class="jxr_keyword">if</strong> (instance instanceof <a name="IAssemblyInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/instance/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a>) {
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>         modelInstances = ((<a name="IAssemblyInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/instance/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a>) instance).getDefinition().getModelInstances();
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>       <strong class="jxr_keyword">if</strong> (instance instanceof <a name="IAssemblyInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a>) {
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>         modelInstances = ((<a name="IAssemblyInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a>) instance).getDefinition().getModelInstances();
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>       }
 <a class="jxr_linenumber" name="L113" href="#L113">113</a> 
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>       <strong class="jxr_keyword">if</strong> (modelInstances != <strong class="jxr_keyword">null</strong> &amp;&amp; !modelInstances.isEmpty()) {
@@ -136,12 +136,12 @@
 <a class="jxr_linenumber" name="L128" href="#L128">128</a>       <a name="IExpression" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/IExpression.html#IExpression">IExpression</a> expr,
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>       Collection&lt;? <strong class="jxr_keyword">extends</strong> IInstance&gt; instances) {
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>     Set&lt;IInstance&gt; retval = <strong class="jxr_keyword">new</strong> LinkedHashSet&lt;&gt;();
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>     <strong class="jxr_keyword">for</strong> (<a name="IInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/instance/IInstance.html#IInstance">IInstance</a> instance : instances) {
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>     <strong class="jxr_keyword">for</strong> (<a name="IInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/IInstance.html#IInstance">IInstance</a> instance : instances) {
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>       <em class="jxr_comment">// get all instances</em>
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>       Collection&lt;IInstance&gt; modelInstances = <strong class="jxr_keyword">new</strong> LinkedList&lt;&gt;();
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>       <strong class="jxr_keyword">if</strong> (instance instanceof <a name="IAssemblyInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/instance/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a>) {
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>       <strong class="jxr_keyword">if</strong> (instance instanceof <a name="IAssemblyInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a>) {
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>         Collection&lt;? <strong class="jxr_keyword">extends</strong> IInstance&gt; resultingInstances
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>             = ((<a name="IAssemblyInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/instance/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a>) instance).getDefinition().getModelInstances();
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>             = ((<a name="IAssemblyInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyInstance.html#IAssemblyInstance">IAssemblyInstance</a>) instance).getDefinition().getModelInstances();
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>         modelInstances.addAll(resultingInstances);
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>       }
 <a class="jxr_linenumber" name="L139" href="#L139">139</a> 

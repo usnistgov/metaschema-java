@@ -34,68 +34,62 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.model.common.metapath.format;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> java.util.stream.Collectors;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">class</strong> <a name="MetapathFormatter" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/MetapathFormatter.html#MetapathFormatter">MetapathFormatter</a> <strong class="jxr_keyword">implements</strong> <a name="IPathFormatter" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/IPathFormatter.html#IPathFormatter">IPathFormatter</a> {
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>    <strong class="jxr_keyword">public</strong> <a name="MetapathFormatter" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/MetapathFormatter.html#MetapathFormatter">MetapathFormatter</a>() {
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>    }
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.INamedInstance;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IRootAssemblyNodeItem;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>    <strong class="jxr_keyword">protected</strong> String getEffectiveName(<a name="IDefinitionPathSegment" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/IDefinitionPathSegment.html#IDefinitionPathSegment">IDefinitionPathSegment</a> segment) {
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">return</strong> segment.getInstance().getEffectiveName();
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>    }
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="MetapathFormatter" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/MetapathFormatter.html#MetapathFormatter">MetapathFormatter</a> <strong class="jxr_keyword">implements</strong> <a name="IPathFormatter" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/IPathFormatter.html#IPathFormatter">IPathFormatter</a> {
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>    @Override
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>    <strong class="jxr_keyword">public</strong> String format(<a name="IPathSegment" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/IPathSegment.html#IPathSegment">IPathSegment</a> segment) {
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>      <strong class="jxr_keyword">return</strong> segment.getPathStream().map(pathSegment -&gt; {
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>        <strong class="jxr_keyword">return</strong> pathSegment.format(<strong class="jxr_keyword">this</strong>);
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>      }).collect(Collectors.joining(<span class="jxr_string">"/"</span>));
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>    }
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>  
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>    @Override
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>    <strong class="jxr_keyword">public</strong> @NotNull String formatPathSegment(@NotNull <a name="IDocumentPathSegment" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/IDocumentPathSegment.html#IDocumentPathSegment">IDocumentPathSegment</a> segment) {
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>      <em class="jxr_comment">// this will result in a slash being generated using the join</em>
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">return</strong> <span class="jxr_string">""</span>;
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>    }
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>  
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>    @Override
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>    <strong class="jxr_keyword">public</strong> String formatPathSegment(<a name="IFlagPathSegment" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/IFlagPathSegment.html#IFlagPathSegment">IFlagPathSegment</a> segment) {
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">return</strong> <span class="jxr_string">"@"</span> + getEffectiveName(segment);
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>    }
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>  
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>    @Override
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>    <strong class="jxr_keyword">public</strong> String formatPathSegment(<a name="IFieldPathSegment" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/IFieldPathSegment.html#IFieldPathSegment">IFieldPathSegment</a> segment) {
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">return</strong> formatModelPathSegment(segment);
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>    }
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>  
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>    @Override
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>    <strong class="jxr_keyword">public</strong> String formatPathSegment(<a name="IAssemblyPathSegment" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/IAssemblyPathSegment.html#IAssemblyPathSegment">IAssemblyPathSegment</a> segment) {
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>      String retval;
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">if</strong> (segment instanceof <a name="IRootAssemblyPathSegment" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/IRootAssemblyPathSegment.html#IRootAssemblyPathSegment">IRootAssemblyPathSegment</a>) {
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>        StringBuilder builder = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>        builder.append(getEffectiveName(segment));
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>        retval = builder.toString();
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>      } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>        <em class="jxr_comment">// TODO: does it make sense to use this for an intermediate that has no parent?</em>
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>        retval = formatModelPathSegment(segment);
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>      }
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>      <strong class="jxr_keyword">return</strong> retval;
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>    }
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>  
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>    @NotNull
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>    <strong class="jxr_keyword">protected</strong> String formatModelPathSegment(<a name="IModelPositionalPathSegment" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/format/IModelPositionalPathSegment.html#IModelPositionalPathSegment">IModelPositionalPathSegment</a> segment) {
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>      StringBuilder builder = <strong class="jxr_keyword">new</strong> StringBuilder(getEffectiveName(segment));
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>      builder.append('[');
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>      builder.append(segment.getPosition());
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>      builder.append(']');
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>      <strong class="jxr_keyword">return</strong> builder.toString();
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>    }
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>  }
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>    @NotNull
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>    <strong class="jxr_keyword">protected</strong> String getEffectiveName(<a name="INodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> nodeItem) {
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>      <a name="INamedInstance" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/INamedInstance.html#INamedInstance">INamedInstance</a> instance = nodeItem.getInstance();
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>      <strong class="jxr_keyword">return</strong> instance == <strong class="jxr_keyword">null</strong> ? nodeItem.getDefinition().getEffectiveName() : instance.getEffectiveName();
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>    }
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>    @Override
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>    <strong class="jxr_keyword">public</strong> String formatDocument(<a name="IDocumentNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IDocumentNodeItem.html#IDocumentNodeItem">IDocumentNodeItem</a> document) {
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>      <em class="jxr_comment">// this will result in a slash being generated using the join in the format method</em>
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">return</strong> <span class="jxr_string">""</span>;
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>    }
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>    @Override
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>    <strong class="jxr_keyword">public</strong> String formatRootAssembly(@NotNull <a name="IRootAssemblyNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IRootAssemblyNodeItem.html#IRootAssemblyNodeItem">IRootAssemblyNodeItem</a> root) {
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">return</strong> root.getDefinition().getRootName();
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>    }
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>    @Override
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>    <strong class="jxr_keyword">public</strong> String formatAssembly(@NotNull <a name="IAssemblyNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAssemblyNodeItem.html#IAssemblyNodeItem">IAssemblyNodeItem</a> assembly) {
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>      <em class="jxr_comment">// TODO: does it make sense to use this for an intermediate that has no parent?</em>
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">return</strong> formatModelPathSegment(assembly);
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>    }
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>    @Override
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>    <strong class="jxr_keyword">public</strong> String formatField(<a name="IFieldNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IFieldNodeItem.html#IFieldNodeItem">IFieldNodeItem</a> field) {
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>      <strong class="jxr_keyword">return</strong> formatModelPathSegment(field);
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>    }
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>    @Override
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>    <strong class="jxr_keyword">public</strong> String formatFlag(<a name="IFlagNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IFlagNodeItem.html#IFlagNodeItem">IFlagNodeItem</a> flag) {
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">return</strong> <span class="jxr_string">"@"</span> + getEffectiveName(flag);
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>    }
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>    @NotNull
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>    <strong class="jxr_keyword">protected</strong> String formatModelPathSegment(<a name="IModelNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IModelNodeItem.html#IModelNodeItem">IModelNodeItem</a> item) {
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>      StringBuilder builder = <strong class="jxr_keyword">new</strong> StringBuilder(getEffectiveName(item))
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>          .append('[')
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>          .append(item.getPosition())
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>          .append(']');
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>      <strong class="jxr_keyword">return</strong> builder.toString();
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>    }
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

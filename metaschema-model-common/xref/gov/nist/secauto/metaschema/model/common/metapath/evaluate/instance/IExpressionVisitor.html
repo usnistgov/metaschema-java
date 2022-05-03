@@ -67,69 +67,78 @@
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> IExpressionVisitor&lt;RESULT, CONTEXT&gt; {
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>  
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>    RESULT visitAddition(@NotNull <a name="Addition" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Addition.html#Addition">Addition</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>  
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>    RESULT visitAnd(@NotNull <a name="And" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/And.html#And">And</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>  
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>    RESULT visitStep(@NotNull <a name="Step" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Step.html#Step">Step</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>  
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>    RESULT visitValueComparison(@NotNull <a name="ValueComparison" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/ValueComparison.html#ValueComparison">ValueComparison</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>  
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>    RESULT visitGeneralComparison(@NotNull <a name="GeneralComparison" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/GeneralComparison.html#GeneralComparison">GeneralComparison</a> generalComparison, CONTEXT context);
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>  
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>    RESULT visitContextItem(@NotNull <a name="ContextItem" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/ContextItem.html#ContextItem">ContextItem</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>  
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>    RESULT visitDecimalLiteral(@NotNull <a name="DecimalLiteral" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/DecimalLiteral.html#DecimalLiteral">DecimalLiteral</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>  
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>    RESULT visitDivision(@NotNull <a name="Division" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Division.html#Division">Division</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>  
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>    RESULT visitFlag(@NotNull <a name="Flag" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Flag.html#Flag">Flag</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>  
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>    RESULT visitFunctionCall(@NotNull <a name="FunctionCall" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/FunctionCall.html#FunctionCall">FunctionCall</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>  
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>    RESULT visitIntegerDivision(@NotNull <a name="IntegerDivision" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/IntegerDivision.html#IntegerDivision">IntegerDivision</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>  
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>    RESULT visitIntegerLiteral(@NotNull <a name="IntegerLiteral" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/IntegerLiteral.html#IntegerLiteral">IntegerLiteral</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>  
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>    RESULT visitMetapath(@NotNull <a name="Metapath" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Metapath.html#Metapath">Metapath</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>  
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>    RESULT visitMod(@NotNull <a name="Mod" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Mod.html#Mod">Mod</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>  
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>    RESULT visitModelInstance(@NotNull <a name="ModelInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/ModelInstance.html#ModelInstance">ModelInstance</a> modelInstance, CONTEXT context);
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>  
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>    RESULT visitMultiplication(@NotNull <a name="Multiplication" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Multiplication.html#Multiplication">Multiplication</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>  
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>    RESULT visitName(@NotNull <a name="Name" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Name.html#Name">Name</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>  
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>    RESULT visitNegate(@NotNull <a name="Negate" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Negate.html#Negate">Negate</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>  
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>   RESULT visitOr(@NotNull <a name="Or" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Or.html#Or">Or</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L101" href="#L101">101</a> 
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>   RESULT visitParenthesizedExpression(@NotNull <a name="ParenthesizedExpression" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/ParenthesizedExpression.html#ParenthesizedExpression">ParenthesizedExpression</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L103" href="#L103">103</a> 
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>   RESULT visitRelativeDoubleSlashPath(@NotNull <a name="RelativeDoubleSlashPath" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/RelativeDoubleSlashPath.html#RelativeDoubleSlashPath">RelativeDoubleSlashPath</a> relativeDoubleSlashPath,
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>       CONTEXT context);
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment"> * Used to support processing a Metapath expression based on the visitor pattern. Each type of</em>
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment"> * expression node in the Metapath abstract syntax tree (AST) is represented.</em>
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  <em class="jxr_javadoccomment"> * @param &lt;RESULT&gt;</em>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment"> *          the result of processing any node</em>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment"> * @param &lt;CONTEXT&gt;</em>
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment"> *          additional state to pass between nodes visited</em>
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> IExpressionVisitor&lt;RESULT, CONTEXT&gt; {
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>  
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>    RESULT visitAddition(@NotNull <a name="Addition" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Addition.html#Addition">Addition</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>    RESULT visitAnd(@NotNull <a name="And" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/And.html#And">And</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>    RESULT visitStep(@NotNull <a name="Step" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Step.html#Step">Step</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>  
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>    RESULT visitValueComparison(@NotNull <a name="ValueComparison" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/ValueComparison.html#ValueComparison">ValueComparison</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>  
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>    RESULT visitGeneralComparison(@NotNull <a name="GeneralComparison" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/GeneralComparison.html#GeneralComparison">GeneralComparison</a> generalComparison, CONTEXT context);
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>    RESULT visitContextItem(@NotNull <a name="ContextItem" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/ContextItem.html#ContextItem">ContextItem</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>    RESULT visitDecimalLiteral(@NotNull <a name="DecimalLiteral" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/DecimalLiteral.html#DecimalLiteral">DecimalLiteral</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>  
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>    RESULT visitDivision(@NotNull <a name="Division" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Division.html#Division">Division</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>  
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>    RESULT visitFlag(@NotNull <a name="Flag" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Flag.html#Flag">Flag</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>  
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>    RESULT visitFunctionCall(@NotNull <a name="FunctionCall" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/FunctionCall.html#FunctionCall">FunctionCall</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>  
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>    RESULT visitIntegerDivision(@NotNull <a name="IntegerDivision" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/IntegerDivision.html#IntegerDivision">IntegerDivision</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>  
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>    RESULT visitIntegerLiteral(@NotNull <a name="IntegerLiteral" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/IntegerLiteral.html#IntegerLiteral">IntegerLiteral</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>  
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>    RESULT visitMetapath(@NotNull <a name="Metapath" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Metapath.html#Metapath">Metapath</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>  
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>    RESULT visitMod(@NotNull <a name="Mod" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Mod.html#Mod">Mod</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L100" href="#L100">100</a> 
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>   RESULT visitModelInstance(@NotNull <a name="ModelInstance" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/ModelInstance.html#ModelInstance">ModelInstance</a> modelInstance, CONTEXT context);
+<a class="jxr_linenumber" name="L102" href="#L102">102</a> 
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>   RESULT visitMultiplication(@NotNull <a name="Multiplication" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Multiplication.html#Multiplication">Multiplication</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L104" href="#L104">104</a> 
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>   RESULT visitName(@NotNull <a name="Name" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Name.html#Name">Name</a> expr, CONTEXT context);
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> 
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>   RESULT visitRelativeSlashPath(@NotNull <a name="RelativeSlashPath" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/RelativeSlashPath.html#RelativeSlashPath">RelativeSlashPath</a> relativeSlashPath, CONTEXT context);
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>   RESULT visitNegate(@NotNull <a name="Negate" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Negate.html#Negate">Negate</a> expr, CONTEXT context);
 <a class="jxr_linenumber" name="L108" href="#L108">108</a> 
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>   RESULT visitRootDoubleSlashPath(@NotNull <a name="RootDoubleSlashPath" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/RootDoubleSlashPath.html#RootDoubleSlashPath">RootDoubleSlashPath</a> rootDoubleSlashPath, CONTEXT context);
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>   RESULT visitOr(@NotNull <a name="Or" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Or.html#Or">Or</a> expr, CONTEXT context);
 <a class="jxr_linenumber" name="L110" href="#L110">110</a> 
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>   RESULT visitRootSlashOnlyPath(@NotNull <a name="RootSlashOnlyPath" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/RootSlashOnlyPath.html#RootSlashOnlyPath">RootSlashOnlyPath</a> rootSlashOnlyPath, CONTEXT context);
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>   RESULT visitParenthesizedExpression(@NotNull <a name="ParenthesizedExpression" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/ParenthesizedExpression.html#ParenthesizedExpression">ParenthesizedExpression</a> expr, CONTEXT context);
 <a class="jxr_linenumber" name="L112" href="#L112">112</a> 
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>   RESULT visitRootSlashPath(@NotNull <a name="RootSlashPath" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/RootSlashPath.html#RootSlashPath">RootSlashPath</a> rootSlashPath, CONTEXT context);
-<a class="jxr_linenumber" name="L114" href="#L114">114</a> 
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>   RESULT visitStringConcat(@NotNull <a name="StringConcat" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/StringConcat.html#StringConcat">StringConcat</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L116" href="#L116">116</a> 
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>   RESULT visitStringLiteral(@NotNull <a name="StringLiteral" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/StringLiteral.html#StringLiteral">StringLiteral</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L118" href="#L118">118</a> 
-<a class="jxr_linenumber" name="L119" href="#L119">119</a>   RESULT visitSubtraction(@NotNull <a name="Subtraction" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Subtraction.html#Subtraction">Subtraction</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L120" href="#L120">120</a> 
-<a class="jxr_linenumber" name="L121" href="#L121">121</a>   RESULT visitUnion(@NotNull <a name="Union" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Union.html#Union">Union</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L122" href="#L122">122</a> 
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>   RESULT visitWildcard(@NotNull <a name="Wildcard" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Wildcard.html#Wildcard">Wildcard</a> expr, CONTEXT context);
-<a class="jxr_linenumber" name="L124" href="#L124">124</a> }
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>   RESULT visitRelativeDoubleSlashPath(@NotNull <a name="RelativeDoubleSlashPath" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/RelativeDoubleSlashPath.html#RelativeDoubleSlashPath">RelativeDoubleSlashPath</a> relativeDoubleSlashPath,
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>       CONTEXT context);
+<a class="jxr_linenumber" name="L115" href="#L115">115</a> 
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>   RESULT visitRelativeSlashPath(@NotNull <a name="RelativeSlashPath" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/RelativeSlashPath.html#RelativeSlashPath">RelativeSlashPath</a> relativeSlashPath, CONTEXT context);
+<a class="jxr_linenumber" name="L117" href="#L117">117</a> 
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>   RESULT visitRootDoubleSlashPath(@NotNull <a name="RootDoubleSlashPath" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/RootDoubleSlashPath.html#RootDoubleSlashPath">RootDoubleSlashPath</a> rootDoubleSlashPath, CONTEXT context);
+<a class="jxr_linenumber" name="L119" href="#L119">119</a> 
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>   RESULT visitRootSlashOnlyPath(@NotNull <a name="RootSlashOnlyPath" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/RootSlashOnlyPath.html#RootSlashOnlyPath">RootSlashOnlyPath</a> rootSlashOnlyPath, CONTEXT context);
+<a class="jxr_linenumber" name="L121" href="#L121">121</a> 
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>   RESULT visitRootSlashPath(@NotNull <a name="RootSlashPath" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/RootSlashPath.html#RootSlashPath">RootSlashPath</a> rootSlashPath, CONTEXT context);
+<a class="jxr_linenumber" name="L123" href="#L123">123</a> 
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>   RESULT visitStringConcat(@NotNull <a name="StringConcat" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/StringConcat.html#StringConcat">StringConcat</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L125" href="#L125">125</a> 
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>   RESULT visitStringLiteral(@NotNull <a name="StringLiteral" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/StringLiteral.html#StringLiteral">StringLiteral</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L127" href="#L127">127</a> 
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>   RESULT visitSubtraction(@NotNull <a name="Subtraction" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Subtraction.html#Subtraction">Subtraction</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L129" href="#L129">129</a> 
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>   RESULT visitUnion(@NotNull <a name="Union" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Union.html#Union">Union</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L131" href="#L131">131</a> 
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>   RESULT visitWildcard(@NotNull <a name="Wildcard" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Wildcard.html#Wildcard">Wildcard</a> expr, CONTEXT context);
+<a class="jxr_linenumber" name="L133" href="#L133">133</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

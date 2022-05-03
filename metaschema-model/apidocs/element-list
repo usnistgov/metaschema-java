@@ -1,7 +1,4 @@
 gov.nist.secauto.metaschema.model
-gov.nist.secauto.metaschema.model.definitions
-gov.nist.secauto.metaschema.model.instances
-gov.nist.secauto.metaschema.model.xml
 gov.nist.secauto.metaschema.model.xmlbeans
 gov.nist.secauto.metaschema.model.xmlbeans.handler
 org.apache.xmlbeans.metadata.system.metaschema

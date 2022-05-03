@@ -25,7 +25,7 @@
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <em class="jxr_javadoccomment"> * An XML NaturalNumberOrUnboundedType(@<a href="http://csrc.nist.gov/ns/oscal/metaschema/1.0)." target="alexandria_uri">http://csrc.nist.gov/ns/oscal/metaschema/1.0).</a></em>
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <em class="jxr_javadoccomment"> * This is a union type. Instances are of one of the following types:</em>
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <em class="jxr_javadoccomment"> *     org.apache.xmlbeans.XmlPositiveInteger</em>
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <em class="jxr_javadoccomment"> *     gov.nist.secauto.metaschema.model.xmlbeans.PositiveIntegerDatatype</em>
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  <em class="jxr_javadoccomment"> *     gov.nist.secauto.metaschema.model.xmlbeans.NaturalNumberOrUnboundedType$Member</em>
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="NaturalNumberOrUnboundedType" href="../../../../../../gov/nist/secauto/metaschema/model/xmlbeans/NaturalNumberOrUnboundedType.html#NaturalNumberOrUnboundedType">NaturalNumberOrUnboundedType</a> <strong class="jxr_keyword">extends</strong> org.apache.xmlbeans.XmlAnySimpleType {
@@ -41,7 +41,7 @@
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment">     * This is an atomic type that is a restriction of gov.nist.secauto.metaschema.model.xmlbeans.NaturalNumberOrUnboundedType$Member.</em>
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> Member <strong class="jxr_keyword">extends</strong> org.apache.xmlbeans.XmlString {
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> Member <strong class="jxr_keyword">extends</strong> gov.nist.secauto.metaschema.model.xmlbeans.StringDatatype {
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>          ElementFactory&lt;gov.nist.secauto.metaschema.model.xmlbeans.NaturalNumberOrUnboundedType.Member&gt; Factory = <strong class="jxr_keyword">new</strong> ElementFactory&lt;&gt;(org.apache.xmlbeans.metadata.system.metaschema.TypeSystemHolder.typeSystem, <span class="jxr_string">"anon7ed4type"</span>);
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>          org.apache.xmlbeans.SchemaType type = Factory.getType();
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  

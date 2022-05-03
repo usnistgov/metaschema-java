@@ -34,26 +34,57 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.binding.model;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.io.BindingException;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> javax.xml.stream.XMLStreamException;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> com.fasterxml.jackson.core.JsonToken;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IAssemblyClassBinding" href="../../../../../../gov/nist/secauto/metaschema/binding/model/IAssemblyClassBinding.html#IAssemblyClassBinding">IAssemblyClassBinding</a> <strong class="jxr_keyword">extends</strong> IClassBinding, <a name="IBoundAssemblyDefinition" href="../../../../../../gov/nist/secauto/metaschema/binding/model/IBoundAssemblyDefinition.html#IBoundAssemblyDefinition">IBoundAssemblyDefinition</a> {
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>    Object readRoot(<a name="IJsonParsingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonParsingContext.html#IJsonParsingContext">IJsonParsingContext</a> parsingContext) <strong class="jxr_keyword">throws</strong> BindingException, IOException;
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>    Object readRoot(<a name="IXmlParsingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/xml/IXmlParsingContext.html#IXmlParsingContext">IXmlParsingContext</a> parsingContext) <strong class="jxr_keyword">throws</strong> XMLStreamException, BindingException, IOException;
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>    <strong class="jxr_keyword">void</strong> writeRoot(Object instance, <a name="IJsonWritingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonWritingContext.html#IJsonWritingContext">IJsonWritingContext</a> context) <strong class="jxr_keyword">throws</strong> IOException;
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>    <strong class="jxr_keyword">void</strong> writeRoot(Object instance, <a name="IXmlWritingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/xml/IXmlWritingContext.html#IXmlWritingContext">IXmlWritingContext</a> context) <strong class="jxr_keyword">throws</strong> XMLStreamException, IOException;
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>  }
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment"> * Represents a Metaschema assembly bound to a Java plain old java object (POJO) class.</em>
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="IAssemblyClassBinding" href="../../../../../../gov/nist/secauto/metaschema/binding/model/IAssemblyClassBinding.html#IAssemblyClassBinding">IAssemblyClassBinding</a> <strong class="jxr_keyword">extends</strong> IClassBinding, IAssemblyDefinition {
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>    @Override
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>    <a name="IBoundFieldInstance" href="../../../../../../gov/nist/secauto/metaschema/binding/model/IBoundFieldInstance.html#IBoundFieldInstance">IBoundFieldInstance</a> getFieldInstanceByName(String name);
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>    @Override
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>    <a name="IBoundAssemblyInstance" href="../../../../../../gov/nist/secauto/metaschema/binding/model/IBoundAssemblyInstance.html#IBoundAssemblyInstance">IBoundAssemblyInstance</a> getAssemblyInstanceByName(String name);
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>    @Override
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>    <a name="IBoundNamedModelInstance" href="../../../../../../gov/nist/secauto/metaschema/binding/model/IBoundNamedModelInstance.html#IBoundNamedModelInstance">IBoundNamedModelInstance</a> getModelInstanceByName(String name);
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>    @Override
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>    Collection&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> IBoundNamedModelInstance&gt; getModelInstances();
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>    @Override
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>    Collection&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> IBoundNamedModelInstance&gt; getNamedModelInstances();
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>    <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">   * Parses JSON into a bound object.</em>
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">   * &lt;p&gt;</em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">   * This method expects the parser's current token to be:</em>
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">   * &lt;ul&gt;</em>
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">   * &lt;li&gt;{@code null} indicating that the parser has not yet parsed a JSON node, or&lt;/li&gt;</em>
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment">   * &lt;li&gt;a {@link JsonToken#START_OBJECT} which represents the object containing the data of this</em>
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  <em class="jxr_javadoccomment">   * assembly.&lt;/li&gt;</em>
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  <em class="jxr_javadoccomment">   * &lt;/ul&gt;</em>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">   * &lt;p&gt;</em>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">   * After parsing the current token will be the {@link JsonToken#END_OBJECT} corresponding to the</em>
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">   * initial {@link JsonToken#START_OBJECT} parsed by this method.</em>
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">   * @param context</em>
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_javadoccomment">   *          the JSON parser</em>
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">   * @return the bound object instance representing the JSON object</em>
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">   * @throws IOException</em>
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">   *           if an error occurred while reading the JSON</em>
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>    @NotNull
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>    Object readObject(@NotNull <a name="IJsonParsingContext" href="../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonParsingContext.html#IJsonParsingContext">IJsonParsingContext</a> context) <strong class="jxr_keyword">throws</strong> IOException;
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

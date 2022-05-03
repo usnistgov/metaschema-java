@@ -99,286 +99,285 @@
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> handleBlockElements;
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>    <strong class="jxr_keyword">public</strong> <a name="AbstractMarkupXmlWriter" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/AbstractMarkupXmlWriter.html#AbstractMarkupXmlWriter">AbstractMarkupXmlWriter</a>(String namespace, <strong class="jxr_keyword">boolean</strong> handleBlockElements) {
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>      Objects.requireNonNull(namespace, <span class="jxr_string">"namespace"</span>);
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>      <strong class="jxr_keyword">this</strong>.namespace = namespace;
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>      <strong class="jxr_keyword">this</strong>.handleBlockElements = handleBlockElements;
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>    }
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>  
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>    <strong class="jxr_keyword">protected</strong> String getNamespace() {
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>     <strong class="jxr_keyword">return</strong> namespace;
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>   }
-<a class="jxr_linenumber" name="L102" href="#L102">102</a> 
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> isHandleBlockElements() {
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>     <strong class="jxr_keyword">return</strong> handleBlockElements;
-<a class="jxr_linenumber" name="L105" href="#L105">105</a>   }
-<a class="jxr_linenumber" name="L106" href="#L106">106</a> 
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> visitChildren(Node parentNode, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>     <strong class="jxr_keyword">for</strong> (Node node : parentNode.getChildren()) {
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>       visit(node, writer);
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>     }
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>   }
-<a class="jxr_linenumber" name="L112" href="#L112">112</a> 
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> visit(Node node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>     <strong class="jxr_keyword">boolean</strong> handled = handleInlineElements(node, writer);
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>     <strong class="jxr_keyword">if</strong> (!handled &amp;&amp; node instanceof Block) {
-<a class="jxr_linenumber" name="L116" href="#L116">116</a>       <strong class="jxr_keyword">if</strong> (isHandleBlockElements()) {
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>         handled = handleBlockElements(node, writer);
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>       } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L119" href="#L119">119</a>         visitChildren(node, writer);
-<a class="jxr_linenumber" name="L120" href="#L120">120</a>         handled = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L121" href="#L121">121</a>       }
-<a class="jxr_linenumber" name="L122" href="#L122">122</a>     }
-<a class="jxr_linenumber" name="L123" href="#L123">123</a> 
-<a class="jxr_linenumber" name="L124" href="#L124">124</a>     <strong class="jxr_keyword">if</strong> (!handled) {
-<a class="jxr_linenumber" name="L125" href="#L125">125</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException(
-<a class="jxr_linenumber" name="L126" href="#L126">126</a>           String.format(<span class="jxr_string">"Node '%s' not handled. AST: %s"</span>, node.getNodeName(), node.toAstString(<strong class="jxr_keyword">true</strong>)));
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>     }
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>   }
-<a class="jxr_linenumber" name="L129" href="#L129">129</a> 
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> writeText(WRITER writer, String text) <strong class="jxr_keyword">throws</strong> XMLStreamException;
-<a class="jxr_linenumber" name="L131" href="#L131">131</a> 
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> writeHtmlEntity(WRITER writer, String entityText) <strong class="jxr_keyword">throws</strong> XMLStreamException;
-<a class="jxr_linenumber" name="L133" href="#L133">133</a> 
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> handleInlineElements(Node node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>     <strong class="jxr_keyword">boolean</strong> retval = false;
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>     <strong class="jxr_keyword">if</strong> (node instanceof Text) {
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>       writeText(writer, node.getChars().toString());
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof EscapedCharacter) {
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>       handleEscapedCharacter((EscapedCharacter) node, writer);
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof HtmlEntity) {
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>       handleHtmlEntity(((HtmlEntity) node).getChars().toString(), writer);
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof TypographicSmarts) {
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>       handleTypographicSmarts((TypographicSmarts) node, writer);
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof TypographicQuotes) {
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>       <strong class="jxr_keyword">if</strong> (node instanceof <a name="DoubleQuoteNode" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/flexmark/DoubleQuoteNode.html#DoubleQuoteNode">DoubleQuoteNode</a>) {
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>         handleBasicElement(node, writer, <span class="jxr_string">"q"</span>);
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>       } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>         handleTypographicSmarts((TypographicQuotes) node, writer);
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>       }
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof Code) {
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>       handleBasicElement(node, writer, <span class="jxr_string">"code"</span>);
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof StrongEmphasis) {
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>       handleBasicElement(node, writer, <span class="jxr_string">"strong"</span>);
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof Emphasis) {
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>       handleBasicElement(node, writer, <span class="jxr_string">"em"</span>);
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof ListItem) {
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>       handleBasicElement(node, writer, <span class="jxr_string">"li"</span>);
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof Link || node instanceof AutoLink) {
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>       handleLink((LinkNode) node, writer);
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof TextBase) {
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>       <em class="jxr_comment">// ignore these, but process their children</em>
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>       visitChildren(node, writer);
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof Subscript) {
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>       handleBasicElement(node, writer, <span class="jxr_string">"sub"</span>);
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof Superscript) {
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>       handleBasicElement(node, writer, <span class="jxr_string">"sup"</span>);
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof Image) {
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>       handleImage((Image) node, writer);
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof <a name="InsertAnchorNode" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/flexmark/InsertAnchorNode.html#InsertAnchorNode">InsertAnchorNode</a>) {
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>       handleInsertAnchor((<a name="InsertAnchorNode" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/flexmark/InsertAnchorNode.html#InsertAnchorNode">InsertAnchorNode</a>) node, writer);
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L186" href="#L186">186</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof SoftLineBreak) {
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>       handleSoftLineBreak((SoftLineBreak) node, writer);
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof HtmlInline) {
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>       handleHtmlInline((HtmlInline) node, writer);
-<a class="jxr_linenumber" name="L191" href="#L191">191</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L192" href="#L192">192</a>     }
-<a class="jxr_linenumber" name="L193" href="#L193">193</a>     <strong class="jxr_keyword">return</strong> retval;
-<a class="jxr_linenumber" name="L194" href="#L194">194</a>   }
-<a class="jxr_linenumber" name="L195" href="#L195">195</a> 
-<a class="jxr_linenumber" name="L196" href="#L196">196</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> handleBlockElements(Node node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L197" href="#L197">197</a>     <strong class="jxr_keyword">boolean</strong> retval = false;
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>     <strong class="jxr_keyword">if</strong> (node instanceof Paragraph) {
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>       handleBasicElement(node, writer, <span class="jxr_string">"p"</span>);
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof Heading) {
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>       handleHeading((Heading) node, writer);
-<a class="jxr_linenumber" name="L203" href="#L203">203</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L204" href="#L204">204</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof OrderedList) {
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>       handleBasicElement(node, writer, <span class="jxr_string">"ol"</span>);
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof BulletList) {
-<a class="jxr_linenumber" name="L208" href="#L208">208</a>       handleBasicElement(node, writer, <span class="jxr_string">"ul"</span>);
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof TableBlock) {
-<a class="jxr_linenumber" name="L211" href="#L211">211</a>       handleTable((TableBlock) node, writer);
-<a class="jxr_linenumber" name="L212" href="#L212">212</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L213" href="#L213">213</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof HtmlBlock) {
-<a class="jxr_linenumber" name="L214" href="#L214">214</a>       handleHtmlBlock((HtmlBlock) node, writer);
-<a class="jxr_linenumber" name="L215" href="#L215">215</a>       retval = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L216" href="#L216">216</a>     }
-<a class="jxr_linenumber" name="L217" href="#L217">217</a>     <strong class="jxr_keyword">return</strong> retval;
-<a class="jxr_linenumber" name="L218" href="#L218">218</a>   }
-<a class="jxr_linenumber" name="L219" href="#L219">219</a> 
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleImage(Image node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L221" href="#L221">221</a>     QName name = <strong class="jxr_keyword">new</strong> QName(getNamespace(), <span class="jxr_string">"img"</span>);
-<a class="jxr_linenumber" name="L222" href="#L222">222</a>     handleImage(node, writer, name, node.getUrl().toString(), node.getText().toString());
-<a class="jxr_linenumber" name="L223" href="#L223">223</a>   }
-<a class="jxr_linenumber" name="L224" href="#L224">224</a> 
-<a class="jxr_linenumber" name="L225" href="#L225">225</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> handleImage(Image node, WRITER writer, QName name, String href, String alt)
-<a class="jxr_linenumber" name="L226" href="#L226">226</a>       <strong class="jxr_keyword">throws</strong> XMLStreamException;
-<a class="jxr_linenumber" name="L227" href="#L227">227</a> 
-<a class="jxr_linenumber" name="L228" href="#L228">228</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleTable(TableBlock node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L229" href="#L229">229</a>     QName tableQName = <strong class="jxr_keyword">new</strong> QName(getNamespace(), <span class="jxr_string">"table"</span>);
-<a class="jxr_linenumber" name="L230" href="#L230">230</a>     handleBasicElementStart(node, writer, tableQName);
-<a class="jxr_linenumber" name="L231" href="#L231">231</a> 
-<a class="jxr_linenumber" name="L232" href="#L232">232</a>     TableHead head = (TableHead) node.getChildOfType(TableHead.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L233" href="#L233">233</a> 
-<a class="jxr_linenumber" name="L234" href="#L234">234</a>     <strong class="jxr_keyword">if</strong> (head != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L235" href="#L235">235</a>       <strong class="jxr_keyword">for</strong> (Node childNode : head.getChildren()) {
-<a class="jxr_linenumber" name="L236" href="#L236">236</a>         <strong class="jxr_keyword">if</strong> (childNode instanceof TableRow) {
-<a class="jxr_linenumber" name="L237" href="#L237">237</a>           handleTableRow((TableRow) childNode, writer);
-<a class="jxr_linenumber" name="L238" href="#L238">238</a>         }
-<a class="jxr_linenumber" name="L239" href="#L239">239</a>       }
-<a class="jxr_linenumber" name="L240" href="#L240">240</a>     }
-<a class="jxr_linenumber" name="L241" href="#L241">241</a> 
-<a class="jxr_linenumber" name="L242" href="#L242">242</a>     TableBody body = (TableBody) node.getChildOfType(TableBody.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L243" href="#L243">243</a> 
-<a class="jxr_linenumber" name="L244" href="#L244">244</a>     <strong class="jxr_keyword">if</strong> (body != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L245" href="#L245">245</a>       <strong class="jxr_keyword">for</strong> (Node childNode : body.getChildren()) {
-<a class="jxr_linenumber" name="L246" href="#L246">246</a>         <strong class="jxr_keyword">if</strong> (childNode instanceof TableRow) {
-<a class="jxr_linenumber" name="L247" href="#L247">247</a>           handleTableRow((TableRow) childNode, writer);
-<a class="jxr_linenumber" name="L248" href="#L248">248</a>         }
-<a class="jxr_linenumber" name="L249" href="#L249">249</a>       }
-<a class="jxr_linenumber" name="L250" href="#L250">250</a>     }
-<a class="jxr_linenumber" name="L251" href="#L251">251</a> 
-<a class="jxr_linenumber" name="L252" href="#L252">252</a>     handleBasicElementEnd(node, writer, tableQName);
-<a class="jxr_linenumber" name="L253" href="#L253">253</a>   }
-<a class="jxr_linenumber" name="L254" href="#L254">254</a> 
-<a class="jxr_linenumber" name="L255" href="#L255">255</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> handleTableRow(TableRow node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L256" href="#L256">256</a>     QName trQName = <strong class="jxr_keyword">new</strong> QName(getNamespace(), <span class="jxr_string">"tr"</span>);
-<a class="jxr_linenumber" name="L257" href="#L257">257</a>     handleBasicElementStart(node, writer, trQName);
-<a class="jxr_linenumber" name="L258" href="#L258">258</a> 
-<a class="jxr_linenumber" name="L259" href="#L259">259</a>     <strong class="jxr_keyword">for</strong> (Node childNode : node.getChildren()) {
-<a class="jxr_linenumber" name="L260" href="#L260">260</a>       <strong class="jxr_keyword">if</strong> (childNode instanceof TableCell) {
-<a class="jxr_linenumber" name="L261" href="#L261">261</a>         handleTableCell((TableCell) childNode, writer);
-<a class="jxr_linenumber" name="L262" href="#L262">262</a>       }
-<a class="jxr_linenumber" name="L263" href="#L263">263</a>     }
-<a class="jxr_linenumber" name="L264" href="#L264">264</a> 
-<a class="jxr_linenumber" name="L265" href="#L265">265</a>     handleBasicElementEnd(node, writer, trQName);
-<a class="jxr_linenumber" name="L266" href="#L266">266</a>   }
-<a class="jxr_linenumber" name="L267" href="#L267">267</a> 
-<a class="jxr_linenumber" name="L268" href="#L268">268</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> handleTableCell(TableCell node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L269" href="#L269">269</a>     QName cellQName;
-<a class="jxr_linenumber" name="L270" href="#L270">270</a>     <strong class="jxr_keyword">if</strong> (node.isHeader()) {
-<a class="jxr_linenumber" name="L271" href="#L271">271</a>       cellQName = <strong class="jxr_keyword">new</strong> QName(getNamespace(), <span class="jxr_string">"th"</span>);
-<a class="jxr_linenumber" name="L272" href="#L272">272</a>     } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L273" href="#L273">273</a>       cellQName = <strong class="jxr_keyword">new</strong> QName(getNamespace(), <span class="jxr_string">"td"</span>);
-<a class="jxr_linenumber" name="L274" href="#L274">274</a>     }
-<a class="jxr_linenumber" name="L275" href="#L275">275</a>     handleBasicElementStart(node, writer, cellQName);
-<a class="jxr_linenumber" name="L276" href="#L276">276</a>     visitChildren(node, writer);
-<a class="jxr_linenumber" name="L277" href="#L277">277</a>     handleBasicElementEnd(node, writer, cellQName);
-<a class="jxr_linenumber" name="L278" href="#L278">278</a>   }
-<a class="jxr_linenumber" name="L279" href="#L279">279</a> 
-<a class="jxr_linenumber" name="L280" href="#L280">280</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleInsertAnchor(<a name="InsertAnchorNode" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/flexmark/InsertAnchorNode.html#InsertAnchorNode">InsertAnchorNode</a> node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L281" href="#L281">281</a>     QName name = <strong class="jxr_keyword">new</strong> QName(getNamespace(), <span class="jxr_string">"insert"</span>);
-<a class="jxr_linenumber" name="L282" href="#L282">282</a>     handleInsertAnchor(node, writer, name);
-<a class="jxr_linenumber" name="L283" href="#L283">283</a>   }
-<a class="jxr_linenumber" name="L284" href="#L284">284</a> 
-<a class="jxr_linenumber" name="L285" href="#L285">285</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> handleInsertAnchor(<a name="InsertAnchorNode" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/flexmark/InsertAnchorNode.html#InsertAnchorNode">InsertAnchorNode</a> node, WRITER writer, QName name)
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>       <strong class="jxr_keyword">throws</strong> XMLStreamException;
-<a class="jxr_linenumber" name="L287" href="#L287">287</a> 
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleHeading(Heading node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L289" href="#L289">289</a>     <strong class="jxr_keyword">int</strong> level = node.getLevel();
-<a class="jxr_linenumber" name="L290" href="#L290">290</a> 
-<a class="jxr_linenumber" name="L291" href="#L291">291</a>     handleBasicElement(node, writer, String.format(<span class="jxr_string">"h%d"</span>, level));
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>   }
-<a class="jxr_linenumber" name="L293" href="#L293">293</a> 
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleEscapedCharacter(EscapedCharacter node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L295" href="#L295">295</a>     writeText(writer, node.getChars().unescape());
-<a class="jxr_linenumber" name="L296" href="#L296">296</a>   }
-<a class="jxr_linenumber" name="L297" href="#L297">297</a> 
-<a class="jxr_linenumber" name="L298" href="#L298">298</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleTypographicSmarts(TypographicQuotes node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L299" href="#L299">299</a>     <strong class="jxr_keyword">if</strong> (node.getTypographicOpening() != <strong class="jxr_keyword">null</strong> &amp;&amp; !node.getTypographicOpening().isEmpty()) {
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>       handleHtmlEntity(node.getTypographicOpening(), writer);
-<a class="jxr_linenumber" name="L301" href="#L301">301</a>     }
-<a class="jxr_linenumber" name="L302" href="#L302">302</a>     visitChildren(node, writer);
-<a class="jxr_linenumber" name="L303" href="#L303">303</a>     <strong class="jxr_keyword">if</strong> (node.getTypographicClosing() != <strong class="jxr_keyword">null</strong> &amp;&amp; !node.getTypographicClosing().isEmpty()) {
-<a class="jxr_linenumber" name="L304" href="#L304">304</a>       handleHtmlEntity(node.getTypographicClosing(), writer);
-<a class="jxr_linenumber" name="L305" href="#L305">305</a>     }
-<a class="jxr_linenumber" name="L306" href="#L306">306</a>   }
-<a class="jxr_linenumber" name="L307" href="#L307">307</a> 
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleTypographicSmarts(TypographicSmarts node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L309" href="#L309">309</a>     handleHtmlEntity(node.getTypographicText(), writer);
-<a class="jxr_linenumber" name="L310" href="#L310">310</a>   }
-<a class="jxr_linenumber" name="L311" href="#L311">311</a> 
-<a class="jxr_linenumber" name="L312" href="#L312">312</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleHtmlEntity(String entityText, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>     String replacement = ENTITY_MAP.get(entityText);
-<a class="jxr_linenumber" name="L314" href="#L314">314</a>     <strong class="jxr_keyword">if</strong> (replacement != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L315" href="#L315">315</a>       writeText(writer, replacement);
-<a class="jxr_linenumber" name="L316" href="#L316">316</a>     } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L317" href="#L317">317</a>       Matcher matcher = ENTITY_PATTERN.matcher(entityText);
-<a class="jxr_linenumber" name="L318" href="#L318">318</a>       <strong class="jxr_keyword">if</strong> (matcher.matches()) {
-<a class="jxr_linenumber" name="L319" href="#L319">319</a>         writeHtmlEntity(writer, matcher.group(1));
-<a class="jxr_linenumber" name="L320" href="#L320">320</a>       } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L321" href="#L321">321</a>         writeText(writer, replacement);
-<a class="jxr_linenumber" name="L322" href="#L322">322</a>       }
-<a class="jxr_linenumber" name="L323" href="#L323">323</a>     }
-<a class="jxr_linenumber" name="L324" href="#L324">324</a>   }
-<a class="jxr_linenumber" name="L325" href="#L325">325</a> 
-<a class="jxr_linenumber" name="L326" href="#L326">326</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleBasicElement(Node node, WRITER writer, String localName) <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L327" href="#L327">327</a>     QName name = <strong class="jxr_keyword">new</strong> QName(getNamespace(), localName);
-<a class="jxr_linenumber" name="L328" href="#L328">328</a>     handleBasicElementStart(node, writer, name);
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>     visitChildren(node, writer);
-<a class="jxr_linenumber" name="L330" href="#L330">330</a>     handleBasicElementEnd(node, writer, name);
-<a class="jxr_linenumber" name="L331" href="#L331">331</a>   }
-<a class="jxr_linenumber" name="L332" href="#L332">332</a> 
-<a class="jxr_linenumber" name="L333" href="#L333">333</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> handleBasicElementStart(Node node, WRITER writer, QName name) <strong class="jxr_keyword">throws</strong> XMLStreamException;
-<a class="jxr_linenumber" name="L334" href="#L334">334</a> 
-<a class="jxr_linenumber" name="L335" href="#L335">335</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> handleBasicElementEnd(Node node, WRITER writer, QName name) <strong class="jxr_keyword">throws</strong> XMLStreamException;
-<a class="jxr_linenumber" name="L336" href="#L336">336</a> 
-<a class="jxr_linenumber" name="L337" href="#L337">337</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleLink(LinkNode node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L338" href="#L338">338</a>     QName name = <strong class="jxr_keyword">new</strong> QName(getNamespace(), <span class="jxr_string">"a"</span>);
-<a class="jxr_linenumber" name="L339" href="#L339">339</a>     handleLinkStart(node, writer, name, node.getUrl().toString());
-<a class="jxr_linenumber" name="L340" href="#L340">340</a> 
-<a class="jxr_linenumber" name="L341" href="#L341">341</a>     visitChildren(node, writer);
-<a class="jxr_linenumber" name="L342" href="#L342">342</a> 
-<a class="jxr_linenumber" name="L343" href="#L343">343</a>     handleLinkEnd(node, writer, name);
-<a class="jxr_linenumber" name="L344" href="#L344">344</a>   }
-<a class="jxr_linenumber" name="L345" href="#L345">345</a> 
-<a class="jxr_linenumber" name="L346" href="#L346">346</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> handleLinkStart(LinkNode node, WRITER writer, QName name, String string)
-<a class="jxr_linenumber" name="L347" href="#L347">347</a>       <strong class="jxr_keyword">throws</strong> XMLStreamException;
-<a class="jxr_linenumber" name="L348" href="#L348">348</a> 
-<a class="jxr_linenumber" name="L349" href="#L349">349</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> handleLinkEnd(LinkNode node, WRITER writer, QName name) <strong class="jxr_keyword">throws</strong> XMLStreamException;
-<a class="jxr_linenumber" name="L350" href="#L350">350</a> 
-<a class="jxr_linenumber" name="L351" href="#L351">351</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleSoftLineBreak(@SuppressWarnings(<span class="jxr_string">"unused"</span>) SoftLineBreak node, WRITER writer)
-<a class="jxr_linenumber" name="L352" href="#L352">352</a>       <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="L353" href="#L353">353</a>     writeText(writer, <span class="jxr_string">" "</span>);
-<a class="jxr_linenumber" name="L354" href="#L354">354</a>   }
-<a class="jxr_linenumber" name="L355" href="#L355">355</a> 
-<a class="jxr_linenumber" name="L356" href="#L356">356</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> handleHtmlBlock(HtmlBlock node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException;
-<a class="jxr_linenumber" name="L357" href="#L357">357</a> 
-<a class="jxr_linenumber" name="L358" href="#L358">358</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> handleHtmlInline(HtmlInline node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException;
-<a class="jxr_linenumber" name="L359" href="#L359">359</a>   <em class="jxr_comment">// {</em>
-<a class="jxr_linenumber" name="L360" href="#L360">360</a>   <em class="jxr_comment">// throw new UnsupportedOperationException(</em>
-<a class="jxr_linenumber" name="L361" href="#L361">361</a>   <em class="jxr_comment">// String.format("Unable to process inline HTML characters: %s", node.getChars().toString()));</em>
-<a class="jxr_linenumber" name="L362" href="#L362">362</a>   <em class="jxr_comment">// // String htmlText = node.getChars().toString();</em>
-<a class="jxr_linenumber" name="L363" href="#L363">363</a>   <em class="jxr_comment">// //</em>
-<a class="jxr_linenumber" name="L364" href="#L364">364</a>   <em class="jxr_comment">// // QName name = new QName(getNamespace(), "name");</em>
-<a class="jxr_linenumber" name="L365" href="#L365">365</a>   <em class="jxr_comment">// // handleBasicElementStart(node, writer, name);</em>
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>   <em class="jxr_comment">// //</em>
-<a class="jxr_linenumber" name="L367" href="#L367">367</a>   <em class="jxr_comment">// // if (node.hasChildren()) {</em>
-<a class="jxr_linenumber" name="L368" href="#L368">368</a>   <em class="jxr_comment">// // visitChildren(node, writer);</em>
-<a class="jxr_linenumber" name="L369" href="#L369">369</a>   <em class="jxr_comment">// // }</em>
-<a class="jxr_linenumber" name="L370" href="#L370">370</a>   <em class="jxr_comment">// //</em>
-<a class="jxr_linenumber" name="L371" href="#L371">371</a>   <em class="jxr_comment">// // handleBasicElementEnd(node, writer, name);</em>
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>   <em class="jxr_comment">// }</em>
-<a class="jxr_linenumber" name="L373" href="#L373">373</a> }
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <strong class="jxr_keyword">this</strong>.namespace = Objects.requireNonNull(namespace, <span class="jxr_string">"namespace"</span>);
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>      <strong class="jxr_keyword">this</strong>.handleBlockElements = handleBlockElements;
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>    }
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>  
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>    <strong class="jxr_keyword">protected</strong> String getNamespace() {
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>      <strong class="jxr_keyword">return</strong> namespace;
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>   }
+<a class="jxr_linenumber" name="L101" href="#L101">101</a> 
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> isHandleBlockElements() {
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>     <strong class="jxr_keyword">return</strong> handleBlockElements;
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>   }
+<a class="jxr_linenumber" name="L105" href="#L105">105</a> 
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> visitChildren(Node parentNode, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>     <strong class="jxr_keyword">for</strong> (Node node : parentNode.getChildren()) {
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>       visit(node, writer);
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>     }
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>   }
+<a class="jxr_linenumber" name="L111" href="#L111">111</a> 
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> visit(Node node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>     <strong class="jxr_keyword">boolean</strong> handled = handleInlineElements(node, writer);
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>     <strong class="jxr_keyword">if</strong> (!handled &amp;&amp; node instanceof Block) {
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>       <strong class="jxr_keyword">if</strong> (isHandleBlockElements()) {
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>         handled = handleBlockElements(node, writer);
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>       } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>         visitChildren(node, writer);
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>         handled = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>       }
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>     }
+<a class="jxr_linenumber" name="L122" href="#L122">122</a> 
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>     <strong class="jxr_keyword">if</strong> (!handled) {
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException(
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>           String.format(<span class="jxr_string">"Node '%s' not handled. AST: %s"</span>, node.getNodeName(), node.toAstString(<strong class="jxr_keyword">true</strong>)));
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>     }
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>   }
+<a class="jxr_linenumber" name="L128" href="#L128">128</a> 
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> writeText(WRITER writer, String text) <strong class="jxr_keyword">throws</strong> XMLStreamException;
+<a class="jxr_linenumber" name="L130" href="#L130">130</a> 
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> writeHtmlEntity(WRITER writer, String entityText) <strong class="jxr_keyword">throws</strong> XMLStreamException;
+<a class="jxr_linenumber" name="L132" href="#L132">132</a> 
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> handleInlineElements(Node node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>     <strong class="jxr_keyword">boolean</strong> retval = false;
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>     <strong class="jxr_keyword">if</strong> (node instanceof Text) {
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>       writeText(writer, node.getChars().toString());
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof EscapedCharacter) {
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>       handleEscapedCharacter((EscapedCharacter) node, writer);
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof HtmlEntity) {
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>       handleHtmlEntity(((HtmlEntity) node).getChars().toString(), writer);
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof TypographicSmarts) {
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>       handleTypographicSmarts((TypographicSmarts) node, writer);
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof TypographicQuotes) {
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>       <strong class="jxr_keyword">if</strong> (node instanceof <a name="DoubleQuoteNode" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/flexmark/DoubleQuoteNode.html#DoubleQuoteNode">DoubleQuoteNode</a>) {
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>         handleBasicElement(node, writer, <span class="jxr_string">"q"</span>);
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>       } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>         handleTypographicSmarts((TypographicQuotes) node, writer);
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>       }
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof Code) {
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>       handleBasicElement(node, writer, <span class="jxr_string">"code"</span>);
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof StrongEmphasis) {
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>       handleBasicElement(node, writer, <span class="jxr_string">"strong"</span>);
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof Emphasis) {
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>       handleBasicElement(node, writer, <span class="jxr_string">"em"</span>);
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof ListItem) {
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>       handleBasicElement(node, writer, <span class="jxr_string">"li"</span>);
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof Link || node instanceof AutoLink) {
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>       handleLink((LinkNode) node, writer);
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof TextBase) {
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>       <em class="jxr_comment">// ignore these, but process their children</em>
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>       visitChildren(node, writer);
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof Subscript) {
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>       handleBasicElement(node, writer, <span class="jxr_string">"sub"</span>);
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof Superscript) {
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>       handleBasicElement(node, writer, <span class="jxr_string">"sup"</span>);
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof Image) {
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>       handleImage((Image) node, writer);
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof <a name="InsertAnchorNode" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/flexmark/InsertAnchorNode.html#InsertAnchorNode">InsertAnchorNode</a>) {
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>       handleInsertAnchor((<a name="InsertAnchorNode" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/flexmark/InsertAnchorNode.html#InsertAnchorNode">InsertAnchorNode</a>) node, writer);
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof SoftLineBreak) {
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>       handleSoftLineBreak((SoftLineBreak) node, writer);
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof HtmlInline) {
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>       handleHtmlInline((HtmlInline) node, writer);
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>     }
+<a class="jxr_linenumber" name="L192" href="#L192">192</a>     <strong class="jxr_keyword">return</strong> retval;
+<a class="jxr_linenumber" name="L193" href="#L193">193</a>   }
+<a class="jxr_linenumber" name="L194" href="#L194">194</a> 
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> handleBlockElements(Node node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>     <strong class="jxr_keyword">boolean</strong> retval = false;
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>     <strong class="jxr_keyword">if</strong> (node instanceof Paragraph) {
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>       handleBasicElement(node, writer, <span class="jxr_string">"p"</span>);
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof Heading) {
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>       handleHeading((Heading) node, writer);
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof OrderedList) {
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>       handleBasicElement(node, writer, <span class="jxr_string">"ol"</span>);
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof BulletList) {
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>       handleBasicElement(node, writer, <span class="jxr_string">"ul"</span>);
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof TableBlock) {
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>       handleTable((TableBlock) node, writer);
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node instanceof HtmlBlock) {
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>       handleHtmlBlock((HtmlBlock) node, writer);
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>       retval = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>     }
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>     <strong class="jxr_keyword">return</strong> retval;
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>   }
+<a class="jxr_linenumber" name="L218" href="#L218">218</a> 
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleImage(Image node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>     QName name = <strong class="jxr_keyword">new</strong> QName(getNamespace(), <span class="jxr_string">"img"</span>);
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>     handleImage(node, writer, name, node.getUrl().toString(), node.getText().toString());
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>   }
+<a class="jxr_linenumber" name="L223" href="#L223">223</a> 
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> handleImage(Image node, WRITER writer, QName name, String href, String alt)
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>       <strong class="jxr_keyword">throws</strong> XMLStreamException;
+<a class="jxr_linenumber" name="L226" href="#L226">226</a> 
+<a class="jxr_linenumber" name="L227" href="#L227">227</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleTable(TableBlock node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>     QName tableQName = <strong class="jxr_keyword">new</strong> QName(getNamespace(), <span class="jxr_string">"table"</span>);
+<a class="jxr_linenumber" name="L229" href="#L229">229</a>     handleBasicElementStart(node, writer, tableQName);
+<a class="jxr_linenumber" name="L230" href="#L230">230</a> 
+<a class="jxr_linenumber" name="L231" href="#L231">231</a>     TableHead head = (TableHead) node.getChildOfType(TableHead.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L232" href="#L232">232</a> 
+<a class="jxr_linenumber" name="L233" href="#L233">233</a>     <strong class="jxr_keyword">if</strong> (head != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L234" href="#L234">234</a>       <strong class="jxr_keyword">for</strong> (Node childNode : head.getChildren()) {
+<a class="jxr_linenumber" name="L235" href="#L235">235</a>         <strong class="jxr_keyword">if</strong> (childNode instanceof TableRow) {
+<a class="jxr_linenumber" name="L236" href="#L236">236</a>           handleTableRow((TableRow) childNode, writer);
+<a class="jxr_linenumber" name="L237" href="#L237">237</a>         }
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>       }
+<a class="jxr_linenumber" name="L239" href="#L239">239</a>     }
+<a class="jxr_linenumber" name="L240" href="#L240">240</a> 
+<a class="jxr_linenumber" name="L241" href="#L241">241</a>     TableBody body = (TableBody) node.getChildOfType(TableBody.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L242" href="#L242">242</a> 
+<a class="jxr_linenumber" name="L243" href="#L243">243</a>     <strong class="jxr_keyword">if</strong> (body != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L244" href="#L244">244</a>       <strong class="jxr_keyword">for</strong> (Node childNode : body.getChildren()) {
+<a class="jxr_linenumber" name="L245" href="#L245">245</a>         <strong class="jxr_keyword">if</strong> (childNode instanceof TableRow) {
+<a class="jxr_linenumber" name="L246" href="#L246">246</a>           handleTableRow((TableRow) childNode, writer);
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>         }
+<a class="jxr_linenumber" name="L248" href="#L248">248</a>       }
+<a class="jxr_linenumber" name="L249" href="#L249">249</a>     }
+<a class="jxr_linenumber" name="L250" href="#L250">250</a> 
+<a class="jxr_linenumber" name="L251" href="#L251">251</a>     handleBasicElementEnd(node, writer, tableQName);
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>   }
+<a class="jxr_linenumber" name="L253" href="#L253">253</a> 
+<a class="jxr_linenumber" name="L254" href="#L254">254</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> handleTableRow(TableRow node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L255" href="#L255">255</a>     QName trQName = <strong class="jxr_keyword">new</strong> QName(getNamespace(), <span class="jxr_string">"tr"</span>);
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>     handleBasicElementStart(node, writer, trQName);
+<a class="jxr_linenumber" name="L257" href="#L257">257</a> 
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>     <strong class="jxr_keyword">for</strong> (Node childNode : node.getChildren()) {
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>       <strong class="jxr_keyword">if</strong> (childNode instanceof TableCell) {
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>         handleTableCell((TableCell) childNode, writer);
+<a class="jxr_linenumber" name="L261" href="#L261">261</a>       }
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>     }
+<a class="jxr_linenumber" name="L263" href="#L263">263</a> 
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>     handleBasicElementEnd(node, writer, trQName);
+<a class="jxr_linenumber" name="L265" href="#L265">265</a>   }
+<a class="jxr_linenumber" name="L266" href="#L266">266</a> 
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> handleTableCell(TableCell node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>     QName cellQName;
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>     <strong class="jxr_keyword">if</strong> (node.isHeader()) {
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>       cellQName = <strong class="jxr_keyword">new</strong> QName(getNamespace(), <span class="jxr_string">"th"</span>);
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>     } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L272" href="#L272">272</a>       cellQName = <strong class="jxr_keyword">new</strong> QName(getNamespace(), <span class="jxr_string">"td"</span>);
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>     }
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>     handleBasicElementStart(node, writer, cellQName);
+<a class="jxr_linenumber" name="L275" href="#L275">275</a>     visitChildren(node, writer);
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>     handleBasicElementEnd(node, writer, cellQName);
+<a class="jxr_linenumber" name="L277" href="#L277">277</a>   }
+<a class="jxr_linenumber" name="L278" href="#L278">278</a> 
+<a class="jxr_linenumber" name="L279" href="#L279">279</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleInsertAnchor(<a name="InsertAnchorNode" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/flexmark/InsertAnchorNode.html#InsertAnchorNode">InsertAnchorNode</a> node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L280" href="#L280">280</a>     QName name = <strong class="jxr_keyword">new</strong> QName(getNamespace(), <span class="jxr_string">"insert"</span>);
+<a class="jxr_linenumber" name="L281" href="#L281">281</a>     handleInsertAnchor(node, writer, name);
+<a class="jxr_linenumber" name="L282" href="#L282">282</a>   }
+<a class="jxr_linenumber" name="L283" href="#L283">283</a> 
+<a class="jxr_linenumber" name="L284" href="#L284">284</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> handleInsertAnchor(<a name="InsertAnchorNode" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/datatype/markup/flexmark/InsertAnchorNode.html#InsertAnchorNode">InsertAnchorNode</a> node, WRITER writer, QName name)
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>       <strong class="jxr_keyword">throws</strong> XMLStreamException;
+<a class="jxr_linenumber" name="L286" href="#L286">286</a> 
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleHeading(Heading node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>     <strong class="jxr_keyword">int</strong> level = node.getLevel();
+<a class="jxr_linenumber" name="L289" href="#L289">289</a> 
+<a class="jxr_linenumber" name="L290" href="#L290">290</a>     handleBasicElement(node, writer, String.format(<span class="jxr_string">"h%d"</span>, level));
+<a class="jxr_linenumber" name="L291" href="#L291">291</a>   }
+<a class="jxr_linenumber" name="L292" href="#L292">292</a> 
+<a class="jxr_linenumber" name="L293" href="#L293">293</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleEscapedCharacter(EscapedCharacter node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>     writeText(writer, node.getChars().unescape());
+<a class="jxr_linenumber" name="L295" href="#L295">295</a>   }
+<a class="jxr_linenumber" name="L296" href="#L296">296</a> 
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleTypographicSmarts(TypographicQuotes node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>     <strong class="jxr_keyword">if</strong> (node.getTypographicOpening() != <strong class="jxr_keyword">null</strong> &amp;&amp; !node.getTypographicOpening().isEmpty()) {
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>       handleHtmlEntity(node.getTypographicOpening(), writer);
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>     }
+<a class="jxr_linenumber" name="L301" href="#L301">301</a>     visitChildren(node, writer);
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>     <strong class="jxr_keyword">if</strong> (node.getTypographicClosing() != <strong class="jxr_keyword">null</strong> &amp;&amp; !node.getTypographicClosing().isEmpty()) {
+<a class="jxr_linenumber" name="L303" href="#L303">303</a>       handleHtmlEntity(node.getTypographicClosing(), writer);
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>     }
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>   }
+<a class="jxr_linenumber" name="L306" href="#L306">306</a> 
+<a class="jxr_linenumber" name="L307" href="#L307">307</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleTypographicSmarts(TypographicSmarts node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>     handleHtmlEntity(node.getTypographicText(), writer);
+<a class="jxr_linenumber" name="L309" href="#L309">309</a>   }
+<a class="jxr_linenumber" name="L310" href="#L310">310</a> 
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleHtmlEntity(String entityText, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L312" href="#L312">312</a>     String replacement = ENTITY_MAP.get(entityText);
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>     <strong class="jxr_keyword">if</strong> (replacement != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>       writeText(writer, replacement);
+<a class="jxr_linenumber" name="L315" href="#L315">315</a>     } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L316" href="#L316">316</a>       Matcher matcher = ENTITY_PATTERN.matcher(entityText);
+<a class="jxr_linenumber" name="L317" href="#L317">317</a>       <strong class="jxr_keyword">if</strong> (matcher.matches()) {
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>         writeHtmlEntity(writer, matcher.group(1));
+<a class="jxr_linenumber" name="L319" href="#L319">319</a>       } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>         writeText(writer, replacement);
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>       }
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>     }
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>   }
+<a class="jxr_linenumber" name="L324" href="#L324">324</a> 
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleBasicElement(Node node, WRITER writer, String localName) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L326" href="#L326">326</a>     QName name = <strong class="jxr_keyword">new</strong> QName(getNamespace(), localName);
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>     handleBasicElementStart(node, writer, name);
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>     visitChildren(node, writer);
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>     handleBasicElementEnd(node, writer, name);
+<a class="jxr_linenumber" name="L330" href="#L330">330</a>   }
+<a class="jxr_linenumber" name="L331" href="#L331">331</a> 
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> handleBasicElementStart(Node node, WRITER writer, QName name) <strong class="jxr_keyword">throws</strong> XMLStreamException;
+<a class="jxr_linenumber" name="L333" href="#L333">333</a> 
+<a class="jxr_linenumber" name="L334" href="#L334">334</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> handleBasicElementEnd(Node node, WRITER writer, QName name) <strong class="jxr_keyword">throws</strong> XMLStreamException;
+<a class="jxr_linenumber" name="L335" href="#L335">335</a> 
+<a class="jxr_linenumber" name="L336" href="#L336">336</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleLink(LinkNode node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>     QName name = <strong class="jxr_keyword">new</strong> QName(getNamespace(), <span class="jxr_string">"a"</span>);
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>     handleLinkStart(node, writer, name, node.getUrl().toString());
+<a class="jxr_linenumber" name="L339" href="#L339">339</a> 
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>     visitChildren(node, writer);
+<a class="jxr_linenumber" name="L341" href="#L341">341</a> 
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>     handleLinkEnd(node, writer, name);
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>   }
+<a class="jxr_linenumber" name="L344" href="#L344">344</a> 
+<a class="jxr_linenumber" name="L345" href="#L345">345</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> handleLinkStart(LinkNode node, WRITER writer, QName name, String string)
+<a class="jxr_linenumber" name="L346" href="#L346">346</a>       <strong class="jxr_keyword">throws</strong> XMLStreamException;
+<a class="jxr_linenumber" name="L347" href="#L347">347</a> 
+<a class="jxr_linenumber" name="L348" href="#L348">348</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> handleLinkEnd(LinkNode node, WRITER writer, QName name) <strong class="jxr_keyword">throws</strong> XMLStreamException;
+<a class="jxr_linenumber" name="L349" href="#L349">349</a> 
+<a class="jxr_linenumber" name="L350" href="#L350">350</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> handleSoftLineBreak(@SuppressWarnings(<span class="jxr_string">"unused"</span>) SoftLineBreak node, WRITER writer)
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>       <strong class="jxr_keyword">throws</strong> XMLStreamException {
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>     writeText(writer, <span class="jxr_string">" "</span>);
+<a class="jxr_linenumber" name="L353" href="#L353">353</a>   }
+<a class="jxr_linenumber" name="L354" href="#L354">354</a> 
+<a class="jxr_linenumber" name="L355" href="#L355">355</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> handleHtmlBlock(HtmlBlock node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException;
+<a class="jxr_linenumber" name="L356" href="#L356">356</a> 
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> handleHtmlInline(HtmlInline node, WRITER writer) <strong class="jxr_keyword">throws</strong> XMLStreamException;
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>   <em class="jxr_comment">// {</em>
+<a class="jxr_linenumber" name="L359" href="#L359">359</a>   <em class="jxr_comment">// throw new UnsupportedOperationException(</em>
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>   <em class="jxr_comment">// String.format("Unable to process inline HTML characters: %s", node.getChars().toString()));</em>
+<a class="jxr_linenumber" name="L361" href="#L361">361</a>   <em class="jxr_comment">// // String htmlText = node.getChars().toString();</em>
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>   <em class="jxr_comment">// //</em>
+<a class="jxr_linenumber" name="L363" href="#L363">363</a>   <em class="jxr_comment">// // QName name = new QName(getNamespace(), "name");</em>
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>   <em class="jxr_comment">// // handleBasicElementStart(node, writer, name);</em>
+<a class="jxr_linenumber" name="L365" href="#L365">365</a>   <em class="jxr_comment">// //</em>
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>   <em class="jxr_comment">// // if (node.hasChildren()) {</em>
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>   <em class="jxr_comment">// // visitChildren(node, writer);</em>
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>   <em class="jxr_comment">// // }</em>
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>   <em class="jxr_comment">// //</em>
+<a class="jxr_linenumber" name="L370" href="#L370">370</a>   <em class="jxr_comment">// // handleBasicElementEnd(node, writer, name);</em>
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>   <em class="jxr_comment">// }</em>
+<a class="jxr_linenumber" name="L372" href="#L372">372</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

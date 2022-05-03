@@ -54,7 +54,7 @@
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">     * Gets the "description" element</em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>      gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineType getDescription();
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineDatatype getDescription();
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment">     * True if has "description" element</em>
@@ -64,12 +64,12 @@
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">     * Sets the "description" element</em>
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">void</strong> setDescription(gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineType description);
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">void</strong> setDescription(gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineDatatype description);
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     * Appends and returns a new empty "description" element</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineType addNewDescription();
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      gov.nist.secauto.metaschema.model.xmlbeans.MarkupLineDatatype addNewDescription();
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">     * Unsets the "description" element</em>
@@ -189,17 +189,17 @@
 <a class="jxr_linenumber" name="L181" href="#L181">181</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L182" href="#L182">182</a> <em class="jxr_javadoccomment">     * Gets a List of "define-flag" elements</em>
 <a class="jxr_linenumber" name="L183" href="#L183">183</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>     java.util.List&lt;gov.nist.secauto.metaschema.model.xmlbeans.LocalFlagDefinitionType&gt; getDefineFlagList();
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>     java.util.List&lt;gov.nist.secauto.metaschema.model.xmlbeans.InlineFlagDefinitionType&gt; getDefineFlagList();
 <a class="jxr_linenumber" name="L185" href="#L185">185</a> 
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L187" href="#L187">187</a> <em class="jxr_javadoccomment">     * Gets array of all "define-flag" elements</em>
 <a class="jxr_linenumber" name="L188" href="#L188">188</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>     gov.nist.secauto.metaschema.model.xmlbeans.LocalFlagDefinitionType[] getDefineFlagArray();
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>     gov.nist.secauto.metaschema.model.xmlbeans.InlineFlagDefinitionType[] getDefineFlagArray();
 <a class="jxr_linenumber" name="L190" href="#L190">190</a> 
 <a class="jxr_linenumber" name="L191" href="#L191">191</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L192" href="#L192">192</a> <em class="jxr_javadoccomment">     * Gets ith "define-flag" element</em>
 <a class="jxr_linenumber" name="L193" href="#L193">193</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L194" href="#L194">194</a>     gov.nist.secauto.metaschema.model.xmlbeans.LocalFlagDefinitionType getDefineFlagArray(<strong class="jxr_keyword">int</strong> i);
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>     gov.nist.secauto.metaschema.model.xmlbeans.InlineFlagDefinitionType getDefineFlagArray(<strong class="jxr_keyword">int</strong> i);
 <a class="jxr_linenumber" name="L195" href="#L195">195</a> 
 <a class="jxr_linenumber" name="L196" href="#L196">196</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L197" href="#L197">197</a> <em class="jxr_javadoccomment">     * Returns number of "define-flag" element</em>
@@ -209,22 +209,22 @@
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L202" href="#L202">202</a> <em class="jxr_javadoccomment">     * Sets array of all "define-flag" element</em>
 <a class="jxr_linenumber" name="L203" href="#L203">203</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L204" href="#L204">204</a>     <strong class="jxr_keyword">void</strong> setDefineFlagArray(gov.nist.secauto.metaschema.model.xmlbeans.LocalFlagDefinitionType[] defineFlagArray);
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>     <strong class="jxr_keyword">void</strong> setDefineFlagArray(gov.nist.secauto.metaschema.model.xmlbeans.InlineFlagDefinitionType[] defineFlagArray);
 <a class="jxr_linenumber" name="L205" href="#L205">205</a> 
 <a class="jxr_linenumber" name="L206" href="#L206">206</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L207" href="#L207">207</a> <em class="jxr_javadoccomment">     * Sets ith "define-flag" element</em>
 <a class="jxr_linenumber" name="L208" href="#L208">208</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>     <strong class="jxr_keyword">void</strong> setDefineFlagArray(<strong class="jxr_keyword">int</strong> i, gov.nist.secauto.metaschema.model.xmlbeans.LocalFlagDefinitionType defineFlag);
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>     <strong class="jxr_keyword">void</strong> setDefineFlagArray(<strong class="jxr_keyword">int</strong> i, gov.nist.secauto.metaschema.model.xmlbeans.InlineFlagDefinitionType defineFlag);
 <a class="jxr_linenumber" name="L210" href="#L210">210</a> 
 <a class="jxr_linenumber" name="L211" href="#L211">211</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L212" href="#L212">212</a> <em class="jxr_javadoccomment">     * Inserts and returns a new empty value (as xml) as the ith "define-flag" element</em>
 <a class="jxr_linenumber" name="L213" href="#L213">213</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L214" href="#L214">214</a>     gov.nist.secauto.metaschema.model.xmlbeans.LocalFlagDefinitionType insertNewDefineFlag(<strong class="jxr_keyword">int</strong> i);
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>     gov.nist.secauto.metaschema.model.xmlbeans.InlineFlagDefinitionType insertNewDefineFlag(<strong class="jxr_keyword">int</strong> i);
 <a class="jxr_linenumber" name="L215" href="#L215">215</a> 
 <a class="jxr_linenumber" name="L216" href="#L216">216</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L217" href="#L217">217</a> <em class="jxr_javadoccomment">     * Appends and returns a new empty value (as xml) as the last "define-flag" element</em>
 <a class="jxr_linenumber" name="L218" href="#L218">218</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L219" href="#L219">219</a>     gov.nist.secauto.metaschema.model.xmlbeans.LocalFlagDefinitionType addNewDefineFlag();
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>     gov.nist.secauto.metaschema.model.xmlbeans.InlineFlagDefinitionType addNewDefineFlag();
 <a class="jxr_linenumber" name="L220" href="#L220">220</a> 
 <a class="jxr_linenumber" name="L221" href="#L221">221</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L222" href="#L222">222</a> <em class="jxr_javadoccomment">     * Removes the ith "define-flag" element</em>

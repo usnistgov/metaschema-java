@@ -67,7 +67,12 @@
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>    }
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> toBoolean();
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>  }
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>    @NotNull
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>    <strong class="jxr_keyword">default</strong> <a name="IBooleanItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IBooleanItem.html#IBooleanItem">IBooleanItem</a> negate() {
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.toBoolean() ? FALSE : TRUE;
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>    }
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

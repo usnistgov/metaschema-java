@@ -5,8 +5,6 @@ gov.nist.secauto.metaschema.model.common.datatype.adapter
 gov.nist.secauto.metaschema.model.common.datatype.markup
 gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark
 gov.nist.secauto.metaschema.model.common.datatype.object
-gov.nist.secauto.metaschema.model.common.definition
-gov.nist.secauto.metaschema.model.common.instance
 gov.nist.secauto.metaschema.model.common.metapath
 gov.nist.secauto.metaschema.model.common.metapath.antlr
 gov.nist.secauto.metaschema.model.common.metapath.ast
@@ -16,5 +14,5 @@ gov.nist.secauto.metaschema.model.common.metapath.format
 gov.nist.secauto.metaschema.model.common.metapath.function
 gov.nist.secauto.metaschema.model.common.metapath.function.library
 gov.nist.secauto.metaschema.model.common.metapath.item
-gov.nist.secauto.metaschema.model.common.metapath.xdm
 gov.nist.secauto.metaschema.model.common.util
+gov.nist.secauto.metaschema.model.common.validation

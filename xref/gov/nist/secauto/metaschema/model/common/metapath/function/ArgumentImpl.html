@@ -90,16 +90,19 @@
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>    @Override
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> equals(Object obj) {
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>      <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong> == obj)
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>      <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong> == obj) {
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>        <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>      <strong class="jxr_keyword">if</strong> (obj == <strong class="jxr_keyword">null</strong>)
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>        <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">if</strong> (getClass() != obj.getClass())
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>        <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>      <a name="ArgumentImpl" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/ArgumentImpl.html#ArgumentImpl">ArgumentImpl</a> other = (<a name="ArgumentImpl" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/ArgumentImpl.html#ArgumentImpl">ArgumentImpl</a>) obj;
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>      <strong class="jxr_keyword">return</strong> Objects.equals(name, other.name) &amp;&amp; Objects.equals(sequenceType, other.sequenceType);
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>    }
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>  }
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      }
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>      <strong class="jxr_keyword">if</strong> (obj == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>        <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>      }
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>      <strong class="jxr_keyword">if</strong> (getClass() != obj.getClass()) {
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>        <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>      }
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <a name="ArgumentImpl" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/ArgumentImpl.html#ArgumentImpl">ArgumentImpl</a> other = (<a name="ArgumentImpl" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/ArgumentImpl.html#ArgumentImpl">ArgumentImpl</a>) obj;
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>      <strong class="jxr_keyword">return</strong> Objects.equals(name, other.name) &amp;&amp; Objects.equals(sequenceType, other.sequenceType);
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>    }
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

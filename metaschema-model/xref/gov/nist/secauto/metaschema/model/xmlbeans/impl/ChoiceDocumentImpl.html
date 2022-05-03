@@ -305,7 +305,7 @@
 <a class="jxr_linenumber" name="L297" href="#L297">297</a> <em class="jxr_javadoccomment">         * Gets a List of "define-assembly" elements</em>
 <a class="jxr_linenumber" name="L298" href="#L298">298</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L299" href="#L299">299</a>         @Override
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>         <strong class="jxr_keyword">public</strong> java.util.List&lt;gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType&gt; getDefineAssemblyList() {
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>         <strong class="jxr_keyword">public</strong> java.util.List&lt;gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType&gt; getDefineAssemblyList() {
 <a class="jxr_linenumber" name="L301" href="#L301">301</a>             <strong class="jxr_keyword">synchronized</strong> (monitor()) {
 <a class="jxr_linenumber" name="L302" href="#L302">302</a>                 check_orphaned();
 <a class="jxr_linenumber" name="L303" href="#L303">303</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> org.apache.xmlbeans.impl.values.JavaListXmlObject&lt;&gt;(
@@ -322,19 +322,19 @@
 <a class="jxr_linenumber" name="L314" href="#L314">314</a> <em class="jxr_javadoccomment">         * Gets array of all "define-assembly" elements</em>
 <a class="jxr_linenumber" name="L315" href="#L315">315</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L316" href="#L316">316</a>         @Override
-<a class="jxr_linenumber" name="L317" href="#L317">317</a>         <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType[] getDefineAssemblyArray() {
-<a class="jxr_linenumber" name="L318" href="#L318">318</a>             <strong class="jxr_keyword">return</strong> getXmlObjectArray(PROPERTY_QNAME[2], <strong class="jxr_keyword">new</strong> gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType[0]);
+<a class="jxr_linenumber" name="L317" href="#L317">317</a>         <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType[] getDefineAssemblyArray() {
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>             <strong class="jxr_keyword">return</strong> getXmlObjectArray(PROPERTY_QNAME[2], <strong class="jxr_keyword">new</strong> gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType[0]);
 <a class="jxr_linenumber" name="L319" href="#L319">319</a>         }
 <a class="jxr_linenumber" name="L320" href="#L320">320</a> 
 <a class="jxr_linenumber" name="L321" href="#L321">321</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L322" href="#L322">322</a> <em class="jxr_javadoccomment">         * Gets ith "define-assembly" element</em>
 <a class="jxr_linenumber" name="L323" href="#L323">323</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L324" href="#L324">324</a>         @Override
-<a class="jxr_linenumber" name="L325" href="#L325">325</a>         <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType getDefineAssemblyArray(<strong class="jxr_keyword">int</strong> i) {
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>         <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType getDefineAssemblyArray(<strong class="jxr_keyword">int</strong> i) {
 <a class="jxr_linenumber" name="L326" href="#L326">326</a>             <strong class="jxr_keyword">synchronized</strong> (monitor()) {
 <a class="jxr_linenumber" name="L327" href="#L327">327</a>                 check_orphaned();
-<a class="jxr_linenumber" name="L328" href="#L328">328</a>                 gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType target = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>                 target = (gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType)get_store().find_element_user(PROPERTY_QNAME[2], i);
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>                 gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType target = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>                 target = (gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType)get_store().find_element_user(PROPERTY_QNAME[2], i);
 <a class="jxr_linenumber" name="L330" href="#L330">330</a>                 <strong class="jxr_keyword">if</strong> (target == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L331" href="#L331">331</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IndexOutOfBoundsException();
 <a class="jxr_linenumber" name="L332" href="#L332">332</a>                 }
@@ -357,7 +357,7 @@
 <a class="jxr_linenumber" name="L349" href="#L349">349</a> <em class="jxr_javadoccomment">         * Sets array of all "define-assembly" element  WARNING: This method is not atomicaly synchronized.</em>
 <a class="jxr_linenumber" name="L350" href="#L350">350</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L351" href="#L351">351</a>         @Override
-<a class="jxr_linenumber" name="L352" href="#L352">352</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDefineAssemblyArray(gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType[] defineAssemblyArray) {
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDefineAssemblyArray(gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType[] defineAssemblyArray) {
 <a class="jxr_linenumber" name="L353" href="#L353">353</a>             check_orphaned();
 <a class="jxr_linenumber" name="L354" href="#L354">354</a>             arraySetterHelper(defineAssemblyArray, PROPERTY_QNAME[2]);
 <a class="jxr_linenumber" name="L355" href="#L355">355</a>         }
@@ -366,7 +366,7 @@
 <a class="jxr_linenumber" name="L358" href="#L358">358</a> <em class="jxr_javadoccomment">         * Sets ith "define-assembly" element</em>
 <a class="jxr_linenumber" name="L359" href="#L359">359</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L360" href="#L360">360</a>         @Override
-<a class="jxr_linenumber" name="L361" href="#L361">361</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDefineAssemblyArray(<strong class="jxr_keyword">int</strong> i, gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType defineAssembly) {
+<a class="jxr_linenumber" name="L361" href="#L361">361</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDefineAssemblyArray(<strong class="jxr_keyword">int</strong> i, gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType defineAssembly) {
 <a class="jxr_linenumber" name="L362" href="#L362">362</a>             generatedSetterHelperImpl(defineAssembly, PROPERTY_QNAME[2], i, org.apache.xmlbeans.impl.values.XmlObjectBase.KIND_SETTERHELPER_ARRAYITEM);
 <a class="jxr_linenumber" name="L363" href="#L363">363</a>         }
 <a class="jxr_linenumber" name="L364" href="#L364">364</a> 
@@ -374,11 +374,11 @@
 <a class="jxr_linenumber" name="L366" href="#L366">366</a> <em class="jxr_javadoccomment">         * Inserts and returns a new empty value (as xml) as the ith "define-assembly" element</em>
 <a class="jxr_linenumber" name="L367" href="#L367">367</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L368" href="#L368">368</a>         @Override
-<a class="jxr_linenumber" name="L369" href="#L369">369</a>         <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType insertNewDefineAssembly(<strong class="jxr_keyword">int</strong> i) {
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>         <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType insertNewDefineAssembly(<strong class="jxr_keyword">int</strong> i) {
 <a class="jxr_linenumber" name="L370" href="#L370">370</a>             <strong class="jxr_keyword">synchronized</strong> (monitor()) {
 <a class="jxr_linenumber" name="L371" href="#L371">371</a>                 check_orphaned();
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>                 gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType target = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L373" href="#L373">373</a>                 target = (gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType)get_store().insert_element_user(PROPERTY_QNAME[2], i);
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>                 gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType target = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>                 target = (gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType)get_store().insert_element_user(PROPERTY_QNAME[2], i);
 <a class="jxr_linenumber" name="L374" href="#L374">374</a>                 <strong class="jxr_keyword">return</strong> target;
 <a class="jxr_linenumber" name="L375" href="#L375">375</a>             }
 <a class="jxr_linenumber" name="L376" href="#L376">376</a>         }
@@ -387,11 +387,11 @@
 <a class="jxr_linenumber" name="L379" href="#L379">379</a> <em class="jxr_javadoccomment">         * Appends and returns a new empty value (as xml) as the last "define-assembly" element</em>
 <a class="jxr_linenumber" name="L380" href="#L380">380</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L381" href="#L381">381</a>         @Override
-<a class="jxr_linenumber" name="L382" href="#L382">382</a>         <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType addNewDefineAssembly() {
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>         <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType addNewDefineAssembly() {
 <a class="jxr_linenumber" name="L383" href="#L383">383</a>             <strong class="jxr_keyword">synchronized</strong> (monitor()) {
 <a class="jxr_linenumber" name="L384" href="#L384">384</a>                 check_orphaned();
-<a class="jxr_linenumber" name="L385" href="#L385">385</a>                 gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType target = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L386" href="#L386">386</a>                 target = (gov.nist.secauto.metaschema.model.xmlbeans.LocalAssemblyDefinitionType)get_store().add_element_user(PROPERTY_QNAME[2]);
+<a class="jxr_linenumber" name="L385" href="#L385">385</a>                 gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType target = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L386" href="#L386">386</a>                 target = (gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType)get_store().add_element_user(PROPERTY_QNAME[2]);
 <a class="jxr_linenumber" name="L387" href="#L387">387</a>                 <strong class="jxr_keyword">return</strong> target;
 <a class="jxr_linenumber" name="L388" href="#L388">388</a>             }
 <a class="jxr_linenumber" name="L389" href="#L389">389</a>         }
@@ -411,7 +411,7 @@
 <a class="jxr_linenumber" name="L403" href="#L403">403</a> <em class="jxr_javadoccomment">         * Gets a List of "define-field" elements</em>
 <a class="jxr_linenumber" name="L404" href="#L404">404</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L405" href="#L405">405</a>         @Override
-<a class="jxr_linenumber" name="L406" href="#L406">406</a>         <strong class="jxr_keyword">public</strong> java.util.List&lt;gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType&gt; getDefineFieldList() {
+<a class="jxr_linenumber" name="L406" href="#L406">406</a>         <strong class="jxr_keyword">public</strong> java.util.List&lt;gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType&gt; getDefineFieldList() {
 <a class="jxr_linenumber" name="L407" href="#L407">407</a>             <strong class="jxr_keyword">synchronized</strong> (monitor()) {
 <a class="jxr_linenumber" name="L408" href="#L408">408</a>                 check_orphaned();
 <a class="jxr_linenumber" name="L409" href="#L409">409</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> org.apache.xmlbeans.impl.values.JavaListXmlObject&lt;&gt;(
@@ -428,19 +428,19 @@
 <a class="jxr_linenumber" name="L420" href="#L420">420</a> <em class="jxr_javadoccomment">         * Gets array of all "define-field" elements</em>
 <a class="jxr_linenumber" name="L421" href="#L421">421</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L422" href="#L422">422</a>         @Override
-<a class="jxr_linenumber" name="L423" href="#L423">423</a>         <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType[] getDefineFieldArray() {
-<a class="jxr_linenumber" name="L424" href="#L424">424</a>             <strong class="jxr_keyword">return</strong> getXmlObjectArray(PROPERTY_QNAME[3], <strong class="jxr_keyword">new</strong> gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType[0]);
+<a class="jxr_linenumber" name="L423" href="#L423">423</a>         <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType[] getDefineFieldArray() {
+<a class="jxr_linenumber" name="L424" href="#L424">424</a>             <strong class="jxr_keyword">return</strong> getXmlObjectArray(PROPERTY_QNAME[3], <strong class="jxr_keyword">new</strong> gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType[0]);
 <a class="jxr_linenumber" name="L425" href="#L425">425</a>         }
 <a class="jxr_linenumber" name="L426" href="#L426">426</a> 
 <a class="jxr_linenumber" name="L427" href="#L427">427</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L428" href="#L428">428</a> <em class="jxr_javadoccomment">         * Gets ith "define-field" element</em>
 <a class="jxr_linenumber" name="L429" href="#L429">429</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L430" href="#L430">430</a>         @Override
-<a class="jxr_linenumber" name="L431" href="#L431">431</a>         <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType getDefineFieldArray(<strong class="jxr_keyword">int</strong> i) {
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>         <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType getDefineFieldArray(<strong class="jxr_keyword">int</strong> i) {
 <a class="jxr_linenumber" name="L432" href="#L432">432</a>             <strong class="jxr_keyword">synchronized</strong> (monitor()) {
 <a class="jxr_linenumber" name="L433" href="#L433">433</a>                 check_orphaned();
-<a class="jxr_linenumber" name="L434" href="#L434">434</a>                 gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType target = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L435" href="#L435">435</a>                 target = (gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType)get_store().find_element_user(PROPERTY_QNAME[3], i);
+<a class="jxr_linenumber" name="L434" href="#L434">434</a>                 gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType target = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L435" href="#L435">435</a>                 target = (gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType)get_store().find_element_user(PROPERTY_QNAME[3], i);
 <a class="jxr_linenumber" name="L436" href="#L436">436</a>                 <strong class="jxr_keyword">if</strong> (target == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L437" href="#L437">437</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IndexOutOfBoundsException();
 <a class="jxr_linenumber" name="L438" href="#L438">438</a>                 }
@@ -463,7 +463,7 @@
 <a class="jxr_linenumber" name="L455" href="#L455">455</a> <em class="jxr_javadoccomment">         * Sets array of all "define-field" element  WARNING: This method is not atomicaly synchronized.</em>
 <a class="jxr_linenumber" name="L456" href="#L456">456</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L457" href="#L457">457</a>         @Override
-<a class="jxr_linenumber" name="L458" href="#L458">458</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDefineFieldArray(gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType[] defineFieldArray) {
+<a class="jxr_linenumber" name="L458" href="#L458">458</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDefineFieldArray(gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType[] defineFieldArray) {
 <a class="jxr_linenumber" name="L459" href="#L459">459</a>             check_orphaned();
 <a class="jxr_linenumber" name="L460" href="#L460">460</a>             arraySetterHelper(defineFieldArray, PROPERTY_QNAME[3]);
 <a class="jxr_linenumber" name="L461" href="#L461">461</a>         }
@@ -472,7 +472,7 @@
 <a class="jxr_linenumber" name="L464" href="#L464">464</a> <em class="jxr_javadoccomment">         * Sets ith "define-field" element</em>
 <a class="jxr_linenumber" name="L465" href="#L465">465</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L466" href="#L466">466</a>         @Override
-<a class="jxr_linenumber" name="L467" href="#L467">467</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDefineFieldArray(<strong class="jxr_keyword">int</strong> i, gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType defineField) {
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>         <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDefineFieldArray(<strong class="jxr_keyword">int</strong> i, gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType defineField) {
 <a class="jxr_linenumber" name="L468" href="#L468">468</a>             generatedSetterHelperImpl(defineField, PROPERTY_QNAME[3], i, org.apache.xmlbeans.impl.values.XmlObjectBase.KIND_SETTERHELPER_ARRAYITEM);
 <a class="jxr_linenumber" name="L469" href="#L469">469</a>         }
 <a class="jxr_linenumber" name="L470" href="#L470">470</a> 
@@ -480,11 +480,11 @@
 <a class="jxr_linenumber" name="L472" href="#L472">472</a> <em class="jxr_javadoccomment">         * Inserts and returns a new empty value (as xml) as the ith "define-field" element</em>
 <a class="jxr_linenumber" name="L473" href="#L473">473</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L474" href="#L474">474</a>         @Override
-<a class="jxr_linenumber" name="L475" href="#L475">475</a>         <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType insertNewDefineField(<strong class="jxr_keyword">int</strong> i) {
+<a class="jxr_linenumber" name="L475" href="#L475">475</a>         <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType insertNewDefineField(<strong class="jxr_keyword">int</strong> i) {
 <a class="jxr_linenumber" name="L476" href="#L476">476</a>             <strong class="jxr_keyword">synchronized</strong> (monitor()) {
 <a class="jxr_linenumber" name="L477" href="#L477">477</a>                 check_orphaned();
-<a class="jxr_linenumber" name="L478" href="#L478">478</a>                 gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType target = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L479" href="#L479">479</a>                 target = (gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType)get_store().insert_element_user(PROPERTY_QNAME[3], i);
+<a class="jxr_linenumber" name="L478" href="#L478">478</a>                 gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType target = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L479" href="#L479">479</a>                 target = (gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType)get_store().insert_element_user(PROPERTY_QNAME[3], i);
 <a class="jxr_linenumber" name="L480" href="#L480">480</a>                 <strong class="jxr_keyword">return</strong> target;
 <a class="jxr_linenumber" name="L481" href="#L481">481</a>             }
 <a class="jxr_linenumber" name="L482" href="#L482">482</a>         }
@@ -493,11 +493,11 @@
 <a class="jxr_linenumber" name="L485" href="#L485">485</a> <em class="jxr_javadoccomment">         * Appends and returns a new empty value (as xml) as the last "define-field" element</em>
 <a class="jxr_linenumber" name="L486" href="#L486">486</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="L487" href="#L487">487</a>         @Override
-<a class="jxr_linenumber" name="L488" href="#L488">488</a>         <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType addNewDefineField() {
+<a class="jxr_linenumber" name="L488" href="#L488">488</a>         <strong class="jxr_keyword">public</strong> gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType addNewDefineField() {
 <a class="jxr_linenumber" name="L489" href="#L489">489</a>             <strong class="jxr_keyword">synchronized</strong> (monitor()) {
 <a class="jxr_linenumber" name="L490" href="#L490">490</a>                 check_orphaned();
-<a class="jxr_linenumber" name="L491" href="#L491">491</a>                 gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType target = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L492" href="#L492">492</a>                 target = (gov.nist.secauto.metaschema.model.xmlbeans.LocalFieldDefinitionType)get_store().add_element_user(PROPERTY_QNAME[3]);
+<a class="jxr_linenumber" name="L491" href="#L491">491</a>                 gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType target = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L492" href="#L492">492</a>                 target = (gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType)get_store().add_element_user(PROPERTY_QNAME[3]);
 <a class="jxr_linenumber" name="L493" href="#L493">493</a>                 <strong class="jxr_keyword">return</strong> target;
 <a class="jxr_linenumber" name="L494" href="#L494">494</a>             }
 <a class="jxr_linenumber" name="L495" href="#L495">495</a>         }

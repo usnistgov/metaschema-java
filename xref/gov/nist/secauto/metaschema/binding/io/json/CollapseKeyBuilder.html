@@ -36,9 +36,9 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> com.fasterxml.jackson.core.JsonGenerator;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.property.IBoundFieldValueInstance;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.property.IBoundFlagInstance;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.IBoundFieldValueInstance;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.IBoundFlagInstance;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
@@ -53,7 +53,7 @@
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="CollapseKeyBuilder" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/CollapseKeyBuilder.html#CollapseKeyBuilder">CollapseKeyBuilder</a> {
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="IFieldClassBinding" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IFieldClassBinding.html#IFieldClassBinding">IFieldClassBinding</a> classBinding;
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> ArrayList&lt;IBoundFlagInstance&gt; flagProperties;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> List&lt;IBoundFlagInstance&gt; flagProperties;
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;CollapseKey, List&lt;Object&gt;&gt; keyToValuesMap;
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>    <strong class="jxr_keyword">public</strong> <a name="CollapseKeyBuilder" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/CollapseKeyBuilder.html#CollapseKeyBuilder">CollapseKeyBuilder</a>(<a name="IFieldClassBinding" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IFieldClassBinding.html#IFieldClassBinding">IFieldClassBinding</a> classBinding) {
@@ -66,7 +66,7 @@
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">return</strong> classBinding;
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>    }
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>    <strong class="jxr_keyword">protected</strong> ArrayList&lt;IBoundFlagInstance&gt; getFlagProperties() {
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>    <strong class="jxr_keyword">protected</strong> List&lt;IBoundFlagInstance&gt; getFlagProperties() {
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">return</strong> flagProperties;
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>    }
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  
@@ -80,7 +80,7 @@
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">int</strong> size = getFlagProperties().size();
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>      Object[] flagValues = <strong class="jxr_keyword">new</strong> Object[size];
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">int</strong> index = 0;
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>      <strong class="jxr_keyword">for</strong> (<a name="IBoundFlagInstance" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/property/IBoundFlagInstance.html#IBoundFlagInstance">IBoundFlagInstance</a> flag : getFlagProperties()) {
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>      <strong class="jxr_keyword">for</strong> (<a name="IBoundFlagInstance" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IBoundFlagInstance.html#IBoundFlagInstance">IBoundFlagInstance</a> flag : getFlagProperties()) {
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>        flagValues[index++] = flag.getValue(instance);
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>      }
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>  
@@ -97,10 +97,10 @@
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> write(<strong class="jxr_keyword">boolean</strong> writeObjectWrapper, <a name="IJsonWritingContext" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonWritingContext.html#IJsonWritingContext">IJsonWritingContext</a> context) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      <a name="IFieldClassBinding" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IFieldClassBinding.html#IFieldClassBinding">IFieldClassBinding</a> classBinding = getClassBinding();
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>      <a name="IBoundFlagInstance" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/property/IBoundFlagInstance.html#IBoundFlagInstance">IBoundFlagInstance</a> jsonKey = classBinding.getJsonKeyFlagInstance();
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>      <a name="IBoundFlagInstance" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/property/IBoundFlagInstance.html#IBoundFlagInstance">IBoundFlagInstance</a> jsonValueKey = classBinding.getJsonValueKeyFlagInstance();
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <a name="IBoundFieldValueInstance" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/property/IBoundFieldValueInstance.html#IBoundFieldValueInstance">IBoundFieldValueInstance</a> fieldValue = classBinding.getFieldValue();
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>      ArrayList&lt;IBoundFlagInstance&gt; flagProperties = getFlagProperties();
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>      <a name="IBoundFlagInstance" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IBoundFlagInstance.html#IBoundFlagInstance">IBoundFlagInstance</a> jsonKey = classBinding.getJsonKeyFlagInstance();
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>      <a name="IBoundFlagInstance" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IBoundFlagInstance.html#IBoundFlagInstance">IBoundFlagInstance</a> jsonValueKey = classBinding.getJsonValueKeyFlagInstance();
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <a name="IBoundFieldValueInstance" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IBoundFieldValueInstance.html#IBoundFieldValueInstance">IBoundFieldValueInstance</a> fieldValue = classBinding.getFieldValue();
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>      List&lt;IBoundFlagInstance&gt; flagProperties = getFlagProperties();
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>      <em class="jxr_comment">// first build an index of the flag properties</em>
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>      List&lt;Integer&gt; flagIndex;
@@ -111,7 +111,7 @@
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>     } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>       flagIndex = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(flagProperties.size());
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>       <strong class="jxr_keyword">int</strong> index = 0;
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>       <strong class="jxr_keyword">for</strong> (<a name="IBoundFlagInstance" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/property/IBoundFlagInstance.html#IBoundFlagInstance">IBoundFlagInstance</a> flag : flagProperties) {
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>       <strong class="jxr_keyword">for</strong> (<a name="IBoundFlagInstance" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IBoundFlagInstance.html#IBoundFlagInstance">IBoundFlagInstance</a> flag : flagProperties) {
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>         <strong class="jxr_keyword">if</strong> (jsonKey != <strong class="jxr_keyword">null</strong> &amp;&amp; jsonKey.equals(flag)) {
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>           jsonKeyIndex = index++;
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (jsonValueKey != <strong class="jxr_keyword">null</strong> &amp;&amp; jsonValueKey.equals(flag)) {
@@ -123,7 +123,7 @@
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>       }
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>     }
 <a class="jxr_linenumber" name="L117" href="#L117">117</a> 
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>     JsonGenerator writer = context.getWriter();
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>     JsonGenerator writer = context.getWriter(); <em class="jxr_comment">// NOPMD - intentional</em>
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>     <em class="jxr_comment">// for each key, we need to write the properties</em>
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>     <strong class="jxr_keyword">for</strong> (Map.Entry&lt;CollapseKey, List&lt;Object&gt;&gt; entry : keyToValuesMap.entrySet()) {
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>       CollapseKey key = entry.getKey();
@@ -144,7 +144,7 @@
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> 
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>       <em class="jxr_comment">// next, write the flags</em>
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>       <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> index : flagIndex) {
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>         <a name="IBoundFlagInstance" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/property/IBoundFlagInstance.html#IBoundFlagInstance">IBoundFlagInstance</a> flag = flagProperties.get(index);
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>         <a name="IBoundFlagInstance" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IBoundFlagInstance.html#IBoundFlagInstance">IBoundFlagInstance</a> flag = flagProperties.get(index);
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>         Object flagValue = flagValues[index];
 <a class="jxr_linenumber" name="L141" href="#L141">141</a> 
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>         <strong class="jxr_keyword">if</strong> (flagValue != <strong class="jxr_keyword">null</strong>) {
@@ -190,7 +190,7 @@
 <a class="jxr_linenumber" name="L182" href="#L182">182</a>     <strong class="jxr_keyword">private</strong> Integer hashCode;
 <a class="jxr_linenumber" name="L183" href="#L183">183</a> 
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>     <strong class="jxr_keyword">public</strong> CollapseKey(Object... flagValues) {
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>       <strong class="jxr_keyword">this</strong>.flagValues = flagValues;
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>       <strong class="jxr_keyword">this</strong>.flagValues = Arrays.copyOf(flagValues, flagValues.length);
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>     }
 <a class="jxr_linenumber" name="L187" href="#L187">187</a> 
 <a class="jxr_linenumber" name="L188" href="#L188">188</a>     <strong class="jxr_keyword">protected</strong> Object[] getFlagValues() {
@@ -198,36 +198,38 @@
 <a class="jxr_linenumber" name="L190" href="#L190">190</a>     }
 <a class="jxr_linenumber" name="L191" href="#L191">191</a> 
 <a class="jxr_linenumber" name="L192" href="#L192">192</a>     @Override
-<a class="jxr_linenumber" name="L193" href="#L193">193</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">synchronized</strong> <strong class="jxr_keyword">int</strong> hashCode() {
-<a class="jxr_linenumber" name="L194" href="#L194">194</a>       <strong class="jxr_keyword">if</strong> (hashCode == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L195" href="#L195">195</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> prime = 31;
-<a class="jxr_linenumber" name="L196" href="#L196">196</a>         hashCode = 1;
-<a class="jxr_linenumber" name="L197" href="#L197">197</a>         hashCode = prime * hashCode + getEnclosingInstance().hashCode();
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>         hashCode = prime * hashCode + Arrays.hashCode(flagValues);
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>       }
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>       <strong class="jxr_keyword">return</strong> hashCode;
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>     }
-<a class="jxr_linenumber" name="L202" href="#L202">202</a> 
-<a class="jxr_linenumber" name="L203" href="#L203">203</a>     @Override
-<a class="jxr_linenumber" name="L204" href="#L204">204</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> equals(Object obj) {
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>       <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong> == obj) {
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>       }
-<a class="jxr_linenumber" name="L208" href="#L208">208</a>       <strong class="jxr_keyword">if</strong> (!(obj instanceof CollapseKey)) {
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>         <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>       }
-<a class="jxr_linenumber" name="L211" href="#L211">211</a>       CollapseKey other = (CollapseKey) obj;
-<a class="jxr_linenumber" name="L212" href="#L212">212</a>       <strong class="jxr_keyword">if</strong> (!getEnclosingInstance().equals(other.getEnclosingInstance())) {
-<a class="jxr_linenumber" name="L213" href="#L213">213</a>         <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L214" href="#L214">214</a>       }
-<a class="jxr_linenumber" name="L215" href="#L215">215</a>       <strong class="jxr_keyword">return</strong> Objects.equals(flagValues, other.flagValues);
-<a class="jxr_linenumber" name="L216" href="#L216">216</a>     }
-<a class="jxr_linenumber" name="L217" href="#L217">217</a> 
-<a class="jxr_linenumber" name="L218" href="#L218">218</a>     <strong class="jxr_keyword">private</strong> <a name="CollapseKeyBuilder" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/CollapseKeyBuilder.html#CollapseKeyBuilder">CollapseKeyBuilder</a> getEnclosingInstance() {
-<a class="jxr_linenumber" name="L219" href="#L219">219</a>       <strong class="jxr_keyword">return</strong> CollapseKeyBuilder.<strong class="jxr_keyword">this</strong>;
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>     }
-<a class="jxr_linenumber" name="L221" href="#L221">221</a>   }
-<a class="jxr_linenumber" name="L222" href="#L222">222</a> }
+<a class="jxr_linenumber" name="L193" href="#L193">193</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> hashCode() {
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>       <strong class="jxr_keyword">synchronized</strong> (<strong class="jxr_keyword">this</strong>) {
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>         <strong class="jxr_keyword">if</strong> (hashCode == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>           <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> prime = 31;
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>           hashCode = 1;
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>           hashCode = prime * hashCode + getEnclosingInstance().hashCode();
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>           hashCode = prime * hashCode + Arrays.hashCode(flagValues);
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>         }
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>       }
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>       <strong class="jxr_keyword">return</strong> hashCode;
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>     }
+<a class="jxr_linenumber" name="L204" href="#L204">204</a> 
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>     @Override
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> equals(Object obj) {
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>       <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong> == obj) {
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>       }
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>       <strong class="jxr_keyword">if</strong> (!(obj instanceof CollapseKey)) {
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>         <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>       }
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>       CollapseKey other = (CollapseKey) obj;
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>       <strong class="jxr_keyword">if</strong> (!getEnclosingInstance().equals(other.getEnclosingInstance())) {
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>         <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>       }
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>       <strong class="jxr_keyword">return</strong> Objects.equals(flagValues, other.flagValues);
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>     }
+<a class="jxr_linenumber" name="L219" href="#L219">219</a> 
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>     <strong class="jxr_keyword">private</strong> <a name="CollapseKeyBuilder" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/CollapseKeyBuilder.html#CollapseKeyBuilder">CollapseKeyBuilder</a> getEnclosingInstance() {
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>       <strong class="jxr_keyword">return</strong> CollapseKeyBuilder.<strong class="jxr_keyword">this</strong>;
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>     }
+<a class="jxr_linenumber" name="L223" href="#L223">223</a>   }
+<a class="jxr_linenumber" name="L224" href="#L224">224</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

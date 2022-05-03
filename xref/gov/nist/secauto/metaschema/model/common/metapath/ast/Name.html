@@ -43,28 +43,27 @@
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="Name" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Name.html#Name">Name</a>
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">extends</strong> AbstractLiteralExpression&lt;IStringItem, String&gt;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">implements</strong> INameExpression&lt;IStringItem&gt; {
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>    <strong class="jxr_keyword">public</strong> <a name="Name" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Name.html#Name">Name</a>(@NotNull String value) {
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>      <strong class="jxr_keyword">super</strong>(value);
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>    }
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>    @Override
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>    <strong class="jxr_keyword">public</strong> Class&lt;IStringItem&gt; getBaseResultType() {
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">return</strong> IStringItem.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>    }
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>  
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>    @Override
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>    <strong class="jxr_keyword">public</strong> ISequence&lt;? <strong class="jxr_keyword">extends</strong> IStringItem&gt; accept(<a name="IExpressionEvaluationVisitor" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/evaluate/IExpressionEvaluationVisitor.html#IExpressionEvaluationVisitor">IExpressionEvaluationVisitor</a> visitor, <a name="INodeContext" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/INodeContext.html#INodeContext">INodeContext</a> context) {
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException();
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>    }
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>  
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>    @Override
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>    <strong class="jxr_keyword">public</strong> &lt;RESULT, CONTEXT&gt; RESULT accept(IExpressionVisitor&lt;RESULT, CONTEXT&gt; visitor, CONTEXT context) {
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">return</strong> visitor.visitName(<strong class="jxr_keyword">this</strong>, context);
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>    }
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>  }
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">extends</strong> AbstractLiteralExpression&lt;IStringItem, String&gt; {
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>    <strong class="jxr_keyword">public</strong> <a name="Name" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/ast/Name.html#Name">Name</a>(@NotNull String value) {
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">super</strong>(value);
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>    }
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>    @SuppressWarnings(<span class="jxr_string">"null"</span>)
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>    @Override
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>    <strong class="jxr_keyword">public</strong> Class&lt;IStringItem&gt; getBaseResultType() {
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>      <strong class="jxr_keyword">return</strong> IStringItem.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>    }
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>    @Override
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>    <strong class="jxr_keyword">public</strong> ISequence&lt;? <strong class="jxr_keyword">extends</strong> IStringItem&gt; accept(<a name="IExpressionEvaluationVisitor" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/evaluate/IExpressionEvaluationVisitor.html#IExpressionEvaluationVisitor">IExpressionEvaluationVisitor</a> visitor, <a name="INodeContext" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/INodeContext.html#INodeContext">INodeContext</a> context) {
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException();
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>    }
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>    @Override
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>    <strong class="jxr_keyword">public</strong> &lt;RESULT, CONTEXT&gt; RESULT accept(IExpressionVisitor&lt;RESULT, CONTEXT&gt; visitor, CONTEXT context) {
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">return</strong> visitor.visitName(<strong class="jxr_keyword">this</strong>, context);
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>    }
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
