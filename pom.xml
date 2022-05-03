@@ -125,8 +125,11 @@
 		<dependency.jackson.version>2.13.2</dependency.jackson.version>
 		<dependency.jackson-databind.version>2.13.2.2</dependency.jackson-databind.version>
 		<dependency.jaxb.version>3.0.0</dependency.jaxb.version>
+		<dependency.jaxb-api.version>2.3.1</dependency.jaxb-api.version>
 		<dependency.jaxen.version>1.2.0</dependency.jaxen.version>
+		<dependency.jdom2.version>2.0.6.1</dependency.jdom2.version>
 		<dependency.jetbrains-annotation.version>23.0.0</dependency.jetbrains-annotation.version>
+		<dependency.jmock-junit5.version>2.12.0</dependency.jmock-junit5.version>
 		<dependency.junit5.version>5.8.2</dependency.junit5.version>
 		<dependency.junit5-platform-launcher.version>1.8.2</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.17.1</dependency.log4j2.version>
@@ -199,7 +202,7 @@
 			<dependency>
 				<groupId>org.jdom</groupId>
 				<artifactId>jdom2</artifactId>
-				<version>2.0.6.1</version>
+				<version>${dependency.jdom2.version}</version>
 			</dependency>
 			<dependency>
 				<!-- For JDOM2 XPath support -->
@@ -216,7 +219,7 @@
 			<dependency>
 				<groupId>javax.xml.bind</groupId>
 				<artifactId>jaxb-api</artifactId>
-				<version>2.3.1</version>
+				<version>${dependency.jaxb-api.version}</version>
 			</dependency>
 
 			<dependency>
@@ -413,7 +416,7 @@
 			<dependency>
 				<groupId>org.jmock</groupId>
 				<artifactId>jmock-junit5</artifactId>
-				<version>2.12.0</version>
+				<version>${dependency.jmock-junit5.version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
