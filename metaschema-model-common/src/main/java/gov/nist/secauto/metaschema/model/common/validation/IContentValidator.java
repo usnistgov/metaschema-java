@@ -26,11 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.common.validation;
 
+import gov.nist.secauto.metaschema.model.common.io.IResourceLoader;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
 import org.jetbrains.annotations.NotNull;
+import org.xml.sax.InputSource;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -38,7 +40,7 @@ import java.nio.file.Path;
 /**
  * A common interface for Metaschema related content validators.
  */
-public interface IContentValidator {
+public interface IContentValidator extends IResourceLoader {
   /**
    * Validate the resource at provided {@code path}.
    * 
@@ -49,7 +51,9 @@ public interface IContentValidator {
    *           if an error occurred while performing validation
    */
   @NotNull
-  IValidationResult validate(@NotNull Path path) throws IOException;
+  default IValidationResult validate(@NotNull Path path) throws IOException {
+    return validate(toInputSource(ObjectUtils.notNull(path.toUri())));
+  }
 
   /**
    * Validate the resource at provided {@code path}.
@@ -63,19 +67,19 @@ public interface IContentValidator {
    *           if there is a problem with the provided {@code url}
    */
   @NotNull
-  IValidationResult validate(@NotNull URL url) throws IOException, URISyntaxException;
+  default IValidationResult validate(@NotNull URL url) throws IOException, URISyntaxException {
+    return validate(toInputSource(ObjectUtils.notNull(url.toURI())));
+  }
 
   /**
    * Validate the resource associated with the provided input stream {@code is}.
    * 
-   * @param is
-   *          the input stream to read content to validate from
-   * @param documentUri
-   *          the URI of the resource to validate
+   * @param source
+   *          information about how to access the resource
    * @return the result of the validation
    * @throws IOException
    *           if an error occurred while performing validation
    */
   @NotNull
-  IValidationResult validate(@NotNull InputStream is, @NotNull URI documentUri) throws IOException;
+  IValidationResult validate(@NotNull InputSource source) throws IOException;
 }

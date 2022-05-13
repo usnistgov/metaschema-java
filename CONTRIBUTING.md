@@ -15,7 +15,7 @@
 
 # Overview
 
-This page is for potential contributors to this project. It provides basic information on the project, describes the main ways people can make contributions, explains how to report issues relating to the project and projecta rtifacts, and lists pointers to additional sources of information.
+This page is for potential contributors to this project. It provides basic information on the project, describes the main ways people can make contributions, explains how to report issues relating to the project and project artifacts, and lists pointers to additional sources of information.
 
 ## Project approach
 
@@ -69,7 +69,7 @@ This project is using the GitHub project cards feature in the project's [work bo
 
 ### User Stories
 
-Development is done against a set of [user stories](../../issues?q=is%3Aopen+is%3Aissue+label%3A%22User+Story%22), that represent features, actions, or enhancements that are intended to be developed. Each user story is based on a [template](../../issues/new?template=feature_request.md&labels=enhancement%2C+User+Story) and describes the basic problem or need to be addressed, a set of detailed goals to accomplish, any dependencies that must be addressed to start or complete the user story, and the criteria for acceptance of the contribution. Each user story is organized against a developmental [milestone](https://github.com/usnistgov/metaschema-java/milestones), indicating the release for which the user story is planned to be addressed.
+Development is done against a set of [user stories](../../issues?q=is%3Aopen+is%3Aissue+label%3A%22User+Story%22), that represent features, actions, or enhancements that are intended to be developed. Each user story is based on a [template](../../issues/new?template=feature_request.md&labels=enhancement%2C+User+Story) and describes the basic problem or need to be addressed, a set of detailed goals to accomplish, any dependencies that must be addressed to start or complete the user story, and the criteria for acceptance of the contribution. Each user story is organized against a developmental [milestone](../../milestones), indicating the release for which the user story is planned to be addressed.
 
 The goals in a user story will be bulleted, indicating that each goal can be worked on in parallel, or numbered, indicating that each goal must be worked on sequentially. Each goal will be assigned to one or more individuals to accomplish.
 
@@ -97,7 +97,7 @@ Note: A pull request must be submitted for all goals before an issue will be mov
 
 This project originated as part of the [Open Security Controls Assessment Language](https://pages.nist.gov/OSCAL/) (OSCAL) project. We use the OSCAL communications channels for this project as well.
 
-A Gitter [chat room](https://gitter.im/usnistgov-OSCAL/metaschema) is available for Metaschema-related discussions. This is a great place to discuss issues pertaining to this work with the community working with Metaschema. The NIST OSCAL team actively chats on the OSCAL Gitter. This room is also setup with Github integration, which provides a good summary of recent Github repo activities within the chat room.
+A Gitter [chat room](https://gitter.im/usnistgov-OSCAL/metaschema) is available for Metaschema-related discussions. This is a great place to discuss issues pertaining to this work with the community. The NIST OSCAL team actively chats on the OSCAL Gitter. This room is also setup with Github integration, which provides a good summary of recent Github repo activities within the chat room.
 
 There are two OSCAL mailing lists, which are also used for this project.
 

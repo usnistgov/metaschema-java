@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.util;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -152,7 +153,7 @@ public final class CollectionUtil {
   }
 
   @NotNull
-  public static <T> List<T> listOrEmpty(List<T> list) {
+  public static <T> List<T> listOrEmpty(@Nullable List<T> list) {
     return list == null ? emptyList() : list;
   }
 
