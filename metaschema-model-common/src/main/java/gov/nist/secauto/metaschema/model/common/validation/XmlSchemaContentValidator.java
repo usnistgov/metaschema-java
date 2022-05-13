@@ -31,12 +31,14 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,8 +50,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-public class XmlSchemaContentValidator
-    extends AbstractContentValidator {
+public class XmlSchemaContentValidator implements IContentValidator {
   private final Schema schema;
 
   @SuppressWarnings("null")
@@ -79,8 +80,25 @@ public class XmlSchemaContentValidator
   }
 
   @Override
-  public IValidationResult validate(@NotNull InputStream is, @NotNull URI documentUri) throws IOException {
-    return validate(new StreamSource(is, documentUri.toString()), documentUri);
+  public IValidationResult validate(@NotNull InputSource source) throws IOException {
+    String systemId = source.getSystemId();
+    URI uri = ObjectUtils.notNull(URI.create(source.getSystemId()));
+
+    IValidationResult retval;
+    if (source.getCharacterStream() != null) {
+      // attempt to use a provided character stream
+      retval = validate(new StreamSource(source.getCharacterStream(), systemId), uri);
+    } else if (source.getByteStream() != null) {
+      // attempt to use a provided byte stream stream
+      retval = validate(new StreamSource(source.getByteStream(), systemId), uri);
+    } else {
+      // fall back to a URL-based connection
+      URL url = uri.toURL();
+      try (InputStream is = url.openStream()) {
+        retval = validate(new StreamSource(is, systemId), uri);
+      }
+    }
+    return retval;
   }
 
   @NotNull

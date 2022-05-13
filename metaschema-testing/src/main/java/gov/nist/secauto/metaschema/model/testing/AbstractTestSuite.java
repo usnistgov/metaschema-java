@@ -327,7 +327,12 @@ public abstract class AbstractTestSuite {
   @SuppressWarnings("unchecked")
   protected Path convertContent(URI contentUri, @NotNull Path generationPath, @NotNull DynamicBindingContext context)
       throws IOException {
-    Object object = context.newBoundLoader().load(contentUri.toURL());
+    Object object;
+    try {
+      object = context.newBoundLoader().load(contentUri.toURL());
+    } catch (URISyntaxException ex) {
+      throw new IOException(ex);
+    }
 
     if (!Files.exists(generationPath)) {
       Files.createDirectories(generationPath);
