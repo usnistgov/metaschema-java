@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.binding.metapath.item;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
+import gov.nist.secauto.metaschema.binding.io.IBoundLoader;
 import gov.nist.secauto.metaschema.model.common.constraint.AbstractFindingCollectingConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
@@ -36,14 +37,15 @@ import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-import gov.nist.secauto.metaschema.model.common.validation.AbstractContentValidator;
+import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationFinding;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 
 import org.jetbrains.annotations.NotNull;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -56,7 +58,7 @@ import java.util.Objects;
 // TODO: consider moving this to model if we can find a way to eliminate the need for the binding
 // context
 public class ConstraintContentValidator
-    extends AbstractContentValidator {
+    implements IContentValidator {
   @NotNull
   private final IBindingContext bindingContext;
 
@@ -70,8 +72,8 @@ public class ConstraintContentValidator
   }
 
   @Override
-  public IValidationResult validate(@NotNull InputStream is, @NotNull URI documentUri) throws IOException {
-    IDocumentNodeItem nodeItem = getBindingContext().newBoundLoader().loadAsNodeItem(is, documentUri);
+  public IValidationResult validate(@NotNull InputSource source) throws IOException {
+    IDocumentNodeItem nodeItem = getBindingContext().newBoundLoader().loadAsNodeItem(source);
     return validate(nodeItem);
   }
 
@@ -79,7 +81,13 @@ public class ConstraintContentValidator
   public IValidationResult validate(@NotNull INodeItem nodeItem) {
     StaticContext staticContext = new StaticContext();
     DynamicContext dynamicContext = staticContext.newDynamicContext();
-    dynamicContext.setDocumentLoader(getBindingContext().newBoundLoader());
+    IBoundLoader loader = getBindingContext().newBoundLoader();
+    
+    EntityResolver resolver = getEntityResolver();
+    if (resolver != null) {
+      loader.setEntityResolver(resolver);
+    }
+    dynamicContext.setDocumentLoader(loader);
     DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext);
 
     BindingConstraintValidationHandler result = new BindingConstraintValidationHandler();
@@ -176,6 +184,7 @@ public class ConstraintContentValidator
       return getConstraint().getLevel();
     }
 
+    @SuppressWarnings("null")
     @Override
     public @NotNull URI getDocumentUri() {
       return getNode().getBaseUri();

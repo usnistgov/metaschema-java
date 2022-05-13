@@ -42,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 public final class FnDoc {
@@ -120,7 +121,7 @@ public final class FnDoc {
 
     try {
       return context.getDocumentLoader().loadAsNodeItem(ObjectUtils.notNull(documentUri.toURL()));
-    } catch (IOException ex) {
+    } catch (IOException | URISyntaxException ex) {
       throw new DocumentFunctionException(DocumentFunctionException.ERROR_RETRIEVING_RESOURCE, String
           .format("Unable to retrieve the resource identified by the URI '%s'.", documentUri.toString()), ex);
     }

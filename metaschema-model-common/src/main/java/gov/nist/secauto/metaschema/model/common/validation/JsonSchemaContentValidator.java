@@ -35,17 +35,19 @@ import org.everit.json.schema.loader.SchemaLoader;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.xml.sax.InputSource;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class JsonSchemaContentValidator
-    extends AbstractContentValidator {
+public class JsonSchemaContentValidator implements IContentValidator {
   @NotNull
   private final Schema schema;
 
@@ -68,8 +70,23 @@ public class JsonSchemaContentValidator
   }
 
   @Override
-  public IValidationResult validate(@NotNull InputStream is, @NotNull URI uri) {
-    JSONObject json = new JSONObject(new JSONTokener(is));
+  public IValidationResult validate(@NotNull InputSource source) throws IOException {
+    URI uri = ObjectUtils.notNull(URI.create(source.getSystemId()));
+
+    JSONObject json;
+    if (source.getCharacterStream() != null) {
+      // attempt to use a provided character stream
+      json = new JSONObject(new JSONTokener(source.getCharacterStream()));
+    } else if (source.getByteStream() != null) {
+      // attempt to use a provided byte stream stream
+      json = new JSONObject(new JSONTokener(source.getByteStream()));
+    } else {
+      // fall back to a URL-based connection
+      URL url = uri.toURL();
+      try (InputStream is = url.openStream()) {
+        json = new JSONObject(new JSONTokener(is));
+      }
+    }
     return validate(json, uri);
   }
 
