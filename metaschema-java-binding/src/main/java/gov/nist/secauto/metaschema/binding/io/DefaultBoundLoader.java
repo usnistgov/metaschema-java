@@ -40,10 +40,14 @@ import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -51,6 +55,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Map;
 
@@ -74,6 +79,12 @@ public class DefaultBoundLoader implements IBoundLoader {
   private final IBindingContext bindingContext;
   @NotNull
   private final IMutableConfiguration configuration;
+
+  /**
+   * An {@link EntityResolver} is not provided by default.
+   */
+  @Nullable
+  private EntityResolver entityResolver;
 
   /**
    * Construct a new OSCAL loader instance, using the provided {@link IBindingContext}.
@@ -122,105 +133,49 @@ public class DefaultBoundLoader implements IBoundLoader {
   }
 
   @Override
-  public Format detectFormat(InputStream is) throws IOException {
-    DataFormatMatcher matcher = matchFormat(is);
-    return formatFromMatcher(matcher);
-  }
-
-  // TODO: consolidate this with the similar load class
-  @Override
-  public IDocumentNodeItem loadAsNodeItem(InputStream is, URI documentUri) throws IOException {
-    BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES);
-    bis.mark(LOOK_AHEAD_BYTES);
-
-    DataFormatMatcher matcher = matchFormat(bis, LOOK_AHEAD_BYTES - 1);
-    Format format = formatFromMatcher(matcher);
-
-    IDeserializer<?> deserializer;
-    switch (format) {
-    case JSON:
-      deserializer = detectModelJson(matcher.createParserWithMatch(), Format.JSON);
-      break;
-    case XML:
-      deserializer = detectModelXml(matcher.getDataStream());
-      break;
-    case YAML:
-      // uses a JSON-based parser
-      deserializer = detectModelJson(matcher.createParserWithMatch(), Format.YAML);
-      break;
-    default:
-      throw new UnsupportedOperationException(
-          String.format("The detected format '%s' is not supported", matcher.getMatchedFormatName()));
-    }
-
-    try {
-      bis.reset();
-    } catch (IOException ex) {
-      throw new IOException("Unable to reset input stream before parsing", ex);
-    }
-
-    return loadAsNodeItem(deserializer, bis, documentUri);
-  }
-
-  @NotNull
-  protected <CLASS> IDocumentNodeItem loadAsNodeItem(@NotNull IDeserializer<CLASS> deserializer,
-      @NotNull InputStream is,
-      @NotNull URI documentUri)
-      throws IOException {
-    return (IDocumentNodeItem) deserializer.deserializeToNodeItem(is, documentUri);
+  public EntityResolver getEntityResolver() {
+    return entityResolver;
   }
 
   @Override
-  public <CLASS> CLASS load(Class<CLASS> clazz, InputStream is, URI documentUri) throws IOException {
-    // we cannot close this stream, since it will cause the underlying stream to be closed
-    BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES);
-
-    DataFormatMatcher matcher;
-    try {
-      bis.mark(LOOK_AHEAD_BYTES);
-      matcher = matchFormat(bis);
-      bis.reset();
-    } catch (IOException ex) {
-      throw new IOException("Unable to reset input stream before parsing", ex);
-    }
-
-    Format format = formatFromMatcher(matcher);
-    IDeserializer<CLASS> deserializer = getDeserializer(clazz, format, getConfiguration());
-    return loadAsObject(deserializer, bis, documentUri);
+  public @Nullable EntityResolver setEntityResolver(@NotNull EntityResolver resolver) {
+    EntityResolver retval = this.entityResolver;
+    this.entityResolver = resolver;
+    return retval;
   }
 
-  @NotNull
-  protected <CLASS> CLASS loadAsObject(@NotNull IDeserializer<CLASS> deserializer, @NotNull InputStream is,
-      @NotNull URI documentUri)
-      throws IOException {
-    INodeItem nodeItem = loadAsNodeItem(deserializer, is, documentUri);
-    return nodeItem.toBoundObject();
-  }
-
-  @NotNull
-  protected Format formatFromMatcher(@NotNull DataFormatMatcher matcher) {
+  @Override
+  public Format detectFormat(InputSource source) throws IOException {
     Format retval;
-    String formatName = matcher.getMatchedFormatName();
-    if (YAMLFactory.FORMAT_NAME_YAML.equals(formatName)) {
-      retval = Format.YAML;
-    } else if (JsonFactory.FORMAT_NAME_JSON.equals(formatName)) {
-      retval = Format.JSON;
-    } else if (XmlFactory.FORMAT_NAME_XML.equals(formatName)) {
-      retval = Format.XML;
+    if (source.getCharacterStream() != null) {
+      throw new UnsupportedOperationException("Character streams are not supported");
+    } else if (source.getByteStream() != null) {
+      // attempt to use a provided byte stream stream
+      retval = detectFormatInternal(ObjectUtils.notNull(source.getByteStream()));
     } else {
-      throw new UnsupportedOperationException(String.format("The detected format '%s' is not supported", formatName));
+      // fall back to a URL-based connection
+      URI uri = ObjectUtils.notNull(URI.create(source.getSystemId()));
+      URL url = uri.toURL();
+      try (InputStream is = url.openStream()) {
+        retval = detectFormatInternal(ObjectUtils.notNull(is));
+      }
     }
     return retval;
   }
 
   @NotNull
-  protected DataFormatMatcher matchFormat(@NotNull InputStream is) throws IOException {
-    return matchFormat(is, LOOK_AHEAD_BYTES);
+  protected Format detectFormatInternal(@NotNull InputStream is) throws IOException {
+    return detectFormatInternal(is, LOOK_AHEAD_BYTES - 1);
+  }
+
+  @NotNull
+  protected Format detectFormatInternal(@NotNull InputStream is, int lookAheadBytes) throws IOException {
+    DataFormatMatcher matcher = matchFormat(is, lookAheadBytes);
+    return formatFromMatcher(matcher);
   }
 
   @NotNull
   protected DataFormatMatcher matchFormat(@NotNull InputStream is, int lookAheadBytes) throws IOException {
-
     DataFormatDetector det = new DataFormatDetector(new JsonFactory[] { YAML_FACTORY, JSON_FACTORY, XML_FACTORY });
     det = det.withMinimalMatch(MatchStrength.INCONCLUSIVE).withOptimalMatch(MatchStrength.SOLID_MATCH)
         .withMaxInputLookahead(lookAheadBytes);
@@ -239,16 +194,85 @@ public class DefaultBoundLoader implements IBoundLoader {
   }
 
   @NotNull
-  protected IDeserializer<?> detectModelXml(@NotNull InputStream is) throws IOException {
-    Class<?> clazz = detectModelXmlClass(is);
+  protected Format formatFromMatcher(@NotNull DataFormatMatcher matcher) {
+    Format retval;
+    String formatName = matcher.getMatchedFormatName();
+    if (YAMLFactory.FORMAT_NAME_YAML.equals(formatName)) {
+      retval = Format.YAML;
+    } else if (JsonFactory.FORMAT_NAME_JSON.equals(formatName)) {
+      retval = Format.JSON;
+    } else if (XmlFactory.FORMAT_NAME_XML.equals(formatName)) {
+      retval = Format.XML;
+    } else {
+      throw new UnsupportedOperationException(String.format("The detected format '%s' is not supported", formatName));
+    }
+    return retval;
+  }
 
-    return getDeserializer(clazz, Format.XML, getConfiguration());
+  @Override
+  public IDocumentNodeItem loadAsNodeItem(InputSource source) throws IOException {
+    URI uri = ObjectUtils.notNull(URI.create(source.getSystemId()));
+
+    IDocumentNodeItem retval;
+    if (source.getCharacterStream() != null) {
+      throw new UnsupportedOperationException("Character streams are not supported");
+    } else if (source.getByteStream() != null) {
+      // attempt to use a provided byte stream stream
+      BufferedInputStream bis = new BufferedInputStream(source.getByteStream(), LOOK_AHEAD_BYTES);
+      bis.mark(LOOK_AHEAD_BYTES);
+      retval = loadAsNodeItemInternal(bis, uri);
+    } else {
+      // fall back to a URL-based connection
+      URL url = uri.toURL();
+      try (InputStream is = url.openStream()) {
+        BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES);
+        bis.mark(LOOK_AHEAD_BYTES);
+        retval = loadAsNodeItemInternal(bis, uri);
+      }
+    }
+    return retval;
   }
 
   @NotNull
-  protected IDeserializer<?> detectModelJson(@NotNull JsonParser parser, @NotNull Format format) throws IOException {
-    Class<?> clazz = detectModelJsonClass(parser);
-    return getDeserializer(clazz, format, getConfiguration());
+  protected IDocumentNodeItem loadAsNodeItemInternal(@NotNull BufferedInputStream bis, @NotNull URI documentUri)
+      throws IOException {
+    DataFormatMatcher matcher = matchFormat(bis, LOOK_AHEAD_BYTES - 1);
+    Format format = formatFromMatcher(matcher);
+
+    Class<?> clazz = detectModel(matcher, format);
+
+    IDeserializer<?> deserializer = getDeserializer(clazz, format, getConfiguration());
+
+    try {
+      bis.reset();
+    } catch (IOException ex) {
+      throw new IOException("Unable to reset input stream before parsing", ex);
+    }
+
+    return  (IDocumentNodeItem) deserializer.deserializeToNodeItem(bis, documentUri);
+  }
+
+  @NotNull
+  protected Class<?> detectModel(@NotNull DataFormatMatcher matcher, @NotNull Format format)
+      throws IOException {
+    Class<?> clazz;
+    switch (format) {
+    case JSON:
+    case YAML:
+      clazz = detectModelJsonClass(ObjectUtils.notNull(matcher.createParserWithMatch()));
+      if (clazz == null) {
+        throw new IllegalStateException(
+            String.format("Detected format '%s', but unable to detect the bound data type", format.name()));
+      }
+      break;
+    case XML:
+      clazz = detectModelXmlClass(ObjectUtils.notNull(matcher.getDataStream()));
+      break;
+    default:
+      throw new UnsupportedOperationException(
+          String.format("The detected format '%s' is not supported", matcher.getMatchedFormatName()));
+    }
+    return clazz;
   }
 
   @NotNull
@@ -273,7 +297,7 @@ public class DefaultBoundLoader implements IBoundLoader {
       }
 
       StartElement start = eventReader.nextEvent().asStartElement();
-      startElementQName = start.getName();
+      startElementQName = ObjectUtils.notNull(start.getName());
     } catch (XMLStreamException ex) {
       throw new IOException(ex);
     }
@@ -290,10 +314,7 @@ public class DefaultBoundLoader implements IBoundLoader {
     return getBindingContext().getBoundClassForXmlQName(rootQName);
   }
 
-  protected Class<?> getBoundClassForJsonName(@NotNull String rootName) {
-    return getBindingContext().getBoundClassForJsonName(rootName);
-  }
-
+  @Nullable
   protected Class<?> detectModelJsonClass(@NotNull JsonParser parser) throws IOException {
     Class<?> retval = null;
     JsonUtil.advanceAndAssert(parser, JsonToken.START_OBJECT);
@@ -313,11 +334,51 @@ public class DefaultBoundLoader implements IBoundLoader {
     return retval;
   }
 
+  protected Class<?> getBoundClassForJsonName(@NotNull String rootName) {
+    return getBindingContext().getBoundClassForJsonName(rootName);
+  }
+
+  @Override
+  public <CLASS> CLASS load(Class<CLASS> clazz, InputSource source) throws IOException {
+    URI uri = ObjectUtils.notNull(URI.create(source.getSystemId()));
+
+    CLASS retval;
+    if (source.getCharacterStream() != null) {
+      throw new UnsupportedOperationException("Character streams are not supported");
+    } else if (source.getByteStream() != null) {
+      // attempt to use a provided byte stream stream
+      BufferedInputStream bis = new BufferedInputStream(source.getByteStream(), LOOK_AHEAD_BYTES);
+      retval = loadInternal(clazz, bis, uri);
+    } else {
+      // fall back to a URL-based connection
+      URL url = uri.toURL();
+      try (InputStream is = url.openStream()) {
+        BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES);
+        retval = loadInternal(clazz, bis, uri);
+      }
+    }
+    return retval;
+  }
+
+  @NotNull
+  protected <CLASS> CLASS loadInternal(@NotNull Class<CLASS> clazz, @NotNull BufferedInputStream bis,
+      @NotNull URI documentUri) throws IOException {
+    // we cannot close this stream, since it will cause the underlying stream to be closed
+    bis.mark(LOOK_AHEAD_BYTES);
+
+    Format format = detectFormatInternal(bis);
+    bis.reset();
+
+    IDeserializer<CLASS> deserializer = getDeserializer(clazz, format, getConfiguration());
+    INodeItem nodeItem = deserializer.deserializeToNodeItem(bis, documentUri);
+    return nodeItem.toBoundObject();
+  }
+
   @NotNull
   protected <CLASS> IDeserializer<CLASS> getDeserializer(@NotNull Class<CLASS> clazz, @NotNull Format format,
       @NotNull IConfiguration config) {
     IDeserializer<CLASS> retval = getBindingContext().newDeserializer(format, clazz);
-    for (Map.Entry<Feature, Boolean> entry : config.getFeatureSettings().entrySet()) {
+    for (Map.Entry<@NotNull Feature, Boolean> entry : config.getFeatureSettings().entrySet()) {
       if (Boolean.TRUE.equals(entry.getValue())) {
         retval.enableFeature(entry.getKey());
       } else if (Boolean.FALSE.equals(entry.getValue())) {

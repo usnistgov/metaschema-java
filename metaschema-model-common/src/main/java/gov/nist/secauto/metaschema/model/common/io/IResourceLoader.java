@@ -23,44 +23,28 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+package gov.nist.secauto.metaschema.model.common.io;
 
-package gov.nist.secauto.metaschema.model.common.metapath;
-
-import gov.nist.secauto.metaschema.model.common.io.IResourceLoader;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.model.common.util.InputSourceUtils;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
+import java.net.URI;
 
-public interface IDocumentLoader extends IResourceLoader {
+public interface IResourceLoader {
   @Nullable
-  EntityResolver setEntityResolver(@NotNull EntityResolver resolver);
-  
-  @NotNull
-  default IDocumentNodeItem loadAsNodeItem(@NotNull URL url) throws IOException, URISyntaxException {
-    return loadAsNodeItem(toInputSource(ObjectUtils.notNull(url.toURI())));
+  default EntityResolver getEntityResolver() {
+    // by default, do not support an entity resolver extension mechanism
+    // Subclasses can override this behavior
+    return null;
   }
 
   @NotNull
-  default IDocumentNodeItem loadAsNodeItem(@NotNull Path path) throws IOException {
-    return loadAsNodeItem(toInputSource(ObjectUtils.notNull(path.toUri())));
+  default InputSource toInputSource(@NotNull URI uri) throws IOException {
+    return InputSourceUtils.toInputSource(uri, getEntityResolver());
   }
-
-  @NotNull
-  default IDocumentNodeItem loadAsNodeItem(@NotNull File file) throws IOException {
-    return loadAsNodeItem(toInputSource(ObjectUtils.notNull(file.toPath().toUri())));
-  }
-
-  @NotNull
-  IDocumentNodeItem loadAsNodeItem(@NotNull InputSource source) throws IOException;
-
 }

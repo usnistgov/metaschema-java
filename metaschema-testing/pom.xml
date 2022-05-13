@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
 		<artifactId>metaschema-framework</artifactId>
-		<version>0.7.1-SNAPSHOT</version>
+		<version>0.8.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>metaschema-testing</artifactId>
 	<name>Metaschema Unit Testing Support</name>

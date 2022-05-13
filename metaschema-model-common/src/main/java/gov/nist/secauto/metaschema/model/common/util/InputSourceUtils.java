@@ -23,40 +23,37 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
-package gov.nist.secauto.metaschema.model.common.validation;
+package gov.nist.secauto.metaschema.model.common.util;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 
-public abstract class AbstractContentValidator implements IContentValidator {
-
-  @SuppressWarnings("null")
-  @Override
-  public IValidationResult validate(@NotNull Path path) throws IOException {
-    try (InputStream is = Files.newInputStream(path, StandardOpenOption.READ)) {
-      return validate(is, path.toUri());
-    }
+public final class InputSourceUtils {
+  private InputSourceUtils() {
+    // disable construction
   }
 
-  @SuppressWarnings("null")
-  @Override
-  public IValidationResult validate(@NotNull URL url) throws IOException, URISyntaxException {
-    try (InputStream is = url.openStream()) {
-      return validate(is, url.toURI());
-    }
-  }
-
-  @Override
   @NotNull
-  public abstract IValidationResult validate(@NotNull InputStream is, @NotNull URI documentUri) throws IOException;
-
+  public static InputSource toInputSource(@NotNull URI uri, @Nullable EntityResolver entityResolver) throws IOException {
+    InputSource retval = null;
+    if (entityResolver != null) {
+      // attempt to resolve the entity
+      try {
+        retval = entityResolver.resolveEntity(null, uri.toASCIIString());
+      } catch (SAXException  ex) {
+        throw new IOException(ex);
+      }
+    }
+    if (retval == null) {
+      // fall back to using the provided URI
+      retval = new InputSource(uri.toASCIIString());
+    }
+    return retval;
+  }
 }
