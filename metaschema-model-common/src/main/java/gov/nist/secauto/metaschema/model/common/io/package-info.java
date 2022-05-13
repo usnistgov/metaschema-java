@@ -24,43 +24,4 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath;
-
-import gov.nist.secauto.metaschema.model.common.io.IResourceLoader;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
-
-public interface IDocumentLoader extends IResourceLoader {
-  @Nullable
-  EntityResolver setEntityResolver(@NotNull EntityResolver resolver);
-  
-  @NotNull
-  default IDocumentNodeItem loadAsNodeItem(@NotNull URL url) throws IOException, URISyntaxException {
-    return loadAsNodeItem(toInputSource(ObjectUtils.notNull(url.toURI())));
-  }
-
-  @NotNull
-  default IDocumentNodeItem loadAsNodeItem(@NotNull Path path) throws IOException {
-    return loadAsNodeItem(toInputSource(ObjectUtils.notNull(path.toUri())));
-  }
-
-  @NotNull
-  default IDocumentNodeItem loadAsNodeItem(@NotNull File file) throws IOException {
-    return loadAsNodeItem(toInputSource(ObjectUtils.notNull(file.toPath().toUri())));
-  }
-
-  @NotNull
-  IDocumentNodeItem loadAsNodeItem(@NotNull InputSource source) throws IOException;
-
-}
+package gov.nist.secauto.metaschema.model.common.io;

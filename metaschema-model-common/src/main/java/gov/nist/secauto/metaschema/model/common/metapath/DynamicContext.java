@@ -30,16 +30,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.DefaultFunction.CallingContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.time.Clock;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -117,41 +117,74 @@ public class DynamicContext {
       this.proxy = proxy;
     }
 
+    @Override
+    public @Nullable EntityResolver getEntityResolver() {
+      return new ContextEntityResolver();
+    }
+
+    @Override
+    public EntityResolver setEntityResolver(@NotNull EntityResolver resolver) {
+      // we delegate to the document loader proxy, so the resolver should be set there
+      throw new UnsupportedOperationException("Set the resolver on the proxy");
+    }
+
     protected IDocumentLoader getProxiedDocumentLoader() {
       return proxy;
     }
 
     @Override
-    public synchronized IDocumentNodeItem loadAsNodeItem(@NotNull URL url) throws IOException {
-      IDocumentNodeItem retval;
-      try {
-        retval = availableDocuments.get(url.toURI());
-      } catch (URISyntaxException ex) {
-        throw new IOException(ex);
-      }
+    public @NotNull IDocumentNodeItem loadAsNodeItem(@NotNull InputSource source) throws IOException {
+      String systemId = source.getSystemId();
+      URI uri = ObjectUtils.notNull(URI.create(systemId));
+      IDocumentNodeItem retval = availableDocuments.get(uri);
       if (retval == null) {
-        retval = getProxiedDocumentLoader().loadAsNodeItem(url);
+        retval = getProxiedDocumentLoader().loadAsNodeItem(source);
+        availableDocuments.put(uri, retval);
       }
       return retval;
     }
 
-    @Override
-    public synchronized IDocumentNodeItem loadAsNodeItem(File file) throws FileNotFoundException, IOException {
-      IDocumentNodeItem retval = availableDocuments.get(file.getCanonicalFile().toURI());
-      if (retval == null) {
-        retval = getProxiedDocumentLoader().loadAsNodeItem(file);
-      }
-      return retval;
-    }
+    public class ContextEntityResolver implements EntityResolver {
 
-    @Override
-    public synchronized IDocumentNodeItem loadAsNodeItem(InputStream is, URI documentUri) throws IOException {
-      IDocumentNodeItem retval = availableDocuments.get(documentUri);
-      if (retval == null) {
-        retval = getProxiedDocumentLoader().loadAsNodeItem(is, documentUri);
-        availableDocuments.put(documentUri, retval);
+      /**
+       * Provides an {@link InputSource} for the provided {@code systemId} after attempting to resolve
+       * this system identifier.
+       * <p>
+       * This implementation of an {@link EntityResolver} will perform the following operations in order:
+       * <ol>
+       * <li>Resolves the {@code systemId} against the base URI provided by the
+       * {@link StaticContext#getBaseUri()} method, if this method returns a non-{@code null} result, to
+       * get a localized resource identifier.</li>
+       * <li>It will then delegate to the EntityResolver provided by the
+       * {@link IDocumentLoader#getEntityResolver()} method, if the result is not-{@code null}, to get the
+       * {@link InputSource}.</li>
+       * <li>If no InputSource is provided by the previous step, then an InputSource will be created from
+       * the URI resolved in the first step, if possible.
+       * <li>If an InputSource is still not provided, then an InputSource will be created from the
+       * provided {@code systemId}.
+       * </ol>
+       */
+      @Override
+      public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+        URI baseUri = getStaticContext().getBaseUri();
+
+        String uri;
+        if (baseUri == null) {
+          uri = systemId;
+        } else {
+          URI resolvedUri = baseUri.resolve(systemId);
+          uri = resolvedUri.toASCIIString();
+        }
+
+        EntityResolver resolver = getProxiedDocumentLoader().getEntityResolver();
+        InputSource retval = resolver == null ? null : resolver.resolveEntity(null, uri);
+        if (retval == null) {
+          retval = new InputSource(uri);
+        }
+
+        return retval;
       }
-      return retval;
+
     }
   }
 }
