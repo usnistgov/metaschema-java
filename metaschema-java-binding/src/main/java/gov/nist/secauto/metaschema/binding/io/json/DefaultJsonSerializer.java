@@ -72,6 +72,7 @@ public class DefaultJsonSerializer<CLASS>
   protected JsonGenerator newJsonGenerator(Writer writer) throws IOException {
     JsonFactory factory = getJsonFactory();
     JsonGenerator retval = factory.createGenerator(writer);
+    retval.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
     retval.setPrettyPrinter(new DefaultPrettyPrinter());
     return retval;
   }
