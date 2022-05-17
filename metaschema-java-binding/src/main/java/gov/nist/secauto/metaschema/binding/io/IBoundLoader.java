@@ -88,6 +88,25 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
   default Format detectFormat(@NotNull File file) throws IOException {
     return detectFormat(ObjectUtils.notNull(file.toPath()));
   }
+  /**
+   * Determine the format of the provided resource.
+   * <p>
+   * This method will consume data from the provided {@link InputStream}. If the caller of this method
+   * intends to read data from the stream after determining the format, the caller should pass in a
+   * stream that can be reset.
+   * <p>
+   * This method will not close the provided {@link InputStream}, since it does not own the stream.
+   * 
+   * @param is
+   *          an input stream for the resource
+   * @return the format of the provided resource
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   */
+  @NotNull
+  default Format detectFormat(@NotNull InputStream is) throws IOException {
+    return detectFormat(new InputSource(is));
+  }
 
   /**
    * Determine the format of the provided resource.
@@ -164,6 +183,29 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
   @NotNull
   default <CLASS> CLASS load(@NotNull File file) throws IOException {
     return loadAsNodeItem(file).toBoundObject();
+  }
+
+  /**
+   * Load data from the provided resource into a bound object.
+   * <p>
+   * This method should auto-detect the format of the provided resource.
+   * <p>
+   * This method will not close the provided {@link InputStream}, since it does not own the stream.
+   * 
+   * @param <CLASS>
+   *          the type of the bound object to return
+   * @param is
+   *          the resource
+   * @param documentUri
+   *          the URI of the resource
+   * @return a bound object containing the loaded data
+   * @throws IOException
+   *           if an error occurred while reading the resource
+   * @see #detectFormat(InputStream)
+   */
+  @NotNull
+  default <CLASS> CLASS load(@NotNull InputStream is, @NotNull URI documentUri) throws IOException {
+    return loadAsNodeItem(is, documentUri).toBoundObject();
   }
 
   /**
