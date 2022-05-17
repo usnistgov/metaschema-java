@@ -25,7 +25,6 @@
 		<url>https://github.com/usnistgov/metaschema-java/tree/main</url>
 		<connection>scm:git:git@github.com/usnistgov/metaschema-java.git</connection>
 		<developerConnection>scm:git:git@github.com:usnistgov/metaschema-java.git</developerConnection>
-		<tag>v0.7.0</tag>
 	</scm>
 
 	<distributionManagement>
