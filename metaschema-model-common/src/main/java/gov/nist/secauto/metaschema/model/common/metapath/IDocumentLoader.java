@@ -37,6 +37,8 @@ import org.xml.sax.InputSource;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -58,6 +60,13 @@ public interface IDocumentLoader extends IResourceLoader {
   @NotNull
   default IDocumentNodeItem loadAsNodeItem(@NotNull File file) throws IOException {
     return loadAsNodeItem(toInputSource(ObjectUtils.notNull(file.toPath().toUri())));
+  }
+
+  @NotNull
+  default IDocumentNodeItem loadAsNodeItem(@NotNull InputStream is, @NotNull URI documentUri) throws IOException {
+    InputSource source = toInputSource(documentUri);
+    source.setByteStream(is);
+    return loadAsNodeItem(source);
   }
 
   @NotNull

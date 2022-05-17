@@ -79,7 +79,10 @@ public class DefaultJsonDeserializer<CLASS>
   @SuppressWarnings("null")
   @NotNull
   protected JsonParser newJsonParser(@NotNull Reader reader) throws IOException {
-    return getJsonFactory().createParser(reader);
+    JsonParser retval = getJsonFactory().createParser(reader);
+    retval.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
+    return retval;
+
   }
 
   @Override
