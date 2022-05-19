@@ -117,7 +117,7 @@
 		<dependency.auto-service.version>1.0.1</dependency.auto-service.version>
 		<dependency.commons-lang3.version>3.11</dependency.commons-lang3.version>
 		<dependency.commons-collections4.version>4.4</dependency.commons-collections4.version>
-		<dependency.commons-io.version>2.8.0</dependency.commons-io.version>
+		<dependency.commons-io.version>2.11.0</dependency.commons-io.version>
 		<dependency.eclipse-jdt-annotation.version>2.2.600</dependency.eclipse-jdt-annotation.version>
 		<dependency.everit-json.version>1.14.0</dependency.everit-json.version>
 		<dependency.flexmark.version>0.64.0</dependency.flexmark.version>
