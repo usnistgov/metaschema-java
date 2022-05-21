@@ -24,31 +24,34 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.binding.io;
+package gov.nist.secauto.metaschema.schemagen;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfigurationFeature;
 
 /**
- * The base feature interface for getting the configuration of serializers or deserializers. This
- * provides an immutable view of the current configuration.
+ * Configuration options for schema generation.
  */
-public interface IConfiguration {
+public enum SchemaGenerationFeature implements IConfigurationFeature {
   /**
-   * Determines if a specific serialization/deserialization feature is enabled.
-   * 
-   * @param feature
-   *          the feature to check for
-   * @return {@code true} if the feature is enabled, or {@code false} otherwise
+   * If enabled, definitions that are defined inline will be generated as inline types. If disabled,
+   * definitions will always be generated as global types.
    */
-  boolean isFeatureEnabled(@NotNull Feature feature);
+  INLINE_DEFINITIONS(false),
+  /**
+   * If enabled, child definitions of a choice that are defined inline will be generated as inline
+   * types. If disabled, child definitions of a choice will always be generated as global types. This
+   * option will only be used if {@link #INLINE_DEFINITIONS} is also enabled.
+   */
+  INLINE_CHOICE_DEFINITIONS(false);
 
-  /**
-   * Get a map of feature to setting.
-   * 
-   * @return the map
-   */
-  @NotNull
-  Map<@NotNull Feature, Boolean> getFeatureSettings();
+  private final boolean enabledByDefault;
+
+  private SchemaGenerationFeature(boolean enabled) {
+    this.enabledByDefault = enabled;
+  }
+
+  @Override
+  public boolean isEnabledByDefault() {
+    return enabledByDefault;
+  }
 }

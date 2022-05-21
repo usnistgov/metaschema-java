@@ -44,6 +44,7 @@ import gov.nist.secauto.metaschema.model.common.INamedValuedDefinition;
 import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.UsedDefinitionModelWalker;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -108,7 +109,7 @@ public class XmlSchemaGenerator
 
   @Override
   public void generateFromMetaschema(@NotNull IMetaschema metaschema, @NotNull Writer out,
-      @NotNull IConfiguration configuration) throws IOException {
+      @NotNull IConfiguration<SchemaGenerationFeature> configuration) throws IOException {
 
     StringWriter stringWriter = new StringWriter();
     try (PrintWriter writer = new PrintWriter(stringWriter)) {
@@ -131,7 +132,7 @@ public class XmlSchemaGenerator
   }
 
   protected void generateDocument(@NotNull IMetaschema metaschema, @NotNull Writer out,
-      @NotNull IConfiguration configuration) throws IOException {
+      @NotNull IConfiguration<SchemaGenerationFeature> configuration) throws IOException {
     try {
       @SuppressWarnings("null")
       @NotNull
