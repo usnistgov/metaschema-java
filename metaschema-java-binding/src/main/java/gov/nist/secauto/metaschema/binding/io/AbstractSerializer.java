@@ -38,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
  *          the bound class to serialize from
  */
 public abstract class AbstractSerializer<CLASS>
-    extends AbstractSerializationBase
+    extends AbstractSerializationBase<SerializationFeature>
     implements ISerializer<CLASS> {
 
   /**
@@ -49,7 +49,8 @@ public abstract class AbstractSerializer<CLASS>
    * @param classBinding
    *          the bound class information for the Java type this serializer is operating on
    */
+  @SuppressWarnings("null")
   public AbstractSerializer(@NotNull IBindingContext bindingContext, @NotNull IAssemblyClassBinding classBinding) {
-    super(bindingContext, classBinding);
+    super(bindingContext, classBinding, SerializationFeature.class);
   }
 }

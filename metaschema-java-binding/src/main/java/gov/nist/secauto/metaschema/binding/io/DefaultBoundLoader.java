@@ -38,6 +38,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
+import gov.nist.secauto.metaschema.model.common.configuration.DefaultConfiguration;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -57,7 +60,7 @@ import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -78,7 +81,7 @@ public class DefaultBoundLoader implements IBoundLoader {
   @NotNull
   private final IBindingContext bindingContext;
   @NotNull
-  private final IMutableConfiguration configuration;
+  private final IMutableConfiguration<DeserializationFeature> configuration;
 
   /**
    * An {@link EntityResolver} is not provided by default.
@@ -92,34 +95,40 @@ public class DefaultBoundLoader implements IBoundLoader {
    * @param bindingContext
    *          the Metaschema binding context to use to load Java types
    */
+  @SuppressWarnings("null")
   public DefaultBoundLoader(@NotNull IBindingContext bindingContext) {
     this.bindingContext = bindingContext;
-    this.configuration = new DefaultMutableConfiguration();
-    this.configuration.enableFeature(Feature.DESERIALIZE_JSON_ROOT_PROPERTY);
+    this.configuration = new DefaultConfiguration<>(DeserializationFeature.class);
   }
 
   @Override
-  public IMutableConfiguration enableFeature(Feature feature) {
+  public IMutableConfiguration<DeserializationFeature> enableFeature(DeserializationFeature feature) {
     return configuration.enableFeature(feature);
   }
 
   @Override
-  public IMutableConfiguration disableFeature(Feature feature) {
+  public IMutableConfiguration<DeserializationFeature> disableFeature(DeserializationFeature feature) {
     return configuration.disableFeature(feature);
   }
 
   @Override
-  public boolean isFeatureEnabled(Feature feature) {
+  public boolean isFeatureEnabled(DeserializationFeature feature) {
     return configuration.isFeatureEnabled(feature);
   }
 
   @Override
-  public Map<@NotNull Feature, Boolean> getFeatureSettings() {
-    return configuration.getFeatureSettings();
+  public Set<@NotNull DeserializationFeature> getFeatureSet() {
+    return configuration.getFeatureSet();
+  }
+
+  @Override
+  public IMutableConfiguration<DeserializationFeature>
+      applyConfiguration(@NotNull IConfiguration<DeserializationFeature> other) {
+    return configuration.applyConfiguration(other);
   }
 
   @NotNull
-  protected IConfiguration getConfiguration() {
+  protected IMutableConfiguration<DeserializationFeature> getConfiguration() {
     return configuration;
   }
 
@@ -376,15 +385,9 @@ public class DefaultBoundLoader implements IBoundLoader {
 
   @NotNull
   protected <CLASS> IDeserializer<CLASS> getDeserializer(@NotNull Class<CLASS> clazz, @NotNull Format format,
-      @NotNull IConfiguration config) {
+      @NotNull IConfiguration<DeserializationFeature> config) {
     IDeserializer<CLASS> retval = getBindingContext().newDeserializer(format, clazz);
-    for (Map.Entry<@NotNull Feature, Boolean> entry : config.getFeatureSettings().entrySet()) {
-      if (Boolean.TRUE.equals(entry.getValue())) {
-        retval.enableFeature(entry.getKey());
-      } else if (Boolean.FALSE.equals(entry.getValue())) {
-        retval.disableFeature(entry.getKey());
-      }
-    }
+    retval.applyConfiguration(config);
     return retval;
   }
 }

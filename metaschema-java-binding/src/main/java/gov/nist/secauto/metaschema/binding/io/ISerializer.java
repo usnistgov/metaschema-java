@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
+import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -46,7 +48,7 @@ import java.nio.file.StandardOpenOption;
  * @param <CLASS>
  *          the Java type from which data can be written
  */
-public interface ISerializer<CLASS> extends IMutableConfiguration {
+public interface ISerializer<CLASS> extends IMutableConfiguration<SerializationFeature> {
   /**
    * Write data from a bound class instance to the {@link OutputStream}.
    * <p>

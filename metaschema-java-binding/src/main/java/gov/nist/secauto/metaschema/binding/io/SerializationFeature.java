@@ -26,48 +26,24 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Map;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfigurationFeature;
 
-public class DefaultMutableConfiguration implements IMutableConfiguration {
-  private final EnumMap<Feature, Boolean> features;
+public enum SerializationFeature implements IConfigurationFeature {
+  /**
+   * If enabled, generate document level constructs in the underlying data format. In XML this would
+   * include XML declarations. In JSON or YAML, this would include an outer object and field with the
+   * name associated with the root node.
+   */
+  SERIALIZE_ROOT(true);
 
-  public DefaultMutableConfiguration() {
-    this.features = new EnumMap<>(Feature.class);
-  }
+  private final boolean enabledByDefault;
 
-  public DefaultMutableConfiguration(IConfiguration configuration) {
-    this.features = new EnumMap<>(configuration.getFeatureSettings());
-  }
-
-  @Override
-  public DefaultMutableConfiguration enableFeature(Feature feature) {
-    features.put(feature, Boolean.TRUE);
-    return this;
+  private SerializationFeature(boolean enabled) {
+    this.enabledByDefault = enabled;
   }
 
   @Override
-  public DefaultMutableConfiguration disableFeature(Feature feature) {
-    features.put(feature, Boolean.FALSE);
-    return this;
-  }
-
-  @Override
-  public boolean isFeatureEnabled(Feature feature) {
-    Boolean state = features.get(feature);
-
-    boolean retval;
-    if (state == null) {
-      retval = false;
-    } else {
-      retval = state;
-    }
-    return retval;
-  }
-
-  @Override
-  public Map<Feature, Boolean> getFeatureSettings() {
-    return Collections.unmodifiableMap(features);
+  public boolean isEnabledByDefault() {
+    return enabledByDefault;
   }
 }

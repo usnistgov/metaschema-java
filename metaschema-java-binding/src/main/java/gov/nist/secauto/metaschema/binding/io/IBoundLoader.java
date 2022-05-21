@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.binding.DefaultBindingContext;
+import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.model.common.metapath.IDocumentLoader;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
@@ -45,7 +46,7 @@ import java.nio.file.Path;
 /**
  * A common interface for loading Metaschema based instance resources.
  */
-public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration {
+public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<DeserializationFeature> {
   /**
    * Determine the format of the provided resource.
    * 

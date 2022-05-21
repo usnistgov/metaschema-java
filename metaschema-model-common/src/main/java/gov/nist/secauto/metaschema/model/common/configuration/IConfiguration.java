@@ -24,28 +24,34 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen;
+package gov.nist.secauto.metaschema.model.common.configuration;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface IMutableConfiguration extends IConfiguration {
+import java.util.Set;
+
+/**
+ * The base feature interface for getting the configuration of processors and parsers in this
+ * library. This provides an immutable view of the current configuration.
+ * 
+ * @param <T>
+ *          the type of the feature set
+ */
+public interface IConfiguration<T extends Enum<T> & IConfigurationFeature> {
   /**
-   * Turn on the provided feature.
+   * Determines if a specific serialization/deserialization feature is enabled.
    * 
    * @param feature
-   *          the feature to turn on
-   * @return the updated configuration
+   *          the feature to check for
+   * @return {@code true} if the feature is enabled, or {@code false} otherwise
    */
-  @NotNull
-  IMutableConfiguration enableFeature(@NotNull Feature feature);
+  boolean isFeatureEnabled(@NotNull T feature);
 
   /**
-   * Turn off the provided feature.
+   * Get the set of enabled features.
    * 
-   * @param feature
-   *          the feature to turn off
-   * @return the updated configuration
+   * @return the set of enabled features.
    */
   @NotNull
-  IMutableConfiguration disableFeature(@NotNull Feature feature);
+  Set<@NotNull T> getFeatureSet();
 }

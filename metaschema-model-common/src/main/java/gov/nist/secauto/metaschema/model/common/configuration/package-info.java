@@ -24,21 +24,4 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen;
-
-/**
- * Configuration options for schema generation.
- */
-public enum Feature {
-  /**
-   * If enabled, definitions that are defined inline will be generated as inline types. If disabled,
-   * definitions will always be generated as global types.
-   */
-  INLINE_DEFINITIONS,
-  /**
-   * If enabled, child definitions of a choice that are defined inline will be generated as inline
-   * types. If disabled, child definitions of a choice will always be generated as global types. This
-   * option will only be used if {@link #INLINE_DEFINITIONS} is also enabled.
-   */
-  INLINE_CHOICE_DEFINITIONS,
-}
+package gov.nist.secauto.metaschema.model.common.configuration;

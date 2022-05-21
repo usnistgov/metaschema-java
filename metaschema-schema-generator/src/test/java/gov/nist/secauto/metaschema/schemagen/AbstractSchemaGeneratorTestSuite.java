@@ -32,6 +32,9 @@ import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.model.common.configuration.DefaultConfiguration;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.XmlSchemaContentValidator;
 import gov.nist.secauto.metaschema.model.testing.AbstractTestSuite;
@@ -65,7 +68,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
   @NotNull
   protected static final ISchemaGenerator JSON_SCHEMA_GENERATOR = new JsonSchemaGenerator();
   @NotNull
-  protected static final IConfiguration SCHEMA_GENERATION_CONFIG;
+  protected static final IConfiguration<SchemaGenerationFeature> SCHEMA_GENERATION_CONFIG;
   @NotNull
   protected static final BiFunction<@NotNull IMetaschema, @NotNull Writer, Void> XML_SCHEMA_PROVIDER;
   @NotNull
@@ -78,9 +81,10 @@ public abstract class AbstractSchemaGeneratorTestSuite
   protected static final Function<@NotNull Path, @NotNull XmlSchemaContentValidator> XML_CONTENT_VALIDATOR_PROVIDER;
 
   static {
-    SCHEMA_GENERATION_CONFIG = new DefaultMutableConfiguration()
-        .enableFeature(Feature.INLINE_DEFINITIONS)
-        .disableFeature(Feature.INLINE_CHOICE_DEFINITIONS);
+    @SuppressWarnings("null")
+    IMutableConfiguration<SchemaGenerationFeature> features = new DefaultConfiguration<>(SchemaGenerationFeature.class)
+        .enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+    SCHEMA_GENERATION_CONFIG = features;
 
     BiFunction<@NotNull IMetaschema, @NotNull Writer, Void> xmlProvider = (metaschema, writer) -> {
       try {

@@ -31,11 +31,11 @@ import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
-import gov.nist.secauto.metaschema.binding.io.Feature;
-import gov.nist.secauto.metaschema.binding.io.IConfiguration;
+import gov.nist.secauto.metaschema.binding.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.binding.metapath.item.IXdmFactory;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.RootAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
@@ -92,10 +92,10 @@ public class DefaultJsonDeserializer<CLASS>
     try (JsonParser parser = newJsonParser(reader)) {
       DefaultJsonParsingContext parsingContext = new DefaultJsonParsingContext(parser, new DefaultJsonProblemHandler());
       IAssemblyClassBinding classBinding = getClassBinding();
-      IConfiguration configuration = getConfiguration();
+      IConfiguration<DeserializationFeature> configuration = getConfiguration();
 
       if (classBinding.isRoot()
-          && configuration.isFeatureEnabled(Feature.DESERIALIZE_JSON_ROOT_PROPERTY)) {
+          && configuration.isFeatureEnabled(DeserializationFeature.DESERIALIZE_JSON_ROOT_PROPERTY)) {
 
         RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
         // now parse the root property

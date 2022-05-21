@@ -24,51 +24,20 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen;
+package gov.nist.secauto.metaschema.model.common.configuration;
 
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.EnumMap;
-import java.util.Map;
-
-public final class DefaultMutableConfiguration implements IMutableConfiguration {
-  @NotNull
-  private final EnumMap<@NotNull Feature, Boolean> features;
-
-  public DefaultMutableConfiguration() {
-    this.features = new EnumMap<>(Feature.class);
-
-    // Set defaults
-    disableFeature(Feature.INLINE_DEFINITIONS);
-    disableFeature(Feature.INLINE_CHOICE_DEFINITIONS);
-  }
-
-  public DefaultMutableConfiguration(IConfiguration configuration) {
-    this.features = new EnumMap<>(configuration.getFeatureSettings());
-  }
-
-  @Override
-  public final DefaultMutableConfiguration enableFeature(Feature feature) {
-    features.put(feature, Boolean.TRUE);
-    return this;
-  }
-
-  @Override
-  public final DefaultMutableConfiguration disableFeature(Feature feature) {
-    features.put(feature, Boolean.FALSE);
-    return this;
-  }
-
-  @Override
-  public final boolean isFeatureEnabled(Feature feature) {
-    Boolean state = features.get(feature);
-    return state == null ? false : state;
-  }
-
-  @Override
-  public final Map<@NotNull Feature, Boolean> getFeatureSettings() {
-    return CollectionUtil.unmodifiableMap(features);
-  }
+/**
+ * The common interface that all configuration features must implement.
+ * <p>
+ * This approach is inspired by the configuration implementation in the
+ * <a href="https://github.com/FasterXML/jackson-databind">Jackson databind library</a>.
+ */
+public interface IConfigurationFeature {
+  /**
+   * Determine if the given feature is enabled in the default configuration.
+   * 
+   * @return {@code true} if the feature is enabled in the default configuration, or {@code false}
+   *         otherwise
+   */
+  boolean isEnabledByDefault();
 }

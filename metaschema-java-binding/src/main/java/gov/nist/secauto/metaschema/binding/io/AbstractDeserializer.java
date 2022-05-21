@@ -46,7 +46,7 @@ import java.net.URI;
  *          the bound class to deserialize to
  */
 public abstract class AbstractDeserializer<CLASS>
-    extends AbstractSerializationBase
+    extends AbstractSerializationBase<DeserializationFeature>
     implements IDeserializer<CLASS> {
 
   /**
@@ -57,8 +57,9 @@ public abstract class AbstractDeserializer<CLASS>
    * @param classBinding
    *          the bound class information for the Java type this deserializer is operating on
    */
+  @SuppressWarnings("null")
   protected AbstractDeserializer(@NotNull IBindingContext bindingContext, @NotNull IAssemblyClassBinding classBinding) {
-    super(bindingContext, classBinding);
+    super(bindingContext, classBinding, DeserializationFeature.class);
   }
 
   @Override
