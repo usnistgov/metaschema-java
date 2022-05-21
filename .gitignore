@@ -8,6 +8,8 @@
 .pmdruleset.xml
 .eclipse-pmd
 .ruleset
+.apt_generated/
+.apt_generated_tests/
 
 # Maven files
 target/
