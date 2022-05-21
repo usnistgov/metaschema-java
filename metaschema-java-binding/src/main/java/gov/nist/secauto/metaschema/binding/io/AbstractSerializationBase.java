@@ -28,24 +28,30 @@ package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.model.common.configuration.DefaultConfiguration;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfigurationFeature;
+import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
+import java.util.Set;
 
-abstract class AbstractSerializationBase implements IMutableConfiguration {
+abstract class AbstractSerializationBase<T extends Enum<T> & IConfigurationFeature>
+    implements IMutableConfiguration<T> {
   @NotNull
   private final IBindingContext bindingContext;
   @NotNull
   private final IAssemblyClassBinding classBinding;
   @NotNull
-  private final IMutableConfiguration configuration;
+  private final DefaultConfiguration<T> configuration;
 
-  protected AbstractSerializationBase(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
+  protected AbstractSerializationBase(@NotNull IBindingContext bindingContext,
+      @NotNull IAssemblyClassBinding classBinding, @NotNull Class<T> configurationEnum) {
     this.bindingContext = ObjectUtils.requireNonNull(bindingContext, "bindingContext");
     this.classBinding = ObjectUtils.requireNonNull(classBinding, "classBinding");
-    this.configuration = new DefaultMutableConfiguration();
+    this.configuration = new DefaultConfiguration<>(configurationEnum);
   }
 
   /**
@@ -75,27 +81,33 @@ abstract class AbstractSerializationBase implements IMutableConfiguration {
    * @return the configuration
    */
   @NotNull
-  protected IConfiguration getConfiguration() {
+  protected IConfiguration<T> getConfiguration() {
     return configuration;
   }
 
   @Override
-  public IMutableConfiguration enableFeature(Feature feature) {
+  public IMutableConfiguration<T> enableFeature(T feature) {
     return configuration.enableFeature(feature);
   }
 
   @Override
-  public IMutableConfiguration disableFeature(Feature feature) {
+  public IMutableConfiguration<T> disableFeature(T feature) {
     return configuration.disableFeature(feature);
   }
 
   @Override
-  public boolean isFeatureEnabled(Feature feature) {
+  public boolean isFeatureEnabled(T feature) {
     return configuration.isFeatureEnabled(feature);
   }
 
   @Override
-  public Map<@NotNull Feature, Boolean> getFeatureSettings() {
-    return configuration.getFeatureSettings();
+  public Set<@NotNull T> getFeatureSet() {
+    return configuration.getFeatureSet();
+  }
+
+  @Override
+  public IMutableConfiguration<T>
+      applyConfiguration(@NotNull IConfiguration<T> other) {
+    return configuration.applyConfiguration(other);
   }
 }

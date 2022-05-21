@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -35,5 +36,5 @@ import java.io.Writer;
 
 public interface ISchemaGenerator {
   void generateFromMetaschema(@NotNull IMetaschema metaschema, @NotNull Writer outconfiguration,
-      @NotNull IConfiguration configuration) throws IOException;
+      @NotNull IConfiguration<SchemaGenerationFeature> configuration) throws IOException;
 }

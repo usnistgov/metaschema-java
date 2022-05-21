@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ModelWalker;
 
@@ -49,12 +50,12 @@ import java.util.Stack;
 public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
 
   @NotNull
-  protected IInlineStrategy newInlineStrategy(@NotNull IConfiguration configuration,
+  protected IInlineStrategy newInlineStrategy(@NotNull IConfiguration<SchemaGenerationFeature> configuration,
       @NotNull Collection<@NotNull ? extends INamedDefinition> definitions) {
     IInlineStrategy retval;
-    if (!configuration.isFeatureEnabled(Feature.INLINE_DEFINITIONS)) {
+    if (!configuration.isFeatureEnabled(SchemaGenerationFeature.INLINE_DEFINITIONS)) {
       retval = IInlineStrategy.NONE_INLINE;
-    } else if (configuration.isFeatureEnabled(Feature.INLINE_CHOICE_DEFINITIONS)) {
+    } else if (configuration.isFeatureEnabled(SchemaGenerationFeature.INLINE_CHOICE_DEFINITIONS)) {
       retval = IInlineStrategy.DEFINED_AS_INLINE;
     } else {
       retval = new ChoiceInlineStrategy(definitions);

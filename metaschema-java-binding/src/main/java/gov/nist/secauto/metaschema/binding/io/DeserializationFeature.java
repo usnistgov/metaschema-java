@@ -26,30 +26,29 @@
 
 package gov.nist.secauto.metaschema.binding.io;
 
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfigurationFeature;
 
-/**
- * This mutable view of a serializer or deserializer configuration allows for changes to be made in
- * the underlying configuration.
- */
-public interface IMutableConfiguration extends IConfiguration {
+public enum DeserializationFeature implements IConfigurationFeature {
   /**
-   * Turn on the provided feature.
-   * 
-   * @param feature
-   *          the feature to turn on
-   * @return the updated configuration
+   * If enabled, perform constraint validation on the deserialized bound objects.
    */
-  @NotNull
-  IMutableConfiguration enableFeature(@NotNull Feature feature);
+  DESERIALIZE_VALIDATE_CONSTRAINTS(true),
+  /**
+   * If enabled, process the next JSON node as a field, whose name must match the
+   * {@link IAssemblyDefinition#getRootJsonName()}. If not enabled, the next JSON node is expected to
+   * be an object containing the data of the {@link IAssemblyDefinition}.
+   */
+  DESERIALIZE_JSON_ROOT_PROPERTY(true);
 
-  /**
-   * Turn off the provided feature.
-   * 
-   * @param feature
-   *          the feature to turn off
-   * @return the updated configuration
-   */
-  @NotNull
-  IMutableConfiguration disableFeature(@NotNull Feature feature);
+  private final boolean enabledByDefault;
+
+  private DeserializationFeature(boolean enabled) {
+    this.enabledByDefault = enabled;
+  }
+
+  @Override
+  public boolean isEnabledByDefault() {
+    return enabledByDefault;
+  }
 }

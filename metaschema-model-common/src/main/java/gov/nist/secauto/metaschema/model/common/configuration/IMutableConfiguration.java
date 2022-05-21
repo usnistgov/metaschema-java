@@ -24,27 +24,38 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen;
+package gov.nist.secauto.metaschema.model.common.configuration;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-
-public interface IConfiguration {
+public interface IMutableConfiguration<T extends Enum<T> & IConfigurationFeature> extends IConfiguration<T> {
   /**
-   * Determines if a specific serialization/deserialization feature is enabled.
+   * Turn on the provided feature.
    * 
    * @param feature
-   *          the feature to check for
-   * @return {@code true} if the feature is enabled, or {@code false} otherwise
-   */
-  boolean isFeatureEnabled(@NotNull Feature feature);
-
-  /**
-   * Get a map of feature to setting.
-   * 
-   * @return the map
+   *          the feature to turn on
+   * @return the updated configuration
    */
   @NotNull
-  Map<@NotNull Feature, Boolean> getFeatureSettings();
+  IMutableConfiguration<T> enableFeature(@NotNull T feature);
+
+  /**
+   * Turn off the provided feature.
+   * 
+   * @param feature
+   *          the feature to turn off
+   * @return the updated configuration
+   */
+  @NotNull
+  IMutableConfiguration<T> disableFeature(@NotNull T feature);
+
+  /**
+   * Replace this configuration with the {@code other} configuration.
+   * 
+   * @param other
+   *          the new configuration
+   * @return the updated configuration
+   */
+  @NotNull
+  IMutableConfiguration<T> applyConfiguration(@NotNull IConfiguration<T> other);
 }

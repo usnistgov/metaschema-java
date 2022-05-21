@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.UsedDefinitionModelWalker;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -66,7 +67,7 @@ public class JsonSchemaGenerator
 
   @Override
   public void generateFromMetaschema(@NotNull IMetaschema metaschema, @NotNull Writer out,
-      @NotNull IConfiguration configuration) throws IOException {
+      @NotNull IConfiguration<SchemaGenerationFeature> configuration) throws IOException {
     JsonGenerator jsonGenerator = getJsonFactory().createGenerator(out);
     jsonGenerator.setCodec(new ObjectMapper());
     jsonGenerator.useDefaultPrettyPrinter();
@@ -77,7 +78,7 @@ public class JsonSchemaGenerator
   }
 
   protected void generateSchemaMetadata(@NotNull IMetaschema metaschema, @NotNull JsonGenerator jsonGenerator,
-      @NotNull IConfiguration configuration)
+      @NotNull IConfiguration<SchemaGenerationFeature> configuration)
       throws IOException {
     jsonGenerator.writeStartObject();
 
