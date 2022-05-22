@@ -143,9 +143,10 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @throws URISyntaxException
    * @see #detectFormat(URL)
    */
+  @SuppressWarnings("unchecked")
   @NotNull
   default <CLASS> CLASS load(@NotNull URL url) throws IOException, URISyntaxException {
-    return loadAsNodeItem(url).toBoundObject();
+    return (CLASS)loadAsNodeItem(url).getValue();
   }
 
   /**
@@ -162,9 +163,10 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *           if an error occurred while reading the resource
    * @see #detectFormat(File)
    */
+  @SuppressWarnings("unchecked")
   @NotNull
   default <CLASS> CLASS load(@NotNull Path path) throws IOException {
-    return loadAsNodeItem(path).toBoundObject();
+    return (CLASS)loadAsNodeItem(path).getValue();
   }
 
   /**
@@ -181,9 +183,10 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *           if an error occurred while reading the resource
    * @see #detectFormat(File)
    */
+  @SuppressWarnings("unchecked")
   @NotNull
   default <CLASS> CLASS load(@NotNull File file) throws IOException {
-    return loadAsNodeItem(file).toBoundObject();
+    return (CLASS)loadAsNodeItem(file).getValue();
   }
 
   /**
@@ -204,9 +207,10 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *           if an error occurred while reading the resource
    * @see #detectFormat(InputStream)
    */
+  @SuppressWarnings("unchecked")
   @NotNull
   default <CLASS> CLASS load(@NotNull InputStream is, @NotNull URI documentUri) throws IOException {
-    return loadAsNodeItem(is, documentUri).toBoundObject();
+    return (CLASS)loadAsNodeItem(is, documentUri).getValue();
   }
 
   /**
@@ -226,9 +230,10 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    *           if an error occurred while reading the resource
    * @see #detectFormat(InputSource)
    */
+  @SuppressWarnings("unchecked")
   @NotNull
   default <CLASS> CLASS load(@NotNull InputSource source) throws IOException {
-    return loadAsNodeItem(source).toBoundObject();
+    return (CLASS)loadAsNodeItem(source).getValue();
   }
 
   /**

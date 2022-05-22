@@ -26,10 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -37,20 +36,27 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-public class ContextItem
+public final class ContextItem
     extends AbstractPathExpression<INodeItem> {
-
-  public ContextItem() {
+  @NotNull
+  private static final ContextItem SINGLETON = new ContextItem();
+  
+  @NotNull
+  public static ContextItem instance() {
+    return SINGLETON;
   }
 
-  @SuppressWarnings("null")
+  private ContextItem() {
+    // disable construction
+  }
+
   @Override
-  public Class<INodeItem> getBaseResultType() {
+  public Class<@NotNull INodeItem> getBaseResultType() {
     return INodeItem.class;
   }
 
   @Override
-  public Class<? extends INodeItem> getStaticResultType() {
+  public Class<@NotNull ? extends INodeItem> getStaticResultType() {
     return getBaseResultType();
   }
 
@@ -61,12 +67,12 @@ public class ContextItem
   }
 
   @Override
-  public ISequence<? extends INodeItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitContextItem(this, context);
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitContextItem(this, context);
+  public ISequence<? extends INodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    return ISequence.of(context.getContextNodeItem());
   }
 }

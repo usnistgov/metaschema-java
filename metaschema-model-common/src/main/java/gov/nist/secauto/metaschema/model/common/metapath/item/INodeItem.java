@@ -26,24 +26,49 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidator;
-import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaPathEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
-import gov.nist.secauto.metaschema.model.common.validation.ValidatingNodeItemVisitor;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 import java.util.stream.Stream;
 
-public interface INodeItem extends IPathItem, INodeContext, IPathSegment {
+public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemVisitable {
+
+  @NotNull
+  default String getName() {
+    INamedInstance instance = getInstance();
+    return instance == null ? getDefinition().getEffectiveName() : instance.getEffectiveName();
+  }
+
+  /**
+   * Get the Metaschema definition associated with this node.
+   * 
+   * @return the definition
+   */
+  @NotNull
+  INamedDefinition getDefinition();
+
+  /**
+   * Retrieve the instance associated with this path segment.
+   * 
+   * @return the instance of the segment, or {@code null} if it doesn't have one
+   */
+  INamedInstance getInstance();
+
+  @Override
+  default INodeItem getContextNodeItem() {
+    return this;
+  }
+
+  @Override
+  default INodeItem getNodeItem() {
+    return this;
+  }
 
   /**
    * Get the type of node item this is.
@@ -79,73 +104,63 @@ public interface INodeItem extends IPathItem, INodeContext, IPathSegment {
   }
 
   /**
-   * Evaluate the provided Metapath, producing a sequence of result items.
-   * 
-   * @param <ITEM_TYPE>
-   *          the type of items in the sequence
-   * @param metapath
-   *          the compiled Metapath expression
-   * @return the result items
-   */
-  @SuppressWarnings("unchecked")
-  @NotNull
-  default <ITEM_TYPE extends IItem> ISequence<? extends ITEM_TYPE> evaluateMetapath(MetapathExpression metapath) {
-    return (@NotNull ISequence<? extends ITEM_TYPE>) evaluateMetapath(metapath,
-        new StaticContext().newDynamicContext());
-  }
-
-  /**
-   * Evaluate the provided Metapath, producing a sequence of result items.
-   * 
-   * @param metapath
-   *          the compiled Metapath expression
-   * @param context
-   *          the dynamic Metapath context
-   * @return the result items
-   * @throws MetapathException
-   *           if an error occured while evaluating the expression
-   */
-  @NotNull
-  default ISequence<?> evaluateMetapath(@NotNull MetapathExpression metapath, @NotNull DynamicContext context)
-      throws MetapathException {
-    return new MetaschemaPathEvaluationVisitor(context).visit(metapath.getASTNode(), this);
-  }
-
-  /**
-   * A visitor callback.
-   * 
-   * @param <RESULT>
-   *          the type of the visitor result
-   * @param <CONTEXT>
-   *          the type of the context parameter
-   * @param visitor
-   *          the calling visitor
-   * @param context
-   *          a parameter used to pass contextual information between visitors
-   * @return the visitor result
-   */
-  <RESULT, CONTEXT> RESULT accept(@NotNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
-
-  /**
-   * Perform constraint validation on this node (and its children) using the provided validator.
-   * 
-   * @param validator
-   *          the validator instance to use for performing validation
-   */
-  default void validate(IConstraintValidator validator) {
-    new ValidatingNodeItemVisitor().visit(this, validator);
-  }
-
-  /**
    * Retrieve the parent node item if it exists.
    * 
    * @return the parent node item, or {@code null} if this node item has no known parent
    */
-  // TODO: Should this be IModelNodeItem?
   INodeItem getParentNodeItem();
 
+  default Stream<@NotNull ? extends INodeItem> ancestor() {
+    return ancestorsOf(this);
+  }
+
+  @SuppressWarnings("null")
+  default Stream<@NotNull ? extends INodeItem> ancestorOrSelf() {
+    return Stream.concat(
+        Stream.of(this),
+        ancestor());
+  }
+
+  @SuppressWarnings("null")
+  static Stream<@NotNull ? extends INodeItem> ancestorsOf(@NotNull INodeItem nodeItem) {
+    INodeItem parent = nodeItem.getParentNodeItem();
+
+    Stream<@NotNull ? extends INodeItem> retval;
+    if (parent == null) {
+      retval = Stream.empty();
+    } else {
+      retval = Stream.concat(Stream.of(parent), ancestorsOf(parent));
+    }
+    return retval;
+  }
+
+  Stream<@NotNull ? extends INodeItem> children();
+
+  default Stream<@NotNull ? extends INodeItem> descendant() {
+    return decendantsOf(this);
+  }
+
+  static Stream<@NotNull ? extends INodeItem> decendantsOf(@NotNull INodeItem nodeItem) {
+    Stream<@NotNull ? extends INodeItem> children = nodeItem.children();
+
+    return children.flatMap(child -> {
+      return Stream.concat(Stream.of(child), decendantsOf(child));
+    });
+  }
+
+  @SuppressWarnings("null")
+  default Stream<@NotNull ? extends INodeItem> descendantOrSelf() {
+    return Stream.concat(
+        Stream.of(this),
+        descendant());
+  }
+
+  @SuppressWarnings("null")
   @Override
-  Stream<@NotNull ? extends INodeItem> getPathStream();
+  default Stream<@NotNull ? extends INodeItem> getPathStream() {
+    INodeItem parent = getParentNodeItem();
+    return parent == null ? Stream.of(this) : Stream.concat(getParentNodeItem().getPathStream(), Stream.of(this));
+  }
 
   /**
    * Retrieve the parent content node item if it exists. A content node is a non-document node.
@@ -155,6 +170,6 @@ public interface INodeItem extends IPathItem, INodeContext, IPathSegment {
    */
   IModelNodeItem getParentContentNodeItem();
 
-  @NotNull
-  <CLASS> CLASS toBoundObject();
+  @Override
+  <T> T getValue();
 }

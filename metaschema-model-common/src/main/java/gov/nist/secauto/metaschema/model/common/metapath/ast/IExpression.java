@@ -26,10 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -86,14 +85,14 @@ public interface IExpression {
   /**
    * Provides a double dispatch callback for visitor handling.
    * 
-   * @param visitor
-   *          the visitor calling this method
+   * @param dynamicContext
+   *          the dynamic evaluation context
    * @param context
-   *          the visitor context
+   *          the initial focus node item
    * @return the result of evaluation
    */
   @NotNull
-  ISequence<? extends IItem> accept(@NotNull IExpressionEvaluationVisitor visitor, @NotNull INodeContext context);
+  ISequence<? extends IItem> accept(@NotNull DynamicContext dynamicContext, @NotNull INodeContext context);
 
   /**
    * Provides a double dispatch callback for visitor handling.

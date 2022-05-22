@@ -26,24 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.format;
 
-import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IRootAssemblyNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
 public class MetapathFormatter implements IPathFormatter {
-
-  @NotNull
-  protected String getEffectiveName(INodeItem nodeItem) {
-    INamedInstance instance = nodeItem.getInstance();
-    return instance == null ? nodeItem.getDefinition().getEffectiveName() : instance.getEffectiveName();
-  }
 
   @Override
   public String formatDocument(IDocumentNodeItem document) {
@@ -53,7 +45,7 @@ public class MetapathFormatter implements IPathFormatter {
 
   @Override
   public String formatRootAssembly(@NotNull IRootAssemblyNodeItem root) {
-    return root.getDefinition().getRootName();
+    return root.getName();
   }
 
   @Override
@@ -69,13 +61,13 @@ public class MetapathFormatter implements IPathFormatter {
 
   @Override
   public String formatFlag(IFlagNodeItem flag) {
-    return "@" + getEffectiveName(flag);
+    return "@" + flag.getName();
   }
 
   @SuppressWarnings("null")
   @NotNull
   protected String formatModelPathSegment(IModelNodeItem item) {
-    StringBuilder builder = new StringBuilder(getEffectiveName(item))
+    StringBuilder builder = new StringBuilder(item.getName())
         .append('[')
         .append(item.getPosition())
         .append(']');

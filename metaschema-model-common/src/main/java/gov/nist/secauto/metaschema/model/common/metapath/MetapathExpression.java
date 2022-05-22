@@ -30,27 +30,35 @@ import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Lexer;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ASTPrinter;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.BuildAstVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.CSTPrinter;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.ContextItem;
 import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.MetaschemaInstanceEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
+import gov.nist.secauto.metaschema.model.common.metapath.function.TypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnBoolean;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.Arrays;
+
 public class MetapathExpression {
+  private static final Logger LOGGER = LogManager.getLogger(MetapathExpression.class);
+
   @NotNull
-  public static final MetapathExpression CONTEXT_NODE = new MetapathExpression(".", new ContextItem());
+  public static final MetapathExpression CONTEXT_NODE = new MetapathExpression(".", ContextItem.instance());
 
   @NotNull
   public static MetapathExpression compile(@NotNull String path) throws MetapathException {
@@ -65,12 +73,24 @@ public class MetapathExpression {
         metapath10Parser parser = new metapath10Parser(tokens);
         parser.addErrorListener(new FailingErrorListener());
 
-        @SuppressWarnings("null")
-        @NotNull
-        ParseTree tree = parser.expr();
-        // CSTPrinter printer = new CSTPrinter();
-        // printer.print(tree, Arrays.asList(parser.getRuleNames()));
-        retval = new MetapathExpression(path, tree);
+        ParseTree tree = ObjectUtils.notNull(parser.expr());
+
+        if (LOGGER.isDebugEnabled()) {
+          try (OutputStream os = new ByteArrayOutputStream()) {
+            PrintStream ps = new PrintStream(os, true);
+            CSTPrinter printer = new CSTPrinter(ps);
+            printer.print(tree, Arrays.asList(metapath10Parser.ruleNames));
+            ps.flush();
+            LOGGER.atDebug().log(String.format("Metapath CST:%n%s", os.toString()));
+          }
+        }
+
+        IExpression expr = new BuildAstVisitor().visit(tree);
+
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.atDebug().log(String.format("Metapath AST:%n%s", ASTPrinter.instance().visit(expr)));
+        }
+        retval = new MetapathExpression(path, expr);
       } catch (Exception ex) {
         throw new MetapathException(String.format("unable to compile path '%s'", path), ex);
       }
@@ -90,12 +110,7 @@ public class MetapathExpression {
   @NotNull
   private final IExpression node;
 
-  @SuppressWarnings("null")
-  public MetapathExpression(@NotNull String path, @NotNull ParseTree tree) {
-    this(path, new BuildAstVisitor().visit(tree));
-  }
-
-  public MetapathExpression(@NotNull String path, @NotNull IExpression expr) {
+  protected MetapathExpression(@NotNull String path, @NotNull IExpression expr) {
     this.path = path;
     this.node = expr;
   }
@@ -111,65 +126,71 @@ public class MetapathExpression {
 
   @Override
   public String toString() {
-    return new ASTPrinter().visit(getASTNode());
+    return ASTPrinter.instance().visit(getASTNode());
   }
 
-  @SuppressWarnings("unchecked")
-  public <T> T evaluateAs(@NotNull INodeItem item, @NotNull ResultType resultType) {
-    ISequence<?> result = item.evaluateMetapath(this);
-    return (T) toResultType(result, resultType);
+  public <T> T evaluateAs(@NotNull INodeContext nodeContext, @NotNull ResultType resultType) {
+    ISequence<?> result = evaluate(nodeContext);
+    return toResultType(result, resultType);
   }
 
-  @SuppressWarnings("unchecked")
-  public <T> T evaluateAs(@NotNull INodeItem item, @NotNull DynamicContext context, @NotNull ResultType resultType) {
-    ISequence<?> result = item.evaluateMetapath(this, context);
-    return (T) toResultType(result, resultType);
+  public <T> T evaluateAs(@NotNull INodeContext nodeContext, @NotNull ResultType resultType,
+      @NotNull DynamicContext dynamicContext) {
+    ISequence<?> result = evaluate(nodeContext, dynamicContext);
+    return toResultType(result, resultType);
   }
 
-  protected Object toResultType(@NotNull ISequence<?> result, @NotNull ResultType resultType) {
-    Object retval;
+  /**
+   * Converts the provided {@code sequence} to the requested {@code resultType}.
+   * 
+   * @param <T>
+   *          the requested return value
+   * @param sequence
+   *          the sequence to convert
+   * @param resultType
+   *          the type of result to produce
+   * @return the converted result
+   * @throws TypeMetapathException
+   *           if the provided sequence is incompatible with the requested result type
+   */
+  protected <T> T toResultType(@NotNull ISequence<?> sequence, @NotNull ResultType resultType) {
+    Object result;
     switch (resultType) {
     case BOOLEAN:
-      retval = FnBoolean.fnBoolean(result).toBoolean();
+      result = FnBoolean.fnBoolean(sequence).toBoolean();
       break;
     case NODE:
-      retval = FunctionUtils.getFirstItem(result, false);
+      result = FunctionUtils.getFirstItem(sequence, true);
       break;
     case NUMBER:
-      INumericItem numeric = FunctionUtils.toNumeric(result, false);
-      retval = numeric == null ? null : numeric.asDecimal();
+      INumericItem numeric = FunctionUtils.toNumeric(sequence, true);
+      result = numeric == null ? null : numeric.asDecimal();
       break;
     case SEQUENCE:
-      retval = result;
+      result = sequence;
       break;
     case STRING:
-      IItem item = FunctionUtils.getFirstItem(result, false);
-      retval = item == null ? "" : FnData.fnDataItem(item).asString();
+      IItem item = FunctionUtils.getFirstItem(sequence, true);
+      result = item == null ? "" : FnData.fnDataItem(item).asString();
       break;
     default:
       throw new UnsupportedOperationException(String.format("unsupported result type '%s'", resultType.name()));
     }
+
+    @SuppressWarnings("unchecked")
+    T retval = (T) result;
     return retval;
   }
 
+  @SuppressWarnings("unchecked")
   @NotNull
-  public ISequence<?> evaluate(@NotNull INodeItem item) {
-    return item.evaluateMetapath(this);
+  public <T extends IItem> ISequence<? extends T> evaluate(@NotNull INodeContext nodeContext) {
+    return (ISequence<? extends T>)evaluate(nodeContext, new StaticContext().newDynamicContext());
   }
 
+  @SuppressWarnings("unchecked")
   @NotNull
-  public ISequence<?> evaluate(@NotNull INodeItem item, @NotNull DynamicContext context) {
-    return item.evaluateMetapath(this, context);
-  }
-
-  @NotNull
-  public IInstanceSet evaluateMetaschemaInstance(IMetaschemaContext context) {
-    IExpression node = getASTNode();
-    Class<? extends IItem> type = node.getStaticResultType();
-    if (!INodeItem.class.isAssignableFrom(type)) {
-      throw new UnsupportedOperationException(String
-          .format("The expression '%s' with static type '%s' is not a node expression", getPath(), type.getName()));
-    }
-    return new MetaschemaInstanceEvaluationVisitor().visit(node, context);
+  public <T extends IItem> ISequence<? extends T> evaluate(@NotNull INodeContext nodeContext, @NotNull DynamicContext context) {
+    return (@NotNull ISequence<T>) getASTNode().accept(context, nodeContext);
   }
 }

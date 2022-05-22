@@ -31,6 +31,11 @@ import org.jetbrains.annotations.NotNull;
 import javax.xml.namespace.QName;
 
 public interface IRootAssemblyDefinition extends IAssemblyDefinition {
+  
+  @NotNull
+  static <T extends IAssemblyDefinition> IRootAssemblyDefinition toRootAssemblyDefinition(@NotNull T rootDefinition) {
+    return new RootAssemblyDefinitionWrapper<IAssemblyDefinition>(rootDefinition);
+  }
 
   @NotNull
   @Override
@@ -49,5 +54,4 @@ public interface IRootAssemblyDefinition extends IAssemblyDefinition {
   default String getRootJsonName() {
     return IAssemblyDefinition.super.getRootJsonName();
   }
-
 }

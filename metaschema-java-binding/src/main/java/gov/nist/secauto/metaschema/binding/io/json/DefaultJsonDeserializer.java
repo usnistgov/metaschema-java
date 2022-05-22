@@ -32,10 +32,10 @@ import com.fasterxml.jackson.core.JsonParser;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.binding.io.DeserializationFeature;
-import gov.nist.secauto.metaschema.binding.metapath.item.IXdmFactory;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.RootAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
@@ -76,7 +76,6 @@ public class DefaultJsonDeserializer<CLASS>
     }
   }
 
-  @SuppressWarnings("null")
   @NotNull
   protected JsonParser newJsonParser(@NotNull Reader reader) throws IOException {
     JsonParser retval = getJsonFactory().createParser(reader);
@@ -85,6 +84,7 @@ public class DefaultJsonDeserializer<CLASS>
 
   }
 
+  @SuppressWarnings("null")
   @Override
   protected INodeItem deserializeToNodeItemInternal(@NotNull Reader reader, @NotNull URI documentUri)
       throws IOException {
@@ -108,14 +108,13 @@ public class DefaultJsonDeserializer<CLASS>
         // // advance past the end object
         // JsonToken end = parser.nextToken();
 
-        retval = IXdmFactory.INSTANCE.newDocumentNodeItem(root, value, documentUri);
+        retval = DefaultNodeItemFactory.instance().newDocumentNodeItem(root, value, documentUri);
       } else {
         @SuppressWarnings("unchecked")
         CLASS value = ObjectUtils.requireNonNull((CLASS) classBinding.readObject(parsingContext));
-        retval = IXdmFactory.INSTANCE.newAssemblyNodeItem(classBinding, value, documentUri);
+        retval = DefaultNodeItemFactory.instance().newAssemblyNodeItem(classBinding, value, documentUri);
       }
       return retval;
     }
   }
-
 }

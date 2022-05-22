@@ -26,17 +26,17 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Lexer;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -44,26 +44,51 @@ import java.util.stream.Stream;
  * a series of predicate expressions that filter the result of the evaluation.
  */
 public class Step implements IExpression {
+  public enum Axis {
+    SELF(metapath10Lexer.KW_SELF),
+    PARENT(metapath10Lexer.KW_PARENT),
+    ANCESTOR(metapath10Lexer.KW_ANCESTOR),
+    ANCESTOR_OR_SELF(metapath10Lexer.KW_ANCESTOR_OR_SELF),
+    CHILDREN(metapath10Lexer.KW_CHILD),
+    DESCENDANT(metapath10Lexer.KW_DESCENDANT),
+    DESCENDANT_OR_SELF(metapath10Lexer.KW_DESCENDANT_OR_SELF);
+
+    private final int keywordIndex;
+
+    private Axis(int keywordIndex) {
+      this.keywordIndex = keywordIndex;
+    }
+
+    public int getKeywordIndex() {
+      return keywordIndex;
+    }
+  }
+
+  @NotNull
+  private final Axis axis;
   @NotNull
   private final IExpression step;
   @NotNull
-  private final List<@NotNull IExpression> predicates;
-  @NotNull
-  private final Class<? extends IItem> staticResultType;
+  private final Class<@NotNull ? extends IItem> staticResultType;
 
   /**
    * Construct a new step expression.
    * 
-   * @param stepExpr
+   * @param axis
+   *          the axis to evaluate against
+   * @param step
    *          the sub-expression to evaluate before filtering with the predicates
-   * @param predicates
-   *          the expressions to apply as a filter
    */
   @SuppressWarnings("null")
-  public Step(@NotNull IExpression stepExpr, @NotNull List<@NotNull IExpression> predicates) {
-    this.step = stepExpr;
-    this.predicates = predicates;
+  public Step(@NotNull Axis axis, @NotNull IExpression step) {
+    this.axis = axis;
+    this.step = step;
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, List.of(step));
+  }
+
+  @NotNull
+  public Axis getAxis() {
+    return axis;
   }
 
   /**
@@ -76,36 +101,16 @@ public class Step implements IExpression {
     return step;
   }
 
-  /**
-   * Retrieve the list of predicates to filter with.
-   * 
-   * @return the list of predicates
-   */
-  @NotNull
-  public List<@NotNull IExpression> getPredicates() {
-    return predicates;
+
+  @Override
+  public Class<@NotNull ? extends IItem> getStaticResultType() {
+    return staticResultType;
   }
 
   @SuppressWarnings("null")
   @Override
   public List<@NotNull ? extends IExpression> getChildren() {
-    List<@NotNull IExpression> retval;
-    if (!predicates.isEmpty()) {
-      retval = Stream.concat(Stream.of(step), predicates.stream()).collect(Collectors.toList());
-    } else {
-      retval = Collections.singletonList(step);
-    }
-    return retval;
-  }
-
-  @Override
-  public Class<? extends IItem> getStaticResultType() {
-    return staticResultType;
-  }
-
-  @Override
-  public ISequence<?> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
-    return visitor.visitStep(this, context);
+    return Collections.singletonList(getStep());
   }
 
   @Override
@@ -113,8 +118,48 @@ public class Step implements IExpression {
     return visitor.visitStep(this, context);
   }
 
+  @SuppressWarnings("null")
   @Override
-  public String toString() {
-    return new ASTPrinter().visit(this);
+  public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
+    Stream<@NotNull ? extends INodeItem> items;
+    switch (getAxis()) {
+    case SELF:
+      items = Stream.of(context.getContextNodeItem());
+      break;
+    case ANCESTOR:
+      items = context.getContextNodeItem().ancestor();
+      break;
+    case ANCESTOR_OR_SELF:
+      items = context.getContextNodeItem().ancestorOrSelf();
+      break;
+    case CHILDREN:
+      items = context.getContextNodeItem().children();
+      break;
+    case DESCENDANT:
+      items = context.getContextNodeItem().descendant();
+      break;
+    case DESCENDANT_OR_SELF:
+      items = context.getContextNodeItem().descendantOrSelf();
+      break;
+    case PARENT:
+      items = Stream.ofNullable(context.getContextNodeItem().getParentNodeItem());
+      break;
+    default:
+      throw new UnsupportedOperationException(getAxis().name());
+    }
+
+    IExpression step = getStep();
+
+    return ISequence.of(items.flatMap(item -> {
+      ISequence<?> result = step.accept(dynamicContext, item);
+      return result.asStream();
+    }));
+  }
+  
+
+  @SuppressWarnings("null")
+  @Override
+  public String toASTString() {
+    return String.format("%s[axis=%s]", getClass().getName(), getAxis().name());
   }
 }

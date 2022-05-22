@@ -42,12 +42,28 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public final class CollectionUtil {
 
   private CollectionUtil() {
     // disable construction
+  }
+
+  /**
+   * Get an {@link Iterable} for the provided {@link Stream}.
+   * 
+   * @param <T>
+   *          the type to iterate on
+   * @param stream
+   *          the stream to iterate over
+   * @return the resulting iterable instance
+   */
+  @NotNull
+  public static <T> Iterable<T> toIterable(@NotNull Stream<T> stream) {
+    Objects.requireNonNull(stream, "stream");
+    return toIterable(stream.iterator());
   }
 
   /**

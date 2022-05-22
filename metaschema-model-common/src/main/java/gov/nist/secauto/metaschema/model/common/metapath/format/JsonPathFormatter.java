@@ -69,7 +69,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 // IFlagInstance jsonKeyFlagInstance = fieldDefinition.getJsonKeyFlagInstance();
 // if (jsonKeyFlagInstance != null) {
 // String keyFlagName = jsonKeyFlagInstance.getEffectiveName();
-// IFlagNodeItem flagNode = node.getFlagByName(keyFlagName);
+// IRequiredValueFlagNodeItem flagNode = node.getFlagByName(keyFlagName);
 // if (flagNode != null) {
 // retval = flagNode.toAtomicItem().asString();
 // }

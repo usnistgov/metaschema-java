@@ -85,7 +85,7 @@ public class DefaultConfiguration<T extends Enum<T> & IConfigurationFeature>
 
   @Override
   public Set<@NotNull T> getFeatureSet() {
-    return CollectionUtil.unmodifiableSet(featureSet);
+    return featureSet;
   }
 
   @Override

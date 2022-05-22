@@ -26,37 +26,131 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
+import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Addition
     extends AbstractArithmeticExpression<IAnyAtomicItem> {
 
-  @SuppressWarnings("null")
+  /**
+   * An expression that sums two atomic data items.
+   * 
+   * @param left
+   *          an expression whose result is summed
+   * @param right
+   *          an expression whose result is summed
+   */
   public Addition(@NotNull IExpression left, @NotNull IExpression right) {
     super(left, right, IAnyAtomicItem.class);
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Class<IAnyAtomicItem> getBaseResultType() {
+  public Class<@NotNull IAnyAtomicItem> getBaseResultType() {
     return IAnyAtomicItem.class;
   }
 
   @Override
-  public ISequence<? extends IAnyAtomicItem> accept(IExpressionEvaluationVisitor visitor,
-      INodeContext context) {
+  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitAddition(this, context);
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(@NotNull IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitAddition(this, context);
+  public ISequence<? extends IAnyAtomicItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    IAnyAtomicItem leftItem = getFirstDataItem(getLeft().accept(dynamicContext, context), true);
+    IAnyAtomicItem rightItem = getFirstDataItem(getRight().accept(dynamicContext, context), true);
+
+    return resultOrEmpty(leftItem, rightItem);
   }
 
+  /**
+   * Get the sum of two atomic items.
+   * 
+   * @param leftItem
+   *          the first item to sum
+   * @param rightItem
+   *          the second item to sum
+   * @return the sum of both items or an empty {@link ISequence} if either item is {@code null}
+   */
+  @NotNull
+  protected static ISequence<? extends IAnyAtomicItem> resultOrEmpty(@Nullable IAnyAtomicItem leftItem,
+      @Nullable IAnyAtomicItem rightItem) {
+    ISequence<? extends IAnyAtomicItem> retval;
+    if (leftItem == null || rightItem == null) {
+      retval = ISequence.empty();
+    } else {
+      IAnyAtomicItem result = sum(leftItem, rightItem);
+      retval = ISequence.of(result);
+    }
+    return retval;
+  }
+
+  /**
+   * Get the sum of two atomic items.
+   * 
+   * @param leftItem
+   *          the first item to sum
+   * @param rightItem
+   *          the second item to sum
+   * @return the sum of both items
+   */
+  @NotNull
+  public static IAnyAtomicItem sum(@NotNull IAnyAtomicItem leftItem,
+      @NotNull IAnyAtomicItem rightItem) {
+    IAnyAtomicItem retval = null;
+    if (leftItem instanceof IDateItem) {
+      IDateItem left = (IDateItem) leftItem;
+      if (rightItem instanceof IYearMonthDurationItem) {
+        retval = OperationFunctions.opAddYearMonthDurationToDate(left, (IYearMonthDurationItem) rightItem);
+      } else if (rightItem instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opAddDayTimeDurationToDate(left, (IDayTimeDurationItem) rightItem);
+      }
+    } else if (leftItem instanceof IDateTimeItem) {
+      IDateTimeItem left = (IDateTimeItem) leftItem;
+      if (rightItem instanceof IYearMonthDurationItem) {
+        retval = OperationFunctions.opAddYearMonthDurationToDateTime(left, (IYearMonthDurationItem) rightItem);
+      } else if (rightItem instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opAddDayTimeDurationToDateTime(left, (IDayTimeDurationItem) rightItem);
+      }
+    } else if (leftItem instanceof IYearMonthDurationItem) {
+      IYearMonthDurationItem left = (IYearMonthDurationItem) leftItem;
+      if (rightItem instanceof IDateItem) {
+        retval = OperationFunctions.opAddYearMonthDurationToDate((IDateItem) rightItem, left);
+      } else if (rightItem instanceof IDateTimeItem) {
+        retval = OperationFunctions.opAddYearMonthDurationToDateTime((IDateTimeItem) rightItem, left);
+      } else if (rightItem instanceof IYearMonthDurationItem) {
+        retval = OperationFunctions.opSubtractYearMonthDurations(left, (IYearMonthDurationItem) rightItem);
+      }
+    } else if (leftItem instanceof IDayTimeDurationItem) {
+      IDayTimeDurationItem left = (IDayTimeDurationItem) leftItem;
+      if (rightItem instanceof IDateItem) {
+        retval = OperationFunctions.opAddDayTimeDurationToDate((IDateItem) rightItem, left);
+      } else if (rightItem instanceof IDateTimeItem) {
+        retval = OperationFunctions.opAddDayTimeDurationToDateTime((IDateTimeItem) rightItem, left);
+      } else if (rightItem instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opAddDayTimeDurations(left, (IDayTimeDurationItem) rightItem);
+      }
+    } else {
+      // handle as numeric
+      INumericItem left = FunctionUtils.toNumeric(leftItem);
+      INumericItem right = FunctionUtils.toNumeric(rightItem);
+      retval = OperationFunctions.opNumericAdd(left, right);
+    }
+    if (retval == null) {
+      throw new UnsupportedOperationException(
+          String.format("The expression '%s + %s' is not supported", leftItem.getClass().getName(), rightItem.getClass().getName()));
+    }
+    return retval;
+  }
 }

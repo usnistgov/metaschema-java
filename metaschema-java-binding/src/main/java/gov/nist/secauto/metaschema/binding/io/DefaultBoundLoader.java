@@ -369,6 +369,7 @@ public class DefaultBoundLoader implements IBoundLoader {
     return retval;
   }
 
+  @SuppressWarnings({ "unchecked", "null" })
   @NotNull
   protected <CLASS> CLASS loadInternal(@NotNull Class<CLASS> clazz, @NotNull BufferedInputStream bis,
       @NotNull URI documentUri) throws IOException {
@@ -380,7 +381,7 @@ public class DefaultBoundLoader implements IBoundLoader {
 
     IDeserializer<CLASS> deserializer = getDeserializer(clazz, format, getConfiguration());
     INodeItem nodeItem = deserializer.deserializeToNodeItem(bis, documentUri);
-    return nodeItem.toBoundObject();
+    return (CLASS)nodeItem.getValue();
   }
 
   @NotNull

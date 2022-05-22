@@ -26,10 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
+import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -43,15 +44,20 @@ public class Negate
   @NotNull
   private final Class<? extends INumericItem> staticResultType;
 
+  /**
+   * Create an expression that gets the complement of a number.
+   * 
+   * @param expr
+   *          the expression whose item result will be complemented
+   */
   @SuppressWarnings("null")
   public Negate(@NotNull IExpression expr) {
     super(expr);
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(INumericItem.class, List.of(expr));
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Class<INumericItem> getBaseResultType() {
+  public Class<@NotNull INumericItem> getBaseResultType() {
     return INumericItem.class;
   }
 
@@ -61,12 +67,17 @@ public class Negate
   }
 
   @Override
-  public ISequence<? extends INumericItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitNegate(this, context);
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitNegate(this, context);
+  public ISequence<? extends INumericItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    INumericItem item = FunctionUtils.toNumericOrNull(
+        getFirstDataItem(getChild().accept(dynamicContext, context), true));
+    if (item != null) {
+      item = OperationFunctions.opNumericUnaryMinus(item);
+    }
+    return ISequence.of(item);
   }
 }

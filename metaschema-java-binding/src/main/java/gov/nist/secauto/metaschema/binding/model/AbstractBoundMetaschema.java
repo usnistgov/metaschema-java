@@ -56,6 +56,7 @@ public abstract class AbstractBoundMetaschema
   private Map<@NotNull String, IAssemblyClassBinding> assemblyDefinitions;
   private Map<@NotNull String, IFieldClassBinding> fieldDefinitions;
 
+  @NotNull
   public static IMetaschema createInstance(
       @NotNull Class<? extends AbstractBoundMetaschema> clazz,
       @NotNull IBindingContext bindingContext) {
@@ -65,6 +66,7 @@ public abstract class AbstractBoundMetaschema
           clazz.getCanonicalName(), Metaschema.class.getCanonicalName()));
     }
 
+    @SuppressWarnings("null")
     Metaschema metaschemaAnnotation = clazz.getAnnotation(Metaschema.class);
 
     List<@NotNull IMetaschema> importedMetaschemas;
@@ -80,6 +82,7 @@ public abstract class AbstractBoundMetaschema
     return createInstance(clazz, bindingContext, importedMetaschemas);
   }
 
+  @NotNull
   public static IMetaschema createInstance(
       @NotNull Class<? extends AbstractBoundMetaschema> clazz,
       @NotNull IBindingContext bindingContext,
@@ -105,6 +108,7 @@ public abstract class AbstractBoundMetaschema
     this.bindingContext = bindingContext;
   }
 
+  @NotNull
   protected IBindingContext getBindingContext() {
     return bindingContext;
   }

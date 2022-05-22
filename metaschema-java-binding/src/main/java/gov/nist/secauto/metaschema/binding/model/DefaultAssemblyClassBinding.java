@@ -41,9 +41,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
-import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
@@ -298,7 +296,7 @@ public class DefaultAssemblyClassBinding
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IFieldInstance> getFieldInstances() {
+  public Collection<@NotNull ? extends IBoundFieldInstance> getFieldInstances() {
     return getFieldInstanceMap().values();
   }
 
@@ -320,7 +318,7 @@ public class DefaultAssemblyClassBinding
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull Collection<@NotNull ? extends IAssemblyInstance> getAssemblyInstances() {
+  public @NotNull Collection<@NotNull ? extends IBoundAssemblyInstance> getAssemblyInstances() {
     return getAssemblyInstanceMap().values();
   }
 

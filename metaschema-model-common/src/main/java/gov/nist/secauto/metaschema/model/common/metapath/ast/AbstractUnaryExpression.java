@@ -34,7 +34,7 @@ import java.util.Objects;
 /**
  * An immutable expression with a single sub-expression.
  */
-public abstract class AbstractUnaryExpression implements IExpression {
+public abstract class AbstractUnaryExpression extends AbstractExpression {
   @NotNull
   private IExpression expr;
 
@@ -63,10 +63,5 @@ public abstract class AbstractUnaryExpression implements IExpression {
   @Override
   public List<@NotNull ? extends IExpression> getChildren() {
     return List.of(expr);
-  }
-
-  @Override
-  public String toString() {
-    return new ASTPrinter().visit(this);
   }
 }

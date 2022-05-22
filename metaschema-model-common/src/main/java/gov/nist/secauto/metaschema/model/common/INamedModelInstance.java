@@ -26,11 +26,25 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 public interface INamedModelInstance extends INamedInstance, IModelInstance {
   @Override
   INamedModelDefinition getDefinition();
+
+  /**
+   * Get the item values for the provided {@code instanceValue}. An instance may be singular or
+   * many valued.
+   * 
+   * @param instanceValue
+   *          the instance
+   * @return the item values or an empty collection if no item values exist
+   */
+  @NotNull
+  Collection<@NotNull ?> getItemValues(Object instanceValue);
 
   /**
    * Indicates if a flag's value can be used as a property name in the containing object in JSON who's

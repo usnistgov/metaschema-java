@@ -39,6 +39,7 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IRequiredValueNodeItem;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 
 import org.jetbrains.annotations.NotNull;
@@ -121,12 +122,13 @@ public interface IBindingContext {
    * 
    * @param clazz
    *          the class binding to load
-   * @return the associated class binding instance or {@code null} if the class is not bound
+   * @return the associated class binding instance
    * @throws NullPointerException
    *           if the provided class is {@code null}
    * @throws IllegalArgumentException
    *           if the provided class is not bound to a Metaschema assembly or field
    */
+  @NotNull
   IClassBinding getClassBinding(@NotNull Class<?> clazz);
 
   /**
@@ -236,7 +238,6 @@ public interface IBindingContext {
    *           if the provided class is not bound to a Metaschema assembly or field
    * @see MetapathExpression
    */
-  // TODO: add method to IAssemblyInstance, etc to do this instead
   INodeItem toNodeItem(@NotNull Object boundObject, @NotNull URI baseUri, boolean rootNode);
 
   /**

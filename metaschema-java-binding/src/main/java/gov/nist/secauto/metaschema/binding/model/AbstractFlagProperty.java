@@ -33,10 +33,7 @@ import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.binding.metapath.item.DefaultXdmFactory;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -62,11 +59,6 @@ abstract class AbstractFlagProperty
   @Override
   public IPropertyCollector newPropertyCollector() {
     return new SingletonPropertyCollector();
-  }
-
-  @Override
-  public INodeItem newNodeItem(@NotNull Object value, @NotNull IModelNodeItem parent) {
-    return DefaultXdmFactory.INSTANCE.newFlagNodeItem(this, value, parent);
   }
 
   @Override

@@ -38,8 +38,6 @@ import gov.nist.secauto.metaschema.binding.io.xml.DefaultXmlDeserializer;
 import gov.nist.secauto.metaschema.binding.io.xml.DefaultXmlSerializer;
 import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlDeserializer;
 import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlSerializer;
-import gov.nist.secauto.metaschema.binding.metapath.item.ConstraintContentValidator;
-import gov.nist.secauto.metaschema.binding.metapath.item.IXdmFactory;
 import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.model.DefaultAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.DefaultFieldClassBinding;
@@ -48,7 +46,12 @@ import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
+import gov.nist.secauto.metaschema.model.common.constraint.FindingCollectingConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
+import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
@@ -179,6 +182,7 @@ public class DefaultBindingContext implements IBindingContext {
   @Override
   public <CLASS> ISerializer<CLASS> newSerializer(@NotNull Format format, @NotNull Class<CLASS> clazz) {
     Objects.requireNonNull(format, "format");
+    @NotNull
     IAssemblyClassBinding classBinding = (IAssemblyClassBinding) getClassBinding(clazz);
 
     ISerializer<CLASS> retval;
@@ -206,9 +210,6 @@ public class DefaultBindingContext implements IBindingContext {
   @Override
   public <CLASS> IDeserializer<CLASS> newDeserializer(@NotNull Format format, @NotNull Class<CLASS> clazz) {
     IAssemblyClassBinding classBinding = (IAssemblyClassBinding) getClassBinding(clazz);
-    if (classBinding == null) {
-      throw new IllegalStateException(String.format("A binding for class '%s' was not found.", clazz.getName()));
-    }
 
     IDeserializer<CLASS> retval;
     switch (format) {
@@ -292,16 +293,18 @@ public class DefaultBindingContext implements IBindingContext {
   @Override
   public INodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode) {
     IClassBinding classBinding = getClassBinding(boundObject.getClass());
-    if (classBinding == null) {
-      throw new IllegalStateException(
-          String.format("A binding for class '%s' was not found.", boundObject.getClass().getName()));
-    }
-    return IXdmFactory.INSTANCE.newNodeItem(classBinding, boundObject, baseUri, rootNode);
+    return DefaultNodeItemFactory.instance().newNodeItem(classBinding, boundObject, baseUri, rootNode);
   }
 
   @Override
   public IValidationResult validate(@NotNull INodeItem nodeItem) {
-    return new ConstraintContentValidator(this).validate(nodeItem);
+    DynamicContext context = new StaticContext().newDynamicContext();
+    context.setDocumentLoader(newBoundLoader());
+    DefaultConstraintValidator validator = new DefaultConstraintValidator(context);
+    FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();
+    validator.setConstraintValidationHandler(handler);
+    validator.validate(nodeItem);
+    return handler;
   }
 
 }

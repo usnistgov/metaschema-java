@@ -26,15 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Union
     extends AbstractNAryExpression {
@@ -42,9 +43,16 @@ public class Union
   @NotNull
   private final Class<? extends IItem> staticResultType;
 
-  public Union(@NotNull List<@NotNull IExpression> children) {
-    super(children);
-    this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, children);
+  /**
+   * Create a new expression that gets the union of the results of evaluating the provided
+   * {@code expressions}.
+   * 
+   * @param expressions
+   *          the expressions to evaluate
+   */
+  public Union(@NotNull List<@NotNull IExpression> expressions) {
+    super(expressions);
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, expressions);
   }
 
   @Override
@@ -53,12 +61,18 @@ public class Union
   }
 
   @Override
-  public ISequence<? extends IItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitUnion(this, context);
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitUnion(this, context);
+  public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
+    @NotNull
+    Stream<@NotNull ? extends IItem> retval = ObjectUtils.notNull(getChildren().stream()
+        .flatMap(child -> {
+          ISequence<?> result = child.accept(dynamicContext, context);
+          return result.asStream();
+        }).distinct());
+    return ISequence.of(retval);
   }
 }

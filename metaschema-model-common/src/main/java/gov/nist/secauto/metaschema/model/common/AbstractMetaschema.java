@@ -83,7 +83,7 @@ public abstract class AbstractMetaschema
   }
 
   @Override
-  public @Nullable IFlagDefinition getExportedFlagDefinitionByName(String name) {
+  public IFlagDefinition getExportedFlagDefinitionByName(String name) {
     return getExportedFlagDefinitionMap().get(name);
   }
 

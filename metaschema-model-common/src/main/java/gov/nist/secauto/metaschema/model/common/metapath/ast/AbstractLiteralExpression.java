@@ -31,10 +31,17 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractLiteralExpression<RESULT_TYPE extends IAnyAtomicItem, VALUE>
+    extends AbstractExpression
     implements ILiteralExpression<RESULT_TYPE, VALUE> {
   @NotNull
   private final VALUE value;
 
+  /**
+   * Construct an expression that always returns the same literal value.
+   * 
+   * @param value
+   *          the literal value
+   */
   public AbstractLiteralExpression(@NotNull VALUE value) {
     this.value = value;
   }
@@ -48,10 +55,5 @@ public abstract class AbstractLiteralExpression<RESULT_TYPE extends IAnyAtomicIt
   @Override
   public String toASTString() {
     return String.format("%s[value=%s]", getClass().getName(), getValue().toString());
-  }
-
-  @Override
-  public String toString() {
-    return new ASTPrinter().visit(this);
   }
 }

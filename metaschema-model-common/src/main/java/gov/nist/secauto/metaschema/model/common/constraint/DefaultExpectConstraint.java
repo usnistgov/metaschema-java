@@ -103,7 +103,7 @@ public class DefaultExpectConstraint
       @NotNull
       String metapath = match.group(2);
       MetapathExpression expr = MetapathExpression.compile(metapath);
-      return expr.evaluateAs(item, context, MetapathExpression.ResultType.STRING);
+      return expr.evaluateAs(item, MetapathExpression.ResultType.STRING, context);
     });
   }
 

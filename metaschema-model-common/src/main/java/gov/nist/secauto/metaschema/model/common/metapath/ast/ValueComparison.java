@@ -26,29 +26,88 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ValueComparison
     extends AbstractComparison {
 
+  /**
+   * Create a new value comparison expression.
+   * 
+   * @param left
+   *          the expression to compare against
+   * @param operator
+   *          the comparison operator
+   * @param right
+   *          the expression to compare with
+   */
   public ValueComparison(@NotNull IExpression left, @NotNull Operator operator, @NotNull IExpression right) {
     super(left, operator, right);
   }
 
   @Override
-  public ISequence<? extends IBooleanItem> accept(IExpressionEvaluationVisitor visitor,
-      INodeContext context) {
+  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitValueComparison(this, context);
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitValueComparison(this, context);
+  public ISequence<? extends IBooleanItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    IAnyAtomicItem left = getFirstDataItem(getLeft().accept(dynamicContext, context), false);
+    IAnyAtomicItem right = getFirstDataItem(getRight().accept(dynamicContext, context), false);
+
+    return resultOrEmpty(left, right);
+  }
+
+  /**
+   * Compare the two atomic items.
+   * 
+   * @param leftItem
+   *          the first item to compare
+   * @param rightItem
+   *          the second item to compare
+   * @return a or an empty {@link ISequence} if either item is {@code null}
+   */
+  @NotNull
+  protected ISequence<? extends IBooleanItem> resultOrEmpty(@Nullable IAnyAtomicItem leftItem,
+      @Nullable IAnyAtomicItem rightItem) {
+    ISequence<? extends IBooleanItem> retval;
+    if (leftItem == null || rightItem == null) {
+      retval = ISequence.empty();
+    } else {
+      IBooleanItem result = valueCompairison(leftItem, getOperator(), rightItem);
+      retval = ISequence.of(result);
+    }
+    return retval;
+  }
+
+  /**
+   * Compare the two items using the provided {@code operator}.
+   * 
+   * @param leftItem
+   *          the first item to compare
+   * @param operator
+   *          the comparison operator
+   * @param rightItem
+   *          the second item to compare
+   * @return the result of the comparison
+   */
+  @NotNull
+  protected IBooleanItem valueCompairison(@NotNull IAnyAtomicItem leftItem, @NotNull Operator operator,
+      @NotNull IAnyAtomicItem rightItem) {
+    IBooleanItem retval;
+    try {
+      retval = compare(leftItem, operator, rightItem);
+    } catch (IllegalArgumentException ex) {
+      throw new UnsupportedOperationException(String.format("The value expression '%s %s %s' is not supported",
+          leftItem.getClass().getName(), operator.name().toLowerCase(), rightItem.getClass().getName()));
+    }
+    return retval;
   }
 }

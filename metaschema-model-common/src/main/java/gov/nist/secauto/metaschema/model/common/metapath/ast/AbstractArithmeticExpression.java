@@ -41,11 +41,12 @@ import java.util.List;
  *          the base result of evaluating the arithmetic expression
  */
 public abstract class AbstractArithmeticExpression<RESULT_TYPE extends IAnyAtomicItem>
-    extends AbstractBinaryExpression
+    extends AbstractBinaryExpression<IExpression, IExpression>
     implements IArithmeticExpression<RESULT_TYPE> {
 
   @NotNull
   private final Class<? extends RESULT_TYPE> staticResultType;
+  
 
   /**
    * Construct a new arithmetic expression.
@@ -59,7 +60,7 @@ public abstract class AbstractArithmeticExpression<RESULT_TYPE extends IAnyAtomi
    */
   @SuppressWarnings("null")
   public AbstractArithmeticExpression(@NotNull IExpression left, @NotNull IExpression right,
-      @NotNull Class<RESULT_TYPE> baseType) {
+      @NotNull Class<@NotNull RESULT_TYPE> baseType) {
     super(left, right);
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(baseType, List.of(left, right));
   }

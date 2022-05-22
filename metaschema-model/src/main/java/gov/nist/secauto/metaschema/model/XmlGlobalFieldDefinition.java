@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
+import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
@@ -139,7 +139,7 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
   }
 
   @Override
-  public INamedInstance getInlineInstance() {
+  public IFieldInstance getInlineInstance() {
     return null;
   }
 
@@ -260,5 +260,11 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
   @Override
   public MarkupMultiline getRemarks() {
     return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
+  }
+
+  @Override
+  public Object getFieldValue(@NotNull Object parentFieldValue) {
+    // there is no value
+    return null;
   }
 }

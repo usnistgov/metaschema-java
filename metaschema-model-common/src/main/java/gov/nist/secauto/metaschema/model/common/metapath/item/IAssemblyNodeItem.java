@@ -31,18 +31,16 @@ import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.net.URI;
+import java.util.stream.Stream;
 
 public interface IAssemblyNodeItem extends IModelNodeItem {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.ASSEMBLY;
   }
-
-  @Override
-  IAssemblyDefinition getDefinition();
-
-  @Override
-  IAssemblyInstance getInstance();
 
   @Override
   default IAssemblyNodeItem getContextNodeItem() {
@@ -52,6 +50,30 @@ public interface IAssemblyNodeItem extends IModelNodeItem {
   @Override
   default IAssemblyNodeItem getNodeItem() {
     return this;
+  }
+
+  @Override
+  default IAssemblyNodeItem getParentContentNodeItem() {
+    INodeItem parent = getParentNodeItem();
+    return parent instanceof IAssemblyNodeItem ? (IAssemblyNodeItem)parent : null;
+  }
+
+  @Override
+  IAssemblyDefinition getDefinition();
+
+  @Override
+  IAssemblyInstance getInstance();
+
+  @Override
+  @Nullable
+  default URI getBaseUri() {
+    INodeItem parent = getParentNodeItem();
+    return parent == null ? null : parent.getBaseUri();
+  }
+
+  @Override
+  default Stream<@NotNull ? extends INodeItem> children() {
+    return modelItems();
   }
 
   @Override

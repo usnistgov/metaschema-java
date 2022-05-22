@@ -29,9 +29,6 @@ package gov.nist.secauto.metaschema.model.common;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -75,6 +72,9 @@ public interface IAssemblyDefinition extends INamedModelDefinition, IModelContai
     return retval;
   }
 
+  @Override
+  IAssemblyInstance getInlineInstance();
+
   /**
    * Get the name used for the associated property in JSON/YAML.
    * 
@@ -108,10 +108,4 @@ public interface IAssemblyDefinition extends INamedModelDefinition, IModelContai
    */
   @NotNull
   List<@NotNull ? extends ICardinalityConstraint> getHasCardinalityConstraints();
-
-  @Override
-  @NotNull
-  default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {
-    return metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(IInstanceSet.newInstanceSet(this)));
-  }
 }
