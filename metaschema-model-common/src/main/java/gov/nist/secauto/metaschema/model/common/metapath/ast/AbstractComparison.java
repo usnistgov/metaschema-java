@@ -26,23 +26,52 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
+import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnNot;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 public abstract class AbstractComparison
-    extends AbstractBinaryExpression
+    extends AbstractBinaryExpression<IExpression, IExpression>
     implements IComparison {
 
   @NotNull
   private final Operator operator;
 
-  @SuppressWarnings("null")
+  /**
+   * Construct an expression that compares the result of the {@code right} expression with the result
+   * of the {@code left} expression using the specified {@code operator}.
+   * 
+   * @param left
+   *          the expression to compare against
+   * @param operator
+   *          the comparison operator
+   * @param right
+   *          the expression to compare with
+   */
   public AbstractComparison(@NotNull IExpression left, @NotNull Operator operator, @NotNull IExpression right) {
     super(left, right);
-    this.operator = Objects.requireNonNull(operator, "operator");
+    this.operator = ObjectUtils.requireNonNull(operator, "operator");
   }
 
+  /**
+   * Get the comparison operator.
+   * 
+   * @return the operator
+   */
   @NotNull
   public Operator getOperator() {
     return operator;
@@ -52,5 +81,280 @@ public abstract class AbstractComparison
   @Override
   public String toASTString() {
     return String.format("%s[operator=%s]", getClass().getName(), operator);
+  }
+
+  /**
+   * Compare the {@code right} item with the  {@code left} item using the specified {@code operator}.
+   * 
+   * @param left
+   *          the expression to compare against
+   * @param operator
+   *          the comparison operator
+   * @param right
+   *          the expression to compare with
+   * @return the comparison result
+   */
+  @NotNull
+  protected IBooleanItem compare(@NotNull IAnyAtomicItem left, @NotNull Operator operator,
+      @NotNull IAnyAtomicItem right) {
+    IBooleanItem retval;
+    if (left instanceof IStringItem || right instanceof IStringItem) {
+      switch (operator) {
+      case EQ:
+        retval = OperationFunctions.opNumericEqual(
+            ((IStringItem) left).compare((IStringItem) right),
+            IIntegerItem.ZERO);
+        break;
+      case GE:
+        retval = OperationFunctions.opNumericGreaterThan(
+            ((IStringItem) left).compare((IStringItem) right),
+            IIntegerItem.NEGATIVE_ONE);
+        break;
+      case GT:
+        retval = OperationFunctions.opNumericGreaterThan(
+            ((IStringItem) left).compare((IStringItem) right),
+            IIntegerItem.ZERO);
+        break;
+      case LE:
+        retval = OperationFunctions.opNumericLessThan(
+            ((IStringItem) left).compare((IStringItem) right),
+            IIntegerItem.ONE);
+        break;
+      case LT:
+        retval = OperationFunctions.opNumericLessThan(
+            ((IStringItem) left).compare((IStringItem) right),
+            IIntegerItem.ZERO);
+        break;
+      case NE:
+        retval = FnNot.fnNot(OperationFunctions.opNumericEqual(
+            ((IStringItem) left).compare((IStringItem) right),
+            IIntegerItem.ZERO));
+        break;
+      default:
+        throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
+      }
+    } else if (left instanceof INumericItem && right instanceof INumericItem) {
+      switch (operator) {
+      case EQ:
+        retval = OperationFunctions.opNumericEqual((INumericItem) left, (INumericItem) right);
+        break;
+      case GE: {
+        IBooleanItem gt = OperationFunctions.opNumericGreaterThan((INumericItem) left, (INumericItem) right);
+        IBooleanItem eq = OperationFunctions.opNumericEqual((INumericItem) left, (INumericItem) right);
+        retval = IBooleanItem.valueOf(gt.toBoolean() || eq.toBoolean());
+        break;
+      }
+      case GT:
+        retval = OperationFunctions.opNumericGreaterThan((INumericItem) left, (INumericItem) right);
+        break;
+      case LE: {
+        IBooleanItem lt = OperationFunctions.opNumericLessThan((INumericItem) left, (INumericItem) right);
+        IBooleanItem eq = OperationFunctions.opNumericEqual((INumericItem) left, (INumericItem) right);
+        retval = IBooleanItem.valueOf(lt.toBoolean() || eq.toBoolean());
+        break;
+      }
+      case LT:
+        retval = OperationFunctions.opNumericLessThan((INumericItem) left, (INumericItem) right);
+        break;
+      case NE:
+        retval = FnNot.fnNot(OperationFunctions.opNumericEqual((INumericItem) left, (INumericItem) right));
+        break;
+      default:
+        throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
+      }
+    } else if (left instanceof IBooleanItem && right instanceof IBooleanItem) {
+      switch (operator) {
+      case EQ:
+        retval = OperationFunctions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right);
+        break;
+      case GE: {
+        IBooleanItem gt = OperationFunctions.opBooleanGreaterThan((IBooleanItem) left, (IBooleanItem) right);
+        IBooleanItem eq = OperationFunctions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right);
+        retval = IBooleanItem.valueOf(gt.toBoolean() || eq.toBoolean());
+        break;
+      }
+      case GT:
+        retval = OperationFunctions.opBooleanGreaterThan((IBooleanItem) left, (IBooleanItem) right);
+        break;
+      case LE: {
+        IBooleanItem lt = OperationFunctions.opBooleanLessThan((IBooleanItem) left, (IBooleanItem) right);
+        IBooleanItem eq = OperationFunctions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right);
+        retval = IBooleanItem.valueOf(lt.toBoolean() || eq.toBoolean());
+        break;
+      }
+      case LT:
+        retval = OperationFunctions.opBooleanLessThan((IBooleanItem) left, (IBooleanItem) right);
+        break;
+      case NE:
+        retval = FnNot.fnNot(OperationFunctions.opBooleanEqual((IBooleanItem) left, (IBooleanItem) right));
+        break;
+      default:
+        throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
+      }
+    } else if (left instanceof IDateTimeItem && right instanceof IDateTimeItem) {
+      switch (operator) {
+      case EQ:
+        retval = OperationFunctions.opDateTimeEqual((IDateTimeItem) left, (IDateTimeItem) right);
+        break;
+      case GE: {
+        IBooleanItem gt = OperationFunctions.opDateTimeGreaterThan((IDateTimeItem) left, (IDateTimeItem) right);
+        IBooleanItem eq = OperationFunctions.opDateTimeEqual((IDateTimeItem) left, (IDateTimeItem) right);
+        retval = IBooleanItem.valueOf(gt.toBoolean() || eq.toBoolean());
+        break;
+      }
+      case GT:
+        retval = OperationFunctions.opDateTimeGreaterThan((IDateTimeItem) left, (IDateTimeItem) right);
+        break;
+      case LE: {
+        IBooleanItem lt = OperationFunctions.opDateTimeLessThan((IDateTimeItem) left, (IDateTimeItem) right);
+        IBooleanItem eq = OperationFunctions.opDateTimeEqual((IDateTimeItem) left, (IDateTimeItem) right);
+        retval = IBooleanItem.valueOf(lt.toBoolean() || eq.toBoolean());
+        break;
+      }
+      case LT:
+        retval = OperationFunctions.opDateTimeLessThan((IDateTimeItem) left, (IDateTimeItem) right);
+        break;
+      case NE:
+        retval = FnNot.fnNot(OperationFunctions.opDateTimeEqual((IDateTimeItem) left, (IDateTimeItem) right));
+        break;
+      default:
+        throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
+      }
+    } else if (left instanceof IDateItem && right instanceof IDateItem) {
+      switch (operator) {
+      case EQ:
+        retval = OperationFunctions.opDateEqual((IDateItem) left, (IDateItem) right);
+        break;
+      case GE: {
+        IBooleanItem gt = OperationFunctions.opDateGreaterThan((IDateItem) left, (IDateItem) right);
+        IBooleanItem eq = OperationFunctions.opDateEqual((IDateItem) left, (IDateItem) right);
+        retval = IBooleanItem.valueOf(gt.toBoolean() || eq.toBoolean());
+        break;
+      }
+      case GT:
+        retval = OperationFunctions.opDateGreaterThan((IDateItem) left, (IDateItem) right);
+        break;
+      case LE: {
+        IBooleanItem lt = OperationFunctions.opDateLessThan((IDateItem) left, (IDateItem) right);
+        IBooleanItem eq = OperationFunctions.opDateEqual((IDateItem) left, (IDateItem) right);
+        retval = IBooleanItem.valueOf(lt.toBoolean() || eq.toBoolean());
+        break;
+      }
+      case LT:
+        retval = OperationFunctions.opDateLessThan((IDateItem) left, (IDateItem) right);
+        break;
+      case NE:
+        retval = FnNot.fnNot(OperationFunctions.opDateEqual((IDateItem) left, (IDateItem) right));
+        break;
+      default:
+        throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
+      }
+    } else if (left instanceof IDurationItem && right instanceof IDurationItem) {
+      switch (operator) {
+      case EQ:
+        retval = OperationFunctions.opDurationEqual((IDurationItem) left, (IDurationItem) right);
+        break;
+      case GE: {
+        if (left instanceof IYearMonthDurationItem && right instanceof IYearMonthDurationItem) {
+          IBooleanItem gt = OperationFunctions.opYearMonthDurationGreaterThan((IYearMonthDurationItem) left,
+              (IYearMonthDurationItem) right);
+          IBooleanItem eq
+              = OperationFunctions.opDurationEqual((IYearMonthDurationItem) left, (IYearMonthDurationItem) right);
+          retval = IBooleanItem.valueOf(gt.toBoolean() || eq.toBoolean());
+        } else if (left instanceof IDayTimeDurationItem && right instanceof IDayTimeDurationItem) {
+          IBooleanItem gt = OperationFunctions.opDayTimeDurationGreaterThan((IDayTimeDurationItem) left,
+              (IDayTimeDurationItem) right);
+          IBooleanItem eq
+              = OperationFunctions.opDurationEqual((IDayTimeDurationItem) left, (IDayTimeDurationItem) right);
+          retval = IBooleanItem.valueOf(gt.toBoolean() || eq.toBoolean());
+        } else {
+          throw new IllegalArgumentException("the item types are not comparable");
+        }
+        break;
+      }
+      case GT:
+        if (left instanceof IYearMonthDurationItem && right instanceof IYearMonthDurationItem) {
+          retval = OperationFunctions.opYearMonthDurationGreaterThan((IYearMonthDurationItem) left,
+              (IYearMonthDurationItem) right);
+        } else if (left instanceof IDayTimeDurationItem && right instanceof IDayTimeDurationItem) {
+          retval = OperationFunctions.opDayTimeDurationGreaterThan((IDayTimeDurationItem) left,
+              (IDayTimeDurationItem) right);
+        } else {
+          throw new IllegalArgumentException("the item types are not comparable");
+        }
+        break;
+      case LE: {
+        if (left instanceof IYearMonthDurationItem && right instanceof IYearMonthDurationItem) {
+          IBooleanItem lt = OperationFunctions.opYearMonthDurationLessThan((IYearMonthDurationItem) left,
+              (IYearMonthDurationItem) right);
+          IBooleanItem eq
+              = OperationFunctions.opDurationEqual((IYearMonthDurationItem) left, (IYearMonthDurationItem) right);
+          retval = IBooleanItem.valueOf(lt.toBoolean() || eq.toBoolean());
+        } else if (left instanceof IDayTimeDurationItem && right instanceof IDayTimeDurationItem) {
+          IBooleanItem lt
+              = OperationFunctions.opDayTimeDurationLessThan((IDayTimeDurationItem) left, (IDayTimeDurationItem) right);
+          IBooleanItem eq
+              = OperationFunctions.opDurationEqual((IDayTimeDurationItem) left, (IDayTimeDurationItem) right);
+          retval = IBooleanItem.valueOf(lt.toBoolean() || eq.toBoolean());
+        } else {
+          throw new IllegalArgumentException("the item types are not comparable");
+        }
+        break;
+      }
+      case LT: {
+        if (left instanceof IYearMonthDurationItem && right instanceof IYearMonthDurationItem) {
+          retval = OperationFunctions.opYearMonthDurationLessThan((IYearMonthDurationItem) left,
+              (IYearMonthDurationItem) right);
+        } else if (left instanceof IDayTimeDurationItem && right instanceof IDayTimeDurationItem) {
+          retval
+              = OperationFunctions.opDayTimeDurationLessThan((IDayTimeDurationItem) left, (IDayTimeDurationItem) right);
+        } else {
+          throw new IllegalArgumentException("the item types are not comparable");
+        }
+        break;
+      }
+      case NE:
+        retval = FnNot.fnNot(OperationFunctions.opDurationEqual((IDurationItem) left, (IDurationItem) right));
+        break;
+      default:
+        throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
+      }
+    } else if (left instanceof IBase64BinaryItem && right instanceof IBase64BinaryItem) {
+      switch (operator) {
+      case EQ:
+        retval = OperationFunctions.opBase64BinaryEqual((IBase64BinaryItem) left, (IBase64BinaryItem) right);
+        break;
+      case GE: {
+        IBooleanItem gt
+            = OperationFunctions.opBase64BinaryGreaterThan((IBase64BinaryItem) left, (IBase64BinaryItem) right);
+        IBooleanItem eq = OperationFunctions.opBase64BinaryEqual((IBase64BinaryItem) left, (IBase64BinaryItem) right);
+        retval = IBooleanItem.valueOf(gt.toBoolean() || eq.toBoolean());
+        break;
+      }
+      case GT:
+        retval = OperationFunctions.opBase64BinaryGreaterThan((IBase64BinaryItem) left, (IBase64BinaryItem) right);
+        break;
+      case LE: {
+        IBooleanItem lt
+            = OperationFunctions.opBase64BinaryLessThan((IBase64BinaryItem) left, (IBase64BinaryItem) right);
+        IBooleanItem eq = OperationFunctions.opBase64BinaryEqual((IBase64BinaryItem) left, (IBase64BinaryItem) right);
+        retval = IBooleanItem.valueOf(lt.toBoolean() || eq.toBoolean());
+        break;
+      }
+      case LT:
+        retval = OperationFunctions.opBase64BinaryLessThan((IBase64BinaryItem) left, (IBase64BinaryItem) right);
+        break;
+      case NE:
+        retval = FnNot
+            .fnNot(OperationFunctions.opBase64BinaryEqual((IBase64BinaryItem) left, (IBase64BinaryItem) right));
+        break;
+      default:
+        throw new IllegalArgumentException(String.format("Unsupported operator '%s'", operator.name()));
+      }
+    } else {
+      throw new InvalidTypeMetapathException(String.format("invalid types for comparison: %s %s %s", left.getClass().getName(),
+          operator.name().toLowerCase(), right.getClass().getName()));
+    }
+    return retval;
   }
 }

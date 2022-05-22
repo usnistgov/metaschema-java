@@ -33,9 +33,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeFunctionMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAtomicValuedItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAtomicValuedItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -144,6 +144,10 @@ public final class FnData {
     } else if (item instanceof IAtomicValuedItem) {
       retval = ((IAtomicValuedItem) item).toAtomicItem();
     } else {
+      retval = null;
+    }
+
+    if (retval == null) {
       throw new InvalidTypeFunctionMetapathException(InvalidTypeFunctionMetapathException.NODE_HAS_NO_TYPED_VALUE,
           String.format("Item '%s' has no typed value", item.getClass().getName()));
     }

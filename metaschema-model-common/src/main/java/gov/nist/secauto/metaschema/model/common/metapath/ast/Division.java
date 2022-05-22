@@ -26,35 +26,117 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
+import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Division
     extends AbstractArithmeticExpression<IAnyAtomicItem> {
 
-  @SuppressWarnings("null")
-  public Division(@NotNull IExpression left, @NotNull IExpression right) {
-    super(left, right, IAnyAtomicItem.class);
+  /**
+   * An expression that gets the quotient result by dividing the dividend by the divisor.
+   * 
+   * @param dividend
+   *          the expression whose result is to be divided
+   * @param divisor
+   *          the expression whose result is to divide by
+   */
+  public Division(@NotNull IExpression dividend, @NotNull IExpression divisor) {
+    super(dividend, divisor, IAnyAtomicItem.class);
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Class<IAnyAtomicItem> getBaseResultType() {
+  public Class<@NotNull IAnyAtomicItem> getBaseResultType() {
     return IAnyAtomicItem.class;
-  }
-
-  @Override
-  public ISequence<? extends IAnyAtomicItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
-    return visitor.visitDivision(this, context);
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitDivision(this, context);
+  }
+
+  @Override
+  public ISequence<? extends IAnyAtomicItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    IAnyAtomicItem dividend = getFirstDataItem(getLeft().accept(dynamicContext, context), true);
+    IAnyAtomicItem divisor = getFirstDataItem(getRight().accept(dynamicContext, context), true);
+
+    return resultOrEmpty(dividend, divisor);
+  }
+
+  /**
+   * Get the quotient result by dividing the dividend by the divisor.
+   * 
+   * @param dividend
+   *          the item to be divided
+   * @param divisor
+   *          the item to divide by
+   * @return the quotient result or an empty {@link ISequence} if either item is {@code null}
+   */
+  @NotNull
+  protected static ISequence<? extends IAnyAtomicItem> resultOrEmpty(@Nullable IAnyAtomicItem dividend,
+      @Nullable IAnyAtomicItem divisor) {
+    ISequence<? extends IAnyAtomicItem> retval;
+    if (dividend == null || divisor == null) {
+      retval = ISequence.empty();
+    } else {
+      IAnyAtomicItem result = divide(dividend, divisor);
+      retval = ISequence.of(result);
+    }
+    return retval;
+  }
+
+  /**
+   * Get the quotient result by dividing the dividend by the divisor.
+   * 
+   * @param dividend
+   *          the item to be divided
+   * @param divisor
+   *          the item to divide by
+   * @return the quotient result
+   */
+  @NotNull
+  public static IAnyAtomicItem divide(@NotNull IAnyAtomicItem dividend,
+      @NotNull IAnyAtomicItem divisor) {
+    IAnyAtomicItem retval = null;
+    if (dividend instanceof IYearMonthDurationItem) {
+      IYearMonthDurationItem left = (IYearMonthDurationItem) dividend;
+      if (divisor instanceof INumericItem) {
+        retval = OperationFunctions.opDivideYearMonthDuration(left, (INumericItem) divisor);
+      } else if (divisor instanceof IYearMonthDurationItem) {
+        // TODO: find a way to support this
+      }
+    } else if (dividend instanceof IDayTimeDurationItem) {
+      IDayTimeDurationItem left = (IDayTimeDurationItem) dividend;
+      if (divisor instanceof INumericItem) {
+        retval = OperationFunctions.opDivideDayTimeDuration(left, (INumericItem) divisor);
+      } else if (divisor instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opDivideDayTimeDurationByDayTimeDuration(left, (IDayTimeDurationItem) divisor);
+      }
+    } else {
+      // handle as numeric
+      INumericItem left = FunctionUtils.toNumeric(dividend);
+      if (divisor instanceof INumericItem) {
+        INumericItem right = FunctionUtils.toNumeric(divisor);
+        retval = OperationFunctions.opNumericDivide(left, right);
+      } else if (divisor instanceof IYearMonthDurationItem) {
+        retval = OperationFunctions.opMultiplyYearMonthDuration((IYearMonthDurationItem) divisor, left);
+      } else if (divisor instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opMultiplyDayTimeDuration((IDayTimeDurationItem) divisor, left);
+      }
+    }
+    if (retval == null) {
+      throw new UnsupportedOperationException(
+          String.format("The expression '%s / %s' is not supported", dividend.getClass().getName(), divisor.getClass().getName()));
+    }
+    return retval;
   }
 }

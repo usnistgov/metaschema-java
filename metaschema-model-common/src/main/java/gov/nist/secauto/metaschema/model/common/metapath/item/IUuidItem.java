@@ -40,6 +40,12 @@ public interface IUuidItem extends IAnyAtomicItem {
     return new UuidItemImpl(value);
   }
 
+  @SuppressWarnings("null")
+  @NotNull
+  public static IUuidItem random() {
+    return valueOf(UUID.randomUUID());
+  }
+
   @NotNull
   public static IUuidItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.UUID.cast(item);

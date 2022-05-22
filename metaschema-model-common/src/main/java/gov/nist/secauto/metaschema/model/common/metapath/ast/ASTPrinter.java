@@ -26,47 +26,40 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.AbstractExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.ast.ASTPrinter.State;
 
-public class ASTPrinter
-    extends AbstractExpressionVisitor<String, Void> {
-  private int indentation = 0;
-  private int lastIndentation = 0;
-  private String indentationPadding = "";
+import org.jetbrains.annotations.NotNull;
 
-  private String getIndentation() {
-    if (indentation != lastIndentation) {
-      StringBuilder buffer = new StringBuilder();
-      for (int i = 0; i < indentation; i++) {
-        buffer.append("  ");
-      }
-      lastIndentation = indentation;
-      indentationPadding = buffer.toString();
-    }
-    return indentationPadding;
+public final class ASTPrinter
+    extends AbstractExpressionVisitor<String, @NotNull State> {
+  
+  private static final ASTPrinter SINGLETON = new ASTPrinter();
+
+  public static ASTPrinter instance() {
+    return SINGLETON;
   }
 
-  public String visit(IExpression expr) {
-    return expr.accept(this, null);
+  private ASTPrinter() {
+    // disable construction
   }
 
   @Override
-  protected String visitChildren(IExpression expr, Void context) {
-    indentation++;
+  protected String visitChildren(IExpression expr, State context) {
+    context.push();
     String result = super.visitChildren(expr, context);
-    indentation--;
+    context.pop();
     return result;
   }
 
   @Override
-  protected String aggregateResult(String result, String nextResult) {
+  protected String aggregateResult(String result, String nextResult, State context) {
     StringBuilder buffer = new StringBuilder();
     if (result != null) {
       buffer.append(result);
-      buffer.append(System.lineSeparator());
+//      buffer.append(" ar "+System.lineSeparator());
     }
 
-    buffer.append(getIndentation());
+    buffer.append(context.getIndentation());
     buffer.append(nextResult);
     return buffer.toString();
   }
@@ -76,9 +69,9 @@ public class ASTPrinter
     return "";
   }
 
-  protected String appendNode(IExpression expr, String childResult) {
+  protected String appendNode(IExpression expr, String childResult, State context) {
     StringBuilder buffer = new StringBuilder();
-    buffer.append(getIndentation());
+    buffer.append(context.getIndentation());
     buffer.append(expr.toASTString());
     if (childResult != null) {
       buffer.append(System.lineSeparator());
@@ -87,154 +80,200 @@ public class ASTPrinter
     return buffer.toString();
   }
 
-  @Override
-  public String visitAddition(Addition expr, Void context) {
-    return appendNode(expr, super.visitAddition(expr, context));
+  public String visit(IExpression retval) {
+    return visit(retval, new State());
   }
 
   @Override
-  public String visitAnd(And expr, Void context) {
-    return appendNode(expr, super.visitAnd(expr, context));
+  public String visitAddition(Addition expr, State context) {
+    return appendNode(expr, super.visitAddition(expr, context), context);
   }
 
   @Override
-  public String visitStep(Step expr, Void context) {
-    return appendNode(expr, super.visitStep(expr, context));
+  public String visitAnd(And expr, State context) {
+    return appendNode(expr, super.visitAnd(expr, context), context);
   }
 
   @Override
-  public String visitValueComparison(ValueComparison expr, Void context) {
-    return appendNode(expr, super.visitValueComparison(expr, context));
+  public String visitStep(Step expr, State context) {
+    return appendNode(expr, super.visitStep(expr, context), context);
   }
 
   @Override
-  public String visitGeneralComparison(GeneralComparison expr, Void context) {
-    return appendNode(expr, super.visitGeneralComparison(expr, context));
+  public String visitValueComparison(ValueComparison expr, State context) {
+    return appendNode(expr, super.visitValueComparison(expr, context), context);
   }
 
   @Override
-  public String visitContextItem(ContextItem expr, Void context) {
-    return appendNode(expr, super.visitContextItem(expr, context));
+  public String visitGeneralComparison(GeneralComparison expr, State context) {
+    return appendNode(expr, super.visitGeneralComparison(expr, context), context);
   }
 
   @Override
-  public String visitDecimalLiteral(DecimalLiteral expr, Void context) {
-    return appendNode(expr, super.visitDecimalLiteral(expr, context));
+  public String visitContextItem(ContextItem expr, State context) {
+    return appendNode(expr, super.visitContextItem(expr, context), context);
   }
 
   @Override
-  public String visitDivision(Division expr, Void context) {
-    return appendNode(expr, super.visitDivision(expr, context));
+  public String visitDecimalLiteral(DecimalLiteral expr, State context) {
+    return appendNode(expr, super.visitDecimalLiteral(expr, context), context);
   }
 
   @Override
-  public String visitFlag(Flag expr, Void context) {
-    return appendNode(expr, super.visitFlag(expr, context));
+  public String visitDivision(Division expr, State context) {
+    return appendNode(expr, super.visitDivision(expr, context), context);
   }
 
   @Override
-  public String visitFunctionCall(FunctionCall expr, Void context) {
-    return appendNode(expr, super.visitFunctionCall(expr, context));
+  public String visitExcept(@NotNull Except expr, State context) {
+    return appendNode(expr, super.visitExcept(expr, context), context);
   }
 
   @Override
-  public String visitIntegerDivision(IntegerDivision expr, Void context) {
-    return appendNode(expr, super.visitIntegerDivision(expr, context));
+  public String visitFlag(Flag expr, State context) {
+    return appendNode(expr, super.visitFlag(expr, context), context);
   }
 
   @Override
-  public String visitIntegerLiteral(IntegerLiteral expr, Void context) {
-    return appendNode(expr, super.visitIntegerLiteral(expr, context));
+  public String visitFunctionCall(FunctionCall expr, State context) {
+    return appendNode(expr, super.visitFunctionCall(expr, context), context);
   }
 
   @Override
-  public String visitMetapath(Metapath expr, Void context) {
-    return appendNode(expr, super.visitMetapath(expr, context));
+  public String visitIntegerDivision(IntegerDivision expr, State context) {
+    return appendNode(expr, super.visitIntegerDivision(expr, context), context);
   }
 
   @Override
-  public String visitMod(Mod expr, Void context) {
-    return appendNode(expr, super.visitMod(expr, context));
+  public String visitIntegerLiteral(IntegerLiteral expr, State context) {
+    return appendNode(expr, super.visitIntegerLiteral(expr, context), context);
   }
 
   @Override
-  public String visitModelInstance(ModelInstance expr, Void context) {
-    return appendNode(expr, super.visitModelInstance(expr, context));
+  public String visitIntersect(@NotNull Intersect expr, State context) {
+    return appendNode(expr, super.visitIntersect(expr, context), context);
   }
 
   @Override
-  public String visitMultiplication(Multiplication expr, Void context) {
-    return appendNode(expr, super.visitMultiplication(expr, context));
+  public String visitMetapath(Metapath expr, State context) {
+    return appendNode(expr, super.visitMetapath(expr, context), context);
   }
 
   @Override
-  public String visitName(Name expr, Void context) {
-    return appendNode(expr, super.visitName(expr, context));
+  public String visitMod(Mod expr, State context) {
+    return appendNode(expr, super.visitMod(expr, context), context);
   }
 
   @Override
-  public String visitNegate(Negate expr, Void context) {
-    return appendNode(expr, super.visitNegate(expr, context));
+  public String visitModelInstance(ModelInstance expr, State context) {
+    return appendNode(expr, super.visitModelInstance(expr, context), context);
   }
 
   @Override
-  public String visitOr(Or expr, Void context) {
-    return appendNode(expr, super.visitOr(expr, context));
+  public String visitMultiplication(Multiplication expr, State context) {
+    return appendNode(expr, super.visitMultiplication(expr, context), context);
   }
 
   @Override
-  public String visitParenthesizedExpression(ParenthesizedExpression expr, Void context) {
-    return appendNode(expr, super.visitParenthesizedExpression(expr, context));
+  public String visitName(Name expr, State context) {
+    return appendNode(expr, super.visitName(expr, context), context);
   }
 
   @Override
-  public String visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr, Void context) {
-    return appendNode(expr, super.visitRelativeDoubleSlashPath(expr, context));
+  public String visitNegate(Negate expr, State context) {
+    return appendNode(expr, super.visitNegate(expr, context), context);
   }
 
   @Override
-  public String visitRelativeSlashPath(RelativeSlashPath expr, Void context) {
-    return appendNode(expr, super.visitRelativeSlashPath(expr, context));
+  public String visitOr(Or expr, State context) {
+    return appendNode(expr, super.visitOr(expr, context), context);
   }
 
   @Override
-  public String visitRootDoubleSlashPath(RootDoubleSlashPath expr, Void context) {
-    return appendNode(expr, super.visitRootDoubleSlashPath(expr, context));
+  public String visitParentItem(ParentItem expr, State context) {
+    return appendNode(expr, super.visitParentItem(expr, context), context);
   }
 
   @Override
-  public String visitRootSlashOnlyPath(RootSlashOnlyPath expr, Void context) {
-    return appendNode(expr, super.visitRootSlashOnlyPath(expr, context));
+  public String visitPredicate(@NotNull Predicate expr, State context) {
+    return appendNode(expr, super.visitPredicate(expr, context), context);
   }
 
   @Override
-  public String visitRootSlashPath(RootSlashPath expr, Void context) {
-    return appendNode(expr, super.visitRootSlashPath(expr, context));
+  public String visitRelativeDoubleSlashPath(RelativeDoubleSlashPath expr, State context) {
+    return appendNode(expr, super.visitRelativeDoubleSlashPath(expr, context), context);
   }
 
   @Override
-  public String visitStringConcat(StringConcat expr, Void context) {
-    return appendNode(expr, super.visitStringConcat(expr, context));
+  public String visitRelativeSlashPath(RelativeSlashPath expr, State context) {
+    return appendNode(expr, super.visitRelativeSlashPath(expr, context), context);
   }
 
   @Override
-  public String visitStringLiteral(StringLiteral expr, Void context) {
-    return appendNode(expr, super.visitStringLiteral(expr, context));
+  public String visitRootDoubleSlashPath(RootDoubleSlashPath expr, State context) {
+    return appendNode(expr, super.visitRootDoubleSlashPath(expr, context), context);
   }
 
   @Override
-  public String visitSubtraction(Subtraction expr, Void context) {
-    return appendNode(expr, super.visitSubtraction(expr, context));
+  public String visitRootSlashOnlyPath(RootSlashOnlyPath expr, State context) {
+    return appendNode(expr, super.visitRootSlashOnlyPath(expr, context), context);
   }
 
   @Override
-  public String visitUnion(Union expr, Void context) {
-    return appendNode(expr, super.visitUnion(expr, context));
+  public String visitRootSlashPath(RootSlashPath expr, State context) {
+    return appendNode(expr, super.visitRootSlashPath(expr, context), context);
   }
 
   @Override
-  public String visitWildcard(Wildcard expr, Void context) {
-    return appendNode(expr, super.visitWildcard(expr, context));
+  public String visitStringConcat(StringConcat expr, State context) {
+    return appendNode(expr, super.visitStringConcat(expr, context), context);
   }
 
+  @Override
+  public String visitStringLiteral(StringLiteral expr, State context) {
+    return appendNode(expr, super.visitStringLiteral(expr, context), context);
+  }
+
+  @Override
+  public String visitSubtraction(Subtraction expr, State context) {
+    return appendNode(expr, super.visitSubtraction(expr, context), context);
+  }
+
+  @Override
+  public String visitUnion(Union expr, State context) {
+    return appendNode(expr, super.visitUnion(expr, context), context);
+  }
+
+  @Override
+  public String visitWildcard(Wildcard expr, State context) {
+    return appendNode(expr, super.visitWildcard(expr, context), context);
+  }
+  
+  static class State {
+    private int indentation = 0;
+    private int lastIndentation = 0;
+    private String indentationPadding = "";
+    
+    public String getIndentation() {
+      if (indentation != lastIndentation) {
+        StringBuilder buffer = new StringBuilder();
+        for (int i = 0; i < indentation; i++) {
+          buffer.append("  ");
+        }
+        lastIndentation = indentation;
+        indentationPadding = buffer.toString();
+      }
+      return indentationPadding;
+    }
+
+    public State push() {
+      indentation++;
+      return this;
+    }
+
+    public State pop() {
+      indentation--;
+      return this;
+    }
+  }
 }

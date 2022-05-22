@@ -31,13 +31,15 @@ import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-public interface IFlagNodeItem extends IAtomicValuedNodeItem {
+public interface IFlagNodeItem extends INodeItem, IAtomicValuedItem {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.FLAG;
@@ -54,17 +56,31 @@ public interface IFlagNodeItem extends IAtomicValuedNodeItem {
   }
 
   @Override
-  @NotNull
-  IModelNodeItem getParentContentNodeItem();
+  default IModelNodeItem getParentContentNodeItem() {
+    return getParentNodeItem();
+  }
 
   @Override
   IModelNodeItem getParentNodeItem();
+
+  @SuppressWarnings("null")
+  @Override
+  default Stream<@NotNull ? extends INodeItem> children() {
+    return Stream.empty();
+  }
 
   @Override
   IFlagDefinition getDefinition();
 
   @Override
   IFlagInstance getInstance();
+
+  @Override
+  @Nullable
+  default URI getBaseUri() {
+    INodeItem parent = getParentNodeItem();
+    return parent == null ? null : parent.getBaseUri();
+  }
 
   /**
    * Flags do not have flag items. This call should return an empty collection.
@@ -90,7 +106,7 @@ public interface IFlagNodeItem extends IAtomicValuedNodeItem {
    */
   @SuppressWarnings("null")
   @Override
-  default @NotNull Stream<? extends IFlagNodeItem> flags() {
+  default @NotNull Stream<@NotNull ? extends IFlagNodeItem> flags() {
     // a flag does not have flags
     return Stream.empty();
   }
@@ -121,7 +137,7 @@ public interface IFlagNodeItem extends IAtomicValuedNodeItem {
   @SuppressWarnings("null")
   @NotNull
   @Override
-  default Stream<? extends IModelNodeItem> modelItems() {
+  default Stream<@NotNull ? extends IModelNodeItem> modelItems() {
     // a flag does not have model items
     return Stream.empty();
   }

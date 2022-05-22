@@ -37,11 +37,11 @@ public class InvalidTypeMetapathException
   private static final long serialVersionUID = 1L;
 
   public InvalidTypeMetapathException(IItem item, Throwable cause) {
-    super(TypeMetapathException.INVALID_TYPE_ERROR, String.format("Invalid data type '%s'", item.getItemName()), cause);
+    super(TypeMetapathException.INVALID_TYPE_ERROR, String.format("Invalid data type '%s'", item.getClass().getName()), cause);
   }
 
   public InvalidTypeMetapathException(IItem item) {
-    super(TypeMetapathException.INVALID_TYPE_ERROR, String.format("Invalid data type '%s'", item.getItemName()));
+    super(TypeMetapathException.INVALID_TYPE_ERROR, String.format("Invalid data type '%s'", item.getClass().getName()));
   }
 
   public InvalidTypeMetapathException(String message, Throwable cause) {

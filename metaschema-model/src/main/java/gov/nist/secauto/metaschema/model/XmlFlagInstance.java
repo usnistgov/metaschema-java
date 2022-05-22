@@ -31,12 +31,15 @@ import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IRequiredValueModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.FlagDocument;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.Collections;
 
 class XmlFlagInstance
     extends AbstractFlagInstance {
@@ -110,7 +113,8 @@ class XmlFlagInstance
   }
 
   @Override
-  public INodeItem newNodeItem(@NotNull Object value, @NotNull IModelNodeItem parent) {
-    throw new UnsupportedOperationException("A bound object is not available");
+  public Object getValue(@NotNull Object parentValue) {
+    // there is no value
+    return null;
   }
 }

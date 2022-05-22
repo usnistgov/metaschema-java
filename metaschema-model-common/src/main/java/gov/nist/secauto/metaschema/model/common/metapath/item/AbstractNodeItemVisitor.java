@@ -65,13 +65,13 @@ public abstract class AbstractNodeItemVisitor<RESULT, CONTEXT> implements INodeI
   }
 
   @SuppressWarnings("unused")
-  protected boolean shouldVisitNextChild(@NotNull IFlagNodeItem item, RESULT result, CONTEXT context) {
+  protected boolean shouldVisitNextChild(@NotNull INodeItem item, RESULT result, CONTEXT context) {
     // this is the default behavior, which can be overridden
     return true;
   }
 
   @SuppressWarnings("unused")
-  protected boolean shouldVisitNextChild(@NotNull IModelNodeItem item, RESULT result, CONTEXT context) {
+  protected boolean shouldVisitNextChild(@NotNull IRequiredValueModelNodeItem item, RESULT result, CONTEXT context) {
     // this is the default behavior, which can be overridden
     return true;
   }
@@ -82,7 +82,7 @@ public abstract class AbstractNodeItemVisitor<RESULT, CONTEXT> implements INodeI
     return childResult;
   }
 
-  public RESULT visit(@NotNull INodeItem item, CONTEXT context) {
+  public RESULT visit(@NotNull INodeItemVisitable item, CONTEXT context) {
     return item.accept(this, context);
   }
 

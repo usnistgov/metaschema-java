@@ -26,11 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -45,24 +44,23 @@ public class Wildcard implements IExpression {
     return Collections.emptyList();
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Class<IStringItem> getBaseResultType() {
-    return IStringItem.class;
+  public Class<@NotNull INodeItem> getBaseResultType() {
+    return INodeItem.class;
   }
 
   @Override
-  public Class<IStringItem> getStaticResultType() {
+  public Class<@NotNull INodeItem> getStaticResultType() {
     return getBaseResultType();
-  }
-
-  @Override
-  public ISequence<? extends IStringItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
-    throw new UnsupportedOperationException();
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitWildcard(this, context);
+  }
+
+  @Override
+  public ISequence<? extends INodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    return ISequence.of(context.getContextNodeItem());
   }
 }

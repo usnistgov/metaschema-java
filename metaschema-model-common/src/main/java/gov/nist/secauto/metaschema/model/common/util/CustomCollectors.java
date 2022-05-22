@@ -29,13 +29,16 @@ package gov.nist.secauto.metaschema.model.common.util;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class CustomCollectors {
   private CustomCollectors() {
@@ -62,13 +65,73 @@ public final class CustomCollectors {
           list.get(last));
     };
   }
+  
+
+  /**
+   * Produce a new stream with duplicates removed based on the provided {@code keyMapper}. When a
+   * duplicate key is encountered, the second item is used. The original sequencing is preserved if
+   * the input stream is sequential.
+   * 
+   * @param <V>
+   *          the item value for the streams
+   * @param <K>
+   *          the key type
+   * @param stream
+   *          the stream to reduce
+   * @param keyMapper
+   *          the key function to use to find unique items
+   * @return a new stream
+   */
+  public static <V, K> Stream<V> distinctByKey(
+      @NotNull Stream<V> stream,
+      @NotNull Function<? super V, ? extends K> keyMapper) {
+    return distinctByKey(stream, keyMapper, (key, value1, value2) -> value2);
+  }
+
+  /**
+   * Produce a new stream with duplicates removed based on the provided {@code keyMapper}. When a
+   * duplicate key is encountered, the provided {@code duplicateHandler} is used to determine which
+   * item to keep. The original sequencing is preserved if the input stream is sequential.
+   * 
+   * @param <V>
+   *          the item value for the streams
+   * @param <K>
+   *          the key type
+   * @param stream
+   *          the stream to reduce
+   * @param keyMapper
+   *          the key function to use to find unique items
+   * @param duplicateHander used to determine which of two duplicates to keep
+   * @return a new stream
+   */
+  public static <V, K> Stream<V> distinctByKey(
+      @NotNull Stream<V> stream,
+      @NotNull Function<? super V, ? extends K> keyMapper,
+      @NotNull DuplicateHandler<K, V> duplicateHander) {
+    Map<K, V> uniqueRoles = stream
+        .collect(CustomCollectors.toMap(
+            keyMapper,
+            Function.identity(),
+            duplicateHander,
+            LinkedHashMap::new));
+    return uniqueRoles.values().stream();
+  }
 
   public static <T, K, V> Collector<T, ?, Map<K, V>> toMap(
       @NotNull Function<? super T, ? extends K> keyMapper,
       @NotNull Function<? super T, ? extends V> valueMapper,
       @NotNull DuplicateHandler<K, V> duplicateHander) {
+    return toMap(keyMapper, valueMapper, duplicateHander, HashMap::new);
+  }
+
+  public static <T, K, V, M extends Map<K, V>> Collector<T, ?, M> toMap(
+      @NotNull Function<? super T, ? extends K> keyMapper,
+      @NotNull Function<? super T, ? extends V> valueMapper,
+      @NotNull DuplicateHandler<K, V> duplicateHander,
+      Supplier<M> supplier
+      ) {
     return Collector.of(
-        HashMap::new,
+        supplier,
         (map, item) -> {
           K key = keyMapper.apply(item);
           V value = Objects.requireNonNull(valueMapper.apply(item));

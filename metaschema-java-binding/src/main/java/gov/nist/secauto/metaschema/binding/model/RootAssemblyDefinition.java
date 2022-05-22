@@ -38,22 +38,7 @@ import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
-import gov.nist.secauto.metaschema.model.common.IFieldInstance;
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.INamedInstance;
-import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.RootAssemblyDefinitionWrapper;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
@@ -78,20 +63,12 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 public class RootAssemblyDefinition
+    extends RootAssemblyDefinitionWrapper<IAssemblyClassBinding>
     implements IRootAssemblyClassBinding {
   private static final Logger LOGGER = LogManager.getLogger(RootAssemblyDefinition.class);
-  private final IAssemblyClassBinding rootDefinition;
 
   public RootAssemblyDefinition(@NotNull IAssemblyClassBinding rootDefinition) {
-    if (!rootDefinition.isRoot()) {
-      throw new IllegalArgumentException(
-          "Provided definition is not a root assembly: " + rootDefinition.toCoordinates());
-    }
-    this.rootDefinition = rootDefinition;
-  }
-
-  protected IAssemblyClassBinding getRootDefinition() {
-    return rootDefinition;
+    super(rootDefinition);
   }
 
   @Override
@@ -151,55 +128,13 @@ public class RootAssemblyDefinition
   }
 
   @Override
-  public boolean isInline() {
-    return false;
+  public IBoundFlagInstance getFlagInstanceByName(String name) {
+    return getRootDefinition().getFlagInstanceByName(name);
   }
 
   @Override
-  public INamedInstance getInlineInstance() {
-    // always null, since this is a root
-    return null;
-  }
-
-  @Override
-  public ModuleScopeEnum getModuleScope() {
-    return ModuleScopeEnum.INHERITED;
-  }
-
-  @Override
-  public String getFormalName() {
-    return getRootDefinition().getFormalName();
-  }
-
-  @Override
-  public MarkupLine getDescription() {
-    return getRootDefinition().getDescription();
-  }
-
-  @Override
-  public String getName() {
-    return getRootDefinition().getName();
-  }
-
-  @Override
-  public String getUseName() {
-    return getRootDefinition().getUseName();
-  }
-
-  @Override
-  public MarkupMultiline getRemarks() {
-    return getRootDefinition().getRemarks();
-  }
-
-  @Override
-  public IMetaschema getContainingMetaschema() {
-    return getRootDefinition().getContainingMetaschema();
-  }
-
-  @Override
-  public boolean hasJsonKey() {
-    // always null, since this is a root
-    return false;
+  public Collection<@NotNull ? extends IBoundFlagInstance> getFlagInstances() {
+    return getRootDefinition().getFlagInstances();
   }
 
   @Override
@@ -218,17 +153,7 @@ public class RootAssemblyDefinition
   }
 
   @Override
-  public IBoundFlagInstance getFlagInstanceByName(String name) {
-    return getRootDefinition().getFlagInstanceByName(name);
-  }
-
-  @Override
-  public Collection<@NotNull ? extends IBoundFlagInstance> getFlagInstances() {
-    return getRootDefinition().getFlagInstances();
-  }
-
-  @Override
-  public Collection<@NotNull ? extends IFieldInstance> getFieldInstances() {
+  public Collection<@NotNull ? extends IBoundFieldInstance> getFieldInstances() {
     return getRootDefinition().getFieldInstances();
   }
 
@@ -238,70 +163,13 @@ public class RootAssemblyDefinition
   }
 
   @Override
-  public Collection<@NotNull ? extends IAssemblyInstance> getAssemblyInstances() {
+  public Collection<@NotNull ? extends IBoundAssemblyInstance> getAssemblyInstances() {
     return getRootDefinition().getAssemblyInstances();
   }
 
   @Override
   public IBoundAssemblyInstance getAssemblyInstanceByName(String name) {
     return getRootDefinition().getAssemblyInstanceByName(name);
-  }
-
-  @Override
-  public List<@NotNull ? extends IChoiceInstance> getChoiceInstances() {
-    return getRootDefinition().getChoiceInstances();
-  }
-
-  @Override
-  public boolean isRoot() {
-    return true;
-  }
-
-  @SuppressWarnings("null")
-  @NotNull
-  @Override
-  public String getRootName() {
-    return getRootDefinition().getRootName();
-  }
-
-  @Override
-  public List<@NotNull ? extends IConstraint> getConstraints() {
-    return getRootDefinition().getConstraints();
-  }
-
-  @Override
-  public List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
-    return getRootDefinition().getAllowedValuesContraints();
-  }
-
-  @Override
-  public List<@NotNull ? extends IMatchesConstraint> getMatchesConstraints() {
-    return getRootDefinition().getMatchesConstraints();
-  }
-
-  @Override
-  public List<@NotNull ? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-    return getRootDefinition().getIndexHasKeyConstraints();
-  }
-
-  @Override
-  public List<@NotNull ? extends IExpectConstraint> getExpectConstraints() {
-    return getRootDefinition().getExpectConstraints();
-  }
-
-  @Override
-  public List<@NotNull ? extends IIndexConstraint> getIndexConstraints() {
-    return getRootDefinition().getIndexConstraints();
-  }
-
-  @Override
-  public List<@NotNull ? extends IUniqueConstraint> getUniqueConstraints() {
-    return getRootDefinition().getUniqueConstraints();
-  }
-
-  @Override
-  public List<@NotNull ? extends ICardinalityConstraint> getHasCardinalityConstraints() {
-    return getRootDefinition().getHasCardinalityConstraints();
   }
 
   // TODO: this is unused, remove it

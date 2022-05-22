@@ -26,14 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface IFieldDefinition extends INamedValuedDefinition, INamedModelDefinition, IField {
+  @Override
+  IFieldInstance getInlineInstance();
+
   /**
    * Retrieves the key to use as the field name for this field's value in JSON.
    * 
@@ -85,9 +84,12 @@ public interface IFieldDefinition extends INamedValuedDefinition, INamedModelDef
    */
   boolean isCollapsible();
 
-  @Override
-  @NotNull
-  default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {
-    return metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(IInstanceSet.newInstanceSet(this)));
-  }
+  /**
+   * Get the value of the field's value from the field item object.
+   * 
+   * @param item
+   *          the field item
+   * @return the field's value or {@code null} if it has no value
+   */
+  Object getFieldValue(@NotNull Object item);
 }

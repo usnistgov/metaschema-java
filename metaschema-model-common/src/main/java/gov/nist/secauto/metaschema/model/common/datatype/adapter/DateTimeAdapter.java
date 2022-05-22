@@ -110,7 +110,7 @@ public class DateTimeAdapter
       retval = super.castInternal(item);
     } else {
       throw new InvalidValueForCastFunctionMetapathException(
-          String.format("unsupported item type '%s'", item.getItemName()));
+          String.format("unsupported item type '%s'", item.getClass().getName()));
     }
     return retval;
   }

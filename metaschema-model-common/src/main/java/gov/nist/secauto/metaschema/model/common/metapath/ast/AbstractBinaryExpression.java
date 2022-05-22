@@ -33,12 +33,18 @@ import java.util.Objects;
 
 /**
  * An immutable representation of an {@link IExpression} that has two sub-expression children.
+ * 
+ * @param <L>
+ *          the type of the left expression
+ * @param <R>
+ *          the type of the right expression
  */
-public abstract class AbstractBinaryExpression implements IExpression {
+public abstract class AbstractBinaryExpression<L extends IExpression, R extends IExpression>
+    extends AbstractExpression {
   @NotNull
-  private final IExpression left;
+  private final L left;
   @NotNull
-  private final IExpression right;
+  private final R right;
 
   /**
    * Construct a new binary expression.
@@ -49,7 +55,7 @@ public abstract class AbstractBinaryExpression implements IExpression {
    *          the second sub-expression to evaluate
    */
   @SuppressWarnings("null")
-  public AbstractBinaryExpression(@NotNull IExpression left, @NotNull IExpression right) {
+  public AbstractBinaryExpression(@NotNull L left, @NotNull R right) {
     this.left = Objects.requireNonNull(left);
     this.right = Objects.requireNonNull(right);
   }
@@ -60,7 +66,7 @@ public abstract class AbstractBinaryExpression implements IExpression {
    * @return the first sub-expression
    */
   @NotNull
-  public IExpression getLeft() {
+  public L getLeft() {
     return left;
   }
 
@@ -70,7 +76,7 @@ public abstract class AbstractBinaryExpression implements IExpression {
    * @return the second sub-expression
    */
   @NotNull
-  public IExpression getRight() {
+  public R getRight() {
     return right;
   }
 
@@ -78,10 +84,5 @@ public abstract class AbstractBinaryExpression implements IExpression {
   @Override
   public List<@NotNull ? extends IExpression> getChildren() {
     return List.of(left, right);
-  }
-
-  @Override
-  public String toString() {
-    return new ASTPrinter().visit(this);
   }
 }

@@ -56,22 +56,6 @@ public interface IBoundNamedInstance extends INamedInstance {
   @NotNull
   IClassBinding getParentClassBinding();
 
-  // /**
-  // * Gets the bound Java field associated with this property.
-  // *
-  // * @return the Java field
-  // */
-  // @NotNull
-  // Field getField();
-  //
-  // /**
-  // * Returns the property name, not the field or method name.
-  // *
-  // * @return the name in the pattern "somePropertyName"
-  // */
-  // @NotNull
-  // String getJavaPropertyName();
-
   /**
    * Get the actual Java type of the underlying bound object.
    * 
@@ -97,6 +81,17 @@ public interface IBoundNamedInstance extends INamedInstance {
   Class<?> getItemType();
 
   /**
+   * Get the current value from the provided {@code parentInstance} object. The provided object must
+   * be of the type associated with the definition containing this property.
+   * 
+   * @param parentInstance
+   *          the object associated with the definition containing this property
+   * @return the value if available, or {@code null} otherwise
+   */
+  @Override
+  Object getValue(@NotNull Object parentInstance);
+
+  /**
    * Set the provided value on the provided object. The provided object must be of the item's type
    * associated with this property.
    * 
@@ -107,16 +102,6 @@ public interface IBoundNamedInstance extends INamedInstance {
    *          collection
    */
   void setValue(@NotNull Object parentInstance, Object value);
-
-  /**
-   * Get the current value from the provided object. The provided object must be of the item's type
-   * associated with this property.
-   * 
-   * @param parentInstance
-   *          the object
-   * @return the value if set, or {@code null} otherwise
-   */
-  Object getValue(@NotNull Object parentInstance);
 
   @NotNull
   IPropertyCollector newPropertyCollector();

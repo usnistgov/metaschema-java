@@ -37,6 +37,10 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
     return this;
   }
 
+  @Override
+  @NotNull
+  Object getValue();
+
   /**
    * Get the item's string value.
    * 

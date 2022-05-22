@@ -30,14 +30,18 @@ import gov.nist.secauto.metaschema.model.common.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.AssemblyDocument;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
+import java.util.Collection;
+import java.util.Collections;
 
 class XmlAssemblyInstance
     extends AbstractAssemblyInstance {
@@ -137,5 +141,18 @@ class XmlAssemblyInstance
   @Override
   public MarkupMultiline getRemarks() {
     return getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : null;
+  }
+
+  @Override
+  public Object getValue(@NotNull Object parentInstance) {
+    // there is no value
+    return null;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Collection<@NotNull ?> getItemValues(Object instanceValue) {
+    // there are no item values
+    return Collections.emptyList();
   }
 }

@@ -26,11 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -39,8 +40,15 @@ import java.util.List;
 public class StringConcat
     extends AbstractNAryExpression {
 
-  public StringConcat(@NotNull List<@NotNull IExpression> chidren) {
-    super(chidren);
+  /**
+   * Create a new expression that concatenates the results of evaluating the provided
+   * {@code expressions} as strings.
+   * 
+   * @param expressions
+   *          the expressions to evaluate
+   */
+  public StringConcat(@NotNull List<@NotNull IExpression> expressions) {
+    super(expressions);
   }
 
   @SuppressWarnings("null")
@@ -55,12 +63,20 @@ public class StringConcat
   }
 
   @Override
-  public ISequence<? extends IStringItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitStringConcat(this, context);
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitStringConcat(this, context);
+  public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
+    StringBuilder builder = new StringBuilder();
+    for (IExpression child : getChildren()) {
+      ISequence<?> result = child.accept(dynamicContext, context);
+      FnData.fnData(result).asStream()
+          .forEachOrdered(item -> {
+            builder.append(item.asString());
+          });
+    }
+    return ISequence.of(IStringItem.valueOf(ObjectUtils.notNull(builder.toString())));
   }
 }

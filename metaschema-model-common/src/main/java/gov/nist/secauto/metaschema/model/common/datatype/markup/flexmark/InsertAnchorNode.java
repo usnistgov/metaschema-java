@@ -46,7 +46,6 @@ public class InsertAnchorNode
   }
 
   public InsertAnchorNode(@NotNull BasedSequence type, @NotNull BasedSequence idReference) {
-    super();
     this.type = type;
     this.idReference = idReference;
   }
@@ -61,6 +60,10 @@ public class InsertAnchorNode
     return idReference;
   }
 
+  public void setIdReference(@NotNull BasedSequence value) {
+    this.idReference = value;
+  }
+  
   @Override
   @NotNull
   public BasedSequence[] getSegments() {

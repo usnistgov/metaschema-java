@@ -189,10 +189,16 @@ public class DefaultFieldClassBinding
     return null;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public IBoundFieldValueInstance getFieldValue() {
+  public IBoundFieldValueInstance getFieldValueInstance() {
     initalizeFieldValueInstance();
     return fieldValue;
+  }
+
+  @Override
+  public Object getFieldValue(@NotNull Object item) {
+    return getFieldValueInstance().getValue(item);
   }
 
   @Override
@@ -212,7 +218,7 @@ public class DefaultFieldClassBinding
 
   @Override
   public String getJsonValueKeyName() {
-    return getFieldValue().getJsonValueKeyName();
+    return getFieldValueInstance().getJsonValueKeyName();
   }
 
   // @Override
@@ -242,7 +248,7 @@ public class DefaultFieldClassBinding
   @Override
   protected void readBody(Object instance, StartElement start, IXmlParsingContext context)
       throws IOException, XMLStreamException {
-    if (!getFieldValue().read(instance, start, context)) {
+    if (!getFieldValueInstance().read(instance, start, context)) {
       throw new IOException(String.format("Missing field value at '%s", XmlEventUtil.toLocation(start)));
     }
   }
@@ -337,7 +343,7 @@ public class DefaultFieldClassBinding
       Set<String> handledProperties = new HashSet<>();
       if (properties.isEmpty()) {
         // this may be a value key value, an unrecognized flag, or the field value
-        IBoundFieldValueInstance fieldValue = getFieldValue();
+        IBoundFieldValueInstance fieldValue = getFieldValueInstance();
         Object value = fieldValue.readValue(instance, context);
         if (value != null) {
           fieldValue.setValue(instance, value);
@@ -376,7 +382,7 @@ public class DefaultFieldClassBinding
 
           if (namedProperty == null && !parsedValueKey) {
             // this may be a value key value, an unrecognized flag, or the field value
-            parsedValueKey = getFieldValue().read(instance, context);
+            parsedValueKey = getFieldValueInstance().read(instance, context);
 
             if (parsedValueKey) {
               handled = true;
@@ -509,7 +515,7 @@ public class DefaultFieldClassBinding
         handled = true;
       } else {
         // this may be a value key value, an unrecognized flag, or the field value
-        IBoundFieldValueInstance fieldValue = getFieldValue();
+        IBoundFieldValueInstance fieldValue = getFieldValueInstance();
         if (jsonValueKey != null) {
           // treat this as the value key
           String key = jsonParser.nextFieldName();
@@ -614,7 +620,7 @@ public class DefaultFieldClassBinding
   private List<? extends Object> handleCollapsedValues(@NotNull Object parentInstance,
       @NotNull IJsonParsingContext context)
       throws IOException {
-    IBoundFieldValueInstance fieldValue = getFieldValue();
+    IBoundFieldValueInstance fieldValue = getFieldValueInstance();
 
     JsonParser jsonParser = context.getReader(); // NOPMD - intentional
 
@@ -641,7 +647,7 @@ public class DefaultFieldClassBinding
   @Override
   protected void writeBody(Object instance, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
-    getFieldValue().write(instance, parentName, context);
+    getFieldValueInstance().write(instance, parentName, context);
   }
 
   @Override
@@ -717,16 +723,16 @@ public class DefaultFieldClassBinding
         ObjectUtils.notNull(property).write(item, context);
       }
 
-      Object fieldValue = getFieldValue().getValue(item);
+      Object fieldValue = getFieldValueInstance().getValue(item);
       if (fieldValue != null) {
         String valueKeyName;
         if (jsonValueKey != null) {
           valueKeyName = jsonValueKey.getValueAsString(jsonValueKey.getValue(item));
         } else {
-          valueKeyName = getFieldValue().getJsonValueKeyName();
+          valueKeyName = getFieldValueInstance().getJsonValueKeyName();
         }
         writer.writeFieldName(valueKeyName);
-        getFieldValue().writeValue(fieldValue, context);
+        getFieldValueInstance().writeValue(fieldValue, context);
       }
 
       if (jsonKey != null) {
@@ -741,7 +747,7 @@ public class DefaultFieldClassBinding
 
   @Override
   public IJavaTypeAdapter<?> getJavaTypeAdapter() {
-    return getFieldValue().getJavaTypeAdapter();
+    return getFieldValueInstance().getJavaTypeAdapter();
   }
 
   /**
@@ -791,7 +797,7 @@ public class DefaultFieldClassBinding
       throws BindingException {
     super.copyBoundObjectInternal(fromInstance, toInstance);
 
-    getFieldValue().copyBoundObject(fromInstance, toInstance);
+    getFieldValueInstance().copyBoundObject(fromInstance, toInstance);
   }
 
   @Override

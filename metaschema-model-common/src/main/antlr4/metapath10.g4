@@ -19,7 +19,7 @@ multiplicativeexpr : unionexpr ( (STAR | KW_DIV | KW_IDIV | KW_MOD) unionexpr )*
 unionexpr : intersectexceptexpr ( (KW_UNION | P) intersectexceptexpr )* ;
 intersectexceptexpr : arrowexpr ( ( KW_INTERSECT | KW_EXCEPT) arrowexpr )* ;
 // [25]
-arrowexpr : unaryexpr ( EG arrowfunctionspecifier argumentlist )* ;
+arrowexpr : unaryexpr ( EG functioncall )* ;
 // [30]
 unaryexpr : ( MINUS | PLUS)* valueexpr ;
 //valueexpr : simplemapexpr ;
@@ -31,10 +31,15 @@ valuecomp : KW_EQ | KW_NE | KW_LT | KW_LE | KW_GT | KW_GE ;
 pathexpr : ( SLASH relativepathexpr?) | ( SS relativepathexpr) | relativepathexpr ;
 relativepathexpr : stepexpr (( SLASH | SS) stepexpr)* ;
 stepexpr : postfixexpr | axisstep ;
-axisstep : forwardstep predicatelist ;
+axisstep : (reversestep | forwardstep) predicatelist ;
 // [40]
-forwardstep : AT? nametest ;
+forwardstep : (forwardaxis nametest) | abbrevforwardstep ;
+forwardaxis : ( KW_CHILD COLONCOLON) | ( KW_DESCENDANT COLONCOLON) | ( KW_SELF COLONCOLON) | ( KW_DESCENDANT_OR_SELF COLONCOLON) ;
+abbrevforwardstep : AT? nametest ;
+reversestep : (reverseaxis nametest) | abbrevreversestep ;
+reverseaxis : ( KW_PARENT COLONCOLON) | ( KW_ANCESTOR COLONCOLON) | ( KW_ANCESTOR_OR_SELF COLONCOLON) ;
 // [45]
+abbrevreversestep : DD ;
 nametest : eqname | wildcard ;
 wildcard : STAR ;
 postfixexpr : primaryexpr (predicate)* ;
@@ -43,7 +48,6 @@ argumentlist : OP (argument ( COMMA argument)*)? CP ;
 predicatelist : predicate* ;
 predicate : OB expr CB ;
 // [55]
-arrowfunctionspecifier : eqname | parenthesizedexpr ;
 primaryexpr : literal | parenthesizedexpr | contextitemexpr | functioncall ;
 literal : numericliteral | StringLiteral ;
 numericliteral : IntegerLiteral | DecimalLiteral | DoubleLiteral ;
@@ -70,7 +74,12 @@ argument : exprsingle ;
 
 // Error in the spec. EQName also includes acceptable keywords.
 eqname : LocalName
+ | KW_ANCESTOR
+ | KW_ANCESTOR_OR_SELF
  | KW_AND
+ | KW_CHILD
+ | KW_DESCENDANT
+ | KW_DESCENDANT_OR_SELF
  | KW_DIV
  | KW_EMPTY_SEQUENCE
  | KW_EQ
@@ -84,6 +93,10 @@ eqname : LocalName
  | KW_MOD
  | KW_NE
  | KW_OR
+ | KW_PARENT
+ | KW_PRECEDING
+ | KW_PRECEDING_SIBLING
+ | KW_SELF
  | KW_UNION
  ;
 
@@ -129,11 +142,18 @@ STAR : '*' ;
 
 // KEYWORDS
 
+KW_ANCESTOR : 'ancestor' ;
+KW_ANCESTOR_OR_SELF : 'ancestor-or-self' ;
 KW_AND : 'and' ;
+KW_CHILD : 'child' ;
+KW_DESCENDANT : 'descendant' ;
+KW_DESCENDANT_OR_SELF : 'descendant-or-self' ;
 KW_DIV : 'div' ;
 KW_EMPTY_SEQUENCE : 'empty-sequence' ;
 KW_EQ : 'eq' ;
 KW_EXCEPT : 'except' ;
+KW_FOLLOWING : 'following' ;
+KW_FOLLOWING_SIBLING : 'following-sibling' ;
 KW_GE : 'ge' ;
 KW_GT : 'gt' ;
 KW_IDIV : 'idiv' ;
@@ -143,6 +163,10 @@ KW_LT : 'lt' ;
 KW_MOD : 'mod' ;
 KW_NE : 'ne' ;
 KW_OR : 'or' ;
+KW_PARENT : 'parent' ;
+KW_PRECEDING : 'preceding' ;
+KW_PRECEDING_SIBLING : 'preceding-sibling' ;
+KW_SELF : 'self' ;
 KW_UNION : 'union' ;
 
 // A.2.1. TEMINAL SYMBOLS

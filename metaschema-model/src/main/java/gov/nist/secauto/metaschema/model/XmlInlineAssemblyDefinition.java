@@ -58,6 +58,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -163,6 +164,19 @@ class XmlInlineAssemblyDefinition
   @Override
   public MarkupMultiline getRemarks() {
     return getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : null;
+  }
+
+  @Override
+  public Object getValue(@NotNull Object parentValue) {
+    // there is no value
+    return null;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Collection<@NotNull ?> getItemValues(Object instanceValue) {
+    // there are no item values
+    return Collections.emptyList();
   }
 
   /**

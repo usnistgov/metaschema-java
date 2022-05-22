@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
@@ -33,13 +34,36 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
-public interface IRootAssemblyNodeItem extends IAssemblyNodeItem {
+public interface IRootAssemblyNodeItem extends IRequiredValueAssemblyNodeItem {
+
+  @Override
+  default String getName() {
+    return getDefinition().getRootName();
+  }
 
   @NotNull
   IDocumentNodeItem getDocumentNodeItem();
+  
+  @Override
+  @NotNull
+  default IDocumentNodeItem getParentNodeItem() {
+    return getDocumentNodeItem();
+  }
+
+  @Override
+  default IRequiredValueAssemblyNodeItem getParentContentNodeItem() {
+    // there is no assembly parent
+    return null;
+  }
 
   @Override
   IRootAssemblyDefinition getDefinition();
+
+  @Override
+  default IAssemblyInstance getInstance() {
+    // there is no instance
+    return null;
+  }
 
   @Override
   default IRootAssemblyNodeItem getContextNodeItem() {
@@ -47,14 +71,13 @@ public interface IRootAssemblyNodeItem extends IAssemblyNodeItem {
   }
 
   @Override
+  default int getPosition() {
+    // a root is always in the first position
+    return 1;
+  }
+
+  @Override
   default String format(@NotNull IPathFormatter formatter) {
     return formatter.formatRootAssembly(this);
   }
-
-  @SuppressWarnings("null")
-  @Override
-  default @NotNull Stream<@NotNull ? extends INodeItem> getPathStream() {
-    return Stream.of(getDocumentNodeItem(), this);
-  }
-
 }

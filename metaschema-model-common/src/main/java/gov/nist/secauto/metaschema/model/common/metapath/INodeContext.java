@@ -23,7 +23,6 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
@@ -47,7 +46,7 @@ public interface INodeContext {
   INodeItem getContextNodeItem();
 
   /**
-   * Get the Metaschema flags associated this node. The resulting collection is expected to be
+   * Get the flags and value data associated this node. The resulting collection is expected to be
    * ordered, with the results in document order.
    * 
    * @return a collection of flags
@@ -56,7 +55,7 @@ public interface INodeContext {
   Collection<@NotNull ? extends IFlagNodeItem> getFlags();
 
   /**
-   * Lookup a Metaschema flag on this node by it's effective name.
+   * Lookup a flag and value data on this node by it's effective name.
    * 
    * @param name
    *          the effective name of the flag
@@ -65,18 +64,18 @@ public interface INodeContext {
   IFlagNodeItem getFlagByName(@NotNull String name);
 
   /**
-   * Get the Metaschema flags associated with this node as a stream.
+   * Get the flags and value data associated with this node as a stream.
    * 
    * @return the stream of flags or an empty stream if none exist
    */
   @SuppressWarnings("null")
   @NotNull
-  default Stream<? extends IFlagNodeItem> flags() {
+  default Stream<@NotNull ? extends IFlagNodeItem> flags() {
     return getFlags().stream();
   }
 
   /**
-   * Get the Metaschema model items (i.e., fields, assemblies) associated this node. A given model
+   * Get the model items (i.e., fields, assemblies) and value data associated this node. A given model
    * instance can be multi-valued, so the value of each instance will be a list. The resulting
    * collection is expected to be ordered, with the results in document order.
    * 
@@ -89,62 +88,13 @@ public interface INodeContext {
   List<@NotNull ? extends IModelNodeItem> getModelItemsByName(String name);
 
   /**
-   * Get the Metaschema model items (i.e., fields, assemblies) associated this node as a stream.
+   * Get the model items (i.e., fields, assemblies) and value data associated this node as a stream.
    * 
    * @return the stream of model items or an empty stream if none exist
    */
   @SuppressWarnings("null")
   @NotNull
-  default Stream<? extends IModelNodeItem> modelItems() {
+  default Stream<@NotNull ? extends IModelNodeItem> modelItems() {
     return getModelItems().stream().flatMap(list -> list.stream());
   }
-
-  //
-  // /**
-  // * Searches the node graph for {@link INodeItem} instances that match the provided
-  // * {@link IExpression}. The resulting nodes are returned in document order.
-  // *
-  // * @param expr
-  // * the search expression
-  // * @param recurse
-  // * if the search should recurse over the child model instances
-  // * @return a stream of matching flag node items
-  // */
-  // @NotNull
-  // Stream<? extends INodeItem> getMatchingChildInstances(@NotNull IExpressionEvaluationVisitor
-  // visitor,
-  // @NotNull IExpression<?> expr,
-  // boolean recurse);
-  //
-  // /**
-  // * Searches the child flags for {@link IFlagNodeItem} instances that match the provided {@link
-  // Flag}
-  // * expression. The resulting nodes are returned in document order.
-  // *
-  // * @param flag
-  // * the search expression
-  // * @return a stream of matching flag node items
-  // */
-  // @NotNull
-  // Stream<? extends IFlagNodeItem> getMatchingChildFlags(@NotNull Flag flag);
-  //
-  // /**
-  // * Searches the child model nodes for {@link IModelNodeItem} instances that match the provided
-  // * {@link ModelInstance} expression. The resulting nodes are returned in document order.
-  // *
-  // * @param modelInstance
-  // * the search expression
-  // * @return a stream of matching model node items
-  // */
-  // @NotNull
-  // Stream<? extends IModelNodeItem> getMatchingChildModelInstances(@NotNull ModelInstance
-  // modelInstance);
-
-  // default IMetapathResult evaluateMetapath(MetapathExpression metapath) {
-  // MetaschemaPathEvaluationVisitor visitor = new MetaschemaPathEvaluationVisitor();
-  // // logger.info(String.format("Evaluating path '%s' as AST '%s'", metapath.getPath(),
-  // // metapath.toString()));
-  // return visitor.visit(metapath.getASTNode(), this);
-  //
-  // }
 }

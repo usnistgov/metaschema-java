@@ -83,7 +83,7 @@ public class CollapseKeyBuilder {
       this.keyToValuesMap.put(key, values);
     }
 
-    Object value = getClassBinding().getFieldValue().getValue(instance);
+    Object value = getClassBinding().getFieldValueInstance().getValue(instance);
     values.add(value);
   }
 
@@ -91,7 +91,7 @@ public class CollapseKeyBuilder {
     IFieldClassBinding classBinding = getClassBinding();
     IBoundFlagInstance jsonKey = classBinding.getJsonKeyFlagInstance();
     IBoundFlagInstance jsonValueKey = classBinding.getJsonValueKeyFlagInstance();
-    IBoundFieldValueInstance fieldValue = classBinding.getFieldValue();
+    IBoundFieldValueInstance fieldValue = classBinding.getFieldValueInstance();
     List<IBoundFlagInstance> flagProperties = getFlagProperties();
 
     // first build an index of the flag properties
