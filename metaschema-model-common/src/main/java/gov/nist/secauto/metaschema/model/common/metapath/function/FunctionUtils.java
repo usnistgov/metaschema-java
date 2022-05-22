@@ -166,9 +166,37 @@ public final class FunctionUtils {
   public static INumericItem toNumeric(@NotNull IItem item) throws TypeMetapathException {
     // atomize
     IAnyAtomicItem atomicItem = FnData.fnDataItem(item);
+    return toNumeric(atomicItem);
+  }
 
+  /**
+   * Gets the provided item value as a {@link INumericItem} value. If the item is {@code null}, then a
+   * {@code null} value is returned.
+   * 
+   * @param item
+   *          the value to convert
+   * @return the numeric item value
+   * @throws TypeMetapathException
+   *           if the item cannot be cast to a numeric value
+   */
+  @Nullable
+  public static INumericItem toNumericOrNull(@Nullable IAnyAtomicItem item) throws TypeMetapathException {
+    return item == null ? null : toNumeric(item);
+  }
+
+  /**
+   * Gets the provided item value as a {@link INumericItem} value.
+   * 
+   * @param item
+   *          the value to convert
+   * @return the numeric item value
+   * @throws TypeMetapathException
+   *           if the item cannot be cast to a numeric value
+   */
+  @NotNull
+  public static INumericItem toNumeric(@NotNull IAnyAtomicItem item) throws TypeMetapathException {
     try {
-      return IDecimalItem.cast(atomicItem);
+      return IDecimalItem.cast(item);
     } catch (InvalidValueForCastFunctionMetapathException ex) {
       throw new InvalidTypeMetapathException(ex.getLocalizedMessage(), ex);
     }

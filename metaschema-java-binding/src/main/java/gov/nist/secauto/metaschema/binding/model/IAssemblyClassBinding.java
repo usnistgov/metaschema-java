@@ -40,20 +40,27 @@ import java.util.Collection;
  * Represents a Metaschema assembly bound to a Java plain old java object (POJO) class.
  */
 public interface IAssemblyClassBinding extends IClassBinding, IAssemblyDefinition {
-  @Override
-  IBoundFieldInstance getFieldInstanceByName(String name);
-
-  @Override
-  IBoundAssemblyInstance getAssemblyInstanceByName(String name);
-
-  @Override
-  IBoundNamedModelInstance getModelInstanceByName(String name);
 
   @Override
   Collection<@NotNull ? extends IBoundNamedModelInstance> getModelInstances();
 
   @Override
   Collection<@NotNull ? extends IBoundNamedModelInstance> getNamedModelInstances();
+
+  @Override
+  Collection<@NotNull ? extends IBoundFieldInstance> getFieldInstances();
+
+  @Override
+  IBoundFieldInstance getFieldInstanceByName(String name);
+
+  @Override
+  Collection<@NotNull ? extends IBoundAssemblyInstance> getAssemblyInstances();
+
+  @Override
+  IBoundAssemblyInstance getAssemblyInstanceByName(String name);
+
+  @Override
+  IBoundNamedModelInstance getModelInstanceByName(String name);
 
   /**
    * Parses JSON into a bound object.

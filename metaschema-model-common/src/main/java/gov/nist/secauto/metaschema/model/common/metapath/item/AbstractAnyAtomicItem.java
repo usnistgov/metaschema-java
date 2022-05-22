@@ -52,6 +52,7 @@ public abstract class AbstractAnyAtomicItem<TYPE> implements IAnyAtomicItem {
   }
 
   @Override
+  @NotNull
   public TYPE getValue() {
     return value;
   }

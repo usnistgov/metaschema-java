@@ -39,9 +39,8 @@ import gov.nist.secauto.metaschema.binding.model.annotations.IsUnique;
 import gov.nist.secauto.metaschema.binding.model.annotations.KeyField;
 import gov.nist.secauto.metaschema.binding.model.annotations.Matches;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.IInstance;
-import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
+import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
@@ -55,7 +54,11 @@ import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.ResultType;
+import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
@@ -63,7 +66,6 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -233,18 +235,23 @@ final class AnnotationUtils {
     }
   }
 
-  public static void applyHasCardinalityConstraints(IAssemblyDefinition definition, AnnotationSpec.Builder annotation,
-      List<@NotNull ? extends ICardinalityConstraint> constraints) {
+  public static void applyHasCardinalityConstraints(
+      @NotNull IAssemblyDefinition definition,
+      @NotNull AnnotationSpec.Builder annotation,
+      @NotNull List<@NotNull ? extends ICardinalityConstraint> constraints) {
     for (ICardinalityConstraint constraint : constraints) {
       Integer minOccurs = constraint.getMinOccurs();
       Integer maxOccurs = constraint.getMaxOccurs();
 
-      IInstanceSet instanceSet = definition.evaluateMetapathInstances(constraint.getTarget());
-      Collection<? extends IInstance> instances = instanceSet.getInstances();
-      if (instances.size() == 1) {
-        IInstance instance = instances.iterator().next();
-        if (instance instanceof IModelInstance) {
-          IModelInstance modelInstance = (IModelInstance) instance;
+      IAssemblyNodeItem definitionNodeItem = DefaultNodeItemFactory.instance().newAssemblyNodeItem(definition, null);
+
+      ISequence<? extends INodeItem> instanceSet
+          = constraint.getTarget().evaluateAs(definitionNodeItem, ResultType.SEQUENCE);
+
+      for (INodeItem item : instanceSet.asList()) {
+        INamedInstance instance = item.getInstance();
+        if (instance instanceof INamedModelInstance) {
+          INamedModelInstance modelInstance = (INamedModelInstance) instance;
 
           if (minOccurs != null) {
             if (minOccurs == modelInstance.getMinOccurs()) {
@@ -253,7 +260,7 @@ final class AnnotationUtils {
                     "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that is redundant with a"
                         + " targeted instance named '%s' that requires min-occurs=%d",
                     definition.getName(), minOccurs, constraint.getTarget().getPath(),
-                    modelInstance instanceof INamedInstance ? ((INamedInstance) modelInstance).getName() : "no name",
+                    modelInstance.getName(),
                     modelInstance.getMinOccurs()));
               }
             } else if (minOccurs < modelInstance.getMinOccurs()) {
@@ -262,7 +269,7 @@ final class AnnotationUtils {
                     "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that conflicts with a"
                         + " targeted instance named '%s' that requires min-occurs=%d",
                     definition.getName(), minOccurs, constraint.getTarget().getPath(),
-                    modelInstance instanceof INamedInstance ? ((INamedInstance) modelInstance).getName() : "no name",
+                    modelInstance.getName(),
                     modelInstance.getMinOccurs()));
               }
             }
@@ -275,7 +282,7 @@ final class AnnotationUtils {
                     "Definition '%s' has max-occurs=%d cardinality constraint targeting '%s' that is redundant with a"
                         + " targeted instance named '%s' that requires max-occurs=%d",
                     definition.getName(), maxOccurs, constraint.getTarget().getPath(),
-                    modelInstance instanceof INamedInstance ? ((INamedInstance) modelInstance).getName() : "no name",
+                    modelInstance.getName(),
                     modelInstance.getMaxOccurs()));
               }
             } else if (maxOccurs < modelInstance.getMaxOccurs()) {
@@ -284,7 +291,7 @@ final class AnnotationUtils {
                     "Definition '%s' has max-occurs=%d cardinality constraint targeting '%s' that conflicts with a"
                         + " targeted instance named '%s' that requires max-occurs=%d",
                     definition.getName(), maxOccurs, constraint.getTarget().getPath(),
-                    modelInstance instanceof INamedInstance ? ((INamedInstance) modelInstance).getName() : "no name",
+                    modelInstance.getName(),
                     modelInstance.getMaxOccurs()));
               }
             }

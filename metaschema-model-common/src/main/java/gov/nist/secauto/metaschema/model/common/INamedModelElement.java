@@ -27,8 +27,6 @@
 package gov.nist.secauto.metaschema.model.common;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -109,15 +107,4 @@ public interface INamedModelElement extends IModelElement {
    */
   @Nullable
   String getUseName();
-
-  /**
-   * Evaluate the Metapath expression to retrieve the resulting Metaschema instances evaluated by the
-   * expression.
-   * 
-   * @param expression
-   *          the Metapath expression
-   * @return the resulting Metaschema instances
-   */
-  @NotNull
-  IInstanceSet evaluateMetapathInstances(@NotNull MetapathExpression expression);
 }

@@ -39,6 +39,8 @@ import gov.nist.secauto.metaschema.model.xmlbeans.FieldDocument;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
+import java.util.Collection;
+import java.util.Collections;
 
 class XmlFieldInstance
     extends AbstractFieldInstance {
@@ -164,5 +166,18 @@ class XmlFieldInstance
   @Override
   public MarkupMultiline getRemarks() {
     return getXmlField().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlField().getRemarks()) : null;
+  }
+
+  @Override
+  public Object getValue(@NotNull Object parentValue) {
+    // there is no value
+    return null;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Collection<@NotNull ?> getItemValues(Object instanceValue) {
+    // there are no item values
+    return Collections.emptyList();
   }
 }

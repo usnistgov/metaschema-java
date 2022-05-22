@@ -26,33 +26,65 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class Name
-    extends AbstractLiteralExpression<IStringItem, String> {
+    implements IExpression {
+
+  private final String value;
+
+  /**
+   * Create a new literal expression.
+   * 
+   * @param value
+   *          the literal value
+   */
   public Name(@NotNull String value) {
-    super(value);
+    this.value = value;
   }
 
-  @SuppressWarnings("null")
-  @Override
-  public Class<IStringItem> getBaseResultType() {
-    return IStringItem.class;
+  public String getValue() {
+    return value;
   }
 
   @Override
-  public ISequence<? extends IStringItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
-    throw new UnsupportedOperationException();
+  public List<@NotNull IExpression> getChildren() {
+    return CollectionUtil.emptyList();
+  }
+
+  @Override
+  public Class<@NotNull INodeItem> getBaseResultType() {
+    return INodeItem.class;
+  }
+
+  @Override
+  public Class<@NotNull INodeItem> getStaticResultType() {
+    return getBaseResultType();
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitName(this, context);
   }
+
+  @Override
+  public ISequence<? extends INodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    INodeItem node = context.getContextNodeItem();
+    return getValue().equals(node.getName()) ? ISequence.of(node) : ISequence.empty();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public String toASTString() {
+    return String.format("%s[value=%s]", getClass().getName(), getValue().toString());
+  }
+
 }

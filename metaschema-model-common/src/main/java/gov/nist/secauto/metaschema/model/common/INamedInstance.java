@@ -77,6 +77,16 @@ public interface INamedInstance extends IInstance, INamedModelElement {
   }
 
   /**
+   * Get the current value from the provided {@code parentInstance} object. The provided object must
+   * be of the type associated with the definition containing this property.
+   * 
+   * @param parentInstance
+   *          the object associated with the definition containing this property
+   * @return the value if available, or {@code null} otherwise
+   */
+  Object getValue(@NotNull Object parentInstance);
+
+  /**
    * Generates a "coordinate" string for the provided information element instance.
    * 
    * A coordinate consists of the element's:

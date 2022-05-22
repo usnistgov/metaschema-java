@@ -26,35 +26,129 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
+import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Subtraction
     extends AbstractArithmeticExpression<IAnyAtomicItem> {
 
-  @SuppressWarnings("null")
-  public Subtraction(@NotNull IExpression left, @NotNull IExpression right) {
-    super(left, right, IAnyAtomicItem.class);
+  /**
+   * An expression that gets the difference of two atomic data items.
+   * 
+   * @param minuend
+   *          an expression whose result is the value being subtracted from
+   * @param subtrahend
+   *          an expression whose result is the value being subtracted
+   */
+  public Subtraction(@NotNull IExpression minuend, @NotNull IExpression subtrahend) {
+    super(minuend, subtrahend, IAnyAtomicItem.class);
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Class<IAnyAtomicItem> getBaseResultType() {
+  public Class<@NotNull IAnyAtomicItem> getBaseResultType() {
     return IAnyAtomicItem.class;
-  }
-
-  @Override
-  public ISequence<? extends IAnyAtomicItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
-    return visitor.visitSubtraction(this, context);
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitSubtraction(this, context);
+  }
+
+  @Override
+  public ISequence<? extends IAnyAtomicItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    IAnyAtomicItem minuend = getFirstDataItem(getLeft().accept(dynamicContext, context), true);
+    IAnyAtomicItem subtrahend = getFirstDataItem(getRight().accept(dynamicContext, context), true);
+
+    return resultOrEmpty(minuend, subtrahend);
+  }
+
+  /**
+   * Get the difference of two atomic items.
+   * 
+   * @param minuend
+   *          the item being subtracted from
+   * @param subtrahend
+   *          the item being subtracted
+   * @return the difference of the items or an empty {@link ISequence} if either item is {@code null}
+   */
+  @NotNull
+  protected static ISequence<? extends IAnyAtomicItem> resultOrEmpty(@Nullable IAnyAtomicItem minuend,
+      @Nullable IAnyAtomicItem subtrahend) {
+    ISequence<? extends IAnyAtomicItem> retval;
+    if (minuend == null || subtrahend == null) {
+      retval = ISequence.empty();
+    } else {
+      IAnyAtomicItem result = subtract(minuend, subtrahend);
+      retval = ISequence.of(result);
+    }
+    return retval;
+  }
+
+  /**
+   * Get the difference of two atomic items.
+   * 
+   * @param minuend
+   *          the item being subtracted from
+   * @param subtrahend
+   *          the item being subtracted
+   * @return the difference of the items
+   */
+  @NotNull
+  public static IAnyAtomicItem subtract(@NotNull IAnyAtomicItem minuend,
+      @NotNull IAnyAtomicItem subtrahend) {
+
+    IAnyAtomicItem retval = null;
+    if (minuend instanceof IDateItem) {
+      IDateItem left = (IDateItem) minuend;
+
+      if (subtrahend instanceof IDateItem) {
+        retval = OperationFunctions.opSubtractDates(left, (IDateItem) subtrahend);
+      } else if (subtrahend instanceof IYearMonthDurationItem) {
+        retval = OperationFunctions.opSubtractYearMonthDurationFromDate(left, (IYearMonthDurationItem) subtrahend);
+      } else if (subtrahend instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opSubtractDayTimeDurationFromDate(left, (IDayTimeDurationItem) subtrahend);
+      }
+    } else if (minuend instanceof IDateTimeItem) {
+      IDateTimeItem left = (IDateTimeItem) minuend;
+      if (subtrahend instanceof IDateTimeItem) {
+        retval = OperationFunctions.opSubtractDateTimes(left, (IDateTimeItem) subtrahend);
+      } else if (subtrahend instanceof IYearMonthDurationItem) {
+        retval = OperationFunctions.opSubtractYearMonthDurationFromDateTime(left, (IYearMonthDurationItem) subtrahend);
+      } else if (subtrahend instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opSubtractDayTimeDurationFromDateTime(left, (IDayTimeDurationItem) subtrahend);
+      }
+    } else if (minuend instanceof IYearMonthDurationItem) {
+      IYearMonthDurationItem left = (IYearMonthDurationItem) minuend;
+      if (subtrahend instanceof IYearMonthDurationItem) {
+        retval = OperationFunctions.opSubtractYearMonthDurations(left, (IYearMonthDurationItem) subtrahend);
+      }
+    } else if (minuend instanceof IDayTimeDurationItem) {
+      IDayTimeDurationItem left = (IDayTimeDurationItem) minuend;
+      if (subtrahend instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opSubtractDayTimeDurations(left, (IDayTimeDurationItem) subtrahend);
+      }
+    } else {
+      // handle as numeric
+      INumericItem left = FunctionUtils.toNumeric(minuend);
+      INumericItem right = FunctionUtils.toNumeric(subtrahend);
+      retval = OperationFunctions.opNumericSubtract(left, right);
+    }
+    if (retval == null) {
+      throw new UnsupportedOperationException(
+          String.format("The expression '%s - %s' is not supported", minuend.getClass().getName(), subtrahend.getClass().getName()));
+    }
+    return retval;
   }
 }

@@ -199,6 +199,12 @@ class DefaultFieldProperty
   // }
 
   private class ScalarFieldDefinition implements IBoundFieldDefinition {
+
+    @Override
+    public @NotNull Object getFieldValue(@NotNull Object item) {
+      return item;
+    }
+
     @Override
     public IJavaTypeAdapter<?> getJavaTypeAdapter() {
       return ObjectUtils.notNull(DefaultFieldProperty.this.getJavaTypeAdapter());

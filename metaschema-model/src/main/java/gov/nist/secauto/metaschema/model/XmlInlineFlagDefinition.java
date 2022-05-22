@@ -43,8 +43,6 @@ import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineFlagDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
@@ -137,8 +135,9 @@ class XmlInlineFlagDefinition
   }
 
   @Override
-  public INodeItem newNodeItem(@NotNull Object value, @NotNull IModelNodeItem parent) {
-    throw new UnsupportedOperationException("A bound object is not available");
+  public Object getValue(@NotNull Object parentValue) {
+    // there is no value
+    return null;
   }
 
   /**

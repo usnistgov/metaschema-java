@@ -141,10 +141,11 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
    * @throws IOException
    *           if an error occurred while reading data from the stream
    */
+  @SuppressWarnings({ "unchecked", "null" })
   @NotNull
   default CLASS deserialize(@NotNull Reader reader, @NotNull URI documentUri) throws IOException {
     INodeItem nodeItem = deserializeToNodeItem(reader, documentUri);
-    return nodeItem.toBoundObject();
+    return (CLASS)nodeItem.getValue();
   }
 
   /**

@@ -56,11 +56,6 @@ abstract class AbstractAssemblyProperty
   protected IDataTypeHandler newDataTypeHandler() {
     IClassBinding classBinding
         = getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
-    if (classBinding == null) {
-      throw new IllegalStateException(
-          String.format("Unable to parse type '%s', which is not a known bound class or data type",
-              getPropertyInfo().getItemType()));
-    }
     return new ClassDataTypeHandler(classBinding, this);
   }
 

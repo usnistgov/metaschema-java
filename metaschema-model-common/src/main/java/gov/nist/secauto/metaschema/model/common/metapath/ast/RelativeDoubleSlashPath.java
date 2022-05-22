@@ -26,12 +26,15 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.stream.Stream;
 
 public class RelativeDoubleSlashPath
     extends AbstractRelativePathExpression {
@@ -41,13 +44,22 @@ public class RelativeDoubleSlashPath
   }
 
   @Override
-  public ISequence<?> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
-    return visitor.visitRelativeDoubleSlashPath(this, context);
-  }
-
-  @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitRelativeDoubleSlashPath(this, context);
   }
 
+  @Override
+  public ISequence<? extends INodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    @SuppressWarnings("unchecked")
+    ISequence<? extends INodeItem> leftResult
+        = (ISequence<? extends INodeItem>) getLeft().accept(dynamicContext, context);
+
+    Stream<? extends INodeItem> result = ObjectUtils.notNull(leftResult.asStream()
+        .flatMap(item -> {
+          // evaluate the right path in the context of the left
+          return search(getRight(), dynamicContext, item);
+        }));
+
+    return ISequence.of(result);
+  }
 }

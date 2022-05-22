@@ -90,14 +90,23 @@ interface IBoundJavaField extends IBoundNamedInstance {
     return (Class<?>) getType();
   }
 
+
+  /**
+   * Get the current value from the provided {@code parentInstance} object. The provided object must
+   * be of the type associated with the definition containing this property.
+   * 
+   * @param parentInstance
+   *          the object associated with the definition containing this property
+   * @return the value if available, or {@code null} otherwise
+   */
   @Override
-  default Object getValue(Object obj) {
+  default Object getValue(@NotNull Object parentInstance) {
     Field field = getField();
-    boolean accessable = field.canAccess(obj);
+    boolean accessable = field.canAccess(parentInstance);
     field.setAccessible(true); // NOPMD - intentional
     Object retval;
     try {
-      Object result = field.get(obj);
+      Object result = field.get(parentInstance);
       retval = result;
     } catch (IllegalArgumentException | IllegalAccessException ex) {
       throw new IllegalArgumentException(

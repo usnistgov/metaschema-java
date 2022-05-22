@@ -34,7 +34,7 @@ import java.util.Objects;
 /**
  * An immutable expression that has a number of sub-expression children.
  */
-public abstract class AbstractNAryExpression implements IExpression {
+public abstract class AbstractNAryExpression extends AbstractExpression {
   @NotNull
   private final List<@NotNull IExpression> children;
 
@@ -52,10 +52,5 @@ public abstract class AbstractNAryExpression implements IExpression {
   @Override
   public List<@NotNull IExpression> getChildren() {
     return children;
-  }
-
-  @Override
-  public String toString() {
-    return new ASTPrinter().visit(this);
   }
 }

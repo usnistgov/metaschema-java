@@ -26,13 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
-
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.Objects;
 
 import javax.xml.namespace.QName;
@@ -70,10 +65,4 @@ public interface IAssemblyInstance extends INamedModelInstance, IAssembly {
 
   @Override
   IAssemblyDefinition getDefinition();
-
-  @Override
-  default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {
-    return metapath.evaluateMetaschemaInstance(
-        new DefaultMetaschemaContext(IInstanceSet.newInstanceSet(Collections.singleton(this))));
-  }
 }

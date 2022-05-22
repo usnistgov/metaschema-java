@@ -26,20 +26,26 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+
+import org.jetbrains.annotations.Nullable;
 
 public interface IItem {
-
   /**
-   * Get a human readable name for the item.
+   * Get the item's "wrapped" value. This "wrapped" value may be:
+   * <ul>
+   * <li>In the case of an Assembly, a Java object representing the fields and flags of the
+   * assembly.</li>
+   * <li>In the case of a Field with flags, a Java object representing the field value and flags of
+   * the field.
+   * <li>In the case of a Field without flags or a flag, a Java type managed by a
+   * {@link IJavaTypeAdapter} or a primitive type provided by the Java standard library.
+   * </ul>
    * 
-   * @return the name
+   * @param <T> the type of the value
+   * 
+   * @return the value or {@code null} if the item has no available value
    */
-  @SuppressWarnings("null")
-  @NotNull
-  default String getItemName() {
-    // TODO: make something more human readable
-    return this.getClass().getName();
-  }
-
+  @Nullable
+  <T> T getValue();
 }

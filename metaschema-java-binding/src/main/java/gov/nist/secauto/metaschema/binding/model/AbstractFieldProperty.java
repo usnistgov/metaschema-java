@@ -62,11 +62,6 @@ abstract class AbstractFieldProperty
     if (itemClass.isAnnotationPresent(MetaschemaField.class)) {
       IClassBinding classBinding
           = getParentClassBinding().getBindingContext().getClassBinding(getPropertyInfo().getItemType());
-      if (classBinding == null) {
-        throw new IllegalStateException(
-            String.format("Unable to parse type '%s', which is not a known bound class or data type",
-                getPropertyInfo().getItemType()));
-      }
       retval = new ClassDataTypeHandler(classBinding, this);
     } else {
       retval = new JavaTypeAdapterDataTypeHandler(this);

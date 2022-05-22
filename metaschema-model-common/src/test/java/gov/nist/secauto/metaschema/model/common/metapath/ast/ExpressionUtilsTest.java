@@ -33,7 +33,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IValuedNodeItem;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -98,7 +97,7 @@ class ExpressionUtilsTest {
     @SuppressWarnings("null")
     Class<? extends INodeItem> result
         = ExpressionUtils.analyzeStaticResultType(baseType, List.of(basicFlagExpr1, basicAssemblyExpr));
-    assertEquals(IValuedNodeItem.class, result);
+    assertEquals(INodeItem.class, result);
   }
 
   @Test

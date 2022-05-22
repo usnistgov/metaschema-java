@@ -43,8 +43,6 @@ import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -142,11 +140,6 @@ class DefaultFlagProperty
       }
     }
     return definition;
-  }
-
-  @Override
-  public @NotNull IInstanceSet evaluateMetapathInstances(@NotNull MetapathExpression expression) {
-    throw new UnsupportedOperationException();
   }
 
   @SuppressWarnings("null")

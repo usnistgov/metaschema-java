@@ -73,6 +73,7 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
    *          the value which may be a singleton or a collection
    * @return the ordered collection of values
    */
+  @Override
   @NotNull
   Collection<@NotNull ? extends Object> getItemValues(Object value);
 

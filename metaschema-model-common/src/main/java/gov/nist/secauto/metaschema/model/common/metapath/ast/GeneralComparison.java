@@ -26,29 +26,122 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 
 import org.jetbrains.annotations.NotNull;
 
 public class GeneralComparison
     extends AbstractComparison {
 
+  /**
+   * Create a new value comparison expression.
+   * 
+   * @param left
+   *          the expression to compare against
+   * @param operator
+   *          the comparison operator
+   * @param right
+   *          the expression to compare with
+   */
   public GeneralComparison(@NotNull IExpression left, @NotNull Operator operator, @NotNull IExpression right) {
     super(left, operator, right);
   }
 
   @Override
-  public ISequence<? extends IBooleanItem> accept(IExpressionEvaluationVisitor visitor,
-      INodeContext context) {
+  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitGeneralComparison(this, context);
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitGeneralComparison(this, context);
+  public ISequence<? extends IBooleanItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    ISequence<? extends IAnyAtomicItem> leftItems = FnData.fnData(getLeft().accept(dynamicContext, context));
+    ISequence<? extends IAnyAtomicItem> rightItems = FnData.fnData(getRight().accept(dynamicContext, context));
+    return ISequence.of(valueCompairison(leftItems, getOperator(), rightItems));
+  }
+
+  /**
+   * Compare the sets of atomic items.
+   * 
+   * @param leftItems
+   *          the first set of items to compare
+   * @param operator
+   *          the comparison operator
+   * @param rightItems
+   *          the second set of items to compare
+   * @return a or an empty {@link ISequence} if either item is {@code null}
+   */
+  @NotNull
+  protected IBooleanItem valueCompairison(@NotNull ISequence<? extends IAnyAtomicItem> leftItems,
+      @NotNull Operator operator, @NotNull ISequence<? extends IAnyAtomicItem> rightItems) {
+
+    IBooleanItem retval = IBooleanItem.FALSE;
+    for (IAnyAtomicItem left : leftItems.asList()) {
+      for (IAnyAtomicItem right : rightItems.asList()) {
+        @NotNull
+        IAnyAtomicItem leftCast;
+        IAnyAtomicItem rightCast;
+        if (left instanceof IUntypedAtomicItem) {
+          if (right instanceof IUntypedAtomicItem) {
+            leftCast = IStringItem.cast(left);
+            rightCast = IStringItem.cast(right);
+          } else {
+            leftCast = applyGeneralComparisonCast(right, left);
+            rightCast = right;
+          }
+        } else if (right instanceof IUntypedAtomicItem) {
+          leftCast = left;
+          rightCast = applyGeneralComparisonCast(left, right);
+        } else {
+          leftCast = left;
+          rightCast = right;
+        }
+
+        try {
+          IBooleanItem result = compare(leftCast, operator, rightCast);
+          if (IBooleanItem.TRUE.equals(result)) {
+            retval = IBooleanItem.TRUE;
+          }
+        } catch (IllegalArgumentException ex) {
+          throw new UnsupportedOperationException(String.format("The value expression '%s %s %s' is not supported",
+              left.getClass().getName(), operator.name().toLowerCase(), right.getClass().getName()));
+        }
+      }
+    }
+    return retval;
+  }
+
+  /**
+   * Attempts to cast the provided {@code other} item to the type of the {@code item}.
+   * 
+   * @param item
+   *          the item whose type the other item is to be cast to
+   * @param other
+   *          the item to cast
+   * @return the casted item
+   */
+  @NotNull
+  protected IAnyAtomicItem applyGeneralComparisonCast(@NotNull IAnyAtomicItem item, @NotNull IAnyAtomicItem other) {
+    IAnyAtomicItem retval = other;
+    if (item instanceof INumericItem) {
+      retval = IDecimalItem.cast(other);
+    } else if (item instanceof IDayTimeDurationItem) {
+      retval = IDayTimeDurationItem.cast(other);
+    } else if (item instanceof IDayTimeDurationItem) {
+      retval = IYearMonthDurationItem.cast(other);
+    } else {
+      retval = item.getJavaTypeAdapter().cast(other);
+    }
+    return retval;
   }
 }

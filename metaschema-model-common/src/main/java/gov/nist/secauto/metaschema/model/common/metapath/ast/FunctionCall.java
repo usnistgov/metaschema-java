@@ -26,18 +26,19 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionService;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class FunctionCall implements IExpression {
   @NotNull
@@ -95,17 +96,19 @@ public class FunctionCall implements IExpression {
   }
 
   @Override
-  public ISequence<? extends IItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
-    return visitor.visitFunctionCall(this, context);
-  }
-
-  @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitFunctionCall(this, context);
   }
 
   @Override
-  public String toString() {
-    return new ASTPrinter().visit(this);
+  public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
+    List<@NotNull ISequence<?>> arguments = ObjectUtils.notNull(getChildren().stream().map(expression -> {
+      @NotNull
+      ISequence<?> result = expression.accept(dynamicContext, context);
+      return result;
+    }).collect(Collectors.toList()));
+
+    IFunction function = getFunction();
+    return function.execute(arguments, dynamicContext, context);
   }
 }

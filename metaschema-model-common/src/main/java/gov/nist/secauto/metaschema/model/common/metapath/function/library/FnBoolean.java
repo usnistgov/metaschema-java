@@ -149,7 +149,7 @@ public final class FnBoolean {
       retval = !string.isBlank();
     } else {
       throw new InvalidArgumentFunctionMetapathException(InvalidArgumentFunctionMetapathException.INVALID_ARGUMENT_TYPE,
-          String.format("Invalid argument type '%s'", item.getItemName()));
+          String.format("Invalid argument type '%s'", item.getClass().getName()));
     }
     return retval;
   }

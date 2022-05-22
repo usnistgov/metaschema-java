@@ -34,6 +34,11 @@ import java.util.Collections;
 import java.util.List;
 
 public interface ILiteralExpression<RESULT_TYPE extends IAnyAtomicItem, VALUE> extends IExpression {
+  /**
+   * Get the literal value.
+   * 
+   * @return the value
+   */
   @NotNull
   VALUE getValue();
 

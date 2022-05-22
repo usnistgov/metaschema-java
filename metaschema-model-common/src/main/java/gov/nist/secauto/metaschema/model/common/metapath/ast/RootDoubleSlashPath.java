@@ -26,10 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -41,12 +40,12 @@ public class RootDoubleSlashPath
   }
 
   @Override
-  public ISequence<?> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitRootDoubleSlashPath(this, context);
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitRootDoubleSlashPath(this, context);
+  public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
+    return ISequence.of(search(getNode(), dynamicContext, context));
   }
 }

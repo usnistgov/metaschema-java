@@ -31,13 +31,15 @@ import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedNodeItem {
+public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedItem {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.FIELD;
@@ -45,6 +47,11 @@ public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedNodeItem {
 
   @Override
   IAssemblyNodeItem getParentNodeItem();
+
+  @Override
+  default IAssemblyNodeItem getParentContentNodeItem() {
+    return getParentNodeItem();
+  }
 
   @Override
   default IFieldNodeItem getContextNodeItem() {
@@ -62,13 +69,20 @@ public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedNodeItem {
   @Override
   IFieldInstance getInstance();
 
+  @Override
+  @Nullable
+  default URI getBaseUri() {
+    INodeItem parent = getParentNodeItem();
+    return parent == null ? null : parent.getBaseUri();
+  }
+
   /**
    * Fields do not have model items. This call should return an empty collection.
    */
   @SuppressWarnings("null")
   @Override
-  default @NotNull Collection<@NotNull ? extends List<@NotNull ? extends IModelNodeItem>> getModelItems() {
-    // a flag does not have model items
+  default Collection<@NotNull ? extends List<@NotNull ? extends IModelNodeItem>> getModelItems() {
+    // a field does not have model items
     return Collections.emptyList();
   }
 
@@ -77,7 +91,8 @@ public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedNodeItem {
    */
   @SuppressWarnings("null")
   @Override
-  default @NotNull List<@NotNull ? extends IModelNodeItem> getModelItemsByName(String name) {
+  default List<@NotNull ? extends IModelNodeItem> getModelItemsByName(String name) {
+    // a field does not have model items
     return Collections.emptyList();
   }
 
@@ -87,7 +102,7 @@ public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedNodeItem {
   @SuppressWarnings("null")
   @NotNull
   @Override
-  default Stream<? extends IModelNodeItem> modelItems() {
+  default Stream<@NotNull ? extends IModelNodeItem> modelItems() {
     return Stream.empty();
   }
 

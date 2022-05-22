@@ -26,10 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -39,15 +38,21 @@ import java.util.regex.Pattern;
 
 public class StringLiteral
     extends AbstractLiteralExpression<IStringItem, String> {
+
   private static final Pattern QUOTE_PATTERN = Pattern.compile("^'(.*)'$|^\"(.*)\"$");
 
+  /**
+   * Construct a new expression that always returns the same string value.
+   * 
+   * @param value
+   *          the literal value
+   */
   public StringLiteral(@NotNull String value) {
     super(removeQuotes(value));
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Class<IStringItem> getBaseResultType() {
+  public Class<@NotNull IStringItem> getBaseResultType() {
     return IStringItem.class;
   }
 
@@ -68,12 +73,12 @@ public class StringLiteral
   }
 
   @Override
-  public ISequence<? extends IStringItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
+  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitStringLiteral(this, context);
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitStringLiteral(this, context);
+  public ISequence<? extends IStringItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    return ISequence.of(IStringItem.valueOf(getValue()));
   }
 }

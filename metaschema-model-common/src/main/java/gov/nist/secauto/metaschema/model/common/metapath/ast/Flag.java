@@ -26,33 +26,63 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.stream.Stream;
+
 public class Flag
     extends AbstractNamedInstanceExpression<IFlagNodeItem> {
-  public Flag(@NotNull IExpression node) {
-    super(node);
+
+  /**
+   * Construct a new expression that finds any child {@link IFlagNodeItem} that matches the provided
+   * {@code test}.
+   * 
+   * @param test
+   *          the test to use to match
+   */
+  public Flag(@NotNull IExpression test) {
+    super(test);
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Class<IFlagNodeItem> getBaseResultType() {
+  public Class<@NotNull IFlagNodeItem> getBaseResultType() {
     return IFlagNodeItem.class;
-  }
-
-  @Override
-  public ISequence<? extends IFlagNodeItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
-    return visitor.visitFlag(this, context);
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitFlag(this, context);
+  }
+
+  @Override
+  public ISequence<? extends IFlagNodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    return ISequence.of(matchFlags(context));
+  }
+
+  /**
+   * Get a stream of matching child node items for the provided {@code context}.
+   * 
+   * @param context
+   *          the context to match child items of
+   * @return the stream of matching node items
+   */
+  @SuppressWarnings("null")
+  @NotNull
+  protected Stream<@NotNull ? extends IFlagNodeItem> matchFlags(@NotNull INodeContext context) {
+    Stream<@NotNull ? extends IFlagNodeItem> retval;
+    if (getTest() instanceof Name) {
+      String name = ((Name) getTest()).getValue();
+      IFlagNodeItem item = context.getFlagByName(name);
+      retval = item == null ? Stream.empty() : Stream.of(item);
+    } else {
+      // wildcard
+      retval = context.flags();
+    }
+    return retval;
   }
 }

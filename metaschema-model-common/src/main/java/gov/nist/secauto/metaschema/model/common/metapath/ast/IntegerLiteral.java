@@ -26,10 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -39,23 +38,28 @@ import java.math.BigInteger;
 public class IntegerLiteral
     extends AbstractLiteralExpression<IIntegerItem, BigInteger> {
 
+  /**
+   * Construct a new expression that always returns the same integer value.
+   * 
+   * @param value
+   *          the literal value
+   */
   public IntegerLiteral(@NotNull BigInteger value) {
     super(value);
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Class<IIntegerItem> getBaseResultType() {
+  public Class<@NotNull IIntegerItem> getBaseResultType() {
     return IIntegerItem.class;
-  }
-
-  @Override
-  public ISequence<? extends IIntegerItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
-    return visitor.visitIntegerLiteral(this, context);
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitIntegerLiteral(this, context);
+  }
+
+  @Override
+  public ISequence<? extends IIntegerItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    return ISequence.of(IIntegerItem.valueOf(getValue()));
   }
 }

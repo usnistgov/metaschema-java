@@ -28,16 +28,13 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 
-public interface IModelNodeItem extends IValuedNodeItem {
+import org.jetbrains.annotations.NotNull;
 
-  @Override
-  IAssemblyNodeItem getParentContentNodeItem();
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Stream;
 
-  @Override
-  INodeItem getParentNodeItem();
-
-  @Override
-  INamedModelDefinition getDefinition();
+public interface IModelNodeItem extends INodeItem {
 
   /**
    * Retrieve the relative position of the associated instance in a collection of instances. A
@@ -46,4 +43,21 @@ public interface IModelNodeItem extends IValuedNodeItem {
    * @return a positive integer value designating this instance's position within a collection
    */
   int getPosition();
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * The parent can be an assembly or a document (in the case of a root assembly.
+   */
+  @Override
+  INodeItem getParentNodeItem();
+
+  @Override
+  INamedModelDefinition getDefinition();
+
+  @SuppressWarnings("null")
+  @Override
+  default Stream<@NotNull ? extends INodeItem> children() {
+    return Stream.empty();
+  }
 }

@@ -26,17 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet;
-
-import org.jetbrains.annotations.NotNull;
-
 public interface IFlagDefinition extends INamedValuedDefinition, IFlag {
-
   @Override
-  @NotNull
-  default IInstanceSet evaluateMetapathInstances(MetapathExpression metapath) {
-    return metapath.evaluateMetaschemaInstance(new DefaultMetaschemaContext(IInstanceSet.newInstanceSet(this)));
-  }
+  IFlagInstance getInlineInstance();
 }

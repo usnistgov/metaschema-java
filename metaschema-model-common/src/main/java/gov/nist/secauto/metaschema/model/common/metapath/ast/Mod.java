@@ -26,35 +26,67 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
+import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Mod
     extends AbstractArithmeticExpression<INumericItem> {
 
-  @SuppressWarnings("null")
-  public Mod(@NotNull IExpression left, @NotNull IExpression right) {
-    super(left, right, INumericItem.class);
+  /**
+   * Create an expression that gets the numeric remainder from dividing the dividend by the divisor.
+   * 
+   * @param dividend
+   *          the item to be divided
+   * @param divisor
+   *          the item to divide by
+   */
+  public Mod(@NotNull IExpression dividend, @NotNull IExpression divisor) {
+    super(dividend, divisor, INumericItem.class);
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Class<INumericItem> getBaseResultType() {
+  public Class<@NotNull INumericItem> getBaseResultType() {
     return INumericItem.class;
-  }
-
-  @Override
-  public ISequence<? extends INumericItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
-    return visitor.visitMod(this, context);
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitMod(this, context);
+  }
+
+  @Override
+  public ISequence<? extends INumericItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    INumericItem dividend = FunctionUtils.toNumeric(getLeft().accept(dynamicContext, context), true);
+    INumericItem divisor = FunctionUtils.toNumeric(getRight().accept(dynamicContext, context), true);
+    return resultOrEmpty(dividend, divisor);
+  }
+
+  /**
+   * Get the numeric remainder from dividing the dividend by the divisor.
+   * 
+   * @param dividend
+   *          the item to be divided
+   * @param divisor
+   *          the item to divide by
+   * @return the remainder or an empty {@link ISequence} if either item is {@code null}
+   */
+  @NotNull
+  protected static ISequence<? extends INumericItem> resultOrEmpty(@Nullable INumericItem dividend,
+      @Nullable INumericItem divisor) {
+    ISequence<? extends INumericItem> retval;
+    if (dividend == null || divisor == null) {
+      retval = ISequence.empty();
+    } else {
+      INumericItem result = OperationFunctions.opNumericIntegerDivide(dividend, divisor);
+      retval = ISequence.of(result);
+    }
+    return retval;
   }
 }

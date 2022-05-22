@@ -26,91 +26,40 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
-import gov.nist.secauto.metaschema.model.common.IInstance;
-import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 public abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeItem>
     extends AbstractPathExpression<RESULT_TYPE> {
-  private static final WildcardMatcher WILDCARD = new WildcardMatcher();
-
   @NotNull
-  private final IExpression node;
+  private final IExpression test;
 
-  public AbstractNamedInstanceExpression(@NotNull IExpression node) {
-    this.node = node;
+  /**
+   * Construct a new expression that finds children that match the provided {@code test} expression.
+   * 
+   * @param test
+   *          the expression to use to determine a match
+   */
+  public AbstractNamedInstanceExpression(@NotNull IExpression test) {
+    this.test = test;
   }
 
+  /**
+   * Get the {@link Wildcard} or {@link Name} test.
+   * 
+   * @return the test
+   */
   @NotNull
-  public IExpression getNode() {
-    return node;
-  }
-
-  public boolean isName() {
-    return getNode() instanceof Name;
-  }
-
-  public Predicate<IInstance> getInstanceMatcher() {
-    IExpression node = getNode();
-
-    Predicate<IInstance> retval;
-    if (node instanceof Name) {
-      retval = new NameMatcher(((Name) node).getValue());
-    } else if (node instanceof Wildcard) {
-      retval = WILDCARD;
-    } else {
-      throw new UnsupportedOperationException();
-    }
-    return retval;
+  public IExpression getTest() {
+    return test;
   }
 
   @SuppressWarnings("null")
   @Override
   public List<@NotNull ? extends IExpression> getChildren() {
-    return List.of(node);
-  }
-
-  private static class NameMatcher implements Predicate<IInstance> {
-    @NotNull
-    private final String name;
-
-    public NameMatcher(@NotNull String name) {
-      this.name = name;
-    }
-
-    @NotNull
-    protected String getName() {
-      return name;
-    }
-
-    @Override
-    public boolean test(IInstance instance) {
-      boolean retval = false;
-      if (instance instanceof INamedInstance) {
-        if (getName().equals(((INamedInstance) instance).getEffectiveName())) {
-          retval = true;
-        }
-      }
-      return retval;
-    }
-
-  }
-
-  private static class WildcardMatcher implements Predicate<gov.nist.secauto.metaschema.model.common.IInstance> {
-
-    @Override
-    public boolean test(IInstance instance) {
-      boolean retval = false;
-      if (instance instanceof INamedInstance) {
-        retval = true;
-      }
-      return retval;
-    }
-
+    return List.of(test);
   }
 }

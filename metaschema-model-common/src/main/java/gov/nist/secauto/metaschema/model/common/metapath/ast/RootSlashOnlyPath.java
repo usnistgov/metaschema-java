@@ -26,10 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -56,13 +55,12 @@ public class RootSlashOnlyPath
   }
 
   @Override
-  public ISequence<? extends IDocumentNodeItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
-    return visitor.visitRootSlashOnlyPath(this, context);
-  }
-
-  @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitRootSlashOnlyPath(this, context);
   }
 
+  @Override
+  public ISequence<? extends IDocumentNodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    return context instanceof IDocumentNodeItem ? ISequence.of((IDocumentNodeItem) context) : ISequence.empty();
+  }
 }

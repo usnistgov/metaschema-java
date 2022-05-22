@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnBoolean;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,18 +40,33 @@ public class And
     extends AbstractNAryExpression
     implements IBooleanLogicExpression {
 
-  public And(@NotNull List<@NotNull IExpression> chidren) {
-    super(chidren);
-  }
-
-  @Override
-  public ISequence<? extends IBooleanItem> accept(IExpressionEvaluationVisitor visitor,
-      INodeContext context) {
-    return visitor.visitAnd(this, context);
+  /**
+   * Determines the logical conjunction of the result of evaluating a list of expressions. The boolean
+   * result of each expression is determined by applying
+   * {@link FnBoolean#fnBooleanAsPrimitive(ISequence)} to each function's {@link ISequence} result.
+   * 
+   * @param expressions
+   *          the list of expressions
+   */
+  public And(@NotNull List<@NotNull IExpression> expressions) {
+    super(expressions);
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitAnd(this, context);
+  }
+
+  @Override
+  public ISequence<? extends IBooleanItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    boolean retval = true;
+    for (IExpression child : getChildren()) {
+      ISequence<?> result = child.accept(dynamicContext, context);
+      if (!FnBoolean.fnBooleanAsPrimitive(result)) {
+        retval = false;
+        break;
+      }
+    }
+    return ISequence.of(IBooleanItem.valueOf(retval));
   }
 }

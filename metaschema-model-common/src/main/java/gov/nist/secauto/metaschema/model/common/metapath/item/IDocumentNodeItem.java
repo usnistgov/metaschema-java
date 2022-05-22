@@ -35,12 +35,23 @@ import org.jetbrains.annotations.NotNull;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
-public interface IDocumentNodeItem extends INodeItem {
+public interface IDocumentNodeItem extends IRequiredValueNodeItem {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.DOCUMENT;
+  }
+
+  @Override
+  default IDocumentNodeItem getContextNodeItem() {
+    return this;
+  }
+
+  @Override
+  default IDocumentNodeItem getNodeItem() {
+    return this;
   }
 
   /**
@@ -52,26 +63,20 @@ public interface IDocumentNodeItem extends INodeItem {
   IRootAssemblyNodeItem getRootAssemblyNodeItem();
 
   @Override
-  default IModelNodeItem getParentContentNodeItem() {
+  default Stream<@NotNull ? extends INodeItem> children() {
+    return Stream.of(getRootAssemblyNodeItem());
+  }
+
+  @Override
+  default IRequiredValueModelNodeItem getParentContentNodeItem() {
     // there is no parent
     return null;
   }
 
   @Override
-  default INodeItem getParentNodeItem() {
+  default IRequiredValueNodeItem getParentNodeItem() {
     // there is no parent
     return null;
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Stream<@NotNull ? extends IDocumentNodeItem> getPathStream() {
-    return Stream.of(this);
-  }
-
-  @Override
-  default IDocumentNodeItem getNodeItem() {
-    return this;
   }
 
   /**
@@ -93,7 +98,7 @@ public interface IDocumentNodeItem extends INodeItem {
    */
   @SuppressWarnings("null")
   @Override
-  default Collection<@NotNull ? extends IFlagNodeItem> getFlags() {
+  default Collection<@NotNull ? extends IRequiredValueFlagNodeItem> getFlags() {
     // a document does not have flags
     return Collections.emptyList();
   }
@@ -102,7 +107,7 @@ public interface IDocumentNodeItem extends INodeItem {
    * Documents do not have flag items. This call should return {@code null}.
    */
   @Override
-  default IFlagNodeItem getFlagByName(@NotNull String name) {
+  default IRequiredValueFlagNodeItem getFlagByName(@NotNull String name) {
     // a document does not have flags
     return null;
   }
@@ -112,9 +117,22 @@ public interface IDocumentNodeItem extends INodeItem {
    */
   @SuppressWarnings("null")
   @Override
-  default @NotNull Stream<? extends IFlagNodeItem> flags() {
+  default @NotNull Stream<@NotNull ? extends IRequiredValueFlagNodeItem> flags() {
     // a document does not have flags
     return Stream.empty();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default @NotNull List<@NotNull ? extends IRequiredValueModelNodeItem> getModelItemsByName(String name) {
+    IRootAssemblyNodeItem root = getRootAssemblyNodeItem();
+    return root.getName().equals(name) ? Collections.singletonList(root) : Collections.emptyList();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default @NotNull Collection<@NotNull ? extends List<@NotNull ? extends IRequiredValueModelNodeItem>> getModelItems() {
+    return Collections.singletonList(Collections.singletonList(getRootAssemblyNodeItem()));
   }
 
   @Override
@@ -122,17 +140,10 @@ public interface IDocumentNodeItem extends INodeItem {
     return getRootAssemblyNodeItem().getDefinition();
   }
 
-  // TODO: eliminate this method
   @Override
   default INamedInstance getInstance() {
     // a document does not have an instance
     return null;
-  }
-
-  @SuppressWarnings("unchecked")
-  @Override
-  default <CLASS> @NotNull CLASS toBoundObject() {
-    return (CLASS) getRootAssemblyNodeItem().getValue();
   }
 
   @Override
@@ -145,4 +156,9 @@ public interface IDocumentNodeItem extends INodeItem {
     return visitor.visitDocument(this, context);
   }
 
+  @Override
+  @NotNull
+  default Object getValue() {
+    return getRootAssemblyNodeItem().getValue();
+  }
 }

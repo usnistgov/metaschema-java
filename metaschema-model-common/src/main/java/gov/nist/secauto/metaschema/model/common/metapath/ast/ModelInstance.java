@@ -26,34 +26,64 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 public class ModelInstance
     extends AbstractNamedInstanceExpression<IModelNodeItem> {
 
-  public ModelInstance(@NotNull IExpression node) {
-    super(node);
+  /**
+   * Construct a new expression that finds any child {@link IModelNodeItem} that matches the provided
+   * {@code test}.
+   * 
+   * @param test
+   *          the test to use to match
+   */
+  public ModelInstance(@NotNull IExpression test) {
+    super(test);
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Class<IModelNodeItem> getBaseResultType() {
+  public Class<@NotNull IModelNodeItem> getBaseResultType() {
     return IModelNodeItem.class;
-  }
-
-  @Override
-  public ISequence<? extends IModelNodeItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
-    return visitor.visitModelInstance(this, context);
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitModelInstance(this, context);
+  }
+
+  @Override
+  public ISequence<? extends IModelNodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    return ISequence.of(matchModelInstance(context));
+  }
+
+  /**
+   * Get a stream of matching child node items for the provided {@code context}.
+   * 
+   * @param context
+   *          the context to match child items of
+   * @return the stream of matching node items
+   */
+  @SuppressWarnings("null")
+  @NotNull
+  protected Stream<? extends IModelNodeItem> matchModelInstance(@NotNull INodeContext context) {
+    Stream<? extends IModelNodeItem> retval;
+    if (getTest() instanceof Name) {
+      String name = ((Name) getTest()).getValue();
+      List<? extends IModelNodeItem> items = context.getModelItemsByName(name);
+      retval = items.stream();
+    } else {
+      // wildcard
+      retval = context.modelItems();
+    }
+    return retval;
   }
 }

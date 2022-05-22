@@ -26,35 +26,113 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
+import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
+import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Multiplication
     extends AbstractArithmeticExpression<IAnyAtomicItem> {
 
-  @SuppressWarnings("null")
+  /**
+   * An expression that gets the product result by multiplying two values.
+   * 
+   * @param left
+   *          the item to be divided
+   * @param right
+   *          the item to divide by
+   */
   public Multiplication(@NotNull IExpression left, @NotNull IExpression right) {
     super(left, right, IAnyAtomicItem.class);
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Class<IAnyAtomicItem> getBaseResultType() {
+  public Class<@NotNull IAnyAtomicItem> getBaseResultType() {
     return IAnyAtomicItem.class;
-  }
-
-  @Override
-  public ISequence<? extends IAnyAtomicItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
-    return visitor.visitMultiplication(this, context);
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitMultiplication(this, context);
+  }
+
+  @Override
+  public ISequence<? extends IAnyAtomicItem> accept(DynamicContext dynamicContext, INodeContext context) {
+    IAnyAtomicItem leftItem = getFirstDataItem(getLeft().accept(dynamicContext, context), true);
+    IAnyAtomicItem rightItem = getFirstDataItem(getRight().accept(dynamicContext, context), true);
+
+    return resultOrEmpty(leftItem, rightItem);
+  }
+
+  /**
+   * Get the sum of two atomic items.
+   * 
+   * @param leftItem
+   *          the first item to multiply
+   * @param rightItem
+   *          the second item to multiply
+   * @return the product of both items or an empty {@link ISequence} if either item is {@code null}
+   */
+  @NotNull
+  protected static ISequence<? extends IAnyAtomicItem> resultOrEmpty(@Nullable IAnyAtomicItem leftItem,
+      @Nullable IAnyAtomicItem rightItem) {
+    ISequence<? extends IAnyAtomicItem> retval;
+    if (leftItem == null || rightItem == null) {
+      retval = ISequence.empty();
+    } else {
+      IAnyAtomicItem result = multiply(leftItem, rightItem);
+      retval = ISequence.of(result);
+    }
+    return retval;
+  }
+
+  /**
+   * Get the sum of two atomic items.
+   * 
+   * @param leftItem
+   *          the first item to multiply
+   * @param rightItem
+   *          the second item to multiply
+   * @return the product of both items
+   */
+  @NotNull
+  public static IAnyAtomicItem multiply(@NotNull IAnyAtomicItem leftItem,
+      @NotNull IAnyAtomicItem rightItem) {
+    IAnyAtomicItem retval = null;
+    if (leftItem instanceof IYearMonthDurationItem) {
+      IYearMonthDurationItem left = (IYearMonthDurationItem) leftItem;
+      if (rightItem instanceof INumericItem) {
+        retval = OperationFunctions.opMultiplyYearMonthDuration(left, (INumericItem) rightItem);
+      }
+    } else if (leftItem instanceof IDayTimeDurationItem) {
+      IDayTimeDurationItem left = (IDayTimeDurationItem) leftItem;
+      if (rightItem instanceof INumericItem) {
+        retval = OperationFunctions.opMultiplyDayTimeDuration(left, (INumericItem) rightItem);
+      }
+    } else {
+      // handle as numeric
+      INumericItem left = FunctionUtils.toNumeric(leftItem);
+      if (rightItem instanceof INumericItem) {
+        INumericItem right = FunctionUtils.toNumeric(rightItem);
+        retval = OperationFunctions.opNumericMultiply(left, right);
+      } else if (rightItem instanceof IYearMonthDurationItem) {
+        retval = OperationFunctions.opMultiplyYearMonthDuration((IYearMonthDurationItem) rightItem, left);
+      } else if (rightItem instanceof IDayTimeDurationItem) {
+        retval = OperationFunctions.opMultiplyDayTimeDuration((IDayTimeDurationItem) rightItem, left);
+      }
+    }
+    if (retval == null) {
+      throw new UnsupportedOperationException(
+          String.format("The expression '%s * %s' is not supported", leftItem.getClass().getName(), rightItem.getClass().getName()));
+    }
+    return retval;
   }
 }

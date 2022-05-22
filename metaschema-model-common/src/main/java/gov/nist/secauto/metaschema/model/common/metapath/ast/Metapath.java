@@ -26,25 +26,32 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.ast;
 
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Metapath
     extends AbstractNAryExpression {
 
   @NotNull
-  private final Class<? extends IItem> staticResultType;
+  private final Class<@NotNull ? extends IItem> staticResultType;
 
-  public Metapath(@NotNull List<@NotNull IExpression> children) {
-    super(children);
-    this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, children);
+  /**
+   * Create a new internal metapath expression.
+   * 
+   * @param expressions
+   *          the expressions to evaluate
+   */
+  public Metapath(@NotNull List<@NotNull IExpression> expressions) {
+    super(expressions);
+    this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, expressions);
   }
 
   @Override
@@ -53,17 +60,17 @@ public class Metapath
   }
 
   @Override
-  public ISequence<? extends IItem> accept(IExpressionEvaluationVisitor visitor, INodeContext context) {
-    return visitor.visitMetapath(this, context);
-  }
-
-  @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitMetapath(this, context);
   }
 
   @Override
-  public String toString() {
-    return new ASTPrinter().visit(this);
+  public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
+    Stream<@NotNull ? extends IItem> retval = ObjectUtils.notNull(getChildren().stream()
+        .flatMap(child -> {
+          ISequence<?> result = child.accept(dynamicContext, context);
+          return result.asStream();
+        }));
+    return ISequence.of(retval);
   }
 }

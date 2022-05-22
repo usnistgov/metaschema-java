@@ -89,7 +89,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
   // }
 
   // @Override
-  // public Stream<? extends INodeItem> getNodeItemsFromParentInstance(IAssemblyNodeItem parentItem,
+  // public Stream<? extends INodeItem> getNodeItemsFromParentInstance(IRequiredValueAssemblyNodeItem parentItem,
   // Object parentValue) {
   // return newNodeItems(parentItem, getPropertyInfo().getItemsFromParentInstance(parentValue));
   // }
