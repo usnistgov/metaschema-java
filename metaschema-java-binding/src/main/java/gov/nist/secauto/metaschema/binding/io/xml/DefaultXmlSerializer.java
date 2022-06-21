@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.io.xml;
 
+import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
@@ -56,6 +57,7 @@ public class DefaultXmlSerializer<CLASS>
       if (xmlOutputFactory == null) {
         xmlOutputFactory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
         xmlOutputFactory.configureForSpeed();
+        xmlOutputFactory.setProperty(WstxOutputProperties.P_USE_DOUBLE_QUOTES_IN_XML_DECL, true);
         xmlOutputFactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
       }
       return xmlOutputFactory;
