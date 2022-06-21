@@ -122,9 +122,9 @@
 		<dependency.everit-json.version>1.14.0</dependency.everit-json.version>
 		<dependency.flexmark.version>0.64.0</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.30</dependency.freemarker.version>
-		<dependency.jackson.version>2.13.2</dependency.jackson.version>
+		<dependency.jackson.version>2.13.3</dependency.jackson.version>
 		<dependency.jackson-databind.version>2.13.3</dependency.jackson-databind.version>
-		<dependency.jaxb.version>3.0.0</dependency.jaxb.version>
+		<dependency.jaxb.version>4.0.0</dependency.jaxb.version>
 		<dependency.jaxb-api.version>2.3.1</dependency.jaxb-api.version>
 		<dependency.jaxen.version>1.2.0</dependency.jaxen.version>
 		<dependency.jdom2.version>2.0.6.1</dependency.jdom2.version>
