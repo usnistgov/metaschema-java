@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
@@ -97,7 +98,7 @@ class ExpressionUtilsTest {
     @SuppressWarnings("null")
     Class<? extends INodeItem> result
         = ExpressionUtils.analyzeStaticResultType(baseType, List.of(basicFlagExpr1, basicAssemblyExpr));
-    assertEquals(INodeItem.class, result);
+    assertEquals(IDefinitionNodeItem.class, result);
   }
 
   @Test

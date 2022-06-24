@@ -39,15 +39,13 @@ import gov.nist.secauto.metaschema.binding.io.xml.DefaultXmlSerializer;
 import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlDeserializer;
 import gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlSerializer;
 import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
-import gov.nist.secauto.metaschema.binding.model.DefaultAssemblyClassBinding;
-import gov.nist.secauto.metaschema.binding.model.DefaultFieldClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
-import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
-import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.constraint.FindingCollectingConstraintValidationHandler;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
@@ -67,6 +65,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -87,15 +86,14 @@ public class DefaultBindingContext implements IBindingContext {
   private static DefaultBindingContext singleton;
 
   @NotNull
-  private final Map<Class<?>, IMetaschema> metaschemasByClass = new HashMap<>(); // NOPMD - intentional
-  @NotNull
-  private final Map<Class<?>, IClassBinding> classBindingsByClass = new HashMap<>(); // NOPMD - intentional
+  private IMetaschemaLoaderStrategy metaschemaLoaderStrategy;
   @NotNull
   private final Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> javaTypeAdapterMap // NOPMD - intentional
       = new HashMap<>();
   @NotNull
   private final List<@NotNull IBindingMatcher> bindingMatchers = new LinkedList<>();
 
+  @NotNull
   public static DefaultBindingContext instance() {
     synchronized (DefaultBindingContext.class) {
       if (singleton == null) {
@@ -108,43 +106,32 @@ public class DefaultBindingContext implements IBindingContext {
   /**
    * Construct a new binding context.
    */
+  public DefaultBindingContext(@NotNull Set<@NotNull IConstraintSet> externalConstraintSets) {
+    // only allow extended classes
+    metaschemaLoaderStrategy = new ExternalConstraintsMetaschemaLoaderStrategy(this, externalConstraintSets);
+  }
+
+  /**
+   * Construct a new binding context.
+   */
   protected DefaultBindingContext() {
     // only allow extended classes
+    metaschemaLoaderStrategy = new SimpleMetaschemaLoaderStrategy(this);
   }
 
   @Override
-  public IMetaschema getMetaschemaInstanceByClass(Class<? extends AbstractBoundMetaschema> clazz) {
-    IMetaschema retval;
-    synchronized (this) {
-      retval = metaschemasByClass.get(clazz);
-      if (retval == null) {
-        retval = AbstractBoundMetaschema.createInstance(clazz, this);
-        metaschemasByClass.put(clazz, retval);
-      }
-    }
-    return retval;
+  public IMetaschema getMetaschemaInstanceByClass(@NotNull Class<? extends AbstractBoundMetaschema> clazz) {
+    return metaschemaLoaderStrategy.getMetaschemaInstanceByClass(clazz);
   }
 
   @Override
   public IClassBinding getClassBinding(@NotNull Class<?> clazz) {
-    IClassBinding retval;
-    synchronized (this) {
-      retval = classBindingsByClass.get(clazz);
-      if (retval == null) {
-        if (clazz.isAnnotationPresent(MetaschemaAssembly.class)) {
-          retval = DefaultAssemblyClassBinding.createInstance(clazz, this);
-        } else if (clazz.isAnnotationPresent(MetaschemaField.class)) {
-          retval = DefaultFieldClassBinding.createInstance(clazz, this);
-        } else {
-          throw new IllegalArgumentException(String.format(
-              "Class '%s' does not represent a Metaschema definition"
-                  + " since it is missing a '%s' or '%s' annotation.",
-              clazz.getName(), MetaschemaAssembly.class.getName(), MetaschemaField.class.getName()));
-        }
-        classBindingsByClass.put(clazz, retval);
-      }
-    }
-    return retval;
+    return metaschemaLoaderStrategy.getClassBinding(clazz);
+  }
+
+  @Override
+  public Map<@NotNull Class<?>, IClassBinding> getClassBindingsByClass() {
+    return metaschemaLoaderStrategy.getClassBindingsByClass();
   }
 
   @Override
@@ -240,12 +227,6 @@ public class DefaultBindingContext implements IBindingContext {
   protected List<@NotNull ? extends IBindingMatcher> getBindingMatchers() {
     synchronized (this) {
       return CollectionUtil.unmodifiableList(bindingMatchers);
-    }
-  }
-
-  public Map<Class<?>, IClassBinding> getClassBindingsByClass() {
-    synchronized (this) {
-      return Collections.unmodifiableMap(classBindingsByClass);
     }
   }
 
