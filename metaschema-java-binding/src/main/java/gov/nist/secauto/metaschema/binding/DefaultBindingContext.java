@@ -281,9 +281,8 @@ public class DefaultBindingContext implements IBindingContext {
   public IValidationResult validate(@NotNull INodeItem nodeItem) {
     DynamicContext context = new StaticContext().newDynamicContext();
     context.setDocumentLoader(newBoundLoader());
-    DefaultConstraintValidator validator = new DefaultConstraintValidator(context);
     FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();
-    validator.setConstraintValidationHandler(handler);
+    DefaultConstraintValidator validator = new DefaultConstraintValidator(context, handler);
     validator.validate(nodeItem);
     return handler;
   }

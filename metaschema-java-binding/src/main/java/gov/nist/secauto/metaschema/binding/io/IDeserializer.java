@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.binding.io;
 
 import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
@@ -61,6 +62,11 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
   default boolean isValidating() {
     return isFeatureEnabled(DeserializationFeature.DESERIALIZE_VALIDATE_CONSTRAINTS);
   }
+
+  @NotNull
+  IConstraintValidationHandler getConstraintValidationHandler();
+
+  void setConstraintValidationHandler(@NotNull IConstraintValidationHandler constraintValidationHandler);
 
   /**
    * Read data from the {@link InputStream} into a bound class instance.
@@ -145,7 +151,7 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
   @NotNull
   default CLASS deserialize(@NotNull Reader reader, @NotNull URI documentUri) throws IOException {
     INodeItem nodeItem = deserializeToNodeItem(reader, documentUri);
-    return (CLASS)nodeItem.getValue();
+    return (CLASS) nodeItem.getValue();
   }
 
   /**
