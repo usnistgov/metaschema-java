@@ -124,25 +124,25 @@ public class Step implements IExpression {
     Stream<@NotNull ? extends INodeItem> items;
     switch (getAxis()) {
     case SELF:
-      items = Stream.of(context.getContextNodeItem());
+      items = Stream.of(context.getNodeItem());
       break;
     case ANCESTOR:
-      items = context.getContextNodeItem().ancestor();
+      items = context.getNodeItem().ancestor();
       break;
     case ANCESTOR_OR_SELF:
-      items = context.getContextNodeItem().ancestorOrSelf();
+      items = context.getNodeItem().ancestorOrSelf();
       break;
     case CHILDREN:
-      items = context.getContextNodeItem().children();
+      items = context.getNodeItem().modelItems();
       break;
     case DESCENDANT:
-      items = context.getContextNodeItem().descendant();
+      items = context.getNodeItem().descendant();
       break;
     case DESCENDANT_OR_SELF:
-      items = context.getContextNodeItem().descendantOrSelf();
+      items = context.getNodeItem().descendantOrSelf();
       break;
     case PARENT:
-      items = Stream.ofNullable(context.getContextNodeItem().getParentNodeItem());
+      items = Stream.ofNullable(context.getNodeItem().getParentNodeItem());
       break;
     default:
       throw new UnsupportedOperationException(getAxis().name());

@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -46,6 +48,7 @@ public @interface AllowedValue {
    * 
    * @return the value
    */
+  @NotNull
   String value();
 
   /**
@@ -53,5 +56,6 @@ public @interface AllowedValue {
    * 
    * @return an encoded markdown string
    */
+  @NotNull
   String description();
 }

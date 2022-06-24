@@ -32,6 +32,7 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
 
@@ -126,5 +127,10 @@ public interface INodeItemFactory {
   default IDocumentNodeItem newDocumentNodeItem(@NotNull IRootAssemblyDefinition definition, @NotNull Object value,
       @NotNull URI documentUri) {
     return new DocumentNodeItemImpl(definition, value, documentUri);
+  }
+
+  @NotNull
+  default IMetaschemaNodeItem newMetaschemaNodeItem(@NotNull IMetaschema metaschema) {
+    return new MetaschemaNodeItemImpl(metaschema);
   }
 }

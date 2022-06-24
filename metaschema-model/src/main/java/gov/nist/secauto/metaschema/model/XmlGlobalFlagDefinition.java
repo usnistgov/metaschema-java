@@ -94,7 +94,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
         if (getXmlFlag().isSetConstraint()) {
           constraints = new ValueConstraintSupport(getXmlFlag().getConstraint());
         } else {
-          constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+          constraints = new ValueConstraintSupport();
         }
       }
       return constraints;
@@ -107,8 +107,8 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   }
 
   @Override
-  public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
-    return initModelConstraints().getAllowedValuesContraints();
+  public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
+    return initModelConstraints().getAllowedValuesConstraints();
   }
 
   @Override
@@ -124,6 +124,26 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   @Override
   public List<? extends IExpectConstraint> getExpectConstraints() {
     return initModelConstraints().getExpectConstraints();
+  }
+
+  @Override
+  public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+    initModelConstraints().addConstraint(constraint);
+  }
+
+  @Override
+  public void addConstraint(@NotNull IMatchesConstraint constraint) {
+    initModelConstraints().addConstraint(constraint);
+  }
+
+  @Override
+  public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+    initModelConstraints().addConstraint(constraint);
+  }
+
+  @Override
+  public void addConstraint(@NotNull IExpectConstraint constraint) {
+    initModelConstraints().addConstraint(constraint);
   }
 
   @SuppressWarnings("null")

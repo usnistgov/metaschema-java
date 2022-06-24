@@ -58,7 +58,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.Resu
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
@@ -245,10 +245,10 @@ final class AnnotationUtils {
 
       IAssemblyNodeItem definitionNodeItem = DefaultNodeItemFactory.instance().newAssemblyNodeItem(definition, null);
 
-      ISequence<? extends INodeItem> instanceSet
+      ISequence<? extends IDefinitionNodeItem> instanceSet
           = constraint.getTarget().evaluateAs(definitionNodeItem, ResultType.SEQUENCE);
 
-      for (INodeItem item : instanceSet.asList()) {
+      for (IDefinitionNodeItem item : instanceSet.asList()) {
         INamedInstance instance = item.getInstance();
         if (instance instanceof INamedModelInstance) {
           INamedModelInstance modelInstance = (INamedModelInstance) instance;

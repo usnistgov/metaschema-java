@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-import gov.nist.secauto.metaschema.model.xmlbeans.FieldDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.FieldReferenceType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +47,7 @@ class XmlFieldInstance
   // private static final Logger logger = LogManager.getLogger(XmlFieldInstance.class);
 
   @NotNull
-  private final FieldDocument.Field xmlField;
+  private final FieldReferenceType xmlField;
 
   /**
    * Constructs a new Metaschema field instance definition from an XML representation bound to Java
@@ -58,7 +58,7 @@ class XmlFieldInstance
    * @param parent
    *          the field definition this object is an instance of
    */
-  public XmlFieldInstance(@NotNull FieldDocument.Field xmlField, @NotNull IAssemblyDefinition parent) {
+  public XmlFieldInstance(@NotNull FieldReferenceType xmlField, @NotNull IAssemblyDefinition parent) {
     super(parent);
     this.xmlField = xmlField;
   }
@@ -68,7 +68,7 @@ class XmlFieldInstance
    * 
    * @return the underlying XML data
    */
-  protected FieldDocument.Field getXmlField() {
+  protected FieldReferenceType getXmlField() {
     return xmlField;
   }
 

@@ -32,6 +32,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -49,6 +51,7 @@ public @interface IsUnique {
    * 
    * @return the identifier if provided or an empty string otherwise
    */
+  @NotNull
   String id() default "";
 
   /**
@@ -56,6 +59,7 @@ public @interface IsUnique {
    * 
    * @return the level
    */
+  @NotNull
   Level level() default IConstraint.Level.ERROR;
 
   /**
@@ -68,6 +72,7 @@ public @interface IsUnique {
    * 
    * @return the target metapath
    */
+  @NotNull
   String target() default ".";
 
   /**
@@ -75,6 +80,7 @@ public @interface IsUnique {
    * 
    * @return one or more keys
    */
+  @NotNull
   KeyField[] keyFields();
 
   /**
@@ -82,6 +88,7 @@ public @interface IsUnique {
    * 
    * @return the message or an empty string otherwise
    */
+  @NotNull
   String message() default "";
 
   /**
@@ -89,5 +96,6 @@ public @interface IsUnique {
    * 
    * @return an encoded markdown string or an empty string if no remarks are provided
    */
+  @NotNull
   String remarks() default "";
 }

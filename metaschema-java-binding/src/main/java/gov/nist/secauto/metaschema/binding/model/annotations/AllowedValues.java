@@ -33,6 +33,8 @@ import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstra
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -50,6 +52,7 @@ public @interface AllowedValues {
    * 
    * @return the identifier if provided or an empty string otherwise
    */
+  @NotNull
   String id() default "";
 
   /**
@@ -57,6 +60,7 @@ public @interface AllowedValues {
    * 
    * @return the level
    */
+  @NotNull
   Level level() default IConstraint.Level.ERROR;
 
   /**
@@ -69,6 +73,7 @@ public @interface AllowedValues {
    * 
    * @return the target metapath
    */
+  @NotNull
   String target() default IConstraint.DEFAULT_TARGET_METAPATH;
 
   /**
@@ -76,6 +81,7 @@ public @interface AllowedValues {
    * 
    * @return an array of allowed value enumerations
    */
+  @NotNull
   AllowedValue[] values();
 
   /**
@@ -90,6 +96,7 @@ public @interface AllowedValues {
    * 
    * @return the message or an empty string otherwise
    */
+  @NotNull
   String message() default "";
 
   /**
@@ -97,5 +104,6 @@ public @interface AllowedValues {
    * 
    * @return an encoded markdown string or an empty string if no remarks are provided
    */
+  @NotNull
   String remarks() default "";
 }

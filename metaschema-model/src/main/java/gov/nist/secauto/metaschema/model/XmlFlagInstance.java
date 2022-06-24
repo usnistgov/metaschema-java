@@ -31,20 +31,15 @@ import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IRequiredValueModelNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-import gov.nist.secauto.metaschema.model.xmlbeans.FlagDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.FlagReferenceType;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.Collections;
 
 class XmlFlagInstance
     extends AbstractFlagInstance {
   @NotNull
-  private final FlagDocument.Flag xmlFlag;
+  private final FlagReferenceType xmlFlag;
 
   /**
    * Constructs a new Metaschema flag instance definition from an XML representation bound to Java
@@ -55,7 +50,7 @@ class XmlFlagInstance
    * @param parent
    *          the field definition this object is an instance of
    */
-  public XmlFlagInstance(@NotNull FlagDocument.Flag xmlFlag, @NotNull INamedModelDefinition parent) {
+  public XmlFlagInstance(@NotNull FlagReferenceType xmlFlag, @NotNull INamedModelDefinition parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
   }
@@ -65,7 +60,7 @@ class XmlFlagInstance
    * 
    * @return the underlying XML data
    */
-  protected FlagDocument.Flag getXmlFlag() {
+  protected FlagReferenceType getXmlFlag() {
     return xmlFlag;
   }
 

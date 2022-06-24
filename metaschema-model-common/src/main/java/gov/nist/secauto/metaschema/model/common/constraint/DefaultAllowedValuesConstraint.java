@@ -40,7 +40,7 @@ public class DefaultAllowedValuesConstraint
     implements IAllowedValuesConstraint {
   private final boolean allowedOther;
   @NotNull
-  private final Map<@NotNull String, @NotNull DefaultAllowedValue> allowedValues;
+  private final Map<@NotNull String, DefaultAllowedValue> allowedValues;
 
   /**
    * Construct a new allowed values constraint which ensures that a target instance's value match one
@@ -68,7 +68,7 @@ public class DefaultAllowedValuesConstraint
       @Nullable String id,
       @NotNull Level level,
       @NotNull MetapathExpression target,
-      @NotNull Map<@NotNull String, @NotNull DefaultAllowedValue> allowedValues,
+      @NotNull Map<@NotNull String, DefaultAllowedValue> allowedValues,
       boolean allowedOther,
       @Nullable MarkupMultiline remarks) {
     super(id, level, target, remarks);
@@ -77,7 +77,7 @@ public class DefaultAllowedValuesConstraint
   }
 
   @Override
-  public Map<@NotNull String, @NotNull DefaultAllowedValue> getAllowedValues() {
+  public Map<@NotNull String, DefaultAllowedValue> getAllowedValues() {
     return allowedValues;
   }
 

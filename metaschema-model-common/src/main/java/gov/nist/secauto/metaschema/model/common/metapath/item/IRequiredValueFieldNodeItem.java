@@ -36,11 +36,6 @@ import java.util.stream.Stream;
 public interface IRequiredValueFieldNodeItem extends IFieldNodeItem, IRequiredValueModelNodeItem {
 
   @Override
-  default IRequiredValueFieldNodeItem getContextNodeItem() {
-    return this;
-  }
-
-  @Override
   default IRequiredValueFieldNodeItem getNodeItem() {
     return this;
   }

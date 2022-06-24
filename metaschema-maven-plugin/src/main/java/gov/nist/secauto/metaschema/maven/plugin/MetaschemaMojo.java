@@ -381,7 +381,7 @@ public class MetaschemaMojo
         getLog().info("Using metaschema source: " + source.getPath());
         IMetaschema metaschema;
         try {
-          metaschema = loader.loadXmlMetaschema(source);
+          metaschema = loader.load(source);
         } catch (MetaschemaException | IOException ex) {
           throw new MojoExecutionException("Loading of metaschema failed", ex);
         }

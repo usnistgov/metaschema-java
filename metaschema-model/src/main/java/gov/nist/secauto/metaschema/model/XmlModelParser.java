@@ -32,9 +32,9 @@ import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
-import gov.nist.secauto.metaschema.model.xmlbeans.AssemblyDocument;
-import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceDocument;
-import gov.nist.secauto.metaschema.model.xmlbeans.FieldDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.AssemblyReferenceType;
+import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceType;
+import gov.nist.secauto.metaschema.model.xmlbeans.FieldReferenceType;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType;
 
@@ -99,9 +99,9 @@ class XmlModelParser {
 
     while (cursor.toNextSelection()) {
       XmlObject obj = cursor.getObject();
-      if (obj instanceof FieldDocument.Field) {
+      if (obj instanceof FieldReferenceType) {
         XmlFieldInstance field
-            = new XmlFieldInstance((FieldDocument.Field) obj, parent); // NOPMD - intentional
+            = new XmlFieldInstance((FieldReferenceType) obj, parent); // NOPMD - intentional
         fieldInstances = append(fieldInstances, field);
         namedModelInstances = append(namedModelInstances, field);
         modelInstances = append(modelInstances, field);
@@ -111,9 +111,9 @@ class XmlModelParser {
         fieldInstances = append(fieldInstances, field);
         namedModelInstances = append(namedModelInstances, field);
         modelInstances = append(modelInstances, field);
-      } else if (obj instanceof AssemblyDocument.Assembly) {
+      } else if (obj instanceof AssemblyReferenceType) {
         XmlAssemblyInstance assembly
-            = new XmlAssemblyInstance((AssemblyDocument.Assembly) obj, parent); // NOPMD - intentional
+            = new XmlAssemblyInstance((AssemblyReferenceType) obj, parent); // NOPMD - intentional
         assemblyInstances = append(assemblyInstances, assembly);
         namedModelInstances = append(namedModelInstances, assembly);
         modelInstances = append(modelInstances, assembly);
@@ -123,9 +123,9 @@ class XmlModelParser {
         assemblyInstances = append(assemblyInstances, assembly);
         namedModelInstances = append(namedModelInstances, assembly);
         modelInstances = append(modelInstances, assembly);
-      } else if (obj instanceof ChoiceDocument.Choice) {
+      } else if (obj instanceof ChoiceType) {
         XmlChoiceInstance choice
-            = new XmlChoiceInstance((ChoiceDocument.Choice) obj, parent); // NOPMD - intentional
+            = new XmlChoiceInstance((ChoiceType) obj, parent); // NOPMD - intentional
         // assemblyInstances.putAll(choice.getAssemblyInstanceMap());
         // fieldInstances..putAll(choice.getFieldInstanceMap());
         modelInstances = append(modelInstances, choice);

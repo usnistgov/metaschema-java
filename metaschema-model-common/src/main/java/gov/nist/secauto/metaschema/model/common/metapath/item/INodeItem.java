@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
-import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathSegment;
@@ -38,37 +36,20 @@ import java.net.URI;
 import java.util.stream.Stream;
 
 public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemVisitable {
-
-  @NotNull
-  default String getName() {
-    INamedInstance instance = getInstance();
-    return instance == null ? getDefinition().getEffectiveName() : instance.getEffectiveName();
-  }
+  /**
+   * Retrieve the parent node item if it exists.
+   * 
+   * @return the parent node item, or {@code null} if this node item has no known parent
+   */
+  INodeItem getParentNodeItem();
 
   /**
-   * Get the Metaschema definition associated with this node.
+   * Retrieve the parent content node item if it exists. A content node is a non-document node.
    * 
-   * @return the definition
+   * @return the parent content node item, or {@code null} if this node item has no known parent
+   *         content node item
    */
-  @NotNull
-  INamedDefinition getDefinition();
-
-  /**
-   * Retrieve the instance associated with this path segment.
-   * 
-   * @return the instance of the segment, or {@code null} if it doesn't have one
-   */
-  INamedInstance getInstance();
-
-  @Override
-  default INodeItem getContextNodeItem() {
-    return this;
-  }
-
-  @Override
-  default INodeItem getNodeItem() {
-    return this;
-  }
+  IModelNodeItem getParentContentNodeItem();
 
   /**
    * Get the type of node item this is.
@@ -103,12 +84,15 @@ public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemV
     return toPath(IPathFormatter.METAPATH_PATH_FORMATER);
   }
 
-  /**
-   * Retrieve the parent node item if it exists.
-   * 
-   * @return the parent node item, or {@code null} if this node item has no known parent
-   */
-  INodeItem getParentNodeItem();
+  @SuppressWarnings("null")
+  @Override
+  default Stream<@NotNull ? extends INodeItem> getPathStream() {
+    INodeItem parent = getParentNodeItem();
+    return parent == null ? Stream.of(this) : Stream.concat(getParentNodeItem().getPathStream(), Stream.of(this));
+  }
+
+  @Override
+  <T> T getValue();
 
   default Stream<@NotNull ? extends INodeItem> ancestor() {
     return ancestorsOf(this);
@@ -134,14 +118,12 @@ public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemV
     return retval;
   }
 
-  Stream<@NotNull ? extends INodeItem> children();
-
   default Stream<@NotNull ? extends INodeItem> descendant() {
     return decendantsOf(this);
   }
 
   static Stream<@NotNull ? extends INodeItem> decendantsOf(@NotNull INodeItem nodeItem) {
-    Stream<@NotNull ? extends INodeItem> children = nodeItem.children();
+    Stream<@NotNull ? extends INodeItem> children = nodeItem.modelItems();
 
     return children.flatMap(child -> {
       return Stream.concat(Stream.of(child), decendantsOf(child));
@@ -155,21 +137,4 @@ public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemV
         descendant());
   }
 
-  @SuppressWarnings("null")
-  @Override
-  default Stream<@NotNull ? extends INodeItem> getPathStream() {
-    INodeItem parent = getParentNodeItem();
-    return parent == null ? Stream.of(this) : Stream.concat(getParentNodeItem().getPathStream(), Stream.of(this));
-  }
-
-  /**
-   * Retrieve the parent content node item if it exists. A content node is a non-document node.
-   * 
-   * @return the parent content node item, or {@code null} if this node item has no known parent
-   *         content node item
-   */
-  IModelNodeItem getParentContentNodeItem();
-
-  @Override
-  <T> T getValue();
 }

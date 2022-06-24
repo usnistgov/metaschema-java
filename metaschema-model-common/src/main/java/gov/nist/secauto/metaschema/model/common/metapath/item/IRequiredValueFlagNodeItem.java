@@ -31,12 +31,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * This marker interface indicates that the {@link IFlagNodeItem} must have a value to exist.
  */
-public interface IRequiredValueFlagNodeItem extends IFlagNodeItem, IRequiredValueNodeItem {
-
-  @Override
-  default IRequiredValueFlagNodeItem getContextNodeItem() {
-    return this;
-  }
+public interface IRequiredValueFlagNodeItem extends IFlagNodeItem, IRequiredValueDefinitionNodeItem {
 
   @Override
   default IRequiredValueFlagNodeItem getNodeItem() {
@@ -53,7 +48,7 @@ public interface IRequiredValueFlagNodeItem extends IFlagNodeItem, IRequiredValu
 
   @Override
   @NotNull
-  Object getValue();
+  <T> T getValue();
 
   @Override
   @NotNull

@@ -33,11 +33,6 @@ import org.jetbrains.annotations.NotNull;
 public interface IRequiredValueAssemblyNodeItem extends IAssemblyNodeItem, IRequiredValueModelNodeItem {
 
   @Override
-  default IRequiredValueAssemblyNodeItem getContextNodeItem() {
-    return this;
-  }
-
-  @Override
   default IRequiredValueAssemblyNodeItem getNodeItem() {
     return this;
   }

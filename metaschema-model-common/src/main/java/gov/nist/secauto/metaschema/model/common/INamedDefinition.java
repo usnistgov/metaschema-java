@@ -26,10 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
+import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
+
 /**
  * This marker interface is used for some collections that contain various named definitions.
  */
-public interface INamedDefinition extends IDefinition {
+public interface INamedDefinition extends IDefinition, IValueConstraintSupport {
   /**
    * Determine if the definition is defined inline, meaning the definition is declared where it is
    * used.

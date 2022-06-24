@@ -43,6 +43,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItemVisitor;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -112,7 +113,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
     IFlagDefinition definition = item.getDefinition();
 
     validateExpect(definition.getExpectConstraints(), item);
-    validateAllowedValues(definition.getAllowedValuesContraints(), item);
+    validateAllowedValues(definition.getAllowedValuesConstraints(), item);
     validateIndexHasKey(definition.getIndexHasKeyConstraints(), item);
     validateMatches(definition.getMatchesConstraints(), item);
   }
@@ -122,7 +123,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
     IFieldDefinition definition = item.getDefinition();
 
     validateExpect(definition.getExpectConstraints(), item);
-    validateAllowedValues(definition.getAllowedValuesContraints(), item);
+    validateAllowedValues(definition.getAllowedValuesConstraints(), item);
     validateIndexHasKey(definition.getIndexHasKeyConstraints(), item);
     validateMatches(definition.getMatchesConstraints(), item);
   }
@@ -132,7 +133,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
     IAssemblyDefinition definition = item.getDefinition();
 
     validateExpect(definition.getExpectConstraints(), item);
-    validateAllowedValues(definition.getAllowedValuesContraints(), item);
+    validateAllowedValues(definition.getAllowedValuesConstraints(), item);
     validateIndexHasKey(definition.getIndexHasKeyConstraints(), item);
     validateMatches(definition.getMatchesConstraints(), item);
     validateHasCardinality(definition.getHasCardinalityConstraints(), item);
@@ -545,6 +546,11 @@ public class DefaultConstraintValidator implements IConstraintValidator {
     public Void visitAssembly(@NotNull IAssemblyNodeItem item, Void context) {
       validate(item);
       return null;
+    }
+
+    @Override
+    public Void visitMetaschema(@NotNull IMetaschemaNodeItem item, Void context) {
+      throw new UnsupportedOperationException("not needed");
     }
   }
 }

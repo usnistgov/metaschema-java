@@ -175,7 +175,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
 
     MetaschemaLoader loader = new MetaschemaLoader();
     Path metaschemaPath = collectionPath.resolve(metaschemaName);
-    IMetaschema metaschema = loader.loadXmlMetaschema(metaschemaPath);
+    IMetaschema metaschema = loader.load(metaschemaPath);
 
     Path jsonSchema = produceJsonSchema(metaschema, generationDir.resolve(generatedSchemaName + ".json"));
     assertEquals(true, validate(JSON_SCHEMA_VALIDATOR, jsonSchema));

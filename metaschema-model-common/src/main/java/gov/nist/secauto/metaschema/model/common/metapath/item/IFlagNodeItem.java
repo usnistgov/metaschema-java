@@ -39,15 +39,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-public interface IFlagNodeItem extends INodeItem, IAtomicValuedItem {
+public interface IFlagNodeItem extends IDefinitionNodeItem, IAtomicValuedItem {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.FLAG;
-  }
-
-  @Override
-  default IFlagNodeItem getContextNodeItem() {
-    return this;
   }
 
   @Override
@@ -62,12 +57,6 @@ public interface IFlagNodeItem extends INodeItem, IAtomicValuedItem {
 
   @Override
   IModelNodeItem getParentNodeItem();
-
-  @SuppressWarnings("null")
-  @Override
-  default Stream<@NotNull ? extends INodeItem> children() {
-    return Stream.empty();
-  }
 
   @Override
   IFlagDefinition getDefinition();

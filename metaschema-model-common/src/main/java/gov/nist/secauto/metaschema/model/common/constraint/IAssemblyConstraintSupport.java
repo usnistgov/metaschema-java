@@ -28,68 +28,16 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 
 public interface IAssemblyConstraintSupport extends IValueConstraintSupport {
-  static final IAssemblyConstraintSupport NULL_CONSTRAINT = new IAssemblyConstraintSupport() {
-
-    @SuppressWarnings("null")
-    @Override
-    public List<@NotNull ? extends IConstraint> getConstraints() {
-      return Collections.emptyList();
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
-      return Collections.emptyList();
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public List<@NotNull ? extends IMatchesConstraint> getMatchesConstraints() {
-      return Collections.emptyList();
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public List<@NotNull ? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-      return Collections.emptyList();
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public List<@NotNull ? extends IExpectConstraint> getExpectConstraints() {
-      return Collections.emptyList();
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public List<@NotNull ? extends IIndexConstraint> getIndexContraints() {
-      return Collections.emptyList();
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public List<@NotNull ? extends IUniqueConstraint> getUniqueConstraints() {
-      return Collections.emptyList();
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public List<@NotNull ? extends ICardinalityConstraint> getHasCardinalityConstraints() {
-      return Collections.emptyList();
-    }
-  };
-
   /**
    * Get the collection of index constraints, if any.
    * 
    * @return the constraints or an empty list
    */
   @NotNull
-  List<@NotNull ? extends IIndexConstraint> getIndexContraints();
+  List<@NotNull ? extends IIndexConstraint> getIndexConstraints();
 
   /**
    * Get the collection of unique constraints, if any.
@@ -106,4 +54,11 @@ public interface IAssemblyConstraintSupport extends IValueConstraintSupport {
    */
   @NotNull
   List<@NotNull ? extends ICardinalityConstraint> getHasCardinalityConstraints();
+
+
+  void addConstraint(@NotNull IIndexConstraint constraint);
+
+  void addConstraint(@NotNull IUniqueConstraint constraint);
+
+  void addConstraint(@NotNull ICardinalityConstraint constraint);
 }

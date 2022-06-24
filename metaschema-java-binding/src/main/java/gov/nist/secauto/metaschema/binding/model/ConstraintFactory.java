@@ -50,9 +50,12 @@ import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,16 +66,17 @@ final class ConstraintFactory {
     // disable
   }
 
-  static Map<String, DefaultAllowedValue> toAllowedValues(AllowedValues constraint) {
+  @NotNull
+  static Map<@NotNull String, DefaultAllowedValue> toAllowedValues(@NotNull AllowedValues constraint) {
     AllowedValue[] values = constraint.values();
 
-    Map<String, DefaultAllowedValue> allowedValues = new LinkedHashMap<>(values.length);
+    Map<@NotNull String, DefaultAllowedValue> allowedValues = new LinkedHashMap<>(values.length);
     for (AllowedValue value : values) {
       DefaultAllowedValue allowedValue
           = new DefaultAllowedValue(value.value(), MarkupLine.fromMarkdown(value.description()));
       allowedValues.put(allowedValue.getValue(), allowedValue);
     }
-    return Collections.unmodifiableMap(allowedValues);
+    return CollectionUtil.unmodifiableMap(allowedValues);
   }
 
   static String toId(String id) {
@@ -91,16 +95,19 @@ final class ConstraintFactory {
     return message.isBlank() ? null : message;
   }
 
-  static IJavaTypeAdapter<?> toDataType(Class<? extends IJavaTypeAdapter<?>> adapterClass) {
+  @Nullable
+  static IJavaTypeAdapter<?> toDataType(@NotNull Class<? extends IJavaTypeAdapter<?>> adapterClass) {
     return adapterClass.isAssignableFrom(NullJavaTypeAdapter.class) ? null
         : DataTypeService.getInstance().getJavaTypeAdapterByClass(adapterClass);
   }
 
-  static MetapathExpression toMetapath(String metapath) {
-    return metapath == null || metapath.isBlank() ? null : MetapathExpression.compile(metapath);
+  @NotNull
+  static MetapathExpression toMetapath(@NotNull String metapath) {
+    return metapath.isBlank() ? MetapathExpression.CONTEXT_NODE : MetapathExpression.compile(metapath);
   }
 
-  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(AllowedValues constraint) {
+  @NotNull
+  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(@NotNull AllowedValues constraint) {
     return new DefaultAllowedValuesConstraint(
         toId(constraint.id()),
         constraint.level(),
@@ -110,6 +117,7 @@ final class ConstraintFactory {
         toRemarks(constraint.remarks()));
   }
 
+  @NotNull
   static DefaultMatchesConstraint newMatchesConstraint(Matches constraint) {
     return new DefaultMatchesConstraint(
         toId(constraint.id()),
@@ -120,10 +128,11 @@ final class ConstraintFactory {
         toRemarks(constraint.remarks()));
   }
 
-  static List<DefaultKeyField> toKeyFields(KeyField... keyFields) {
-    List<DefaultKeyField> retval;
+  @NotNull
+  static List<@NotNull DefaultKeyField> toKeyFields(@NotNull KeyField... keyFields) {
+    List<@NotNull DefaultKeyField> retval;
     if (keyFields == null || keyFields.length == 0) {
-      retval = Collections.emptyList();
+      retval = CollectionUtil.emptyList();
     } else {
       retval = new ArrayList<>(keyFields.length);
       for (KeyField keyField : keyFields) {
@@ -131,16 +140,18 @@ final class ConstraintFactory {
             toPattern(keyField.pattern()), toRemarks(keyField.remarks()));
         retval.add(field);
       }
-      retval = Collections.unmodifiableList(retval);
+      retval = CollectionUtil.unmodifiableList(retval);
     }
     return retval;
   }
 
+  @Nullable
   static Integer toCardinality(int value) {
     return value < 0 ? null : Integer.valueOf(value);
   }
 
-  static DefaultUniqueConstraint newUniqueConstraint(IsUnique constraint) {
+  @NotNull
+  static DefaultUniqueConstraint newUniqueConstraint(@NotNull IsUnique constraint) {
     return new DefaultUniqueConstraint(
         toId(constraint.id()),
         constraint.level(),
@@ -149,7 +160,8 @@ final class ConstraintFactory {
         toRemarks(constraint.remarks()));
   }
 
-  static DefaultIndexConstraint newIndexConstraint(Index constraint) {
+  @NotNull
+  static DefaultIndexConstraint newIndexConstraint(@NotNull Index constraint) {
     return new DefaultIndexConstraint(
         toId(constraint.id()),
         constraint.level(),
@@ -159,7 +171,8 @@ final class ConstraintFactory {
         toRemarks(constraint.remarks()));
   }
 
-  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(IndexHasKey constraint) {
+  @NotNull
+  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(@NotNull IndexHasKey constraint) {
     return new DefaultIndexHasKeyConstraint(
         toId(constraint.id()),
         constraint.level(),
@@ -169,7 +182,8 @@ final class ConstraintFactory {
         toRemarks(constraint.remarks()));
   }
 
-  static DefaultExpectConstraint newExpectConstraint(Expect constraint) {
+  @NotNull
+  static DefaultExpectConstraint newExpectConstraint(@NotNull Expect constraint) {
     return new DefaultExpectConstraint(
         toId(constraint.id()),
         constraint.level(),
@@ -179,7 +193,8 @@ final class ConstraintFactory {
         toRemarks(constraint.remarks()));
   }
 
-  static DefaultCardinalityConstraint newCardinalityConstraint(HasCardinality constraint) {
+  @NotNull
+  static DefaultCardinalityConstraint newCardinalityConstraint(@NotNull HasCardinality constraint) {
     return new DefaultCardinalityConstraint(
         toId(constraint.id()),
         constraint.level(),

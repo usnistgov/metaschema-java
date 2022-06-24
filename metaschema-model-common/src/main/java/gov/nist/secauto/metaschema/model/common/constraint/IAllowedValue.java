@@ -28,12 +28,15 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface IAllowedValue {
   /**
    * Retrieves the enumerated value associated with this allowed value constraint entry.
    * 
    * @return the value
    */
+  @NotNull
   String getValue();
 
   /**
@@ -41,5 +44,6 @@ public interface IAllowedValue {
    * 
    * @return the description
    */
+  @NotNull
   MarkupLine getDescription();
 }

@@ -28,50 +28,16 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 
 public interface IValueConstraintSupport extends IConstraintSupport {
-  static final IValueConstraintSupport NULL_CONSTRAINT = new IValueConstraintSupport() {
-
-    @SuppressWarnings("null")
-    @Override
-    public List<@NotNull ? extends IConstraint> getConstraints() {
-      return Collections.emptyList();
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
-      return Collections.emptyList();
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public List<@NotNull ? extends IMatchesConstraint> getMatchesConstraints() {
-      return Collections.emptyList();
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public List<@NotNull ? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-      return Collections.emptyList();
-    }
-
-    @SuppressWarnings("null")
-    @Override
-    public List<@NotNull ? extends IExpectConstraint> getExpectConstraints() {
-      return Collections.emptyList();
-    }
-  };
-
   /**
    * Get the collection of allowed value constraints, if any.
    * 
    * @return the constraints or an empty list
    */
   @NotNull
-  List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesContraints();
+  List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesConstraints();
 
   /**
    * Get the collection of matches constraints, if any.
@@ -96,4 +62,12 @@ public interface IValueConstraintSupport extends IConstraintSupport {
    */
   @NotNull
   List<@NotNull ? extends IExpectConstraint> getExpectConstraints();
+
+  void addConstraint(@NotNull IAllowedValuesConstraint constraint);
+
+  void addConstraint(@NotNull IMatchesConstraint constraint);
+
+  void addConstraint(@NotNull IIndexHasKeyConstraint constraint);
+
+  void addConstraint(@NotNull IExpectConstraint constraint);
 }

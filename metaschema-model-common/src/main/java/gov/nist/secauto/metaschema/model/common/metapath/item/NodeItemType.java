@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 public enum NodeItemType {
+  METASCHEMA,
   DOCUMENT,
   ASSEMBLY,
   FIELD,

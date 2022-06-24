@@ -364,7 +364,7 @@ class XmlInlineAssemblyDefinition
           if (getXmlAssembly().isSetConstraint()) {
             constraints = new AssemblyConstraintSupport(getXmlAssembly().getConstraint());
           } else {
-            constraints = IAssemblyConstraintSupport.NULL_CONSTRAINT;
+            constraints = new AssemblyConstraintSupport();
           }
         }
         return constraints;
@@ -377,8 +377,8 @@ class XmlInlineAssemblyDefinition
     }
 
     @Override
-    public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
-      return initModelConstraints().getAllowedValuesContraints();
+    public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
+      return initModelConstraints().getAllowedValuesConstraints();
     }
 
     @Override
@@ -398,7 +398,7 @@ class XmlInlineAssemblyDefinition
 
     @Override
     public List<? extends IIndexConstraint> getIndexConstraints() {
-      return initModelConstraints().getIndexContraints();
+      return initModelConstraints().getIndexConstraints();
     }
 
     @Override
@@ -409,6 +409,41 @@ class XmlInlineAssemblyDefinition
     @Override
     public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
       return initModelConstraints().getHasCardinalityConstraints();
+    }
+
+    @Override
+    public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+      initModelConstraints().addConstraint(constraint);
+    }
+
+    @Override
+    public void addConstraint(@NotNull IMatchesConstraint constraint) {
+      initModelConstraints().addConstraint(constraint);
+    }
+
+    @Override
+    public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+      initModelConstraints().addConstraint(constraint);
+    }
+
+    @Override
+    public void addConstraint(@NotNull IExpectConstraint constraint) {
+      initModelConstraints().addConstraint(constraint);
+    }
+
+    @Override
+    public void addConstraint(@NotNull IIndexConstraint constraint) {
+      initModelConstraints().addConstraint(constraint);
+    }
+
+    @Override
+    public void addConstraint(@NotNull IUniqueConstraint constraint) {
+      initModelConstraints().addConstraint(constraint);
+    }
+
+    @Override
+    public void addConstraint(@NotNull ICardinalityConstraint constraint) {
+      initModelConstraints().addConstraint(constraint);
     }
 
     @Override

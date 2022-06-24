@@ -53,7 +53,7 @@ class FlagTest extends AbstractExpressionTest {
 
     context.checking(new Expectations() {
       {
-        allowing(nodeContext).getContextNodeItem();
+        allowing(nodeContext).getNodeItem();
         will(returnValue(nodeContext));
         allowing(nodeContext).getNodeItemType();
         will(returnValue(NodeItemType.ASSEMBLY));

@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceType;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +46,7 @@ import java.util.Map;
 class XmlChoiceInstance
     extends AbstractChoiceInstance {
   @NotNull
-  private final ChoiceDocument.Choice xmlChoice;
+  private final ChoiceType xmlChoice;
   private XmlModelContainerSupport modelContainer;
 
   /**
@@ -58,7 +58,7 @@ class XmlChoiceInstance
    *          the parent assembly definition that contains this choice
    */
   public XmlChoiceInstance(
-      @NotNull ChoiceDocument.Choice xmlChoice,
+      @NotNull ChoiceType xmlChoice,
       @NotNull IAssemblyDefinition containingAssembly) {
     super(containingAssembly);
     this.xmlChoice = xmlChoice;
@@ -77,7 +77,7 @@ class XmlChoiceInstance
    * @return the underlying XML data
    */
   @NotNull
-  protected ChoiceDocument.Choice getXmlChoice() {
+  protected ChoiceType getXmlChoice() {
     return xmlChoice;
   }
 

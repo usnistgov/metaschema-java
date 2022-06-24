@@ -32,6 +32,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -51,6 +53,7 @@ public @interface BoundFlag {
    * 
    * @return the name
    */
+  @NotNull
   String useName() default "##default";
 
   /**
@@ -61,6 +64,7 @@ public @interface BoundFlag {
    * 
    * @return the namespace
    */
+  @NotNull
   String namespace() default "##none";
 
   /**
@@ -78,6 +82,7 @@ public @interface BoundFlag {
    * 
    * @return the default value
    */
+  @NotNull
   String defaultValue() default "\u0000";
 
   /**
@@ -94,6 +99,7 @@ public @interface BoundFlag {
    * 
    * @return the data type adapter
    */
+  @NotNull
   Class<? extends IJavaTypeAdapter<?>> typeAdapter();
 
   /**
@@ -101,6 +107,7 @@ public @interface BoundFlag {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
+  @NotNull
   AllowedValues[] allowedValues() default {};
 
   /**
@@ -108,6 +115,7 @@ public @interface BoundFlag {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
+  @NotNull
   Matches[] matches() default {};
 
   /**
@@ -115,6 +123,7 @@ public @interface BoundFlag {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
+  @NotNull
   IndexHasKey[] indexHasKey() default {};
 
   /**
@@ -122,5 +131,6 @@ public @interface BoundFlag {
    * 
    * @return the expected constraints or an empty array if no expected constraints are defined
    */
+  @NotNull
   Expect[] expect() default {};
 }

@@ -82,7 +82,7 @@ class XmlInlineFlagDefinition
         if (getXmlFlag().isSetConstraint()) {
           constraints = new ValueConstraintSupport(getXmlFlag().getConstraint());
         } else {
-          constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+          constraints = new ValueConstraintSupport();
         }
       }
     }
@@ -195,9 +195,9 @@ class XmlInlineFlagDefinition
     }
 
     @Override
-    public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+    public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
       checkModelConstraints();
-      return constraints.getAllowedValuesContraints();
+      return constraints.getAllowedValuesConstraints();
     }
 
     @Override
@@ -216,6 +216,30 @@ class XmlInlineFlagDefinition
     public List<? extends IExpectConstraint> getExpectConstraints() {
       checkModelConstraints();
       return constraints.getExpectConstraints();
+    }
+
+    @Override
+    public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+      checkModelConstraints();
+      constraints.addConstraint(constraint);
+    }
+
+    @Override
+    public void addConstraint(@NotNull IMatchesConstraint constraint) {
+      checkModelConstraints();
+      constraints.addConstraint(constraint);
+    }
+
+    @Override
+    public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+      checkModelConstraints();
+      constraints.addConstraint(constraint);
+    }
+
+    @Override
+    public void addConstraint(@NotNull IExpectConstraint constraint) {
+      checkModelConstraints();
+      constraints.addConstraint(constraint);
     }
 
     @Override

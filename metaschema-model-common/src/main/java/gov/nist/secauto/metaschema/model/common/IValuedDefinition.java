@@ -26,15 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * This marker interface identifies Metaschema definition types that have associated values (i.e.,
@@ -48,37 +42,4 @@ public interface IValuedDefinition extends IDefinition {
    */
   @NotNull
   IJavaTypeAdapter<?> getJavaTypeAdapter();
-
-  /**
-   * Retrieve the list of allowed value constraints that apply to this definition's value.
-   * 
-   * @return the list of allowed value constraints
-   */
-  @NotNull
-  List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesContraints();
-
-  /**
-   * Retrieve the list of matches constraints that apply to this definition's value.
-   * 
-   * @return the list of matches constraints
-   */
-  @NotNull
-  List<@NotNull ? extends IMatchesConstraint> getMatchesConstraints();
-
-  /**
-   * Retrieve the list of key reference constraints that apply to this definition's value.
-   * 
-   * @return the list of key reference constraints
-   */
-  @NotNull
-  List<@NotNull ? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints();
-
-  /**
-   * Retrieve the list of expect constraints that apply to this definition's value.
-   * 
-   * @return the list of expect constraints
-   */
-  @NotNull
-  List<@NotNull ? extends IExpectConstraint> getExpectConstraints();
-
 }

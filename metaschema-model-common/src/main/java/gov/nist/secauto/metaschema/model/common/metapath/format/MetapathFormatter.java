@@ -30,12 +30,19 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IRootAssemblyNodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
 public class MetapathFormatter implements IPathFormatter {
+
+  @Override
+  public @NotNull String formatMetaschema(@NotNull IMetaschemaNodeItem metaschema) {
+    // this will result in a slash being generated using the join in the format method
+    return "";
+  }
 
   @Override
   public String formatDocument(IDocumentNodeItem document) {

@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.ast;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
 import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
@@ -77,8 +78,8 @@ public class Name
 
   @Override
   public ISequence<? extends INodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    INodeItem node = context.getContextNodeItem();
-    return getValue().equals(node.getName()) ? ISequence.of(node) : ISequence.empty();
+    INodeItem node = context.getNodeItem();
+    return node instanceof IDefinitionNodeItem && getValue().equals(((IDefinitionNodeItem)node).getName()) ? ISequence.of(node) : ISequence.empty();
   }
 
   @SuppressWarnings("null")

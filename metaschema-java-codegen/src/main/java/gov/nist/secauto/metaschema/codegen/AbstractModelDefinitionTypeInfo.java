@@ -108,7 +108,7 @@ class AbstractModelDefinitionTypeInfo<DEF extends INamedModelDefinition>
 
   @SuppressWarnings("null")
   @Override
-  public Collection<gov.nist.secauto.metaschema.codegen.IFlagInstanceTypeInfo> getFlagInstanceTypeInfos() {
+  public Collection<@NotNull IFlagInstanceTypeInfo> getFlagInstanceTypeInfos() {
     initInstanceTypeInfos();
     return flagTypeInfos.values();
   }
@@ -131,7 +131,7 @@ class AbstractModelDefinitionTypeInfo<DEF extends INamedModelDefinition>
 
   protected void buildConstraints(@NotNull AnnotationSpec.Builder annotation) {
     INamedModelDefinition definition = getDefinition();
-    AnnotationUtils.applyAllowedValuesConstraints(annotation, definition.getAllowedValuesContraints());
+    AnnotationUtils.applyAllowedValuesConstraints(annotation, definition.getAllowedValuesConstraints());
     AnnotationUtils.applyIndexHasKeyConstraints(annotation, definition.getIndexHasKeyConstraints());
     AnnotationUtils.applyMatchesConstraints(annotation, definition.getMatchesConstraints());
     AnnotationUtils.applyExpectConstraints(annotation, definition.getExpectConstraints());

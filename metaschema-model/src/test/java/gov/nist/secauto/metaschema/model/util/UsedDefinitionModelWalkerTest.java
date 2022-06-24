@@ -52,7 +52,7 @@ class UsedDefinitionModelWalkerTest {
   void test() throws MetaschemaException, IOException {
     MetaschemaLoader loader = new MetaschemaLoader();
 
-    IMetaschema metaschema = loader.loadXmlMetaschema(new URL(
+    IMetaschema metaschema = loader.load(new URL(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
 
     Collection<@NotNull ? extends IDefinition> definitions

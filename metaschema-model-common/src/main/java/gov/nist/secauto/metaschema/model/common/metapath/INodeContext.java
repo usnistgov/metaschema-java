@@ -43,7 +43,7 @@ public interface INodeContext {
    * @return the context node
    */
   @NotNull
-  INodeItem getContextNodeItem();
+  INodeItem getNodeItem();
 
   /**
    * Get the flags and value data associated this node. The resulting collection is expected to be

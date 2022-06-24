@@ -26,14 +26,19 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -65,11 +70,56 @@ class ModelFactoryImpl {
   }
 
   @NotNull
+  public IFlagNodeItem newFlagNodeItem(@NotNull IFlagDefinition definition, @Nullable URI baseUri) {
+    return getNodeItemFactory().newFlagNodeItem(definition, baseUri);
+  }
+
+  @NotNull
+  public IFlagNodeItem newFlagNodeItem(@NotNull IFlagInstance instance, @NotNull IModelNodeItem parent) {
+    return getNodeItemFactory().newFlagNodeItem(instance, parent);
+  }
+
+  @NotNull
+  public IRequiredValueFlagNodeItem newFlagNodeItem(@NotNull IFlagInstance instance, @NotNull IRequiredValueModelNodeItem parent, @NotNull Object instanceValue) {
+    return getNodeItemFactory().newFlagNodeItem(instance, parent, instanceValue);
+  }
+
+  @NotNull
+  public IFieldNodeItem newFieldNodeItem(@NotNull IFieldDefinition definition, @Nullable URI baseUri) {
+    return getNodeItemFactory().newFieldNodeItem(definition, baseUri);
+  }
+
+  @NotNull
+  public IFieldNodeItem newFieldNodeItem(@NotNull IFieldInstance instance, @NotNull IAssemblyNodeItem parent) {
+    return getNodeItemFactory().newFieldNodeItem(instance, parent);
+  }
+
+  @NotNull
+  public IRequiredValueFieldNodeItem newFieldNodeItem(@NotNull IFieldInstance instance, @NotNull IRequiredValueAssemblyNodeItem parent, int position, @NotNull Object instanceValue) {
+    return getNodeItemFactory().newFieldNodeItem(instance, parent, position, instanceValue);
+  }
+
+  @NotNull
+  public IAssemblyNodeItem newAssemblyNodeItem(@NotNull IAssemblyDefinition definition, @Nullable URI baseUri) {
+    return getNodeItemFactory().newAssemblyNodeItem(definition, baseUri);
+  }
+
+  @NotNull
+  public IAssemblyNodeItem newAssemblyNodeItem(@NotNull IAssemblyInstance instance, @NotNull IAssemblyNodeItem parent) {
+    return getNodeItemFactory().newAssemblyNodeItem(instance, parent);
+  }
+
+  @NotNull
+  public IRequiredValueAssemblyNodeItem newAssemblyNodeItem(@NotNull IAssemblyInstance instance, @NotNull IRequiredValueAssemblyNodeItem parent, int position, @NotNull Object instanceValue) {
+    return getNodeItemFactory().newAssemblyNodeItem(instance, parent, position, instanceValue);
+  }
+
+  @NotNull
   public Map<@NotNull String, IFlagNodeItem> generateFlags(@NotNull IModelNodeItem parent) {
     Map<@NotNull String, IFlagNodeItem> retval = new LinkedHashMap<>();
 
     for (IFlagInstance instance : parent.getDefinition().getFlagInstances()) {
-      IFlagNodeItem item = getNodeItemFactory().newFlagNodeItem(instance, parent);
+      IFlagNodeItem item = newFlagNodeItem(instance, parent);
       retval.put(instance.getEffectiveName(), item);
     }
     return retval.isEmpty() ? CollectionUtil.emptyMap() : CollectionUtil.unmodifiableMap(retval);
@@ -83,7 +133,7 @@ class ModelFactoryImpl {
     for (IFlagInstance instance : parent.getDefinition().getFlagInstances()) {
       Object instanceValue = instance.getValue(parentValue);
       if (instanceValue != null) {
-        IRequiredValueFlagNodeItem item = getNodeItemFactory().newFlagNodeItem(instance, parent, instanceValue);
+        IRequiredValueFlagNodeItem item = newFlagNodeItem(instance, parent, instanceValue);
         retval.put(instance.getEffectiveName(), item);
       }
     }
@@ -97,9 +147,9 @@ class ModelFactoryImpl {
       @NotNull
       IModelNodeItem item;
       if (instance instanceof IAssemblyInstance) {
-        item = getNodeItemFactory().newAssemblyNodeItem((IAssemblyInstance) instance, parent);
+        item = newAssemblyNodeItem((IAssemblyInstance) instance, parent);
       } else if (instance instanceof IFieldInstance) {
-        item = getNodeItemFactory().newFieldNodeItem((IFieldInstance) instance, parent);
+        item = newFieldNodeItem((IFieldInstance) instance, parent);
       } else {
         throw new UnsupportedOperationException("unsupported instance type: " + instance.getClass().getName());
       }
@@ -122,10 +172,10 @@ class ModelFactoryImpl {
         @NotNull
         IRequiredValueModelNodeItem item;
         if (instance instanceof IAssemblyInstance) {
-          item = getNodeItemFactory().newAssemblyNodeItem((IAssemblyInstance) instance, parent, index.incrementAndGet(),
+          item = newAssemblyNodeItem((IAssemblyInstance) instance, parent, index.incrementAndGet(),
               itemValue);
         } else if (instance instanceof IFieldInstance) {
-          item = getNodeItemFactory().newFieldNodeItem((IFieldInstance) instance, parent, index.incrementAndGet(),
+          item = newFieldNodeItem((IFieldInstance) instance, parent, index.incrementAndGet(),
               itemValue);
         } else {
           throw new UnsupportedOperationException("unsupported instance type: " + instance.getClass().getName());

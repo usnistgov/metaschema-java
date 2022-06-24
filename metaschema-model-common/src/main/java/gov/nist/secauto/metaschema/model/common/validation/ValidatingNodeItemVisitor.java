@@ -31,6 +31,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.AbstractNodeItemVi
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
+
+import org.jetbrains.annotations.NotNull;
 
 public class ValidatingNodeItemVisitor
     extends AbstractNodeItemVisitor<Boolean, IConstraintValidator> {
@@ -56,5 +59,10 @@ public class ValidatingNodeItemVisitor
   public Boolean visitAssembly(IAssemblyNodeItem item, IConstraintValidator context) {
     context.validate(item);
     return super.visitAssembly(item, context);
+  }
+
+  @Override
+  public Boolean visitMetaschema(@NotNull IMetaschemaNodeItem item, IConstraintValidator context) {
+    throw new UnsupportedOperationException("validation of a metaschema node item is not needed");
   }
 }
