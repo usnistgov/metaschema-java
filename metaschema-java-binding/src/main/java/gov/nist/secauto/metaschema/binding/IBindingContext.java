@@ -31,17 +31,16 @@ import gov.nist.secauto.metaschema.binding.io.Format;
 import gov.nist.secauto.metaschema.binding.io.IBoundLoader;
 import gov.nist.secauto.metaschema.binding.io.IDeserializer;
 import gov.nist.secauto.metaschema.binding.io.ISerializer;
-import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.net.URI;
@@ -53,17 +52,17 @@ import javax.xml.namespace.QName;
  * Provides information supporting a binding between a set of Metaschema models and corresponding
  * Java classes.
  */
-public interface IBindingContext {
+public interface IBindingContext extends IMetaschemaLoaderStrategy {
 
   /**
-   * Get a new {@link IBindingContext}, which can be used to load information that binds a model to a
+   * Get the singleton {@link IBindingContext} instance, which can be used to load information that binds a model to a
    * set of Java classes.
    * 
    * @return a new binding context
    */
   @NotNull
-  static IBindingContext newInstance() {
-    return new DefaultBindingContext();
+  static IBindingContext instance() {
+    return DefaultBindingContext.instance();
   }
 
   /**
@@ -82,6 +81,7 @@ public interface IBindingContext {
    * @return the bound class or {@code null} if not recognized
    * @see IBindingContext#registerBindingMatcher(IBindingMatcher)
    */
+  @Nullable
   Class<?> getBoundClassForXmlQName(@NotNull QName rootQName);
 
   /**
@@ -93,6 +93,7 @@ public interface IBindingContext {
    * @return the bound class or {@code null} if not recognized
    * @see IBindingContext#registerBindingMatcher(IBindingMatcher)
    */
+  @Nullable
   Class<?> getBoundClassForJsonName(@NotNull String rootName);
 
   /**
@@ -108,37 +109,13 @@ public interface IBindingContext {
    *          the Java {@link Class} for the bound type
    * @return the adapter instance or {@code null} if the provided class is not bound
    */
+  @Nullable
   <TYPE extends IJavaTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz);
 
   // boolean hasClassBinding(Class<?> clazz) throws BindingException;
 
   // <TYPE> void registerSubclassType(@NotNull Class<TYPE> originalClass, @NotNull Class<? extends
   // TYPE> replacementClass);
-
-  /**
-   * Get the {@link IClassBinding} instance for a {@link MetaschemaAssembly} or
-   * {@link MetaschemaField} associated with a Java class.
-   * 
-   * @param clazz
-   *          the class binding to load
-   * @return the associated class binding instance
-   * @throws NullPointerException
-   *           if the provided class is {@code null}
-   * @throws IllegalArgumentException
-   *           if the provided class is not bound to a Metaschema assembly or field
-   */
-  @NotNull
-  IClassBinding getClassBinding(@NotNull Class<?> clazz);
-
-  /**
-   * Get the Metaschema instance identified by the provided class.
-   * 
-   * @param clazz
-   *          the Metaschema class
-   * @return the Metaschema instance
-   */
-  @NotNull
-  IMetaschema getMetaschemaInstanceByClass(@NotNull Class<? extends AbstractBoundMetaschema> clazz);
 
   /**
    * Gets a data {@link ISerializer} which can be used to write Java instance data for the provided

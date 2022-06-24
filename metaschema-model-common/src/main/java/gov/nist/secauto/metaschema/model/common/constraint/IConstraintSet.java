@@ -23,29 +23,79 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.ResultType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 
 public interface IConstraintSet {
-  Collection<@NotNull IConstraintSet> getImportedConstraintSets();
+
+  @NotNull
+  static Set<@NotNull IConstraintSet> resolveConstraintSets(@NotNull Set<@NotNull IConstraintSet> constraintSets) {
+    return constraintSets.stream()
+        .flatMap(set -> resolveConstraintSet(set))
+        .distinct()
+        .collect(Collectors.toUnmodifiableSet());
+  }
+
+  @NotNull
+  private static Stream<@NotNull IConstraintSet> resolveConstraintSet(@NotNull IConstraintSet constraintSet) {
+    return Stream.concat(Stream.of(constraintSet), constraintSet.getImportedConstraintSets().stream());
+  }
+
+  @NotNull
+  static List<@NotNull ITargetedConstaints> getTargetedConstraintsForMetaschema(
+      @NotNull Set<@NotNull IConstraintSet> constraintSets, @NotNull IMetaschema metaschema) {
+    return resolveConstraintSets(constraintSets).stream()
+        .flatMap(set -> set.getTargetedConstraintsForMetaschema(metaschema))
+        .collect(Collectors.toUnmodifiableList());
+  }
+
+  static void applyConstraintSetToMetaschema(@NotNull Set<@NotNull IConstraintSet> constraintSets, @NotNull IMetaschema metaschema) throws MetaschemaException {
+    Set<@NotNull IConstraintSet> resolvedConstraintSets = resolveConstraintSets(constraintSets);
+
+    ConstraintComposingVisitor visitor = new ConstraintComposingVisitor();
+    IMetaschemaNodeItem item = DefaultNodeItemFactory.instance().newMetaschemaNodeItem(metaschema);
+
+    for (ITargetedConstaints targeted : IConstraintSet.getTargetedConstraintsForMetaschema(resolvedConstraintSets, metaschema)) {
+      MetapathExpression targetExpression = targeted.getTargetExpression();
+      INodeItem node = targetExpression.evaluateAs(item, ResultType.NODE);
+      if (node == null) {
+        throw new MetaschemaException("Target not found for expression: " + targetExpression.getPath());
+      }
+      node.accept(visitor, targeted);
+    }
+
+  }
   
+  Collection<@NotNull IConstraintSet> getImportedConstraintSets();
+
   /**
-   * Get the set of Metaschema scoped constraints to apply by a {@link QName} formed from the Metaschema namespace and short name.
+   * Get the set of Metaschema scoped constraints to apply by a {@link QName} formed from the
+   * Metaschema namespace and short name.
+   * 
    * @return the mapping of QName to scoped constraints
    */
   @NotNull
   Map<@NotNull QName, List<@NotNull IScopedContraints>> getScopedContraints();
-  
+
   @NotNull
   Stream<@NotNull ITargetedConstaints> getTargetedConstraintsForMetaschema(@NotNull IMetaschema metaschema);
 }

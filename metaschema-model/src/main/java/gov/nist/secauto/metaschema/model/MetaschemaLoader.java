@@ -80,6 +80,7 @@ public class MetaschemaLoader
     extends AbstractLoader<IMetaschema> {
   private boolean resolveEntities; // = false;
 
+  @NotNull
   private final Set<@NotNull IConstraintSet> registeredConstraintSets;
 
   public MetaschemaLoader() {
@@ -90,6 +91,7 @@ public class MetaschemaLoader
     this.registeredConstraintSets = CollectionUtil.unmodifiableSet(additionalConstraintSets);
   }
 
+  @NotNull
   protected Set<@NotNull IConstraintSet> getRegisteredConstraintSets() {
     return registeredConstraintSets;
   }
@@ -103,30 +105,13 @@ public class MetaschemaLoader
     resolveEntities = true;
   }
 
-  protected List<@NotNull ITargetedConstaints> getTargetedConstraintsForMetaschema(@NotNull IMetaschema metaschema) {
-    return getRegisteredConstraintSets().stream()
-        .flatMap(set -> set.getTargetedConstraintsForMetaschema(metaschema))
-        .collect(Collectors.toUnmodifiableList());
-  }
-
   protected IMetaschema newXmlMetaschema(
       @NotNull URI resource,
       @NotNull METASCHEMADocument xmlObject,
       @NotNull List<@NotNull IMetaschema> importedMetaschemas) throws MetaschemaException {
     IMetaschema retval = new XmlMetaschema(resource, xmlObject, importedMetaschemas);
 
-    IMetaschemaNodeItem item = DefaultNodeItemFactory.instance().newMetaschemaNodeItem(retval);
-
-    ConstraintComposingVisitor visitor = new ConstraintComposingVisitor();
-
-    for (ITargetedConstaints targeted : getTargetedConstraintsForMetaschema(retval)) {
-      MetapathExpression targetExpression = targeted.getTargetExpression();
-      INodeItem node = targetExpression.evaluateAs(item, ResultType.NODE);
-      if (node == null) {
-        throw new MetaschemaException("Target not found for expression: " + targetExpression.getPath());
-      }
-      node.accept(visitor, targeted);
-    }
+    IConstraintSet.applyConstraintSetToMetaschema(getRegisteredConstraintSets(), retval);
 
     return retval;
   }
@@ -229,36 +214,4 @@ public class MetaschemaLoader
     return metaschemaXml;
   }
 
-  private class ConstraintComposingVisitor
-      implements INodeItemVisitor<Void, @NotNull ITargetedConstaints> {
-
-    @Override
-    public Void visitDocument(@NotNull IDocumentNodeItem item, @NotNull ITargetedConstaints context) {
-      throw new UnsupportedOperationException("constraints can only apply to an assembly, field, or flag definition");
-    }
-
-    @Override
-    public Void visitFlag(@NotNull IFlagNodeItem item, @NotNull ITargetedConstaints context) {
-      context.target(item.getDefinition());
-      return null;
-    }
-
-    @Override
-    public Void visitField(@NotNull IFieldNodeItem item, @NotNull ITargetedConstaints context) {
-      context.target(item.getDefinition());
-      return null;
-    }
-
-    @Override
-    public Void visitAssembly(@NotNull IAssemblyNodeItem item, @NotNull ITargetedConstaints context) {
-      context.target(item.getDefinition());
-      return null;
-    }
-
-    @Override
-    public Void visitMetaschema(@NotNull IMetaschemaNodeItem item, @NotNull ITargetedConstaints context) {
-      throw new UnsupportedOperationException("constraints can only apply to an assembly, field, or flag definition");
-    }
-
-  }
 }
