@@ -76,21 +76,16 @@ public class DefaultConstraintValidator implements IConstraintValidator {
   @NotNull
   private final DynamicContext metapathContext;
   @NotNull
-  private IConstraintValidationHandler handler = new LoggingConstraintValidationHandler();
+  private final IConstraintValidationHandler handler;
 
-  public DefaultConstraintValidator(@NotNull DynamicContext metapathContext) {
-    Objects.requireNonNull(metapathContext, "metapathContext");
+  public DefaultConstraintValidator(@NotNull DynamicContext metapathContext, @NotNull IConstraintValidationHandler handler) {
     this.metapathContext = metapathContext;
+    this.handler = handler;
   }
 
   @NotNull
   public IConstraintValidationHandler getConstraintValidationHandler() {
     return handler;
-  }
-
-  @SuppressWarnings("null")
-  public void setConstraintValidationHandler(@NotNull IConstraintValidationHandler handler) {
-    this.handler = Objects.requireNonNull(handler, "handler");
   }
 
   @NotNull

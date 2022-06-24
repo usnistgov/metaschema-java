@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.binding.io;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidationHandler;
+import gov.nist.secauto.metaschema.model.common.constraint.LoggingConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
@@ -49,6 +51,8 @@ public abstract class AbstractDeserializer<CLASS>
     extends AbstractSerializationBase<DeserializationFeature>
     implements IDeserializer<CLASS> {
 
+  private IConstraintValidationHandler constraintValidationHandler;
+
   /**
    * Construct a new deserializer.
    * 
@@ -60,6 +64,23 @@ public abstract class AbstractDeserializer<CLASS>
   @SuppressWarnings("null")
   protected AbstractDeserializer(@NotNull IBindingContext bindingContext, @NotNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding, DeserializationFeature.class);
+  }
+
+  @Override
+  public IConstraintValidationHandler getConstraintValidationHandler() {
+    synchronized (this) {
+      if (constraintValidationHandler == null) {
+        constraintValidationHandler = new LoggingConstraintValidationHandler();
+      }
+      return constraintValidationHandler;
+    }
+  }
+
+  @Override
+  public void setConstraintValidationHandler(@NotNull IConstraintValidationHandler constraintValidationHandler) {
+    synchronized (this) {
+      this.constraintValidationHandler = constraintValidationHandler;
+    }
   }
 
   @Override
@@ -76,7 +97,7 @@ public abstract class AbstractDeserializer<CLASS>
       StaticContext staticContext = new StaticContext();
       DynamicContext dynamicContext = staticContext.newDynamicContext();
       dynamicContext.setDocumentLoader(getBindingContext().newBoundLoader());
-      DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext);
+      DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext, getConstraintValidationHandler());
       validator.validate(nodeItem);
       validator.finalizeValidation();
     }
