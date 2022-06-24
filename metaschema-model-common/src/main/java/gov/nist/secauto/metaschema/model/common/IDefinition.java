@@ -26,24 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
-
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public interface IDefinition extends INamedModelElement {
 
   @NotNull
   ModuleScopeEnum DEFAULT_DEFINITION_MODEL_SCOPE = ModuleScopeEnum.INHERITED;
-
-  /**
-   * Retrieve the list of constraints associated with this definition.
-   * 
-   * @return the list of constraints
-   */
-  @NotNull
-  List<@NotNull ? extends IConstraint> getConstraints();
 
   /**
    * Retrieve the definition's scope within the context of its defining module.

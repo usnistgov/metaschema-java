@@ -255,7 +255,7 @@ public abstract class AbstractTestSuite {
     Future<@NotNull IMetaschema> loadMetaschemaFuture = executor.submit(() -> {
       IMetaschema metaschema;
       try {
-        metaschema = LOADER.loadXmlMetaschema(metaschemaUri.toURL());
+        metaschema = LOADER.load(metaschemaUri.toURL());
       } catch (IOException | MetaschemaException ex) {
         throw new JUnitException("Unable to generate schema for Metaschema: " + metaschemaUri, ex);
       }

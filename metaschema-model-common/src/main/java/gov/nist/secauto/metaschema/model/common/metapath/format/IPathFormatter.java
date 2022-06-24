@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IRootAssemblyNodeItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -119,4 +120,7 @@ public interface IPathFormatter {
    */
   @NotNull
   String formatDocument(@NotNull IDocumentNodeItem document);
+
+  @NotNull
+  String formatMetaschema(@NotNull IMetaschemaNodeItem metaschema);
 }

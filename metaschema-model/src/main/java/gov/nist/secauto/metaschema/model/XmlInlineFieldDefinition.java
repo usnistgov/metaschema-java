@@ -333,7 +333,7 @@ class XmlInlineFieldDefinition
           if (getXmlField().isSetConstraint()) {
             constraints = new ValueConstraintSupport(getXmlField().getConstraint());
           } else {
-            constraints = IValueConstraintSupport.NULL_CONSTRAINT;
+            constraints = new ValueConstraintSupport();
           }
         }
         return constraints;
@@ -346,8 +346,8 @@ class XmlInlineFieldDefinition
     }
 
     @Override
-    public List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
-      return initModelConstraints().getAllowedValuesContraints();
+    public List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
+      return initModelConstraints().getAllowedValuesConstraints();
     }
 
     @Override
@@ -365,6 +365,25 @@ class XmlInlineFieldDefinition
       return initModelConstraints().getExpectConstraints();
     }
 
+    @Override
+    public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+      initModelConstraints().addConstraint(constraint);
+    }
+
+    @Override
+    public void addConstraint(@NotNull IMatchesConstraint constraint) {
+      initModelConstraints().addConstraint(constraint);
+    }
+
+    @Override
+    public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+      initModelConstraints().addConstraint(constraint);
+    }
+
+    @Override
+    public void addConstraint(@NotNull IExpectConstraint constraint) {
+      initModelConstraints().addConstraint(constraint);
+    }
     @Override
     public MarkupMultiline getRemarks() {
       return XmlInlineFieldDefinition.this.getRemarks();

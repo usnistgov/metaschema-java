@@ -39,7 +39,6 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IRequiredValueNodeItem;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 
 import org.jetbrains.annotations.NotNull;
@@ -130,6 +129,16 @@ public interface IBindingContext {
    */
   @NotNull
   IClassBinding getClassBinding(@NotNull Class<?> clazz);
+
+  /**
+   * Get the Metaschema instance identified by the provided class.
+   * 
+   * @param clazz
+   *          the Metaschema class
+   * @return the Metaschema instance
+   */
+  @NotNull
+  IMetaschema getMetaschemaInstanceByClass(@NotNull Class<? extends AbstractBoundMetaschema> clazz);
 
   /**
    * Gets a data {@link ISerializer} which can be used to write Java instance data for the provided
@@ -252,13 +261,4 @@ public interface IBindingContext {
    */
   IValidationResult validate(@NotNull INodeItem nodeItem);
 
-  /**
-   * Get the Metaschema instance identified by the provided class.
-   * 
-   * @param clazz
-   *          the Metaschema class
-   * @return the Metaschema instance
-   */
-  @NotNull
-  IMetaschema getMetaschemaInstanceByClass(@NotNull Class<? extends AbstractBoundMetaschema> clazz);
 }

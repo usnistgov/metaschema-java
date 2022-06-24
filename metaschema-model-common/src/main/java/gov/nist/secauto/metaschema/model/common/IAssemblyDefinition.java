@@ -26,17 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
+import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 
 import javax.xml.namespace.QName;
 
-public interface IAssemblyDefinition extends INamedModelDefinition, IModelContainer, IAssembly {
+public interface IAssemblyDefinition
+    extends INamedModelDefinition, IModelContainer, IAssembly, IAssemblyConstraintSupport {
 
   /**
    * Check if the assembly is a top-level root assembly.
@@ -84,28 +79,4 @@ public interface IAssemblyDefinition extends INamedModelDefinition, IModelContai
   default String getRootJsonName() {
     return getRootName();
   }
-
-  /**
-   * Get any index constraints associated with this assembly definition.
-   * 
-   * @return the collection of index constraints, which may be empty
-   */
-  @NotNull
-  List<@NotNull ? extends IIndexConstraint> getIndexConstraints();
-
-  /**
-   * Get any unique constraints associated with this assembly definition.
-   * 
-   * @return the collection of unique constraints, which may be empty
-   */
-  @NotNull
-  List<@NotNull ? extends IUniqueConstraint> getUniqueConstraints();
-
-  /**
-   * Get any cardinality constraints associated with this assembly definition.
-   * 
-   * @return the collection of cardinality constraints, which may be empty
-   */
-  @NotNull
-  List<@NotNull ? extends ICardinalityConstraint> getHasCardinalityConstraints();
 }

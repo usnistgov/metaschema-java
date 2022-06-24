@@ -46,7 +46,7 @@ class Examples {
 
     URI metaschemaUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
-    IMetaschema metaschema = loader.loadMetaschema(metaschemaUri);
+    IMetaschema metaschema = loader.load(metaschemaUri);
     assertNotNull(metaschema, "metaschema not found");
   }
 
@@ -55,7 +55,7 @@ class Examples {
     MetaschemaLoader loader = new MetaschemaLoader();
     URI metaschemaUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
-    IMetaschema metaschema = loader.loadMetaschema(metaschemaUri);
+    IMetaschema metaschema = loader.load(metaschemaUri);
 
     IAssemblyDefinition definition = metaschema.getScopedAssemblyDefinitionByName("property");
     assertNotNull(definition, "definition not found");

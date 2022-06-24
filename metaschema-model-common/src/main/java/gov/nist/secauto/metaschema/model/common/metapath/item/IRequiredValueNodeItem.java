@@ -31,11 +31,6 @@ import org.jetbrains.annotations.NotNull;
 public interface IRequiredValueNodeItem extends INodeItem {
 
   @Override
-  default @NotNull IRequiredValueNodeItem getContextNodeItem() {
-    return this;
-  }
-
-  @Override
   default IRequiredValueNodeItem getNodeItem() {
     return this;
   }

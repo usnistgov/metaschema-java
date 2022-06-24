@@ -26,14 +26,16 @@
 
 package gov.nist.secauto.metaschema.model;
 
-import gov.nist.secauto.metaschema.model.common.constraint.AbstractConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.AllowedValuesType;
 import gov.nist.secauto.metaschema.model.xmlbeans.DefineFieldConstraintsType;
 import gov.nist.secauto.metaschema.model.xmlbeans.DefineFlagConstraintsType;
@@ -49,7 +51,6 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -58,15 +59,19 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
       + "$this/m:allowed-values|$this/m:matches|$this/m:index-has-key|$this/m:expect";
 
   @NotNull
-  private final List<AbstractConstraint> constraints;
+  private final List<@NotNull IConstraint> constraints = new LinkedList<>();
   @NotNull
-  private final List<DefaultAllowedValuesConstraint> allowedValuesConstraints;
+  private final List<@NotNull IAllowedValuesConstraint> allowedValuesConstraints = new LinkedList<>();
   @NotNull
-  private final List<DefaultMatchesConstraint> matchesConstraints;
+  private final List<@NotNull IMatchesConstraint> matchesConstraints = new LinkedList<>();
   @NotNull
-  private final List<DefaultIndexHasKeyConstraint> indexHasKeyConstraints;
+  private final List<@NotNull IIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
   @NotNull
-  private final List<DefaultExpectConstraint> expectConstraints;
+  private final List<@NotNull IExpectConstraint> expectConstraints = new LinkedList<>();
+
+  public ValueConstraintSupport() {
+    // do nothing
+  }
 
   /**
    * Generate a set of constraints from the provided XMLBeans instance.
@@ -77,46 +82,24 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
   public ValueConstraintSupport(@NotNull DefineFlagConstraintsType xmlConstraints) { // NOPMD - intentional
     XmlCursor cursor = xmlConstraints.newCursor();
     cursor.selectPath(PATH);
-
-    List<AbstractConstraint> constraints = new LinkedList<>();
-    List<DefaultAllowedValuesConstraint> allowedValuesConstraints = new LinkedList<>();
-    List<DefaultMatchesConstraint> matchesConstraints = new LinkedList<>();
-    List<DefaultIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
-    List<DefaultExpectConstraint> expectConstraints = new LinkedList<>();
     while (cursor.toNextSelection()) {
       XmlObject obj = cursor.getObject();
       if (obj instanceof AllowedValuesType) {
         DefaultAllowedValuesConstraint constraint
             = ConstraintFactory.newAllowedValuesConstraint((AllowedValuesType) obj);
-        constraints.add(constraint);
-        allowedValuesConstraints.add(constraint);
+        addConstraint(constraint);
       } else if (obj instanceof MatchesConstraintType) {
         DefaultMatchesConstraint constraint = ConstraintFactory.newMatchesConstraint((MatchesConstraintType) obj);
-        constraints.add(constraint);
-        matchesConstraints.add(constraint);
+        addConstraint(constraint);
       } else if (obj instanceof IndexHasKeyConstraintType) {
         DefaultIndexHasKeyConstraint constraint
             = ConstraintFactory.newIndexHasKeyConstraint((IndexHasKeyConstraintType) obj);
-        constraints.add(constraint);
-        indexHasKeyConstraints.add(constraint);
+        addConstraint(constraint);
       } else if (obj instanceof ExpectConstraintType) {
         DefaultExpectConstraint constraint = ConstraintFactory.newExpectConstraint((ExpectConstraintType) obj);
-        constraints.add(constraint);
-        expectConstraints.add(constraint);
+        addConstraint(constraint);
       }
     }
-    this.constraints = ObjectUtils.notNull(
-        constraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(constraints));
-    this.allowedValuesConstraints = ObjectUtils.notNull(
-        allowedValuesConstraints.isEmpty() ? Collections.emptyList()
-            : Collections.unmodifiableList(allowedValuesConstraints));
-    this.matchesConstraints = ObjectUtils.notNull(
-        matchesConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(matchesConstraints));
-    this.indexHasKeyConstraints = ObjectUtils.notNull(
-        indexHasKeyConstraints.isEmpty() ? Collections.emptyList()
-            : Collections.unmodifiableList(indexHasKeyConstraints));
-    this.expectConstraints = ObjectUtils.notNull(
-        expectConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(expectConstraints));
   }
 
   /**
@@ -130,68 +113,90 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
     cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
         + "$this/m:allowed-values|$this/m:matches|$this/m:index-has-key|$this/m:expect");
 
-    List<AbstractConstraint> constraints = new LinkedList<>();
-    List<DefaultAllowedValuesConstraint> allowedValuesConstraints = new LinkedList<>();
-    List<DefaultMatchesConstraint> matchesConstraints = new LinkedList<>();
-    List<DefaultIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
-    List<DefaultExpectConstraint> expectConstraints = new LinkedList<>();
     while (cursor.toNextSelection()) {
       XmlObject obj = cursor.getObject();
       if (obj instanceof ScopedAllowedValuesType) {
         DefaultAllowedValuesConstraint constraint
             = ConstraintFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj);
-        constraints.add(constraint);
-        allowedValuesConstraints.add(constraint);
+        addConstraint(constraint);
       } else if (obj instanceof ScopedMatchesConstraintType) {
         DefaultMatchesConstraint constraint = ConstraintFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj);
-        constraints.add(constraint);
-        matchesConstraints.add(constraint);
+        addConstraint(constraint);
       } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
         DefaultIndexHasKeyConstraint constraint
             = ConstraintFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj);
-        constraints.add(constraint);
-        indexHasKeyConstraints.add(constraint);
+        addConstraint(constraint);
       } else if (obj instanceof ScopedExpectConstraintType) {
         DefaultExpectConstraint constraint = ConstraintFactory.newExpectConstraint((ScopedExpectConstraintType) obj);
-        constraints.add(constraint);
-        expectConstraints.add(constraint);
+        addConstraint(constraint);
       }
     }
-    this.constraints = ObjectUtils.notNull(
-        constraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(constraints));
-    this.allowedValuesConstraints = ObjectUtils.notNull(
-        allowedValuesConstraints.isEmpty() ? Collections.emptyList()
-            : Collections.unmodifiableList(allowedValuesConstraints));
-    this.matchesConstraints = ObjectUtils.notNull(
-        matchesConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(matchesConstraints));
-    this.indexHasKeyConstraints = ObjectUtils.notNull(indexHasKeyConstraints.isEmpty() ? Collections.emptyList()
-        : Collections.unmodifiableList(indexHasKeyConstraints));
-    this.expectConstraints = ObjectUtils.notNull(
-        expectConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(expectConstraints));
   }
 
   @Override
-  public List<? extends IConstraint> getConstraints() {
-    return constraints;
+  public List<@NotNull IConstraint> getConstraints() {
+    synchronized (this) {
+      return constraints;
+    }
   }
 
   @Override
-  public List<DefaultAllowedValuesConstraint> getAllowedValuesContraints() {
-    return allowedValuesConstraints;
+  public List<@NotNull IAllowedValuesConstraint> getAllowedValuesConstraints() {
+    synchronized (this) {
+      return allowedValuesConstraints;
+    }
   }
 
   @Override
-  public List<DefaultMatchesConstraint> getMatchesConstraints() {
-    return matchesConstraints;
+  public List<@NotNull IMatchesConstraint> getMatchesConstraints() {
+    synchronized (this) {
+      return matchesConstraints;
+    }
   }
 
   @Override
-  public List<DefaultIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-    return indexHasKeyConstraints;
+  public List<@NotNull IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+    synchronized (this) {
+      return indexHasKeyConstraints;
+    }
   }
 
   @Override
-  public List<DefaultExpectConstraint> getExpectConstraints() {
-    return expectConstraints;
+  public List<@NotNull IExpectConstraint> getExpectConstraints() {
+    synchronized (this) {
+      return expectConstraints;
+    }
+  }
+
+  @Override
+  public final void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+    synchronized (this) {
+      constraints.add(constraint);
+      allowedValuesConstraints.add(constraint);
+    }
+  }
+
+  @Override
+  public final void addConstraint(@NotNull IMatchesConstraint constraint) {
+    synchronized (this) {
+      constraints.add(constraint);
+      matchesConstraints.add(constraint);
+    }
+  }
+
+  @Override
+  public final void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+    synchronized (this) {
+      constraints.add(constraint);
+      indexHasKeyConstraints.add(constraint);
+    }
+  }
+
+  @Override
+  public final void addConstraint(@NotNull IExpectConstraint constraint) {
+    synchronized (this) {
+      constraints.add(constraint);
+      expectConstraints.add(constraint);
+    }
   }
 }

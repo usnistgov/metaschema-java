@@ -74,7 +74,7 @@ public final class MetaschemaCompilerHelper {
   public static IProduction compileMetaschema(@NotNull Path metaschemaPath, @NotNull Path classDir,
       @NotNull IBindingConfiguration bindingConfiguration)
       throws IOException, MetaschemaException {
-    IMetaschema metaschema = LOADER.loadXmlMetaschema(metaschemaPath);
+    IMetaschema metaschema = LOADER.load(metaschemaPath);
     return compileMetaschema(metaschema, classDir, bindingConfiguration);
   }
 

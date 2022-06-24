@@ -30,12 +30,10 @@ import gov.nist.secauto.metaschema.model.common.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
-import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-import gov.nist.secauto.metaschema.model.xmlbeans.AssemblyDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.AssemblyReferenceType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +45,7 @@ class XmlAssemblyInstance
     extends AbstractAssemblyInstance {
   // private static final Logger logger = LogManager.getLogger(XmlAssemblyInstance.class);
 
-  private final AssemblyDocument.Assembly xmlAssembly;
+  private final AssemblyReferenceType xmlAssembly;
 
   /**
    * Constructs a new Metaschema Assembly instance definition from an XML representation bound to Java
@@ -58,7 +56,7 @@ class XmlAssemblyInstance
    * @param parent
    *          the assembly definition this object is an instance of
    */
-  public XmlAssemblyInstance(@NotNull AssemblyDocument.Assembly xmlAssembly, @NotNull IAssemblyDefinition parent) {
+  public XmlAssemblyInstance(@NotNull AssemblyReferenceType xmlAssembly, @NotNull IAssemblyDefinition parent) {
     super(parent);
     this.xmlAssembly = xmlAssembly;
   }
@@ -68,7 +66,7 @@ class XmlAssemblyInstance
    * 
    * @return the underlying XML data
    */
-  protected AssemblyDocument.Assembly getXmlAssembly() {
+  protected AssemblyReferenceType getXmlAssembly() {
     return xmlAssembly;
   }
 

@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.model;
 
-import gov.nist.secauto.metaschema.model.common.constraint.AbstractConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultCardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultExpectConstraint;
@@ -34,9 +33,15 @@ import gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultUniqueConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
+import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.xmlbeans.DefineAssemblyConstraintsType;
 import gov.nist.secauto.metaschema.model.xmlbeans.HasCardinalityConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedAllowedValuesType;
@@ -50,7 +55,6 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -64,21 +68,25 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
       + "$this/m:allowed-values|$this/m:index|$this/m:index-has-key|$this/m:is-unique|"
       + "$this/m:has-cardinality|$this/m:matches|$this/m:expect";
   @NotNull
-  private final List<AbstractConstraint> constraints;
+  private final List<@NotNull IConstraint> constraints = new LinkedList<>();
   @NotNull
-  private final List<DefaultAllowedValuesConstraint> allowedValuesConstraints;
+  private final List<@NotNull IAllowedValuesConstraint> allowedValuesConstraints = new LinkedList<>();
   @NotNull
-  private final List<DefaultMatchesConstraint> matchesConstraints;
+  private final List<@NotNull IMatchesConstraint> matchesConstraints = new LinkedList<>();
   @NotNull
-  private final List<DefaultIndexHasKeyConstraint> indexHasKeyConstraints;
+  private final List<@NotNull IIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
   @NotNull
-  private final List<DefaultExpectConstraint> expectConstraints;
+  private final List<@NotNull IExpectConstraint> expectConstraints = new LinkedList<>();
   @NotNull
-  private final List<DefaultIndexConstraint> indexConstraints;
+  private final List<@NotNull IIndexConstraint> indexConstraints = new LinkedList<>();
   @NotNull
-  private final List<DefaultUniqueConstraint> uniqueConstraints;
+  private final List<@NotNull IUniqueConstraint> uniqueConstraints = new LinkedList<>();
   @NotNull
-  private final List<DefaultCardinalityConstraint> cardinalityConstraints;
+  private final List<@NotNull ICardinalityConstraint> cardinalityConstraints = new LinkedList<>();
+
+  public AssemblyConstraintSupport() {
+    // do nothing
+  }
 
   /**
    * Generate a set of constraints from the provided XMLBeans instance.
@@ -90,108 +98,145 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
     XmlCursor cursor = xmlConstraints.newCursor();
     cursor.selectPath(PATH);
 
-    List<AbstractConstraint> constraints = new LinkedList<>();
-    List<DefaultAllowedValuesConstraint> allowedValuesConstraints = new LinkedList<>();
-    List<DefaultMatchesConstraint> matchesConstraints = new LinkedList<>();
-    List<DefaultIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
-    List<DefaultExpectConstraint> expectConstraints = new LinkedList<>();
-    List<DefaultIndexConstraint> indexConstraints = new LinkedList<>();
-    List<DefaultUniqueConstraint> uniqueConstraints = new LinkedList<>();
-    List<DefaultCardinalityConstraint> cardinalityConstraints = new LinkedList<>();
-
     while (cursor.toNextSelection()) {
       XmlObject obj = cursor.getObject();
       if (obj instanceof ScopedAllowedValuesType) {
         DefaultAllowedValuesConstraint constraint
             = ConstraintFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj);
-        constraints.add(constraint);
-        allowedValuesConstraints.add(constraint);
+        addConstraint(constraint);
       } else if (obj instanceof ScopedIndexConstraintType) {
         DefaultIndexConstraint constraint = ConstraintFactory.newIndexConstraint((ScopedIndexConstraintType) obj);
-        constraints.add(constraint);
-        indexConstraints.add(constraint);
+        addConstraint(constraint);
       } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
         DefaultIndexHasKeyConstraint constraint
             = ConstraintFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj);
-        constraints.add(constraint);
-        indexHasKeyConstraints.add(constraint);
+        addConstraint(constraint);
       } else if (obj instanceof ScopedKeyConstraintType) {
         DefaultUniqueConstraint constraint = ConstraintFactory.newUniqueConstraint((ScopedKeyConstraintType) obj);
-        constraints.add(constraint);
-        uniqueConstraints.add(constraint);
+        addConstraint(constraint);
       } else if (obj instanceof HasCardinalityConstraintType) {
         DefaultCardinalityConstraint constraint
             = ConstraintFactory.newCardinalityConstraint((HasCardinalityConstraintType) obj);
-        constraints.add(constraint);
-        cardinalityConstraints.add(constraint);
+        addConstraint(constraint);
       } else if (obj instanceof ScopedMatchesConstraintType) {
         DefaultMatchesConstraint constraint = ConstraintFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj);
-        constraints.add(constraint);
-        matchesConstraints.add(constraint);
+        addConstraint(constraint);
       } else if (obj instanceof ScopedExpectConstraintType) {
         DefaultExpectConstraint constraint = ConstraintFactory.newExpectConstraint((ScopedExpectConstraintType) obj);
-        constraints.add(constraint);
-        expectConstraints.add(constraint);
+        addConstraint(constraint);
       }
     }
-    this.constraints = ObjectUtils.notNull(
-        constraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(constraints));
-    this.allowedValuesConstraints = ObjectUtils.notNull(
-        allowedValuesConstraints.isEmpty() ? Collections.emptyList()
-            : Collections.unmodifiableList(allowedValuesConstraints));
-    this.matchesConstraints = ObjectUtils.notNull(
-        matchesConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(matchesConstraints));
-    this.indexHasKeyConstraints = ObjectUtils.notNull(
-        indexHasKeyConstraints.isEmpty() ? Collections.emptyList()
-            : Collections.unmodifiableList(indexHasKeyConstraints));
-    this.expectConstraints = ObjectUtils.notNull(
-        expectConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(expectConstraints));
-    this.indexConstraints = ObjectUtils.notNull(
-        indexConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(indexConstraints));
-    this.uniqueConstraints = ObjectUtils.notNull(
-        uniqueConstraints.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(uniqueConstraints));
-    this.cardinalityConstraints = ObjectUtils.notNull(
-        cardinalityConstraints.isEmpty() ? Collections.emptyList()
-            : Collections.unmodifiableList(cardinalityConstraints));
   }
 
   @Override
-  public List<? extends IConstraint> getConstraints() {
-    return constraints;
+  public List<@NotNull IConstraint> getConstraints() {
+    synchronized (this) {
+      return constraints;
+    }
   }
 
   @Override
-  public List<DefaultAllowedValuesConstraint> getAllowedValuesContraints() {
-    return allowedValuesConstraints;
+  public List<@NotNull IAllowedValuesConstraint> getAllowedValuesConstraints() {
+    synchronized (this) {
+      return allowedValuesConstraints;
+    }
   }
 
   @Override
-  public List<DefaultMatchesConstraint> getMatchesConstraints() {
-    return matchesConstraints;
+  public List<@NotNull IMatchesConstraint> getMatchesConstraints() {
+    synchronized (this) {
+      return matchesConstraints;
+    }
   }
 
   @Override
-  public List<DefaultIndexHasKeyConstraint> getIndexHasKeyConstraints() {
-    return indexHasKeyConstraints;
+  public List<@NotNull IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+    synchronized (this) {
+      return indexHasKeyConstraints;
+    }
   }
 
   @Override
-  public List<DefaultExpectConstraint> getExpectConstraints() {
-    return expectConstraints;
+  public List<@NotNull IExpectConstraint> getExpectConstraints() {
+    synchronized (this) {
+      return expectConstraints;
+    }
   }
 
   @Override
-  public List<DefaultIndexConstraint> getIndexContraints() {
-    return indexConstraints;
+  public List<@NotNull IIndexConstraint> getIndexConstraints() {
+    synchronized (this) {
+      return indexConstraints;
+    }
   }
 
   @Override
-  public List<DefaultUniqueConstraint> getUniqueConstraints() {
-    return uniqueConstraints;
+  public List<@NotNull IUniqueConstraint> getUniqueConstraints() {
+    synchronized (this) {
+      return uniqueConstraints;
+    }
   }
 
   @Override
-  public List<DefaultCardinalityConstraint> getHasCardinalityConstraints() {
-    return cardinalityConstraints;
+  public List<@NotNull ICardinalityConstraint> getHasCardinalityConstraints() {
+    synchronized (this) {
+      return cardinalityConstraints;
+    }
+  }
+
+  @Override
+  public final void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+    synchronized (this) {
+      constraints.add(constraint);
+      allowedValuesConstraints.add(constraint);
+    }
+  }
+
+  @Override
+  public final void addConstraint(@NotNull IMatchesConstraint constraint) {
+    synchronized (this) {
+      constraints.add(constraint);
+      matchesConstraints.add(constraint);
+    }
+  }
+
+  @Override
+  public final void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+    synchronized (this) {
+      constraints.add(constraint);
+      indexHasKeyConstraints.add(constraint);
+    }
+  }
+
+  @Override
+  public final void addConstraint(@NotNull IExpectConstraint constraint) {
+    synchronized (this) {
+      constraints.add(constraint);
+      expectConstraints.add(constraint);
+    }
+  }
+
+  @Override
+  public final void addConstraint(@NotNull IIndexConstraint constraint) {
+    synchronized (this) {
+      constraints.add(constraint);
+      indexConstraints.add(constraint);
+    }
+  }
+
+  @Override
+  public final void addConstraint(@NotNull IUniqueConstraint constraint) {
+    synchronized (this) {
+      constraints.add(constraint);
+      uniqueConstraints.add(constraint);
+    }
+  }
+
+  @Override
+  public final void addConstraint(@NotNull ICardinalityConstraint constraint) {
+    synchronized (this) {
+      constraints.add(constraint);
+      cardinalityConstraints.add(constraint);
+    }
   }
 }

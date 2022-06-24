@@ -73,7 +73,7 @@ public final class ParentItem
 
   @Override
   public ISequence<? extends INodeItem> accept(DynamicContext dynamicContext, INodeContext context) {
-    INodeItem contextItem = context.getContextNodeItem();
+    INodeItem contextItem = context.getNodeItem();
     return ISequence.of(contextItem.getParentNodeItem());
   }
 }

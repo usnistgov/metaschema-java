@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -51,6 +53,7 @@ public @interface KeyField {
    * 
    * @return the target metapath
    */
+  @NotNull
   String target() default ".";
 
   /**
@@ -60,6 +63,7 @@ public @interface KeyField {
    * 
    * @return a pattern string or an empty string if no pattern is provided
    */
+  @NotNull
   String pattern() default "";
 
   /**
@@ -67,5 +71,6 @@ public @interface KeyField {
    * 
    * @return an encoded markdown string or an empty string if no remarks are provided
    */
+  @NotNull
   String remarks() default "";
 }

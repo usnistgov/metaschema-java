@@ -54,11 +54,6 @@ public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedItem {
   }
 
   @Override
-  default IFieldNodeItem getContextNodeItem() {
-    return this;
-  }
-
-  @Override
   default IFieldNodeItem getNodeItem() {
     return this;
   }

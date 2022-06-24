@@ -39,7 +39,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstra
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.xmlbeans.AllowedValuesType;
-import gov.nist.secauto.metaschema.model.xmlbeans.EnumDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.EnumType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ExpectConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.HasCardinalityConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.IndexHasKeyConstraintType;
@@ -51,6 +51,8 @@ import gov.nist.secauto.metaschema.model.xmlbeans.ScopedIndexConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedIndexHasKeyConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedKeyConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedMatchesConstraintType;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,23 +68,27 @@ final class ConstraintFactory {
 
   static Map<String, DefaultAllowedValue> toAllowedValues(AllowedValuesType xmlConstraint) {
     Map<String, DefaultAllowedValue> allowedValues = new LinkedHashMap<>(xmlConstraint.sizeOfEnumArray());
-    for (EnumDocument.Enum1 xmlEnum : xmlConstraint.getEnumList()) {
+    for (EnumType xmlEnum : xmlConstraint.getEnumList()) {
       @SuppressWarnings("null")
-      DefaultAllowedValue allowedValue
-          = new DefaultAllowedValue(xmlEnum.getValue(), MarkupStringConverter.toMarkupString(xmlEnum));
+      DefaultAllowedValue allowedValue = new DefaultAllowedValue(
+          xmlEnum.getValue(),
+          MarkupStringConverter.toMarkupString(xmlEnum));
       allowedValues.put(allowedValue.getValue(), allowedValue);
     }
     return Collections.unmodifiableMap(allowedValues);
   }
 
+  @NotNull
   static DefaultAllowedValuesConstraint newAllowedValuesConstraint(ScopedAllowedValuesType xmlConstraint) {
     return newAllowedValuesConstraint(xmlConstraint, xmlConstraint.getTarget());
   }
 
+  @NotNull
   static DefaultAllowedValuesConstraint newAllowedValuesConstraint(AllowedValuesType xmlConstraint) {
     return newAllowedValuesConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE);
   }
 
+  @NotNull
   @SuppressWarnings("null")
   static DefaultAllowedValuesConstraint newAllowedValuesConstraint(AllowedValuesType xmlConstraint,
       MetapathExpression target) {
@@ -94,14 +100,17 @@ final class ConstraintFactory {
         xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
   }
 
+  @NotNull
   static DefaultMatchesConstraint newMatchesConstraint(ScopedMatchesConstraintType xmlConstraint) {
     return newMatchesConstraint(xmlConstraint, xmlConstraint.getTarget());
   }
 
+  @NotNull
   static DefaultMatchesConstraint newMatchesConstraint(MatchesConstraintType xmlConstraint) {
     return newMatchesConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE);
   }
 
+  @NotNull
   @SuppressWarnings("null")
   static DefaultMatchesConstraint newMatchesConstraint(MatchesConstraintType xmlConstraint, MetapathExpression target) {
     return new DefaultMatchesConstraint(xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
@@ -112,6 +121,7 @@ final class ConstraintFactory {
         xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
   }
 
+  @NotNull
   static List<DefaultKeyField> newKeyFields(KeyConstraintType xmlConstraint) {
     List<DefaultKeyField> keyFields = new ArrayList<>(xmlConstraint.sizeOfKeyFieldArray());
     for (KeyConstraintType.KeyField xmlKeyField : xmlConstraint.getKeyFieldList()) {
@@ -124,6 +134,7 @@ final class ConstraintFactory {
     return Collections.unmodifiableList(keyFields);
   }
 
+  @NotNull
   @SuppressWarnings("null")
   static DefaultUniqueConstraint newUniqueConstraint(ScopedKeyConstraintType xmlConstraint) {
     return new DefaultUniqueConstraint(
@@ -133,6 +144,7 @@ final class ConstraintFactory {
         xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
   }
 
+  @NotNull
   @SuppressWarnings("null")
   static DefaultIndexConstraint newIndexConstraint(ScopedIndexConstraintType xmlConstraint) {
     return new DefaultIndexConstraint(
@@ -144,15 +156,18 @@ final class ConstraintFactory {
         xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
   }
 
+  @NotNull
   static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(ScopedIndexHasKeyConstraintType xmlConstraint) {
     return newIndexHasKeyConstraint(xmlConstraint, xmlConstraint.getTarget());
   }
 
+  @NotNull
   static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(IndexHasKeyConstraintType xmlConstraint) {
     return newIndexHasKeyConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE);
 
   }
 
+  @NotNull
   @SuppressWarnings("null")
   static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(IndexHasKeyConstraintType xmlConstraint,
       MetapathExpression target) {
@@ -164,14 +179,17 @@ final class ConstraintFactory {
         xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
   }
 
+  @NotNull
   static DefaultExpectConstraint newExpectConstraint(ScopedExpectConstraintType xmlConstraint) {
     return newExpectConstraint(xmlConstraint, xmlConstraint.getTarget());
   }
 
+  @NotNull
   static DefaultExpectConstraint newExpectConstraint(ExpectConstraintType xmlConstraint) {
     return newExpectConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE);
   }
 
+  @NotNull
   @SuppressWarnings("null")
   static DefaultExpectConstraint newExpectConstraint(ExpectConstraintType xmlConstraint, MetapathExpression target) {
     return new DefaultExpectConstraint(
@@ -183,6 +201,7 @@ final class ConstraintFactory {
         xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
   }
 
+  @NotNull
   @SuppressWarnings("null")
   static DefaultCardinalityConstraint newCardinalityConstraint(HasCardinalityConstraintType xmlConstraint) {
     return new DefaultCardinalityConstraint(

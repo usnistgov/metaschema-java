@@ -37,7 +37,7 @@ public interface IConstraintSupport {
   /**
    * Retrieve the ordered collection of constraints.
    * 
-   * @return the constraints
+   * @return the constraints or an empty list
    */
   @NotNull
   List<@NotNull ? extends IConstraint> getConstraints();

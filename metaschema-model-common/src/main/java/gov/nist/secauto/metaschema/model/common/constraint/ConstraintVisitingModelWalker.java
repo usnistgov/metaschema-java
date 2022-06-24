@@ -280,7 +280,7 @@ public abstract class ConstraintVisitingModelWalker<DATA>
    *          other data to use for processing
    */
   protected void walkConstraints(IAssemblyDefinition definition, DATA data) {
-    for (IAllowedValuesConstraint constraint : definition.getAllowedValuesContraints()) {
+    for (IAllowedValuesConstraint constraint : definition.getAllowedValuesConstraints()) {
       visit(definition, constraint, data);
     }
 
@@ -318,7 +318,7 @@ public abstract class ConstraintVisitingModelWalker<DATA>
    *          other data to use for processing
    */
   protected void walkConstraints(IFieldDefinition definition, DATA data) {
-    for (IAllowedValuesConstraint constraint : definition.getAllowedValuesContraints()) {
+    for (IAllowedValuesConstraint constraint : definition.getAllowedValuesConstraints()) {
       visit(definition, constraint, data);
     }
 
@@ -344,7 +344,7 @@ public abstract class ConstraintVisitingModelWalker<DATA>
    *          other data to use for processing
    */
   protected void walkConstraints(IFlagDefinition definition, DATA data) {
-    for (IAllowedValuesConstraint constraint : definition.getAllowedValuesContraints()) {
+    for (IAllowedValuesConstraint constraint : definition.getAllowedValuesConstraints()) {
       visit(definition, constraint, data);
     }
 

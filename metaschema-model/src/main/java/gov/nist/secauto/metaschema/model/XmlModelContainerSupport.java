@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceDocument.Choice;
+import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.jetbrains.annotations.NotNull;
@@ -62,7 +62,7 @@ class XmlModelContainerSupport {
    */
   public XmlModelContainerSupport(@NotNull XmlObject xmlContent, @NotNull IAssemblyDefinition containingAssembly) {
     XmlModelParser parser = new XmlModelParser();
-    if (xmlContent instanceof Choice) {
+    if (xmlContent instanceof ChoiceType) {
       parser.parseChoice(xmlContent, containingAssembly);
     } else {
       parser.parseModel(xmlContent, containingAssembly);

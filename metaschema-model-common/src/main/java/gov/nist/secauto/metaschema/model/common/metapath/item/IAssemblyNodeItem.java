@@ -34,17 +34,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
-import java.util.stream.Stream;
 
 public interface IAssemblyNodeItem extends IModelNodeItem {
   @Override
   default NodeItemType getNodeItemType() {
     return NodeItemType.ASSEMBLY;
-  }
-
-  @Override
-  default IAssemblyNodeItem getContextNodeItem() {
-    return this;
   }
 
   @Override
@@ -69,11 +63,6 @@ public interface IAssemblyNodeItem extends IModelNodeItem {
   default URI getBaseUri() {
     INodeItem parent = getParentNodeItem();
     return parent == null ? null : parent.getBaseUri();
-  }
-
-  @Override
-  default Stream<@NotNull ? extends INodeItem> children() {
-    return modelItems();
   }
 
   @Override

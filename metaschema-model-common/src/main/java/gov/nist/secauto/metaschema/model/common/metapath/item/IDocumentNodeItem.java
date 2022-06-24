@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.INamedInstance;
-import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
 import org.jetbrains.annotations.NotNull;
@@ -45,11 +43,6 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
   }
 
   @Override
-  default IDocumentNodeItem getContextNodeItem() {
-    return this;
-  }
-
-  @Override
   default IDocumentNodeItem getNodeItem() {
     return this;
   }
@@ -62,10 +55,6 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
   @NotNull
   IRootAssemblyNodeItem getRootAssemblyNodeItem();
 
-  @Override
-  default Stream<@NotNull ? extends INodeItem> children() {
-    return Stream.of(getRootAssemblyNodeItem());
-  }
 
   @Override
   default IRequiredValueModelNodeItem getParentContentNodeItem() {
@@ -124,6 +113,11 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
 
   @SuppressWarnings("null")
   @Override
+  default Stream<@NotNull ? extends IModelNodeItem> modelItems() {
+    return Stream.of(getRootAssemblyNodeItem());
+  }
+  @SuppressWarnings("null")
+  @Override
   default @NotNull List<@NotNull ? extends IRequiredValueModelNodeItem> getModelItemsByName(String name) {
     IRootAssemblyNodeItem root = getRootAssemblyNodeItem();
     return root.getName().equals(name) ? Collections.singletonList(root) : Collections.emptyList();
@@ -133,17 +127,6 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
   @Override
   default @NotNull Collection<@NotNull ? extends List<@NotNull ? extends IRequiredValueModelNodeItem>> getModelItems() {
     return Collections.singletonList(Collections.singletonList(getRootAssemblyNodeItem()));
-  }
-
-  @Override
-  default IRootAssemblyDefinition getDefinition() {
-    return getRootAssemblyNodeItem().getDefinition();
-  }
-
-  @Override
-  default INamedInstance getInstance() {
-    // a document does not have an instance
-    return null;
   }
 
   @Override
@@ -158,7 +141,7 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
 
   @Override
   @NotNull
-  default Object getValue() {
+  default <T> T getValue() {
     return getRootAssemblyNodeItem().getValue();
   }
 }

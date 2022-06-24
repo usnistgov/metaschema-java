@@ -67,7 +67,7 @@ class PredicateTest extends AbstractExpressionTest {
         atMost(1).of(stepResult).asList();
         will(returnValue(CollectionUtil.singletonList(item)));
 
-        allowing(item).getContextNodeItem();
+        allowing(item).getNodeItem();
         will(returnValue(item));
 
         atMost(1).of(predicates).stream();
@@ -108,7 +108,7 @@ class PredicateTest extends AbstractExpressionTest {
         atMost(1).of(stepResult).asList();
         will(returnValue(CollectionUtil.singletonList(item)));
 
-        allowing(item).getContextNodeItem();
+        allowing(item).getNodeItem();
         will(returnValue(item));
 
         never(predicates).stream();

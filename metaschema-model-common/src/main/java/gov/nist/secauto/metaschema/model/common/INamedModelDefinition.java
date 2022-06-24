@@ -26,16 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * This marker interface identifies a definition that is intended to be part of an Assembly's model.
@@ -97,40 +91,4 @@ public interface INamedModelDefinition extends INamedDefinition {
   // TODO: remove
   @Nullable
   IFlagInstance getJsonKeyFlagInstance();
-
-  /**
-   * Retrieve the list of allowed value constraints that apply to this definition's descendant flag or
-   * field values.
-   * 
-   * @return the list of allowed value constraints
-   */
-  @NotNull
-  List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesContraints();
-
-  /**
-   * Retrieve the list of matches constraints that apply to this definition's descendant flag or field
-   * values.
-   * 
-   * @return the list of matches constraints
-   */
-  @NotNull
-  List<@NotNull ? extends IMatchesConstraint> getMatchesConstraints();
-
-  /**
-   * Retrieve the list of key reference constraints that apply to this definition's descendant flag or
-   * field values.
-   * 
-   * @return the list of key reference constraints
-   */
-  @NotNull
-  List<@NotNull ? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints();
-
-  /**
-   * Retrieve the list of expect constraints that apply to this definition's descendant flag or field
-   * values.
-   * 
-   * @return the list of expect constraints
-   */
-  @NotNull
-  List<@NotNull ? extends IExpectConstraint> getExpectConstraints();
 }

@@ -34,10 +34,12 @@ import org.apache.commons.io.output.TeeOutputStream;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,7 +65,7 @@ class XmlOutlineDocumentationGeneratorTest {
     
     metaschemas.add(metaschema);
 
-    try (FileOutputStream fos = new FileOutputStream("xml-outline.html")) {
+    try (OutputStream fos = Files.newOutputStream(Paths.get("xml-outline.html"))) {
       TeeOutputStream out = new TeeOutputStream(System.out, fos);
       generator.generateFromMetaschema(metaschema, new OutputStreamWriter(out));
     }

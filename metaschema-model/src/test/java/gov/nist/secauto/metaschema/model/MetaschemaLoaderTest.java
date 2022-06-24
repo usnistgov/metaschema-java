@@ -29,10 +29,13 @@ package gov.nist.secauto.metaschema.model;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.junit.jupiter.api.Test;
@@ -49,7 +52,7 @@ class MetaschemaLoaderTest {
     MetaschemaLoader loader = new MetaschemaLoader();
     URI metaschemaUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
-    IMetaschema metaschema = loader.loadMetaschema(metaschemaUri);
+    IMetaschema metaschema = loader.load(metaschemaUri);
 
     IMetaschema oscalCatalogMetaschema = metaschema.getImportedMetaschemaByShortName("oscal-catalog");
     assertNotNull(oscalCatalogMetaschema, "catalog metaschema not found");
@@ -67,7 +70,25 @@ class MetaschemaLoaderTest {
     URI metaschemaUri = ObjectUtils.notNull(
         Paths.get("metaschema/test-suite/docs-models/models_metaschema.xml").toUri());
     IMetaschema metaschema
-        = loader.loadMetaschema(metaschemaUri);
+        = loader.load(metaschemaUri);
     assertFalse(metaschema.getRootAssemblyDefinitions().isEmpty(), "no roots found");
+  }
+  
+
+  @Test
+  void testConstraints() throws MetaschemaException, IOException { // NOPMD - intentional
+    ConstraintLoader constraintLoader = new ConstraintLoader();
+    IConstraintSet constraintSet = constraintLoader.load(Paths.get("src/test/resources/content/oscal-constraints.xml"));
+
+    MetaschemaLoader loader = new MetaschemaLoader(CollectionUtil.singleton(constraintSet));
+    URI metaschemaUri = ObjectUtils.notNull(URI.create(
+        "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
+    IMetaschema metaschema = loader.load(metaschemaUri);
+    IAssemblyDefinition catalog =  metaschema.getExportedAssemblyDefinitionByName("catalog");
+    
+    
+    assertNotNull(catalog, "catalog not found");
+    List<? extends IConstraint> constraints = catalog.getConstraints();
+    assertFalse(constraints.isEmpty(), "a constraint was expected");
   }
 }

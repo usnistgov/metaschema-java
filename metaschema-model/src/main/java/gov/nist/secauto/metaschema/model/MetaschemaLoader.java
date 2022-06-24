@@ -28,12 +28,22 @@ package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet;
+import gov.nist.secauto.metaschema.model.common.constraint.ITargetedConstaints;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.ResultType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItemVisitor;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-import gov.nist.secauto.metaschema.model.xmlbeans.ImportDocument;
 import gov.nist.secauto.metaschema.model.xmlbeans.METASCHEMADocument;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.jetbrains.annotations.NotNull;
@@ -42,22 +52,18 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
@@ -70,205 +76,94 @@ import javax.xml.parsers.SAXParserFactory;
  * Loaded Metaschema instances are cached to avoid the need to load them for every use. Any
  * Metaschema imported is also loaded and cached automatically.
  */
-public class MetaschemaLoader {
-  private static final Logger LOGGER = LogManager.getLogger(MetaschemaLoader.class);
-
-  @NotNull
-  private final Set<IMetaschema> loadedMetaschema = new LinkedHashSet<>();
-  @NotNull
-  private final Map<@NotNull URI, IMetaschema> metaschemaCache = new LinkedHashMap<>(); // NOPMD - intentional
+public class MetaschemaLoader
+    extends AbstractLoader<IMetaschema> {
   private boolean resolveEntities; // = false;
 
+  private final Set<@NotNull IConstraintSet> registeredConstraintSets;
+
+  public MetaschemaLoader() {
+    this(CollectionUtil.emptySet());
+  }
+
+  public MetaschemaLoader(@NotNull Set<@NotNull IConstraintSet> additionalConstraintSets) {
+    this.registeredConstraintSets = CollectionUtil.unmodifiableSet(additionalConstraintSets);
+  }
+
+  protected Set<@NotNull IConstraintSet> getRegisteredConstraintSets() {
+    return registeredConstraintSets;
+  }
+
   /**
-   * Set the loader in a model that allows XML entity resolution. This may be needed to parse some
-   * Metaschema files. Enabling entity resolution is a less secure mode, which requires trust in the
-   * metaschema content being parsed.
+   * Enable a mode that allows XML entity resolution. This may be needed to parse some resource files
+   * that contain entities. Enabling entity resolution is a less secure, which requires trust in the
+   * resource content being parsed.
    */
   public void allowEntityResolution() {
     resolveEntities = true;
   }
 
-  /**
-   * Retrieve the set of loaded Metaschema.
-   * 
-   * @return a set of loaded Metaschema
-   */
-  public Set<IMetaschema> getLoadedMetaschema() {
-    return loadedMetaschema.isEmpty() ? Collections.emptySet() : Collections.unmodifiableSet(loadedMetaschema);
+  protected List<@NotNull ITargetedConstaints> getTargetedConstraintsForMetaschema(@NotNull IMetaschema metaschema) {
+    return getRegisteredConstraintSets().stream()
+        .flatMap(set -> set.getTargetedConstraintsForMetaschema(metaschema))
+        .collect(Collectors.toUnmodifiableList());
   }
 
-  /**
-   * Retrieve a mapping of Metaschema resource URIs to loaded Metaschema.
-   * 
-   * @return the mapping
-   */
-  @NotNull
-  protected Map<@NotNull URI, IMetaschema> getMetaschemaCache() {
-    return metaschemaCache;
+  protected IMetaschema newXmlMetaschema(
+      @NotNull URI resource,
+      @NotNull METASCHEMADocument xmlObject,
+      @NotNull List<@NotNull IMetaschema> importedMetaschemas) throws MetaschemaException {
+    IMetaschema retval = new XmlMetaschema(resource, xmlObject, importedMetaschemas);
+
+    IMetaschemaNodeItem item = DefaultNodeItemFactory.instance().newMetaschemaNodeItem(retval);
+
+    ConstraintComposingVisitor visitor = new ConstraintComposingVisitor();
+
+    for (ITargetedConstaints targeted : getTargetedConstraintsForMetaschema(retval)) {
+      MetapathExpression targetExpression = targeted.getTargetExpression();
+      INodeItem node = targetExpression.evaluateAs(item, ResultType.NODE);
+      if (node == null) {
+        throw new MetaschemaException("Target not found for expression: " + targetExpression.getPath());
+      }
+      node.accept(visitor, targeted);
+    }
+
+    return retval;
   }
 
-  /**
-   * Load a Metaschema from the specified URI.
-   * 
-   * @param resource
-   *          the Metaschema resource to load
-   * @return the loaded Metaschema instance for the specified file
-   * @throws MetaschemaException
-   *           if an error occurred while processing the Metaschema definition
-   * @throws IOException
-   *           if an error occurred parsing the Metaschema
-   */
-  @NotNull
-  public IMetaschema loadMetaschema(@NotNull URI resource) throws MetaschemaException, IOException {
-    return loadXmlMetaschema(resource, new Stack<>(), new LinkedHashMap<>());
-  }
+  @Override
+  protected IMetaschema parseResource(@NotNull URI resource, @NotNull Stack<@NotNull URI> visitedResources)
+      throws IOException {
+    // parse this metaschema
+    METASCHEMADocument xmlObject = parseMetaschema(resource);
 
-  /**
-   * Load a Metaschema from the specified path.
-   * 
-   * @param path
-   *          the Metaschema to load
-   * @return the loaded Metaschema instance for the specified path
-   * @throws MetaschemaException
-   *           if an error occurred while processing the Metaschema definition
-   * @throws IOException
-   *           if an error occurred parsing the Metaschema
-   */
-  @NotNull
-  public IMetaschema loadXmlMetaschema(@NotNull Path path) throws MetaschemaException, IOException {
-    return loadXmlMetaschema(ObjectUtils.notNull(path.toUri()));
-  }
+    // now check if this Metaschema imports other metaschema
+    int size = xmlObject.getMETASCHEMA().sizeOfImportArray();
+    @NotNull
+    Map<@NotNull URI, IMetaschema> importedMetaschema;
+    if (size == 0) {
+      importedMetaschema = ObjectUtils.notNull(Collections.emptyMap());
+    } else {
+      try {
+        importedMetaschema = new LinkedHashMap<>();
+        for (METASCHEMADocument.METASCHEMA.Import imported : xmlObject.getMETASCHEMA().getImportList()) {
+          URI importedResource = URI.create(imported.getHref());
+          importedResource = ObjectUtils.notNull(resource.resolve(importedResource));
+          importedMetaschema.put(importedResource, loadInternal(importedResource, visitedResources));
+        }
+      } catch (MetaschemaException ex) {
+        throw new IOException(ex);
+      }
+    }
 
-  /**
-   * Load a Metaschema from the specified file.
-   * 
-   * @param file
-   *          the Metaschema to load
-   * @return the loaded Metaschema instance for the specified file
-   * @throws MetaschemaException
-   *           if an error occurred while processing the Metaschema definition
-   * @throws IOException
-   *           if an error occurred parsing the Metaschema
-   */
-  @NotNull
-  public IMetaschema loadXmlMetaschema(@NotNull File file) throws MetaschemaException, IOException {
-    return loadXmlMetaschema(ObjectUtils.notNull(file.toURI()));
-  }
-
-  /**
-   * Loads a Metaschema from the specified URL.
-   * 
-   * @param url
-   *          the URL to load the metaschema from
-   * @return the loaded Metaschema or {@code null} if the Metaschema was not found
-   * @throws MetaschemaException
-   *           if an error occurred while processing the Metaschema definition
-   * @throws IOException
-   *           if an error occurred parsing the Metaschema
-   */
-  @NotNull
-  public IMetaschema loadXmlMetaschema(@NotNull URL url) throws MetaschemaException, IOException {
+    // now create this metaschema
+    @SuppressWarnings("null")
+    Collection<@NotNull IMetaschema> values = importedMetaschema.values();
     try {
-      URI resource = url.toURI();
-      return loadXmlMetaschema(ObjectUtils.notNull(resource));
-    } catch (URISyntaxException ex) {
-      // this should not happen
-      LOGGER.error("Invalid url", ex);
+      return newXmlMetaschema(resource, xmlObject, new ArrayList<>(values));
+    } catch (MetaschemaException ex) {
       throw new IOException(ex);
     }
-  }
-
-  /**
-   * Load an XML-based Metaschema from the specified URI.
-   * 
-   * @param resource
-   *          the Metaschema resource to load
-   * @return the loaded Metaschema instance for the specified file
-   * @throws MetaschemaException
-   *           if an error occurred while processing the Metaschema definition
-   * @throws IOException
-   *           if an error occurred parsing the Metaschema
-   * @throws IllegalArgumentException
-   *           if the provided URI is not absolute
-   */
-  @NotNull
-  protected IMetaschema loadXmlMetaschema(@NotNull URI resource) throws MetaschemaException, IOException {
-    if (!resource.isAbsolute()) {
-      throw new IllegalArgumentException(String.format("The URI '%s' must be absolute.", resource.toString()));
-    }
-    return loadXmlMetaschema(resource, new Stack<>(), getMetaschemaCache());
-  }
-
-  /**
-   * Loads a metaschema from the provided resource.
-   * <p>
-   * If the metaschema imports other metaschema, the provided visitedMetaschema can be used to track
-   * circular inclusions. This is useful when this method recurses into included metaschema.
-   * <p>
-   * Previously loaded metaschema are provided by the metaschemaCache. This method will add the
-   * current metaschema to the cache after all imported metaschema have been loaded.
-   * 
-   * @param resource
-   *          the metaschema resource to load
-   * @param visitedMetaschema
-   *          a LIFO queue representing previously visited metaschema in an import chain
-   * @param metaschemaCache
-   *          a map of previously processed metaschema, keyed by the resource URI of the metaschema
-   * @return the loaded metaschema
-   * @throws MetaschemaException
-   *           if an error occurred while processing the Metaschema definition
-   * @throws MalformedURLException
-   *           if the provided URI is malformed
-   * @throws IOException
-   *           if an error occurred parsing the Metaschema
-   */
-  @NotNull
-  protected IMetaschema loadXmlMetaschema(@NotNull URI resource, @NotNull Stack<@NotNull URI> visitedMetaschema,
-      Map<@NotNull URI, IMetaschema> metaschemaCache) throws MetaschemaException, MalformedURLException, IOException {
-    // first check if the current Metaschema has been visited to prevent cycles
-    if (visitedMetaschema.contains(resource)) {
-      throw new MetaschemaException("Cycle detected in metaschema includes for '" + resource + "'. Call stack: '"
-          + visitedMetaschema.stream().map(n -> n.toString()).collect(Collectors.joining(",")));
-    }
-
-    IMetaschema retval = metaschemaCache.get(resource);
-    if (retval == null) {
-      LOGGER.info("Loading metaschema '{}'", resource);
-      // parse this metaschema
-      METASCHEMADocument metaschemaXml = parseMetaschema(resource);
-
-      // now check if this Metaschema imports other metaschema
-      int size = metaschemaXml.getMETASCHEMA().sizeOfImportArray();
-      @NotNull
-      Map<@NotNull URI, IMetaschema> importedMetaschema;
-      if (size == 0) {
-        importedMetaschema = ObjectUtils.notNull(Collections.emptyMap());
-      } else {
-        visitedMetaschema.push(resource);
-        try {
-          importedMetaschema = new LinkedHashMap<>();
-          for (ImportDocument.Import imported : metaschemaXml.getMETASCHEMA().getImportList()) {
-            URI importedResource = URI.create(imported.getHref());
-            importedResource = ObjectUtils.notNull(resource.resolve(importedResource));
-            importedMetaschema.put(importedResource,
-                loadXmlMetaschema(importedResource, visitedMetaschema, metaschemaCache));
-          }
-        } finally {
-          visitedMetaschema.pop();
-        }
-      }
-
-      // now create this metaschema
-      @SuppressWarnings("null")
-      Collection<@NotNull ? extends IMetaschema> values = importedMetaschema.values();
-      retval = new XmlMetaschema(resource, metaschemaXml, new ArrayList<>(values));
-      metaschemaCache.put(resource, retval);
-    } else {
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Found metaschema in cache '{}'", resource);
-      }
-    }
-    return retval;
   }
 
   /**
@@ -332,5 +227,38 @@ public class MetaschemaLoader {
       throw new IOException(ex);
     }
     return metaschemaXml;
+  }
+
+  private class ConstraintComposingVisitor
+      implements INodeItemVisitor<Void, @NotNull ITargetedConstaints> {
+
+    @Override
+    public Void visitDocument(@NotNull IDocumentNodeItem item, @NotNull ITargetedConstaints context) {
+      throw new UnsupportedOperationException("constraints can only apply to an assembly, field, or flag definition");
+    }
+
+    @Override
+    public Void visitFlag(@NotNull IFlagNodeItem item, @NotNull ITargetedConstaints context) {
+      context.target(item.getDefinition());
+      return null;
+    }
+
+    @Override
+    public Void visitField(@NotNull IFieldNodeItem item, @NotNull ITargetedConstaints context) {
+      context.target(item.getDefinition());
+      return null;
+    }
+
+    @Override
+    public Void visitAssembly(@NotNull IAssemblyNodeItem item, @NotNull ITargetedConstaints context) {
+      context.target(item.getDefinition());
+      return null;
+    }
+
+    @Override
+    public Void visitMetaschema(@NotNull IMetaschemaNodeItem item, @NotNull ITargetedConstaints context) {
+      throw new UnsupportedOperationException("constraints can only apply to an assembly, field, or flag definition");
+    }
+
   }
 }

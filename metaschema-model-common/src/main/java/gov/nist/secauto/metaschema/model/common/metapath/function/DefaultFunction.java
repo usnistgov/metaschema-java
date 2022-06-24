@@ -319,7 +319,7 @@ public class DefaultFunction
       if (result == null) {
         // logger.info(String.format("Executing function '%s' with arguments '%s'.", toSignature(),
         // convertedArguments.toString()));
-        result = handler.execute(this, convertedArguments, dynamicContext, focus.getContextNodeItem());
+        result = handler.execute(this, convertedArguments, dynamicContext, focus.getNodeItem());
 
         if (callingContext != null) {
           // add result to cache
@@ -398,7 +398,7 @@ public class DefaultFunction
 
     private CallingContext(@NotNull List<@NotNull ISequence<?>> arguments, @NotNull INodeContext focus) {
       if (isFocusDepenent()) {
-        contextNodeItem = focus.getContextNodeItem();
+        contextNodeItem = focus.getNodeItem();
       } else {
         contextNodeItem = null;
       }

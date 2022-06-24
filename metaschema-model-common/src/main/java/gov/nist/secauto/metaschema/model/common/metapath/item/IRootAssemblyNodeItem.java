@@ -32,8 +32,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.stream.Stream;
-
 public interface IRootAssemblyNodeItem extends IRequiredValueAssemblyNodeItem {
 
   @Override
@@ -66,7 +64,7 @@ public interface IRootAssemblyNodeItem extends IRequiredValueAssemblyNodeItem {
   }
 
   @Override
-  default IRootAssemblyNodeItem getContextNodeItem() {
+  default IRootAssemblyNodeItem getNodeItem() {
     return this;
   }
 

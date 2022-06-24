@@ -49,7 +49,7 @@ public class TestBasicMetaschema {
 
   @NotNull
   private static IMetaschema loadMetaschema(@NotNull Path metaschemaFile) throws MetaschemaException, IOException {
-    return LOADER.loadXmlMetaschema(metaschemaFile);
+    return LOADER.load(metaschemaFile);
   }
 
   public static Class<?> compileMetaschema(@NotNull Path metaschemaFile, @Nullable Path bindingFile,

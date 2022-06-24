@@ -36,4 +36,6 @@ public interface INodeItemVisitor<RESULT, CONTEXT> {
   RESULT visitField(@NotNull IFieldNodeItem item, CONTEXT context);
 
   RESULT visitAssembly(@NotNull IAssemblyNodeItem item, CONTEXT context);
+
+  RESULT visitMetaschema(@NotNull IMetaschemaNodeItem item, CONTEXT context);
 }

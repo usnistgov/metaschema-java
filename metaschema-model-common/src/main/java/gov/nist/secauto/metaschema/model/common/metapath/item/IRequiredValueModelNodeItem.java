@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 /**
  * This marker interface indicates that the {@link IModelNodeItem} must have a value to exist.
  */
-public interface IRequiredValueModelNodeItem extends IModelNodeItem, IRequiredValueNodeItem {
+public interface IRequiredValueModelNodeItem extends IModelNodeItem, IRequiredValueDefinitionNodeItem {
   
   @Override
   IRequiredValueNodeItem getParentNodeItem();

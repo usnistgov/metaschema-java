@@ -39,6 +39,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+
 /**
  * The API for accessing information about a given Metaschema.
  * <p>
@@ -128,6 +130,15 @@ public interface IMetaschema {
    */
   @NotNull
   URI getJsonBaseUri();
+
+  /**
+   * Get the qualified name associated with the Metaschema.
+   * 
+   * @return the qualified name
+   */
+  default QName getQName() {
+    return new QName(getXmlNamespace().toString(), getShortName());
+  }
 
   /**
    * Retrieves all Metaschema imported by this Metaschema.

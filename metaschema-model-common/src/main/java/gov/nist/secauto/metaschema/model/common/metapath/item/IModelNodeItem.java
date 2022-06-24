@@ -28,13 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Stream;
-
-public interface IModelNodeItem extends INodeItem {
+public interface IModelNodeItem extends IDefinitionNodeItem {
 
   /**
    * Retrieve the relative position of the associated instance in a collection of instances. A
@@ -54,10 +48,4 @@ public interface IModelNodeItem extends INodeItem {
 
   @Override
   INamedModelDefinition getDefinition();
-
-  @SuppressWarnings("null")
-  @Override
-  default Stream<@NotNull ? extends INodeItem> children() {
-    return Stream.empty();
-  }
 }

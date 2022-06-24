@@ -34,7 +34,6 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.api.Action;
 import org.jmock.api.Invocation;
-import org.jmock.lib.action.CustomAction;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
@@ -82,14 +81,14 @@ public class MockItemFactory {
         will(returnValue(root));
         allowing(document).getDocumentUri();
         will(returnValue(documentURI));
-        allowing(document).getContextNodeItem();
+        allowing(document).getNodeItem();
         will(returnValue(document));
         allowing(document).getParentNodeItem();
         will(returnValue(null));
 
         allowing(root).getName();
         will(returnValue(name));
-        allowing(root).getContextNodeItem();
+        allowing(root).getNodeItem();
         will(returnValue(root));
         allowing(root).getDocumentNodeItem();
         will(returnValue(document));
@@ -140,7 +139,7 @@ public class MockItemFactory {
           });
         });
 
-        allowing(item).children();
+        allowing(item).modelItems();
         will(new Action() {
 
           @Override
@@ -187,7 +186,7 @@ public class MockItemFactory {
         allowing(retval).toAtomicItem();
         will(returnValue(value));
 
-        allowing(retval).getContextNodeItem();
+        allowing(retval).getNodeItem();
         will(returnValue(retval));
       }
     });
@@ -215,7 +214,7 @@ public class MockItemFactory {
         allowing(retval).toAtomicItem();
         will(returnValue(value));
 
-        allowing(retval).getContextNodeItem();
+        allowing(retval).getNodeItem();
         will(returnValue(retval));
       }
     });
@@ -234,7 +233,7 @@ public class MockItemFactory {
         allowing(retval).getName();
         will(returnValue(name));
 
-        allowing(retval).getContextNodeItem();
+        allowing(retval).getNodeItem();
         will(returnValue(retval));
       }
     });

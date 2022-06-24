@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-import gov.nist.secauto.metaschema.model.xmlbeans.FlagDocument;
+import gov.nist.secauto.metaschema.model.xmlbeans.FlagReferenceType;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFieldDefinitionType;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType;
@@ -148,8 +148,8 @@ class XmlFlagContainerSupport {
     Map<@NotNull String, IFlagInstance> flagInstances = new LinkedHashMap<>(); // NOPMD - intentional
     while (cursor.toNextSelection()) {
       XmlObject obj = cursor.getObject();
-      if (obj instanceof FlagDocument.Flag) {
-        XmlFlagInstance flagInstance = new XmlFlagInstance((FlagDocument.Flag) obj, parent); // NOPMD - intentional
+      if (obj instanceof FlagReferenceType) {
+        XmlFlagInstance flagInstance = new XmlFlagInstance((FlagReferenceType) obj, parent); // NOPMD - intentional
         flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
       } else if (obj instanceof InlineFlagDefinitionType) {
         XmlInlineFlagDefinition flagInstance

@@ -47,9 +47,9 @@ public class RootSlashPath
   
   @Override
   public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
-    if (!(context.getContextNodeItem() instanceof IDocumentNodeItem)) {
-      throw new UnsupportedOperationException("root searching is not supported on non-document nodes");
-    }
+//    if (!(context.getNodeItem() instanceof IDocumentNodeItem)) {
+//      throw new UnsupportedOperationException("root searching is not supported on non-document nodes");
+//    }
 
     return getNode().accept(dynamicContext, context);
 

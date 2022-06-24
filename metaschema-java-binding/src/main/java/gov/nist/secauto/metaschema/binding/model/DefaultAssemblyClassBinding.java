@@ -63,10 +63,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -169,42 +167,9 @@ public class DefaultAssemblyClassBinding
     return xmlRootQName;
   }
 
-  /**
-   * Collect all fields that are part of the model for this class.
-   * 
-   * @param clazz
-   *          the class
-   * @return an immutable collection of field and assembly instances
-   */
-  protected Collection<java.lang.reflect.Field> getModelInstanceFields(Class<?> clazz) {
-    java.lang.reflect.Field[] fields = clazz.getDeclaredFields();
-
-    List<java.lang.reflect.Field> retval = new LinkedList<>();
-
-    Class<?> superClass = clazz.getSuperclass();
-    if (superClass != null) {
-      // get instances from superclass
-      retval.addAll(getModelInstanceFields(superClass));
-    }
-
-    for (java.lang.reflect.Field field : fields) {
-      if (!field.isAnnotationPresent(BoundAssembly.class) && !field.isAnnotationPresent(BoundField.class)) {
-        // skip fields that aren't a field or assembly instance
-        continue;
-      }
-
-      if (field.isAnnotationPresent(Ignore.class)) {
-        // skip this field, since it is ignored
-        continue;
-      }
-      retval.add(field);
-    }
-    return Collections.unmodifiableCollection(retval);
-  }
-
-  protected Stream<gov.nist.secauto.metaschema.binding.model.IBoundNamedModelInstance>
+  protected Stream<@NotNull IBoundNamedModelInstance>
       getModelInstanceFieldStream(Class<?> clazz) {
-    Stream<gov.nist.secauto.metaschema.binding.model.IBoundNamedModelInstance> superInstances;
+    Stream<@NotNull IBoundNamedModelInstance> superInstances;
     Class<?> superClass = clazz.getSuperclass();
     if (superClass == null) {
       superInstances = Stream.empty();
@@ -352,9 +317,9 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public List<? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
+  public List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
     checkModelConstraints();
-    return constraints.getAllowedValuesContraints();
+    return constraints.getAllowedValuesConstraints();
   }
 
   @Override
@@ -378,7 +343,7 @@ public class DefaultAssemblyClassBinding
   @Override
   public List<? extends IIndexConstraint> getIndexConstraints() {
     checkModelConstraints();
-    return constraints.getIndexContraints();
+    return constraints.getIndexConstraints();
   }
 
   @Override
@@ -391,6 +356,48 @@ public class DefaultAssemblyClassBinding
   public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
     checkModelConstraints();
     return constraints.getHasCardinalityConstraints();
+  }
+
+  @Override
+  public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+    checkModelConstraints();
+    constraints.addConstraint(constraint);
+  }
+
+  @Override
+  public void addConstraint(@NotNull IMatchesConstraint constraint) {
+    checkModelConstraints();
+    constraints.addConstraint(constraint);
+  }
+
+  @Override
+  public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+    checkModelConstraints();
+    constraints.addConstraint(constraint);
+  }
+
+  @Override
+  public void addConstraint(@NotNull IExpectConstraint constraint) {
+    checkModelConstraints();
+    constraints.addConstraint(constraint);
+  }
+
+  @Override
+  public void addConstraint(@NotNull IIndexConstraint constraint) {
+    checkModelConstraints();
+    constraints.addConstraint(constraint);
+  }
+
+  @Override
+  public void addConstraint(@NotNull IUniqueConstraint constraint) {
+    checkModelConstraints();
+    constraints.addConstraint(constraint);
+  }
+
+  @Override
+  public void addConstraint(@NotNull ICardinalityConstraint constraint) {
+    checkModelConstraints();
+    constraints.addConstraint(constraint);
   }
 
   @Override
@@ -430,7 +437,7 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public List<Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
+  public List<@NotNull Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
       throws IOException {
 
     JsonUtil.assertCurrent(context.getReader(), JsonToken.FIELD_NAME, JsonToken.END_OBJECT);

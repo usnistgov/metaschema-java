@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common;
 
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
@@ -43,8 +44,9 @@ import java.util.List;
 
 /**
  * Wraps an {@link IAssemblyDefinition} that is a {@link IRootAssemblyDefinition}.
-
- * @param <T> the type of the wrapped definition
+ * 
+ * @param <T>
+ *          the type of the wrapped definition
  */
 public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implements IRootAssemblyDefinition {
   @NotNull
@@ -136,7 +138,6 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implem
     return null;
   }
 
-
   @Override
   public IFlagInstance getFlagInstanceByName(String name) {
     return getRootDefinition().getFlagInstanceByName(name);
@@ -187,7 +188,6 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implem
     return getRootDefinition().getChoiceInstances();
   }
 
-
   @Override
   public List<@NotNull ? extends IConstraint> getConstraints() {
     return getRootDefinition().getConstraints();
@@ -203,16 +203,14 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implem
     return getRootDefinition().getUniqueConstraints();
   }
 
-
   @Override
   public List<@NotNull ? extends ICardinalityConstraint> getHasCardinalityConstraints() {
     return getRootDefinition().getHasCardinalityConstraints();
   }
 
-
   @Override
-  public List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesContraints() {
-    return getRootDefinition().getAllowedValuesContraints();
+  public List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesConstraints() {
+    return getRootDefinition().getAllowedValuesConstraints();
   }
 
   @Override
@@ -228,6 +226,41 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implem
   @Override
   public List<@NotNull ? extends IExpectConstraint> getExpectConstraints() {
     return getRootDefinition().getExpectConstraints();
+  }
+
+  @Override
+  public void addConstraint(@NotNull IIndexConstraint constraint) {
+    getRootDefinition().addConstraint(constraint);
+  }
+
+  @Override
+  public void addConstraint(@NotNull IUniqueConstraint constraint) {
+    getRootDefinition().addConstraint(constraint);
+  }
+
+  @Override
+  public void addConstraint(@NotNull ICardinalityConstraint constraint) {
+    getRootDefinition().addConstraint(constraint);
+  }
+
+  @Override
+  public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+    getRootDefinition().addConstraint(constraint);
+  }
+
+  @Override
+  public void addConstraint(@NotNull IMatchesConstraint constraint) {
+    getRootDefinition().addConstraint(constraint);
+  }
+
+  @Override
+  public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+    getRootDefinition().addConstraint(constraint);
+  }
+
+  @Override
+  public void addConstraint(@NotNull IExpectConstraint constraint) {
+    getRootDefinition().addConstraint(constraint);
   }
 
 }
