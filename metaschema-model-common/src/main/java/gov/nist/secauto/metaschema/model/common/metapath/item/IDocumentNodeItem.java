@@ -141,7 +141,7 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
 
   @Override
   @NotNull
-  default <T> T getValue() {
+  default Object getValue() {
     return getRootAssemblyNodeItem().getValue();
   }
 }

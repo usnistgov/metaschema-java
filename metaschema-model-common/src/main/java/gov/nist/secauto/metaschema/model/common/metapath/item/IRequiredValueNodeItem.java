@@ -43,5 +43,5 @@ public interface IRequiredValueNodeItem extends INodeItem {
 
   @Override
   @NotNull
-  <T> T getValue();
+  Object getValue();
 }

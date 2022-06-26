@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.IExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.StaticMetapathException;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -103,7 +104,7 @@ public final class FunctionService {
    * @param arguments
    *          a list of argument expressions for use in determining an argument signature match
    * @return the matching function or {@code null} if no match exists
-   * @throws UnsupportedOperationException
+   * @throws StaticMetapathException
    *           if a matching function was not found
    */
   @SuppressWarnings("null")
@@ -120,13 +121,13 @@ public final class FunctionService {
    * @param arguments
    *          a list of argument expressions for use in determining an argument signature match
    * @return the matching function
-   * @throws UnsupportedOperationException
+   * @throws StaticMetapathException
    *           if a matching function was not found
    */
   public synchronized IFunction getFunction(@NotNull String name, @NotNull List<@NotNull IExpression> arguments) {
     IFunction retval = library.getFunction(name, arguments);
     if (retval == null) {
-      throw new UnsupportedOperationException(
+      throw new StaticMetapathException(StaticMetapathException.NO_FUNCTION_MATCH,
           String.format("unable to find function with name '%s' having arity '%d'", name, arguments.size()));
     }
     return retval;

@@ -40,7 +40,7 @@ public class IndentingXmlStreamWriter2
   private String indentText = DEFAULT_INDENT_TEXT;
   private String lineEndText = DEFAULT_LINE_END_TEXT;
   private int depth; // = 0;
-  private final Map<Integer, Boolean> depthWithChildMap = new HashMap<>();
+  private final Map<Integer, Boolean> depthWithChildMap = new HashMap<>(); // NOPMD - synchronization not needed
   private static final String DEFAULT_INDENT_TEXT = "  ";
   private static final String DEFAULT_LINE_END_TEXT = "\n";
 

@@ -33,7 +33,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class StringAdapter
     extends AbstractStringJavaTypeAdapter<IStringItem> {
-  public StringAdapter() {
+  StringAdapter() {
+    // avoid general construction
   }
 
   @Override

@@ -216,7 +216,7 @@ public class XmlSchemaGenerator
     writer.writeStartElement(NS_XML_SCHEMA, "appinfo");
 
     writer.writeStartElement(targetNS, "schema-name");
-    metaschema.getName().toHtmlAsStream(writer, targetNS);
+    metaschema.getName().writeHtml(writer, targetNS);
     writer.writeEndElement();
 
     writer.writeStartElement(targetNS, "schema-version");
@@ -232,11 +232,58 @@ public class XmlSchemaGenerator
     MarkupMultiline remarks = metaschema.getRemarks();
     if (remarks != null) {
       writer.writeStartElement(NS_XML_SCHEMA, "documentation");
-      remarks.toHtmlAsStream(writer, targetNS);
+      remarks.writeHtml(writer, targetNS);
       writer.writeEndElement();
     }
 
     writer.writeEndElement();
+  }
+
+  private void generateDocumentation(String formalName, MarkupLine description, MarkupMultiline remarks,
+      @NotNull String xmlNS, @NotNull GenerationState state) throws XMLStreamException {
+    XMLStreamWriter2 writer = state.getWriter();
+    writer.writeStartElement(NS_XML_SCHEMA, "annotation");
+    if (formalName != null || description != null) {
+      writer.writeStartElement(NS_XML_SCHEMA, "appinfo");
+
+      if (formalName != null) {
+        writer.writeStartElement(xmlNS, "formal-name");
+        writer.writeCharacters(formalName);
+        writer.writeEndElement();
+      }
+
+      if (description != null) {
+        writer.writeStartElement(xmlNS, "description");
+        description.writeHtml(writer, xmlNS);
+        writer.writeEndElement();
+      }
+
+      writer.writeEndElement(); // xs:appInfo
+    }
+
+    writer.writeStartElement(NS_XML_SCHEMA, "documentation");
+
+    if (description != null) {
+      // write description
+      writer.writeStartElement(xmlNS, "p");
+
+      if (formalName != null) {
+        writer.writeStartElement(xmlNS, "b");
+        writer.writeCharacters(formalName);
+        writer.writeEndElement();
+        writer.writeCharacters(": ");
+      }
+
+      description.writeHtml(writer, xmlNS);
+      writer.writeEndElement(); // p
+    }
+
+    if (remarks != null) {
+      remarks.writeHtml(writer, xmlNS);
+    }
+
+    writer.writeEndElement(); // xs:documentation
+    writer.writeEndElement(); // xs:annotation
   }
 
   private void generateMetadata(@NotNull INamedDefinition definition, @NotNull GenerationState state)
@@ -246,50 +293,7 @@ public class XmlSchemaGenerator
     MarkupMultiline remarks = definition.getRemarks();
 
     if (formalName != null || description != null || remarks != null) {
-      XMLStreamWriter2 writer = state.getWriter();
-      String xmlNS = state.getNS(definition);
-      writer.writeStartElement(NS_XML_SCHEMA, "annotation");
-      if (formalName != null || description != null) {
-        writer.writeStartElement(NS_XML_SCHEMA, "appinfo");
-
-        if (formalName != null) {
-          writer.writeStartElement(xmlNS, "formal-name");
-          writer.writeCharacters(formalName);
-          writer.writeEndElement();
-        }
-
-        if (description != null) {
-          writer.writeStartElement(xmlNS, "description");
-          description.toHtmlAsStream(writer, xmlNS);
-          writer.writeEndElement();
-        }
-
-        writer.writeEndElement(); // xs:appInfo
-      }
-
-      writer.writeStartElement(NS_XML_SCHEMA, "documentation");
-
-      if (description != null) {
-        // write description
-        writer.writeStartElement(xmlNS, "p");
-
-        if (formalName != null) {
-          writer.writeStartElement(xmlNS, "b");
-          writer.writeCharacters(formalName);
-          writer.writeEndElement();
-          writer.writeCharacters(": ");
-        }
-
-        description.toHtmlAsStream(writer, xmlNS);
-        writer.writeEndElement(); // p
-      }
-
-      if (remarks != null) {
-        remarks.toHtmlAsStream(writer, xmlNS);
-      }
-
-      writer.writeEndElement(); // xs:documentation
-      writer.writeEndElement(); // xs:annotation
+      generateDocumentation(formalName, description, remarks, state.getNS(definition), state);
     }
   }
 
@@ -583,56 +587,8 @@ public class XmlSchemaGenerator
 
     MarkupMultiline remarks = instance.getRemarks();
 
-    if (formalName != null || description != null || definitionRemarks != null || remarks != null) {
-      XMLStreamWriter2 writer = state.getWriter();
-      String xmlNS = state.getNS(instance);
-
-      writer.writeStartElement(NS_XML_SCHEMA, "annotation");
-      if (formalName != null || description != null) {
-        writer.writeStartElement(NS_XML_SCHEMA, "appinfo");
-
-        if (formalName != null) {
-          writer.writeStartElement(xmlNS, "formal-name");
-          writer.writeCharacters(formalName);
-          writer.writeEndElement();
-        }
-
-        if (description != null) {
-          writer.writeStartElement(xmlNS, "description");
-          description.toHtmlAsStream(writer, xmlNS);
-          writer.writeEndElement();
-        }
-
-        writer.writeEndElement(); // xs:appInfo
-      }
-
-      writer.writeStartElement(NS_XML_SCHEMA, "documentation");
-
-      if (description != null) {
-        // write description
-        writer.writeStartElement(xmlNS, "p");
-
-        if (formalName != null) {
-          writer.writeStartElement(xmlNS, "b");
-          writer.writeCharacters(formalName);
-          writer.writeEndElement();
-          writer.writeCharacters(": ");
-        }
-
-        description.toHtmlAsStream(writer, xmlNS);
-        writer.writeEndElement(); // p
-      }
-
-      if (remarks != null) {
-        remarks.toHtmlAsStream(writer, xmlNS);
-      }
-
-      if (definitionRemarks != null) {
-        definitionRemarks.toHtmlAsStream(writer, xmlNS);
-      }
-
-      writer.writeEndElement(); // xs:documentation
-      writer.writeEndElement(); // xs:annotation
+    if (formalName != null || description != null || remarks != null) {
+      generateDocumentation(formalName, description, remarks, state.getNS(instance), state);
     }
   }
 
@@ -761,14 +717,19 @@ public class XmlSchemaGenerator
       return defaultNS;
     }
 
+    @NotNull
     public String getDatatypeNS() {
       return getDefaultNS();
     }
 
+    @SuppressWarnings("null")
+    @NotNull
     public String getNS(@NotNull INamedDefinition definition) {
       return definition.getContainingMetaschema().getXmlNamespace().toASCIIString();
     }
 
+    @SuppressWarnings("null")
+    @NotNull
     public String getNS(@NotNull INamedInstance instance) {
       String namespace = instance.getXmlNamespace();
       if (namespace == null) {

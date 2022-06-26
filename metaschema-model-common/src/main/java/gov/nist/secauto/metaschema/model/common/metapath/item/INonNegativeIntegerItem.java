@@ -59,12 +59,16 @@ public interface INonNegativeIntegerItem extends IIntegerItem {
 
   @NotNull
   public static INonNegativeIntegerItem valueOf(@NotNull String value) {
-    return valueOf(MetaschemaDataTypeProvider.NON_NEGATIVE_INTEGER.parse(value));
+    try {
+      return valueOf(MetaschemaDataTypeProvider.NON_NEGATIVE_INTEGER.parse(value));
+    } catch (IllegalArgumentException ex) {
+      throw new InvalidValueForCastFunctionMetapathException(String.format("Unable to parse string value '%s'", value),
+          ex);
+    }
   }
 
   @NotNull
-  public static INonNegativeIntegerItem cast(@NotNull IAnyAtomicItem item)
-      throws InvalidValueForCastFunctionMetapathException {
+  public static INonNegativeIntegerItem cast(@NotNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.NON_NEGATIVE_INTEGER.cast(item);
   }
 }

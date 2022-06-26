@@ -83,7 +83,7 @@ public class NullJavaTypeAdapter
   public static class VoidItem implements IAnyAtomicItem {
 
     @Override
-    public @NotNull Object getValue() {
+    public Void getValue() {
       throw new UnsupportedOperationException(NOT_VALID);
     }
 

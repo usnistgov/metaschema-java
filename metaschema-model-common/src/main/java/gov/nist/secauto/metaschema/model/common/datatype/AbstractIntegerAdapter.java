@@ -42,7 +42,7 @@ public abstract class AbstractIntegerAdapter<ITEM_TYPE extends IIntegerItem>
   }
 
   @Override
-  public BigInteger parse(String value) throws NumberFormatException {
+  public BigInteger parse(String value) {
     return new BigInteger(value);
   }
 

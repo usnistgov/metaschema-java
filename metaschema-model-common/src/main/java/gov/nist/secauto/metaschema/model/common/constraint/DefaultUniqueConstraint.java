@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -37,12 +38,30 @@ public class DefaultUniqueConstraint
     extends AbstractKeyConstraint
     implements IUniqueConstraint {
 
+  /**
+   * Create a new key-based constraint, which uses a set of key fields to build a key used to identify
+   * non-unique items.
+   * 
+   * @param id
+   *          the optional identifier for the constraint
+   * @param source
+   *          information about the constraint source
+   * @param level
+   *          the significance of a violation of this constraint
+   * @param target
+   *          the Metapath expression identifying the nodes the constraint targets
+   * @param keyFields
+   *          a list of key fields associated with the constraint
+   * @param remarks
+   *          optional remarks describing the intent of the constraint
+   */
   public DefaultUniqueConstraint(
-      String id,
+      @Nullable String id,
+      @NotNull ISource source,
       @NotNull Level level,
       @NotNull MetapathExpression target,
       @NotNull List<@NotNull DefaultKeyField> keyFields,
-      MarkupMultiline remarks) {
-    super(id, level, target, keyFields, remarks);
+      @Nullable MarkupMultiline remarks) {
+    super(id, source, level, target, keyFields, remarks);
   }
 }

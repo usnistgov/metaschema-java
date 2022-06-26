@@ -44,7 +44,7 @@ class SingletonPropertyCollector implements IPropertyCollector {
   }
 
   @Override
-  public void addAll(Collection<?> items) throws IllegalStateException {
+  public void addAll(Collection<?> items) {
     int size = items.size();
     if (size > 1) {
       throw new IllegalStateException("Multiple values cannot be set for this singleton");

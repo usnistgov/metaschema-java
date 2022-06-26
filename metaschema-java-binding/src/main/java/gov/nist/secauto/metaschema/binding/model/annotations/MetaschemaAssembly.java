@@ -31,6 +31,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -49,7 +51,16 @@ public @interface MetaschemaAssembly {
    * 
    * @return the metaschema class
    */
+  @NotNull
   Class<? extends AbstractBoundMetaschema> metaschema();
+
+  /**
+   * Name of the assembly.
+   * 
+   * @return the name
+   */
+  @NotNull
+  String name();
 
   /**
    * Name of the root XML element or the JSON/YAML property.
@@ -58,6 +69,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return the name
    */
+  @NotNull
   String rootName() default "##none";
 
   /**
@@ -68,6 +80,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return the namespace
    */
+  @NotNull
   String rootNamespace() default "##default";
 
   /**
@@ -75,6 +88,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
+  @NotNull
   AllowedValues[] allowedValues() default {};
 
   /**
@@ -82,6 +96,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
+  @NotNull
   Matches[] matches() default {};
 
   /**
@@ -89,6 +104,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
+  @NotNull
   IndexHasKey[] indexHasKey() default {};
 
   /**
@@ -96,6 +112,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return the expected constraints or an empty array if no expected constraints are defined
    */
+  @NotNull
   Expect[] expect() default {};
 
   /**
@@ -103,6 +120,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return the index constraints or an empty array if no index constraints are defined
    */
+  @NotNull
   Index[] index() default {};
 
   /**
@@ -110,6 +128,7 @@ public @interface MetaschemaAssembly {
    * 
    * @return the unique constraints or an empty array if no unique constraints are defined
    */
+  @NotNull
   IsUnique[] isUnique() default {};
 
   /**
@@ -117,5 +136,6 @@ public @interface MetaschemaAssembly {
    * 
    * @return the cardinality constraints or an empty array if no cardinality constraints are defined
    */
+  @NotNull
   HasCardinality[] hasCardinality() default {};
 }

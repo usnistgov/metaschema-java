@@ -39,6 +39,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
@@ -162,7 +163,7 @@ class DefaultFlagProperty
     protected void checkModelConstraints() {
       synchronized (this) {
         if (constraints == null) {
-          constraints = new ValueConstraintSupport(getFlagAnnotation());
+          constraints = new ValueConstraintSupport(getFlagAnnotation(), InternalModelSource.instance());
         }
       }
     }

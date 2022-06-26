@@ -55,7 +55,7 @@ interface IPropertyCollector {
    * @throws IllegalStateException
    *           if the item cannot be added due to a model inconsistency
    */
-  void addAll(@NotNull Collection<@NotNull ?> items) throws IllegalStateException;
+  void addAll(@NotNull Collection<@NotNull ?> items);
 
   /**
    * Get the current state of the "collection". For single valued "non-collections" this may return a

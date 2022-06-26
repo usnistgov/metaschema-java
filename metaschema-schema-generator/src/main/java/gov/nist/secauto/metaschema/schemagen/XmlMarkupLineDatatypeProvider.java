@@ -26,42 +26,18 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-
-import org.jdom2.Element;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 public class XmlMarkupLineDatatypeProvider
-    extends AbstractXmlDatatypeProvider {
+    extends AbstractXmlMarkupDatatypeProvider {
   private static final String DATATYPE_NAME = "MarkupLineDatatype";
+  private static final String SCHEMA_RESOURCE_PATH = "schema/xml/metaschema-markup-line.xsd";
 
   @Override
-  protected InputStream getSchemaResource() {
-    return JDom2XmlSchemaLoader.class.getClassLoader()
-        .getResourceAsStream("schema/xml/metaschema-markup-line.xsd");
+  protected String getSchemaResourcePath() {
+    return SCHEMA_RESOURCE_PATH;
   }
 
   @Override
-  protected List<@NotNull Element> queryElements(JDom2XmlSchemaLoader loader) {
-    return loader.getContent(
-        "/xs:schema/*",
-        CollectionUtil.singletonMap("xs", JDom2XmlSchemaLoader.NS_XML_SCHEMA));
-  }
-
-  @Override
-  protected @NotNull Map<@NotNull String, IDatatypeContent> handleResults(@NotNull List<@NotNull Element> items) {
-    return CollectionUtil.singletonMap(
-        DATATYPE_NAME,
-        new JDom2DatatypeContent(
-            DATATYPE_NAME,
-            items.stream()
-                .filter(element -> !("include".equals(element.getName())))
-                .collect(Collectors.toList()),
-            CollectionUtil.emptyList()));
+  protected String getDataTypeName() {
+    return DATATYPE_NAME;
   }
 }

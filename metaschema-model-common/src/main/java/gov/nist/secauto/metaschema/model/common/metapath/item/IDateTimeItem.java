@@ -47,8 +47,13 @@ public interface IDateTimeItem extends IAnyAtomicItem {
   }
 
   @NotNull
-  public static IDateTimeItem valueOf(@NotNull String value) throws IllegalArgumentException {
-    return valueOf(MetaschemaDataTypeProvider.DATE_TIME.parse(value));
+  public static IDateTimeItem valueOf(@NotNull String value) {
+    try {
+      return valueOf(MetaschemaDataTypeProvider.DATE_TIME.parse(value));
+    } catch (IllegalArgumentException ex) {
+      throw new InvalidValueForCastFunctionMetapathException(String.format("Unable to parse string value '%s'", value),
+          ex);
+    }
   }
 
   @NotNull

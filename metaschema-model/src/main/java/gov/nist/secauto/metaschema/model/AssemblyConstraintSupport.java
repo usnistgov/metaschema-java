@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstra
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ISource;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
@@ -93,8 +94,12 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
    * 
    * @param xmlConstraints
    *          the XMLBeans instance
+   * @param source
+   *          information about the source of the constraints
    */
-  public AssemblyConstraintSupport(DefineAssemblyConstraintsType xmlConstraints) { // NOPMD - unavoidable
+  public AssemblyConstraintSupport( // NOPMD - unavoidable
+      @NotNull DefineAssemblyConstraintsType xmlConstraints,
+      @NotNull ISource source) {
     XmlCursor cursor = xmlConstraints.newCursor();
     cursor.selectPath(PATH);
 
@@ -102,27 +107,31 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
       XmlObject obj = cursor.getObject();
       if (obj instanceof ScopedAllowedValuesType) {
         DefaultAllowedValuesConstraint constraint
-            = ConstraintFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj);
+            = ConstraintFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof ScopedIndexConstraintType) {
-        DefaultIndexConstraint constraint = ConstraintFactory.newIndexConstraint((ScopedIndexConstraintType) obj);
+        DefaultIndexConstraint constraint
+            = ConstraintFactory.newIndexConstraint((ScopedIndexConstraintType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
         DefaultIndexHasKeyConstraint constraint
-            = ConstraintFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj);
+            = ConstraintFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof ScopedKeyConstraintType) {
-        DefaultUniqueConstraint constraint = ConstraintFactory.newUniqueConstraint((ScopedKeyConstraintType) obj);
+        DefaultUniqueConstraint constraint
+            = ConstraintFactory.newUniqueConstraint((ScopedKeyConstraintType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof HasCardinalityConstraintType) {
         DefaultCardinalityConstraint constraint
-            = ConstraintFactory.newCardinalityConstraint((HasCardinalityConstraintType) obj);
+            = ConstraintFactory.newCardinalityConstraint((HasCardinalityConstraintType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof ScopedMatchesConstraintType) {
-        DefaultMatchesConstraint constraint = ConstraintFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj);
+        DefaultMatchesConstraint constraint
+            = ConstraintFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof ScopedExpectConstraintType) {
-        DefaultExpectConstraint constraint = ConstraintFactory.newExpectConstraint((ScopedExpectConstraintType) obj);
+        DefaultExpectConstraint constraint
+            = ConstraintFactory.newExpectConstraint((ScopedExpectConstraintType) obj, source);
         addConstraint(constraint);
       }
     }

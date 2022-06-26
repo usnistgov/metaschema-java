@@ -42,11 +42,11 @@ import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.constraint.FindingCollectingConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory;
@@ -56,11 +56,7 @@ import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -88,8 +84,7 @@ public class DefaultBindingContext implements IBindingContext {
   @NotNull
   private IMetaschemaLoaderStrategy metaschemaLoaderStrategy;
   @NotNull
-  private final Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> javaTypeAdapterMap // NOPMD - intentional
-      = new HashMap<>();
+  private final MetaschemaDataTypeProvider dataTypeProvider = new MetaschemaDataTypeProvider();
   @NotNull
   private final List<@NotNull IBindingMatcher> bindingMatchers = new LinkedList<>();
 
@@ -105,6 +100,9 @@ public class DefaultBindingContext implements IBindingContext {
 
   /**
    * Construct a new binding context.
+   * 
+   * @param externalConstraintSets
+   *          the set of external constraints to configure this binding to use
    */
   public DefaultBindingContext(@NotNull Set<@NotNull IConstraintSet> externalConstraintSets) {
     // only allow extended classes
@@ -137,28 +135,7 @@ public class DefaultBindingContext implements IBindingContext {
   @Override
   public <TYPE extends IJavaTypeAdapter<?>> TYPE
       getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz) {
-    IJavaTypeAdapter<?> instance;
-    synchronized (this) {
-      instance = javaTypeAdapterMap.get(clazz);
-      if (instance == null) {
-        Constructor<TYPE> constructor;
-        try {
-          constructor = clazz.getDeclaredConstructor();
-        } catch (NoSuchMethodException ex) {
-          throw new IllegalArgumentException(ex);
-        }
-
-        try {
-          instance = constructor.newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
-          throw new IllegalArgumentException(ex);
-        }
-        javaTypeAdapterMap.put(clazz, instance);
-      }
-    }
-    @SuppressWarnings("unchecked")
-    TYPE retval = (TYPE) instance;
-    return retval;
+    return dataTypeProvider.getJavaTypeAdapterInstance(clazz);
   }
 
   /**
@@ -230,8 +207,8 @@ public class DefaultBindingContext implements IBindingContext {
     }
   }
 
-  public Map<Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> getJavaTypeAdaptersByClass() {
-    return Collections.unmodifiableMap(javaTypeAdapterMap);
+  public Map<@NotNull Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> getJavaTypeAdaptersByClass() {
+    return dataTypeProvider.getJavaTypeAdaptersByClass();
   }
 
   @Override

@@ -34,7 +34,8 @@ import org.jetbrains.annotations.NotNull;
 public class EmailAddressAdapter
     extends AbstractStringJavaTypeAdapter<IEmailAddressItem> {
 
-  public EmailAddressAdapter() {
+  EmailAddressAdapter() {
+    // avoid general construction
   }
 
   @Override

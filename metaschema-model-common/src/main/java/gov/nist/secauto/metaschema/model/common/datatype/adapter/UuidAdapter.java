@@ -35,7 +35,7 @@ public class UuidAdapter
     extends AbstractJavaTypeAdapter<UUID, IUuidItem> {
 
   @SuppressWarnings("null")
-  public UuidAdapter() {
+  UuidAdapter() {
     super(UUID.class);
   }
 
@@ -46,7 +46,7 @@ public class UuidAdapter
 
   @SuppressWarnings("null")
   @Override
-  public UUID parse(String value) throws IllegalArgumentException {
+  public UUID parse(String value) {
     return UUID.fromString(value);
   }
 

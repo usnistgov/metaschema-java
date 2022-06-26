@@ -108,13 +108,6 @@ abstract class AbstractClassBinding implements IClassBinding {
   }
 
   @Override
-  public String getName() {
-    // there is not a provided name, but we need to have one. This will always be provided on the
-    // instance side as a use name
-    return ObjectUtils.notNull(getBoundClass().getName());
-  }
-
-  @Override
   public String getUseName() { // NOPMD
     // a use name is never provided
     return null;

@@ -160,9 +160,8 @@ class MapPropertyInfo
   }
 
   public static class MapPropertyCollector implements IPropertyCollector {
-
     @NotNull
-    private final Map<String, Object> map = new LinkedHashMap<>();
+    private final Map<String, Object> map = new LinkedHashMap<>(); // NOPMD - single threaded
     @Nullable
     private final IBoundFlagInstance jsonKey;
 

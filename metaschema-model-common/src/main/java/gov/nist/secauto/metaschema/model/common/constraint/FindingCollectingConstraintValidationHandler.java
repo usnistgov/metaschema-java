@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
@@ -80,10 +80,27 @@ public class FindingCollectingConstraintValidationHandler
       @NotNull List<@NotNull ? extends INodeItem> targets,
       @NotNull CharSequence message,
       Throwable cause) {
-    findings.add(new ConstraintValidationFinding(constraint, message, cause, node, targets));
+    newFinding(
+        CollectionUtil.singletonList(constraint),
+        node,
+        targets,
+        message,
+        cause);
+  }
 
-    if (constraint.getLevel().ordinal() > highestLevel.ordinal()) {
-      highestLevel = constraint.getLevel();
+  protected void newFinding(
+      @NotNull List<@NotNull ? extends IConstraint> constraints,
+      @NotNull INodeItem node,
+      @NotNull List<@NotNull ? extends INodeItem> targets,
+      @NotNull CharSequence message,
+      Throwable cause) {
+    
+    ConstraintValidationFinding finding = new ConstraintValidationFinding(constraints, message, cause, node, targets);
+    findings.add(finding);
+
+    Level severity = finding.getSeverity();
+    if (severity.ordinal() > highestLevel.ordinal()) {
+      highestLevel = severity;
     }
   }
 
@@ -164,6 +181,13 @@ public class FindingCollectingConstraintValidationHandler
       @NotNull DynamicContext dynamicContext) {
     newFinding(constraint, node, CollectionUtil.singletonList(target),
         newExpectViolationMessage(constraint, node, target, dynamicContext), null);
+  }
+
+  @Override
+  public void handleAllowedValuesViolation(@NotNull List<@NotNull IAllowedValuesConstraint> failedConstraints,
+      @NotNull INodeItem target) {
+    newFinding(failedConstraints, target, CollectionUtil.singletonList(target),
+        newAllowedValuesViolationMessage(failedConstraints, target), null);
   }
 
 }

@@ -56,12 +56,16 @@ public interface IPositiveIntegerItem extends IIntegerItem {
 
   @NotNull
   public static IPositiveIntegerItem valueOf(@NotNull String value) {
-    return valueOf(MetaschemaDataTypeProvider.POSITIVE_INTEGER.parse(value));
+    try {
+      return valueOf(MetaschemaDataTypeProvider.POSITIVE_INTEGER.parse(value));
+    } catch (IllegalArgumentException ex) {
+      throw new InvalidValueForCastFunctionMetapathException(String.format("Unable to parse string value '%s'", value),
+          ex);
+    }
   }
 
   @NotNull
-  public static IPositiveIntegerItem cast(@NotNull IAnyAtomicItem item)
-      throws InvalidValueForCastFunctionMetapathException {
+  public static IPositiveIntegerItem cast(@NotNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.POSITIVE_INTEGER.cast(item);
   }
 }

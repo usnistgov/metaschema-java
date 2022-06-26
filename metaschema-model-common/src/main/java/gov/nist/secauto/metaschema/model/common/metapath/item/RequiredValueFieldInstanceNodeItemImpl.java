@@ -47,8 +47,11 @@ class RequiredValueFieldInstanceNodeItemImpl
    */
   private IAnyAtomicItem atomicItem;
 
-  public RequiredValueFieldInstanceNodeItemImpl(@NotNull IFieldInstance instance, @NotNull IRequiredValueAssemblyNodeItem parent,
-      int position, @NotNull Object value) {
+  public RequiredValueFieldInstanceNodeItemImpl(
+      @NotNull IFieldInstance instance,
+      @NotNull IRequiredValueAssemblyNodeItem parent,
+      int position,
+      @NotNull Object value) {
     super(instance, parent, position);
     this.value = value;
   }

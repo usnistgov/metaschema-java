@@ -48,6 +48,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -123,6 +124,11 @@ public class DefaultFieldClassBinding
   @NotNull
   public MetaschemaField getMetaschemaFieldAnnotation() {
     return metaschemaField;
+  }
+
+  @Override
+  public String getName() {
+    return getMetaschemaFieldAnnotation().name();
   }
 
   /**
@@ -711,7 +717,7 @@ public class DefaultFieldClassBinding
         Object flagValue = jsonKey.getValue(item);
         String key = jsonKey.getValueAsString(flagValue);
         if (key == null) {
-          throw new IOException(new NullPointerException("Null key value"));
+          throw new IOException(new NullPointerException("Null key value")); // NOPMD - intentional
         }
         writer.writeFieldName(key);
 
@@ -757,7 +763,7 @@ public class DefaultFieldClassBinding
   protected void checkModelConstraints() {
     synchronized (this) {
       if (constraints == null) {
-        constraints = new ValueConstraintSupport(this.getMetaschemaFieldAnnotation());
+        constraints = new ValueConstraintSupport(this.getMetaschemaFieldAnnotation(), InternalModelSource.instance());
       }
     }
   }

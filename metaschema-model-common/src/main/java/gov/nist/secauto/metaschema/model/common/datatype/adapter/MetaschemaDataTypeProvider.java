@@ -30,11 +30,14 @@ import com.google.auto.service.AutoService;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeProvider;
+import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 @AutoService(IDataTypeProvider.class)
-public class MetaschemaDataTypeProvider
+public class MetaschemaDataTypeProvider // NOPMD - Used for service initialization
     extends AbstractDataTypeProvider {
   @NotNull
   public static final Base64Adapter BASE64 = new Base64Adapter();

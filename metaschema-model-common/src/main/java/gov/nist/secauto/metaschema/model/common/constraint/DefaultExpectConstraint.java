@@ -56,6 +56,8 @@ public class DefaultExpectConstraint
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param source
+   *          information about the constraint source
    * @param level
    *          the significance of a violation of this constraint
    * @param message
@@ -71,12 +73,13 @@ public class DefaultExpectConstraint
   @SuppressWarnings("null")
   public DefaultExpectConstraint(
       @Nullable String id,
+      @NotNull ISource source,
       @NotNull Level level,
       String message,
       @NotNull MetapathExpression target,
       @NotNull MetapathExpression test,
       MarkupMultiline remarks) {
-    super(id, level, target, remarks);
+    super(id, source, level, target, remarks);
     this.test = Objects.requireNonNull(test);
     this.message = message;
   }
@@ -94,17 +97,14 @@ public class DefaultExpectConstraint
   @Override
   public CharSequence generateMessage(@NotNull INodeItem item, @NotNull DynamicContext context) {
     String message = getMessage();
-    if (message == null) {
-      return null;
-    }
 
-    return ReplacementScanner.replaceTokens(message, METAPATH_VALUE_TEMPLATE_PATTERN, match -> {
-      @SuppressWarnings("null")
-      @NotNull
-      String metapath = match.group(2);
-      MetapathExpression expr = MetapathExpression.compile(metapath);
-      return expr.evaluateAs(item, MetapathExpression.ResultType.STRING, context);
-    });
+    return message == null ? null
+        : ReplacementScanner.replaceTokens(message, METAPATH_VALUE_TEMPLATE_PATTERN, match -> {
+          @SuppressWarnings("null")
+          @NotNull
+          String metapath = match.group(2);
+          MetapathExpression expr = MetapathExpression.compile(metapath);
+          return expr.evaluateAs(item, MetapathExpression.ResultType.STRING, context);
+        });
   }
-
 }

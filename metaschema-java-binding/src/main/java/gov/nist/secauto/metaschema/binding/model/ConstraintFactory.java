@@ -45,6 +45,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexHasKeyCon
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultKeyField;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultUniqueConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ISource;
 import gov.nist.secauto.metaschema.model.common.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
@@ -70,10 +71,10 @@ final class ConstraintFactory {
   static Map<@NotNull String, DefaultAllowedValue> toAllowedValues(@NotNull AllowedValues constraint) {
     AllowedValue[] values = constraint.values();
 
-    Map<@NotNull String, DefaultAllowedValue> allowedValues = new LinkedHashMap<>(values.length);
+    Map<@NotNull String, DefaultAllowedValue> allowedValues = new LinkedHashMap<>(values.length); // NOPMD - intentional
     for (AllowedValue value : values) {
       DefaultAllowedValue allowedValue
-          = new DefaultAllowedValue(value.value(), MarkupLine.fromMarkdown(value.description()));
+          = new DefaultAllowedValue(value.value(), MarkupLine.fromMarkdown(value.description())); // NOPMD - intentional
       allowedValues.put(allowedValue.getValue(), allowedValue);
     }
     return CollectionUtil.unmodifiableMap(allowedValues);
@@ -107,20 +108,24 @@ final class ConstraintFactory {
   }
 
   @NotNull
-  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(@NotNull AllowedValues constraint) {
+  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(@NotNull AllowedValues constraint,
+      @NotNull ISource source) {
     return new DefaultAllowedValuesConstraint(
         toId(constraint.id()),
+        source,
         constraint.level(),
         toMetapath(constraint.target()),
         toAllowedValues(constraint),
         constraint.allowOthers(),
+        constraint.extensible(),
         toRemarks(constraint.remarks()));
   }
 
   @NotNull
-  static DefaultMatchesConstraint newMatchesConstraint(Matches constraint) {
+  static DefaultMatchesConstraint newMatchesConstraint(Matches constraint, @NotNull ISource source) {
     return new DefaultMatchesConstraint(
         toId(constraint.id()),
+        source,
         constraint.level(),
         toMetapath(constraint.target()),
         toPattern(constraint.pattern()),
@@ -136,7 +141,7 @@ final class ConstraintFactory {
     } else {
       retval = new ArrayList<>(keyFields.length);
       for (KeyField keyField : keyFields) {
-        DefaultKeyField field = new DefaultKeyField(toMetapath(keyField.target()),
+        DefaultKeyField field = new DefaultKeyField(toMetapath(keyField.target()), // NOPMD - intentional
             toPattern(keyField.pattern()), toRemarks(keyField.remarks()));
         retval.add(field);
       }
@@ -151,9 +156,10 @@ final class ConstraintFactory {
   }
 
   @NotNull
-  static DefaultUniqueConstraint newUniqueConstraint(@NotNull IsUnique constraint) {
+  static DefaultUniqueConstraint newUniqueConstraint(@NotNull IsUnique constraint, @NotNull ISource source) {
     return new DefaultUniqueConstraint(
         toId(constraint.id()),
+        source,
         constraint.level(),
         toMetapath(constraint.target()),
         toKeyFields(constraint.keyFields()),
@@ -161,9 +167,10 @@ final class ConstraintFactory {
   }
 
   @NotNull
-  static DefaultIndexConstraint newIndexConstraint(@NotNull Index constraint) {
+  static DefaultIndexConstraint newIndexConstraint(@NotNull Index constraint, @NotNull ISource source) {
     return new DefaultIndexConstraint(
         toId(constraint.id()),
+        source,
         constraint.level(),
         toMetapath(constraint.target()),
         constraint.name(),
@@ -172,9 +179,11 @@ final class ConstraintFactory {
   }
 
   @NotNull
-  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(@NotNull IndexHasKey constraint) {
+  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(@NotNull IndexHasKey constraint,
+      @NotNull ISource source) {
     return new DefaultIndexHasKeyConstraint(
         toId(constraint.id()),
+        source,
         constraint.level(),
         toMetapath(constraint.target()),
         constraint.indexName(),
@@ -183,9 +192,10 @@ final class ConstraintFactory {
   }
 
   @NotNull
-  static DefaultExpectConstraint newExpectConstraint(@NotNull Expect constraint) {
+  static DefaultExpectConstraint newExpectConstraint(@NotNull Expect constraint, @NotNull ISource source) {
     return new DefaultExpectConstraint(
         toId(constraint.id()),
+        source,
         constraint.level(),
         toMessage(constraint.message()),
         toMetapath(constraint.target()),
@@ -194,9 +204,11 @@ final class ConstraintFactory {
   }
 
   @NotNull
-  static DefaultCardinalityConstraint newCardinalityConstraint(@NotNull HasCardinality constraint) {
+  static DefaultCardinalityConstraint newCardinalityConstraint(@NotNull HasCardinality constraint,
+      @NotNull ISource source) {
     return new DefaultCardinalityConstraint(
         toId(constraint.id()),
+        source,
         constraint.level(),
         toMetapath(constraint.target()),
         toCardinality(constraint.minOccurs()),

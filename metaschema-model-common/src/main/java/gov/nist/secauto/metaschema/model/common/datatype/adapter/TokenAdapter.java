@@ -34,8 +34,8 @@ import org.jetbrains.annotations.NotNull;
 public class TokenAdapter
     extends AbstractStringJavaTypeAdapter<ITokenItem> {
 
-  public TokenAdapter() {
-    super();
+  TokenAdapter() {
+    // avoid general construction
   }
 
   @Override

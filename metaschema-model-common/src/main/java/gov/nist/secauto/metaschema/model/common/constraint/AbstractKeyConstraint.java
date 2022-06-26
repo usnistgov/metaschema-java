@@ -45,6 +45,8 @@ public abstract class AbstractKeyConstraint
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param source
+   *          information about the constraint source
    * @param level
    *          the significance of a violation of this constraint
    * @param target
@@ -56,11 +58,12 @@ public abstract class AbstractKeyConstraint
    */
   public AbstractKeyConstraint(
       @Nullable String id,
+      @NotNull ISource source,
       @NotNull Level level,
       @NotNull MetapathExpression target,
       @NotNull List<@NotNull DefaultKeyField> keyFields,
-      MarkupMultiline remarks) {
-    super(id, level, target, remarks);
+      @Nullable MarkupMultiline remarks) {
+    super(id, source, level, target, remarks);
     if (keyFields.isEmpty()) {
       throw new IllegalArgumentException("an empty list of key fields is not allowed");
     }

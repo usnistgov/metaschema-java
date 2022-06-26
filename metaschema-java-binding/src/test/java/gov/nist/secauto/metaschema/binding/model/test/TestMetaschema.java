@@ -38,15 +38,17 @@ import org.jetbrains.annotations.NotNull;
 import java.net.URI;
 import java.util.List;
 
-@Metaschema(assemblies = {
-    EmptyBoundAssembly.class,
-    FlaggedBoundAssembly.class,
-    OnlyModelBoundAssembly.class,
-    RootBoundAssembly.class
-}, fields = {
-    CollapsibleFlaggedBoundField.class,
-    FlaggedBoundField.class
-})
+@Metaschema(
+    assemblies = {
+        EmptyBoundAssembly.class,
+        FlaggedBoundAssembly.class,
+        OnlyModelBoundAssembly.class,
+        RootBoundAssembly.class
+    },
+    fields = {
+        CollapsibleFlaggedBoundField.class,
+        FlaggedBoundField.class
+    })
 public class TestMetaschema
     extends AbstractBoundMetaschema {
 

@@ -45,7 +45,8 @@ public interface INodeItemFactory {
   
   @SuppressWarnings("null")
   @NotNull
-  default INodeItem newNodeItem(@NotNull INamedDefinition definition, @NotNull Object value, @NotNull URI baseUri, boolean rootNode) {
+  default INodeItem newNodeItem(@NotNull INamedDefinition definition, @NotNull Object value, @NotNull URI baseUri,
+      boolean rootNode) {
     INodeItem retval;
     if (definition instanceof IAssemblyDefinition) {
       if (rootNode && definition instanceof IRootAssemblyDefinition) {

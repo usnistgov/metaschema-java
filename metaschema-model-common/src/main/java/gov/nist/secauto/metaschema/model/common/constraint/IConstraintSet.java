@@ -27,10 +27,12 @@
 package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.ResultType;
 import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
@@ -68,23 +70,37 @@ public interface IConstraintSet {
         .collect(Collectors.toUnmodifiableList());
   }
 
-  static void applyConstraintSetToMetaschema(@NotNull Set<@NotNull IConstraintSet> constraintSets, @NotNull IMetaschema metaschema) throws MetaschemaException {
+  static void applyConstraintSetToMetaschema(@NotNull Set<@NotNull IConstraintSet> constraintSets,
+      @NotNull IMetaschema metaschema) throws MetaschemaException {
     Set<@NotNull IConstraintSet> resolvedConstraintSets = resolveConstraintSets(constraintSets);
 
     ConstraintComposingVisitor visitor = new ConstraintComposingVisitor();
     IMetaschemaNodeItem item = DefaultNodeItemFactory.instance().newMetaschemaNodeItem(metaschema);
 
-    for (ITargetedConstaints targeted : IConstraintSet.getTargetedConstraintsForMetaschema(resolvedConstraintSets, metaschema)) {
+    for (ITargetedConstaints targeted : IConstraintSet.getTargetedConstraintsForMetaschema(resolvedConstraintSets,
+        metaschema)) {
       MetapathExpression targetExpression = targeted.getTargetExpression();
       INodeItem node = targetExpression.evaluateAs(item, ResultType.NODE);
       if (node == null) {
-        throw new MetaschemaException("Target not found for expression: " + targetExpression.getPath());
+        throw new MetaschemaException(String.format("Target not found for expression '%s' on metaschema '%s'.",
+            targetExpression.getPath(),
+            metaschema.getQName()));
+      } else if (node instanceof IDefinitionNodeItem) {
+        INamedDefinition nodeDefinition = ((IDefinitionNodeItem) node).getDefinition();
+        IMetaschema nodeMetaschema = nodeDefinition.getContainingMetaschema();
+        if (!metaschema.equals(nodeMetaschema)) {
+          throw new MetaschemaException(
+              String.format("Target definition '%s' in metaschema '%s' is not in the scoped metaschema '%s'.",
+                  nodeDefinition.getName(),
+                  nodeMetaschema.getQName(),
+                  metaschema.getQName()));
+        }
       }
       node.accept(visitor, targeted);
     }
 
   }
-  
+
   Collection<@NotNull IConstraintSet> getImportedConstraintSets();
 
   /**

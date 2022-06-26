@@ -26,6 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+/**
+ * This Metapath exception base class is used for all exceptions that have a defined error code
+ * family and value.
+ */
 public abstract class AbstractCodedMetapathException
     extends MetapathException {
 
@@ -39,16 +43,42 @@ public abstract class AbstractCodedMetapathException
    */
   private final int code;
 
+  /**
+   * Constructs a new Metapath exception with the provided {@code message} and no cause.
+   * 
+   * @param code
+   *          the error code value
+   * @param message
+   *          the exception message
+   */
   public AbstractCodedMetapathException(int code, String message) {
     super(message);
     this.code = code;
   }
 
+  /**
+   * Constructs a new Metapath exception with the provided {@code message} and {@code cause}.
+   * 
+   * @param code
+   *          the error code value
+   * @param message
+   *          the exception message
+   * @param cause
+   *          the exception cause
+   */
   public AbstractCodedMetapathException(int code, String message, Throwable cause) {
     super(message, cause);
     this.code = code;
   }
 
+  /**
+   * Constructs a new Metapath exception with a {@code null} message and the provided {@code cause}.
+   * 
+   * @param code
+   *          the error code value
+   * @param cause
+   *          the exception cause
+   */
   public AbstractCodedMetapathException(int code, Throwable cause) {
     super(cause);
     this.code = code;
@@ -61,15 +91,30 @@ public abstract class AbstractCodedMetapathException
 
   @Override
   public String getLocalizedMessage() {
-    return String.format("%s: %s", getCodeAsString(), super.getMessage());
+    return String.format("%s: %s", getCodeAsString(), super.getLocalizedMessage());
   }
 
+  /**
+   * Get the error code value.
+   * 
+   * @return the error code value
+   */
   protected int getCode() {
     return code;
   }
 
+  /**
+   * Get the error code family.
+   * 
+   * @return the error code family
+   */
   protected abstract String getCodePrefix();
 
+  /**
+   * Get a combination of the error code family and value.
+   * 
+   * @return the full error code.
+   */
   protected String getCodeAsString() {
     return String.format("%s%04d", getCodePrefix(), getCode());
   }

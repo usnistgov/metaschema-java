@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@MetaschemaAssembly(rootName = "root", metaschema = TestMetaschema.class)
+@MetaschemaAssembly(name= "root", rootName = "root", metaschema = TestMetaschema.class)
 public class RootBoundAssembly {
   @BoundFlag(useName = "uuid", defaultValue = "374dd648-b247-483c-afd8-a66ba8876070", typeAdapter = UuidAdapter.class)
   private UUID uuid; // NOPMD - intentional

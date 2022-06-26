@@ -37,7 +37,9 @@ import java.util.Map;
  * A {@link INodeItem} supported by a {@link IAssemblyInstance}, that must have an associated value.
  */
 class RequiredValueAssemblyInstanceNodeItemImpl
-    extends AbstractAssemblyInstanceNodeItem<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem, IRequiredValueAssemblyNodeItem>
+    extends
+    AbstractAssemblyInstanceNodeItem<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem,
+        IRequiredValueAssemblyNodeItem>
     implements IRequiredValueAssemblyNodeItem {
   @NotNull
   private final Object value;

@@ -27,9 +27,18 @@
 package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.ResultType;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A common interface for all constraint definitions.
@@ -65,17 +74,17 @@ public interface IConstraint {
    * The default level to use if no level is provided.
    */
   @NotNull
-  static final Level DEFAULT_LEVEL = Level.ERROR;
+  Level DEFAULT_LEVEL = Level.ERROR;
   /**
    * The default target Metapath expression to use if no target is provided.
    */
   @NotNull
-  static final MetapathExpression DEFAULT_TARGET = MetapathExpression.CONTEXT_NODE;
+  MetapathExpression DEFAULT_TARGET = MetapathExpression.CONTEXT_NODE;
   /**
    * The default target Metapath expression to use if no target is provided.
    */
   @NotNull
-  static final String DEFAULT_TARGET_METAPATH = ".";
+  String DEFAULT_TARGET_METAPATH = ".";
 
   /**
    * Retrieve the unique identifier for the constraint.
@@ -83,6 +92,13 @@ public interface IConstraint {
    * @return the identifier or {@code null} if no identifier is defined
    */
   String getId();
+
+  /**
+   * Get information about the source of the constraint.
+   * 
+   * @return the source information
+   */
+  ISource getSource();
 
   /**
    * The significance of a violation of this constraint.
@@ -101,9 +117,151 @@ public interface IConstraint {
   MetapathExpression getTarget();
 
   /**
+   * Based on the provided {@code contextNodeItem}, find all nodes matching the target expression.
+   * 
+   * @param contextNodeItem
+   *          the node item to evaluate the target expression against
+   * @return the matching nodes as a sequence
+   * @see #getTarget()
+   */
+  @NotNull
+  default ISequence<? extends IDefinitionNodeItem> matchTargets(@NotNull IDefinitionNodeItem contextNodeItem) {
+    return getTarget().evaluateAs(contextNodeItem, ResultType.SEQUENCE);
+  }
+
+  /**
+   * Based on the provided {@code contextNodeItem}, find all nodes matching the target expression.
+   * 
+   * @param contextNodeItem
+   *          the node item to evaluate the target expression against
+   * @param dynamicContext
+   *          the Metapath evaluation context to use
+   * @return the matching nodes as a sequence
+   * @see #getTarget()
+   */
+  @NotNull
+  default ISequence<? extends IDefinitionNodeItem> matchTargets(@NotNull IDefinitionNodeItem contextNodeItem,
+      @NotNull DynamicContext dynamicContext) {
+    return getTarget().evaluateAs(contextNodeItem, ResultType.SEQUENCE, dynamicContext);
+  }
+
+  /**
    * Retrieve the remarks associated with the constraint.
    * 
    * @return the remarks or {@code null} if no remarks are defined
    */
   MarkupMultiline getRemarks();
+
+  interface ISource {
+    enum SourceType {
+      /**
+       * A constraint embedded in a model.
+       */
+      MODEL,
+      /**
+       * A constraint defined externally from a model.
+       */
+      EXTERNAL;
+    }
+
+    @NotNull
+    SourceType getSourceType();
+
+    @Nullable
+    URI getSource();
+  }
+
+  class InternalModelSource implements ISource {
+    @NotNull
+    private static final ISource SINGLETON = new InternalModelSource();
+
+    @NotNull
+    public static ISource instance() {
+      return SINGLETON;
+    }
+
+    private InternalModelSource() {
+      // reduce visibility
+    }
+
+    @Override
+    public SourceType getSourceType() {
+      return SourceType.MODEL;
+    }
+
+    @Override
+    public URI getSource() {
+      // always null
+      return null;
+    }
+  }
+
+  class ExternalModelSource implements IConstraint.ISource {
+    @NotNull
+    private static final Map<@NotNull URI, ExternalModelSource> sources = new HashMap<>(); // NOPMD - intentional
+    @NotNull
+    private final URI modelUri;
+
+    @NotNull
+    public static ISource instance(@NotNull URI location) {
+      ISource retval;
+      synchronized (sources) {
+        retval = sources.get(location);
+        if (retval == null) {
+          retval = new ExternalModelSource(location);
+        }
+      }
+      return retval;
+    }
+
+    private ExternalModelSource(@NotNull URI modelSource) {
+      this.modelUri = modelSource;
+    }
+
+    @Override
+    public SourceType getSourceType() {
+      return SourceType.MODEL;
+    }
+
+    @NotNull
+    @Override
+    public URI getSource() {
+      return modelUri;
+    }
+  }
+
+  class ExternalSource implements IConstraint.ISource {
+    @NotNull
+    private static final Map<@NotNull URI, ExternalSource> sources = new HashMap<>(); // NOPMD - intentional
+
+    @NotNull
+    private final URI modelUri;
+
+    @NotNull
+    public static ISource instance(@NotNull URI location) {
+      ISource retval;
+      synchronized (sources) {
+        retval = sources.get(location);
+        if (retval == null) {
+          retval = new ExternalModelSource(location);
+        }
+      }
+      return retval;
+    }
+
+    private ExternalSource(@NotNull URI modelSource) {
+      this.modelUri = modelSource;
+    }
+
+    @Override
+    public SourceType getSourceType() {
+      return SourceType.EXTERNAL;
+    }
+
+    @NotNull
+    @Override
+    public URI getSource() {
+      return modelUri;
+    }
+  }
 }

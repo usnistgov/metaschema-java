@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -45,5 +46,10 @@ public class TestUtils {
   @SuppressWarnings("null")
   public static IIntegerItem integer(int value) {
     return IIntegerItem.valueOf(BigInteger.valueOf(value));
+  }
+
+  @SuppressWarnings("null")
+  public static IStringItem string(String value) {
+    return IStringItem.valueOf(value);
   }
 }

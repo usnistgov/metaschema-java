@@ -31,9 +31,6 @@ import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.net.URI;
-import java.util.stream.Stream;
-
 /**
  * A {@link INodeItem} supported by a {@link IFieldInstance}.
  * 

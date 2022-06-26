@@ -41,7 +41,8 @@ import java.math.BigInteger;
 public class IntegerAdapter
     extends AbstractIntegerAdapter<IIntegerItem> {
 
-  public IntegerAdapter() {
+  IntegerAdapter() {
+    // avoid general construction
   }
 
   @Override

@@ -125,6 +125,7 @@ class AbstractModelDefinitionTypeInfo<DEF extends INamedModelDefinition>
   }
 
   protected void buildCommonProperties(@NotNull AnnotationSpec.Builder annotation) {
+    annotation.addMember("name", "$S", getDefinition().getName());
     IMetaschema metaschema = getDefinition().getContainingMetaschema();
     annotation.addMember("metaschema", "$T.class", getTypeResolver().getClassName(metaschema));
   }

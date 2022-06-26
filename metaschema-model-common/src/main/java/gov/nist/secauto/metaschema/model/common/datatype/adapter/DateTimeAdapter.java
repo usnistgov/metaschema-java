@@ -46,7 +46,7 @@ public class DateTimeAdapter
     extends AbstractDatatypeJavaTypeAdapter<DateTime, IDateTimeItem> {
 
   @SuppressWarnings("null")
-  public DateTimeAdapter() {
+  DateTimeAdapter() {
     super(DateTime.class);
   }
 

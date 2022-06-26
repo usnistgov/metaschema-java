@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.IExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
 import org.jetbrains.annotations.NotNull;

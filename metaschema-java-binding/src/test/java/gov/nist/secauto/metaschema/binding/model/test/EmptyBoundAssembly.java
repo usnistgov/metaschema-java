@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.binding.model.test;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 
-@MetaschemaAssembly(rootName = "root", metaschema = TestMetaschema.class)
+@MetaschemaAssembly(name= "empty-bound-assembly", rootName = "root", metaschema = TestMetaschema.class)
 public class EmptyBoundAssembly {
 
 }

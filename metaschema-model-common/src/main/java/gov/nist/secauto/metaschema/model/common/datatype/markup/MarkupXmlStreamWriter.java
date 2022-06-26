@@ -34,6 +34,7 @@ import com.vladsch.flexmark.util.ast.Node;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
 
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.NodeVisitor;
@@ -45,7 +46,7 @@ import javax.xml.stream.XMLStreamWriter;
 public class MarkupXmlStreamWriter
     extends AbstractMarkupXmlWriter<XMLStreamWriter> {
 
-  public MarkupXmlStreamWriter(String namespace, boolean handleBlockElements) {
+  public MarkupXmlStreamWriter(@NotNull String namespace, boolean handleBlockElements) {
     super(namespace, handleBlockElements);
   }
 
@@ -153,15 +154,13 @@ public class MarkupXmlStreamWriter
 
     @Override
     public void tail(org.jsoup.nodes.Node node, int depth) {
-      if (depth > 0) {
-        if (node instanceof org.jsoup.nodes.Element) {
-          org.jsoup.nodes.Element element = (org.jsoup.nodes.Element) node;
-          if (!element.childNodes().isEmpty()) {
-            try {
-              writer.writeEndElement();
-            } catch (XMLStreamException ex) {
-              throw new InlineHtmlXmlStreamException(ex);
-            }
+      if (depth > 0 && node instanceof org.jsoup.nodes.Element) {
+        org.jsoup.nodes.Element element = (org.jsoup.nodes.Element) node;
+        if (!element.childNodes().isEmpty()) {
+          try {
+            writer.writeEndElement();
+          } catch (XMLStreamException ex) {
+            throw new InlineHtmlXmlStreamException(ex);
           }
         }
       }

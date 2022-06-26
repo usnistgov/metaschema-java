@@ -43,10 +43,12 @@ public class HtmlQuoteTagExtension
 
   @Override
   public void rendererOptions(@NotNull MutableDataHolder options) {
+    // do nothing
   }
 
   @Override
   public void parserOptions(MutableDataHolder options) {
+    // do nothing
   }
 
   @Override

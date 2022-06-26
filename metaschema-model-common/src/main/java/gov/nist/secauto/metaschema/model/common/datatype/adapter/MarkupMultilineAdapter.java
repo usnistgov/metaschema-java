@@ -52,7 +52,7 @@ public class MarkupMultilineAdapter
     extends AbstractMarkupAdapter<MarkupMultiline> {
 
   @SuppressWarnings("null")
-  public MarkupMultilineAdapter() {
+  MarkupMultilineAdapter() {
     super(MarkupMultiline.class);
   }
 

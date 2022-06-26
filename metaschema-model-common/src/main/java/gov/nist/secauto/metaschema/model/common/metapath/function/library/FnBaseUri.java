@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function.library;
 
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
@@ -82,17 +82,7 @@ public final class FnBaseUri {
       @NotNull List<@NotNull ISequence<?>> arguments,
       @NotNull DynamicContext dynamicContext,
       INodeItem focus) {
-
-    INodeItem item = focus;
-
-    ISequence<IAnyUriItem> retval;
-    if (item == null) {
-      retval = ISequence.empty();
-    } else {
-      IAnyUriItem uri = fnBaseUri(item);
-      retval = ISequence.of(uri);
-    }
-    return retval;
+    return focus == null ? ISequence.empty() : ISequence.of(fnBaseUri(focus));
   }
 
   @SuppressWarnings("unused")
@@ -106,14 +96,7 @@ public final class FnBaseUri {
 
     INodeItem item = FunctionUtils.getFirstItem(arg, true);
 
-    ISequence<IAnyUriItem> retval;
-    if (item == null) {
-      retval = ISequence.empty();
-    } else {
-      IAnyUriItem uri = fnBaseUri(item);
-      retval = ISequence.of(uri);
-    }
-    return retval;
+    return item == null ? ISequence.empty() : ISequence.of(fnBaseUri(item));
   }
 
   /**

@@ -30,8 +30,11 @@ import com.vladsch.flexmark.formatter.Formatter;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
+
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.OutputStream;
 import java.util.List;
@@ -44,9 +47,31 @@ public interface IMarkupText {
   @NotNull
   Document getDocument();
 
-  void toHtmlAsStream(@NotNull XMLStreamWriter2 xmlStreamWriter, String namespace) throws XMLStreamException;
+  /**
+   * Write HTML content to the provided {@code xmlStreamWriter} using the provided {@code namespace}.
+   * 
+   * @param writer
+   *          the writer
+   * @param namespace
+   *          the XML namespace for the HTML
+   * @throws XMLStreamException
+   *           if an error occurred while writing
+   */
+  void writeHtml(@NotNull XMLStreamWriter2 writer, @NotNull String namespace) throws XMLStreamException;
 
-  void toHtmlAsStream(@NotNull OutputStream os, String namespace, String prefix) throws XMLStreamException;
+  /**
+   * Write HTML content to the provided {@code outputStream} using the provided {@code namespace}.
+   * 
+   * @param outputStream
+   *          the stream to write to
+   * @param namespace
+   *          the XML namespace for the HTML
+   * @param prefix
+   *          the XML prefix for the HTML
+   * @throws XMLStreamException
+   *           if an error occurred while writing
+   */
+  void writeHtml(@NotNull OutputStream outputStream, @Nullable String namespace, @Nullable String prefix) throws XMLStreamException;
 
   @NotNull
   String toHtml();
@@ -68,7 +93,7 @@ public interface IMarkupText {
   Stream<Node> getNodesAsStream();
 
   @NotNull
-  default List<gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode> getInserts() {
+  default List<InsertAnchorNode> getInserts() {
     return getInserts(insert -> true);
   }
 
@@ -81,6 +106,6 @@ public interface IMarkupText {
    * @return the matching insert statements
    */
   @NotNull
-  List<gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode> getInserts(
-      @NotNull Predicate<gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode> filter);
+  List<InsertAnchorNode> getInserts(
+      @NotNull Predicate<InsertAnchorNode> filter);
 }

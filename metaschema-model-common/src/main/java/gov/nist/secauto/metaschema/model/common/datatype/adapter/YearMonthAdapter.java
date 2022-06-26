@@ -38,7 +38,7 @@ public class YearMonthAdapter
     extends AbstractJavaTypeAdapter<Period, IYearMonthDurationItem> {
 
   @SuppressWarnings("null")
-  protected YearMonthAdapter() {
+  YearMonthAdapter() {
     super(Period.class);
   }
 
@@ -55,7 +55,7 @@ public class YearMonthAdapter
 
   @SuppressWarnings("null")
   @Override
-  public Period parse(String value) throws IllegalArgumentException {
+  public Period parse(String value) {
     try {
       return Period.parse(value);
     } catch (DateTimeParseException ex) {

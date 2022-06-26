@@ -26,9 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.IExpression;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +39,7 @@ import java.util.stream.Stream;
 public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
 
   @NotNull
-  private final HashMap<@NotNull String, NamedFunctionSet> library = new HashMap<>();
+  private final Map<@NotNull String, NamedFunctionSet> library = new HashMap<>(); // NOPMD- intentional
 
   /**
    * Get the map of function name to function signatures.
@@ -46,7 +47,7 @@ public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
    * @return the mapping
    */
   @NotNull
-  protected HashMap<@NotNull String, NamedFunctionSet> getLibrary() {
+  protected Map<@NotNull String, NamedFunctionSet> getLibrary() {
     return library;
   }
 
@@ -59,15 +60,18 @@ public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
    *           if the provided function has the same arity as a previously registered function with
    *           the same name
    */
-  public synchronized void registerFunction(@NotNull IFunction function) throws IllegalArgumentException {
+  public void registerFunction(@NotNull IFunction function) {
     String name = function.getName();
 
-    NamedFunctionSet functions = getLibrary().get(name);
-    if (functions == null) {
-      functions = new NamedFunctionSet();
-      library.put(name, functions);
+    IFunction duplicate;
+    synchronized (this) {
+      NamedFunctionSet functions = getLibrary().get(name);
+      if (functions == null) {
+        functions = new NamedFunctionSet();
+        library.put(name, functions);
+      }
+      duplicate = functions.addFunction(function);
     }
-    IFunction duplicate = functions.addFunction(function);
     if (duplicate != null) {
       throw new IllegalArgumentException(String.format("Duplicate functions with same arity: %s shadows %s",
           duplicate.toSignature(), function.toSignature()));
@@ -76,30 +80,30 @@ public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
 
   @Override
   public Stream<@NotNull IFunction> getFunctionsAsStream() {
-    return getLibrary().values().stream().flatMap(set -> {
-      return set.getFunctionsAsStream();
-    });
+    synchronized (this) {
+      return getLibrary().values().stream().flatMap(set -> {
+        return set.getFunctionsAsStream();
+      });
+    }
   }
 
   @Override
-  public synchronized boolean hasFunction(@NotNull String name, @NotNull List<@NotNull IExpression> args) {
+  public boolean hasFunction(@NotNull String name, @NotNull List<@NotNull IExpression> args) {
     return getFunction(name, args) != null;
   }
 
   @Override
-  public synchronized IFunction getFunction(@NotNull String name, @NotNull List<@NotNull IExpression> args) {
-    NamedFunctionSet functions = getLibrary().get(name);
+  public IFunction getFunction(@NotNull String name, @NotNull List<@NotNull IExpression> args) {
     IFunction retval;
-    if (functions == null) {
-      retval = null;
-    } else {
-      retval = functions.getFunctionWithArity(args.size());
+    synchronized (this) {
+      NamedFunctionSet functions = getLibrary().get(name);
+      retval = functions == null ? null : functions.getFunctionWithArity(args.size());
     }
     return retval;
   }
 
   private static class NamedFunctionSet {
-    private final Map<Integer, IFunction> arityToFunctionMap;
+    private final Map<@NotNull Integer, IFunction> arityToFunctionMap;
 
     public NamedFunctionSet() {
       this.arityToFunctionMap = new HashMap<>();
@@ -111,10 +115,12 @@ public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
       return arityToFunctionMap.values().stream();
     }
 
+    @Nullable
     public IFunction getFunctionWithArity(int arity) {
       return arityToFunctionMap.get(arity);
     }
 
+    @Nullable
     public IFunction addFunction(@NotNull IFunction function) {
       return arityToFunctionMap.put(function.arity(), function);
     }

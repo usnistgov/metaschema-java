@@ -48,7 +48,7 @@ public class IPv6AddressAdapter
   }
 
   @SuppressWarnings("null")
-  public IPv6AddressAdapter() {
+  IPv6AddressAdapter() {
     super(IPv6Address.class);
   }
 
@@ -59,7 +59,7 @@ public class IPv6AddressAdapter
 
   @SuppressWarnings("null")
   @Override
-  public IPv6Address parse(String value) throws IllegalArgumentException {
+  public IPv6Address parse(String value) {
     try {
       return (IPv6Address) new IPAddressString(value, IP_V_6).toAddress();
     } catch (AddressStringException | IncompatibleAddressException ex) {

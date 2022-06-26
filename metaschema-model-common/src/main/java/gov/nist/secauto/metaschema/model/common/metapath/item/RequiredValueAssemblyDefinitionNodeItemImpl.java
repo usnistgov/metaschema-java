@@ -35,7 +35,6 @@ import org.jetbrains.annotations.Nullable;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * A {@link INodeItem} supported by a {@link IAssemblyInstance}, that must have an associated value.

@@ -33,13 +33,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AbstractDataTypeProvider implements IDataTypeProvider {
-  private final HashMap<String, IJavaTypeAdapter<?>> library = new HashMap<>();
+  private final Map<@NotNull String, IJavaTypeAdapter<?>> library = new HashMap<>(); // NOPMD - synchronized
+  private final Map<@NotNull Class<? extends IJavaTypeAdapter<?>>, // NOPMD - synchronized
+      IJavaTypeAdapter<?>> libraryByClass = new HashMap<>();
 
   @SuppressWarnings("null")
   @Override
-  public Map<String, ? extends IJavaTypeAdapter<?>> getJavaTypeAdapters() {
+  public Map<@NotNull String, ? extends IJavaTypeAdapter<?>> getJavaTypeAdapters() {
     synchronized (this) {
       return Collections.unmodifiableMap(library);
+    }
+  }
+
+  public Map<@NotNull Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> getJavaTypeAdaptersByClass() {
+    synchronized (this) {
+      return Collections.unmodifiableMap(libraryByClass);
+    }
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public <TYPE extends IJavaTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz) {
+    synchronized (this) {
+      return (TYPE) libraryByClass.get(clazz);
     }
   }
 
@@ -51,8 +67,7 @@ public class AbstractDataTypeProvider implements IDataTypeProvider {
    * @throws IllegalArgumentException
    *           if another type adapter is already bound to the same name
    */
-  protected void registerDatatype(@NotNull IJavaTypeAdapter<?> adapter)
-      throws IllegalArgumentException {
+  protected void registerDatatype(@NotNull IJavaTypeAdapter<?> adapter) {
     String name = adapter.getName();
 
     registerDatatypeByName(name, adapter);
@@ -68,11 +83,13 @@ public class AbstractDataTypeProvider implements IDataTypeProvider {
    * @throws IllegalArgumentException
    *           if another type adapter is already bound to the same name
    */
-  protected void registerDatatypeByName(@NotNull String name, @NotNull IJavaTypeAdapter<?> adapter)
-      throws IllegalArgumentException {
+  protected void registerDatatypeByName(@NotNull String name, @NotNull IJavaTypeAdapter<?> adapter) {
     IJavaTypeAdapter<?> duplicate;
     synchronized (this) {
       duplicate = library.put(name, adapter);
+      @SuppressWarnings("unchecked")
+      Class<? extends IJavaTypeAdapter<?>> clazz = (Class<? extends IJavaTypeAdapter<?>>) adapter.getClass();
+      libraryByClass.put(clazz, adapter);
     }
     if (duplicate != null) {
       throw new IllegalArgumentException(String.format("Another adapter was registered with the name '%s'", name));

@@ -25,7 +25,7 @@
  */
 /**
  * Provides interfaces, abstract implementation classes, and exceptions that are used in Metaschema
- * APIs.
+ * APIs for processing Metaschema-based models.
  */
 
 package gov.nist.secauto.metaschema.model.common;

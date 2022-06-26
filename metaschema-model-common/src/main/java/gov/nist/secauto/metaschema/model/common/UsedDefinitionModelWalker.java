@@ -75,7 +75,7 @@ public class UsedDefinitionModelWalker
   @NotNull
   public static Collection<@NotNull ? extends INamedDefinition>
       collectUsedDefinitionsFromMetaschema(@NotNull Collection<@NotNull ? extends IMetaschema> metaschemas) {
-    Set<gov.nist.secauto.metaschema.model.common.IAssemblyDefinition> definitions = new HashSet<>();
+    Set<@NotNull IAssemblyDefinition> definitions = new HashSet<>();
     for (IMetaschema metaschema : metaschemas) {
       // get local roots in case they are scope=local
       for (IAssemblyDefinition rootDef : metaschema.getRootAssemblyDefinitions()) {

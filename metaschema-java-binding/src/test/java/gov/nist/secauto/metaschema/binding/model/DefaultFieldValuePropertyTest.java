@@ -35,13 +35,13 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import gov.nist.secauto.metaschema.binding.IBindingContext;
-import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.Metaschema;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -75,7 +75,7 @@ class DefaultFieldValuePropertyTest {
 
   @Test
   void testJsonRead()
-      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, BindingException {
+      throws JsonParseException, IOException, NoSuchFieldException {
     String json = "{ \"a-value\": \"theValue\" }";
     JsonFactory factory = new JsonFactory();
     JsonParser jsonParser = factory.createParser(json);
@@ -86,7 +86,7 @@ class DefaultFieldValuePropertyTest {
     context.checking(new Expectations() {
       { // NOPMD - intentional
         oneOf(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-        will(returnValue(new StringAdapter()));
+        will(returnValue(MetaschemaDataTypeProvider.STRING));
 
         allowing(classBinding).getBoundClass();
         will(returnValue(theClass));
@@ -119,8 +119,7 @@ class DefaultFieldValuePropertyTest {
 
   @Test
   void testXmlRead()
-      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, XMLStreamException,
-      BindingException {
+      throws JsonParseException, IOException, NoSuchFieldException, XMLStreamException {
     String xml = "<field xmlns='http://example.com/ns'>theValue</field>";
     XMLInputFactory factory = WstxInputFactory.newInstance();
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
@@ -131,7 +130,7 @@ class DefaultFieldValuePropertyTest {
     context.checking(new Expectations() {
       { // NOPMD - intentional
         oneOf(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-        will(returnValue(new StringAdapter()));
+        will(returnValue(MetaschemaDataTypeProvider.STRING));
 
         allowing(classBinding).getBoundClass();
         will(returnValue(theClass));
@@ -202,6 +201,7 @@ class DefaultFieldValuePropertyTest {
 
   @SuppressWarnings("PMD")
   @MetaschemaField(
+      name="simple-field",
       metaschema = TestMetaschema.class,
       isCollapsible = true)
   public static class SimpleField {
@@ -220,7 +220,7 @@ class DefaultFieldValuePropertyTest {
 
   @Test
   void testJsonDefaultNameRead()
-      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, BindingException {
+      throws JsonParseException, IOException, NoSuchFieldException, SecurityException {
     String json = "{ \"STRVALUE\": \"theValue\" }";
     JsonFactory factory = new JsonFactory();
     JsonParser jsonParser = factory.createParser(json);
@@ -231,7 +231,7 @@ class DefaultFieldValuePropertyTest {
     context.checking(new Expectations() {
       { // NOPMD - intentional
         oneOf(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-        will(returnValue(new StringAdapter()));
+        will(returnValue(MetaschemaDataTypeProvider.STRING));
 
         allowing(classBinding).getBoundClass();
         will(returnValue(theClass));
@@ -264,8 +264,7 @@ class DefaultFieldValuePropertyTest {
 
   @Test
   void testXmlDefaultNameRead()
-      throws JsonParseException, IOException, NoSuchFieldException, SecurityException, XMLStreamException,
-      BindingException {
+      throws JsonParseException, IOException, NoSuchFieldException, XMLStreamException {
     String xml = "<field xmlns='http://example.com/ns'>theValue</field>";
     XMLInputFactory factory = WstxInputFactory.newInstance();
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
@@ -276,7 +275,7 @@ class DefaultFieldValuePropertyTest {
     context.checking(new Expectations() {
       { // NOPMD - intentional
         oneOf(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-        will(returnValue(new StringAdapter()));
+        will(returnValue(MetaschemaDataTypeProvider.STRING));
 
         allowing(classBinding).getBoundClass();
         will(returnValue(theClass));
@@ -306,6 +305,7 @@ class DefaultFieldValuePropertyTest {
 
   @SuppressWarnings("PMD")
   @MetaschemaField(
+      name= "simple-field2", 
       metaschema = TestMetaschema.class,
       isCollapsible = true)
   public static class SimpleField2 {

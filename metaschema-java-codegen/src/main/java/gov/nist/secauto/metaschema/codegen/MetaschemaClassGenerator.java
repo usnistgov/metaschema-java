@@ -93,7 +93,7 @@ class MetaschemaClassGenerator {
   }
 
   @NotNull
-  protected TypeSpec.Builder generateClass(@NotNull ClassName className) {
+  protected TypeSpec.Builder generateClass(@NotNull ClassName className) { // NOPMD - long, but readable
     // create the class
     TypeSpec.Builder builder = TypeSpec.classBuilder(className).addModifiers(Modifier.PUBLIC, Modifier.FINAL);
 

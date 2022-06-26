@@ -44,7 +44,7 @@ public final class FlagInstanceFilter {
   public static Collection<@NotNull ? extends IFlagInstance> filterFlags(
       @NotNull Collection<@NotNull ? extends IFlagInstance> flags,
       IFlagInstance jsonKeyFlag) {
-    Predicate<gov.nist.secauto.metaschema.model.common.IFlagInstance> filter = null;
+    Predicate<IFlagInstance> filter = null;
 
     // determine if we need to filter a JSON key
     if (jsonKeyFlag != null) {
@@ -58,7 +58,7 @@ public final class FlagInstanceFilter {
       @NotNull Collection<@NotNull ? extends IFlagInstance> flags,
       IFlagInstance jsonKeyFlag,
       IFlagInstance jsonValueKeyFlag) {
-    Predicate<gov.nist.secauto.metaschema.model.common.IFlagInstance> filter = null;
+    Predicate<IFlagInstance> filter = null;
 
     // determine if we need to filter a JSON key
     if (jsonKeyFlag != null) {
@@ -67,7 +67,7 @@ public final class FlagInstanceFilter {
 
     // determine if we need to filter a JSON value key
     if (jsonValueKeyFlag != null) {
-      Predicate<gov.nist.secauto.metaschema.model.common.IFlagInstance> jsonValueKeyFilter
+      Predicate<IFlagInstance> jsonValueKeyFilter
           = filterFlag(jsonValueKeyFlag);
       if (filter == null) {
         filter = jsonValueKeyFilter;
@@ -80,7 +80,7 @@ public final class FlagInstanceFilter {
   }
 
   @NotNull
-  protected static Predicate<gov.nist.secauto.metaschema.model.common.IFlagInstance>
+  protected static Predicate<IFlagInstance>
       filterFlag(@NotNull IFlagInstance flagToFilter) {
     return flag -> flag != flagToFilter;
   }
@@ -88,7 +88,7 @@ public final class FlagInstanceFilter {
   @NotNull
   protected static Collection<@NotNull ? extends IFlagInstance> applyFilter(
       @NotNull Collection<@NotNull ? extends IFlagInstance> flags,
-      Predicate<gov.nist.secauto.metaschema.model.common.IFlagInstance> filter) {
+      Predicate<IFlagInstance> filter) {
     Collection<@NotNull ? extends IFlagInstance> retval;
     if (filter == null) {
       retval = flags;

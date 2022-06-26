@@ -31,7 +31,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
@@ -44,8 +43,7 @@ import java.net.URL;
 import java.nio.file.Path;
 
 public interface IDocumentLoader extends IResourceLoader {
-  @Nullable
-  EntityResolver setEntityResolver(@NotNull EntityResolver resolver);
+  void setEntityResolver(@NotNull EntityResolver resolver);
   
   @NotNull
   default IDocumentNodeItem loadAsNodeItem(@NotNull URL url) throws IOException, URISyntaxException {

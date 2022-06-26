@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding;
 
 import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
@@ -33,14 +34,18 @@ import gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.Set;
 
 class ExternalConstraintsMetaschemaLoaderStrategy
     extends AbstractMetaschemaLoaderStrategy {
   @NotNull
   private final Set<@NotNull IConstraintSet> externalConstraintSets;
+  private final Set<IMetaschema> resolvedMetaschemas = new HashSet<>();
 
-  protected ExternalConstraintsMetaschemaLoaderStrategy(@NotNull IBindingContext bindingContext, @NotNull Set<@NotNull IConstraintSet> externalConstraintSets) {
+  protected ExternalConstraintsMetaschemaLoaderStrategy(
+      @NotNull IBindingContext bindingContext,
+      @NotNull Set<@NotNull IConstraintSet> externalConstraintSets) {
     super(bindingContext);
     this.externalConstraintSets = externalConstraintSets;
   }
@@ -51,22 +56,27 @@ class ExternalConstraintsMetaschemaLoaderStrategy
   }
 
   @Override
-  protected IClassBinding newClassBinding(@NotNull Class<?> clazz) {
-    IClassBinding retval = super.newClassBinding(clazz);
+  public @NotNull IClassBinding getClassBinding(@NotNull Class<?> clazz) {
+    IClassBinding retval = super.getClassBinding(clazz);
     // force loading of metaschema information to apply constraints
-    retval.getContainingMetaschema();
-    return retval;
-  }
-
-  @Override
-  protected IMetaschema newMetaschema(@NotNull Class<? extends AbstractBoundMetaschema> clazz) {
-    IMetaschema retval = super.newMetaschema(clazz);
-    try {
-      IConstraintSet.applyConstraintSetToMetaschema(getExternalConstraintSets(), retval);
-    } catch (MetaschemaException ex) {
-      throw new IllegalStateException(ex);
+    IMetaschema metaschema = retval.getContainingMetaschema();
+    synchronized (resolvedMetaschemas) {
+      if (!resolvedMetaschemas.contains(metaschema)) {
+        // add first, to avoid loops
+        resolvedMetaschemas.add(metaschema);
+        try {
+          IConstraintSet.applyConstraintSetToMetaschema(getExternalConstraintSets(), metaschema);
+        } catch (MetaschemaException ex) {
+          throw new IllegalStateException(ex);
+        }
+      }
     }
     return retval;
   }
 
+  @Override
+  public @NotNull IMetaschema getMetaschemaInstanceByClass(@NotNull Class<? extends AbstractBoundMetaschema> clazz) {
+    IMetaschema retval = super.getMetaschemaInstanceByClass(clazz);
+    return retval;
+  }
 }

@@ -45,12 +45,9 @@ class FieldDefinitionTypeInfoImpl
     extends AbstractModelDefinitionTypeInfo<IFieldDefinition>
     implements IFieldDefinitionTypeInfo {
 
-  private final IFieldValueTypeInfo fieldValue;
-
   public FieldDefinitionTypeInfoImpl(@NotNull IFieldDefinition definition, @NotNull ITypeResolver typeResolver) {
     super(definition, typeResolver);
-    fieldValue = IFieldValueTypeInfo.newTypeInfo(this);
-    addPropertyTypeInfo(fieldValue);
+    addPropertyTypeInfo(IFieldValueTypeInfo.newTypeInfo(this));
   }
 
   @Override

@@ -57,7 +57,7 @@ public class DateAdapter
       + "(Z|[+-][0-9]{2}:[0-9]{2})?$");
 
   @SuppressWarnings("null")
-  public DateAdapter() {
+  DateAdapter() {
     super(Date.class);
   }
 

@@ -197,14 +197,12 @@ public class MarkupXmlEventWriter
 
     @Override
     public void tail(org.jsoup.nodes.Node node, int depth) {
-      if (depth > 0) {
-        if (node instanceof org.jsoup.nodes.Element) {
-          org.jsoup.nodes.Element element = (org.jsoup.nodes.Element) node;
-          try {
-            writer.add(eventFactory.createEndElement(new QName(getNamespace(), element.tagName()), null));
-          } catch (XMLStreamException ex) {
-            throw new InlineHtmlXmlStreamException(ex);
-          }
+      if (depth > 0 && node instanceof org.jsoup.nodes.Element) {
+        org.jsoup.nodes.Element element = (org.jsoup.nodes.Element) node;
+        try {
+          writer.add(eventFactory.createEndElement(new QName(getNamespace(), element.tagName()), null));
+        } catch (XMLStreamException ex) {
+          throw new InlineHtmlXmlStreamException(ex);
         }
       }
     }

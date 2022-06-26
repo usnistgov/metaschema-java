@@ -28,75 +28,32 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Lexer;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ASTPrinter;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.BuildAstVisitor;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.CSTPrinter;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.ContextItem;
-import gov.nist.secauto.metaschema.model.common.metapath.ast.IExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.function.TypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnBoolean;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 
 public class MetapathExpression {
-  private static final Logger LOGGER = LogManager.getLogger(MetapathExpression.class);
-
-  @NotNull
-  public static final MetapathExpression CONTEXT_NODE = new MetapathExpression(".", ContextItem.instance());
-
-  @NotNull
-  public static MetapathExpression compile(@NotNull String path) throws MetapathException {
-    @NotNull
-    MetapathExpression retval;
-    if (".".equals(path)) {
-      retval = MetapathExpression.CONTEXT_NODE;
-    } else {
-      try {
-        metapath10Lexer lexer = new metapath10Lexer(CharStreams.fromString(path));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        metapath10Parser parser = new metapath10Parser(tokens);
-        parser.addErrorListener(new FailingErrorListener());
-
-        ParseTree tree = ObjectUtils.notNull(parser.expr());
-
-        if (LOGGER.isDebugEnabled()) {
-          try (OutputStream os = new ByteArrayOutputStream()) {
-            PrintStream ps = new PrintStream(os, true);
-            CSTPrinter printer = new CSTPrinter(ps);
-            printer.print(tree, Arrays.asList(metapath10Parser.ruleNames));
-            ps.flush();
-            LOGGER.atDebug().log(String.format("Metapath CST:%n%s", os.toString()));
-          }
-        }
-
-        IExpression expr = new BuildAstVisitor().visit(tree);
-
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.atDebug().log(String.format("Metapath AST:%n%s", ASTPrinter.instance().visit(expr)));
-        }
-        retval = new MetapathExpression(path, expr);
-      } catch (Exception ex) {
-        throw new MetapathException(String.format("unable to compile path '%s'", path), ex);
-      }
-    }
-    return retval;
-  }
 
   public enum ResultType {
     NUMBER,
@@ -106,21 +63,97 @@ public class MetapathExpression {
     NODE;
   }
 
+  private static final Logger LOGGER = LogManager.getLogger(MetapathExpression.class);
+
+  @NotNull
+  public static final MetapathExpression CONTEXT_NODE = new MetapathExpression(".", ContextItem.instance());
+
   private final String path;
   @NotNull
   private final IExpression node;
 
+  /**
+   * Compiles a Metapath expression string.
+   * 
+   * @param path
+   *          the metapath expression
+   * @return the compiled expression object
+   * @throws MetapathException
+   *           if an error occurred while compiling the Metapath expression
+   */
+  @NotNull
+  public static MetapathExpression compile(@NotNull String path) {
+    @NotNull
+    MetapathExpression retval;
+    if (".".equals(path)) {
+      retval = MetapathExpression.CONTEXT_NODE;
+    } else {
+      try {
+        metapath10Lexer lexer = new metapath10Lexer(CharStreams.fromString(path));
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        metapath10Parser parser = new metapath10Parser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(new FailingErrorListener());
+
+        ParseTree tree = ObjectUtils.notNull(parser.expr());
+
+        if (LOGGER.isDebugEnabled()) {
+          try (OutputStream os = new ByteArrayOutputStream()) {
+            try (PrintStream ps = new PrintStream(os, true)) {
+              CSTPrinter printer = new CSTPrinter(ps);
+              printer.print(tree, Arrays.asList(metapath10Parser.ruleNames));
+              ps.flush();
+              LOGGER.atDebug().log(String.format("Metapath CST:%n%s", os.toString()));
+            }
+          } catch (IOException ex) {
+            LOGGER.atError().withThrowable(ex).log("An unexpected error occured while closing the steam.");
+          }
+        }
+
+        IExpression expr = new BuildAstVisitor().visit(tree);
+
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.atDebug().log(String.format("Metapath AST:%n%s", ASTPrinter.instance().visit(expr)));
+        }
+        retval = new MetapathExpression(path, expr);
+      } catch (MetapathException | ParseCancellationException ex) {
+        String msg = String.format("Unable to compile Metapath '%s'", path);
+        LOGGER.atError().withThrowable(ex).log(msg);
+        throw new MetapathException(msg, ex);
+      }
+    }
+    return retval;
+  }
+
+  /**
+   * Construct a new Metapath expression.
+   * 
+   * @param path
+   *          the Metapath as a string
+   * @param expr
+   *          the Metapath as a compiled abstract syntax tree (AST)
+   */
   protected MetapathExpression(@NotNull String path, @NotNull IExpression expr) {
     this.path = path;
     this.node = expr;
   }
 
+  /**
+   * Get the original Metapath expression as a string.
+   * 
+   * @return the expression
+   */
   public String getPath() {
     return path;
   }
 
+  /**
+   * Get the compiled abstract syntax tree (AST) representation of the Metapath.
+   * 
+   * @return the Metapath AST
+   */
   @NotNull
-  public IExpression getASTNode() {
+  protected IExpression getASTNode() {
     return node;
   }
 
@@ -129,11 +162,51 @@ public class MetapathExpression {
     return ASTPrinter.instance().visit(getASTNode());
   }
 
+  /**
+   * Evaluate this Metapath expression using the provided {@code nodeContext} as the initial
+   * evaluation context. The specific result type will be determined by the {@code resultType}
+   * argument.
+   * 
+   * @param <T>
+   *          the expected result type
+   * @param nodeContext
+   *          the initial evaluation context
+   * @param resultType
+   *          the type of result to produce
+   * @return the converted result
+   * @throws TypeMetapathException
+   *           if the provided sequence is incompatible with the requested result type
+   * @throws MetapathException
+   *           if an error occurred during evaluation
+   * @see #toResultType(ISequence, ResultType)
+   */
   public <T> T evaluateAs(@NotNull INodeContext nodeContext, @NotNull ResultType resultType) {
     ISequence<?> result = evaluate(nodeContext);
     return toResultType(result, resultType);
   }
 
+  /**
+   * Evaluate this Metapath expression using the provided {@code nodeContext} as the initial
+   * evaluation context. The specific result type will be determined by the {@code resultType}
+   * argument.
+   * <p>
+   * This variant allow for reuse of a provided {@code dynamicContext}.
+   * 
+   * @param <T>
+   *          the expected result type
+   * @param nodeContext
+   *          the initial evaluation context
+   * @param resultType
+   *          the type of result to produce
+   * @param dynamicContext
+   *          the dynamic context to use for evaluation
+   * @return the converted result
+   * @throws TypeMetapathException
+   *           if the provided sequence is incompatible with the requested result type
+   * @throws MetapathException
+   *           if an error occurred during evaluation
+   * @see #toResultType(ISequence, ResultType)
+   */
   public <T> T evaluateAs(@NotNull INodeContext nodeContext, @NotNull ResultType resultType,
       @NotNull DynamicContext dynamicContext) {
     ISequence<?> result = evaluate(nodeContext, dynamicContext);
@@ -142,6 +215,18 @@ public class MetapathExpression {
 
   /**
    * Converts the provided {@code sequence} to the requested {@code resultType}.
+   * <p>
+   * The {@code resultType} determines the returned result, which is derived from the evaluation
+   * result sequence, as follows:
+   * <ul>
+   * <li>BOOLEAN - the effective boolean result is produced using
+   * {@link FnBoolean#fnBoolean(ISequence)}.</li>
+   * <li>NODE - the first result item in the sequence is returned.</li>
+   * <li>NUMBER - the sequence is cast to a number using
+   * {@link IDecimalItem#cast(IAnyAtomicItem)}.</li>
+   * <li>SEQUENCE - the evaluation result sequence.</li>
+   * <li>STRING - the string value of the first result item in the sequence.</li>
+   * </ul>
    * 
    * @param <T>
    *          the requested return value
@@ -174,7 +259,7 @@ public class MetapathExpression {
       result = item == null ? "" : FnData.fnDataItem(item).asString();
       break;
     default:
-      throw new UnsupportedOperationException(String.format("unsupported result type '%s'", resultType.name()));
+      throw new InvalidTypeMetapathException(String.format("unsupported result type '%s'", resultType.name()));
     }
 
     @SuppressWarnings("unchecked")
@@ -182,15 +267,45 @@ public class MetapathExpression {
     return retval;
   }
 
+  /**
+   * Evaluate this Metapath expression using the provided {@code nodeContext} as the initial
+   * evaluation context.
+   * 
+   * @param <T>
+   *          the type of items contained in the resulting sequence
+   * @param nodeContext
+   *          the initial evaluation context
+   * @return a sequence of Metapath items representing the result of the evaluation
+   * @throws MetapathException
+   *           if an error occurred during evaluation
+   */
   @SuppressWarnings("unchecked")
   @NotNull
   public <T extends IItem> ISequence<? extends T> evaluate(@NotNull INodeContext nodeContext) {
-    return (ISequence<? extends T>)evaluate(nodeContext, new StaticContext().newDynamicContext());
+    return (ISequence<? extends T>) evaluate(nodeContext, new StaticContext().newDynamicContext());
   }
 
+  /**
+   * Evaluate this Metapath expression using the provided {@code nodeContext} as the initial
+   * evaluation context.
+   * <p>
+   * This variant allow for reuse of a provided {@code dynamicContext}.
+   * 
+   * @param <T>
+   *          the type of items contained in the resulting sequence
+   * @param nodeContext
+   *          the initial evaluation context
+   * @param dynamicContext
+   *          the dynamic context to use for evaluation
+   * @return a sequence of Metapath items representing the result of the evaluation
+   * @throws MetapathException
+   *           if an error occurred during evaluation
+   */
   @SuppressWarnings("unchecked")
   @NotNull
-  public <T extends IItem> ISequence<? extends T> evaluate(@NotNull INodeContext nodeContext, @NotNull DynamicContext context) {
-    return (@NotNull ISequence<T>) getASTNode().accept(context, nodeContext);
+  public <T extends IItem> ISequence<? extends T> evaluate(@NotNull INodeContext nodeContext,
+      @NotNull DynamicContext dynamicContext) {
+    return (ISequence<T>) getASTNode().accept(dynamicContext,
+        nodeContext);
   }
 }

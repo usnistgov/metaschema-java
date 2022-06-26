@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("PMD")
-@MetaschemaAssembly(metaschema = TestMetaschema.class)
+@MetaschemaAssembly(name= "only-model", metaschema = TestMetaschema.class)
 public class OnlyModelBoundAssembly { // NOPMD - intentional
   /*
    * ================ = simple field = ================

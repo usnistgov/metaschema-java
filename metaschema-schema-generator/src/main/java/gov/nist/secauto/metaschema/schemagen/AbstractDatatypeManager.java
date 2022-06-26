@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -71,17 +72,17 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
     DATATYPE_TRANSLATION_MAP.put("year-month-duration", "YearMonthDurationDatatype");
   }
 
+  @NotNull
+  private final Map<@NotNull IJavaTypeAdapter<?>, String> datatypeToTypeMap = new HashMap<>();
+  @NotNull
+  private final Map<INamedDefinition, String> definitionToNameMap
+      = new HashMap<>();
+
   @SuppressWarnings("null")
   @NotNull
   protected static Map<String, String> getDatatypeTranslationMap() {
     return Collections.unmodifiableMap(DATATYPE_TRANSLATION_MAP);
   }
-
-  @NotNull
-  private final Map<@NotNull IJavaTypeAdapter<?>, String> datatypeToTypeMap = new HashMap<>();
-  @NotNull
-  private final Map<gov.nist.secauto.metaschema.model.common.INamedDefinition, String> definitionToNameMap
-      = new HashMap<>();
 
   @Override
   public Set<String> getUsedTypes() {
@@ -157,10 +158,10 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
     StringBuilder builder = new StringBuilder();
     for (String segment : text.split("\\p{Punct}")) {
       if (segment.length() > 0) {
-        builder.append(segment.substring(0, 1).toUpperCase());
+        builder.append(segment.substring(0, 1).toUpperCase(Locale.ROOT));
       }
       if (segment.length() > 1) {
-        builder.append(segment.substring(1).toLowerCase());
+        builder.append(segment.substring(1).toLowerCase(Locale.ROOT));
       }
     }
     return builder;

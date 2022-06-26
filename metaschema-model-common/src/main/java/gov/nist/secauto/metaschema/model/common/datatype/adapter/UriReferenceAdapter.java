@@ -34,7 +34,7 @@ import java.net.URI;
 public class UriReferenceAdapter
     extends AbstractJavaTypeAdapter<URI, IUriReferenceItem> {
   @SuppressWarnings("null")
-  public UriReferenceAdapter() {
+  UriReferenceAdapter() {
     super(URI.class);
   }
 
@@ -45,7 +45,7 @@ public class UriReferenceAdapter
 
   @SuppressWarnings("null")
   @Override
-  public URI parse(String value) throws IllegalArgumentException {
+  public URI parse(String value) {
     return URI.create(value);
   }
 

@@ -34,7 +34,12 @@ import org.jetbrains.annotations.NotNull;
 public interface IHostnameItem extends IStringItem {
   @NotNull
   public static IHostnameItem valueOf(@NotNull String value) {
-    return new HostnameItemImpl(MetaschemaDataTypeProvider.HOSTNAME.parse(value));
+    try {
+      return new HostnameItemImpl(MetaschemaDataTypeProvider.HOSTNAME.parse(value));
+    } catch (IllegalArgumentException ex) {
+      throw new InvalidValueForCastFunctionMetapathException(String.format("Unable to parse string value '%s'", value),
+          ex);
+    }
   }
 
   @NotNull

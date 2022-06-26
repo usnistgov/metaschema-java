@@ -101,7 +101,7 @@ abstract class AbstractDefinitionTypeInfo<DEF extends INamedDefinition> implemen
 
   @SuppressWarnings("null")
   @Override
-  public Collection<gov.nist.secauto.metaschema.codegen.ITypeInfo> getPropertyTypeInfos() {
+  public Collection<ITypeInfo> getPropertyTypeInfos() {
     initInstanceTypeInfos();
     return propertyNameToInstanceTypeInfoMap.values();
   }
@@ -115,7 +115,7 @@ abstract class AbstractDefinitionTypeInfo<DEF extends INamedDefinition> implemen
 
   @SuppressWarnings("null")
   @Override
-  public Collection<gov.nist.secauto.metaschema.codegen.IInstanceTypeInfo> getInstanceTypeInfos() {
+  public Collection<IInstanceTypeInfo> getInstanceTypeInfos() {
     initInstanceTypeInfos();
     return instanceToInstanceTypeInfoMap.values();
   }

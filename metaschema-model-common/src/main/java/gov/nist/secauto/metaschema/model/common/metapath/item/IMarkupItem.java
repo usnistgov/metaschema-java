@@ -50,7 +50,7 @@ public interface IMarkupItem extends IUntypedAtomicItem {
   }
 
   @NotNull
-  public static IMarkupItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+  static IMarkupItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
     return MetaschemaDataTypeProvider.MARKUP_MULTILINE.cast(item);
   }
 }

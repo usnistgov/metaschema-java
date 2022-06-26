@@ -89,7 +89,7 @@ public interface IJavaTypeAdapter<TYPE> {
    *           if the data type cannot be represented as a string
    */
   @NotNull
-  String asString(@NotNull Object value) throws UnsupportedOperationException;
+  String asString(@NotNull Object value);
 
   /**
    * Create a copy of the provided value.
@@ -177,7 +177,7 @@ public interface IJavaTypeAdapter<TYPE> {
    *           if the data is not valid to the data type
    */
   @NotNull
-  TYPE parse(@NotNull String value) throws IllegalArgumentException;
+  TYPE parse(@NotNull String value);
 
   /**
    * This method is expected to parse content starting at the next event. Parsing will continue until

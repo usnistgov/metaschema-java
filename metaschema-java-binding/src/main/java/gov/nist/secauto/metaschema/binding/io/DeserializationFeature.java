@@ -43,7 +43,7 @@ public enum DeserializationFeature implements IConfigurationFeature {
 
   private final boolean enabledByDefault;
 
-  private DeserializationFeature(boolean enabled) {
+  DeserializationFeature(boolean enabled) {
     this.enabledByDefault = enabled;
   }
 

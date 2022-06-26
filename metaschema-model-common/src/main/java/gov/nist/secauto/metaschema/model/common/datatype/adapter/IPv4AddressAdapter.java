@@ -48,7 +48,7 @@ public class IPv4AddressAdapter
   }
 
   @SuppressWarnings("null")
-  public IPv4AddressAdapter() {
+  IPv4AddressAdapter() {
     super(IPv4Address.class);
   }
 
@@ -59,7 +59,7 @@ public class IPv4AddressAdapter
 
   @SuppressWarnings("null")
   @Override
-  public IPv4Address parse(String value) throws IllegalArgumentException {
+  public IPv4Address parse(String value) {
     try {
       return (IPv4Address) new IPAddressString(value, IP_V_4).toAddress();
     } catch (AddressStringException | IncompatibleAddressException ex) {

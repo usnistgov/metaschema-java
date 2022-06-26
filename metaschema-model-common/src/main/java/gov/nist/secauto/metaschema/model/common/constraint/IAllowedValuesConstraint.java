@@ -32,7 +32,24 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public interface IAllowedValuesConstraint extends IConstraint {
-  static final boolean DEFAULT_ALLOW_OTHER = false;
+  boolean DEFAULT_ALLOW_OTHER = false;
+  @NotNull
+  Extensible DEFAULT_EXTENSIBLE = Extensible.MODEL;
+
+  enum Extensible {
+    /**
+     * Can be extended by external constraints. The most permissive level.
+     */
+    EXTERNAL,
+    /**
+     * Can be extended by constraints in the same model.
+     */
+    MODEL,
+    /**
+     * Cannot be extended. The most restrictive level.
+     */
+    NONE;
+  }
 
   /**
    * Get the collection allowed values associated with this constraint.
@@ -62,4 +79,12 @@ public interface IAllowedValuesConstraint extends IConstraint {
    * @return {@code true} if the constraint is "open-ended", or {@code false} otherwise
    */
   boolean isAllowedOther();
+
+  /**
+   * Determines the degree to which this constraint can be extended by other constraints applied to
+   * the same value.
+   * 
+   * @return the enumeration value
+   */
+  Extensible getExtensible();
 }

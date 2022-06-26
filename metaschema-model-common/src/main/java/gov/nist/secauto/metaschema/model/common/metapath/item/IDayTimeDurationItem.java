@@ -40,8 +40,13 @@ public interface IDayTimeDurationItem extends IDurationItem {
   }
 
   @NotNull
-  public static IDayTimeDurationItem valueOf(@NotNull String value) throws IllegalArgumentException {
-    return valueOf(MetaschemaDataTypeProvider.DAY_TIME_DURATION.parse(value));
+  public static IDayTimeDurationItem valueOf(@NotNull String value) {
+    try {
+      return valueOf(MetaschemaDataTypeProvider.DAY_TIME_DURATION.parse(value));
+    } catch (IllegalArgumentException ex) {
+      throw new InvalidValueForCastFunctionMetapathException(String.format("Unable to parse string value '%s'", value),
+          ex);
+    }
   }
 
   @NotNull

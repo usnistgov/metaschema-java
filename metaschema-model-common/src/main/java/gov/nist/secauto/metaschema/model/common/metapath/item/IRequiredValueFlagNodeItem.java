@@ -48,9 +48,5 @@ public interface IRequiredValueFlagNodeItem extends IFlagNodeItem, IRequiredValu
 
   @Override
   @NotNull
-  <T> T getValue();
-
-  @Override
-  @NotNull
   IAnyAtomicItem toAtomicItem();
 }

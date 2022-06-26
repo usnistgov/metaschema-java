@@ -42,10 +42,8 @@ public interface IItem {
    * {@link IJavaTypeAdapter} or a primitive type provided by the Java standard library.
    * </ul>
    * 
-   * @param <T> the type of the value
-   * 
    * @return the value or {@code null} if the item has no available value
    */
   @Nullable
-  <T> T getValue();
+  Object getValue();
 }

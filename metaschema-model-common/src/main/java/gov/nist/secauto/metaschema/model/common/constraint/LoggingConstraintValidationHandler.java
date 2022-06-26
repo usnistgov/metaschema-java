@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
@@ -37,7 +37,10 @@ import org.apache.logging.log4j.LogBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 public class LoggingConstraintValidationHandler
@@ -57,9 +60,7 @@ public class LoggingConstraintValidationHandler
     this.pathFormatter = Objects.requireNonNull(pathFormatter, "pathFormatter");
   }
 
-  protected LogBuilder getLogBuilder(@NotNull IConstraint constraint) {
-    Level level = constraint.getLevel();
-
+  protected LogBuilder getLogBuilder(@NotNull Level level) {
     LogBuilder retval;
     switch (level) {
     case CRITICAL:
@@ -85,9 +86,7 @@ public class LoggingConstraintValidationHandler
     return nodeItem.toPath(getPathFormatter());
   }
 
-  protected boolean isLogged(@NotNull IConstraint constraint) {
-    Level level = constraint.getLevel();
-
+  protected boolean isLogged(@NotNull Level level) {
     boolean retval;
     switch (level) {
     case CRITICAL:
@@ -109,19 +108,16 @@ public class LoggingConstraintValidationHandler
   }
 
   protected void logConstraint(
-      @NotNull IConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull CharSequence message) {
-    getLogBuilder(constraint).log("{}: ({}) {}", constraint.getLevel().name(), toPath(node), message);
-  }
-
-  protected void logConstraint(
-      @NotNull IConstraint constraint,
+      @NotNull Level level,
       @NotNull INodeItem node,
       @NotNull CharSequence message,
-      @NotNull Throwable cause) {
-    getLogBuilder(constraint).withThrowable(cause).log("{}: ({}) {}", constraint.getLevel().name(), toPath(node),
-        message);
+      @Nullable Throwable cause) {
+    LogBuilder builder = getLogBuilder(level);
+    if (cause != null) {
+      builder.withThrowable(cause);
+    }
+
+    builder.log("{}: ({}) {}", level.name(), toPath(node), message);
   }
 
   @Override
@@ -129,8 +125,9 @@ public class LoggingConstraintValidationHandler
       @NotNull ICardinalityConstraint constraint,
       @NotNull INodeItem node,
       @NotNull ISequence<? extends INodeItem> targets) {
-    if (isLogged(constraint)) {
-      logConstraint(constraint, node, newCardinalityMinimumViolationMessage(constraint, node, targets));
+    Level level = constraint.getLevel();
+    if (isLogged(level)) {
+      logConstraint(level, node, newCardinalityMinimumViolationMessage(constraint, node, targets), null);
     }
   }
 
@@ -139,8 +136,9 @@ public class LoggingConstraintValidationHandler
       @NotNull ICardinalityConstraint constraint,
       @NotNull INodeItem node,
       @NotNull ISequence<? extends INodeItem> targets) {
-    if (isLogged(constraint)) {
-      logConstraint(constraint, node, newCardinalityMaximumViolationMessage(constraint, node, targets));
+    Level level = constraint.getLevel();
+    if (isLogged(level)) {
+      logConstraint(level, node, newCardinalityMaximumViolationMessage(constraint, node, targets), null);
     }
   }
 
@@ -150,8 +148,9 @@ public class LoggingConstraintValidationHandler
       @NotNull INodeItem node,
       @NotNull INodeItem oldItem,
       @NotNull INodeItem target) {
-    if (isLogged(constraint)) {
-      logConstraint(constraint, target, newIndexDuplicateKeyViolationMessage(constraint, node, oldItem, target));
+    Level level = constraint.getLevel();
+    if (isLogged(level)) {
+      logConstraint(level, target, newIndexDuplicateKeyViolationMessage(constraint, node, oldItem, target), null);
     }
   }
 
@@ -161,8 +160,9 @@ public class LoggingConstraintValidationHandler
       @NotNull INodeItem node,
       @NotNull INodeItem oldItem,
       @NotNull INodeItem target) {
-    if (isLogged(constraint)) {
-      logConstraint(constraint, target, newUniqueKeyViolationMessage(constraint, node, oldItem, target));
+    Level level = constraint.getLevel();
+    if (isLogged(level)) {
+      logConstraint(level, target, newUniqueKeyViolationMessage(constraint, node, oldItem, target), null);
     }
   }
 
@@ -173,8 +173,9 @@ public class LoggingConstraintValidationHandler
       @NotNull INodeItem node,
       @NotNull INodeItem target,
       @NotNull MetapathException cause) {
-    if (isLogged(constraint)) {
-      logConstraint(constraint, target, cause.getLocalizedMessage(), cause);
+    Level level = constraint.getLevel();
+    if (isLogged(level)) {
+      logConstraint(level, target, cause.getLocalizedMessage(), cause);
     }
   }
 
@@ -184,8 +185,9 @@ public class LoggingConstraintValidationHandler
       @NotNull INodeItem node,
       @NotNull INodeItem target,
       @NotNull String value) {
-    if (isLogged(constraint)) {
-      logConstraint(constraint, target, newMatchPatternViolationMessage(constraint, node, target, value));
+    Level level = constraint.getLevel();
+    if (isLogged(level)) {
+      logConstraint(level, target, newMatchPatternViolationMessage(constraint, node, target, value), null);
     }
   }
 
@@ -196,8 +198,9 @@ public class LoggingConstraintValidationHandler
       @NotNull INodeItem target,
       @NotNull String value,
       @NotNull IllegalArgumentException cause) {
-    if (isLogged(constraint)) {
-      logConstraint(constraint, target, newMatchDatatypeViolationMessage(constraint, node, target, value), cause);
+    Level level = constraint.getLevel();
+    if (isLogged(level)) {
+      logConstraint(level, target, newMatchDatatypeViolationMessage(constraint, node, target, value), cause);
     }
   }
 
@@ -207,8 +210,24 @@ public class LoggingConstraintValidationHandler
       @NotNull INodeItem node,
       @NotNull INodeItem target,
       @NotNull DynamicContext dynamicContext) {
-    if (isLogged(constraint)) {
-      logConstraint(constraint, target, newExpectViolationMessage(constraint, node, target, dynamicContext));
+    Level level = constraint.getLevel();
+    if (isLogged(level)) {
+      logConstraint(level, target, newExpectViolationMessage(constraint, node, target, dynamicContext), null);
     }
   }
+
+  @Override
+  public void handleAllowedValuesViolation(@NotNull List<@NotNull IAllowedValuesConstraint> failedConstraints,
+      @NotNull INodeItem target) {
+
+    @SuppressWarnings("null")
+    Level level = failedConstraints.stream()
+        .map(IConstraint::getLevel)
+        .max(Comparator.comparing(Level::ordinal))
+        .get();
+    if (isLogged(level)) {
+      logConstraint(level, target, newAllowedValuesViolationMessage(failedConstraints, target), null);
+    }
+  }
+
 }

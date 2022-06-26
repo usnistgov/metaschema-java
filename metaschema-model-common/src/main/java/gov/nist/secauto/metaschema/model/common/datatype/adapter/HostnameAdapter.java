@@ -34,7 +34,8 @@ import org.jetbrains.annotations.NotNull;
 public class HostnameAdapter
     extends AbstractStringJavaTypeAdapter<IHostnameItem> {
 
-  public HostnameAdapter() {
+  HostnameAdapter() {
+    // avoid general construction
   }
 
   @Override

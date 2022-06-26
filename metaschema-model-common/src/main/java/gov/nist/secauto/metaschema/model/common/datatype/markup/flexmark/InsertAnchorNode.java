@@ -67,9 +67,8 @@ public class InsertAnchorNode
   @Override
   @NotNull
   public BasedSequence[] getSegments() {
-    @SuppressWarnings("null")
     @NotNull
-    BasedSequence[] retval = new BasedSequence[] { getType(), getIdReference() };
+    BasedSequence[] retval = { getType(), getIdReference() };
     return retval;
   }
 

@@ -38,7 +38,7 @@ public class DateTimeWithTZAdapter
     extends AbstractJavaTypeAdapter<ZonedDateTime, IDateTimeItem> {
 
   @SuppressWarnings("null")
-  public DateTimeWithTZAdapter() {
+  DateTimeWithTZAdapter() {
     super(ZonedDateTime.class);
   }
 
@@ -49,7 +49,7 @@ public class DateTimeWithTZAdapter
 
   @SuppressWarnings("null")
   @Override
-  public ZonedDateTime parse(String value) throws IllegalArgumentException {
+  public ZonedDateTime parse(String value) {
     try {
       return ZonedDateTime.from(DateFormats.DATE_TIME_WITH_TZ.parse(value));
     } catch (DateTimeParseException ex) {

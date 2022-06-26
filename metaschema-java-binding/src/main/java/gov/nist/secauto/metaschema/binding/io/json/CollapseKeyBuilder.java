@@ -32,6 +32,8 @@ import gov.nist.secauto.metaschema.binding.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.binding.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,8 +47,8 @@ import java.util.Objects;
 
 public class CollapseKeyBuilder {
   private final IFieldClassBinding classBinding;
-  private final List<IBoundFlagInstance> flagProperties;
-  private final Map<CollapseKey, List<Object>> keyToValuesMap;
+  private final List<@NotNull IBoundFlagInstance> flagProperties;
+  private final Map<@NotNull CollapseKey, List<@NotNull Object>> keyToValuesMap;
 
   public CollapseKeyBuilder(IFieldClassBinding classBinding) {
     this.classBinding = classBinding;
@@ -58,17 +60,18 @@ public class CollapseKeyBuilder {
     return classBinding;
   }
 
-  protected List<IBoundFlagInstance> getFlagProperties() {
+  protected List<@NotNull IBoundFlagInstance> getFlagProperties() {
     return flagProperties;
   }
 
-  public void addAll(Collection<? extends Object> instances) {
+  public void addAll(Collection<@NotNull ? extends Object> instances) {
     for (Object instance : instances) {
       add(instance);
     }
   }
 
-  public void add(Object instance) {
+  // TODO: check and handle nullness of values
+  public void add(@NotNull Object instance) {
     int size = getFlagProperties().size();
     Object[] flagValues = new Object[size];
     int index = 0;
@@ -77,7 +80,7 @@ public class CollapseKeyBuilder {
     }
 
     CollapseKey key = new CollapseKey(flagValues);
-    List<Object> values = this.keyToValuesMap.get(key);
+    List<@NotNull Object> values = this.keyToValuesMap.get(key);
     if (values == null) {
       values = new LinkedList<>();
       this.keyToValuesMap.put(key, values);
@@ -87,12 +90,12 @@ public class CollapseKeyBuilder {
     values.add(value);
   }
 
-  public void write(boolean writeObjectWrapper, IJsonWritingContext context) throws IOException {
+  public void write(boolean writeObjectWrapper, @NotNull IJsonWritingContext context) throws IOException {
     IFieldClassBinding classBinding = getClassBinding();
     IBoundFlagInstance jsonKey = classBinding.getJsonKeyFlagInstance();
     IBoundFlagInstance jsonValueKey = classBinding.getJsonValueKeyFlagInstance();
     IBoundFieldValueInstance fieldValue = classBinding.getFieldValueInstance();
-    List<IBoundFlagInstance> flagProperties = getFlagProperties();
+    List<@NotNull IBoundFlagInstance> flagProperties = getFlagProperties();
 
     // first build an index of the flag properties
     List<Integer> flagIndex;
@@ -117,7 +120,7 @@ public class CollapseKeyBuilder {
 
     JsonGenerator writer = context.getWriter(); // NOPMD - intentional
     // for each key, we need to write the properties
-    for (Map.Entry<CollapseKey, List<Object>> entry : keyToValuesMap.entrySet()) {
+    for (Map.Entry<@NotNull CollapseKey, List<@NotNull Object>> entry : keyToValuesMap.entrySet()) {
       CollapseKey key = entry.getKey();
 
       Object[] flagValues = key.getFlagValues();
@@ -146,7 +149,7 @@ public class CollapseKeyBuilder {
       }
 
       // finally write the field value
-      List<Object> fieldValues = entry.getValue();
+      List<@NotNull Object> fieldValues = entry.getValue();
       if (!fieldValues.isEmpty()) {
         String valueKeyName;
         if (jsonValueKey == null || jsonValueKeyIndex == null) {
@@ -179,27 +182,27 @@ public class CollapseKeyBuilder {
 
   public class CollapseKey {
     private final Object[] flagValues;
-    private Integer hashCode;
+    private Integer cachedHashCode;
 
     public CollapseKey(Object... flagValues) {
       this.flagValues = Arrays.copyOf(flagValues, flagValues.length);
     }
 
     protected Object[] getFlagValues() {
-      return flagValues;
+      return Arrays.copyOf(flagValues, flagValues.length);
     }
 
     @Override
     public int hashCode() {
       synchronized (this) {
-        if (hashCode == null) {
+        if (cachedHashCode == null) {
           final int prime = 31;
-          hashCode = 1;
-          hashCode = prime * hashCode + getEnclosingInstance().hashCode();
-          hashCode = prime * hashCode + Arrays.hashCode(flagValues);
+          cachedHashCode = 1;
+          cachedHashCode = prime * cachedHashCode + getEnclosingInstance().hashCode();
+          cachedHashCode = prime * cachedHashCode + Arrays.hashCode(flagValues);
         }
       }
-      return hashCode;
+      return cachedHashCode;
     }
 
     @Override
