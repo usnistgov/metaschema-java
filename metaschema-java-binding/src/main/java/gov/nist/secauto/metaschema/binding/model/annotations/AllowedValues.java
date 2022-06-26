@@ -91,6 +91,9 @@ public @interface AllowedValues {
    */
   boolean allowOthers() default IAllowedValuesConstraint.DEFAULT_ALLOW_OTHER;
 
+  @NotNull
+  IAllowedValuesConstraint.Extensible extensible() default IAllowedValuesConstraint.Extensible.MODEL;
+
   /**
    * The message to emit when the constraint is violated.
    * 
@@ -106,4 +109,5 @@ public @interface AllowedValues {
    */
   @NotNull
   String remarks() default "";
+
 }

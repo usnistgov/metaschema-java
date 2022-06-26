@@ -23,6 +23,10 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>metaschema-model-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>metaschema-model</artifactId>
 		</dependency>
 		<dependency>
@@ -81,6 +85,7 @@
 					</configuration>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
 					<configuration>
 						<excludeRoots>

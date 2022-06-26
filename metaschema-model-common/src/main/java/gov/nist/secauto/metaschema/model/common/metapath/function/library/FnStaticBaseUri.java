@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function.library;
 
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import java.net.URI;
 import java.util.List;
 
-public class FnStaticBaseUri {
+public final class FnStaticBaseUri {
   @NotNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("static-base-uri")
@@ -63,6 +63,10 @@ public class FnStaticBaseUri {
 
     IAnyUriItem uri = fnStaticBaseUri(dynamicContext);
     return ISequence.of(uri);
+  }
+
+  private FnStaticBaseUri() {
+    // disable construction
   }
 
   /**

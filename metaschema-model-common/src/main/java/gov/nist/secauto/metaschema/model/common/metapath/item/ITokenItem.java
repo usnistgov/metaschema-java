@@ -33,8 +33,13 @@ import org.jetbrains.annotations.NotNull;
 
 public interface ITokenItem extends IStringItem {
   @NotNull
-  public static ITokenItem valueOf(@NotNull String string) {
-    return new TokenItemImpl(MetaschemaDataTypeProvider.TOKEN.parse(string));
+  public static ITokenItem valueOf(@NotNull String value) {
+    try {
+      return new TokenItemImpl(MetaschemaDataTypeProvider.TOKEN.parse(value));
+    } catch (IllegalArgumentException ex) {
+      throw new InvalidValueForCastFunctionMetapathException(String.format("Unable to parse string value '%s'", value),
+          ex);
+    }
   }
 
   @NotNull

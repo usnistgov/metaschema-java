@@ -56,6 +56,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @throws IOException
    *           if an error occurred while reading the resource
    * @throws URISyntaxException
+   *           if the provided {@code url} is malformed
    */
   @NotNull
   default Format detectFormat(@NotNull URL url) throws IOException, URISyntaxException {
@@ -89,6 +90,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   default Format detectFormat(@NotNull File file) throws IOException {
     return detectFormat(ObjectUtils.notNull(file.toPath()));
   }
+
   /**
    * Determine the format of the provided resource.
    * <p>
@@ -141,12 +143,13 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @throws IOException
    *           if an error occurred while reading the resource
    * @throws URISyntaxException
+   *           if the provided {@code url} is malformed
    * @see #detectFormat(URL)
    */
   @SuppressWarnings("unchecked")
   @NotNull
   default <CLASS> CLASS load(@NotNull URL url) throws IOException, URISyntaxException {
-    return (CLASS)loadAsNodeItem(url).getValue();
+    return (CLASS) loadAsNodeItem(url).getValue();
   }
 
   /**
@@ -166,7 +169,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   @SuppressWarnings("unchecked")
   @NotNull
   default <CLASS> CLASS load(@NotNull Path path) throws IOException {
-    return (CLASS)loadAsNodeItem(path).getValue();
+    return (CLASS) loadAsNodeItem(path).getValue();
   }
 
   /**
@@ -186,7 +189,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   @SuppressWarnings("unchecked")
   @NotNull
   default <CLASS> CLASS load(@NotNull File file) throws IOException {
-    return (CLASS)loadAsNodeItem(file).getValue();
+    return (CLASS) loadAsNodeItem(file).getValue();
   }
 
   /**
@@ -210,7 +213,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   @SuppressWarnings("unchecked")
   @NotNull
   default <CLASS> CLASS load(@NotNull InputStream is, @NotNull URI documentUri) throws IOException {
-    return (CLASS)loadAsNodeItem(is, documentUri).getValue();
+    return (CLASS) loadAsNodeItem(is, documentUri).getValue();
   }
 
   /**
@@ -233,7 +236,7 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
   @SuppressWarnings("unchecked")
   @NotNull
   default <CLASS> CLASS load(@NotNull InputSource source) throws IOException {
-    return (CLASS)loadAsNodeItem(source).getValue();
+    return (CLASS) loadAsNodeItem(source).getValue();
   }
 
   /**
@@ -289,7 +292,8 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
    * @return the loaded instance data
    * @throws IOException
    *           if an error occurred while loading the data in the specified file
-   * @throws URISyntaxException 
+   * @throws URISyntaxException
+   *           if the provided {@code url} is malformed
    */
   @NotNull
   default <CLASS> CLASS load(@NotNull Class<CLASS> clazz, @NotNull URL url) throws IOException, URISyntaxException {

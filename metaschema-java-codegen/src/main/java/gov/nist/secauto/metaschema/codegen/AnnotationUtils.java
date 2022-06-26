@@ -53,9 +53,8 @@ import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.ResultType;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem;
@@ -245,8 +244,7 @@ final class AnnotationUtils {
 
       IAssemblyNodeItem definitionNodeItem = DefaultNodeItemFactory.instance().newAssemblyNodeItem(definition, null);
 
-      ISequence<? extends IDefinitionNodeItem> instanceSet
-          = constraint.getTarget().evaluateAs(definitionNodeItem, ResultType.SEQUENCE);
+      ISequence<? extends IDefinitionNodeItem> instanceSet = constraint.matchTargets(definitionNodeItem);
 
       for (IDefinitionNodeItem item : instanceSet.asList()) {
         INamedInstance instance = item.getInstance();
@@ -264,7 +262,7 @@ final class AnnotationUtils {
                     modelInstance.getMinOccurs()));
               }
             } else if (minOccurs < modelInstance.getMinOccurs()) {
-              if (LOGGER.isWarnEnabled()) {
+              if (LOGGER.isWarnEnabled()) { // NOPMD - readability
                 LOGGER.warn(String.format(
                     "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that conflicts with a"
                         + " targeted instance named '%s' that requires min-occurs=%d",
@@ -286,7 +284,7 @@ final class AnnotationUtils {
                     modelInstance.getMaxOccurs()));
               }
             } else if (maxOccurs < modelInstance.getMaxOccurs()) {
-              if (LOGGER.isWarnEnabled()) {
+              if (LOGGER.isWarnEnabled()) { // NOPMD - readability
                 LOGGER.warn(String.format(
                     "Definition '%s' has max-occurs=%d cardinality constraint targeting '%s' that conflicts with a"
                         + " targeted instance named '%s' that requires max-occurs=%d",

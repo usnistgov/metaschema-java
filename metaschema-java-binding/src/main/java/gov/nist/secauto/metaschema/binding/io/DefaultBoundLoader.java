@@ -147,10 +147,8 @@ public class DefaultBoundLoader implements IBoundLoader {
   }
 
   @Override
-  public @Nullable EntityResolver setEntityResolver(@NotNull EntityResolver resolver) {
-    EntityResolver retval = this.entityResolver;
+  public void setEntityResolver(@NotNull EntityResolver resolver) {
     this.entityResolver = resolver;
-    return retval;
   }
 
   @Override
@@ -227,14 +225,15 @@ public class DefaultBoundLoader implements IBoundLoader {
       throw new UnsupportedOperationException("Character streams are not supported");
     } else if (source.getByteStream() != null) {
       // attempt to use a provided byte stream stream
-      BufferedInputStream bis = new BufferedInputStream(source.getByteStream(), LOOK_AHEAD_BYTES);
+      BufferedInputStream bis = new BufferedInputStream( // NOPMD - stream not owned
+          source.getByteStream(), LOOK_AHEAD_BYTES);
       bis.mark(LOOK_AHEAD_BYTES);
       retval = loadAsNodeItemInternal(bis, uri);
     } else {
       // fall back to a URL-based connection
       URL url = uri.toURL();
       try (InputStream is = url.openStream()) {
-        BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES);
+        BufferedInputStream bis = new BufferedInputStream(is, LOOK_AHEAD_BYTES); // NOPMD - stream not owned
         bis.mark(LOOK_AHEAD_BYTES);
         retval = loadAsNodeItemInternal(bis, uri);
       }
@@ -248,9 +247,7 @@ public class DefaultBoundLoader implements IBoundLoader {
     DataFormatMatcher matcher = matchFormat(bis, LOOK_AHEAD_BYTES - 1);
     Format format = formatFromMatcher(matcher);
 
-    Class<?> clazz = detectModel(matcher, format);
-
-    IDeserializer<?> deserializer = getDeserializer(clazz, format, getConfiguration());
+    Class<?> clazz = detectModel(matcher, format); // NOPMD - must be called before reset
 
     try {
       bis.reset();
@@ -258,6 +255,7 @@ public class DefaultBoundLoader implements IBoundLoader {
       throw new IOException("Unable to reset input stream before parsing", ex);
     }
 
+    IDeserializer<?> deserializer = getDeserializer(clazz, format, getConfiguration());
     return  (IDocumentNodeItem) deserializer.deserializeToNodeItem(bis, documentUri);
   }
 

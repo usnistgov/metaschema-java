@@ -34,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * a new {@link INodeItem} instance, that is orphaned from any parent nodes, supported by an

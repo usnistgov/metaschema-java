@@ -44,7 +44,7 @@ public class BooleanAdapter
     extends AbstractJavaTypeAdapter<Boolean, IBooleanItem> {
 
   @SuppressWarnings("null")
-  public BooleanAdapter() {
+  BooleanAdapter() {
     super(Boolean.class);
   }
 

@@ -86,7 +86,7 @@ public interface INamedModelDefinitionTypeInfo extends INamedDefinitionTypeInfo 
   IFlagInstanceTypeInfo getFlagInstanceTypeInfo(@NotNull IFlagInstance instance);
 
   @NotNull
-  Collection<gov.nist.secauto.metaschema.codegen.IFlagInstanceTypeInfo> getFlagInstanceTypeInfos();
+  Collection<IFlagInstanceTypeInfo> getFlagInstanceTypeInfos();
 
   /**
    * Generates the associated Java class and saves it using the provided file.

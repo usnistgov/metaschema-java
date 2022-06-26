@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.function;
+package gov.nist.secauto.metaschema.model.common.metapath.function; // NOPMD - intentional
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
@@ -47,7 +47,7 @@ import java.time.Period;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAmount;
 
-public final class OperationFunctions {
+public final class OperationFunctions { // NOPMD - intentional
   private OperationFunctions() {
     // disable
   }
@@ -63,7 +63,7 @@ public final class OperationFunctions {
   }
 
   @NotNull
-  protected static IDateItem addDurationToDate(@NotNull ZonedDateTime dateTime, @NotNull TemporalAmount duration) {
+  private static IDateItem addDurationToDate(@NotNull ZonedDateTime dateTime, @NotNull TemporalAmount duration) {
 
     @SuppressWarnings("null")
     @NotNull
@@ -129,7 +129,7 @@ public final class OperationFunctions {
   }
 
   @NotNull
-  protected static IDateItem subtractDurationFromDate(@NotNull ZonedDateTime dateTime,
+  private static IDateItem subtractDurationFromDate(@NotNull ZonedDateTime dateTime,
       @NotNull TemporalAmount duration) {
     @SuppressWarnings("null")
     @NotNull
@@ -167,7 +167,7 @@ public final class OperationFunctions {
   }
 
   @NotNull
-  protected static IDayTimeDurationItem between(@NotNull ZonedDateTime time1, @NotNull ZonedDateTime time2) {
+  private static IDayTimeDurationItem between(@NotNull ZonedDateTime time1, @NotNull ZonedDateTime time2) {
     @SuppressWarnings("null")
     @NotNull
     Duration between = Duration.between(time1, time2);
@@ -366,23 +366,8 @@ public final class OperationFunctions {
     INumericItem retval;
     if (left instanceof IDecimalItem || right instanceof IDecimalItem) {
       // create a decimal result
-      BigDecimal decimalLeft;
-      if (left instanceof IIntegerItem) {
-        decimalLeft = ((IIntegerItem) left).asDecimal();
-      } else if (left instanceof IDecimalItem) {
-        decimalLeft = ((IDecimalItem) left).asDecimal();
-      } else {
-        throw new InvalidTypeMetapathException(left);
-      }
-
-      BigDecimal decimalRight;
-      if (left instanceof IIntegerItem) {
-        decimalRight = ((IIntegerItem) right).asDecimal();
-      } else if (left instanceof IDecimalItem) {
-        decimalRight = ((IDecimalItem) right).asDecimal();
-      } else {
-        throw new InvalidTypeMetapathException(right);
-      }
+      BigDecimal decimalLeft = left.asDecimal();
+      BigDecimal decimalRight = right.asDecimal();
 
       @SuppressWarnings("null")
       @NotNull
@@ -390,23 +375,8 @@ public final class OperationFunctions {
       retval = IDecimalItem.valueOf(result);
     } else {
       // create an integer result
-      BigInteger integerLeft;
-      if (left instanceof IIntegerItem) {
-        integerLeft = ((IIntegerItem) left).asInteger();
-      } else if (left instanceof IDecimalItem) {
-        integerLeft = ((IDecimalItem) left).asInteger();
-      } else {
-        throw new InvalidTypeMetapathException(left);
-      }
-
-      BigInteger integerRight;
-      if (left instanceof IIntegerItem) {
-        integerRight = ((IIntegerItem) right).asInteger();
-      } else if (left instanceof IDecimalItem) {
-        integerRight = ((IDecimalItem) right).asInteger();
-      } else {
-        throw new InvalidTypeMetapathException(right);
-      }
+      BigInteger integerLeft = left.asInteger();
+      BigInteger integerRight = right.asInteger();
 
       @SuppressWarnings("null")
       @NotNull
@@ -421,23 +391,8 @@ public final class OperationFunctions {
     INumericItem retval;
     if (left instanceof IDecimalItem || right instanceof IDecimalItem) {
       // create a decimal result
-      BigDecimal decimalLeft;
-      if (left instanceof IIntegerItem) {
-        decimalLeft = ((IIntegerItem) left).asDecimal();
-      } else if (left instanceof IDecimalItem) {
-        decimalLeft = ((IDecimalItem) left).asDecimal();
-      } else {
-        throw new InvalidTypeMetapathException(left);
-      }
-
-      BigDecimal decimalRight;
-      if (left instanceof IIntegerItem) {
-        decimalRight = ((IIntegerItem) right).asDecimal();
-      } else if (left instanceof IDecimalItem) {
-        decimalRight = ((IDecimalItem) right).asDecimal();
-      } else {
-        throw new InvalidTypeMetapathException(right);
-      }
+      BigDecimal decimalLeft = left.asDecimal();
+      BigDecimal decimalRight = right.asDecimal();
 
       @SuppressWarnings("null")
       @NotNull
@@ -445,23 +400,8 @@ public final class OperationFunctions {
       retval = IDecimalItem.valueOf(result);
     } else {
       // create an integer result
-      BigInteger integerLeft;
-      if (left instanceof IIntegerItem) {
-        integerLeft = ((IIntegerItem) left).asInteger();
-      } else if (left instanceof IDecimalItem) {
-        integerLeft = ((IDecimalItem) left).asInteger();
-      } else {
-        throw new InvalidTypeMetapathException(left);
-      }
-
-      BigInteger integerRight;
-      if (left instanceof IIntegerItem) {
-        integerRight = ((IIntegerItem) right).asInteger();
-      } else if (left instanceof IDecimalItem) {
-        integerRight = ((IDecimalItem) right).asInteger();
-      } else {
-        throw new InvalidTypeMetapathException(right);
-      }
+      BigInteger integerLeft = left.asInteger();
+      BigInteger integerRight = right.asInteger();
 
       @SuppressWarnings("null")
       @NotNull
@@ -476,23 +416,8 @@ public final class OperationFunctions {
     INumericItem retval;
     if (left instanceof IDecimalItem || right instanceof IDecimalItem) {
       // create a decimal result
-      BigDecimal decimalLeft;
-      if (left instanceof IIntegerItem) {
-        decimalLeft = ((IIntegerItem) left).asDecimal();
-      } else if (left instanceof IDecimalItem) {
-        decimalLeft = ((IDecimalItem) left).asDecimal();
-      } else {
-        throw new InvalidTypeMetapathException(left);
-      }
-
-      BigDecimal decimalRight;
-      if (left instanceof IIntegerItem) {
-        decimalRight = ((IIntegerItem) right).asDecimal();
-      } else if (left instanceof IDecimalItem) {
-        decimalRight = ((IDecimalItem) right).asDecimal();
-      } else {
-        throw new InvalidTypeMetapathException(right);
-      }
+      BigDecimal decimalLeft = left.asDecimal();
+      BigDecimal decimalRight = right.asDecimal();
 
       @SuppressWarnings("null")
       @NotNull
@@ -593,28 +518,14 @@ public final class OperationFunctions {
    */
   @NotNull
   public static INumericItem opNumericMod(@NotNull INumericItem dividend, @NotNull INumericItem divisor) {
-    BigDecimal decimalDivisor;
-    if (divisor instanceof IIntegerItem) {
-      decimalDivisor = ((IIntegerItem) divisor).asDecimal();
-    } else if (divisor instanceof IDecimalItem) {
-      decimalDivisor = ((IDecimalItem) divisor).asDecimal();
-    } else {
-      throw new InvalidTypeMetapathException(divisor);
-    }
+    BigDecimal decimalDivisor = divisor.asDecimal();
 
     if (BigDecimal.ZERO.equals(decimalDivisor)) {
       throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,
           ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
     }
 
-    BigDecimal decimalDividend;
-    if (dividend instanceof IIntegerItem) {
-      decimalDividend = ((IIntegerItem) dividend).asDecimal();
-    } else if (dividend instanceof IDecimalItem) {
-      decimalDividend = ((IDecimalItem) dividend).asDecimal();
-    } else {
-      throw new InvalidTypeMetapathException(dividend);
-    }
+    BigDecimal decimalDividend = dividend.asDecimal();
 
     INumericItem retval;
     if (BigDecimal.ZERO.equals(decimalDividend)) {
@@ -698,24 +609,24 @@ public final class OperationFunctions {
 
   @NotNull
   public static IBooleanItem opBooleanEqual(@Nullable IBooleanItem arg1, @Nullable IBooleanItem arg2) {
-    boolean left = arg1 == null ? false : arg1.toBoolean();
-    boolean right = arg2 == null ? false : arg2.toBoolean();
+    boolean left = arg1 != null && arg1.toBoolean();
+    boolean right = arg2 != null && arg2.toBoolean();
 
     return IBooleanItem.valueOf(left == right);
   }
 
   @NotNull
   public static IBooleanItem opBooleanGreaterThan(@Nullable IBooleanItem arg1, @Nullable IBooleanItem arg2) {
-    boolean left = arg1 == null ? false : arg1.toBoolean();
-    boolean right = arg2 == null ? false : arg2.toBoolean();
+    boolean left = arg1 != null && arg1.toBoolean();
+    boolean right = arg2 != null && arg2.toBoolean();
 
     return IBooleanItem.valueOf(left && !right);
   }
 
   @NotNull
   public static IBooleanItem opBooleanLessThan(@Nullable IBooleanItem arg1, @Nullable IBooleanItem arg2) {
-    boolean left = arg1 == null ? false : arg1.toBoolean();
-    boolean right = arg2 == null ? false : arg2.toBoolean();
+    boolean left = arg1 != null && arg1.toBoolean();
+    boolean right = arg2 != null && arg2.toBoolean();
 
     return IBooleanItem.valueOf(!left && right);
   }

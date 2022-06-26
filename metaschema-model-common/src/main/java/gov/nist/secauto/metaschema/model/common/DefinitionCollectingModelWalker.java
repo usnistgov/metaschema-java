@@ -48,7 +48,7 @@ public abstract class DefinitionCollectingModelWalker
 
   private final Function<INamedDefinition, Boolean> filter;
   @NotNull
-  private final Set<gov.nist.secauto.metaschema.model.common.INamedDefinition> definitions = new LinkedHashSet<>();
+  private final Set<INamedDefinition> definitions = new LinkedHashSet<>();
 
   @Override
   protected Void getDefaultData() { // NOPMD - intentional

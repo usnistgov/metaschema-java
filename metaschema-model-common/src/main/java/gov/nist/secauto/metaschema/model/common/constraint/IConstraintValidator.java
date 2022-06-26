@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
@@ -44,6 +45,8 @@ public interface IConstraintValidator {
    * 
    * @param item
    *          the node item to validate
+   * @throws MetapathException
+   *           if an error occurred while evaluating a Metapath used in a constraint
    */
   void validate(@NotNull INodeItem item);
 
@@ -52,6 +55,8 @@ public interface IConstraintValidator {
    * 
    * @param item
    *          the document item to validate
+   * @throws MetapathException
+   *           if an error occurred while evaluating a Metapath used in a constraint
    */
   void validate(@NotNull IDocumentNodeItem item);
 
@@ -60,6 +65,8 @@ public interface IConstraintValidator {
    * 
    * @param item
    *          the flag item to validate
+   * @throws MetapathException
+   *           if an error occurred while evaluating a Metapath used in a constraint
    */
   void validate(@NotNull IFlagNodeItem item);
 
@@ -68,6 +75,8 @@ public interface IConstraintValidator {
    * 
    * @param item
    *          the field item to validate
+   * @throws MetapathException
+   *           if an error occurred while evaluating a Metapath used in a constraint
    */
   void validate(@NotNull IFieldNodeItem item);
 
@@ -76,11 +85,16 @@ public interface IConstraintValidator {
    * 
    * @param item
    *          the assembly item to validate
+   * @throws MetapathException
+   *           if an error occurred while evaluating a Metapath used in a constraint
    */
   void validate(@NotNull IAssemblyNodeItem item);
 
   /**
    * Complete any validations that require full analysis of the content model.
+   * 
+   * @throws MetapathException
+   *           if an error occurred while evaluating a Metapath used in a constraint
    */
   void finalizeValidation();
 }

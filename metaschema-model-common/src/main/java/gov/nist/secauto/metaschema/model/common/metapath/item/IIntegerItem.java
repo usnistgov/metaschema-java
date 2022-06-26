@@ -53,8 +53,17 @@ public interface IIntegerItem extends IDecimalItem {
     return valueOf(bigInteger);
   }
 
+  /**
+   * Create an integer item from a string representing an integer value.
+   * 
+   * @param value
+   *          an integer value
+   * @return the item
+   * @throws NumberFormatException
+   *           if the provided value is not a valid representation of a {@link BigInteger}
+   */
   @NotNull
-  static IIntegerItem valueOf(@NotNull String value) throws NumberFormatException {
+  static IIntegerItem valueOf(@NotNull String value) {
     return valueOf(new BigInteger(value));
   }
 

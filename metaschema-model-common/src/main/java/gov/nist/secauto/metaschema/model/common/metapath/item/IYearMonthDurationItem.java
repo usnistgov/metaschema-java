@@ -47,14 +47,18 @@ public interface IYearMonthDurationItem extends IDurationItem {
   }
 
   @NotNull
-  public static IYearMonthDurationItem valueOf(@NotNull String value) throws IllegalArgumentException {
-    Period period = MetaschemaDataTypeProvider.YEAR_MONTH_DURATION.parse(value);
-    return valueOf(period);
+  public static IYearMonthDurationItem valueOf(@NotNull String value) {
+    try {
+      Period period = MetaschemaDataTypeProvider.YEAR_MONTH_DURATION.parse(value);
+      return valueOf(period);
+    } catch (IllegalArgumentException ex) {
+      throw new InvalidValueForCastFunctionMetapathException(String.format("Unable to parse string value '%s'", value),
+          ex);
+    }
   }
 
   @NotNull
-  public static IYearMonthDurationItem cast(@NotNull IAnyAtomicItem item)
-      throws InvalidValueForCastFunctionMetapathException {
+  public static IYearMonthDurationItem cast(@NotNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.YEAR_MONTH_DURATION.cast(item);
   }
 

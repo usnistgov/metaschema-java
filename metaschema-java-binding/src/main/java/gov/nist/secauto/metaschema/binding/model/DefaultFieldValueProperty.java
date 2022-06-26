@@ -40,7 +40,6 @@ import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;

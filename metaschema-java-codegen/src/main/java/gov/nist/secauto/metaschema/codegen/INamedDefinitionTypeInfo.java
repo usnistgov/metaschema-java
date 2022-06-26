@@ -59,8 +59,8 @@ public interface INamedDefinitionTypeInfo {
   IInstanceTypeInfo getInstanceTypeInfo(@NotNull INamedInstance instance);
 
   @NotNull
-  Collection<gov.nist.secauto.metaschema.codegen.ITypeInfo> getPropertyTypeInfos();
+  Collection<ITypeInfo> getPropertyTypeInfos();
 
   @NotNull
-  Collection<gov.nist.secauto.metaschema.codegen.IInstanceTypeInfo> getInstanceTypeInfos();
+  Collection<IInstanceTypeInfo> getInstanceTypeInfos();
 }

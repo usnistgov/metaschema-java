@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function.library;
 
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
@@ -125,7 +125,8 @@ public final class FnResolveUri {
    *         relative URI is {@code null}
    */
   @NotNull
-  private static ISequence<IAnyUriItem> executeTwoArg(@NotNull IFunction function,
+  private static ISequence<IAnyUriItem> executeTwoArg(
+      @NotNull IFunction function,
       @NotNull List<@NotNull ISequence<?>> arguments,
       @NotNull DynamicContext dynamicContext,
       INodeItem focus) {

@@ -46,7 +46,7 @@ public enum SchemaGenerationFeature implements IConfigurationFeature {
 
   private final boolean enabledByDefault;
 
-  private SchemaGenerationFeature(boolean enabled) {
+  SchemaGenerationFeature(boolean enabled) {
     this.enabledByDefault = enabled;
   }
 

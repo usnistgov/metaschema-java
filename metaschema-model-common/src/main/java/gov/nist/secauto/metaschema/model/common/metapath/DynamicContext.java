@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.DefaultFunction.CallingContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
@@ -47,7 +46,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DynamicContext {
+public class DynamicContext { // NOPMD - intentional data class
   @NotNull
   private final StaticContext staticContext;
   @NotNull
@@ -123,7 +122,7 @@ public class DynamicContext {
     }
 
     @Override
-    public EntityResolver setEntityResolver(@NotNull EntityResolver resolver) {
+    public void setEntityResolver(@NotNull EntityResolver resolver) {
       // we delegate to the document loader proxy, so the resolver should be set there
       throw new UnsupportedOperationException("Set the resolver on the proxy");
     }

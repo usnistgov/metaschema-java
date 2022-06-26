@@ -26,12 +26,24 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.object;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.time.ZonedDateTime;
 
-public class Date
+public class Date // NOPMD - intentional
     extends AbstractAmbiguousDateTime<Date> {
 
-  public Date(ZonedDateTime value, boolean hasTimeZone) {
+  /**
+   * Construct a new date object. This type supports ambiguous dates that were provided without a time
+   * zone.
+   * 
+   * @param value
+   *          the date value
+   * @param hasTimeZone
+   *          {@code true} if the date is intended to have an associated time zone or {@code false}
+   *          otherwise
+   */
+  public Date(@NotNull ZonedDateTime value, boolean hasTimeZone) {
     super(value, hasTimeZone);
   }
 

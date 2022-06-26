@@ -84,37 +84,27 @@ public class DefaultXmlSerializer<CLASS>
   public void serialize(CLASS data, Writer writer) throws IOException {
     XMLStreamWriter2 streamWriter = newXMLStreamWriter(writer);
     IOException caughtException = null;
-    try {
       IAssemblyClassBinding classBinding = getClassBinding();
       IXmlWritingContext writingContext = new DefaultXmlWritingContext(streamWriter);
 
       RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
 
+      
+    try {
       root.writeRoot(data, writingContext);
-
+      streamWriter.flush();
     } catch (XMLStreamException ex) {
       caughtException = new IOException(ex);
       throw caughtException;
-    } finally {
-      try {
-        streamWriter.flush();
-      } catch (XMLStreamException ex) {
-        if (caughtException != null) {
-          caughtException.addSuppressed(ex);
-        } else {
-          throw new IOException(ex);
-        }
-      }
-
+    } finally { // NOPMD - exception handling is needed
       try {
         streamWriter.close();
       } catch (XMLStreamException ex) {
         if (caughtException == null) {
           throw new IOException(ex);
-        } else {
-          caughtException.addSuppressed(ex);
-          throw caughtException;
         }
+        caughtException.addSuppressed(ex);
+        throw caughtException; // NOPMD - intentional
       }
     }
   }

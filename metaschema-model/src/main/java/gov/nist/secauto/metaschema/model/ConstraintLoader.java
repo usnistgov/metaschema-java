@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.model;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintSet;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultScopedContraints;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ExternalSource;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ISource;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.model.common.constraint.IScopedContraints;
 import gov.nist.secauto.metaschema.model.common.constraint.ITargetedConstaints;
@@ -95,7 +97,7 @@ public class ConstraintLoader
     // now create this metaschema
     @SuppressWarnings("null")
     Collection<@NotNull IConstraintSet> values = importedMetaschema.values();
-    return new DefaultConstraintSet(resource, parseScopedConstraints(xmlObject), new LinkedHashSet<>(values));
+    return new DefaultConstraintSet(resource, parseScopedConstraints(xmlObject, resource), new LinkedHashSet<>(values));
   }
 
   /**
@@ -119,9 +121,21 @@ public class ConstraintLoader
     }
   }
 
+  /**
+   * Parse individual constraint definitions from the provided XMLBeans object.
+   * 
+   * @param xmlObject
+   *          the XMLBeans object
+   * @param source
+   *          the source of the constraint content
+   * @return the scoped constraint definitions
+   */
   @NotNull
-  protected List<@NotNull IScopedContraints> parseScopedConstraints(METASCHEMACONSTRAINTSDocument xmlObject) {
+  protected List<@NotNull IScopedContraints> parseScopedConstraints(
+      @NotNull METASCHEMACONSTRAINTSDocument xmlObject,
+      @NotNull URI source) {
     List<@NotNull IScopedContraints> scopedConstraints = new LinkedList<>();
+    ISource constraintSource = ExternalSource.instance(source);
 
     for (Scope scope : xmlObject.getMETASCHEMACONSTRAINTS().getScopeList()) {
       URI namespace = ObjectUtils.notNull(URI.create(scope.getMetaschemaNamespace()));
@@ -131,23 +145,26 @@ public class ConstraintLoader
       cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
           + "$this/m:assembly|$this/m:field|$this/m:flag");
 
-      List<@NotNull ITargetedConstaints> targetedConstraints = new LinkedList<>();
+      List<@NotNull ITargetedConstaints> targetedConstraints = new LinkedList<>(); // NOPMD - intentional
       while (cursor.toNextSelection()) {
         XmlObject obj = cursor.getObject();
         if (obj instanceof Scope.Assembly) {
           Scope.Assembly assembly = (Scope.Assembly) obj;
           MetapathExpression expression = ObjectUtils.requireNonNull(assembly.getTarget());
-          AssemblyConstraintSupport constraints = new AssemblyConstraintSupport(assembly);
+          AssemblyConstraintSupport constraints // NOPMD - intentional
+              = new AssemblyConstraintSupport(assembly, constraintSource);
           targetedConstraints.add(new AssemblyTargetedConstraints(expression, constraints));
         } else if (obj instanceof Scope.Field) {
           Scope.Field field = (Scope.Field) obj;
           MetapathExpression expression = ObjectUtils.requireNonNull(field.getTarget());
-          ValueConstraintSupport constraints = new ValueConstraintSupport(field);
+          ValueConstraintSupport constraints // NOPMD - intentional
+              = new ValueConstraintSupport(field, constraintSource);
           targetedConstraints.add(new FieldTargetedConstraints(expression, constraints));
         } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
           Scope.Flag flag = (Scope.Flag) obj;
           MetapathExpression expression = ObjectUtils.requireNonNull(flag.getTarget());
-          ValueConstraintSupport constraints = new ValueConstraintSupport(flag);
+          ValueConstraintSupport constraints // NOPMD - intentional
+              = new ValueConstraintSupport(flag, constraintSource);
           targetedConstraints.add(new FlagTargetedConstraints(expression, constraints));
         }
       }

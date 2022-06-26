@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.configuration;
 
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;

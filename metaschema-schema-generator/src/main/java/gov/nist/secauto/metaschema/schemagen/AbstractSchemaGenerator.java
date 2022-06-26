@@ -65,7 +65,7 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
 
   private static class ChoiceInlineStrategy implements IInlineStrategy {
     @NotNull
-    private final Map<gov.nist.secauto.metaschema.model.common.INamedDefinition, Boolean> definitionInlinedMap;
+    private final Map<INamedDefinition, Boolean> definitionInlinedMap;
 
     public ChoiceInlineStrategy(@NotNull Collection<@NotNull ? extends INamedDefinition> definitions) {
       ChoiceModelWalker walker = new ChoiceModelWalker();
@@ -78,19 +78,18 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
     @Override
     public boolean isInline(@NotNull INamedDefinition definition) {
       Boolean inlined = definitionInlinedMap.get(definition);
-      return inlined == null ? false : inlined;
+      return inlined != null && inlined;
     }
   }
 
   private static class ChoiceModelWalker
       extends ModelWalker<@NotNull Integer> {
     @NotNull
-    private final Map<gov.nist.secauto.metaschema.model.common.INamedDefinition, Boolean> definitionInlinedMap
-        = new HashMap<>(); // NOPMD - intentional
-    private final Stack<gov.nist.secauto.metaschema.model.common.INamedDefinition> visitStack = new Stack<>();
+    private final Map<INamedDefinition, Boolean> definitionInlinedMap = new HashMap<>(); // NOPMD - intentional
+    private final Stack<INamedDefinition> visitStack = new Stack<>();
 
     @NotNull
-    protected Map<gov.nist.secauto.metaschema.model.common.INamedDefinition, Boolean> getDefinitionInlinedMap() {
+    protected Map<INamedDefinition, Boolean> getDefinitionInlinedMap() {
       return CollectionUtil.unmodifiableMap(definitionInlinedMap);
     }
 
@@ -109,7 +108,7 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
     protected void updateInlineStatus(@NotNull INamedDefinition definition, boolean inline) {
       Boolean value = definitionInlinedMap.get(definition);
 
-      if (value == null || (value && value != inline)) {
+      if (value == null || (value && value != inline)) { // NOPMD - readability
         definitionInlinedMap.put(definition, inline);
       } // or leave it as-is
     }

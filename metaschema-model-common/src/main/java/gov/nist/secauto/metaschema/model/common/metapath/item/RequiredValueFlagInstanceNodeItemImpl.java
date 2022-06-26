@@ -46,7 +46,9 @@ class RequiredValueFlagInstanceNodeItemImpl
    */
   private IAnyAtomicItem atomicItem;
 
-  public RequiredValueFlagInstanceNodeItemImpl(@NotNull IFlagInstance instance, @NotNull IRequiredValueModelNodeItem parent,
+  public RequiredValueFlagInstanceNodeItemImpl(
+      @NotNull IFlagInstance instance,
+      @NotNull IRequiredValueModelNodeItem parent,
       @NotNull Object value) {
     super(instance, parent);
     this.value = value;

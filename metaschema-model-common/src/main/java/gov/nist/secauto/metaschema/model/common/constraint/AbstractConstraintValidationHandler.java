@@ -28,11 +28,15 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
+import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public abstract class AbstractConstraintValidationHandler implements IConstraintValidationHandler {
   @NotNull
@@ -131,5 +135,24 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
           toPath(target));
     }
     return message;
+  }
+
+  @SuppressWarnings("null")
+  @NotNull
+  protected CharSequence newAllowedValuesViolationMessage(
+      @NotNull List<@NotNull IAllowedValuesConstraint> constraints,
+      @NotNull INodeItem target) {
+
+    String allowedValues = constraints.stream()
+        .flatMap(constraint -> constraint.getAllowedValues().values().stream())
+        .map(allowedValue -> allowedValue.getValue())
+        .sorted()
+        .distinct()
+        .collect(CustomCollectors.joiningWithOxfordComma("or"));
+
+    return String.format("Value '%s' doesn't match one of '%s' at path '%s'",
+        FnData.fnDataItem(target).asString(),
+        allowedValues,
+        toPath(target));
   }
 }

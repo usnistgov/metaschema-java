@@ -28,15 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.net.URI;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
 public abstract class AbstractAssemblyInstanceNodeItem<F extends IFlagNodeItem, M extends IModelNodeItem, P extends INodeItem>
     extends AbstractAssemblyNodeItem<F, M> {

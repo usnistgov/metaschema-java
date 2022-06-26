@@ -51,7 +51,7 @@ public class DecimalAdapter
   private static final BigDecimal DECIMAL_BOOLEAN_FALSE = new BigDecimal("0.0");
 
   @SuppressWarnings("null")
-  public DecimalAdapter() {
+  DecimalAdapter() {
     super(BigDecimal.class);
   }
 
@@ -61,7 +61,7 @@ public class DecimalAdapter
   }
 
   @Override
-  public BigDecimal parse(String value) throws IllegalArgumentException {
+  public BigDecimal parse(String value) {
     return new BigDecimal(value, MATH_CONTEXT);
   }
 

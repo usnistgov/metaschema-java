@@ -31,6 +31,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -44,11 +46,20 @@ import java.lang.annotation.Target;
 public @interface MetaschemaField {
 
   /**
+   * Name of the field.
+   * 
+   * @return the name
+   */
+  @NotNull
+  String name();
+
+  /**
    * Get the metaschema class that "owns" this assembly, which is the concrete implementation of the
    * metaschema containing the assembly.
    * 
    * @return the metaschema class
    */
+  @NotNull
   Class<? extends AbstractBoundMetaschema> metaschema();
 
   /**
@@ -68,6 +79,7 @@ public @interface MetaschemaField {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
+  @NotNull
   AllowedValues[] allowedValues() default {};
 
   /**
@@ -75,6 +87,7 @@ public @interface MetaschemaField {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
+  @NotNull
   Matches[] matches() default {};
 
   /**
@@ -82,6 +95,7 @@ public @interface MetaschemaField {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
+  @NotNull
   IndexHasKey[] indexHasKey() default {};
 
   /**
@@ -89,5 +103,6 @@ public @interface MetaschemaField {
    * 
    * @return the expected constraints or an empty array if no expected constraints are defined
    */
+  @NotNull
   Expect[] expect() default {};
 }

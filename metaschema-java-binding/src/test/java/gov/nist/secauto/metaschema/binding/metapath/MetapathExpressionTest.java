@@ -32,9 +32,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 
 import org.jmock.Mockery;

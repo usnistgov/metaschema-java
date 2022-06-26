@@ -34,7 +34,12 @@ import org.jetbrains.annotations.NotNull;
 public interface INcNameItem extends IStringItem {
   @NotNull
   public static INcNameItem valueOf(@NotNull String value) {
-    return new NcNameItemImpl(MetaschemaDataTypeProvider.NCNAME.parse(value));
+    try {
+      return new NcNameItemImpl(MetaschemaDataTypeProvider.NCNAME.parse(value));
+    } catch (IllegalArgumentException ex) {
+      throw new InvalidValueForCastFunctionMetapathException(String.format("Unable to parse string value '%s'", value),
+          ex);
+    }
   }
 
   @NotNull

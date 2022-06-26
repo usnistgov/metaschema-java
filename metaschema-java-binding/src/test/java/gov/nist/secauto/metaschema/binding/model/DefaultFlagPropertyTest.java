@@ -43,6 +43,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Metaschema;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IntegerAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -87,7 +88,7 @@ class DefaultFlagPropertyTest {
     context.checking(new Expectations() {
       { // NOPMD - intentional
         oneOf(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-        will(returnValue(new StringAdapter()));
+        will(returnValue(MetaschemaDataTypeProvider.STRING));
 
         allowing(classBinding).getBoundClass();
         will(returnValue(SimpleAssembly.class));
@@ -126,7 +127,7 @@ class DefaultFlagPropertyTest {
     context.checking(new Expectations() {
       { // NOPMD - intentional
         oneOf(bindingContext).getJavaTypeAdapterInstance(StringAdapter.class);
-        will(returnValue(new StringAdapter()));
+        will(returnValue(MetaschemaDataTypeProvider.STRING));
 
         allowing(classBinding).getBoundClass();
         will(returnValue(SimpleAssembly.class));
@@ -196,7 +197,7 @@ class DefaultFlagPropertyTest {
   }
 
   @SuppressWarnings("PMD")
-  @MetaschemaAssembly(metaschema = TestMetaschema.class, rootName = "test", rootNamespace = "http://example.com/ns")
+  @MetaschemaAssembly(name= "simple-assembly", metaschema = TestMetaschema.class, rootName = "test", rootNamespace = "http://example.com/ns")
   private static class SimpleAssembly {
     @BoundFlag(useName = "id", typeAdapter = StringAdapter.class)
     private String _id;

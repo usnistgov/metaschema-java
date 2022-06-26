@@ -62,6 +62,8 @@ import javax.xml.namespace.QName;
  * {@link #getFlagDefinitions()}, along with similarly named accessors.
  */
 public interface IMetaschema {
+  static String METASCHEMA_XML_NS = "http://csrc.nist.gov/ns/oscal/metaschema/1.0";
+
   static <DEF extends IDefinition> Predicate<@NotNull DEF> allNonLocalDefinitions() {
     return definition -> {
       return ModuleScopeEnum.INHERITED.equals(definition.getModuleScope())

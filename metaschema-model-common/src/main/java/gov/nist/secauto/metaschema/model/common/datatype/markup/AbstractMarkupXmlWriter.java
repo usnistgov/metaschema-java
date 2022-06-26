@@ -60,9 +60,10 @@ import com.vladsch.flexmark.util.ast.Node;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.DoubleQuoteNode;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,14 +88,16 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
     ENTITY_MAP.put("&raquo;", "»");
   }
 
+  @NotNull
   private final String namespace;
   private final boolean handleBlockElements;
 
-  public AbstractMarkupXmlWriter(String namespace, boolean handleBlockElements) {
-    this.namespace = Objects.requireNonNull(namespace, "namespace");
+  public AbstractMarkupXmlWriter(@NotNull String namespace, boolean handleBlockElements) {
+    this.namespace = namespace;
     this.handleBlockElements = handleBlockElements;
   }
 
+  @NotNull
   protected String getNamespace() {
     return namespace;
   }
@@ -110,10 +113,10 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
   }
 
   protected void visit(Node node, WRITER writer) throws XMLStreamException {
-    boolean handled = handleInlineElements(node, writer);
+    boolean handled = processInlineElements(node, writer);
     if (!handled && node instanceof Block) {
       if (isHandleBlockElements()) {
-        handled = handleBlockElements(node, writer);
+        handled = processBlockElements(node, writer);
       } else {
         visitChildren(node, writer);
         handled = true;
@@ -130,7 +133,7 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
 
   protected abstract void writeHtmlEntity(WRITER writer, String entityText) throws XMLStreamException;
 
-  protected boolean handleInlineElements(Node node, WRITER writer) throws XMLStreamException {
+  protected boolean processInlineElements(Node node, WRITER writer) throws XMLStreamException {
     boolean retval = false;
     if (node instanceof Text) {
       writeText(writer, node.getChars().toString());
@@ -192,7 +195,7 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
     return retval;
   }
 
-  protected boolean handleBlockElements(Node node, WRITER writer) throws XMLStreamException {
+  protected boolean processBlockElements(Node node, WRITER writer) throws XMLStreamException {
     boolean retval = false;
     if (node instanceof Paragraph) {
       handleBasicElement(node, writer, "p");

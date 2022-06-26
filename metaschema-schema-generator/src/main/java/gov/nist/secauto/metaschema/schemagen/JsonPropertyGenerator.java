@@ -221,7 +221,7 @@ public final class JsonPropertyGenerator {
       @NotNull InstanceProperties properties,
       @NotNull ObjectNode definitionNode,
       @NotNull GenerationState state) throws IOException {
-    List<InstanceProperties> propertyChoices = CollectionUtil.singletonList(properties);
+    List<@NotNull InstanceProperties> propertyChoices = CollectionUtil.singletonList(properties);
     propertyChoices = explodeChoices(choices, propertyChoices, state);
 
     if (propertyChoices.size() == 1) {
@@ -238,7 +238,7 @@ public final class JsonPropertyGenerator {
     }
   }
 
-  protected static List<InstanceProperties> explodeChoices(
+  protected static List<@NotNull InstanceProperties> explodeChoices(
       @NotNull Collection<@NotNull ? extends IChoiceInstance> choices,
       @NotNull List<InstanceProperties> propertyChoices,
       @NotNull GenerationState state) throws IOException {

@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 
-@MetaschemaAssembly(metaschema = TestMetaschema.class)
+@MetaschemaAssembly(name= "flagged-assembly", metaschema = TestMetaschema.class)
 public class FlaggedAssembly {
   @BoundFlag(useName = "id", typeAdapter = StringAdapter.class)
   private String id;

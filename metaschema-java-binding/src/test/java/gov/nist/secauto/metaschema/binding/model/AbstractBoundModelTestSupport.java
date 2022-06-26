@@ -63,7 +63,7 @@ public class AbstractBoundModelTestSupport {
   private final JUnit5Mockery context = new JUnit5Mockery();
 
   @Mock
-  private IBindingContext bindingContext;
+  private IBindingContext bindingContext; // NOPMD - auto mocked
 
   @NotNull
   protected JUnit5Mockery getJUnit5Mockery() {
@@ -134,8 +134,7 @@ public class AbstractBoundModelTestSupport {
     registerAssemblyBinding(FlaggedBoundAssembly.class);
     registerFieldBinding(FlaggedBoundField.class);
     registerAssemblyBinding(OnlyModelBoundAssembly.class);
-    IAssemblyClassBinding retval = registerAssemblyBinding(RootBoundAssembly.class);
-    return retval;
+    return registerAssemblyBinding(RootBoundAssembly.class);
   }
 
   @NotNull

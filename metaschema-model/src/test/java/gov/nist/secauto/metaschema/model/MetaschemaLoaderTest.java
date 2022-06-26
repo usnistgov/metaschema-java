@@ -74,7 +74,6 @@ class MetaschemaLoaderTest {
     assertFalse(metaschema.getRootAssemblyDefinitions().isEmpty(), "no roots found");
   }
   
-
   @Test
   void testConstraints() throws MetaschemaException, IOException { // NOPMD - intentional
     ConstraintLoader constraintLoader = new ConstraintLoader();
@@ -84,9 +83,8 @@ class MetaschemaLoaderTest {
     URI metaschemaUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
     IMetaschema metaschema = loader.load(metaschemaUri);
-    IAssemblyDefinition catalog =  metaschema.getExportedAssemblyDefinitionByName("catalog");
-    
-    
+    IAssemblyDefinition catalog = metaschema.getExportedAssemblyDefinitionByName("catalog");
+
     assertNotNull(catalog, "catalog not found");
     List<? extends IConstraint> constraints = catalog.getConstraints();
     assertFalse(constraints.isEmpty(), "a constraint was expected");

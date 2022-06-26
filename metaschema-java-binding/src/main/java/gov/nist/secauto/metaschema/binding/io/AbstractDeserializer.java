@@ -97,7 +97,9 @@ public abstract class AbstractDeserializer<CLASS>
       StaticContext staticContext = new StaticContext();
       DynamicContext dynamicContext = staticContext.newDynamicContext();
       dynamicContext.setDocumentLoader(getBindingContext().newBoundLoader());
-      DefaultConstraintValidator validator = new DefaultConstraintValidator(dynamicContext, getConstraintValidationHandler());
+      DefaultConstraintValidator validator = new DefaultConstraintValidator(
+          dynamicContext,
+          getConstraintValidationHandler());
       validator.validate(nodeItem);
       validator.finalizeValidation();
     }

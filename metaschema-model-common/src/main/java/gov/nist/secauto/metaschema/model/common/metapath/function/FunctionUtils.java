@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;

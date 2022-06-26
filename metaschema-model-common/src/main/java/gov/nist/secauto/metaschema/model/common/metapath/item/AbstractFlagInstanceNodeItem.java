@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
-import java.util.stream.Stream;
 
 /**
  * A {@link INodeItem} supported by a {@link IFlagInstance}.

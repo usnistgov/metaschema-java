@@ -80,7 +80,10 @@ class ModelFactoryImpl {
   }
 
   @NotNull
-  public IRequiredValueFlagNodeItem newFlagNodeItem(@NotNull IFlagInstance instance, @NotNull IRequiredValueModelNodeItem parent, @NotNull Object instanceValue) {
+  public IRequiredValueFlagNodeItem newFlagNodeItem(
+      @NotNull IFlagInstance instance,
+      @NotNull IRequiredValueModelNodeItem parent,
+      @NotNull Object instanceValue) {
     return getNodeItemFactory().newFlagNodeItem(instance, parent, instanceValue);
   }
 
@@ -95,7 +98,11 @@ class ModelFactoryImpl {
   }
 
   @NotNull
-  public IRequiredValueFieldNodeItem newFieldNodeItem(@NotNull IFieldInstance instance, @NotNull IRequiredValueAssemblyNodeItem parent, int position, @NotNull Object instanceValue) {
+  public IRequiredValueFieldNodeItem newFieldNodeItem(
+      @NotNull IFieldInstance instance,
+      @NotNull IRequiredValueAssemblyNodeItem parent,
+      int position,
+      @NotNull Object instanceValue) {
     return getNodeItemFactory().newFieldNodeItem(instance, parent, position, instanceValue);
   }
 
@@ -110,7 +117,11 @@ class ModelFactoryImpl {
   }
 
   @NotNull
-  public IRequiredValueAssemblyNodeItem newAssemblyNodeItem(@NotNull IAssemblyInstance instance, @NotNull IRequiredValueAssemblyNodeItem parent, int position, @NotNull Object instanceValue) {
+  public IRequiredValueAssemblyNodeItem newAssemblyNodeItem(
+      @NotNull IAssemblyInstance instance,
+      @NotNull IRequiredValueAssemblyNodeItem parent,
+      int position,
+      @NotNull Object instanceValue) {
     return getNodeItemFactory().newAssemblyNodeItem(instance, parent, position, instanceValue);
   }
 
@@ -126,7 +137,8 @@ class ModelFactoryImpl {
   }
 
   @NotNull
-  public Map<@NotNull String, IRequiredValueFlagNodeItem> generateFlagsWithValues(@NotNull IRequiredValueModelNodeItem parent) {
+  public Map<@NotNull String, IRequiredValueFlagNodeItem> generateFlagsWithValues(
+      @NotNull IRequiredValueModelNodeItem parent) {
     Map<@NotNull String, IRequiredValueFlagNodeItem> retval = new LinkedHashMap<>();
 
     Object parentValue = parent.getValue();

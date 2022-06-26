@@ -49,8 +49,19 @@ public interface IBooleanItem extends IAnyAtomicItem {
 
   @NotNull
   public static IBooleanItem valueOf(@NotNull String value) {
-    Boolean bool = MetaschemaDataTypeProvider.BOOLEAN.parse(value);
-    return valueOf(bool);
+    IBooleanItem retval;
+    if ("1".equals(value)) {
+      retval = IBooleanItem.TRUE;
+    } else {
+      try {
+        Boolean bool = MetaschemaDataTypeProvider.BOOLEAN.parse(value);
+        retval =  valueOf(bool);
+      } catch (IllegalArgumentException ex) {
+        throw new InvalidValueForCastFunctionMetapathException(String.format("Unable to parse string value '%s'", value),
+            ex);
+      }
+    }
+    return retval;
   }
 
   @NotNull

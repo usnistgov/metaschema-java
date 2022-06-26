@@ -69,7 +69,6 @@ class DefaultAssemblyProperty
     return assembly;
   }
 
-  @SuppressWarnings("null")
   @Override
   public IAssemblyClassBinding getDefinition() {
     Class<?> itemType = getItemType();

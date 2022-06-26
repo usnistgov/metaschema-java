@@ -34,9 +34,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public abstract class AbstractConstraint implements IConstraint {
+public abstract class AbstractConstraint implements IConstraint { // NOPMD - intentional data class
   @Nullable
   private final String id;
+  @Nullable
+  private final ISource source;
   @NotNull
   private final Level level;
   @NotNull
@@ -49,6 +51,8 @@ public abstract class AbstractConstraint implements IConstraint {
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param source
+   *          information about the constraint source
    * @param level
    *          the significance of a violation of this constraint
    * @param target
@@ -59,11 +63,13 @@ public abstract class AbstractConstraint implements IConstraint {
   @SuppressWarnings("null")
   public AbstractConstraint(
       @Nullable String id,
+      @NotNull ISource source,
       @NotNull Level level,
       @NotNull MetapathExpression target,
       @Nullable MarkupMultiline remarks) {
     Objects.requireNonNull(target);
     this.id = id;
+    this.source = source;
     this.level = Objects.requireNonNull(level, "level");
     this.target = Objects.requireNonNull(target, "target");
     this.remarks = remarks;
@@ -72,6 +78,11 @@ public abstract class AbstractConstraint implements IConstraint {
   @Override
   public String getId() {
     return id;
+  }
+
+  @Override
+  public ISource getSource() {
+    return source;
   }
 
   @Override

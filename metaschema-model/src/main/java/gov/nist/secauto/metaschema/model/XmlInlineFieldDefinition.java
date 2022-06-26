@@ -38,6 +38,7 @@ import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ExternalModelSource;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
@@ -46,6 +47,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineFieldDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
@@ -331,7 +333,10 @@ class XmlInlineFieldDefinition
       synchronized (this) {
         if (constraints == null) {
           if (getXmlField().isSetConstraint()) {
-            constraints = new ValueConstraintSupport(getXmlField().getConstraint());
+            constraints = new ValueConstraintSupport(
+                ObjectUtils.notNull(getXmlField().getConstraint()),
+                ExternalModelSource.instance(
+                    ObjectUtils.requireNonNull(getContainingMetaschema().getLocation())));
           } else {
             constraints = new ValueConstraintSupport();
           }
@@ -384,6 +389,7 @@ class XmlInlineFieldDefinition
     public void addConstraint(@NotNull IExpectConstraint constraint) {
       initModelConstraints().addConstraint(constraint);
     }
+
     @Override
     public MarkupMultiline getRemarks() {
       return XmlInlineFieldDefinition.this.getRemarks();

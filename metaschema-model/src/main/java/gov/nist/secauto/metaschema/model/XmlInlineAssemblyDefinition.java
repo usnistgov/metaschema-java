@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model;
+package gov.nist.secauto.metaschema.model; // NOPMD - excessive public methods and coupling is unavoidable
 
 import gov.nist.secauto.metaschema.model.common.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
@@ -44,6 +44,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstra
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ExternalModelSource;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
@@ -51,6 +52,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
@@ -362,7 +364,10 @@ class XmlInlineAssemblyDefinition
       synchronized (this) {
         if (constraints == null) {
           if (getXmlAssembly().isSetConstraint()) {
-            constraints = new AssemblyConstraintSupport(getXmlAssembly().getConstraint());
+            constraints = new AssemblyConstraintSupport(
+                ObjectUtils.notNull(getXmlAssembly().getConstraint()),
+                ExternalModelSource.instance(
+                    ObjectUtils.requireNonNull(getContainingMetaschema().getLocation())));
           } else {
             constraints = new AssemblyConstraintSupport();
           }

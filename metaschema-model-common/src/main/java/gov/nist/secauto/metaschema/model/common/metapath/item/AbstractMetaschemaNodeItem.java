@@ -52,8 +52,8 @@ public abstract class AbstractMetaschemaNodeItem implements IMetaschemaNodeItem 
 
   @SuppressWarnings("unchecked")
   @Override
-  public <T> T getValue() {
-    return (T)metaschema;
+  public IMetaschema getValue() {
+    return metaschema;
   }
 
   @Override

@@ -36,6 +36,7 @@ import com.vladsch.flexmark.util.ast.Node;
 import gov.nist.secauto.metaschema.model.common.datatype.IDatatype;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstCollectingVisitor;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.FlexmarkFactory;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertVisitor;
 
 import org.codehaus.stax2.XMLOutputFactory2;
@@ -43,6 +44,7 @@ import org.codehaus.stax2.XMLStreamWriter2;
 import org.codehaus.stax2.ri.evt.MergedNsContext;
 import org.codehaus.stax2.ri.evt.NamespaceEventImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.OutputStream;
 import java.util.List;
@@ -75,7 +77,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   }
 
   @Override
-  public void toHtmlAsStream(@NotNull XMLStreamWriter2 xmlStreamWriter, String namespace)
+  public void writeHtml(@NotNull XMLStreamWriter2 xmlStreamWriter, @NotNull String namespace)
       throws XMLStreamException {
     MarkupXmlStreamWriter writingVisitor
         = new MarkupXmlStreamWriter(namespace, this instanceof MarkupMultiline);
@@ -84,7 +86,8 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   }
 
   @Override
-  public void toHtmlAsStream(OutputStream os, String namespace, String prefix) throws XMLStreamException {
+  public void writeHtml(@NotNull OutputStream os, @Nullable String namespace, @Nullable String prefix)
+      throws XMLStreamException {
     XMLOutputFactory2 factory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
     factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
     XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
@@ -95,7 +98,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
         List.of(NamespaceEventImpl.constructNamespace(null, effectivePrefix, effectiveNamespace)));
     xmlStreamWriter.setNamespaceContext(nsContext);
 
-    toHtmlAsStream(xmlStreamWriter, effectiveNamespace);
+    writeHtml(xmlStreamWriter, effectiveNamespace);
   }
 
   @Override
@@ -126,10 +129,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
 
   @NotNull
   protected String toMarkdownYaml(Formatter formatter) {
-    String markdown = formatter.render(getDocument());
-    // markdown = markdown.replaceAll("\\n", "\n");
-    // markdown = markdown.replaceAll("\\r", "\r");
-    return markdown;
+    return formatter.render(getDocument());
   }
 
   @SuppressWarnings("null")
@@ -140,8 +140,8 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   }
 
   @Override
-  public List<gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode> getInserts(
-      @NotNull Predicate<gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode> filter) {
+  public List<InsertAnchorNode> getInserts(
+      @NotNull Predicate<InsertAnchorNode> filter) {
     InsertVisitor visitor = new InsertVisitor(filter);
     visitor.visitChildren(getDocument());
     return visitor.getInserts();
@@ -149,8 +149,6 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
 
   @Override
   public String toString() {
-    AstCollectingVisitor visitor = new AstCollectingVisitor();
-    visitor.collect(getDocument());
-    return visitor.getAst();
+    return new AstCollectingVisitor().collectAndGetAstText(getDocument());
   }
 }

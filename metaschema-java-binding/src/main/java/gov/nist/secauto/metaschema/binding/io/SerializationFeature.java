@@ -38,7 +38,7 @@ public enum SerializationFeature implements IConfigurationFeature {
 
   private final boolean enabledByDefault;
 
-  private SerializationFeature(boolean enabled) {
+  SerializationFeature(boolean enabled) {
     this.enabledByDefault = enabled;
   }
 

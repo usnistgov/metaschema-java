@@ -35,7 +35,7 @@ import java.util.Base64;
 public class Base64Adapter
     extends AbstractJavaTypeAdapter<ByteBuffer, IBase64BinaryItem> {
   @SuppressWarnings("null")
-  public Base64Adapter() {
+  Base64Adapter() {
     super(ByteBuffer.class);
   }
 

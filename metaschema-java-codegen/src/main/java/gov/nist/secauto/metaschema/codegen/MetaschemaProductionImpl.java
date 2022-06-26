@@ -72,11 +72,9 @@ class MetaschemaProductionImpl implements IMetaschemaProduction {
               } else if (definition instanceof IFieldDefinition) {
                 IFieldDefinition fieldDefinition = (IFieldDefinition) definition;
 
-                if (fieldDefinition.getFlagInstances().isEmpty()) {
-                  // if field is just a simple data value, then no class is needed
-                } else {
+                if (!fieldDefinition.getFlagInstances().isEmpty()) {
                   typeInfo = IFieldDefinitionTypeInfo.newTypeInfo((IFieldDefinition) definition, typeResolver);
-                }
+                } // otherwise field is just a simple data value, then no class is needed
               }
               return typeInfo;
             })

@@ -92,7 +92,7 @@ public interface INodeItem extends IItem, INodeContext, IPathSegment, INodeItemV
   }
 
   @Override
-  <T> T getValue();
+  Object getValue();
 
   default Stream<@NotNull ? extends INodeItem> ancestor() {
     return ancestorsOf(this);

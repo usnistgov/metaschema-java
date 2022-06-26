@@ -33,7 +33,6 @@ import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;

@@ -47,7 +47,7 @@ public class DateWithTZAdapter
       + "(Z|[+-][0-9]{2}:[0-9]{2})$");
 
   @SuppressWarnings("null")
-  public DateWithTZAdapter() {
+  DateWithTZAdapter() {
     super(ZonedDateTime.class);
   }
 

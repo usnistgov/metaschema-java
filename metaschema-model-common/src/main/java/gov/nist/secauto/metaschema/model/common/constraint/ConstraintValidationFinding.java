@@ -23,20 +23,24 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationFinding;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
 public class ConstraintValidationFinding implements IValidationFinding { // NOPMD - intentional
   @NotNull
-  private final IConstraint constraint;
+  private final List<@NotNull ? extends IConstraint> constraints;
   @NotNull
   private final CharSequence message;
   @NotNull
@@ -45,22 +49,36 @@ public class ConstraintValidationFinding implements IValidationFinding { // NOPM
   private final List<@NotNull ? extends INodeItem> targets;
   private final Throwable cause;
 
-  @SuppressWarnings("null")
   public ConstraintValidationFinding(
       @NotNull IConstraint constraint,
       @NotNull CharSequence message,
       Throwable cause,
       @NotNull INodeItem node,
       @NotNull List<@NotNull ? extends INodeItem> targets) {
-    this.constraint = Objects.requireNonNull(constraint, "constraint");
-    this.message = Objects.requireNonNull(message, "message");
-    this.cause = cause;
-    this.node = Objects.requireNonNull(node, "node");
-    this.targets = Objects.requireNonNull(targets, "targets");
+    this(
+        CollectionUtil.singletonList(constraint),
+        message,
+        cause,
+        node,
+        targets);
   }
 
-  public IConstraint getConstraint() {
-    return constraint;
+  @SuppressWarnings("null")
+  public ConstraintValidationFinding(
+      @NotNull List<@NotNull ? extends IConstraint> constraints,
+      @NotNull CharSequence message,
+      Throwable cause,
+      @NotNull INodeItem node,
+      @NotNull List<@NotNull ? extends INodeItem> targets) {
+    this.constraints = constraints;
+    this.message = message;
+    this.cause = cause;
+    this.node = node;
+    this.targets = targets;
+  }
+
+  public List<@NotNull ? extends IConstraint> getConstraints() {
+    return constraints;
   }
 
   @Override
@@ -81,9 +99,13 @@ public class ConstraintValidationFinding implements IValidationFinding { // NOPM
     return cause;
   }
 
+  @SuppressWarnings("null")
   @Override
-  public IConstraint.Level getSeverity() {
-    return getConstraint().getLevel();
+  public Level getSeverity() {
+    return getConstraints().stream()
+        .map(IConstraint::getLevel)
+        .max(Comparator.comparing(Level::ordinal))
+        .get();
   }
 
   @SuppressWarnings("null")

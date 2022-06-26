@@ -197,7 +197,7 @@ public abstract class AbstractLoader<T> {
     return ObjectUtils.notNull(retval);
   }
 
-  protected abstract T parseResource(@NotNull URI resource, @NotNull Stack<@NotNull URI> visitedResources) throws IOException;
-
+  protected abstract T parseResource(@NotNull URI resource, @NotNull Stack<@NotNull URI> visitedResources)
+      throws IOException;
 
 }

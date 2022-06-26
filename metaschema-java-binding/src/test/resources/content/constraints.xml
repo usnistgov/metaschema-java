@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<METASCHEMA-CONSTRAINTS xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../metaschema/schema/xml/metaschema.xsd">
+    <name>Test Constraints</name>
+    <version>1.0.4</version>
+
+    <scope metaschema-namespace="https://csrc.nist.gov/ns/test/xml" metaschema-short-name="test-metaschema">
+        <assembly target="/root">
+            <expect target="." test="control"/>
+        </assembly>
+    </scope>
+</METASCHEMA-CONSTRAINTS>

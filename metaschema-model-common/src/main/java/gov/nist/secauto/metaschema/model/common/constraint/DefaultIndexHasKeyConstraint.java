@@ -36,16 +36,36 @@ import java.util.List;
 public class DefaultIndexHasKeyConstraint
     extends AbstractKeyConstraint
     implements IIndexHasKeyConstraint {
+  @NotNull
   private final String indexName;
 
+  /**
+   * Create a key reference constraint, which uses a set of key fields to build a key to match against an index.
+   * 
+   * @param id
+   *          the optional identifier for the constraint
+   * @param source
+   *          information about the constraint source
+   * @param level
+   *          the significance of a violation of this constraint
+   * @param target
+   *          the Metapath expression identifying the nodes the constraint targets
+   * @param indexName
+   *          a reference to the name of the index
+   * @param keyFields
+   *          a list of key fields associated with the constraint
+   * @param remarks
+   *          optional remarks describing the intent of the constraint
+   */
   public DefaultIndexHasKeyConstraint(
       String id,
+      @NotNull ISource source,
       @NotNull Level level,
       @NotNull MetapathExpression target,
       String indexName,
       @NotNull List<@NotNull DefaultKeyField> keyFields,
       MarkupMultiline remarks) {
-    super(id, level, target, keyFields, remarks);
+    super(id, source, level, target, keyFields, remarks);
     if (indexName.isBlank()) {
       throw new IllegalArgumentException("The index name must be a non-blank string");
     }

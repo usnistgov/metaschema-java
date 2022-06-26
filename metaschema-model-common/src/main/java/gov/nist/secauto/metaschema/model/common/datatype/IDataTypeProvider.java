@@ -33,4 +33,6 @@ import java.util.Map;
 public interface IDataTypeProvider {
   @NotNull
   Map<String, @NotNull ? extends IJavaTypeAdapter<?>> getJavaTypeAdapters();
+  
+  <TYPE extends IJavaTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz);
 }

@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
@@ -40,6 +39,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstra
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ExternalModelSource;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
@@ -47,6 +47,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
@@ -61,7 +62,7 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
   @NotNull
   private final GlobalAssemblyDefinitionType xmlAssembly;
   @NotNull
-  private final IMetaschema metaschema;
+  private final XmlMetaschema metaschema;
   private XmlFlagContainerSupport flagContainer;
   private XmlModelContainerSupport modelContainer;
   private IAssemblyConstraintSupport constraints;
@@ -92,7 +93,7 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
   }
 
   @Override
-  public IMetaschema getContainingMetaschema() {
+  public XmlMetaschema getContainingMetaschema() {
     return metaschema;
   }
 
@@ -205,7 +206,9 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
     synchronized (this) {
       if (constraints == null) {
         if (getXmlAssembly().isSetConstraint()) {
-          constraints = new AssemblyConstraintSupport(getXmlAssembly().getConstraint());
+          constraints = new AssemblyConstraintSupport(
+              ObjectUtils.notNull(getXmlAssembly().getConstraint()),
+              ExternalModelSource.instance(getContainingMetaschema().getLocation()));
         } else {
           constraints = new AssemblyConstraintSupport();
         }

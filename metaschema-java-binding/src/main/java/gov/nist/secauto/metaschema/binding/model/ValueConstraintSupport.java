@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ISource;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
@@ -46,7 +47,7 @@ import java.util.stream.Collectors;
 /**
  * Support for constraints on valued objects (i.e., fields and flags).
  */
-class ValueConstraintSupport implements IValueConstraintSupport {
+class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - intentional data class
   @NotNull
   private final List<@NotNull IConstraint> constraints;
   @NotNull
@@ -71,23 +72,27 @@ class ValueConstraintSupport implements IValueConstraintSupport {
    * 
    * @param propertyAnnotation
    *          the annotation where the constraints are defined
+   * @param source
+   *          information about the source of the constraint
    */
   @SuppressWarnings("null")
-  public ValueConstraintSupport(@NotNull BoundFlag propertyAnnotation) { // NOPMD - intentional
+  public ValueConstraintSupport( // NOPMD - intentional
+      @NotNull BoundFlag propertyAnnotation,
+      @NotNull ISource source) {
     allowedValuesConstraints = Arrays.stream(propertyAnnotation.allowedValues())
-        .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation))
+        .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation, source))
         .collect(Collectors.toCollection(LinkedList::new));
 
     matchesConstraints = Arrays.stream(propertyAnnotation.matches())
-        .map(annotation -> ConstraintFactory.newMatchesConstraint(annotation))
+        .map(annotation -> ConstraintFactory.newMatchesConstraint(annotation, source))
         .collect(Collectors.toCollection(LinkedList::new));
 
     indexHasKeyConstraints = Arrays.stream(propertyAnnotation.indexHasKey())
-        .map(annotation -> ConstraintFactory.newIndexHasKeyConstraint(annotation))
+        .map(annotation -> ConstraintFactory.newIndexHasKeyConstraint(annotation, source))
         .collect(Collectors.toCollection(LinkedList::new));
 
     expectConstraints = Arrays.stream(propertyAnnotation.expect())
-        .map(annotation -> ConstraintFactory.newExpectConstraint(annotation))
+        .map(annotation -> ConstraintFactory.newExpectConstraint(annotation, source))
         .collect(Collectors.toCollection(LinkedList::new));
 
     constraints = new LinkedList<>();
@@ -102,23 +107,27 @@ class ValueConstraintSupport implements IValueConstraintSupport {
    * 
    * @param propertyAnnotation
    *          the annotation where the constraints are defined
+   * @param source
+   *          information about the source of the constraint
    */
   @SuppressWarnings("null")
-  public ValueConstraintSupport(@NotNull BoundField propertyAnnotation) { // NOPMD - intentional
+  public ValueConstraintSupport( // NOPMD - intentional
+      @NotNull BoundField propertyAnnotation,
+      @NotNull ISource source) {
     allowedValuesConstraints = Arrays.stream(propertyAnnotation.allowedValues())
-        .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation))
+        .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation, source))
         .collect(Collectors.toCollection(LinkedList::new));
 
     matchesConstraints = Arrays.stream(propertyAnnotation.matches())
-        .map(annotation -> ConstraintFactory.newMatchesConstraint(annotation))
+        .map(annotation -> ConstraintFactory.newMatchesConstraint(annotation, source))
         .collect(Collectors.toCollection(LinkedList::new));
 
     indexHasKeyConstraints = Arrays.stream(propertyAnnotation.indexHasKey())
-        .map(annotation -> ConstraintFactory.newIndexHasKeyConstraint(annotation))
+        .map(annotation -> ConstraintFactory.newIndexHasKeyConstraint(annotation, source))
         .collect(Collectors.toCollection(LinkedList::new));
 
     expectConstraints = Arrays.stream(propertyAnnotation.expect())
-        .map(annotation -> ConstraintFactory.newExpectConstraint(annotation))
+        .map(annotation -> ConstraintFactory.newExpectConstraint(annotation, source))
         .collect(Collectors.toCollection(LinkedList::new));
 
     constraints = new LinkedList<>();
@@ -133,23 +142,27 @@ class ValueConstraintSupport implements IValueConstraintSupport {
    * 
    * @param classAnnotation
    *          the annotation where the constraints are defined
+   * @param source
+   *          information about the source of the constraint
    */
   @SuppressWarnings("null")
-  public ValueConstraintSupport(@NotNull MetaschemaField classAnnotation) { // NOPMD - intentional
+  public ValueConstraintSupport( // NOPMD - intentional
+      @NotNull MetaschemaField classAnnotation,
+      @NotNull ISource source) {
     allowedValuesConstraints = Arrays.stream(classAnnotation.allowedValues())
-        .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation))
+        .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation, source))
         .collect(Collectors.toCollection(LinkedList::new));
 
     matchesConstraints = Arrays.stream(classAnnotation.matches())
-        .map(annotation -> ConstraintFactory.newMatchesConstraint(annotation))
+        .map(annotation -> ConstraintFactory.newMatchesConstraint(annotation, source))
         .collect(Collectors.toCollection(LinkedList::new));
 
     indexHasKeyConstraints = Arrays.stream(classAnnotation.indexHasKey())
-        .map(annotation -> ConstraintFactory.newIndexHasKeyConstraint(annotation))
+        .map(annotation -> ConstraintFactory.newIndexHasKeyConstraint(annotation, source))
         .collect(Collectors.toCollection(LinkedList::new));
 
     expectConstraints = Arrays.stream(classAnnotation.expect())
-        .map(annotation -> ConstraintFactory.newExpectConstraint(annotation))
+        .map(annotation -> ConstraintFactory.newExpectConstraint(annotation, source))
         .collect(Collectors.toCollection(LinkedList::new));
 
     constraints = new LinkedList<>();

@@ -34,6 +34,10 @@ import org.jetbrains.annotations.NotNull;
 public class NcNameAdapter
     extends AbstractStringJavaTypeAdapter<INcNameItem> {
 
+  NcNameAdapter() {
+    // avoid general construction
+  }
+
   @Override
   public String getName() {
     return "NCName";

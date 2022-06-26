@@ -28,9 +28,13 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import static gov.nist.secauto.metaschema.model.common.metapath.TestUtils.decimal;
 import static gov.nist.secauto.metaschema.model.common.metapath.TestUtils.integer;
+import static gov.nist.secauto.metaschema.model.common.metapath.TestUtils.string;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -108,5 +112,44 @@ class INumericItemTest {
   void testRound(@NotNull INumericItem arg, @NotNull IIntegerItem precision, @NotNull INumericItem expected) {
     INumericItem result = arg.round(precision);
     assertEquals(expected, result);
+  }
+
+  private static Stream<Arguments> provideValuesForCast() {
+    return Stream.of(
+        Arguments.of(integer(-100), integer(-100)),
+        Arguments.of(integer(654321), integer(654321)),
+        Arguments.of(decimal("2.4999"), decimal("2.4999")),
+        Arguments.of(decimal("3.1415e0"), decimal("3.1415e0")),
+        Arguments.of(string("-100"), decimal(-100)),
+        Arguments.of(string("654321"), decimal(654321)),
+        Arguments.of(string("2.5"), decimal(2.5)),
+        Arguments.of(string("2.4999"), decimal("2.4999")),
+        Arguments.of(string("-2.5"), decimal(-2.5)),
+        Arguments.of(string("1.125"), decimal(1.125)),
+        Arguments.of(string("3.1415e0"), decimal("3.1415e0")),
+        Arguments.of(string("35.425e0"), decimal("35.425e0")));
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideValuesForCast")
+  void testCast(@NotNull IAnyAtomicItem item, @NotNull INumericItem expected) {
+    INumericItem result = INumericItem.cast(item);
+    assertEquals(expected, result);
+  }
+
+
+  private static Stream<Arguments> provideValuesForCastFail() {
+    return Stream.of(
+        Arguments.of(string("x123")),
+        Arguments.of(string("abc")),
+        Arguments.of(string("")));
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideValuesForCastFail")
+  void testCastFail(@NotNull IAnyAtomicItem item) {
+    Assertions.assertThrows(InvalidValueForCastFunctionMetapathException.class, () -> {
+      INumericItem.cast(item);
+    });
   }
 }

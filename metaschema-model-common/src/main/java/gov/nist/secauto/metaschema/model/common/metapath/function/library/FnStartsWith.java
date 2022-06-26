@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function.library;
 
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
@@ -40,7 +40,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class FnStartsWith {
+public final class FnStartsWith {
+
   @NotNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("starts-with")
@@ -72,6 +73,10 @@ public class FnStartsWith {
         = FunctionUtils.getFirstItem((ISequence<IStringItem>) arguments.iterator().next(), true);
 
     return ISequence.of(fnStartsWith(arg1, arg2));
+  }
+  
+  private FnStartsWith() {
+    // disable construction
   }
 
   /**

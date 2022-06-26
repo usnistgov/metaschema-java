@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Pattern;
 
@@ -40,14 +41,33 @@ public class DefaultMatchesConstraint
   private final Pattern pattern;
   private final IJavaTypeAdapter<?> dataType;
 
+  /**
+   * Create a new matches constraint, which enforces a value pattern and/or data type.
+   * 
+   * @param id
+   *          the optional identifier for the constraint
+   * @param source
+   *          information about the constraint source
+   * @param level
+   *          the significance of a violation of this constraint
+   * @param target
+   *          the Metapath expression identifying the nodes the constraint targets
+   * @param pattern
+   *          the value pattern to match or {@code null} if there is no match pattern
+   * @param dataType
+   *          the value data type to match or {@code null} if there is no match data type
+   * @param remarks
+   *          optional remarks describing the intent of the constraint
+   */
   public DefaultMatchesConstraint(
-      String id,
+      @Nullable String id,
+      @NotNull ISource source,
       @NotNull Level level,
       @NotNull MetapathExpression target,
-      Pattern pattern,
-      IJavaTypeAdapter<?> dataType,
-      MarkupMultiline remarks) {
-    super(id, level, target, remarks);
+      @Nullable Pattern pattern,
+      @Nullable IJavaTypeAdapter<?> dataType,
+      @Nullable MarkupMultiline remarks) {
+    super(id, source, level, target, remarks);
     if (pattern == null && dataType == null) {
       throw new IllegalArgumentException("a pattern or data type must be provided");
     }

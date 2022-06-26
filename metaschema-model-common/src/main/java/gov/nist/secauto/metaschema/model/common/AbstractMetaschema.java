@@ -138,7 +138,7 @@ public abstract class AbstractMetaschema
 
       if (exportedFlagDefinitions == null) {
         // Populate the stream with the definitions from this metaschema
-        Predicate<gov.nist.secauto.metaschema.model.common.IDefinition> filter = IMetaschema.allNonLocalDefinitions();
+        Predicate<@NotNull IDefinition> filter = IMetaschema.allNonLocalDefinitions();
         Stream<@NotNull ? extends IFlagDefinition> flags = getFlagDefinitions().stream()
             .filter(filter);
         Stream<@NotNull ? extends IFieldDefinition> fields = getFieldDefinitions().stream()

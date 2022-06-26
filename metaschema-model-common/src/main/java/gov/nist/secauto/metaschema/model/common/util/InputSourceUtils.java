@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.util;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,13 +41,14 @@ public final class InputSourceUtils {
   }
 
   @NotNull
-  public static InputSource toInputSource(@NotNull URI uri, @Nullable EntityResolver entityResolver) throws IOException {
+  public static InputSource toInputSource(@NotNull URI uri, @Nullable EntityResolver entityResolver)
+      throws IOException {
     InputSource retval = null;
     if (entityResolver != null) {
       // attempt to resolve the entity
       try {
         retval = entityResolver.resolveEntity(null, uri.toASCIIString());
-      } catch (SAXException  ex) {
+      } catch (SAXException ex) {
         throw new IOException(ex);
       }
     }

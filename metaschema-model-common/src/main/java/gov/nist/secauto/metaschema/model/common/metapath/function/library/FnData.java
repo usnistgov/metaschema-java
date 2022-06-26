@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function.library;
 
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
@@ -138,13 +138,11 @@ public final class FnData {
    */
   @NotNull
   public static IAnyAtomicItem fnDataItem(@NotNull IItem item) {
-    IAnyAtomicItem retval;
+    IAnyAtomicItem retval = null;
     if (item instanceof IAnyAtomicItem) {
       retval = (IAnyAtomicItem) item;
     } else if (item instanceof IAtomicValuedItem) {
       retval = ((IAtomicValuedItem) item).toAtomicItem();
-    } else {
-      retval = null;
     }
 
     if (retval == null) {

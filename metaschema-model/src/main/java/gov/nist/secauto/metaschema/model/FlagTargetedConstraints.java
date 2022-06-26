@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
@@ -35,7 +36,9 @@ import org.jetbrains.annotations.NotNull;
 public class FlagTargetedConstraints
     extends AbstractTargetedConstraints<IValueConstraintSupport> {
 
-  public FlagTargetedConstraints(@NotNull MetapathExpression targetExpression, @NotNull IValueConstraintSupport constraints) {
+  public FlagTargetedConstraints(
+      @NotNull MetapathExpression targetExpression,
+      @NotNull IValueConstraintSupport constraints) {
     super(targetExpression, constraints);
   }
 

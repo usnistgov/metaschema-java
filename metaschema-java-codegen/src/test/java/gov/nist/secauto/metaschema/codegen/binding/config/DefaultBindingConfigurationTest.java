@@ -31,10 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.ModelType;
 
-import org.jetbrains.annotations.NotNull;
 import org.jmock.Expectations;
 import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;

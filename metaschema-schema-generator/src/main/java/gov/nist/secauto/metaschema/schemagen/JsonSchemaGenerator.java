@@ -100,7 +100,7 @@ public class JsonSchemaGenerator
 
     generateDefinitions(definitions, state);
 
-    Set<gov.nist.secauto.metaschema.model.common.IAssemblyDefinition> rootAssemblies = new LinkedHashSet<>();
+    Set<@NotNull IAssemblyDefinition> rootAssemblies = new LinkedHashSet<>();
 
     for (IDefinition definition : definitions) {
       if (definition instanceof IAssemblyDefinition) {
@@ -142,7 +142,7 @@ public class JsonSchemaGenerator
   }
 
   protected void generateRootProperties(
-      @NotNull Set<gov.nist.secauto.metaschema.model.common.IAssemblyDefinition> rootAssemblies,
+      @NotNull Set<@NotNull IAssemblyDefinition> rootAssemblies,
       @NotNull GenerationState state) throws IOException {
     JsonGenerator writer = state.getWriter();
     // generate root properties

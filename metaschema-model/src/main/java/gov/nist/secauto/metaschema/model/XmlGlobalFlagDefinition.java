@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ExternalModelSource;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
@@ -41,6 +42,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFlagDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
@@ -92,7 +94,9 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
     synchronized (this) {
       if (constraints == null) {
         if (getXmlFlag().isSetConstraint()) {
-          constraints = new ValueConstraintSupport(getXmlFlag().getConstraint());
+          constraints = new ValueConstraintSupport(
+              ObjectUtils.notNull(getXmlFlag().getConstraint()),
+              ExternalModelSource.instance(getContainingMetaschema().getLocation()));
         } else {
           constraints = new ValueConstraintSupport();
         }

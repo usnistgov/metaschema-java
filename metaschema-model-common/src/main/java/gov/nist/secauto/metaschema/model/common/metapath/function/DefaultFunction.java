@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
@@ -385,6 +385,15 @@ public class DefaultFunction
     return builder.toString();
   }
 
+  /**
+   * Set up the execution context for this function.
+   * 
+   * @param arguments
+   *          the function arguments
+   * @param focus
+   *          the current node context
+   * @return the calling context
+   */
   @NotNull
   public CallingContext newCallingContext(@NotNull List<@NotNull ISequence<?>> arguments, @NotNull INodeContext focus) {
     return new CallingContext(arguments, focus);
@@ -405,16 +414,31 @@ public class DefaultFunction
       this.arguments = arguments;
     }
 
+    /**
+     * Get the function instance associated with the calling context.
+     * 
+     * @return the function instance
+     */
     @NotNull
     protected DefaultFunction getFunction() {
       return DefaultFunction.this;
     }
 
+    /**
+     * Get the node item focus associated with the calling context.
+     * 
+     * @return the function instance
+     */
     @Nullable
     public INodeItem getContextNodeItem() {
       return contextNodeItem;
     }
 
+    /**
+     * Get the arguments associated with the calling context.
+     * 
+     * @return the arguments
+     */
     @NotNull
     public List<@NotNull ISequence<?>> getArguments() {
       return arguments;

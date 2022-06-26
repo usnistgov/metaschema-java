@@ -46,6 +46,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstra
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
@@ -137,6 +138,11 @@ public class DefaultAssemblyClassBinding
    */
   public MetaschemaAssembly getMetaschemaAssemblyAnnotation() {
     return metaschemaAssembly;
+  }
+
+  @Override
+  public String getName() {
+    return getMetaschemaAssemblyAnnotation().name();
   }
 
   @Override
@@ -305,7 +311,7 @@ public class DefaultAssemblyClassBinding
   protected void checkModelConstraints() {
     synchronized (this) {
       if (constraints == null) {
-        constraints = new AssemblyConstraintSupport(this);
+        constraints = new AssemblyConstraintSupport(this, InternalModelSource.instance());
       }
     }
   }

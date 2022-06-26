@@ -36,7 +36,8 @@ import java.math.BigInteger;
 public class NonNegativeIntegerAdapter
     extends AbstractIntegerAdapter<INonNegativeIntegerItem> {
 
-  public NonNegativeIntegerAdapter() {
+  NonNegativeIntegerAdapter() {
+    // avoid general construction
   }
 
   @Override

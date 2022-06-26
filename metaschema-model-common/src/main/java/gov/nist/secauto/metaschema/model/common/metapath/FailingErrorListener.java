@@ -33,7 +33,7 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 public class FailingErrorListener
     extends BaseErrorListener {
-  private boolean syntaxError = false;
+  private boolean syntaxError; // false;
 
   public boolean isSyntaxError() {
     return syntaxError;

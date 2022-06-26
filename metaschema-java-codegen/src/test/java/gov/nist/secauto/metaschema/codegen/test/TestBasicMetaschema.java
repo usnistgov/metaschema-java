@@ -169,7 +169,7 @@ public class TestBasicMetaschema {
   Path generationDir = Paths.get("target/generated-test-sources/metaschema");
 
   @Test
-  public void testSimpleMetaschema() throws MetaschemaException, IOException, ClassNotFoundException {
+  void testSimpleMetaschema() throws MetaschemaException, IOException, ClassNotFoundException {
     runTests("simple", "gov.nist.csrc.ns.metaschema.testing.simple.TopLevel", generationDir);
     // runTests("simple", "gov.nist.csrc.ns.metaschema.testing.simple.TopLevel", generationDir, (obj) ->
     // {
@@ -182,7 +182,7 @@ public class TestBasicMetaschema {
   }
 
   @Test
-  public void testSimpleUuidMetaschema()
+  void testSimpleUuidMetaschema()
       throws MetaschemaException, IOException, ClassNotFoundException {
     runTests("simple_with_uuid", "gov.nist.csrc.ns.metaschema.testing.simple.with.uuid.TopLevel", generationDir,
         (obj) -> {
@@ -195,17 +195,17 @@ public class TestBasicMetaschema {
   }
 
   @Test
-  public void testSimpleWithFieldMetaschema()
+  void testSimpleWithFieldMetaschema()
       throws MetaschemaException, IOException, ClassNotFoundException {
     runTests("simple_with_field", "gov.nist.csrc.ns.metaschema.testing.simple.with.field.TopLevel", generationDir);
   }
 
-  private static Object reflectMethod(Object obj, String name) throws NoSuchMethodException, SecurityException {
+  private static Object reflectMethod(Object obj, String name) throws NoSuchMethodException {
     return ReflectionUtils.invokeMethod(obj.getClass().getMethod(name), obj);
   }
 
   @Test
-  public void testFieldsWithFlagMetaschema()
+  void testFieldsWithFlagMetaschema()
       throws MetaschemaException, IOException, ClassNotFoundException {
     runTests("fields_with_flags", "gov.nist.csrc.ns.metaschema.testing.fields.with.flags.TopLevel", generationDir);
     // runTests("fields_with_flags", "gov.nist.csrc.ns.metaschema.testing.fields.with.flags.TopLevel",
@@ -276,7 +276,7 @@ public class TestBasicMetaschema {
   }
 
   @Test
-  public void testAssemblyMetaschema()
+  void testAssemblyMetaschema()
       throws MetaschemaException, IOException, ClassNotFoundException {
     runTests("assembly", "gov.nist.itl.metaschema.codegen.xml.example.assembly.TopLevel", generationDir, (obj) -> {
       try {
@@ -288,7 +288,7 @@ public class TestBasicMetaschema {
   }
 
   @Test
-  public void testLocalDefinitionsMetaschema()
+  void testLocalDefinitionsMetaschema()
       throws MetaschemaException, IOException, ClassNotFoundException {
     runTests("local-definitions", "gov.nist.csrc.ns.metaschema.testing.local.definitions.TopLevel", generationDir);
   }

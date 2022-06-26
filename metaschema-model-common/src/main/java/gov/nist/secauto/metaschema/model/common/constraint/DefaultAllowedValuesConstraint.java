@@ -39,6 +39,7 @@ public class DefaultAllowedValuesConstraint
     extends AbstractConstraint
     implements IAllowedValuesConstraint {
   private final boolean allowedOther;
+  private final Extensible extensible;
   @NotNull
   private final Map<@NotNull String, DefaultAllowedValue> allowedValues;
 
@@ -52,6 +53,8 @@ public class DefaultAllowedValuesConstraint
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param source
+   *          information about the constraint source
    * @param level
    *          the significance of a violation of this constraint
    * @param target
@@ -66,14 +69,17 @@ public class DefaultAllowedValuesConstraint
    */
   public DefaultAllowedValuesConstraint(
       @Nullable String id,
+      @NotNull ISource source,
       @NotNull Level level,
       @NotNull MetapathExpression target,
       @NotNull Map<@NotNull String, DefaultAllowedValue> allowedValues,
       boolean allowedOther,
+      @NotNull Extensible extensible,
       @Nullable MarkupMultiline remarks) {
-    super(id, level, target, remarks);
+    super(id, source, level, target, remarks);
     this.allowedValues = allowedValues;
     this.allowedOther = allowedOther;
+    this.extensible = extensible;
   }
 
   @Override
@@ -84,5 +90,10 @@ public class DefaultAllowedValuesConstraint
   @Override
   public boolean isAllowedOther() {
     return allowedOther;
+  }
+
+  @Override
+  public Extensible getExtensible() {
+    return extensible;
   }
 }

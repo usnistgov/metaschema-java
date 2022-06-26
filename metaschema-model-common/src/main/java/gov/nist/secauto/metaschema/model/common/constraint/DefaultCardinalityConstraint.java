@@ -47,6 +47,8 @@ public class DefaultCardinalityConstraint
    * 
    * @param id
    *          the optional identifier for the constraint
+   * @param source
+   *          information about the constraint source
    * @param level
    *          the significance of a violation of this constraint
    * @param target
@@ -60,12 +62,13 @@ public class DefaultCardinalityConstraint
    */
   public DefaultCardinalityConstraint(
       @Nullable String id,
+      @NotNull ISource source,
       @NotNull Level level,
       @NotNull MetapathExpression target,
       @Nullable Integer minOccurs,
       @Nullable Integer maxOccurs,
       MarkupMultiline remarks) {
-    super(id, level, target, remarks);
+    super(id, source, level, target, remarks);
     if (minOccurs == null && maxOccurs == null) {
       throw new IllegalArgumentException("at least one of minOccurs or maxOccurs must be provided");
     }

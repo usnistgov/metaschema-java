@@ -38,7 +38,7 @@ public class DayTimeAdapter
     extends AbstractJavaTypeAdapter<Duration, IDayTimeDurationItem> {
 
   @SuppressWarnings("null")
-  protected DayTimeAdapter() {
+  DayTimeAdapter() {
     super(Duration.class);
   }
 
@@ -55,7 +55,7 @@ public class DayTimeAdapter
 
   @SuppressWarnings("null")
   @Override
-  public Duration parse(String value) throws IllegalArgumentException {
+  public Duration parse(String value) {
     try {
       return Duration.parse(value);
     } catch (DateTimeParseException ex) {

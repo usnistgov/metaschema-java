@@ -33,12 +33,12 @@ import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 
 /**
- * Metaschema has a need to represent dates and times that allow for an ambiguous timezone. This is
- * due to some models not requiring a timezone as part of a date/time. An ambiguous dateTime allows
- * a timezone to be inferred, without change information in the source content.
+ * Metaschema has a need to represent dates and times that allow for an ambiguous time zone. This is
+ * due to some models not requiring a time zone as part of a date/time. An ambiguous dateTime allows
+ * a time zone to be inferred, without change information in the source content.
  * <p>
- * This class wraps a ZonedDateTime object and tracks if a timezone was found when parsing, which
- * can be used to ensure that the assumed timezone is not written back out in such cases.
+ * This class wraps a ZonedDateTime object and tracks if a time zone was found when parsing, which
+ * can be used to ensure that the assumed time zone is not written back out in such cases.
  * 
  * @param <TYPE>
  *          the bound object type
@@ -47,11 +47,27 @@ public abstract class AbstractAmbiguousDateTime<TYPE extends AbstractAmbiguousDa
     extends AbstractDatatype<TYPE, ZonedDateTime> {
   private final boolean timeZone;
 
+  /**
+   * Construct a new object. This type supports ambiguous dates/times that were provided without a
+   * time zone.
+   * 
+   * @param value
+   *          the date value
+   * @param hasTimeZone
+   *          {@code true} if the date is intended to have an associated time zone or {@code false}
+   *          otherwise
+   */
   public AbstractAmbiguousDateTime(@NotNull ZonedDateTime value, boolean hasTimeZone) {
     super(value);
     this.timeZone = hasTimeZone;
   }
 
+  /**
+   * Indicate if a time zone is configured.
+   * 
+   * @return {@code true} if the date is intended to have an associated time zone or {@code false}
+   *         otherwise
+   */
   public boolean hasTimeZone() {
     return timeZone;
   }

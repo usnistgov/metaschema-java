@@ -27,11 +27,13 @@
 package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
+import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
-import gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public interface IConstraintValidationHandler {
 
@@ -81,4 +83,8 @@ public interface IConstraintValidationHandler {
       @NotNull INodeItem node,
       @NotNull INodeItem target,
       @NotNull MetapathException ex);
+
+  void handleAllowedValuesViolation(
+      @NotNull List<@NotNull IAllowedValuesConstraint> failedConstraints,
+      @NotNull INodeItem target);
 }

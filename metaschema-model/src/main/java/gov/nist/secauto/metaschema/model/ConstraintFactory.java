@@ -37,7 +37,12 @@ import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstra
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ISource;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.AllowedValuesType;
 import gov.nist.secauto.metaschema.model.xmlbeans.EnumType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ExpectConstraintType;
@@ -45,6 +50,7 @@ import gov.nist.secauto.metaschema.model.xmlbeans.HasCardinalityConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.IndexHasKeyConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.KeyConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.MatchesConstraintType;
+import gov.nist.secauto.metaschema.model.xmlbeans.RemarksType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedAllowedValuesType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedExpectConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedIndexConstraintType;
@@ -53,163 +59,219 @@ import gov.nist.secauto.metaschema.model.xmlbeans.ScopedKeyConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedMatchesConstraintType;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("PMD")
 final class ConstraintFactory {
   private ConstraintFactory() {
     // disable
   }
 
-  static Map<String, DefaultAllowedValue> toAllowedValues(AllowedValuesType xmlConstraint) {
-    Map<String, DefaultAllowedValue> allowedValues = new LinkedHashMap<>(xmlConstraint.sizeOfEnumArray());
+  @NotNull
+  private static MetapathExpression target(@Nullable MetapathExpression target) {
+    return target == null ? IConstraint.DEFAULT_TARGET : target;
+  }
+
+  @NotNull
+  private static Level level(@Nullable Level level) {
+    return level == null ? IConstraint.DEFAULT_LEVEL : level;
+  }
+
+  @Nullable
+  private static MarkupMultiline remarks(@Nullable RemarksType remarks) {
+    return remarks == null ? null : MarkupStringConverter.toMarkupString(remarks);
+  }
+
+  @NotNull
+  static Map<@NotNull String, DefaultAllowedValue> toAllowedValues(@NotNull AllowedValuesType xmlConstraint) {
+    Map<@NotNull String, DefaultAllowedValue> allowedValues // NOPMD - intentional
+        = new LinkedHashMap<>(xmlConstraint.sizeOfEnumArray());
     for (EnumType xmlEnum : xmlConstraint.getEnumList()) {
       @SuppressWarnings("null")
-      DefaultAllowedValue allowedValue = new DefaultAllowedValue(
+      DefaultAllowedValue allowedValue = new DefaultAllowedValue( // NOPMD - intentional
           xmlEnum.getValue(),
           MarkupStringConverter.toMarkupString(xmlEnum));
       allowedValues.put(allowedValue.getValue(), allowedValue);
     }
-    return Collections.unmodifiableMap(allowedValues);
+    return CollectionUtil.unmodifiableMap(allowedValues);
   }
 
   @NotNull
-  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(ScopedAllowedValuesType xmlConstraint) {
-    return newAllowedValuesConstraint(xmlConstraint, xmlConstraint.getTarget());
+  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(
+      @NotNull ScopedAllowedValuesType xmlConstraint,
+      @NotNull ISource source) {
+    return newAllowedValuesConstraint(xmlConstraint, target(xmlConstraint.getTarget()), source);
   }
 
   @NotNull
-  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(AllowedValuesType xmlConstraint) {
-    return newAllowedValuesConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE);
+  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(
+      @NotNull AllowedValuesType xmlConstraint,
+      @NotNull ISource source) {
+    return newAllowedValuesConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);
   }
 
   @NotNull
-  @SuppressWarnings("null")
-  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(AllowedValuesType xmlConstraint,
-      MetapathExpression target) {
+  static DefaultAllowedValuesConstraint newAllowedValuesConstraint(
+      @NotNull AllowedValuesType xmlConstraint,
+      @NotNull MetapathExpression target,
+      @NotNull ISource source) {
     return new DefaultAllowedValuesConstraint(
-        xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
-        xmlConstraint.isSetLevel() ? xmlConstraint.getLevel() : IConstraint.DEFAULT_LEVEL,
-        target == null ? IConstraint.DEFAULT_TARGET : target, toAllowedValues(xmlConstraint),
+        xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
+        source,
+        level(xmlConstraint.getLevel()),
+        target,
+        toAllowedValues(xmlConstraint),
         xmlConstraint.isSetAllowOther() ? xmlConstraint.getAllowOther() : IAllowedValuesConstraint.DEFAULT_ALLOW_OTHER,
-        xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
+        xmlConstraint.isSetExtensible() ? ObjectUtils.notNull(xmlConstraint.getExtensible())
+            : IAllowedValuesConstraint.DEFAULT_EXTENSIBLE,
+        remarks(xmlConstraint.getRemarks()));
   }
 
   @NotNull
-  static DefaultMatchesConstraint newMatchesConstraint(ScopedMatchesConstraintType xmlConstraint) {
-    return newMatchesConstraint(xmlConstraint, xmlConstraint.getTarget());
+  static DefaultMatchesConstraint newMatchesConstraint(
+      @NotNull ScopedMatchesConstraintType xmlConstraint,
+      @NotNull ISource source) {
+    return newMatchesConstraint(xmlConstraint, target(xmlConstraint.getTarget()), source);
   }
 
   @NotNull
-  static DefaultMatchesConstraint newMatchesConstraint(MatchesConstraintType xmlConstraint) {
-    return newMatchesConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE);
+  static DefaultMatchesConstraint newMatchesConstraint(
+      @NotNull MatchesConstraintType xmlConstraint,
+      @NotNull ISource source) {
+    return newMatchesConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);
   }
 
   @NotNull
-  @SuppressWarnings("null")
-  static DefaultMatchesConstraint newMatchesConstraint(MatchesConstraintType xmlConstraint, MetapathExpression target) {
-    return new DefaultMatchesConstraint(xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
-        xmlConstraint.isSetLevel() ? xmlConstraint.getLevel() : IConstraint.DEFAULT_LEVEL,
-        target == null ? IConstraint.DEFAULT_TARGET : target,
-        xmlConstraint.isSetRegex() ? xmlConstraint.getRegex() : null,
-        xmlConstraint.isSetDatatype() ? xmlConstraint.getDatatype() : null,
-        xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
+  static DefaultMatchesConstraint newMatchesConstraint(
+      @NotNull MatchesConstraintType xmlConstraint,
+      @NotNull MetapathExpression target,
+      @NotNull ISource source) {
+    return new DefaultMatchesConstraint(
+        xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
+        source,
+        level(xmlConstraint.getLevel()),
+        target,
+        xmlConstraint.isSetRegex() ? xmlConstraint.getRegex() : null, // NOPMD - intentional
+        xmlConstraint.isSetDatatype() ? xmlConstraint.getDatatype() : null, // NOPMD - intentional
+        remarks(xmlConstraint.getRemarks()));
   }
 
   @NotNull
-  static List<DefaultKeyField> newKeyFields(KeyConstraintType xmlConstraint) {
-    List<DefaultKeyField> keyFields = new ArrayList<>(xmlConstraint.sizeOfKeyFieldArray());
+  static List<@NotNull DefaultKeyField> newKeyFields(@NotNull KeyConstraintType xmlConstraint) {
+    List<@NotNull DefaultKeyField> keyFields = new ArrayList<>(xmlConstraint.sizeOfKeyFieldArray());
     for (KeyConstraintType.KeyField xmlKeyField : xmlConstraint.getKeyFieldList()) {
       @SuppressWarnings("null")
       DefaultKeyField keyField
-          = new DefaultKeyField(xmlKeyField.getTarget(), xmlKeyField.isSetPattern() ? xmlKeyField.getPattern() : null,
-              xmlKeyField.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlKeyField.getRemarks()) : null);
+          = new DefaultKeyField( // NOPMD - intentional
+              xmlKeyField.getTarget(),
+              xmlKeyField.isSetPattern() ? xmlKeyField.getPattern() : null, // NOPMD - intentional
+              remarks(xmlKeyField.getRemarks()));
       keyFields.add(keyField);
     }
-    return Collections.unmodifiableList(keyFields);
+    return CollectionUtil.unmodifiableList(keyFields);
   }
 
   @NotNull
-  @SuppressWarnings("null")
-  static DefaultUniqueConstraint newUniqueConstraint(ScopedKeyConstraintType xmlConstraint) {
+  static DefaultUniqueConstraint newUniqueConstraint(
+      @NotNull ScopedKeyConstraintType xmlConstraint,
+      @NotNull ISource source) {
     return new DefaultUniqueConstraint(
-        xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
-        xmlConstraint.isSetLevel() ? xmlConstraint.getLevel() : IConstraint.DEFAULT_LEVEL,
-        xmlConstraint.getTarget(), newKeyFields(xmlConstraint),
-        xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
+        xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
+        source,
+        level(xmlConstraint.getLevel()),
+        target(xmlConstraint.getTarget()),
+        newKeyFields(xmlConstraint),
+        remarks(xmlConstraint.getRemarks()));
   }
 
   @NotNull
-  @SuppressWarnings("null")
-  static DefaultIndexConstraint newIndexConstraint(ScopedIndexConstraintType xmlConstraint) {
+  static DefaultIndexConstraint newIndexConstraint(
+      @NotNull ScopedIndexConstraintType xmlConstraint,
+      @NotNull ISource source) {
     return new DefaultIndexConstraint(
-        xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
-        xmlConstraint.isSetLevel() ? xmlConstraint.getLevel() : IConstraint.DEFAULT_LEVEL,
-        xmlConstraint.getTarget(),
+        xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
+        source,
+        level(xmlConstraint.getLevel()),
+        target(xmlConstraint.getTarget()),
         xmlConstraint.getName(),
         newKeyFields(xmlConstraint),
-        xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
+        remarks(xmlConstraint.getRemarks()));
   }
 
   @NotNull
-  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(ScopedIndexHasKeyConstraintType xmlConstraint) {
-    return newIndexHasKeyConstraint(xmlConstraint, xmlConstraint.getTarget());
+  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(
+      @NotNull ScopedIndexHasKeyConstraintType xmlConstraint,
+      @NotNull ISource source) {
+    return newIndexHasKeyConstraint(xmlConstraint, target(xmlConstraint.getTarget()), source);
   }
 
   @NotNull
-  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(IndexHasKeyConstraintType xmlConstraint) {
-    return newIndexHasKeyConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE);
+  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(
+      @NotNull IndexHasKeyConstraintType xmlConstraint,
+      @NotNull ISource source) {
+    return newIndexHasKeyConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);
 
   }
 
   @NotNull
-  @SuppressWarnings("null")
-  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(IndexHasKeyConstraintType xmlConstraint,
-      MetapathExpression target) {
+  static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(
+      @NotNull IndexHasKeyConstraintType xmlConstraint,
+      @NotNull MetapathExpression target,
+      @NotNull ISource source) {
     return new DefaultIndexHasKeyConstraint(
-        xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
-        xmlConstraint.isSetLevel() ? xmlConstraint.getLevel() : IConstraint.DEFAULT_LEVEL,
-        target == null ? IConstraint.DEFAULT_TARGET : target,
-        xmlConstraint.getName(), newKeyFields(xmlConstraint),
-        xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
+        xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
+        source,
+        level(xmlConstraint.getLevel()),
+        target,
+        xmlConstraint.getName(),
+        newKeyFields(xmlConstraint),
+        remarks(xmlConstraint.getRemarks()));
   }
 
   @NotNull
-  static DefaultExpectConstraint newExpectConstraint(ScopedExpectConstraintType xmlConstraint) {
-    return newExpectConstraint(xmlConstraint, xmlConstraint.getTarget());
+  static DefaultExpectConstraint newExpectConstraint(
+      @NotNull ScopedExpectConstraintType xmlConstraint,
+      @NotNull ISource source) {
+    return newExpectConstraint(xmlConstraint, target(xmlConstraint.getTarget()), source);
   }
 
   @NotNull
-  static DefaultExpectConstraint newExpectConstraint(ExpectConstraintType xmlConstraint) {
-    return newExpectConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE);
+  static DefaultExpectConstraint newExpectConstraint(
+      @NotNull ExpectConstraintType xmlConstraint,
+      @NotNull ISource source) {
+    return newExpectConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);
   }
 
   @NotNull
-  @SuppressWarnings("null")
-  static DefaultExpectConstraint newExpectConstraint(ExpectConstraintType xmlConstraint, MetapathExpression target) {
+  static DefaultExpectConstraint newExpectConstraint(
+      @NotNull ExpectConstraintType xmlConstraint,
+      @NotNull MetapathExpression target,
+      @NotNull ISource source) {
     return new DefaultExpectConstraint(
-        xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
-        xmlConstraint.isSetLevel() ? xmlConstraint.getLevel() : IConstraint.DEFAULT_LEVEL,
-        xmlConstraint.isSetMessage() ? xmlConstraint.getMessage() : null,
-        target == null ? IConstraint.DEFAULT_TARGET : target,
-        xmlConstraint.getTest(),
-        xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
+        xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
+        source,
+        level(xmlConstraint.getLevel()),
+        xmlConstraint.isSetMessage() ? xmlConstraint.getMessage() : null, // NOPMD - intentional
+        target,
+        ObjectUtils.requireNonNull(xmlConstraint.getTest()),
+        remarks(xmlConstraint.getRemarks()));
   }
 
   @NotNull
-  @SuppressWarnings("null")
-  static DefaultCardinalityConstraint newCardinalityConstraint(HasCardinalityConstraintType xmlConstraint) {
+  static DefaultCardinalityConstraint newCardinalityConstraint(
+      @NotNull HasCardinalityConstraintType xmlConstraint,
+      @NotNull ISource source) {
     return new DefaultCardinalityConstraint(
-        xmlConstraint.isSetId() ? xmlConstraint.getId() : null,
-        xmlConstraint.isSetLevel() ? xmlConstraint.getLevel() : IConstraint.DEFAULT_LEVEL,
-        xmlConstraint.getTarget(),
-        xmlConstraint.isSetMinOccurs() ? xmlConstraint.getMinOccurs().intValueExact() : null,
-        xmlConstraint.isSetMaxOccurs() ? xmlConstraint.getMaxOccurs().intValueExact() : null,
-        xmlConstraint.isSetRemarks() ? MarkupStringConverter.toMarkupString(xmlConstraint.getRemarks()) : null);
+        xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
+        source,
+        level(xmlConstraint.getLevel()),
+        target(xmlConstraint.getTarget()),
+        xmlConstraint.isSetMinOccurs() ? xmlConstraint.getMinOccurs().intValueExact() : null, // NOPMD - intentional
+        xmlConstraint.isSetMaxOccurs() ? xmlConstraint.getMaxOccurs().intValueExact() : null, // NOPMD - intentional
+        remarks(xmlConstraint.getRemarks()));
   }
 }

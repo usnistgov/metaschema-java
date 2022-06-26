@@ -36,6 +36,11 @@ import java.nio.ByteBuffer;
 public interface IBase64BinaryItem extends IAnyAtomicItem {
 
   @NotNull
+  public static IBase64BinaryItem valueOf(@NotNull String value) {
+    return IBase64BinaryItem.cast(IStringItem.valueOf(value));
+  }
+
+  @NotNull
   public static IBase64BinaryItem valueOf(@NotNull ByteBuffer value) {
     return new Base64BinaryItemImpl(value);
   }
