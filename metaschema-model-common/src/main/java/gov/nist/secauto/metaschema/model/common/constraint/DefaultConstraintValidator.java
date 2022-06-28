@@ -276,10 +276,12 @@ public class DefaultConstraintValidator implements IConstraintValidator {
           }
 
           IJavaTypeAdapter<?> adapter = constraint.getDataType();
-          try {
-            adapter.parse(value);
-          } catch (IllegalArgumentException ex) {
-            getConstraintValidationHandler().handleMatchDatatypeViolation(constraint, node, item, value, ex);
+          if (adapter != null) {
+            try {
+              adapter.parse(value);
+            } catch (IllegalArgumentException ex) {
+              getConstraintValidationHandler().handleMatchDatatypeViolation(constraint, node, item, value, ex);
+            }
           }
         });
   }
@@ -528,7 +530,8 @@ public class DefaultConstraintValidator implements IConstraintValidator {
     }
   }
 
-  private class Visitor extends AbstractNodeItemVisitor<Void, Void> {
+  private class Visitor
+      extends AbstractNodeItemVisitor<Void, Void> {
     @Override
     public Void visitDocument(@NotNull IDocumentNodeItem item, Void context) {
       return super.visitDocument(item, context);
