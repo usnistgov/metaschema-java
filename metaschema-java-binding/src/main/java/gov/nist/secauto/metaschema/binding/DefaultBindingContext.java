@@ -52,6 +52,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 
 import org.jetbrains.annotations.NotNull;
@@ -80,9 +81,8 @@ import javax.xml.namespace.QName;
  */
 public class DefaultBindingContext implements IBindingContext {
   private static DefaultBindingContext singleton;
-
   @NotNull
-  private IMetaschemaLoaderStrategy metaschemaLoaderStrategy;
+  private final IMetaschemaLoaderStrategy metaschemaLoaderStrategy;
   @NotNull
   private final MetaschemaDataTypeProvider dataTypeProvider = new MetaschemaDataTypeProvider();
   @NotNull
@@ -95,7 +95,7 @@ public class DefaultBindingContext implements IBindingContext {
         singleton = new DefaultBindingContext();
       }
     }
-    return singleton;
+    return ObjectUtils.notNull(singleton);
   }
 
   /**
@@ -260,7 +260,7 @@ public class DefaultBindingContext implements IBindingContext {
     context.setDocumentLoader(newBoundLoader());
     FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();
     DefaultConstraintValidator validator = new DefaultConstraintValidator(context, handler);
-    validator.validate(nodeItem);
+    validator.visit(nodeItem);
     return handler;
   }
 

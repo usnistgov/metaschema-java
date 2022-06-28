@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -153,7 +154,7 @@ public final class JsonDefinitionGenerator {
     }
   }
 
-  public static void generateFieldDefinition(
+  public static void generateFieldDefinition( // NOPMD - ok
       @NotNull IFieldDefinition definition,
       @NotNull ObjectNode definitionNode,
       @NotNull GenerationState state) throws IOException {
@@ -161,7 +162,7 @@ public final class JsonDefinitionGenerator {
 
     Collection<@NotNull ? extends IFlagInstance> flags = definition.getFlagInstances();
     IFlagInstance jsonKeyFlag = definition.getJsonKeyFlagInstance();
-    if (flags.isEmpty() || (jsonKeyFlag != null && flags.size() == 1)) {
+    if (flags.isEmpty() || (jsonKeyFlag != null && flags.size() == 1)) { // NOPMD - readability
       // field is a simple value if there are no flags or if the only flag is a JSON key
       definitionNode.put("$ref",
           datatypeManager.getJsonDefinitionRefForDatatype(definition.getJavaTypeAdapter()));
@@ -193,19 +194,23 @@ public final class JsonDefinitionGenerator {
       if (jsonValueKeyFlag == null) {
         definitionNode.put("additionalProperties", false);
       } else {
-        ObjectNode additionalPropertiesNode;
+        ObjectNode additionalPropertiesTypeNode;
 
         if (definition.isCollapsible()) {
-          additionalPropertiesNode = JsonPropertyGenerator.generateCollapsibleFieldValueType(definition, state);
+          additionalPropertiesTypeNode = JsonPropertyGenerator.generateCollapsibleFieldValueType(definition, state);
         } else {
-          additionalPropertiesNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
+          additionalPropertiesTypeNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
           // the type of the additional properties must be the datatype of the field value
-          additionalPropertiesNode.put("$ref",
+          additionalPropertiesTypeNode.put("$ref",
               datatypeManager.getJsonDefinitionRefForDatatype(definition.getJavaTypeAdapter()));
         }
 
-        additionalPropertiesNode.put("minProperties", properties.getRequired().size() + 1);
-        additionalPropertiesNode.put("maxProperties", properties.getProperties().size() + 1);
+        ObjectNode additionalPropertiesNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
+        ArrayNode allOf = additionalPropertiesNode.putArray("allOf");
+        allOf.add(additionalPropertiesTypeNode);
+        allOf.addObject()
+            .put("minProperties", properties.getRequired().size() + 1)
+            .put("maxProperties", properties.getProperties().size() + 1);
 
         definitionNode.set("additionalProperties", additionalPropertiesNode);
       }
