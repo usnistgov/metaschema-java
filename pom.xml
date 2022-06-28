@@ -137,7 +137,7 @@
 		<dependency.moxy.version>3.0.2</dependency.moxy.version>
 		<dependency.saxon.version>11.3</dependency.saxon.version>
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
-		<dependency.woodstox.version>6.2.8</dependency.woodstox.version>
+		<dependency.woodstox.version>6.3.0</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.1.0</dependency.xmlbeans.version>
 		<dependency.xmlresolver.version>4.3.0</dependency.xmlresolver.version>
 
