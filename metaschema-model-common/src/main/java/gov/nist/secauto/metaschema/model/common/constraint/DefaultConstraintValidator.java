@@ -96,14 +96,8 @@ public class DefaultConstraintValidator implements IConstraintValidator {
     return metapathContext;
   }
 
-  @Override
-  public void validate(@NotNull INodeItem item) {
+  public void visit(@NotNull INodeItem item) {
     item.accept(new Visitor(), null);
-  }
-
-  @Override
-  public void validate(@NotNull IDocumentNodeItem item) {
-//    validate(item.getRootAssemblyNodeItem());
   }
 
   @Override

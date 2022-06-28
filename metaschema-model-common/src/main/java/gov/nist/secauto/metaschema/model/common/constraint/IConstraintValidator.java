@@ -28,10 +28,8 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -40,26 +38,6 @@ import org.jetbrains.annotations.NotNull;
  * with a Metaschema model.
  */
 public interface IConstraintValidator {
-  /**
-   * Validate the provided item against any associated constraints.
-   * 
-   * @param item
-   *          the node item to validate
-   * @throws MetapathException
-   *           if an error occurred while evaluating a Metapath used in a constraint
-   */
-  void validate(@NotNull INodeItem item);
-
-  /**
-   * Validate the provided document item against any associated constraints.
-   * 
-   * @param item
-   *          the document item to validate
-   * @throws MetapathException
-   *           if an error occurred while evaluating a Metapath used in a constraint
-   */
-  void validate(@NotNull IDocumentNodeItem item);
-
   /**
    * Validate the provided flag item against any associated constraints.
    * 

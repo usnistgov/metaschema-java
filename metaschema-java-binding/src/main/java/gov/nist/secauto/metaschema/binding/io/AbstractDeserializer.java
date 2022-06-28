@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.LoggingConstraintVali
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -72,7 +73,7 @@ public abstract class AbstractDeserializer<CLASS>
       if (constraintValidationHandler == null) {
         constraintValidationHandler = new LoggingConstraintValidationHandler();
       }
-      return constraintValidationHandler;
+      return ObjectUtils.notNull(constraintValidationHandler);
     }
   }
 
@@ -100,7 +101,7 @@ public abstract class AbstractDeserializer<CLASS>
       DefaultConstraintValidator validator = new DefaultConstraintValidator(
           dynamicContext,
           getConstraintValidationHandler());
-      validator.validate(nodeItem);
+      validator.visit(nodeItem);
       validator.finalizeValidation();
     }
     return nodeItem;
