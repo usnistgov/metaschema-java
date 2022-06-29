@@ -26,13 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import gov.nist.secauto.metaschema.model.common.datatype.AbstractStringJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INcNameItem;
 
 import org.jetbrains.annotations.NotNull;
 
 public class NcNameAdapter
-    extends AbstractStringJavaTypeAdapter<INcNameItem> {
+    extends AbstractStringAdapter<INcNameItem> {
 
   NcNameAdapter() {
     // avoid general construction

@@ -26,13 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import gov.nist.secauto.metaschema.model.common.datatype.AbstractStringJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.ITokenItem;
 
 import org.jetbrains.annotations.NotNull;
 
 public class TokenAdapter
-    extends AbstractStringJavaTypeAdapter<ITokenItem> {
+    extends AbstractStringAdapter<ITokenItem> {
 
   TokenAdapter() {
     // avoid general construction

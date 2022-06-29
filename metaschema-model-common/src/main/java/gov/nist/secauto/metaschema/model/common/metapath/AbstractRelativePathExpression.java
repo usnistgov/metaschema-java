@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public abstract class AbstractRelativePathExpression
+abstract class AbstractRelativePathExpression
     extends AbstractPathExpression<INodeItem> {
   @NotNull
   private final IExpression left;

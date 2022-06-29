@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -59,11 +59,11 @@ public abstract class AbstractAnyAtomicItem<TYPE> implements IAnyAtomicItem {
 
   @Override
   @NotNull
-  public abstract IJavaTypeAdapter<TYPE> getJavaTypeAdapter();
+  public abstract IDataTypeAdapter<TYPE> getJavaTypeAdapter();
 
   @Override
   public String asString() {
-    IJavaTypeAdapter<TYPE> adapter = getJavaTypeAdapter();
+    IDataTypeAdapter<TYPE> adapter = getJavaTypeAdapter();
     return adapter.asString(getValue());
   }
 

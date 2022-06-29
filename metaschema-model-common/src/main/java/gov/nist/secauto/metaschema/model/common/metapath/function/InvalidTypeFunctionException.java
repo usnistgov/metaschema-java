@@ -27,30 +27,45 @@
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.AbstractCodedMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-public class TypeMetapathException
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
+
+public class InvalidTypeFunctionException
     extends AbstractCodedMetapathException {
-  public static final int INVALID_TYPE_ERROR = 4;
+  public static final int NODE_HAS_NO_TYPED_VALUE = 12;
 
   /**
-   * the serial version UID.
+   * the serial version UUID.
    */
-  private static final long serialVersionUID = 2L;
+  private static final long serialVersionUID = 1L;
 
-  public TypeMetapathException(int code, String message, Throwable cause) {
-    super(code, message, cause);
+  public InvalidTypeFunctionException(int code, @NotNull IItem item) {
+    super(code, generateMessage(item));
   }
 
-  public TypeMetapathException(int code, String message) {
-    super(code, message);
+  public InvalidTypeFunctionException(int code, @NotNull IItem item, Throwable cause) {
+    super(code, generateMessage(item), cause);
   }
 
-  public TypeMetapathException(int code, Throwable cause) {
-    super(code, cause);
+  protected static String generateMessage(@NotNull IItem item) {
+    String retval;
+    if (item instanceof INodeItem) {
+      INodeItem nodeItem = (INodeItem)item;
+      retval = String.format("The %s node item at path '%s' has no typed value",
+          nodeItem.getNodeItemType().name().toLowerCase(Locale.ROOT),
+          nodeItem.getMetapath());
+    } else {
+      retval = String.format("Item '%s' has no typed value", item.getClass().getName());
+    }
+    return retval;
   }
-
+  
   @Override
   protected String getCodePrefix() {
-    return "MPTY";
+    return "FOTY";
   }
 }

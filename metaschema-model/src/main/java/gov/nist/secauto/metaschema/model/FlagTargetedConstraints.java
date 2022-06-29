@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import org.jetbrains.annotations.NotNull;
 
-public class FlagTargetedConstraints
+class FlagTargetedConstraints
     extends AbstractTargetedConstraints<IValueConstraintSupport> {
 
   public FlagTargetedConstraints(

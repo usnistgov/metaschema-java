@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeItem>
+abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeItem>
     extends AbstractPathExpression<RESULT_TYPE> {
   @NotNull
   private final IExpression test;

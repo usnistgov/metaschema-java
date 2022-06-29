@@ -26,13 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUriReferenceItem;
 
 import java.net.URI;
 
 public class UriReferenceAdapter
-    extends AbstractJavaTypeAdapter<URI, IUriReferenceItem> {
+    extends AbstractDataTypeAdapter<URI, IUriReferenceItem> {
   @SuppressWarnings("null")
   UriReferenceAdapter() {
     super(URI.class);

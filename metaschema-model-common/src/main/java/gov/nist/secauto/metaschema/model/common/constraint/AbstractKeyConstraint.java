@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public abstract class AbstractKeyConstraint
+abstract class AbstractKeyConstraint
     extends AbstractConstraint
     implements IKeyConstraint {
   @NotNull

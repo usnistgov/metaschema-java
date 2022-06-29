@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public abstract class AbstractConstraint implements IConstraint { // NOPMD - intentional data class
+abstract class AbstractConstraint implements IConstraint { // NOPMD - intentional data class
   @Nullable
   private final String id;
   @Nullable

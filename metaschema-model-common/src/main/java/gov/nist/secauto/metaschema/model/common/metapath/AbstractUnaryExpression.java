@@ -34,7 +34,7 @@ import java.util.Objects;
 /**
  * An immutable expression with a single sub-expression.
  */
-public abstract class AbstractUnaryExpression extends AbstractExpression {
+abstract class AbstractUnaryExpression extends AbstractExpression {
   @NotNull
   private final IExpression expr;
 

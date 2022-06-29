@@ -34,7 +34,7 @@ import com.squareup.javapoet.TypeName;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -66,7 +66,7 @@ class FieldValueTypeInfoImpl
     IFieldDefinition definition = getParentDefinitionTypeInfo().getDefinition();
     AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(BoundFieldValue.class);
 
-    IJavaTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
+    IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
 
     // a field object always has a single value
     if (!definition.hasJsonValueKeyFlagInstance()) {

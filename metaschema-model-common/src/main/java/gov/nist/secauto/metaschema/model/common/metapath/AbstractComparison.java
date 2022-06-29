@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnNot;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
@@ -50,7 +49,7 @@ import java.util.Locale;
  * A common base class for all comparison nodes, which consist of two expressions representing the
  * left and right sides of the comparison, and a comparison operator.
  */
-public abstract class AbstractComparison // NOPMD - unavoidable
+abstract class AbstractComparison // NOPMD - unavoidable
     extends AbstractBinaryExpression<IExpression, IExpression>
     implements IComparison {
 

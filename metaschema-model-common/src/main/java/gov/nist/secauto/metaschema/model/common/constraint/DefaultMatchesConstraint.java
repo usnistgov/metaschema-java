@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
@@ -39,7 +39,7 @@ public class DefaultMatchesConstraint
     extends AbstractConstraint
     implements IMatchesConstraint {
   private final Pattern pattern;
-  private final IJavaTypeAdapter<?> dataType;
+  private final IDataTypeAdapter<?> dataType;
 
   /**
    * Create a new matches constraint, which enforces a value pattern and/or data type.
@@ -65,7 +65,7 @@ public class DefaultMatchesConstraint
       @NotNull Level level,
       @NotNull MetapathExpression target,
       @Nullable Pattern pattern,
-      @Nullable IJavaTypeAdapter<?> dataType,
+      @Nullable IDataTypeAdapter<?> dataType,
       @Nullable MarkupMultiline remarks) {
     super(id, source, level, target, remarks);
     if (pattern == null && dataType == null) {
@@ -81,7 +81,7 @@ public class DefaultMatchesConstraint
   }
 
   @Override
-  public IJavaTypeAdapter<?> getDataType() {
+  public IDataTypeAdapter<?> getDataType() {
     return dataType;
   }
 

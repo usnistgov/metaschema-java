@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -41,5 +41,5 @@ public interface IValuedDefinition extends IDefinition {
    * @return the data type
    */
   @NotNull
-  IJavaTypeAdapter<?> getJavaTypeAdapter();
+  IDataTypeAdapter<?> getJavaTypeAdapter();
 }

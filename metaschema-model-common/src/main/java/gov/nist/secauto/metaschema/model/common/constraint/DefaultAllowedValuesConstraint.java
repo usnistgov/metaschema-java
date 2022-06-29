@@ -64,6 +64,8 @@ public class DefaultAllowedValuesConstraint
    * @param allowedOther
    *          when {@code true} values other than the values specified by {@code allowedValues} are
    *          allowed, or disallowed if {@code false}
+   * @param extensible
+   *          indicates the degree to which extended values should be allowed
    * @param remarks
    *          optional remarks describing the intent of the constraint
    */

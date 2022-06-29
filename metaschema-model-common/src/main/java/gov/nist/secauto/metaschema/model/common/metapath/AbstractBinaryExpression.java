@@ -39,7 +39,7 @@ import java.util.Objects;
  * @param <R>
  *          the type of the right expression
  */
-public abstract class AbstractBinaryExpression<L extends IExpression, R extends IExpression>
+abstract class AbstractBinaryExpression<L extends IExpression, R extends IExpression>
     extends AbstractExpression {
   @NotNull
   private final L left;

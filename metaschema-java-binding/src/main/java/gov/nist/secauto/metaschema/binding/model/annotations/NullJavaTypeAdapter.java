@@ -27,8 +27,8 @@
 package gov.nist.secauto.metaschema.binding.model.annotations;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter.VoidItem;
-import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.AbstractDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
  * Used to mark a Java type that has no configured adapter.
  */
 public class NullJavaTypeAdapter
-    extends AbstractJavaTypeAdapter<Void, VoidItem> {
+    extends AbstractDataTypeAdapter<Void, VoidItem> {
 
   private static final String NOT_VALID = "not a valid type";
 
@@ -98,7 +98,7 @@ public class NullJavaTypeAdapter
     }
 
     @Override
-    public IJavaTypeAdapter<?> getJavaTypeAdapter() {
+    public IDataTypeAdapter<?> getJavaTypeAdapter() {
       throw new UnsupportedOperationException(NOT_VALID);
     }
   }

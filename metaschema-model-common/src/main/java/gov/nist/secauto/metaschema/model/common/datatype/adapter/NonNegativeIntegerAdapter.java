@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import gov.nist.secauto.metaschema.model.common.datatype.AbstractIntegerAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INonNegativeIntegerItem;
 
 import org.jetbrains.annotations.NotNull;

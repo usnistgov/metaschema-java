@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataT
 import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupText;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +50,7 @@ public interface IMarkupItem extends IUntypedAtomicItem {
   }
 
   @NotNull
-  static IMarkupItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+  static IMarkupItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.MARKUP_MULTILINE.cast(item);
   }
 }

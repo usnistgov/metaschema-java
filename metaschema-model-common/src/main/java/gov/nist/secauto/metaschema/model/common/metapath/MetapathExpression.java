@@ -29,8 +29,6 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Lexer;
 import gov.nist.secauto.metaschema.model.common.metapath.antlr.metapath10Parser;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeMetapathException;
-import gov.nist.secauto.metaschema.model.common.metapath.function.TypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnBoolean;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
@@ -305,7 +303,11 @@ public class MetapathExpression {
   @NotNull
   public <T extends IItem> ISequence<? extends T> evaluate(@NotNull INodeContext nodeContext,
       @NotNull DynamicContext dynamicContext) {
-    return (ISequence<T>) getASTNode().accept(dynamicContext,
-        nodeContext);
+    try {
+      return (ISequence<T>) getASTNode().accept(dynamicContext,
+          nodeContext);
+    } catch (MetapathException ex) {
+      throw new MetapathException(String.format("An error occurred while evaluating the expression '%s'.", ex));
+    }
   }
 }

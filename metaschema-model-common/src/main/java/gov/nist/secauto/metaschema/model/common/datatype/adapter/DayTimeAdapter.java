@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +34,7 @@ import java.time.Duration;
 import java.time.format.DateTimeParseException;
 
 public class DayTimeAdapter
-    extends AbstractJavaTypeAdapter<Duration, IDayTimeDurationItem> {
+    extends AbstractDataTypeAdapter<Duration, IDayTimeDurationItem> {
 
   @SuppressWarnings("null")
   DayTimeAdapter() {

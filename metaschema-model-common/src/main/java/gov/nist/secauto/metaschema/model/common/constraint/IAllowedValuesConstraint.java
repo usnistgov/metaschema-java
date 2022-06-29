@@ -31,6 +31,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
+/**
+ * Represents a rule requiring the value of a field or flag to match the name of one entry in a set
+ * of enumerated values.
+ */
 public interface IAllowedValuesConstraint extends IConstraint {
   boolean DEFAULT_ALLOW_OTHER = false;
   @NotNull

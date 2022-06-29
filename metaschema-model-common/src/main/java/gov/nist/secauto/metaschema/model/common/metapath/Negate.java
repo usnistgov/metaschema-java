@@ -35,8 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 class Negate
-    extends AbstractUnaryExpression
-    implements IArithmeticExpression<INumericItem> {
+    extends AbstractUnaryExpression {
 
   @NotNull
   private final Class<? extends INumericItem> staticResultType;

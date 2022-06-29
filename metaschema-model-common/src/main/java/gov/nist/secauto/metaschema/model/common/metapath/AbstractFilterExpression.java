@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public abstract class AbstractFilterExpression
+abstract class AbstractFilterExpression
     extends AbstractBinaryExpression<IExpression, IExpression> {
 
   @NotNull

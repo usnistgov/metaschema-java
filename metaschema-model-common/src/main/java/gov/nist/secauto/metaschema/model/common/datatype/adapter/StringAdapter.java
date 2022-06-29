@@ -26,13 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import gov.nist.secauto.metaschema.model.common.datatype.AbstractStringJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 import org.jetbrains.annotations.NotNull;
 
 public class StringAdapter
-    extends AbstractStringJavaTypeAdapter<IStringItem> {
+    extends AbstractStringAdapter<IStringItem> {
   StringAdapter() {
     // avoid general construction
   }

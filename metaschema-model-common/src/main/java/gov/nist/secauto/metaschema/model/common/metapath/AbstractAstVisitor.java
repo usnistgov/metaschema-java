@@ -75,7 +75,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
-public abstract class AbstractAstVisitor<R> // NOPMD
+abstract class AbstractAstVisitor<R> // NOPMD
     extends metapath10BaseVisitor<R> {
 
   /**

@@ -29,8 +29,7 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 
-import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
@@ -41,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 public class BooleanAdapter
-    extends AbstractJavaTypeAdapter<Boolean, IBooleanItem> {
+    extends AbstractDataTypeAdapter<Boolean, IBooleanItem> {
 
   @SuppressWarnings("null")
   BooleanAdapter() {
@@ -114,12 +113,12 @@ public class BooleanAdapter
   }
 
   @NotNull
-  protected IBooleanItem castToBoolean(@NotNull IStringItem item) throws InvalidValueForCastFunctionMetapathException {
+  protected IBooleanItem castToBoolean(@NotNull IStringItem item) throws InvalidValueForCastFunctionException {
     IBooleanItem retval;
     try {
       INumericItem numeric = INumericItem.cast(item);
       retval = castToBoolean(numeric);
-    } catch (InvalidValueForCastFunctionMetapathException ex) {
+    } catch (InvalidValueForCastFunctionException ex) {
       retval = super.castInternal(item);
     }
     return retval;

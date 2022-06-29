@@ -74,10 +74,13 @@
 						</sourceDirectories>
 					</configuration>
 				</plugin>
-
-				<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-javadoc-plugin</artifactId> 
-					<configuration> <excludePackageNames>gov.nist.itl.metaschema.model.m4.xml:gov.nist.itl.metaschema.model.m4.xml.impl</excludePackageNames> 
-					</configuration> </plugin> -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<configuration>
+						<excludePackageNames>gov.nist.secauto.metaschema.model.xmlbeans,org.apache.xmlbeans.metadata.*</excludePackageNames>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>

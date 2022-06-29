@@ -26,13 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import gov.nist.secauto.metaschema.model.common.datatype.AbstractStringJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IHostnameItem;
 
 import org.jetbrains.annotations.NotNull;
 
 public class HostnameAdapter
-    extends AbstractStringJavaTypeAdapter<IHostnameItem> {
+    extends AbstractStringAdapter<IHostnameItem> {
 
   HostnameAdapter() {
     // avoid general construction

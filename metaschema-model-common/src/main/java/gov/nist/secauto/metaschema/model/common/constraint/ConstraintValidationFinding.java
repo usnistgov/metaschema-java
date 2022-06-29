@@ -36,8 +36,10 @@ import org.jetbrains.annotations.NotNull;
 import java.net.URI;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
+/**
+ * Represents an individual constraint validation issue.
+ */
 public class ConstraintValidationFinding implements IValidationFinding { // NOPMD - intentional
   @NotNull
   private final List<@NotNull ? extends IConstraint> constraints;
@@ -63,7 +65,6 @@ public class ConstraintValidationFinding implements IValidationFinding { // NOPM
         targets);
   }
 
-  @SuppressWarnings("null")
   public ConstraintValidationFinding(
       @NotNull List<@NotNull ? extends IConstraint> constraints,
       @NotNull CharSequence message,

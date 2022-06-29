@@ -89,11 +89,6 @@ public abstract class AbstractCodedMetapathException
     return String.format("%s: %s", getCodeAsString(), super.getMessage());
   }
 
-  @Override
-  public String getLocalizedMessage() {
-    return String.format("%s: %s", getCodeAsString(), super.getLocalizedMessage());
-  }
-
   /**
    * Get the error code value.
    * 

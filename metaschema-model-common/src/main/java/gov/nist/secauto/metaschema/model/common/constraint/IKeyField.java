@@ -34,6 +34,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Pattern;
 
+/**
+ * Represents a component of a key used in a key-based index.
+ * <p>
+ * A key field is targeted at a Metaschema field or flag data object's value. An optional pattern
+ * can be used to extract a portion of the value for use in generating an index key.
+ */
 public interface IKeyField {
   @NotNull
   MetapathExpression getTarget();

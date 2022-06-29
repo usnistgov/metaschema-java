@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.ModelType;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -64,14 +64,14 @@ class DefaultFieldValueProperty
   @NotNull
   private final BoundFieldValue fieldValue;
   @NotNull
-  private final IJavaTypeAdapter<?> javaTypeAdapter;
+  private final IDataTypeAdapter<?> javaTypeAdapter;
 
   public DefaultFieldValueProperty(@NotNull IFieldClassBinding fieldClassBinding, @NotNull Field field) {
     super(fieldClassBinding);
     this.field = ObjectUtils.requireNonNull(field, "field");
     this.fieldValue = ObjectUtils.requireNonNull(field.getAnnotation(BoundFieldValue.class));
 
-    Class<? extends IJavaTypeAdapter<?>> adapterClass = ObjectUtils.notNull(fieldValue.typeAdapter());
+    Class<? extends IDataTypeAdapter<?>> adapterClass = ObjectUtils.notNull(fieldValue.typeAdapter());
     if (NullJavaTypeAdapter.class.equals(adapterClass)) {
       this.javaTypeAdapter = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
     } else {
@@ -104,7 +104,7 @@ class DefaultFieldValueProperty
   }
 
   @Override
-  public IJavaTypeAdapter<?> getJavaTypeAdapter() {
+  public IDataTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
 
@@ -261,7 +261,7 @@ class DefaultFieldValueProperty
   @Override
   public void copyBoundObject(Object fromInstance, Object toInstance) {
     Object value = getValue(fromInstance);
-    IJavaTypeAdapter<?> adapter = getJavaTypeAdapter();
+    IDataTypeAdapter<?> adapter = getJavaTypeAdapter();
     setValue(toInstance, value == null ? null : adapter.copy(value));
   }
 }

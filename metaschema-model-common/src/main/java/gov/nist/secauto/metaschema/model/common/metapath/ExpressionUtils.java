@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class ExpressionUtils {
+final class ExpressionUtils {
   private ExpressionUtils() {
     // disable
   }

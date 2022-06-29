@@ -34,7 +34,7 @@ import java.util.Objects;
 /**
  * An immutable expression that has a number of sub-expression children.
  */
-public abstract class AbstractNAryExpression extends AbstractExpression {
+abstract class AbstractNAryExpression extends AbstractExpression {
   @NotNull
   private final List<@NotNull IExpression> children;
 

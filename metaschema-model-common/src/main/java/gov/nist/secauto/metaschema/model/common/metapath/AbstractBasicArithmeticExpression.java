@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractBasicArithmeticExpression
+abstract class AbstractBasicArithmeticExpression
     extends AbstractArithmeticExpression<IAnyAtomicItem> {
 
   /**

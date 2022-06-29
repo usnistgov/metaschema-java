@@ -41,7 +41,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A common interface for all constraint definitions.
+ * Represents a rule constraining the model of a Metaschema assembly, field or flag. Provides a
+ * common interface for all constraint definitions.
  */
 public interface IConstraint {
   /**

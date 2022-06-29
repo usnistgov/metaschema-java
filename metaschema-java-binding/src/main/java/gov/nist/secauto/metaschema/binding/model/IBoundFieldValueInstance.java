@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +37,7 @@ import java.io.IOException;
 public interface IBoundFieldValueInstance extends IBoundNamedInstance {
 
   @NotNull
-  IJavaTypeAdapter<?> getJavaTypeAdapter();
+  IDataTypeAdapter<?> getJavaTypeAdapter();
 
   /**
    * Get the JSON value key name based on either the configured value key name or the default for the

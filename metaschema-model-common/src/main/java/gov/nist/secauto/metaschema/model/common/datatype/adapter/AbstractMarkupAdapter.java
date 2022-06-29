@@ -26,13 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import gov.nist.secauto.metaschema.model.common.datatype.AbstractDatatypeJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.AbstractMarkupString;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupParser;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IMarkupItem;
 
+import org.jetbrains.annotations.NotNull;
+
 public abstract class AbstractMarkupAdapter<TYPE extends AbstractMarkupString<TYPE>>
-    extends AbstractDatatypeJavaTypeAdapter<TYPE, IMarkupItem> {
+    extends AbstractCustomJavaDataTypeAdapter<TYPE, IMarkupItem> {
 
   private static final MarkupParser MARKUP_PARSER = new MarkupParser();
 
@@ -51,7 +52,7 @@ public abstract class AbstractMarkupAdapter<TYPE extends AbstractMarkupString<TY
    * @param clazz
    *          the markup type class
    */
-  protected AbstractMarkupAdapter(Class<TYPE> clazz) {
+  protected AbstractMarkupAdapter(@NotNull Class<TYPE> clazz) {
     super(clazz);
   }
 

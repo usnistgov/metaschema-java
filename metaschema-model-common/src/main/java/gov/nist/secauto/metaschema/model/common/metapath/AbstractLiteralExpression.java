@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractLiteralExpression<RESULT_TYPE extends IAnyAtomicItem, VALUE>
+abstract class AbstractLiteralExpression<RESULT_TYPE extends IAnyAtomicItem, VALUE>
     extends AbstractExpression
     implements ILiteralExpression<RESULT_TYPE, VALUE> {
   @NotNull

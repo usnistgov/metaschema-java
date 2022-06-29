@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.binding.model;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
@@ -77,7 +77,7 @@ abstract class AbstractFieldProperty
       XMLEvent event = eventReader.peek();
       if (event.isStartElement()) {
         QName qname = ObjectUtils.notNull(event.asStartElement().getName());
-        IJavaTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
+        IDataTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
         retval = !isInXmlWrapped() && adapter.isUnrappedValueAllowedInXml() && adapter.canHandleQName(qname);
       }
     }
@@ -91,7 +91,7 @@ abstract class AbstractFieldProperty
     IXmlBindingSupplier supplier = getDataTypeHandler();
 
     // figure out if we need to parse the wrapper or not
-    IJavaTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
+    IDataTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
     boolean parseWrapper = true;
     if (!isInXmlWrapped() && adapter.isUnrappedValueAllowedInXml()) {
       parseWrapper = false;

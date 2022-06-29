@@ -24,22 +24,51 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype;
+package gov.nist.secauto.metaschema.model.common.datatype.object;
+
+import gov.nist.secauto.metaschema.model.common.datatype.AbstractCustomJavaDataType;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.time.ZonedDateTime;
+
 /**
- * The common interface of all bound objects supported by a custom data type.
- *
+ * Metaschema has a need to represent dates and times that allow for an ambiguous time zone. This is
+ * due to some models not requiring a time zone as part of a date/time. An ambiguous dateTime allows
+ * a time zone to be inferred, without change information in the source content.
+ * <p>
+ * This class wraps a ZonedDateTime object and tracks if a time zone was found when parsing, which
+ * can be used to ensure that the assumed time zone is not written back out in such cases.
+ * 
  * @param <TYPE>
- *          the bound object type supported by this data type
+ *          the bound object type
  */
-public interface IDatatype<TYPE extends IDatatype<TYPE>> {
+public abstract class AbstractAmbiguousTemporal<TYPE extends AbstractAmbiguousTemporal<TYPE>>
+    extends AbstractCustomJavaDataType<TYPE, ZonedDateTime> {
+  private final boolean timeZone;
+
   /**
-   * Provides a copy of the data value associated with the Datatype instance.
+   * Construct a new object. This type supports ambiguous dates/times that were provided without a
+   * time zone.
    * 
-   * @return the copy
+   * @param value
+   *          the date value
+   * @param hasTimeZone
+   *          {@code true} if the date is intended to have an associated time zone or {@code false}
+   *          otherwise
    */
-  @NotNull
-  TYPE copy();
+  public AbstractAmbiguousTemporal(@NotNull ZonedDateTime value, boolean hasTimeZone) {
+    super(value);
+    this.timeZone = hasTimeZone;
+  }
+
+  /**
+   * Indicate if a time zone is configured.
+   * 
+   * @return {@code true} if the date is intended to have an associated time zone or {@code false}
+   *         otherwise
+   */
+  public boolean hasTimeZone() {
+    return timeZone;
+  }
 }

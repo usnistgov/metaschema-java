@@ -577,7 +577,15 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<configuration>
+						<excludePackageNames>gov.nist.secauto.metaschema.*.xmlbeans,org.apache.xmlbeans.*</excludePackageNames>
 						<failOnWarnings>false</failOnWarnings>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<configuration>
+						<deployAtEnd>true</deployAtEnd>
 					</configuration>
 				</plugin>
 			</plugins>

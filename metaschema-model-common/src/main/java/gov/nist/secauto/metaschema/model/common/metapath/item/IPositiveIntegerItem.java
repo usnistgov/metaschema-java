@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -59,7 +59,7 @@ public interface IPositiveIntegerItem extends IIntegerItem {
     try {
       return valueOf(MetaschemaDataTypeProvider.POSITIVE_INTEGER.parse(value));
     } catch (IllegalArgumentException ex) {
-      throw new InvalidValueForCastFunctionMetapathException(String.format("Unable to parse string value '%s'", value),
+      throw new InvalidValueForCastFunctionException(String.format("Unable to parse string value '%s'", value),
           ex);
     }
   }

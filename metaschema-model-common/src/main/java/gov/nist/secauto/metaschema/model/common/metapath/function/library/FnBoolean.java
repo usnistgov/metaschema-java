@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidArgumentFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidArgumentFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
@@ -148,7 +148,7 @@ public final class FnBoolean {
       String string = ((IAnyUriItem) item).asString();
       retval = !string.isBlank();
     } else {
-      throw new InvalidArgumentFunctionMetapathException(InvalidArgumentFunctionMetapathException.INVALID_ARGUMENT_TYPE,
+      throw new InvalidArgumentFunctionException(InvalidArgumentFunctionException.INVALID_ARGUMENT_TYPE,
           String.format("Invalid argument type '%s'", item.getClass().getName()));
     }
     return retval;

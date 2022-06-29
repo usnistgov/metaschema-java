@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.INamedDefinition;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -121,7 +121,7 @@ public class JsonDatatypeManager
 
   @SuppressWarnings("null")
   @NotNull
-  protected String getJsonDefinitionRefForDatatype(@NotNull IJavaTypeAdapter<?> datatype) {
+  protected String getJsonDefinitionRefForDatatype(@NotNull IDataTypeAdapter<?> datatype) {
     return new StringBuilder()
         .append("#/definitions/")
         .append(getTypeNameForDatatype(datatype))

@@ -29,13 +29,13 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
+import gov.nist.secauto.metaschema.model.common.metapath.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.ResultType;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnBoolean;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.model.common.metapath.item.AbstractNodeItemVisitor;
@@ -145,7 +145,11 @@ public class DefaultConstraintValidator implements IConstraintValidator {
       @NotNull IAssemblyNodeItem item) {
     for (ICardinalityConstraint constraint : constraints) {
       ISequence<? extends IDefinitionNodeItem> targets = constraint.matchTargets(item, getMetapathContext());
-      validateHasCardinality(constraint, item, targets);
+      try {
+        validateHasCardinality(constraint, item, targets);
+      } catch (MetapathException ex) {
+        rethrowConstraintError(constraint, item, ex);
+      }
     }
   }
 
@@ -175,7 +179,11 @@ public class DefaultConstraintValidator implements IConstraintValidator {
       @NotNull IAssemblyNodeItem item) {
     for (IIndexConstraint constraint : constraints) {
       ISequence<? extends IDefinitionNodeItem> targets = constraint.matchTargets(item, getMetapathContext());
-      validateIndex(constraint, item, targets);
+      try {
+        validateIndex(constraint, item, targets);
+      } catch (MetapathException ex) {
+        rethrowConstraintError(constraint, item, ex);
+      }
     }
   }
 
@@ -223,7 +231,11 @@ public class DefaultConstraintValidator implements IConstraintValidator {
       @NotNull IAssemblyNodeItem item) {
     for (IUniqueConstraint constraint : constraints) {
       ISequence<? extends IDefinitionNodeItem> targets = constraint.matchTargets(item, getMetapathContext());
-      validateUnique(constraint, item, targets);
+      try {
+        validateUnique(constraint, item, targets);
+      } catch (MetapathException ex) {
+        rethrowConstraintError(constraint, item, ex);
+      }
     }
   }
 
@@ -256,7 +268,11 @@ public class DefaultConstraintValidator implements IConstraintValidator {
 
     for (IMatchesConstraint constraint : constraints) {
       ISequence<? extends IDefinitionNodeItem> targets = constraint.matchTargets(item, getMetapathContext());
-      validateMatches(constraint, item, targets);
+      try {
+        validateMatches(constraint, item, targets);
+      } catch (MetapathException ex) {
+        rethrowConstraintError(constraint, item, ex);
+      }
     }
   }
 
@@ -275,7 +291,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
             }
           }
 
-          IJavaTypeAdapter<?> adapter = constraint.getDataType();
+          IDataTypeAdapter<?> adapter = constraint.getDataType();
           if (adapter != null) {
             try {
               adapter.parse(value);
@@ -307,16 +323,20 @@ public class DefaultConstraintValidator implements IConstraintValidator {
 
     for (IItem target : targets.asList()) {
       INodeItem item = (INodeItem) target;
-      String key = buildKey(constraint.getKeyFields(), item);
+      try {
+        String key = buildKey(constraint.getKeyFields(), item);
 
-      // LOGGER.info("key-ref: {} {}", key, item);
-      //
-      List<@NotNull INodeItem> items = keyRefItems.get(key);
-      if (items == null) {
-        items = new LinkedList<>();
-        keyRefItems.put(key, items);
+        // LOGGER.info("key-ref: {} {}", key, item);
+        //
+        List<@NotNull INodeItem> items = keyRefItems.get(key);
+        if (items == null) {
+          items = new LinkedList<>();
+          keyRefItems.put(key, items);
+        }
+        items.add(item);
+      } catch (MetapathException ex) {
+        rethrowConstraintError(constraint, item, ex);
       }
-      items.add(item);
     }
   }
 
@@ -338,10 +358,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
           getConstraintValidationHandler().handleExpectViolation(constraint, node, item, getMetapathContext());
         }
       } catch (MetapathException ex) {
-        String msg = String.format("Unable to evaluate expect constraint '%s' at path '%s'", metapath.getPath(),
-            item.getMetapath());
-        LOGGER.atError().withThrowable(ex).log(msg);
-        throw new MetapathException(msg, ex);
+        rethrowConstraintError(constraint, item, ex);
       }
     });
   }
@@ -357,11 +374,39 @@ public class DefaultConstraintValidator implements IConstraintValidator {
   protected void validateAllowedValues(@NotNull IAllowedValuesConstraint constraint,
       ISequence<? extends IDefinitionNodeItem> targets) {
     targets.asStream().forEachOrdered(item -> {
-      updateValueStatus(item, constraint);
+      try {
+        updateValueStatus(item, constraint);
+      } catch (MetapathException ex) {
+        rethrowConstraintError(constraint, item, ex);
+      }
     });
   }
 
-  protected void updateValueStatus(@NotNull INodeItem targetItem, IAllowedValuesConstraint allowedValue) {
+  private void rethrowConstraintError(@NotNull IConstraint constraint, INodeItem item,
+      MetapathException ex) {
+    StringBuilder builder = new StringBuilder();
+    builder.append("A ")
+        .append(constraint.getClass().getName())
+        .append(" constraint");
+
+    String id = constraint.getId();
+    if (id == null) {
+      builder.append(" targeting the metapath '")
+          .append(constraint.getTarget().getPath())
+          .append("'");
+    } else {
+      builder.append(" with id '")
+          .append(id)
+          .append("'");
+    }
+
+    builder.append(" resulted in an unexpected error. The error was: ")
+        .append(ex.getLocalizedMessage());
+
+    throw new MetapathException(builder.toString(), ex);
+  }
+
+  protected void updateValueStatus(@NotNull INodeItem targetItem, @NotNull IAllowedValuesConstraint allowedValue) {
     // constraint.getAllowedValues().containsKey(value)
 
     @Nullable

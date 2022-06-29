@@ -32,6 +32,13 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents a rule requiring a Metaschema assembly, field, or flag data instance to pass a
+ * Metapath-based test.
+ * <p>
+ * A custom message can be used to indicate what a test failure signifies.
+ */
+
 public interface IExpectConstraint extends IConstraint {
   @NotNull
   MetapathExpression getTest();

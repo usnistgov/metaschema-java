@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <CONTEXT>
  *          additional state to pass between nodes visited
  */
-public abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpressionVisitor<RESULT, CONTEXT> {
+abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpressionVisitor<RESULT, CONTEXT> {
 
   /**
    * This dispatch method will visit the provided {@code expression}.

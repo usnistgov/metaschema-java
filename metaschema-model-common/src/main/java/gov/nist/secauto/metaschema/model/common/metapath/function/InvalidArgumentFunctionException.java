@@ -28,29 +28,32 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.AbstractCodedMetapathException;
 
-public class InvalidTypeFunctionMetapathException
+public class InvalidArgumentFunctionException
     extends AbstractCodedMetapathException {
-  public static final int NODE_HAS_NO_TYPED_VALUE = 12;
+
+  public static final int INVALID_VALUE_FOR_CAST = 1;
+  public static final int INVALID_ARGUMENT_TO_RESOLVE_URI = 2;
+  public static final int INVALID_ARGUMENT_TYPE = 6;
 
   /**
    * the serial version UUID.
    */
   private static final long serialVersionUID = 1L;
 
-  public InvalidTypeFunctionMetapathException(int code, String message, Throwable cause) {
+  public InvalidArgumentFunctionException(int code, String message, Throwable cause) {
     super(code, message, cause);
   }
 
-  public InvalidTypeFunctionMetapathException(int code, String message) {
+  public InvalidArgumentFunctionException(int code, String message) {
     super(code, message);
   }
 
-  public InvalidTypeFunctionMetapathException(int code, Throwable cause) {
+  public InvalidArgumentFunctionException(int code, Throwable cause) {
     super(code, cause);
   }
 
   @Override
   protected String getCodePrefix() {
-    return "FOTY";
+    return "FORG";
   }
 }

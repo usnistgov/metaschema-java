@@ -41,7 +41,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -63,7 +63,7 @@ class DefaultFieldProperty
   @NotNull
   private final BoundField fieldAnnotation;
   @NotNull
-  private final IJavaTypeAdapter<?> javaTypeAdapter;
+  private final IDataTypeAdapter<?> javaTypeAdapter;
   private IBoundFieldDefinition definition;
   private IValueConstraintSupport constraints;
 
@@ -83,7 +83,7 @@ class DefaultFieldProperty
           field.getName(), parentClassBinding.getBoundClass().getName(), BoundField.class.getName()));
     }
 
-    Class<? extends IJavaTypeAdapter<?>> adapterClass = ObjectUtils.notNull(getFieldAnnotation().typeAdapter());
+    Class<? extends IDataTypeAdapter<?>> adapterClass = ObjectUtils.notNull(getFieldAnnotation().typeAdapter());
     if (NullJavaTypeAdapter.class.equals(adapterClass)) {
       javaTypeAdapter = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
     } else {
@@ -116,7 +116,7 @@ class DefaultFieldProperty
   }
 
   @NotNull
-  protected IJavaTypeAdapter<?> getJavaTypeAdapter() {
+  protected IDataTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
 
@@ -207,7 +207,7 @@ class DefaultFieldProperty
     }
 
     @Override
-    public IJavaTypeAdapter<?> getJavaTypeAdapter() {
+    public IDataTypeAdapter<?> getJavaTypeAdapter() {
       return ObjectUtils.notNull(DefaultFieldProperty.this.getJavaTypeAdapter());
     }
 

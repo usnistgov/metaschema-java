@@ -31,7 +31,8 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ModelWalker;
 
-public abstract class ConstraintVisitingModelWalker<DATA>
+// TODO: remove if unused
+abstract class ConstraintVisitingModelWalker<DATA>
     extends ModelWalker<DATA> {
 
   @Override

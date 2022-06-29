@@ -24,26 +24,51 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath;
+package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItemVisitor;
+import com.fasterxml.jackson.core.JsonGenerator;
 
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 
-public interface IExpressionEvaluationVisitor extends INodeItemVisitor<@NotNull ISequence<?>, @NotNull IExpression> {
+import java.io.IOException;
+import java.math.BigInteger;
+
+/**
+ * Provides a common base class for integer-based data types.
+ * <p>
+ * An underlying {@link BigInteger} is used to support arbitrary sized integers.
+ *
+ * @param <ITEM_TYPE>
+ *          the Metapath item type supported by the adapter
+ */
+public abstract class AbstractIntegerAdapter<ITEM_TYPE extends IIntegerItem>
+    extends AbstractDataTypeAdapter<BigInteger, ITEM_TYPE> {
+
   /**
-   * Visit the provided expression and evaluate it against the node context.
-   * 
-   * @param <T>
-   *          the type of the items contained in the sequence
-   * 
-   * @param expr
-   *          the expression to evaluate
-   * @param context
-   *          the current node context
-   * @return the matching sequence of nodes or an empty sequence if no nodes match
+   * Construct a new integer adapter.
    */
-  @NotNull
-  <T extends IItem> ISequence<T> visit(@NotNull IExpression expr, @NotNull INodeContext context);
+  @SuppressWarnings("null")
+  protected AbstractIntegerAdapter() {
+    super(BigInteger.class);
+  }
+
+  @Override
+  public BigInteger parse(String value) {
+    return new BigInteger(value);
+  }
+
+  @Override
+  public void writeJsonValue(Object value, JsonGenerator generator) throws IOException {
+    try {
+      generator.writeNumber((BigInteger) value);
+    } catch (ClassCastException ex) {
+      throw new IOException(ex);
+    }
+  }
+
+  @Override
+  public BigInteger copy(Object obj) {
+    // a BigInteger is immutable
+    return (BigInteger) obj;
+  }
 }

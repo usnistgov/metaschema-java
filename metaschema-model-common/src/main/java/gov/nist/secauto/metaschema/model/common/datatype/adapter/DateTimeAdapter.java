@@ -26,9 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import gov.nist.secauto.metaschema.model.common.datatype.AbstractDatatypeJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.object.DateTime;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
@@ -43,7 +42,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 
 public class DateTimeAdapter
-    extends AbstractDatatypeJavaTypeAdapter<DateTime, IDateTimeItem> {
+    extends AbstractCustomJavaDataTypeAdapter<DateTime, IDateTimeItem> {
 
   @SuppressWarnings("null")
   DateTimeAdapter() {
@@ -109,7 +108,7 @@ public class DateTimeAdapter
     } else if (item instanceof IStringItem || item instanceof IUntypedAtomicItem) {
       retval = super.castInternal(item);
     } else {
-      throw new InvalidValueForCastFunctionMetapathException(
+      throw new InvalidValueForCastFunctionException(
           String.format("unsupported item type '%s'", item.getClass().getName()));
     }
     return retval;

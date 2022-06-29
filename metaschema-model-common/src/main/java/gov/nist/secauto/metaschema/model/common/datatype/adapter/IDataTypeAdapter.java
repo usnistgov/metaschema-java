@@ -24,12 +24,12 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype;
+package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -47,7 +47,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public interface IJavaTypeAdapter<TYPE> {
+public interface IDataTypeAdapter<TYPE> {
 
   /**
    * Get the metaschema type name associated with this adapter. This name must be unique with respect
@@ -136,11 +136,11 @@ public interface IJavaTypeAdapter<TYPE> {
    * @param item
    *          the atomic item to cast
    * @return an atomic item of this type
-   * @throws InvalidValueForCastFunctionMetapathException
+   * @throws InvalidValueForCastFunctionException
    *           if the provided item type cannot be cast to this item type
    */
   @NotNull
-  IAnyAtomicItem cast(IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException;
+  IAnyAtomicItem cast(IAnyAtomicItem item) throws InvalidValueForCastFunctionException;
 
   /**
    * Indicates if the adapter will parse the {@link XMLEvent#START_ELEMENT} before parsing the value
@@ -234,7 +234,7 @@ public interface IJavaTypeAdapter<TYPE> {
   }
 
   /**
-   * Parses a provided string using {@link IJavaTypeAdapter#parse(XMLEventReader2)}.
+   * Parses a provided string using {@link IDataTypeAdapter#parse(XMLEventReader2)}.
    * <p>
    * This method may pre-parse the data and then return copies, since the data can only be parsed
    * once, but the supplier might be called multiple times.

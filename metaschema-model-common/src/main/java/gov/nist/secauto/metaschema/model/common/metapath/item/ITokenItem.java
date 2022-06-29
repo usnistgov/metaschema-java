@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -37,13 +37,13 @@ public interface ITokenItem extends IStringItem {
     try {
       return new TokenItemImpl(MetaschemaDataTypeProvider.TOKEN.parse(value));
     } catch (IllegalArgumentException ex) {
-      throw new InvalidValueForCastFunctionMetapathException(String.format("Unable to parse string value '%s'", value),
+      throw new InvalidValueForCastFunctionException(String.format("Unable to parse string value '%s'", value),
           ex);
     }
   }
 
   @NotNull
-  public static ITokenItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+  public static ITokenItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.TOKEN.cast(item);
   }
 

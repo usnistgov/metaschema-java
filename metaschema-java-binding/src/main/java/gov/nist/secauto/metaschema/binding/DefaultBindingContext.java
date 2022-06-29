@@ -45,7 +45,7 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.model.common.constraint.FindingCollectingConstraintValidationHandler;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
@@ -133,7 +133,7 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public <TYPE extends IJavaTypeAdapter<?>> TYPE
+  public <TYPE extends IDataTypeAdapter<?>> TYPE
       getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz) {
     return dataTypeProvider.getJavaTypeAdapterInstance(clazz);
   }
@@ -207,7 +207,7 @@ public class DefaultBindingContext implements IBindingContext {
     }
   }
 
-  public Map<@NotNull Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> getJavaTypeAdaptersByClass() {
+  public Map<@NotNull Class<? extends IDataTypeAdapter<?>>, IDataTypeAdapter<?>> getJavaTypeAdaptersByClass() {
     return dataTypeProvider.getJavaTypeAdaptersByClass();
   }
 

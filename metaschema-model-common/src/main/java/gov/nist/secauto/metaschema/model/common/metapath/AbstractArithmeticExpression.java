@@ -40,13 +40,11 @@ import java.util.List;
  * @param <RESULT_TYPE>
  *          the base result of evaluating the arithmetic expression
  */
-public abstract class AbstractArithmeticExpression<RESULT_TYPE extends IAnyAtomicItem>
-    extends AbstractBinaryExpression<IExpression, IExpression>
-    implements IArithmeticExpression<RESULT_TYPE> {
+abstract class AbstractArithmeticExpression<RESULT_TYPE extends IAnyAtomicItem>
+    extends AbstractBinaryExpression<IExpression, IExpression> {
 
   @NotNull
   private final Class<? extends RESULT_TYPE> staticResultType;
-  
 
   /**
    * Construct a new arithmetic expression.

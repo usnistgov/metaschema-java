@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
-public interface IPathExpression<RESULT_TYPE extends IItem> extends IExpression {
+interface IPathExpression<RESULT_TYPE extends IItem> extends IExpression {
   @Override
   Class<RESULT_TYPE> getBaseResultType();
 

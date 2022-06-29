@@ -24,4 +24,31 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.io;
+package gov.nist.secauto.metaschema.model.common.metapath;
+
+public class TypeMetapathException
+    extends AbstractCodedMetapathException {
+  public static final int INVALID_TYPE_ERROR = 4;
+
+  /**
+   * the serial version UID.
+   */
+  private static final long serialVersionUID = 2L;
+
+  public TypeMetapathException(int code, String message, Throwable cause) {
+    super(code, message, cause);
+  }
+
+  public TypeMetapathException(int code, String message) {
+    super(code, message);
+  }
+
+  public TypeMetapathException(int code, Throwable cause) {
+    super(code, cause);
+  }
+
+  @Override
+  protected String getCodePrefix() {
+    return "MPTY";
+  }
+}

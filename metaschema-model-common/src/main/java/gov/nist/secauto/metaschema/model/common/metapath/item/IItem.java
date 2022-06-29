@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +39,7 @@ public interface IItem {
    * <li>In the case of a Field with flags, a Java object representing the field value and flags of
    * the field.
    * <li>In the case of a Field without flags or a flag, a Java type managed by a
-   * {@link IJavaTypeAdapter} or a primitive type provided by the Java standard library.
+   * {@link IDataTypeAdapter} or a primitive type provided by the Java standard library.
    * </ul>
    * 
    * @return the value or {@code null} if the item has no available value

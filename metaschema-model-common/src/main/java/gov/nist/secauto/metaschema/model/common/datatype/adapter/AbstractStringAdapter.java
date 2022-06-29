@@ -24,40 +24,32 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype;
+package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
-
-import java.io.IOException;
-import java.math.BigInteger;
-
-public abstract class AbstractIntegerAdapter<ITEM_TYPE extends IIntegerItem>
-    extends AbstractJavaTypeAdapter<BigInteger, ITEM_TYPE> {
+/**
+ * Provides a common base class for string-based data types.
+ *
+ * @param <ITEM_TYPE>
+ *          the Metapath item type supported by the adapter
+ */
+public abstract class AbstractStringAdapter<ITEM_TYPE extends IStringItem>
+    extends AbstractDataTypeAdapter<String, ITEM_TYPE> {
 
   @SuppressWarnings("null")
-  protected AbstractIntegerAdapter() {
-    super(BigInteger.class);
+  protected AbstractStringAdapter() {
+    super(String.class);
   }
 
   @Override
-  public BigInteger parse(String value) {
-    return new BigInteger(value);
+  public String parse(String value) {
+    return value;
   }
 
   @Override
-  public void writeJsonValue(Object value, JsonGenerator generator) throws IOException {
-    try {
-      generator.writeNumber((BigInteger) value);
-    } catch (ClassCastException ex) {
-      throw new IOException(ex);
-    }
-  }
-
-  @Override
-  public BigInteger copy(Object obj) {
-    // a BigInteger is immutable
-    return (BigInteger) obj;
+  public String copy(Object obj) {
+    // a Java string is immutable
+    return (String) obj;
   }
 }

@@ -24,30 +24,31 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype;
+package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import gov.nist.secauto.metaschema.model.common.datatype.ICustomJavaDataType;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Provides a Java type adapter implementation for data types that are based on {@link IDatatype}.
+ * Provides a Java type adapter implementation for data types that are based on {@link ICustomJavaDataType}.
  * 
  * @param <TYPE>
- *          the Java type this adapter supports, which is based on {@link IDatatype}
+ *          the Java type this adapter supports, which is based on {@link ICustomJavaDataType}
  * @param <ITEM_TYPE>
  *          the Metapath item type associated with the adapter
  */
-public abstract class AbstractDatatypeJavaTypeAdapter<TYPE extends IDatatype<TYPE>, ITEM_TYPE extends IAnyAtomicItem>
-    extends AbstractJavaTypeAdapter<TYPE, ITEM_TYPE> {
+public abstract class AbstractCustomJavaDataTypeAdapter<TYPE extends ICustomJavaDataType<TYPE>, ITEM_TYPE extends IAnyAtomicItem>
+    extends AbstractDataTypeAdapter<TYPE, ITEM_TYPE> {
 
   /**
-   * Construct a new Java type adapter for the class based on {@link IDatatype}.
+   * Construct a new Java type adapter for the class based on {@link ICustomJavaDataType}.
    * 
    * @param clazz
-   *          a data type class based on {@link IDatatype}
+   *          a data type class based on {@link ICustomJavaDataType}
    */
-  public AbstractDatatypeJavaTypeAdapter(@NotNull Class<TYPE> clazz) {
+  public AbstractCustomJavaDataTypeAdapter(@NotNull Class<TYPE> clazz) {
     super(clazz);
   }
 

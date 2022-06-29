@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.validation;
 
-import gov.nist.secauto.metaschema.model.common.io.IResourceLoader;
+import gov.nist.secauto.metaschema.model.common.IResourceLoader;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;

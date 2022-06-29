@@ -26,31 +26,24 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-
-public class InvalidTypeMetapathException
-    extends TypeMetapathException {
+public class InvalidValueForCastFunctionException
+    extends InvalidArgumentFunctionException {
 
   /**
-   * the serial version UID.
+   * the serial version UUID.
    */
   private static final long serialVersionUID = 1L;
 
-  public InvalidTypeMetapathException(IItem item, Throwable cause) {
-    super(TypeMetapathException.INVALID_TYPE_ERROR, String.format("Invalid data type '%s'", item.getClass().getName()),
-        cause);
+  public InvalidValueForCastFunctionException(String message, Throwable cause) {
+    super(InvalidArgumentFunctionException.INVALID_VALUE_FOR_CAST, message, cause);
   }
 
-  public InvalidTypeMetapathException(IItem item) {
-    super(TypeMetapathException.INVALID_TYPE_ERROR, String.format("Invalid data type '%s'", item.getClass().getName()));
+  public InvalidValueForCastFunctionException(String message) {
+    super(InvalidArgumentFunctionException.INVALID_VALUE_FOR_CAST, message);
   }
 
-  public InvalidTypeMetapathException(String message, Throwable cause) {
-    super(TypeMetapathException.INVALID_TYPE_ERROR, message, cause);
-  }
-
-  public InvalidTypeMetapathException(String message) {
-    super(TypeMetapathException.INVALID_TYPE_ERROR, message);
+  public InvalidValueForCastFunctionException(Throwable cause) {
+    super(InvalidArgumentFunctionException.INVALID_VALUE_FOR_CAST, cause);
   }
 
 }

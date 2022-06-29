@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.object.Date;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -51,12 +51,12 @@ public interface IDateItem extends IAnyAtomicItem {
     try {
       return valueOf(MetaschemaDataTypeProvider.DATE.parse(value));
     } catch (IllegalArgumentException ex) {
-      throw new InvalidValueForCastFunctionMetapathException(String.format("Unable to parse string value '%s'", value), ex);
+      throw new InvalidValueForCastFunctionException(String.format("Unable to parse string value '%s'", value), ex);
     }
   }
 
   @NotNull
-  public static IDateItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+  public static IDateItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.DATE.cast(item);
   }
 

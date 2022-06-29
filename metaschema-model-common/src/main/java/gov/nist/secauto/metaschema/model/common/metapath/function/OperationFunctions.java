@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function; // NOPMD - intentional
 
+import gov.nist.secauto.metaschema.model.common.metapath.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;

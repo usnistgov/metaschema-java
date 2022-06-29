@@ -46,7 +46,7 @@ import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
@@ -98,7 +98,7 @@ class ModelInstanceTypeInfoImpl
     if (instance instanceof IFieldInstance) {
       IFieldInstance fieldInstance = (IFieldInstance) instance;
       if (fieldInstance.isSimple()) {
-        IJavaTypeAdapter<?> dataType = fieldInstance.getDefinition().getJavaTypeAdapter();
+        IDataTypeAdapter<?> dataType = fieldInstance.getDefinition().getJavaTypeAdapter();
         // this is a simple value
         retval = ObjectUtils.notNull(ClassName.get(dataType.getJavaClass()));
       } else {
@@ -173,7 +173,7 @@ class ModelInstanceTypeInfoImpl
       IFieldInstance fieldInstance = (IFieldInstance) modelInstance;
       IFieldDefinition fieldDefinition = (IFieldDefinition) definition;
 
-      IJavaTypeAdapter<?> valueDataType = fieldDefinition.getJavaTypeAdapter();
+      IDataTypeAdapter<?> valueDataType = fieldDefinition.getJavaTypeAdapter();
 
       if (MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
         fieldAnnoation.addMember("inXmlWrapped", "$L", fieldInstance.isInXmlWrapped());

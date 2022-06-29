@@ -30,6 +30,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Represents a container of rules constraining the effective model of a Metaschema assembly data instance.
+ */
 public interface IAssemblyConstraintSupport extends IValueConstraintSupport {
   /**
    * Get the collection of index constraints, if any.

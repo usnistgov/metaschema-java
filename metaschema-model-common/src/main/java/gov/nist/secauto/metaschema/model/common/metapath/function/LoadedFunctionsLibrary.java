@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-public class LoadedFunctionsLibrary
+class LoadedFunctionsLibrary
     extends AbstractFunctionLibrary {
 
 }
