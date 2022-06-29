@@ -229,7 +229,7 @@
 <a class="jxr_linenumber" name="L221" href="#L221">221</a>       @NotNull InstanceProperties properties,
 <a class="jxr_linenumber" name="L222" href="#L222">222</a>       @NotNull ObjectNode definitionNode,
 <a class="jxr_linenumber" name="L223" href="#L223">223</a>       @NotNull GenerationState state) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L224" href="#L224">224</a>     List&lt;InstanceProperties&gt; propertyChoices = CollectionUtil.singletonList(properties);
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>     List&lt;@NotNull InstanceProperties&gt; propertyChoices = CollectionUtil.singletonList(properties);
 <a class="jxr_linenumber" name="L225" href="#L225">225</a>     propertyChoices = explodeChoices(choices, propertyChoices, state);
 <a class="jxr_linenumber" name="L226" href="#L226">226</a> 
 <a class="jxr_linenumber" name="L227" href="#L227">227</a>     <strong class="jxr_keyword">if</strong> (propertyChoices.size() == 1) {
@@ -246,7 +246,7 @@
 <a class="jxr_linenumber" name="L238" href="#L238">238</a>     }
 <a class="jxr_linenumber" name="L239" href="#L239">239</a>   }
 <a class="jxr_linenumber" name="L240" href="#L240">240</a> 
-<a class="jxr_linenumber" name="L241" href="#L241">241</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> List&lt;InstanceProperties&gt; explodeChoices(
+<a class="jxr_linenumber" name="L241" href="#L241">241</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> List&lt;@NotNull InstanceProperties&gt; explodeChoices(
 <a class="jxr_linenumber" name="L242" href="#L242">242</a>       @NotNull Collection&lt;@NotNull ? <strong class="jxr_keyword">extends</strong> IChoiceInstance&gt; choices,
 <a class="jxr_linenumber" name="L243" href="#L243">243</a>       @NotNull List&lt;InstanceProperties&gt; propertyChoices,
 <a class="jxr_linenumber" name="L244" href="#L244">244</a>       @NotNull GenerationState state) <strong class="jxr_keyword">throws</strong> IOException {

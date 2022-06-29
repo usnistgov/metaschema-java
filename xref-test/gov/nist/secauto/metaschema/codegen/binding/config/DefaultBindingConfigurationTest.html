@@ -39,60 +39,58 @@
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IMetaschema;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.MetaschemaException;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.ModelType;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.jmock.Expectations;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.jmock.junit5.JUnit5Mockery;
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> org.junit.jupiter.api.Test;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> org.junit.jupiter.api.extension.RegisterExtension;
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> java.io.File;
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> java.net.MalformedURLException;
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> java.net.URI;
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>  
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">class</strong> <a name="DefaultBindingConfigurationTest" href="../../../../../../../gov/nist/secauto/metaschema/codegen/binding/config/DefaultBindingConfigurationTest.html#DefaultBindingConfigurationTest">DefaultBindingConfigurationTest</a> {
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> URI METASCHEMA_LOCATION
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>        = <strong class="jxr_keyword">new</strong> File(<span class="jxr_string">"src/test/resources/metaschema/metaschema.xml"</span>).getAbsoluteFile().toURI();
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DEFINITION_NAME = <span class="jxr_string">"grandchild"</span>;
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> ModelType DEFINITION_MODEL_TYPE = ModelType.ASSEMBLY;
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DEFINITION__CLASS_NAME = <span class="jxr_string">"TheChild"</span>;
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>  
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>    @RegisterExtension
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>    JUnit5Mockery context = <strong class="jxr_keyword">new</strong> JUnit5Mockery();
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> INamedModelDefinition definition = context.mock(INamedModelDefinition.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> IMetaschema metaschema = context.mock(IMetaschema.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>  
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>    @Test
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>    <strong class="jxr_keyword">void</strong> testLoader() <strong class="jxr_keyword">throws</strong> MalformedURLException, IOException {
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>      File bindingConfigFile = <strong class="jxr_keyword">new</strong> File(<span class="jxr_string">"src/test/resources/metaschema/binding-config.xml"</span>);
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>  
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      DefaultBindingConfiguration config = <strong class="jxr_keyword">new</strong> DefaultBindingConfiguration();
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      config.load(bindingConfigFile);
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>  
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>      assertEquals(<span class="jxr_string">"gov.nist.itl.metaschema.codegen.xml.example.assembly"</span>,
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>          config.getPackageNameForNamespace(<span class="jxr_string">"http://csrc.nist.gov/ns/metaschema/testing/assembly"</span>));
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>  
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>      context.checking(<strong class="jxr_keyword">new</strong> Expectations() {
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>        { <em class="jxr_comment">// NOPMD - intentional</em>
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>          oneOf(metaschema).getLocation();
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>          will(returnValue(METASCHEMA_LOCATION));
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>          allowing(definition).getContainingMetaschema();
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>          will(returnValue(metaschema));
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>          allowing(definition).getModelType();
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>          will(returnValue(DEFINITION_MODEL_TYPE));
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>          allowing(definition).getName();
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>          will(returnValue(DEFINITION_NAME));
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>        }
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>      });
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>      IDefinitionBindingConfiguration defConfig = config.getBindingConfigurationForDefinition(definition);
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>      assertNotNull(defConfig);
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>      assertEquals(DEFINITION__CLASS_NAME, defConfig.getClassName());
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>    }
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>  
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>  }
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.ModelType;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.jmock.Expectations;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.jmock.junit5.JUnit5Mockery;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.junit.jupiter.api.Test;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.junit.jupiter.api.extension.RegisterExtension;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> java.io.File;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> java.net.MalformedURLException;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> java.net.URI;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">class</strong> <a name="DefaultBindingConfigurationTest" href="../../../../../../../gov/nist/secauto/metaschema/codegen/binding/config/DefaultBindingConfigurationTest.html#DefaultBindingConfigurationTest">DefaultBindingConfigurationTest</a> {
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> URI METASCHEMA_LOCATION
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>        = <strong class="jxr_keyword">new</strong> File(<span class="jxr_string">"src/test/resources/metaschema/metaschema.xml"</span>).getAbsoluteFile().toURI();
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DEFINITION_NAME = <span class="jxr_string">"grandchild"</span>;
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> ModelType DEFINITION_MODEL_TYPE = ModelType.ASSEMBLY;
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DEFINITION__CLASS_NAME = <span class="jxr_string">"TheChild"</span>;
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>    @RegisterExtension
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>    JUnit5Mockery context = <strong class="jxr_keyword">new</strong> JUnit5Mockery();
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> INamedModelDefinition definition = context.mock(INamedModelDefinition.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> IMetaschema metaschema = context.mock(IMetaschema.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>    @Test
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>    <strong class="jxr_keyword">void</strong> testLoader() <strong class="jxr_keyword">throws</strong> MalformedURLException, IOException {
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>      File bindingConfigFile = <strong class="jxr_keyword">new</strong> File(<span class="jxr_string">"src/test/resources/metaschema/binding-config.xml"</span>);
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>      DefaultBindingConfiguration config = <strong class="jxr_keyword">new</strong> DefaultBindingConfiguration();
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>      config.load(bindingConfigFile);
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      assertEquals(<span class="jxr_string">"gov.nist.itl.metaschema.codegen.xml.example.assembly"</span>,
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>          config.getPackageNameForNamespace(<span class="jxr_string">"http://csrc.nist.gov/ns/metaschema/testing/assembly"</span>));
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      context.checking(<strong class="jxr_keyword">new</strong> Expectations() {
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>        { <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>          oneOf(metaschema).getLocation();
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>          will(returnValue(METASCHEMA_LOCATION));
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>          allowing(definition).getContainingMetaschema();
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          will(returnValue(metaschema));
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>          allowing(definition).getModelType();
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>          will(returnValue(DEFINITION_MODEL_TYPE));
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>          allowing(definition).getName();
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>          will(returnValue(DEFINITION_NAME));
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>        }
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>      });
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>      IDefinitionBindingConfiguration defConfig = config.getBindingConfigurationForDefinition(definition);
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>      assertNotNull(defConfig);
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>      assertEquals(DEFINITION__CLASS_NAME, defConfig.getClassName());
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>    }
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

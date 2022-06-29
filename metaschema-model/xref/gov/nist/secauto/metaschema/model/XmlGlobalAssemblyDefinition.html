@@ -40,22 +40,22 @@
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IDefinition;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFieldInstance;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFlagInstance;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IMetaschema;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IModelInstance;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.INamedInstance;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.INamedModelInstance;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IModelInstance;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.INamedModelInstance;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ExternalModelSource;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
@@ -70,7 +70,7 @@
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>    @NotNull
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> GlobalAssemblyDefinitionType xmlAssembly;
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>    @NotNull
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> IMetaschema metaschema;
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="XmlMetaschema" href="../../../../../gov/nist/secauto/metaschema/model/XmlMetaschema.html#XmlMetaschema">XmlMetaschema</a> metaschema;
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>    <strong class="jxr_keyword">private</strong> <a name="XmlFlagContainerSupport" href="../../../../../gov/nist/secauto/metaschema/model/XmlFlagContainerSupport.html#XmlFlagContainerSupport">XmlFlagContainerSupport</a> flagContainer;
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>    <strong class="jxr_keyword">private</strong> <a name="XmlModelContainerSupport" href="../../../../../gov/nist/secauto/metaschema/model/XmlModelContainerSupport.html#XmlModelContainerSupport">XmlModelContainerSupport</a> modelContainer;
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>    <strong class="jxr_keyword">private</strong> IAssemblyConstraintSupport constraints;
@@ -101,7 +101,7 @@
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>    }
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>  
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>    @Override
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>    <strong class="jxr_keyword">public</strong> IMetaschema getContainingMetaschema() {
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>    <strong class="jxr_keyword">public</strong> <a name="XmlMetaschema" href="../../../../../gov/nist/secauto/metaschema/model/XmlMetaschema.html#XmlMetaschema">XmlMetaschema</a> getContainingMetaschema() {
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>      <strong class="jxr_keyword">return</strong> metaschema;
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>    }
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  
@@ -214,131 +214,175 @@
 <a class="jxr_linenumber" name="L206" href="#L206">206</a>     <strong class="jxr_keyword">synchronized</strong> (<strong class="jxr_keyword">this</strong>) {
 <a class="jxr_linenumber" name="L207" href="#L207">207</a>       <strong class="jxr_keyword">if</strong> (constraints == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L208" href="#L208">208</a>         <strong class="jxr_keyword">if</strong> (getXmlAssembly().isSetConstraint()) {
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>           constraints = <strong class="jxr_keyword">new</strong> <a name="AssemblyConstraintSupport" href="../../../../../gov/nist/secauto/metaschema/model/AssemblyConstraintSupport.html#AssemblyConstraintSupport">AssemblyConstraintSupport</a>(getXmlAssembly().getConstraint());
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L211" href="#L211">211</a>           constraints = IAssemblyConstraintSupport.NULL_CONSTRAINT;
-<a class="jxr_linenumber" name="L212" href="#L212">212</a>         }
-<a class="jxr_linenumber" name="L213" href="#L213">213</a>       }
-<a class="jxr_linenumber" name="L214" href="#L214">214</a>     }
-<a class="jxr_linenumber" name="L215" href="#L215">215</a>   }
-<a class="jxr_linenumber" name="L216" href="#L216">216</a> 
-<a class="jxr_linenumber" name="L217" href="#L217">217</a>   @Override
-<a class="jxr_linenumber" name="L218" href="#L218">218</a>   <strong class="jxr_keyword">public</strong> List&lt;? <strong class="jxr_keyword">extends</strong> IConstraint&gt; getConstraints() {
-<a class="jxr_linenumber" name="L219" href="#L219">219</a>     checkModelConstraints();
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>     <strong class="jxr_keyword">return</strong> constraints.getConstraints();
-<a class="jxr_linenumber" name="L221" href="#L221">221</a>   }
-<a class="jxr_linenumber" name="L222" href="#L222">222</a> 
-<a class="jxr_linenumber" name="L223" href="#L223">223</a>   @Override
-<a class="jxr_linenumber" name="L224" href="#L224">224</a>   <strong class="jxr_keyword">public</strong> List&lt;? <strong class="jxr_keyword">extends</strong> IAllowedValuesConstraint&gt; getAllowedValuesContraints() {
-<a class="jxr_linenumber" name="L225" href="#L225">225</a>     checkModelConstraints();
-<a class="jxr_linenumber" name="L226" href="#L226">226</a>     <strong class="jxr_keyword">return</strong> constraints.getAllowedValuesContraints();
-<a class="jxr_linenumber" name="L227" href="#L227">227</a>   }
-<a class="jxr_linenumber" name="L228" href="#L228">228</a> 
-<a class="jxr_linenumber" name="L229" href="#L229">229</a>   @Override
-<a class="jxr_linenumber" name="L230" href="#L230">230</a>   <strong class="jxr_keyword">public</strong> List&lt;? <strong class="jxr_keyword">extends</strong> IMatchesConstraint&gt; getMatchesConstraints() {
-<a class="jxr_linenumber" name="L231" href="#L231">231</a>     checkModelConstraints();
-<a class="jxr_linenumber" name="L232" href="#L232">232</a>     <strong class="jxr_keyword">return</strong> constraints.getMatchesConstraints();
-<a class="jxr_linenumber" name="L233" href="#L233">233</a>   }
-<a class="jxr_linenumber" name="L234" href="#L234">234</a> 
-<a class="jxr_linenumber" name="L235" href="#L235">235</a>   @Override
-<a class="jxr_linenumber" name="L236" href="#L236">236</a>   <strong class="jxr_keyword">public</strong> List&lt;? <strong class="jxr_keyword">extends</strong> IIndexHasKeyConstraint&gt; getIndexHasKeyConstraints() {
-<a class="jxr_linenumber" name="L237" href="#L237">237</a>     checkModelConstraints();
-<a class="jxr_linenumber" name="L238" href="#L238">238</a>     <strong class="jxr_keyword">return</strong> constraints.getIndexHasKeyConstraints();
-<a class="jxr_linenumber" name="L239" href="#L239">239</a>   }
-<a class="jxr_linenumber" name="L240" href="#L240">240</a> 
-<a class="jxr_linenumber" name="L241" href="#L241">241</a>   @Override
-<a class="jxr_linenumber" name="L242" href="#L242">242</a>   <strong class="jxr_keyword">public</strong> List&lt;? <strong class="jxr_keyword">extends</strong> IExpectConstraint&gt; getExpectConstraints() {
-<a class="jxr_linenumber" name="L243" href="#L243">243</a>     checkModelConstraints();
-<a class="jxr_linenumber" name="L244" href="#L244">244</a>     <strong class="jxr_keyword">return</strong> constraints.getExpectConstraints();
-<a class="jxr_linenumber" name="L245" href="#L245">245</a>   }
-<a class="jxr_linenumber" name="L246" href="#L246">246</a> 
-<a class="jxr_linenumber" name="L247" href="#L247">247</a>   @Override
-<a class="jxr_linenumber" name="L248" href="#L248">248</a>   <strong class="jxr_keyword">public</strong> List&lt;? <strong class="jxr_keyword">extends</strong> IIndexConstraint&gt; getIndexConstraints() {
-<a class="jxr_linenumber" name="L249" href="#L249">249</a>     checkModelConstraints();
-<a class="jxr_linenumber" name="L250" href="#L250">250</a>     <strong class="jxr_keyword">return</strong> constraints.getIndexContraints();
-<a class="jxr_linenumber" name="L251" href="#L251">251</a>   }
-<a class="jxr_linenumber" name="L252" href="#L252">252</a> 
-<a class="jxr_linenumber" name="L253" href="#L253">253</a>   @Override
-<a class="jxr_linenumber" name="L254" href="#L254">254</a>   <strong class="jxr_keyword">public</strong> List&lt;? <strong class="jxr_keyword">extends</strong> IUniqueConstraint&gt; getUniqueConstraints() {
-<a class="jxr_linenumber" name="L255" href="#L255">255</a>     checkModelConstraints();
-<a class="jxr_linenumber" name="L256" href="#L256">256</a>     <strong class="jxr_keyword">return</strong> constraints.getUniqueConstraints();
-<a class="jxr_linenumber" name="L257" href="#L257">257</a>   }
-<a class="jxr_linenumber" name="L258" href="#L258">258</a> 
-<a class="jxr_linenumber" name="L259" href="#L259">259</a>   @Override
-<a class="jxr_linenumber" name="L260" href="#L260">260</a>   <strong class="jxr_keyword">public</strong> List&lt;? <strong class="jxr_keyword">extends</strong> ICardinalityConstraint&gt; getHasCardinalityConstraints() {
-<a class="jxr_linenumber" name="L261" href="#L261">261</a>     checkModelConstraints();
-<a class="jxr_linenumber" name="L262" href="#L262">262</a>     <strong class="jxr_keyword">return</strong> constraints.getHasCardinalityConstraints();
-<a class="jxr_linenumber" name="L263" href="#L263">263</a>   }
-<a class="jxr_linenumber" name="L264" href="#L264">264</a> 
-<a class="jxr_linenumber" name="L265" href="#L265">265</a>   @Override
-<a class="jxr_linenumber" name="L266" href="#L266">266</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isInline() {
-<a class="jxr_linenumber" name="L267" href="#L267">267</a>     <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L268" href="#L268">268</a>   }
-<a class="jxr_linenumber" name="L269" href="#L269">269</a> 
-<a class="jxr_linenumber" name="L270" href="#L270">270</a>   @Override
-<a class="jxr_linenumber" name="L271" href="#L271">271</a>   <strong class="jxr_keyword">public</strong> INamedInstance getInlineInstance() {
-<a class="jxr_linenumber" name="L272" href="#L272">272</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L273" href="#L273">273</a>   }
-<a class="jxr_linenumber" name="L274" href="#L274">274</a> 
-<a class="jxr_linenumber" name="L275" href="#L275">275</a>   @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L276" href="#L276">276</a>   @Override
-<a class="jxr_linenumber" name="L277" href="#L277">277</a>   <strong class="jxr_keyword">public</strong> String getName() {
-<a class="jxr_linenumber" name="L278" href="#L278">278</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().getName();
-<a class="jxr_linenumber" name="L279" href="#L279">279</a>   }
-<a class="jxr_linenumber" name="L280" href="#L280">280</a> 
-<a class="jxr_linenumber" name="L281" href="#L281">281</a>   @Override
-<a class="jxr_linenumber" name="L282" href="#L282">282</a>   <strong class="jxr_keyword">public</strong> String getUseName() {
-<a class="jxr_linenumber" name="L283" href="#L283">283</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName() : getName();
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>   }
-<a class="jxr_linenumber" name="L285" href="#L285">285</a> 
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>   @Override
-<a class="jxr_linenumber" name="L287" href="#L287">287</a>   <strong class="jxr_keyword">public</strong> String getFormalName() {
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().isSetFormalName() ? getXmlAssembly().getFormalName() : <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>           constraints = <strong class="jxr_keyword">new</strong> <a name="AssemblyConstraintSupport" href="../../../../../gov/nist/secauto/metaschema/model/AssemblyConstraintSupport.html#AssemblyConstraintSupport">AssemblyConstraintSupport</a>(
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>               ObjectUtils.notNull(getXmlAssembly().getConstraint()),
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>               ExternalModelSource.instance(getContainingMetaschema().getLocation()));
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>           constraints = <strong class="jxr_keyword">new</strong> <a name="AssemblyConstraintSupport" href="../../../../../gov/nist/secauto/metaschema/model/AssemblyConstraintSupport.html#AssemblyConstraintSupport">AssemblyConstraintSupport</a>();
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>         }
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>       }
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>     }
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>   }
+<a class="jxr_linenumber" name="L218" href="#L218">218</a> 
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>   @Override
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>   <strong class="jxr_keyword">public</strong> List&lt;? <strong class="jxr_keyword">extends</strong> IConstraint&gt; getConstraints() {
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>     checkModelConstraints();
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>     <strong class="jxr_keyword">return</strong> constraints.getConstraints();
+<a class="jxr_linenumber" name="L223" href="#L223">223</a>   }
+<a class="jxr_linenumber" name="L224" href="#L224">224</a> 
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>   @Override
+<a class="jxr_linenumber" name="L226" href="#L226">226</a>   <strong class="jxr_keyword">public</strong> List&lt;? <strong class="jxr_keyword">extends</strong> IAllowedValuesConstraint&gt; getAllowedValuesConstraints() {
+<a class="jxr_linenumber" name="L227" href="#L227">227</a>     checkModelConstraints();
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>     <strong class="jxr_keyword">return</strong> constraints.getAllowedValuesConstraints();
+<a class="jxr_linenumber" name="L229" href="#L229">229</a>   }
+<a class="jxr_linenumber" name="L230" href="#L230">230</a> 
+<a class="jxr_linenumber" name="L231" href="#L231">231</a>   @Override
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>   <strong class="jxr_keyword">public</strong> List&lt;? <strong class="jxr_keyword">extends</strong> IMatchesConstraint&gt; getMatchesConstraints() {
+<a class="jxr_linenumber" name="L233" href="#L233">233</a>     checkModelConstraints();
+<a class="jxr_linenumber" name="L234" href="#L234">234</a>     <strong class="jxr_keyword">return</strong> constraints.getMatchesConstraints();
+<a class="jxr_linenumber" name="L235" href="#L235">235</a>   }
+<a class="jxr_linenumber" name="L236" href="#L236">236</a> 
+<a class="jxr_linenumber" name="L237" href="#L237">237</a>   @Override
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>   <strong class="jxr_keyword">public</strong> List&lt;? <strong class="jxr_keyword">extends</strong> IIndexHasKeyConstraint&gt; getIndexHasKeyConstraints() {
+<a class="jxr_linenumber" name="L239" href="#L239">239</a>     checkModelConstraints();
+<a class="jxr_linenumber" name="L240" href="#L240">240</a>     <strong class="jxr_keyword">return</strong> constraints.getIndexHasKeyConstraints();
+<a class="jxr_linenumber" name="L241" href="#L241">241</a>   }
+<a class="jxr_linenumber" name="L242" href="#L242">242</a> 
+<a class="jxr_linenumber" name="L243" href="#L243">243</a>   @Override
+<a class="jxr_linenumber" name="L244" href="#L244">244</a>   <strong class="jxr_keyword">public</strong> List&lt;? <strong class="jxr_keyword">extends</strong> IExpectConstraint&gt; getExpectConstraints() {
+<a class="jxr_linenumber" name="L245" href="#L245">245</a>     checkModelConstraints();
+<a class="jxr_linenumber" name="L246" href="#L246">246</a>     <strong class="jxr_keyword">return</strong> constraints.getExpectConstraints();
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>   }
+<a class="jxr_linenumber" name="L248" href="#L248">248</a> 
+<a class="jxr_linenumber" name="L249" href="#L249">249</a>   @Override
+<a class="jxr_linenumber" name="L250" href="#L250">250</a>   <strong class="jxr_keyword">public</strong> List&lt;? <strong class="jxr_keyword">extends</strong> IIndexConstraint&gt; getIndexConstraints() {
+<a class="jxr_linenumber" name="L251" href="#L251">251</a>     checkModelConstraints();
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>     <strong class="jxr_keyword">return</strong> constraints.getIndexConstraints();
+<a class="jxr_linenumber" name="L253" href="#L253">253</a>   }
+<a class="jxr_linenumber" name="L254" href="#L254">254</a> 
+<a class="jxr_linenumber" name="L255" href="#L255">255</a>   @Override
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>   <strong class="jxr_keyword">public</strong> List&lt;? <strong class="jxr_keyword">extends</strong> IUniqueConstraint&gt; getUniqueConstraints() {
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>     checkModelConstraints();
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>     <strong class="jxr_keyword">return</strong> constraints.getUniqueConstraints();
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>   }
+<a class="jxr_linenumber" name="L260" href="#L260">260</a> 
+<a class="jxr_linenumber" name="L261" href="#L261">261</a>   @Override
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>   <strong class="jxr_keyword">public</strong> List&lt;? <strong class="jxr_keyword">extends</strong> ICardinalityConstraint&gt; getHasCardinalityConstraints() {
+<a class="jxr_linenumber" name="L263" href="#L263">263</a>     checkModelConstraints();
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>     <strong class="jxr_keyword">return</strong> constraints.getHasCardinalityConstraints();
+<a class="jxr_linenumber" name="L265" href="#L265">265</a>   }
+<a class="jxr_linenumber" name="L266" href="#L266">266</a> 
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>   @Override
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>     checkModelConstraints();
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>     constraints.addConstraint(constraint);
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>   }
+<a class="jxr_linenumber" name="L272" href="#L272">272</a> 
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>   @Override
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> addConstraint(@NotNull IMatchesConstraint constraint) {
+<a class="jxr_linenumber" name="L275" href="#L275">275</a>     checkModelConstraints();
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>     constraints.addConstraint(constraint);
+<a class="jxr_linenumber" name="L277" href="#L277">277</a>   }
+<a class="jxr_linenumber" name="L278" href="#L278">278</a> 
+<a class="jxr_linenumber" name="L279" href="#L279">279</a>   @Override
+<a class="jxr_linenumber" name="L280" href="#L280">280</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+<a class="jxr_linenumber" name="L281" href="#L281">281</a>     checkModelConstraints();
+<a class="jxr_linenumber" name="L282" href="#L282">282</a>     constraints.addConstraint(constraint);
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>   }
+<a class="jxr_linenumber" name="L284" href="#L284">284</a> 
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>   @Override
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> addConstraint(@NotNull IExpectConstraint constraint) {
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>     checkModelConstraints();
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>     constraints.addConstraint(constraint);
 <a class="jxr_linenumber" name="L289" href="#L289">289</a>   }
 <a class="jxr_linenumber" name="L290" href="#L290">290</a> 
-<a class="jxr_linenumber" name="L291" href="#L291">291</a>   @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>   @Override
-<a class="jxr_linenumber" name="L293" href="#L293">293</a>   <strong class="jxr_keyword">public</strong> MarkupLine getDescription() {
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription())
-<a class="jxr_linenumber" name="L295" href="#L295">295</a>         : <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L296" href="#L296">296</a>   }
-<a class="jxr_linenumber" name="L297" href="#L297">297</a> 
-<a class="jxr_linenumber" name="L298" href="#L298">298</a>   @Override
-<a class="jxr_linenumber" name="L299" href="#L299">299</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> hasJsonKey() {
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().isSetJsonKey();
+<a class="jxr_linenumber" name="L291" href="#L291">291</a>   @Override
+<a class="jxr_linenumber" name="L292" href="#L292">292</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> addConstraint(@NotNull IIndexConstraint constraint) {
+<a class="jxr_linenumber" name="L293" href="#L293">293</a>     checkModelConstraints();
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>     constraints.addConstraint(constraint);
+<a class="jxr_linenumber" name="L295" href="#L295">295</a>   }
+<a class="jxr_linenumber" name="L296" href="#L296">296</a> 
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>   @Override
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> addConstraint(@NotNull IUniqueConstraint constraint) {
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>     checkModelConstraints();
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>     constraints.addConstraint(constraint);
 <a class="jxr_linenumber" name="L301" href="#L301">301</a>   }
 <a class="jxr_linenumber" name="L302" href="#L302">302</a> 
 <a class="jxr_linenumber" name="L303" href="#L303">303</a>   @Override
-<a class="jxr_linenumber" name="L304" href="#L304">304</a>   <strong class="jxr_keyword">public</strong> IFlagInstance getJsonKeyFlagInstance() {
-<a class="jxr_linenumber" name="L305" href="#L305">305</a>     IFlagInstance retval = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L306" href="#L306">306</a>     <strong class="jxr_keyword">if</strong> (hasJsonKey()) {
-<a class="jxr_linenumber" name="L307" href="#L307">307</a>       retval = getFlagInstanceByName(getXmlAssembly().getJsonKey().getFlagRef());
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>     }
-<a class="jxr_linenumber" name="L309" href="#L309">309</a>     <strong class="jxr_keyword">return</strong> retval;
-<a class="jxr_linenumber" name="L310" href="#L310">310</a>   }
-<a class="jxr_linenumber" name="L311" href="#L311">311</a> 
-<a class="jxr_linenumber" name="L312" href="#L312">312</a>   @Override
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isRoot() {
-<a class="jxr_linenumber" name="L314" href="#L314">314</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().isSetRootName();
-<a class="jxr_linenumber" name="L315" href="#L315">315</a>   }
-<a class="jxr_linenumber" name="L316" href="#L316">316</a> 
-<a class="jxr_linenumber" name="L317" href="#L317">317</a>   @Override
-<a class="jxr_linenumber" name="L318" href="#L318">318</a>   <strong class="jxr_keyword">public</strong> String getRootName() {
-<a class="jxr_linenumber" name="L319" href="#L319">319</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().isSetRootName() ? getXmlAssembly().getRootName() : <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L320" href="#L320">320</a>   }
-<a class="jxr_linenumber" name="L321" href="#L321">321</a> 
-<a class="jxr_linenumber" name="L322" href="#L322">322</a>   @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L323" href="#L323">323</a>   @Override
-<a class="jxr_linenumber" name="L324" href="#L324">324</a>   <strong class="jxr_keyword">public</strong> ModuleScopeEnum getModuleScope() {
-<a class="jxr_linenumber" name="L325" href="#L325">325</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().isSetScope() ? getXmlAssembly().getScope() : IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
-<a class="jxr_linenumber" name="L326" href="#L326">326</a>   }
-<a class="jxr_linenumber" name="L327" href="#L327">327</a> 
-<a class="jxr_linenumber" name="L328" href="#L328">328</a>   @SuppressWarnings(<span class="jxr_string">"null"</span>)
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>   @Override
-<a class="jxr_linenumber" name="L330" href="#L330">330</a>   <strong class="jxr_keyword">public</strong> MarkupMultiline getRemarks() {
-<a class="jxr_linenumber" name="L331" href="#L331">331</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L332" href="#L332">332</a>   }
-<a class="jxr_linenumber" name="L333" href="#L333">333</a> }
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> addConstraint(@NotNull ICardinalityConstraint constraint) {
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>     checkModelConstraints();
+<a class="jxr_linenumber" name="L306" href="#L306">306</a>     constraints.addConstraint(constraint);
+<a class="jxr_linenumber" name="L307" href="#L307">307</a>   }
+<a class="jxr_linenumber" name="L308" href="#L308">308</a> 
+<a class="jxr_linenumber" name="L309" href="#L309">309</a>   @Override
+<a class="jxr_linenumber" name="L310" href="#L310">310</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isInline() {
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>     <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L312" href="#L312">312</a>   }
+<a class="jxr_linenumber" name="L313" href="#L313">313</a> 
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>   @Override
+<a class="jxr_linenumber" name="L315" href="#L315">315</a>   <strong class="jxr_keyword">public</strong> IAssemblyInstance getInlineInstance() {
+<a class="jxr_linenumber" name="L316" href="#L316">316</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L317" href="#L317">317</a>   }
+<a class="jxr_linenumber" name="L318" href="#L318">318</a> 
+<a class="jxr_linenumber" name="L319" href="#L319">319</a>   @SuppressWarnings(<span class="jxr_string">"null"</span>)
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>   @Override
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>   <strong class="jxr_keyword">public</strong> String getName() {
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().getName();
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>   }
+<a class="jxr_linenumber" name="L324" href="#L324">324</a> 
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>   @Override
+<a class="jxr_linenumber" name="L326" href="#L326">326</a>   <strong class="jxr_keyword">public</strong> String getUseName() {
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName() : getName();
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>   }
+<a class="jxr_linenumber" name="L329" href="#L329">329</a> 
+<a class="jxr_linenumber" name="L330" href="#L330">330</a>   @Override
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>   <strong class="jxr_keyword">public</strong> String getFormalName() {
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().isSetFormalName() ? getXmlAssembly().getFormalName() : <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>   }
+<a class="jxr_linenumber" name="L334" href="#L334">334</a> 
+<a class="jxr_linenumber" name="L335" href="#L335">335</a>   @SuppressWarnings(<span class="jxr_string">"null"</span>)
+<a class="jxr_linenumber" name="L336" href="#L336">336</a>   @Override
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>   <strong class="jxr_keyword">public</strong> MarkupLine getDescription() {
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription())
+<a class="jxr_linenumber" name="L339" href="#L339">339</a>         : <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>   }
+<a class="jxr_linenumber" name="L341" href="#L341">341</a> 
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>   @Override
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> hasJsonKey() {
+<a class="jxr_linenumber" name="L344" href="#L344">344</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().isSetJsonKey();
+<a class="jxr_linenumber" name="L345" href="#L345">345</a>   }
+<a class="jxr_linenumber" name="L346" href="#L346">346</a> 
+<a class="jxr_linenumber" name="L347" href="#L347">347</a>   @Override
+<a class="jxr_linenumber" name="L348" href="#L348">348</a>   <strong class="jxr_keyword">public</strong> IFlagInstance getJsonKeyFlagInstance() {
+<a class="jxr_linenumber" name="L349" href="#L349">349</a>     IFlagInstance retval = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L350" href="#L350">350</a>     <strong class="jxr_keyword">if</strong> (hasJsonKey()) {
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>       retval = getFlagInstanceByName(getXmlAssembly().getJsonKey().getFlagRef());
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>     }
+<a class="jxr_linenumber" name="L353" href="#L353">353</a>     <strong class="jxr_keyword">return</strong> retval;
+<a class="jxr_linenumber" name="L354" href="#L354">354</a>   }
+<a class="jxr_linenumber" name="L355" href="#L355">355</a> 
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>   @Override
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isRoot() {
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().isSetRootName();
+<a class="jxr_linenumber" name="L359" href="#L359">359</a>   }
+<a class="jxr_linenumber" name="L360" href="#L360">360</a> 
+<a class="jxr_linenumber" name="L361" href="#L361">361</a>   @Override
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>   <strong class="jxr_keyword">public</strong> String getRootName() {
+<a class="jxr_linenumber" name="L363" href="#L363">363</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().isSetRootName() ? getXmlAssembly().getRootName() : <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>   }
+<a class="jxr_linenumber" name="L365" href="#L365">365</a> 
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>   @SuppressWarnings(<span class="jxr_string">"null"</span>)
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>   @Override
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>   <strong class="jxr_keyword">public</strong> ModuleScopeEnum getModuleScope() {
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().isSetScope() ? getXmlAssembly().getScope() : IDefinition.DEFAULT_DEFINITION_MODEL_SCOPE;
+<a class="jxr_linenumber" name="L370" href="#L370">370</a>   }
+<a class="jxr_linenumber" name="L371" href="#L371">371</a> 
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>   @SuppressWarnings(<span class="jxr_string">"null"</span>)
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>   @Override
+<a class="jxr_linenumber" name="L374" href="#L374">374</a>   <strong class="jxr_keyword">public</strong> MarkupMultiline getRemarks() {
+<a class="jxr_linenumber" name="L375" href="#L375">375</a>     <strong class="jxr_keyword">return</strong> getXmlAssembly().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getRemarks()) : <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L376" href="#L376">376</a>   }
+<a class="jxr_linenumber" name="L377" href="#L377">377</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

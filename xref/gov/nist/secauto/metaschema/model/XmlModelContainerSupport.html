@@ -40,7 +40,7 @@
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFieldInstance;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IModelInstance;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.INamedModelInstance;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.xmlbeans.ChoiceDocument.Choice;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.xmlbeans.ChoiceType;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.apache.xmlbeans.XmlObject;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
@@ -70,7 +70,7 @@
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>    <strong class="jxr_keyword">public</strong> <a name="XmlModelContainerSupport" href="../../../../../gov/nist/secauto/metaschema/model/XmlModelContainerSupport.html#XmlModelContainerSupport">XmlModelContainerSupport</a>(@NotNull XmlObject xmlContent, @NotNull <a name="IAssemblyDefinition" href="../../../../../gov/nist/secauto/metaschema/model/common/IAssemblyDefinition.html#IAssemblyDefinition">IAssemblyDefinition</a> containingAssembly) {
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      <a name="XmlModelParser" href="../../../../../gov/nist/secauto/metaschema/model/XmlModelParser.html#XmlModelParser">XmlModelParser</a> parser = <strong class="jxr_keyword">new</strong> <a name="XmlModelParser" href="../../../../../gov/nist/secauto/metaschema/model/XmlModelParser.html#XmlModelParser">XmlModelParser</a>();
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">if</strong> (xmlContent instanceof Choice) {
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">if</strong> (xmlContent instanceof ChoiceType) {
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>        parser.parseChoice(xmlContent, containingAssembly);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>        parser.parseModel(xmlContent, containingAssembly);

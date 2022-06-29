@@ -25,9 +25,9 @@ under the License.
     <language>en-us</language>
     <copyright>&#169;2022 National Institute of Standards and Technology</copyright>
     <item>
-      <title>File: 182,
+      <title>File: 124,
              Errors: 0,
-             Warnings: 654,
+             Warnings: 538,
              Infos: 0
       </title>
             <link>https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html</link>
@@ -46,48 +46,6 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.IntegerAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/IntegerAdapter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.Addition.java">gov/nist/secauto/metaschema/model/common/metapath/ast/Addition.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.And.java">gov/nist/secauto/metaschema/model/common/metapath/ast/And.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.IKeyField.java">gov/nist/secauto/metaschema/model/common/constraint/IKeyField.java</a>
                 </td>
                 <td>
@@ -102,7 +60,21 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.evaluate.StaticMetapathException.java">gov/nist/secauto/metaschema/model/common/metapath/evaluate/StaticMetapathException.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.IDocumentLoader.java">gov/nist/secauto/metaschema/model/common/metapath/IDocumentLoader.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  6
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeFunctionException.java">gov/nist/secauto/metaschema/model/common/metapath/function/InvalidTypeFunctionException.java</a>
                 </td>
                 <td>
                   0
@@ -116,13 +88,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.IDocumentLoader.java">gov/nist/secauto/metaschema/model/common/metapath/IDocumentLoader.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.DefaultScopedContraints.java">gov/nist/secauto/metaschema/model/common/constraint/DefaultScopedContraints.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  4
+                  1
                 </td>
                 <td>
                   0
@@ -144,13 +116,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.IPv4AddressAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/IPv4AddressAdapter.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException.java">gov/nist/secauto/metaschema/model/common/metapath/function/InvalidValueForCastFunctionException.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
+                  3
                 </td>
                 <td>
                   0
@@ -172,20 +144,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.Multiplication.java">gov/nist/secauto/metaschema/model/common/metapath/ast/Multiplication.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorFormatter.java">gov/nist/secauto/metaschema/model/common/datatype/markup/flexmark/InsertAnchorFormatter.java</a>
                 </td>
                 <td>
@@ -193,34 +151,6 @@ under the License.
                 </td>
                 <td>
                   2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IInstanceSet.java">gov/nist/secauto/metaschema/model/common/metapath/evaluate/instance/IInstanceSet.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  5
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.ContextItem.java">gov/nist/secauto/metaschema/model/common/metapath/ast/ContextItem.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
                 </td>
                 <td>
                   0
@@ -284,6 +214,20 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter.java">gov/nist/secauto/metaschema/model/common/metapath/format/IPathFormatter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/MetaschemaDataTypeProvider.java</a>
                 </td>
                 <td>
@@ -312,13 +256,27 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData.java">gov/nist/secauto/metaschema/model/common/metapath/function/library/FnData.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.item.IUuidItem.java">gov/nist/secauto/metaschema/model/common/metapath/item/IUuidItem.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  2
+                  3
                 </td>
                 <td>
                   0
@@ -332,49 +290,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  8
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.Flag.java">gov/nist/secauto/metaschema/model/common/metapath/ast/Flag.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.TokenAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/TokenAdapter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.ExpressionUtils.java">gov/nist/secauto/metaschema/model/common/metapath/ast/ExpressionUtils.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
+                  9
                 </td>
                 <td>
                   0
@@ -424,13 +340,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.RelativeSlashPath.java">gov/nist/secauto/metaschema/model/common/metapath/ast/RelativeSlashPath.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.FindingCollectingConstraintValidationHandler.java">gov/nist/secauto/metaschema/model/common/constraint/FindingCollectingConstraintValidationHandler.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
+                  3
                 </td>
                 <td>
                   0
@@ -438,13 +354,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.FindingCollectingConstraintValidationHandler.java">gov/nist/secauto/metaschema/model/common/constraint/FindingCollectingConstraintValidationHandler.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.DefaultConstraintSet.java">gov/nist/secauto/metaschema/model/common/constraint/DefaultConstraintSet.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  8
+                  2
                 </td>
                 <td>
                   0
@@ -466,13 +382,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.DateTimeAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/DateTimeAdapter.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.AbstractTargetedConstraints.java">gov/nist/secauto/metaschema/model/common/constraint/AbstractTargetedConstraints.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
+                  3
                 </td>
                 <td>
                   0
@@ -508,6 +424,20 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem.java">gov/nist/secauto/metaschema/model/common/metapath/item/IDefinitionNodeItem.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.item.ITokenItem.java">gov/nist/secauto/metaschema/model/common/metapath/item/ITokenItem.java</a>
                 </td>
                 <td>
@@ -522,55 +452,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexHasKeyConstraint.java">gov/nist/secauto/metaschema/model/common/constraint/DefaultIndexHasKeyConstraint.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.item.INodeItemFactory.java">gov/nist/secauto/metaschema/model/common/metapath/item/INodeItemFactory.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.DayTimeAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/DayTimeAdapter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.DateTimeWithTZAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/DateTimeWithTZAdapter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.Metapath.java">gov/nist/secauto/metaschema/model/common/metapath/ast/Metapath.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
+                  14
                 </td>
                 <td>
                   0
@@ -584,7 +472,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  5
+                  4
                 </td>
                 <td>
                   0
@@ -598,7 +486,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  48
+                  45
                 </td>
                 <td>
                   0
@@ -606,55 +494,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.BuildAstVisitor.java">gov/nist/secauto/metaschema/model/common/metapath/ast/BuildAstVisitor.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  3
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.IntegerLiteral.java">gov/nist/secauto/metaschema/model/common/metapath/ast/IntegerLiteral.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.format.MetapathFormatter.java">gov/nist/secauto/metaschema/model/common/metapath/format/MetapathFormatter.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
                   1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence.java">gov/nist/secauto/metaschema/model/common/metapath/evaluate/ISequence.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  9
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.MetaschemaInstanceEvaluationVisitor.java">gov/nist/secauto/metaschema/model/common/metapath/evaluate/instance/MetaschemaInstanceEvaluationVisitor.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  6
                 </td>
                 <td>
                   0
@@ -676,34 +522,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.YearMonthAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/YearMonthAdapter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.format.MetapathFormatter.java">gov/nist/secauto/metaschema/model/common/metapath/format/MetapathFormatter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupXmlEventWriter.java">gov/nist/secauto/metaschema/model/common/datatype/markup/MarkupXmlEventWriter.java</a>
                 </td>
                 <td>
@@ -711,20 +529,6 @@ under the License.
                 </td>
                 <td>
                   2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.RelativeDoubleSlashPath.java">gov/nist/secauto/metaschema/model/common/metapath/ast/RelativeDoubleSlashPath.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
                 </td>
                 <td>
                   0
@@ -746,49 +550,21 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.Union.java">gov/nist/secauto/metaschema/model/common/metapath/ast/Union.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.object.Date.java">gov/nist/secauto/metaschema/model/common/datatype/object/Date.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.ModelInstance.java">gov/nist/secauto/metaschema/model/common/metapath/ast/ModelInstance.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.TestUtils.java">gov/nist/secauto/metaschema/model/common/metapath/TestUtils.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.DynamicMetapathException.java">gov/nist/secauto/metaschema/model/common/metapath/DynamicMetapathException.java</a>
                 </td>
                 <td>
                   0
@@ -816,20 +592,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.UriAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/UriAdapter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem.java">gov/nist/secauto/metaschema/model/common/metapath/item/IDecimalItem.java</a>
                 </td>
                 <td>
@@ -844,41 +606,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.Or.java">gov/nist/secauto/metaschema/model/common/metapath/ast/Or.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.AbstractConstraintValidationHandler.java">gov/nist/secauto/metaschema/model/common/constraint/AbstractConstraintValidationHandler.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  9
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.function.InvalidArgumentFunctionMetapathException.java">gov/nist/secauto/metaschema/model/common/metapath/function/InvalidArgumentFunctionMetapathException.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  3
+                  10
                 </td>
                 <td>
                   0
@@ -900,27 +634,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.function.TypeMetapathException.java">gov/nist/secauto/metaschema/model/common/metapath/function/TypeMetapathException.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupText.java">gov/nist/secauto/metaschema/model/common/datatype/markup/IMarkupText.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  3
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.MarkupMultilineAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/MarkupMultilineAdapter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
+                  6
                 </td>
                 <td>
                   0
@@ -942,48 +662,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupText.java">gov/nist/secauto/metaschema/model/common/datatype/markup/IMarkupText.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  8
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.RootSlashPath.java">gov/nist/secauto/metaschema/model/common/metapath/ast/RootSlashPath.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.object.AbstractAmbiguousDateTime.java">gov/nist/secauto/metaschema/model/common/datatype/object/AbstractAmbiguousDateTime.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorHtmlNodeRenderer.java">gov/nist/secauto/metaschema/model/common/datatype/markup/flexmark/InsertAnchorHtmlNodeRenderer.java</a>
                 </td>
                 <td>
@@ -991,20 +669,6 @@ under the License.
                 </td>
                 <td>
                   1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.evaluate.MetaschemaPathEvaluationVisitor.java">gov/nist/secauto/metaschema/model/common/metapath/evaluate/MetaschemaPathEvaluationVisitor.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  8
                 </td>
                 <td>
                   0
@@ -1026,13 +690,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.MarkupLineAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/MarkupLineAdapter.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.function.library.CastFunction.java">gov/nist/secauto/metaschema/model/common/metapath/function/library/CastFunction.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
+                  4
                 </td>
                 <td>
                   0
@@ -1054,13 +718,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.PositiveIntegerAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/PositiveIntegerAdapter.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet.java">gov/nist/secauto/metaschema/model/common/constraint/IConstraintSet.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
+                  6
                 </td>
                 <td>
                   0
@@ -1074,7 +738,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  4
+                  5
                 </td>
                 <td>
                   0
@@ -1096,27 +760,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeFunctionMetapathException.java">gov/nist/secauto/metaschema/model/common/metapath/function/InvalidTypeFunctionMetapathException.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.item.AbstractAssemblyInstanceNodeItem.java">gov/nist/secauto/metaschema/model/common/metapath/item/AbstractAssemblyInstanceNodeItem.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  3
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultMetaschemaContext.java">gov/nist/secauto/metaschema/model/common/metapath/evaluate/instance/DefaultMetaschemaContext.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  5
+                  2
                 </td>
                 <td>
                   0
@@ -1144,7 +794,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  2
+                  3
                 </td>
                 <td>
                   0
@@ -1166,27 +816,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstraint.java">gov/nist/secauto/metaschema/model/common/constraint/DefaultMatchesConstraint.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ISequence.java">gov/nist/secauto/metaschema/model/common/metapath/ISequence.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.Division.java">gov/nist/secauto/metaschema/model/common/metapath/ast/Division.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
+                  9
                 </td>
                 <td>
                   0
@@ -1214,21 +850,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.Subtraction.java">gov/nist/secauto/metaschema/model/common/metapath/ast/Subtraction.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
+                  2
                 </td>
                 <td>
                   0
@@ -1250,34 +872,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.validation.XmlSchemaContentValidator.java">gov/nist/secauto/metaschema/model/common/validation/XmlSchemaContentValidator.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  5
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.object.DateTime.java">gov/nist/secauto/metaschema/model/common/datatype/object/DateTime.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupParser.java">gov/nist/secauto/metaschema/model/common/datatype/markup/MarkupParser.java</a>
                 </td>
                 <td>
@@ -1292,13 +886,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.DefaultIndexConstraint.java">gov/nist/secauto/metaschema/model/common/constraint/DefaultIndexConstraint.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.ConstraintValidationFinding.java">gov/nist/secauto/metaschema/model/common/constraint/ConstraintValidationFinding.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
+                  5
                 </td>
                 <td>
                   0
@@ -1306,13 +900,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.IntegerDivision.java">gov/nist/secauto/metaschema/model/common/metapath/ast/IntegerDivision.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.validation.XmlSchemaContentValidator.java">gov/nist/secauto/metaschema/model/common/validation/XmlSchemaContentValidator.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
+                  5
                 </td>
                 <td>
                   0
@@ -1334,21 +928,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.evaluate.AbstractExpressionEvaluationVisitor.java">gov/nist/secauto/metaschema/model/common/metapath/evaluate/AbstractExpressionEvaluationVisitor.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  4
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.ParenthesizedExpression.java">gov/nist/secauto/metaschema/model/common/metapath/ast/ParenthesizedExpression.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition.java">gov/nist/secauto/metaschema/model/common/IRootAssemblyDefinition.java</a>
                 </td>
                 <td>
                   0
@@ -1376,34 +956,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.evaluate.IExpressionEvaluationVisitor.java">gov/nist/secauto/metaschema/model/common/metapath/evaluate/IExpressionEvaluationVisitor.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  28
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.AbstractLiteralExpression.java">gov/nist/secauto/metaschema/model/common/metapath/ast/AbstractLiteralExpression.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.function.DateTimeFunctionException.java">gov/nist/secauto/metaschema/model/common/metapath/function/DateTimeFunctionException.java</a>
                 </td>
                 <td>
@@ -1418,27 +970,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.StringLiteral.java">gov/nist/secauto/metaschema/model/common/metapath/ast/StringLiteral.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.function.InvalidArgumentFunctionException.java">gov/nist/secauto/metaschema/model/common/metapath/function/InvalidArgumentFunctionException.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.HostnameAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/HostnameAdapter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
+                  3
                 </td>
                 <td>
                   0
@@ -1460,13 +998,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.IPv6AddressAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/IPv6AddressAdapter.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.AbstractCustomJavaDataType.java">gov/nist/secauto/metaschema/model/common/datatype/AbstractCustomJavaDataType.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
+                  2
                 </td>
                 <td>
                   0
@@ -1480,7 +1018,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  4
+                  3
                 </td>
                 <td>
                   0
@@ -1488,7 +1026,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.Negate.java">gov/nist/secauto/metaschema/model/common/metapath/ast/Negate.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.util.InputSourceUtils.java">gov/nist/secauto/metaschema/model/common/util/InputSourceUtils.java</a>
                 </td>
                 <td>
                   0
@@ -1516,20 +1054,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.Name.java">gov/nist/secauto/metaschema/model/common/metapath/ast/Name.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem.java">gov/nist/secauto/metaschema/model/common/metapath/item/IDateTimeItem.java</a>
                 </td>
                 <td>
@@ -1544,35 +1068,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.DefaultInstanceSet.java">gov/nist/secauto/metaschema/model/common/metapath/evaluate/instance/DefaultInstanceSet.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.Base64Adapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/Base64Adapter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.BooleanAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/BooleanAdapter.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport.java">gov/nist/secauto/metaschema/model/common/constraint/IAssemblyConstraintSupport.java</a>
                 </td>
                 <td>
                   0
@@ -1586,13 +1082,55 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.AbstractStringAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/AbstractStringAdapter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.IResourceLoader.java">gov/nist/secauto/metaschema/model/common/IResourceLoader.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.BooleanAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/BooleanAdapter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode.java">gov/nist/secauto/metaschema/model/common/datatype/markup/flexmark/InsertAnchorNode.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  4
+                  5
                 </td>
                 <td>
                   0
@@ -1614,34 +1152,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.function.DefaultFunction.java">gov/nist/secauto/metaschema/model/common/metapath/function/DefaultFunction.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  4
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.RootDoubleSlashPath.java">gov/nist/secauto/metaschema/model/common/metapath/ast/RootDoubleSlashPath.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.markup.AbstractMarkupString.java">gov/nist/secauto/metaschema/model/common/datatype/markup/AbstractMarkupString.java</a>
                 </td>
                 <td>
@@ -1649,34 +1159,6 @@ under the License.
                 </td>
                 <td>
                   3
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.DateAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/DateAdapter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IMetaschemaContext.java">gov/nist/secauto/metaschema/model/common/metapath/evaluate/instance/IMetaschemaContext.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  5
                 </td>
                 <td>
                   0
@@ -1698,27 +1180,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.AbstractIntegerAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/AbstractIntegerAdapter.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.IConstraint.java">gov/nist/secauto/metaschema/model/common/constraint/IConstraint.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.AbstractNamedInstanceExpression.java">gov/nist/secauto/metaschema/model/common/metapath/ast/AbstractNamedInstanceExpression.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  4
+                  5
                 </td>
                 <td>
                   0
@@ -1726,27 +1194,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.DateWithTZAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/DateWithTZAdapter.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.item.MockItemFactory.java">gov/nist/secauto/metaschema/model/common/metapath/item/MockItemFactory.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/StringAdapter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
+                  9
                 </td>
                 <td>
                   0
@@ -1782,13 +1236,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem.java">gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.ITargetedConstaints.java">gov/nist/secauto/metaschema/model/common/constraint/ITargetedConstaints.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
+                  4
                 </td>
                 <td>
                   0
@@ -1796,13 +1250,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeMetapathException.java">gov/nist/secauto/metaschema/model/common/metapath/function/InvalidTypeMetapathException.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem.java">gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  4
+                  6
                 </td>
                 <td>
                   0
@@ -1824,90 +1278,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.AbstractDatatype.java">gov/nist/secauto/metaschema/model/common/datatype/AbstractDatatype.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.DecimalAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/DecimalAdapter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.ASTPrinter.java">gov/nist/secauto/metaschema/model/common/metapath/ast/ASTPrinter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.IFlagInstance.java">gov/nist/secauto/metaschema/model/common/IFlagInstance.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.AbstractRootPathExpression.java">gov/nist/secauto/metaschema/model/common/metapath/ast/AbstractRootPathExpression.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.AbstractComparison.java">gov/nist/secauto/metaschema/model/common/metapath/ast/AbstractComparison.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertVisitor.java">gov/nist/secauto/metaschema/model/common/datatype/markup/flexmark/InsertVisitor.java</a>
                 </td>
                 <td>
@@ -1915,20 +1285,6 @@ under the License.
                 </td>
                 <td>
                   3
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.DecimalLiteral.java">gov/nist/secauto/metaschema/model/common/metapath/ast/DecimalLiteral.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
                 </td>
                 <td>
                   0
@@ -1950,41 +1306,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.UriReferenceAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/UriReferenceAdapter.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.item.AbstractMetaschemaNodeItem.java">gov/nist/secauto/metaschema/model/common/metapath/item/AbstractMetaschemaNodeItem.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.FailingErrorListener.java">gov/nist/secauto/metaschema/model/common/metapath/FailingErrorListener.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.AbstractFindingCollectingConstraintValidationHandler.java">gov/nist/secauto/metaschema/model/common/constraint/AbstractFindingCollectingConstraintValidationHandler.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  2
+                  6
                 </td>
                 <td>
                   0
@@ -2048,20 +1376,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException.java">gov/nist/secauto/metaschema/model/common/metapath/function/InvalidValueForCastFunctionMetapathException.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  3
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.item.IEmailAddressItem.java">gov/nist/secauto/metaschema/model/common/metapath/item/IEmailAddressItem.java</a>
                 </td>
                 <td>
@@ -2090,69 +1404,27 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.AbstractExpressionVisitor.java">gov/nist/secauto/metaschema/model/common/metapath/evaluate/instance/AbstractExpressionVisitor.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.AbstractExpressionTest.java">gov/nist/secauto/metaschema/model/common/metapath/AbstractExpressionTest.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.item.AbstractAssemblyNodeItem.java">gov/nist/secauto/metaschema/model/common/metapath/item/AbstractAssemblyNodeItem.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
                   2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.AbstractStringJavaTypeAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/AbstractStringJavaTypeAdapter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.Mod.java">gov/nist/secauto/metaschema/model/common/metapath/ast/Mod.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.AbstractCodedMetapathException.java">gov/nist/secauto/metaschema/model/common/metapath/AbstractCodedMetapathException.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  6
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.EmailAddressAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/EmailAddressAdapter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
                 </td>
                 <td>
                   0
@@ -2174,6 +1446,20 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory.java">gov/nist/secauto/metaschema/model/common/metapath/item/DefaultNodeItemFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint.java">gov/nist/secauto/metaschema/model/common/constraint/IExpectConstraint.java</a>
                 </td>
                 <td>
@@ -2188,7 +1474,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.evaluate.DynamicMetapathException.java">gov/nist/secauto/metaschema/model/common/metapath/evaluate/DynamicMetapathException.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.StaticMetapathException.java">gov/nist/secauto/metaschema/model/common/metapath/StaticMetapathException.java</a>
                 </td>
                 <td>
                   0
@@ -2202,83 +1488,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.UuidAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/UuidAdapter.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.TypeMetapathException.java">gov/nist/secauto/metaschema/model/common/metapath/TypeMetapathException.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance.IExpressionVisitor.java">gov/nist/secauto/metaschema/model/common/metapath/evaluate/instance/IExpressionVisitor.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  30
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.adapter.NonNegativeIntegerAdapter.java">gov/nist/secauto/metaschema/model/common/datatype/adapter/NonNegativeIntegerAdapter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.java">gov/nist/secauto/metaschema/model/common/metapath/MetapathExpression.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  11
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.RootSlashOnlyPath.java">gov/nist/secauto/metaschema/model/common/metapath/ast/RootSlashOnlyPath.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.StringConcat.java">gov/nist/secauto/metaschema/model/common/metapath/ast/StringConcat.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
+                  3
                 </td>
                 <td>
                   0
@@ -2328,13 +1544,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.DefaultUniqueConstraint.java">gov/nist/secauto/metaschema/model/common/constraint/DefaultUniqueConstraint.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.RootAssemblyDefinitionWrapper.java">gov/nist/secauto/metaschema/model/common/RootAssemblyDefinitionWrapper.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
+                  2
                 </td>
                 <td>
                   0
@@ -2356,20 +1572,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.AbstractRelativePathExpression.java">gov/nist/secauto/metaschema/model/common/metapath/ast/AbstractRelativePathExpression.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  3
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorOptions.java">gov/nist/secauto/metaschema/model/common/datatype/markup/flexmark/InsertAnchorOptions.java</a>
                 </td>
                 <td>
@@ -2377,48 +1579,6 @@ under the License.
                 </td>
                 <td>
                   1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.function.CastFunction.java">gov/nist/secauto/metaschema/model/common/metapath/function/CastFunction.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  4
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.ValueComparison.java">gov/nist/secauto/metaschema/model/common/metapath/ast/ValueComparison.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator.java">gov/nist/secauto/metaschema/model/common/validation/JsonSchemaContentValidator.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  7
                 </td>
                 <td>
                   0
@@ -2440,13 +1600,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.GeneralComparison.java">gov/nist/secauto/metaschema/model/common/metapath/ast/GeneralComparison.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator.java">gov/nist/secauto/metaschema/model/common/validation/JsonSchemaContentValidator.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
+                  7
                 </td>
                 <td>
                   0
@@ -2488,7 +1648,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  2
+                  3
                 </td>
                 <td>
                   0
@@ -2510,7 +1670,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.item.AbstractIntegerItem.java">gov/nist/secauto/metaschema/model/common/metapath/item/AbstractIntegerItem.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeProvider.java">gov/nist/secauto/metaschema/model/common/datatype/AbstractDataTypeProvider.java</a>
                 </td>
                 <td>
                   0
@@ -2524,7 +1684,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.ast.ILiteralExpression.java">gov/nist/secauto/metaschema/model/common/metapath/ast/ILiteralExpression.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.item.AbstractIntegerItem.java">gov/nist/secauto/metaschema/model/common/metapath/item/AbstractIntegerItem.java</a>
                 </td>
                 <td>
                   0
@@ -2558,7 +1718,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  23
+                  24
                 </td>
                 <td>
                   0
@@ -2566,13 +1726,27 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.MetapathException.java">gov/nist/secauto/metaschema/model/common/metapath/MetapathException.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.metapath.InvalidTypeMetapathException.java">gov/nist/secauto/metaschema/model/common/metapath/InvalidTypeMetapathException.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  5
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport.java">gov/nist/secauto/metaschema/model/common/constraint/IValueConstraintSupport.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
                 </td>
                 <td>
                   0
@@ -2586,7 +1760,21 @@ under the License.
                   0
                 </td>
                 <td>
-                  5
+                  6
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-model-common//checkstyle.html#gov.nist.secauto.metaschema.model.common.constraint.IScopedContraints.java">gov/nist/secauto/metaschema/model/common/constraint/IScopedContraints.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
                 </td>
                 <td>
                   0

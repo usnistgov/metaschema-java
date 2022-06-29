@@ -35,15 +35,15 @@
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.model.common.metapath.function.library;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeFunctionMetapathException;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.function.InvalidTypeFunctionException;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IAtomicValuedItem;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IAtomicValuedItem;
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  
@@ -146,18 +146,19 @@
 <a class="jxr_linenumber" name="L138" href="#L138">138</a> <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>   @NotNull
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a name="IAnyAtomicItem" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> fnDataItem(@NotNull <a name="IItem" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IItem.html#IItem">IItem</a> item) {
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>     <a name="IAnyAtomicItem" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> retval;
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>     <a name="IAnyAtomicItem" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> retval = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>     <strong class="jxr_keyword">if</strong> (item instanceof <a name="IAnyAtomicItem" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a>) {
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>       retval = (<a name="IAnyAtomicItem" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a>) item;
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (item instanceof <a name="IAtomicValuedItem" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAtomicValuedItem.html#IAtomicValuedItem">IAtomicValuedItem</a>) {
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>       retval = ((<a name="IAtomicValuedItem" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAtomicValuedItem.html#IAtomicValuedItem">IAtomicValuedItem</a>) item).toAtomicItem();
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>     } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="InvalidTypeFunctionMetapathException" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/InvalidTypeFunctionMetapathException.html#InvalidTypeFunctionMetapathException">InvalidTypeFunctionMetapathException</a>(InvalidTypeFunctionMetapathException.NODE_HAS_NO_TYPED_VALUE,
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>           String.format(<span class="jxr_string">"Item '%s' has no typed value"</span>, item.getClass().getName()));
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>     }
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>     <strong class="jxr_keyword">return</strong> retval;
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>   }
-<a class="jxr_linenumber" name="L152" href="#L152">152</a> }
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>     }
+<a class="jxr_linenumber" name="L147" href="#L147">147</a> 
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>     <strong class="jxr_keyword">if</strong> (retval == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="InvalidTypeFunctionException" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/InvalidTypeFunctionException.html#InvalidTypeFunctionException">InvalidTypeFunctionException</a>(InvalidTypeFunctionException.NODE_HAS_NO_TYPED_VALUE, item);
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>     }
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>     <strong class="jxr_keyword">return</strong> retval;
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>   }
+<a class="jxr_linenumber" name="L153" href="#L153">153</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

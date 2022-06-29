@@ -35,10 +35,10 @@
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> gov.nist.secauto.metaschema.model.common.metapath.function.library;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.evaluate.ISequence;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.function.InvalidArgumentFunctionMetapathException;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.function.InvalidArgumentFunctionException;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
@@ -156,8 +156,8 @@
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>       String string = ((<a name="IAnyUriItem" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyUriItem.html#IAnyUriItem">IAnyUriItem</a>) item).asString();
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>       retval = !string.isBlank();
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>     } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="InvalidArgumentFunctionMetapathException" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/InvalidArgumentFunctionMetapathException.html#InvalidArgumentFunctionMetapathException">InvalidArgumentFunctionMetapathException</a>(InvalidArgumentFunctionMetapathException.INVALID_ARGUMENT_TYPE,
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>           String.format(<span class="jxr_string">"Invalid argument type '%s'"</span>, item.getItemName()));
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="InvalidArgumentFunctionException" href="../../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/InvalidArgumentFunctionException.html#InvalidArgumentFunctionException">InvalidArgumentFunctionException</a>(InvalidArgumentFunctionException.INVALID_ARGUMENT_TYPE,
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>           String.format(<span class="jxr_string">"Invalid argument type '%s'"</span>, item.getClass().getName()));
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>     }
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>     <strong class="jxr_keyword">return</strong> retval;
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>   }

@@ -73,13 +73,13 @@
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>    }
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>    @SuppressWarnings(<span class="jxr_string">"unused"</span>)
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> shouldVisitNextChild(@NotNull <a name="IFlagNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IFlagNodeItem.html#IFlagNodeItem">IFlagNodeItem</a> item, RESULT result, CONTEXT context) {
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> shouldVisitNextChild(@NotNull <a name="INodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> item, RESULT result, CONTEXT context) {
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>      <em class="jxr_comment">// this is the default behavior, which can be overridden</em>
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>    }
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>    @SuppressWarnings(<span class="jxr_string">"unused"</span>)
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> shouldVisitNextChild(@NotNull <a name="IModelNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IModelNodeItem.html#IModelNodeItem">IModelNodeItem</a> item, RESULT result, CONTEXT context) {
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> shouldVisitNextChild(@NotNull <a name="IRequiredValueModelNodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IRequiredValueModelNodeItem.html#IRequiredValueModelNodeItem">IRequiredValueModelNodeItem</a> item, RESULT result, CONTEXT context) {
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>      <em class="jxr_comment">// this is the default behavior, which can be overridden</em>
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>    }
@@ -90,7 +90,7 @@
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      <strong class="jxr_keyword">return</strong> childResult;
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>    }
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>    <strong class="jxr_keyword">public</strong> RESULT visit(@NotNull <a name="INodeItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItem.html#INodeItem">INodeItem</a> item, CONTEXT context) {
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>    <strong class="jxr_keyword">public</strong> RESULT visit(@NotNull <a name="INodeItemVisitable" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/INodeItemVisitable.html#INodeItemVisitable">INodeItemVisitable</a> item, CONTEXT context) {
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>      <strong class="jxr_keyword">return</strong> item.accept(<strong class="jxr_keyword">this</strong>, context);
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>    }
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  

@@ -39,7 +39,7 @@
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>    }
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>    @Override
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>    <strong class="jxr_keyword">public</strong> IJavaTypeAdapter&lt;?&gt; getJavaTypeAdapter() {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>    <strong class="jxr_keyword">public</strong> IDataTypeAdapter&lt;?&gt; getJavaTypeAdapter() {
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">return</strong> getProperty().getDefinition().getJavaTypeAdapter();
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>    }
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  

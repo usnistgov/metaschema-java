@@ -36,7 +36,7 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.object.Date;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  
@@ -55,18 +55,22 @@
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>    }
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>    @NotNull
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a name="IDateItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IDateItem.html#IDateItem">IDateItem</a> valueOf(@NotNull String value) <strong class="jxr_keyword">throws</strong> IllegalArgumentException {
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">return</strong> valueOf(MetaschemaDataTypeProvider.DATE.parse(value));
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>    }
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>  
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>    @NotNull
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a name="IDateItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IDateItem.html#IDateItem">IDateItem</a> <strong class="jxr_keyword">cast</strong>(@NotNull <a name="IAnyAtomicItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> item) <strong class="jxr_keyword">throws</strong> <a name="InvalidValueForCastFunctionMetapathException" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/InvalidValueForCastFunctionMetapathException.html#InvalidValueForCastFunctionMetapathException">InvalidValueForCastFunctionMetapathException</a> {
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">return</strong> MetaschemaDataTypeProvider.DATE.<strong class="jxr_keyword">cast</strong>(item);
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>    }
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>  
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>    @NotNull
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>    ZonedDateTime asZonedDateTime();
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>  }
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a name="IDateItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IDateItem.html#IDateItem">IDateItem</a> valueOf(@NotNull String value) {
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>        <strong class="jxr_keyword">return</strong> valueOf(MetaschemaDataTypeProvider.DATE.parse(value));
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      } <strong class="jxr_keyword">catch</strong> (IllegalArgumentException ex) {
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>        <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a name="InvalidValueForCastFunctionException" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/InvalidValueForCastFunctionException.html#InvalidValueForCastFunctionException">InvalidValueForCastFunctionException</a>(String.format(<span class="jxr_string">"Unable to parse string value '%s'"</span>, value), ex);
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      }
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>    }
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>    @NotNull
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a name="IDateItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IDateItem.html#IDateItem">IDateItem</a> <strong class="jxr_keyword">cast</strong>(@NotNull <a name="IAnyAtomicItem" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IAnyAtomicItem.html#IAnyAtomicItem">IAnyAtomicItem</a> item) <strong class="jxr_keyword">throws</strong> <a name="InvalidValueForCastFunctionException" href="../../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/function/InvalidValueForCastFunctionException.html#InvalidValueForCastFunctionException">InvalidValueForCastFunctionException</a> {
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>      <strong class="jxr_keyword">return</strong> MetaschemaDataTypeProvider.DATE.<strong class="jxr_keyword">cast</strong>(item);
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>    }
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>    @NotNull
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>    ZonedDateTime asZonedDateTime();
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

@@ -40,7 +40,7 @@
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.adapter.BooleanAdapter;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  @MetaschemaAssembly(metaschema = TestMetaschema.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  @MetaschemaAssembly(name = <span class="jxr_string">"flagged-bound-assembly"</span>, metaschema = TestMetaschema.<strong class="jxr_keyword">class</strong>)
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="FlaggedBoundAssembly" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/test/FlaggedBoundAssembly.html#FlaggedBoundAssembly">FlaggedBoundAssembly</a> {
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>    @JsonKey
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>    @BoundFlag(useName = <span class="jxr_string">"assembly-required-flag"</span>, typeAdapter = StringAdapter.<strong class="jxr_keyword">class</strong>, required = <strong class="jxr_keyword">true</strong>)

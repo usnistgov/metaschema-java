@@ -54,7 +54,7 @@
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  
@@ -106,7 +106,7 @@
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>      <strong class="jxr_keyword">if</strong> (instance instanceof <a name="IFieldInstance" href="../../../../../gov/nist/secauto/metaschema/model/common/IFieldInstance.html#IFieldInstance">IFieldInstance</a>) {
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>        <a name="IFieldInstance" href="../../../../../gov/nist/secauto/metaschema/model/common/IFieldInstance.html#IFieldInstance">IFieldInstance</a> fieldInstance = (<a name="IFieldInstance" href="../../../../../gov/nist/secauto/metaschema/model/common/IFieldInstance.html#IFieldInstance">IFieldInstance</a>) instance;
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>       <strong class="jxr_keyword">if</strong> (fieldInstance.isSimple()) {
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>         IJavaTypeAdapter&lt;?&gt; dataType = fieldInstance.getDefinition().getJavaTypeAdapter();
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>         IDataTypeAdapter&lt;?&gt; dataType = fieldInstance.getDefinition().getJavaTypeAdapter();
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>         <em class="jxr_comment">// this is a simple value</em>
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>         retval = ObjectUtils.notNull(ClassName.get(dataType.getJavaClass()));
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>       } <strong class="jxr_keyword">else</strong> {
@@ -181,7 +181,7 @@
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>       <a name="IFieldInstance" href="../../../../../gov/nist/secauto/metaschema/model/common/IFieldInstance.html#IFieldInstance">IFieldInstance</a> fieldInstance = (<a name="IFieldInstance" href="../../../../../gov/nist/secauto/metaschema/model/common/IFieldInstance.html#IFieldInstance">IFieldInstance</a>) modelInstance;
 <a class="jxr_linenumber" name="L174" href="#L174">174</a>       <a name="IFieldDefinition" href="../../../../../gov/nist/secauto/metaschema/model/common/IFieldDefinition.html#IFieldDefinition">IFieldDefinition</a> fieldDefinition = (<a name="IFieldDefinition" href="../../../../../gov/nist/secauto/metaschema/model/common/IFieldDefinition.html#IFieldDefinition">IFieldDefinition</a>) definition;
 <a class="jxr_linenumber" name="L175" href="#L175">175</a> 
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>       IJavaTypeAdapter&lt;?&gt; valueDataType = fieldDefinition.getJavaTypeAdapter();
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>       IDataTypeAdapter&lt;?&gt; valueDataType = fieldDefinition.getJavaTypeAdapter();
 <a class="jxr_linenumber" name="L177" href="#L177">177</a> 
 <a class="jxr_linenumber" name="L178" href="#L178">178</a>       <strong class="jxr_keyword">if</strong> (MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != fieldInstance.isInXmlWrapped()) {
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>         fieldAnnoation.addMember(<span class="jxr_string">"inXmlWrapped"</span>, <span class="jxr_string">"$L"</span>, fieldInstance.isInXmlWrapped());
@@ -193,7 +193,7 @@
 <a class="jxr_linenumber" name="L185" href="#L185">185</a> 
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>         fieldAnnoation.addMember(<span class="jxr_string">"typeAdapter"</span>, <span class="jxr_string">"$T.class"</span>, valueDataType.getClass());
 <a class="jxr_linenumber" name="L187" href="#L187">187</a> 
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>         AnnotationUtils.applyAllowedValuesConstraints(fieldAnnoation, fieldDefinition.getAllowedValuesContraints());
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>         AnnotationUtils.applyAllowedValuesConstraints(fieldAnnoation, fieldDefinition.getAllowedValuesConstraints());
 <a class="jxr_linenumber" name="L189" href="#L189">189</a>         AnnotationUtils.applyIndexHasKeyConstraints(fieldAnnoation, fieldDefinition.getIndexHasKeyConstraints());
 <a class="jxr_linenumber" name="L190" href="#L190">190</a>         AnnotationUtils.applyMatchesConstraints(fieldAnnoation, fieldDefinition.getMatchesConstraints());
 <a class="jxr_linenumber" name="L191" href="#L191">191</a>         AnnotationUtils.applyExpectConstraints(fieldAnnoation, fieldDefinition.getExpectConstraints());

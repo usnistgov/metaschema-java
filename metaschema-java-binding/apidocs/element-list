@@ -3,6 +3,5 @@ gov.nist.secauto.metaschema.binding.io
 gov.nist.secauto.metaschema.binding.io.json
 gov.nist.secauto.metaschema.binding.io.xml
 gov.nist.secauto.metaschema.binding.io.yaml
-gov.nist.secauto.metaschema.binding.metapath.item
 gov.nist.secauto.metaschema.binding.model
 gov.nist.secauto.metaschema.binding.model.annotations

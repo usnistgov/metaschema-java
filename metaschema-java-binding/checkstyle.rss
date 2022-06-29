@@ -27,7 +27,7 @@ under the License.
     <item>
       <title>File: 36,
              Errors: 0,
-             Warnings: 138,
+             Warnings: 127,
              Infos: 0
       </title>
             <link>https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html</link>
@@ -66,7 +66,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  2
+                  1
                 </td>
                 <td>
                   0
@@ -74,13 +74,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.io.xml.DefaultXmlDeserializer.java">gov/nist/secauto/metaschema/binding/io/xml/DefaultXmlDeserializer.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.model.DefaultAssemblyClassBinding.java">gov/nist/secauto/metaschema/binding/model/DefaultAssemblyClassBinding.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  5
+                  2
                 </td>
                 <td>
                   0
@@ -102,13 +102,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.model.DefaultAssemblyClassBinding.java">gov/nist/secauto/metaschema/binding/model/DefaultAssemblyClassBinding.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.io.xml.DefaultXmlDeserializer.java">gov/nist/secauto/metaschema/binding/io/xml/DefaultXmlDeserializer.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  2
+                  5
                 </td>
                 <td>
                   0
@@ -144,13 +144,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.io.json.DefaultJsonSerializer.java">gov/nist/secauto/metaschema/binding/io/json/DefaultJsonSerializer.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.model.DefaultFlagProperty.java">gov/nist/secauto/metaschema/binding/model/DefaultFlagProperty.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  5
+                  1
                 </td>
                 <td>
                   0
@@ -164,7 +164,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  4
+                  3
                 </td>
                 <td>
                   0
@@ -172,13 +172,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlSerializer.java">gov/nist/secauto/metaschema/binding/io/yaml/DefaultYamlSerializer.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.io.json.DefaultJsonSerializer.java">gov/nist/secauto/metaschema/binding/io/json/DefaultJsonSerializer.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
+                  5
                 </td>
                 <td>
                   0
@@ -200,13 +200,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.io.xml.IndentingXmlStreamWriter2.java">gov/nist/secauto/metaschema/binding/io/xml/IndentingXmlStreamWriter2.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.io.yaml.DefaultYamlSerializer.java">gov/nist/secauto/metaschema/binding/io/yaml/DefaultYamlSerializer.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  8
+                  1
                 </td>
                 <td>
                   0
@@ -221,6 +221,20 @@ under the License.
                 </td>
                 <td>
                   3
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.io.xml.IndentingXmlStreamWriter2.java">gov/nist/secauto/metaschema/binding/io/xml/IndentingXmlStreamWriter2.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  8
                 </td>
                 <td>
                   0
@@ -256,20 +270,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.io.xml.DefaultXmlParsingContext.java">gov/nist/secauto/metaschema/binding/io/xml/DefaultXmlParsingContext.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.model.IBoundFlagInstance.java">gov/nist/secauto/metaschema/binding/model/IBoundFlagInstance.java</a>
                 </td>
                 <td>
@@ -277,6 +277,20 @@ under the License.
                 </td>
                 <td>
                   3
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.io.xml.DefaultXmlParsingContext.java">gov/nist/secauto/metaschema/binding/io/xml/DefaultXmlParsingContext.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
                 </td>
                 <td>
                   0
@@ -312,13 +326,27 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.metapath.item.ConstraintContentValidator.java">gov/nist/secauto/metaschema/binding/metapath/item/ConstraintContentValidator.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.io.IDeserializer.java">gov/nist/secauto/metaschema/binding/io/IDeserializer.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  7
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.model.annotations.AllowedValues.java">gov/nist/secauto/metaschema/binding/model/annotations/AllowedValues.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
                 </td>
                 <td>
                   0
@@ -424,13 +452,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.io.json.DefaultJsonWritingContext.java">gov/nist/secauto/metaschema/binding/io/json/DefaultJsonWritingContext.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.model.DefaultFieldClassBinding.java">gov/nist/secauto/metaschema/binding/model/DefaultFieldClassBinding.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
+                  2
                 </td>
                 <td>
                   0
@@ -438,7 +466,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.model.DefaultFieldClassBinding.java">gov/nist/secauto/metaschema/binding/model/DefaultFieldClassBinding.java</a>
+                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.io.json.DefaultJsonWritingContext.java">gov/nist/secauto/metaschema/binding/io/json/DefaultJsonWritingContext.java</a>
                 </td>
                 <td>
                   0
@@ -466,41 +494,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.io.DefaultMutableConfiguration.java">gov/nist/secauto/metaschema/binding/io/DefaultMutableConfiguration.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.model.DefaultFieldProperty.java">gov/nist/secauto/metaschema/binding/model/DefaultFieldProperty.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://pages.nist.gov/metaschema-java/metaschema-java-binding//checkstyle.html#gov.nist.secauto.metaschema.binding.metapath.item.IXdmFactory.java">gov/nist/secauto/metaschema/binding/metapath/item/IXdmFactory.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  6
+                  1
                 </td>
                 <td>
                   0

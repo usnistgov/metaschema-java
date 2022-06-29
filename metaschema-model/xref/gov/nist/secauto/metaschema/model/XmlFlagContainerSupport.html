@@ -39,7 +39,7 @@
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.IFlagInstance;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.xmlbeans.FlagDocument;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.xmlbeans.FlagReferenceType;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.xmlbeans.GlobalFieldDefinitionType;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType;
@@ -156,8 +156,8 @@
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>     Map&lt;@NotNull String, IFlagInstance&gt; flagInstances = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;&gt;(); <em class="jxr_comment">// NOPMD - intentional</em>
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>     <strong class="jxr_keyword">while</strong> (cursor.toNextSelection()) {
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>       XmlObject obj = cursor.getObject();
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>       <strong class="jxr_keyword">if</strong> (obj instanceof FlagDocument.Flag) {
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>         <a name="XmlFlagInstance" href="../../../../../gov/nist/secauto/metaschema/model/XmlFlagInstance.html#XmlFlagInstance">XmlFlagInstance</a> flagInstance = <strong class="jxr_keyword">new</strong> <a name="XmlFlagInstance" href="../../../../../gov/nist/secauto/metaschema/model/XmlFlagInstance.html#XmlFlagInstance">XmlFlagInstance</a>((FlagDocument.Flag) obj, parent); <em class="jxr_comment">// NOPMD - intentional</em>
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>       <strong class="jxr_keyword">if</strong> (obj instanceof FlagReferenceType) {
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         <a name="XmlFlagInstance" href="../../../../../gov/nist/secauto/metaschema/model/XmlFlagInstance.html#XmlFlagInstance">XmlFlagInstance</a> flagInstance = <strong class="jxr_keyword">new</strong> <a name="XmlFlagInstance" href="../../../../../gov/nist/secauto/metaschema/model/XmlFlagInstance.html#XmlFlagInstance">XmlFlagInstance</a>((FlagReferenceType) obj, parent); <em class="jxr_comment">// NOPMD - intentional</em>
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>         flagInstances.put(flagInstance.getEffectiveName(), flagInstance);
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>       } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (obj instanceof InlineFlagDefinitionType) {
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>         <a name="XmlInlineFlagDefinition" href="../../../../../gov/nist/secauto/metaschema/model/XmlInlineFlagDefinition.html#XmlInlineFlagDefinition">XmlInlineFlagDefinition</a> flagInstance

@@ -3,7 +3,6 @@ gov.nist.secauto.metaschema.binding.io
 gov.nist.secauto.metaschema.binding.io.json
 gov.nist.secauto.metaschema.binding.io.xml
 gov.nist.secauto.metaschema.binding.io.yaml
-gov.nist.secauto.metaschema.binding.metapath.item
 gov.nist.secauto.metaschema.binding.model
 gov.nist.secauto.metaschema.binding.model.annotations
 gov.nist.secauto.metaschema.codegen
@@ -13,6 +12,7 @@ gov.nist.secauto.metaschema.freemarker.support
 gov.nist.secauto.metaschema.maven.plugin
 gov.nist.secauto.metaschema.model
 gov.nist.secauto.metaschema.model.common
+gov.nist.secauto.metaschema.model.common.configuration
 gov.nist.secauto.metaschema.model.common.constraint
 gov.nist.secauto.metaschema.model.common.datatype
 gov.nist.secauto.metaschema.model.common.datatype.adapter
@@ -21,9 +21,6 @@ gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark
 gov.nist.secauto.metaschema.model.common.datatype.object
 gov.nist.secauto.metaschema.model.common.metapath
 gov.nist.secauto.metaschema.model.common.metapath.antlr
-gov.nist.secauto.metaschema.model.common.metapath.ast
-gov.nist.secauto.metaschema.model.common.metapath.evaluate
-gov.nist.secauto.metaschema.model.common.metapath.evaluate.instance
 gov.nist.secauto.metaschema.model.common.metapath.format
 gov.nist.secauto.metaschema.model.common.metapath.function
 gov.nist.secauto.metaschema.model.common.metapath.function.library

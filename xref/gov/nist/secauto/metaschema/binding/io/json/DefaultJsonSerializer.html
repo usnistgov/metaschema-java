@@ -80,23 +80,24 @@
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>    <strong class="jxr_keyword">protected</strong> JsonGenerator newJsonGenerator(Writer writer) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>      JsonFactory factory = getJsonFactory();
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      JsonGenerator retval = factory.createGenerator(writer);
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>      retval.setPrettyPrinter(<strong class="jxr_keyword">new</strong> DefaultPrettyPrinter());
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">return</strong> retval;
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>    }
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>  
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>    @Override
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> serialize(CLASS data, Writer writer) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>      <strong class="jxr_keyword">try</strong> (JsonGenerator generator = newJsonGenerator(writer)) {
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>        <a name="IAssemblyClassBinding" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IAssemblyClassBinding.html#IAssemblyClassBinding">IAssemblyClassBinding</a> classBinding = getClassBinding();
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>        <a name="IJsonWritingContext" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonWritingContext.html#IJsonWritingContext">IJsonWritingContext</a> writingContext = <strong class="jxr_keyword">new</strong> <a name="DefaultJsonWritingContext" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/DefaultJsonWritingContext.html#DefaultJsonWritingContext">DefaultJsonWritingContext</a>(generator);
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>  
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>        <a name="RootAssemblyDefinition" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/RootAssemblyDefinition.html#RootAssemblyDefinition">RootAssemblyDefinition</a> root = <strong class="jxr_keyword">new</strong> <a name="RootAssemblyDefinition" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/RootAssemblyDefinition.html#RootAssemblyDefinition">RootAssemblyDefinition</a>(classBinding);
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>  
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>        root.writeRoot(data, writingContext);
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>      }
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>    }
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>  
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>  }
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>      retval.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      retval.setPrettyPrinter(<strong class="jxr_keyword">new</strong> DefaultPrettyPrinter());
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">return</strong> retval;
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>    }
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>  
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>    @Override
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> serialize(CLASS data, Writer writer) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>      <strong class="jxr_keyword">try</strong> (JsonGenerator generator = newJsonGenerator(writer)) {
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>        <a name="IAssemblyClassBinding" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/IAssemblyClassBinding.html#IAssemblyClassBinding">IAssemblyClassBinding</a> classBinding = getClassBinding();
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>        <a name="IJsonWritingContext" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/IJsonWritingContext.html#IJsonWritingContext">IJsonWritingContext</a> writingContext = <strong class="jxr_keyword">new</strong> <a name="DefaultJsonWritingContext" href="../../../../../../../gov/nist/secauto/metaschema/binding/io/json/DefaultJsonWritingContext.html#DefaultJsonWritingContext">DefaultJsonWritingContext</a>(generator);
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>  
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>        <a name="RootAssemblyDefinition" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/RootAssemblyDefinition.html#RootAssemblyDefinition">RootAssemblyDefinition</a> root = <strong class="jxr_keyword">new</strong> <a name="RootAssemblyDefinition" href="../../../../../../../gov/nist/secauto/metaschema/binding/model/RootAssemblyDefinition.html#RootAssemblyDefinition">RootAssemblyDefinition</a>(classBinding);
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>  
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>        root.writeRoot(data, writingContext);
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>      }
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>    }
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>  
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>

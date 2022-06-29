@@ -53,31 +53,28 @@
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>      <strong class="jxr_keyword">extends</strong> AbstractModelDefinitionTypeInfo&lt;IFieldDefinition&gt;
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      <strong class="jxr_keyword">implements</strong> <a name="IFieldDefinitionTypeInfo" href="../../../../../gov/nist/secauto/metaschema/codegen/IFieldDefinitionTypeInfo.html#IFieldDefinitionTypeInfo">IFieldDefinitionTypeInfo</a> {
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="IFieldValueTypeInfo" href="../../../../../gov/nist/secauto/metaschema/codegen/IFieldValueTypeInfo.html#IFieldValueTypeInfo">IFieldValueTypeInfo</a> fieldValue;
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>  
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>    <strong class="jxr_keyword">public</strong> <a name="FieldDefinitionTypeInfoImpl" href="../../../../../gov/nist/secauto/metaschema/codegen/FieldDefinitionTypeInfoImpl.html#FieldDefinitionTypeInfoImpl">FieldDefinitionTypeInfoImpl</a>(@NotNull IFieldDefinition definition, @NotNull <a name="ITypeResolver" href="../../../../../gov/nist/secauto/metaschema/codegen/ITypeResolver.html#ITypeResolver">ITypeResolver</a> typeResolver) {
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">super</strong>(definition, typeResolver);
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>      fieldValue = IFieldValueTypeInfo.newTypeInfo(<strong class="jxr_keyword">this</strong>);
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>      addPropertyTypeInfo(fieldValue);
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>    }
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>  
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>    @Override
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>    <strong class="jxr_keyword">protected</strong> Set&lt;INamedModelDefinition&gt; buildClass(@NotNull TypeSpec.Builder builder, @NotNull ClassName className)
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>        <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>      Set&lt;INamedModelDefinition&gt; retval = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;();
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>      retval.addAll(<strong class="jxr_keyword">super</strong>.buildClass(builder, className));
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>  
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>      AnnotationSpec.Builder metaschemaField = ObjectUtils.notNull(AnnotationSpec.builder(MetaschemaField.<strong class="jxr_keyword">class</strong>));
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>  
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      buildCommonProperties(metaschemaField);
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>    <strong class="jxr_keyword">public</strong> <a name="FieldDefinitionTypeInfoImpl" href="../../../../../gov/nist/secauto/metaschema/codegen/FieldDefinitionTypeInfoImpl.html#FieldDefinitionTypeInfoImpl">FieldDefinitionTypeInfoImpl</a>(@NotNull IFieldDefinition definition, @NotNull <a name="ITypeResolver" href="../../../../../gov/nist/secauto/metaschema/codegen/ITypeResolver.html#ITypeResolver">ITypeResolver</a> typeResolver) {
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">super</strong>(definition, typeResolver);
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>      addPropertyTypeInfo(IFieldValueTypeInfo.newTypeInfo(<strong class="jxr_keyword">this</strong>));
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>    }
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>    @Override
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>    <strong class="jxr_keyword">protected</strong> Set&lt;INamedModelDefinition&gt; buildClass(@NotNull TypeSpec.Builder builder, @NotNull ClassName className)
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>        <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>      Set&lt;INamedModelDefinition&gt; retval = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;();
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>      retval.addAll(<strong class="jxr_keyword">super</strong>.buildClass(builder, className));
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>      AnnotationSpec.Builder metaschemaField = ObjectUtils.notNull(AnnotationSpec.builder(MetaschemaField.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>      buildCommonProperties(metaschemaField);
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>      metaschemaField.addMember(<span class="jxr_string">"isCollapsible"</span>, <span class="jxr_string">"$L"</span>, getDefinition().isCollapsible());
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      buildConstraints(metaschemaField);
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>      metaschemaField.addMember(<span class="jxr_string">"isCollapsible"</span>, <span class="jxr_string">"$L"</span>, getDefinition().isCollapsible());
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>      buildConstraints(metaschemaField);
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>  
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>      builder.addAnnotation(metaschemaField.build());
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">return</strong> retval;
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>    }
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>  }
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>      builder.addAnnotation(metaschemaField.build());
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>      <strong class="jxr_keyword">return</strong> retval;
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>    }
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
