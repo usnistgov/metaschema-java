@@ -31,7 +31,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -92,7 +92,7 @@ public @interface Matches {
    * @return the data type adapter or a {@link NullJavaTypeAdapter} if none is provided
    */
   @NotNull
-  Class<? extends IJavaTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
+  Class<? extends IDataTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
 
   /**
    * The message to emit when the constraint is violated.

@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.ASTPrinter.State;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class ASTPrinter
+final class ASTPrinter
     extends AbstractExpressionVisitor<String, @NotNull State> {
 
   private static final ASTPrinter SINGLETON = new ASTPrinter();

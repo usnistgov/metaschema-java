@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -48,7 +48,7 @@ public @interface BoundFieldValue {
    * 
    * @return the data type adapter
    */
-  Class<? extends IJavaTypeAdapter<?>> typeAdapter();
+  Class<? extends IDataTypeAdapter<?>> typeAdapter();
 
   /**
    * The name of the JSON property that contains the field's value. If this value is provided, the the

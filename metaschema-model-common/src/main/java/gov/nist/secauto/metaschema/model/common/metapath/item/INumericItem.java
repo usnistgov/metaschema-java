@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.ArithmeticFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ import java.math.RoundingMode;
 public interface INumericItem extends IAnyAtomicItem {
 
   @NotNull
-  public static INumericItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+  public static INumericItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     INumericItem retval;
     if (item instanceof INumericItem) {
       retval = (INumericItem) item;
@@ -49,7 +49,7 @@ public interface INumericItem extends IAnyAtomicItem {
       try {
         retval = IDecimalItem.valueOf(item.asString());
       } catch (NumberFormatException ex) {
-        throw new InvalidValueForCastFunctionMetapathException(ex);
+        throw new InvalidValueForCastFunctionException(ex);
       }
     }
     return retval;

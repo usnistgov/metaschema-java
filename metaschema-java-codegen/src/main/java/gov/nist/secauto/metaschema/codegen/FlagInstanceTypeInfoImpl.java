@@ -38,7 +38,7 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
@@ -76,7 +76,7 @@ class FlagInstanceTypeInfoImpl
 
     IFlagDefinition definition = instance.getDefinition();
 
-    IJavaTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
+    IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
     annotation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
 
     AnnotationUtils.applyAllowedValuesConstraints(annotation, definition.getAllowedValuesConstraints());

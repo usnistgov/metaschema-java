@@ -40,7 +40,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -61,7 +61,7 @@ class DefaultFlagProperty
   @NotNull
   private final BoundFlag flag;
   @NotNull
-  private final IJavaTypeAdapter<?> javaTypeAdapter;
+  private final IDataTypeAdapter<?> javaTypeAdapter;
   private InternalFlagDefinition definition;
 
   /**
@@ -78,7 +78,7 @@ class DefaultFlagProperty
     this.field = ObjectUtils.requireNonNull(field, "field");
     this.flag = ObjectUtils.requireNonNull(field.getAnnotation(BoundFlag.class));
 
-    Class<? extends IJavaTypeAdapter<?>> adapterClass = ObjectUtils.notNull(this.flag.typeAdapter());
+    Class<? extends IDataTypeAdapter<?>> adapterClass = ObjectUtils.notNull(this.flag.typeAdapter());
     if (NullJavaTypeAdapter.class.equals(adapterClass)) {
       this.javaTypeAdapter = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
     } else {
@@ -113,7 +113,7 @@ class DefaultFlagProperty
   }
 
   @NotNull
-  protected IJavaTypeAdapter<?> getJavaTypeAdapter() {
+  protected IDataTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
 
@@ -169,7 +169,7 @@ class DefaultFlagProperty
     }
 
     @Override
-    public IJavaTypeAdapter<?> getJavaTypeAdapter() {
+    public IDataTypeAdapter<?> getJavaTypeAdapter() {
       return DefaultFlagProperty.this.getJavaTypeAdapter();
     }
 

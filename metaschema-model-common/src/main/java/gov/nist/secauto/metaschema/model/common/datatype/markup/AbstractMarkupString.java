@@ -33,7 +33,7 @@ import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 
-import gov.nist.secauto.metaschema.model.common.datatype.IDatatype;
+import gov.nist.secauto.metaschema.model.common.datatype.ICustomJavaDataType;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.AstCollectingVisitor;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.FlexmarkFactory;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
@@ -56,7 +56,7 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 
 public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYPE>>
-    implements IMarkupText, IDatatype<TYPE> {
+    implements IMarkupText, ICustomJavaDataType<TYPE> {
   private static final String DEFAULT_HTML_NS = "http://www.w3.org/1999/xhtml";
   private static final String DEFAULT_HTML_PREFIX = "";
   @NotNull

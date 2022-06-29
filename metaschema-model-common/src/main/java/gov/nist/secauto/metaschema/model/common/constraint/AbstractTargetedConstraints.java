@@ -37,6 +37,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Provides an base implementation for a set of external constraints that target a given definition
+ * using a target Metapath expression.
+ *
+ * @param <T>
+ *          the type of the constraint container
+ */
 public abstract class AbstractTargetedConstraints<T extends IValueConstraintSupport> implements ITargetedConstaints {
   @NotNull
   private final MetapathExpression targetExpression;
@@ -109,7 +116,6 @@ public abstract class AbstractTargetedConstraints<T extends IValueConstraintSupp
     getIndexHasKeyConstraints().forEach(constraint -> definition.addConstraint(constraint));
     getExpectConstraints().forEach(constraint -> definition.addConstraint(constraint));
   }
-
 
   @Override
   public void target(@NotNull IFlagDefinition definition) {

@@ -30,6 +30,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * A common interface used for constraints oriented around key-based indexes.
+ */
 public interface IKeyConstraint extends IConstraint {
   /**
    * Retrieve the list of keys to use in creating and looking up an entry in a given index.

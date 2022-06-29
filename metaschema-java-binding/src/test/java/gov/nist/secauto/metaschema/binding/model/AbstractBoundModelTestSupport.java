@@ -42,7 +42,7 @@ import gov.nist.secauto.metaschema.binding.model.test.OnlyModelBoundAssembly;
 import gov.nist.secauto.metaschema.binding.model.test.RootBoundAssembly;
 import gov.nist.secauto.metaschema.binding.model.test.TestMetaschema;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 
 import org.codehaus.stax2.XMLEventReader2;
@@ -70,7 +70,7 @@ public class AbstractBoundModelTestSupport {
     return context;
   }
 
-  protected void registerDatatype(@NotNull IJavaTypeAdapter<?> adapter) {
+  protected void registerDatatype(@NotNull IDataTypeAdapter<?> adapter) {
     context.checking(new Expectations() {
       { // NOPMD - intentional
         allowing(bindingContext).getJavaTypeAdapterInstance(adapter.getClass());

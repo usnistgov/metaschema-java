@@ -51,7 +51,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstrain
 import gov.nist.secauto.metaschema.model.common.constraint.IKeyField;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
@@ -180,7 +180,7 @@ final class AnnotationUtils {
         constraintAnnotation.addMember("pattern", "$S", pattern.pattern());
       }
 
-      IJavaTypeAdapter<?> dataType = constraint.getDataType();
+      IDataTypeAdapter<?> dataType = constraint.getDataType();
       if (dataType != null) {
         constraintAnnotation.addMember("typeAdapter", "$T.class", dataType.getClass());
       }

@@ -26,14 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBase64BinaryItem;
 
 import java.nio.ByteBuffer;
 import java.util.Base64;
 
 public class Base64Adapter
-    extends AbstractJavaTypeAdapter<ByteBuffer, IBase64BinaryItem> {
+    extends AbstractDataTypeAdapter<ByteBuffer, IBase64BinaryItem> {
   @SuppressWarnings("null")
   Base64Adapter() {
     super(ByteBuffer.class);

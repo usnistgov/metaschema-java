@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 
 import org.jetbrains.annotations.NotNull;
@@ -63,7 +63,7 @@ class BooleanItemImpl implements IBooleanItem {
   }
 
   @Override
-  public IJavaTypeAdapter<?> getJavaTypeAdapter() {
+  public IDataTypeAdapter<?> getJavaTypeAdapter() {
     return MetaschemaDataTypeProvider.BOOLEAN;
   }
 

@@ -26,13 +26,23 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype;
 
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+/**
+ * A service interface used to provide implementations of data types represented as
+ * {@link IDataTypeAdapter} instances.
+ * <p>
+ * Multiple providers can be used to support dynamic data type discovery in an Metaschema-based
+ * application, allowing data type extensions to be loaded at runtime using the
+ * {@link DataTypeService}.
+ */
 public interface IDataTypeProvider {
   @NotNull
-  Map<String, @NotNull ? extends IJavaTypeAdapter<?>> getJavaTypeAdapters();
-  
-  <TYPE extends IJavaTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz);
+  Map<String, @NotNull ? extends IDataTypeAdapter<?>> getJavaTypeAdapters();
+
+  <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz);
 }

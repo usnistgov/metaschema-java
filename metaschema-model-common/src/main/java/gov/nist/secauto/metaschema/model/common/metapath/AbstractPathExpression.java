@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
-public abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
+abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
     extends AbstractExpression
     implements IPathExpression<RESULT_TYPE> {
   @Override

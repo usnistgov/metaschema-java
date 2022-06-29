@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.binding.io.ISerializer;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
@@ -97,7 +97,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
   Class<?> getBoundClassForJsonName(@NotNull String rootName);
 
   /**
-   * Get's the {@link IJavaTypeAdapter} associated with the specified Java class, which is used to
+   * Get's the {@link IDataTypeAdapter} associated with the specified Java class, which is used to
    * read and write XML, JSON, and YAML data to and from instances of that class. Thus, this adapter
    * supports a direct binding between the Java class and structured data in one of the supported
    * formats. Adapters are used to support bindings for simple data objects (e.g., {@link String},
@@ -110,7 +110,7 @@ public interface IBindingContext extends IMetaschemaLoaderStrategy {
    * @return the adapter instance or {@code null} if the provided class is not bound
    */
   @Nullable
-  <TYPE extends IJavaTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz);
+  <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz);
 
   // boolean hasClassBinding(Class<?> clazz) throws BindingException;
 

@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
@@ -114,7 +114,7 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
       @SuppressWarnings("unused") @NotNull INodeItem node,
       @NotNull INodeItem target,
       @NotNull String value) {
-    IJavaTypeAdapter<?> adapter = constraint.getDataType();
+    IDataTypeAdapter<?> adapter = constraint.getDataType();
     return String.format("Value '%s' did not conform to the data type '%s' at path '%s'", value,
         adapter.getName(), toPath(target));
   }

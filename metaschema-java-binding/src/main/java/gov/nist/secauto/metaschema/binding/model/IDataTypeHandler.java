@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,11 +54,11 @@ interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSupplier, IX
   IClassBinding getClassBinding();
 
   /**
-   * Get the associated {@link IJavaTypeAdapter}, if the data type is not a complex bound object.
+   * Get the associated {@link IDataTypeAdapter}, if the data type is not a complex bound object.
    * 
    * @return the adpater, or {@code null} otherwise
    */
-  IJavaTypeAdapter<?> getJavaTypeAdapter();
+  IDataTypeAdapter<?> getJavaTypeAdapter();
 
   /**
    * Indicate if the value supported by this handler allows values without an XML element wrapper.

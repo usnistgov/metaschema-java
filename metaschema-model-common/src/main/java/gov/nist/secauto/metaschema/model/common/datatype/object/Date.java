@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 
 public class Date // NOPMD - intentional
-    extends AbstractAmbiguousDateTime<Date> {
+    extends AbstractAmbiguousTemporal<Date> {
 
   /**
    * Construct a new date object. This type supports ambiguous dates that were provided without a time

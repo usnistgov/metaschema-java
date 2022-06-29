@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <CONTEXT>
  *          additional state to pass between nodes visited
  */
-public interface IExpressionVisitor<RESULT, CONTEXT> {
+interface IExpressionVisitor<RESULT, CONTEXT> {
 
   RESULT visitAddition(@NotNull Addition expr, CONTEXT context);
 

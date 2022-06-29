@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -73,7 +73,7 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
   }
 
   @NotNull
-  private final Map<@NotNull IJavaTypeAdapter<?>, String> datatypeToTypeMap = new HashMap<>();
+  private final Map<gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter<?>, String> datatypeToTypeMap = new HashMap<>();
   @NotNull
   private final Map<INamedDefinition, String> definitionToNameMap
       = new HashMap<>();
@@ -92,7 +92,7 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
   @SuppressWarnings("null")
   @Override
   @NotNull
-  public String getTypeNameForDatatype(@NotNull IJavaTypeAdapter<?> datatype) {
+  public String getTypeNameForDatatype(@NotNull IDataTypeAdapter<?> datatype) {
     synchronized (this) {
       String name = datatypeToTypeMap.get(datatype);
       if (name == null) {

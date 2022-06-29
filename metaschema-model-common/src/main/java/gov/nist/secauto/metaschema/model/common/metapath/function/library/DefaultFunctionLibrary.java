@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.model.common.metapath.function.library;
 import com.google.auto.service.AutoService;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.AbstractFunctionLibrary;
-import gov.nist.secauto.metaschema.model.common.metapath.function.CastFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionLibrary;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;

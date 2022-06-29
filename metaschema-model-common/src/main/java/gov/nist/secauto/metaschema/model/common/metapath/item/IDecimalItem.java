@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +50,7 @@ public interface IDecimalItem extends INumericItem {
       // it is important to use this BigDecimal constructor to preserve the precision of the double value
       return valueOf(new BigDecimal(value));
     } catch (NumberFormatException ex) {
-      throw new InvalidValueForCastFunctionMetapathException(String.format("Unable to parse double value '%n'", value),
+      throw new InvalidValueForCastFunctionException(String.format("Unable to parse double value '%n'", value),
           ex);
     }
   }
@@ -65,13 +65,13 @@ public interface IDecimalItem extends INumericItem {
     try {
       return valueOf(MetaschemaDataTypeProvider.DECIMAL.parse(value));
     } catch (IllegalArgumentException ex) {
-      throw new InvalidValueForCastFunctionMetapathException(String.format("Unable to parse string value '%s'", value),
+      throw new InvalidValueForCastFunctionException(String.format("Unable to parse string value '%s'", value),
           ex);
     }
   }
 
   public static @NotNull IDecimalItem cast(@NotNull IAnyAtomicItem item)
-      throws InvalidValueForCastFunctionMetapathException {
+      throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.DECIMAL.cast(item);
   }
 }

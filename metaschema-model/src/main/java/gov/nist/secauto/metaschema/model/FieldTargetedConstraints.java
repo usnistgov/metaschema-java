@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import org.jetbrains.annotations.NotNull;
 
-public class FieldTargetedConstraints
+class FieldTargetedConstraints
     extends AbstractTargetedConstraints<IValueConstraintSupport> {
 
   public FieldTargetedConstraints(@NotNull MetapathExpression targetExpression,

@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
-import gov.nist.secauto.metaschema.model.common.metapath.function.TypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
@@ -35,7 +34,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractExpression implements IExpression {
+abstract class AbstractExpression implements IExpression {
   /**
    * Get the first data item of the provided {@code sequence} cast to an {@link IAnyAtomicItem}.
    * 
@@ -55,19 +54,6 @@ public abstract class AbstractExpression implements IExpression {
     IItem item = FunctionUtils.getFirstItem(sequence, requireSingleton);
 
     return item == null ? null : FnData.fnDataItem(item);
-  }
-
-  @FunctionalInterface
-  public interface ExpressionEvaluator {
-    /**
-     * Used to evaluate the provided {@code expression}.
-     * 
-     * @param expression
-     *          the expression to evaluate
-     * @return the evaluation result
-     */
-    @NotNull
-    ISequence<?> evaluate(@NotNull IExpression expression);
   }
 
   @Override

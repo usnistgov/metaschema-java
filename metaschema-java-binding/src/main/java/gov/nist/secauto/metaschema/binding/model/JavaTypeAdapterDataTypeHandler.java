@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
@@ -60,7 +60,7 @@ class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
   }
 
   @Override
-  public IJavaTypeAdapter<?> getJavaTypeAdapter() {
+  public IDataTypeAdapter<?> getJavaTypeAdapter() {
     return getProperty().getDefinition().getJavaTypeAdapter();
   }
 

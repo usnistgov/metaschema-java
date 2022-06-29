@@ -25,10 +25,6 @@
  */
 /**
  * The Metaschema and Metapath data type system API.
- * <p>
- * This package provides abstract implementation classes for different kinds of
- * {@link gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter}, which must be
- * implemented by a new date type to be used in this API.
  */
 
 package gov.nist.secauto.metaschema.model.common.datatype;

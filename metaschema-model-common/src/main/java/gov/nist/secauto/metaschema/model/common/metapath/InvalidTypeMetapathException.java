@@ -24,51 +24,33 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype.object;
+package gov.nist.secauto.metaschema.model.common.metapath;
 
-import gov.nist.secauto.metaschema.model.common.datatype.AbstractDatatype;
+import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.time.ZonedDateTime;
-
-/**
- * Metaschema has a need to represent dates and times that allow for an ambiguous time zone. This is
- * due to some models not requiring a time zone as part of a date/time. An ambiguous dateTime allows
- * a time zone to be inferred, without change information in the source content.
- * <p>
- * This class wraps a ZonedDateTime object and tracks if a time zone was found when parsing, which
- * can be used to ensure that the assumed time zone is not written back out in such cases.
- * 
- * @param <TYPE>
- *          the bound object type
- */
-public abstract class AbstractAmbiguousDateTime<TYPE extends AbstractAmbiguousDateTime<TYPE>>
-    extends AbstractDatatype<TYPE, ZonedDateTime> {
-  private final boolean timeZone;
+public class InvalidTypeMetapathException
+    extends TypeMetapathException {
 
   /**
-   * Construct a new object. This type supports ambiguous dates/times that were provided without a
-   * time zone.
-   * 
-   * @param value
-   *          the date value
-   * @param hasTimeZone
-   *          {@code true} if the date is intended to have an associated time zone or {@code false}
-   *          otherwise
+   * the serial version UID.
    */
-  public AbstractAmbiguousDateTime(@NotNull ZonedDateTime value, boolean hasTimeZone) {
-    super(value);
-    this.timeZone = hasTimeZone;
+  private static final long serialVersionUID = 1L;
+
+  public InvalidTypeMetapathException(IItem item, Throwable cause) {
+    super(TypeMetapathException.INVALID_TYPE_ERROR, String.format("Invalid data type '%s'", item.getClass().getName()),
+        cause);
   }
 
-  /**
-   * Indicate if a time zone is configured.
-   * 
-   * @return {@code true} if the date is intended to have an associated time zone or {@code false}
-   *         otherwise
-   */
-  public boolean hasTimeZone() {
-    return timeZone;
+  public InvalidTypeMetapathException(IItem item) {
+    super(TypeMetapathException.INVALID_TYPE_ERROR, String.format("Invalid data type '%s'", item.getClass().getName()));
   }
+
+  public InvalidTypeMetapathException(String message, Throwable cause) {
+    super(TypeMetapathException.INVALID_TYPE_ERROR, message, cause);
+  }
+
+  public InvalidTypeMetapathException(String message) {
+    super(TypeMetapathException.INVALID_TYPE_ERROR, message);
+  }
+
 }

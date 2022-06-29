@@ -32,7 +32,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -85,7 +85,7 @@ public @interface BoundField {
    * 
    * @return the data type adapter
    */
-  Class<? extends IJavaTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
+  Class<? extends IDataTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
   //
   // /**
   // * The name of the JSON property that contains the field's value. If this value is provided, the

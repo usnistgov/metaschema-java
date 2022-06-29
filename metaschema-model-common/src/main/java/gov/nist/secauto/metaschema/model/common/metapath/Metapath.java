@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class Metapath
+class Metapath
     extends AbstractNAryExpression {
 
   @NotNull

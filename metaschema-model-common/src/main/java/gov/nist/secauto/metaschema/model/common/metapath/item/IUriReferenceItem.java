@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +41,7 @@ public interface IUriReferenceItem extends IAnyUriItem {
 
   @NotNull
   public static IUriReferenceItem cast(@NotNull IAnyAtomicItem item)
-      throws InvalidValueForCastFunctionMetapathException {
+      throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.URI_REFERENCE.cast(item);
   }
 }

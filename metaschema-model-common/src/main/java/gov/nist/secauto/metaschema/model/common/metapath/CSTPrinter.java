@@ -37,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.PrintStream;
 import java.util.List;
 
-public class CSTPrinter {
+class CSTPrinter {
   @NotNull
   private final PrintStream outputStream;
   private boolean ignoringWrappers = true;

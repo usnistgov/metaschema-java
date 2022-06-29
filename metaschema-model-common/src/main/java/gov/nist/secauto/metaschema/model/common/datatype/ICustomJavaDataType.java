@@ -23,28 +23,23 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-package gov.nist.secauto.metaschema.model.common.io;
 
-import gov.nist.secauto.metaschema.model.common.util.InputSourceUtils;
+package gov.nist.secauto.metaschema.model.common.datatype;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
 
-import java.io.IOException;
-import java.net.URI;
-
-public interface IResourceLoader {
-  @Nullable
-  default EntityResolver getEntityResolver() {
-    // by default, do not support an entity resolver extension mechanism
-    // Subclasses can override this behavior
-    return null;
-  }
-
+/**
+ * The common interface for all data type implementations supported by a custom Java class.
+ *
+ * @param <TYPE>
+ *          the type of the custom Java class
+ */
+public interface ICustomJavaDataType<TYPE extends ICustomJavaDataType<TYPE>> {
+  /**
+   * Provides a copy of the data value associated with the Datatype instance.
+   * 
+   * @return the copy
+   */
   @NotNull
-  default InputSource toInputSource(@NotNull URI uri) throws IOException {
-    return InputSourceUtils.toInputSource(uri, getEntityResolver());
-  }
+  TYPE copy();
 }

@@ -24,26 +24,31 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype;
+package gov.nist.secauto.metaschema.model.common;
 
-import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
+import gov.nist.secauto.metaschema.model.common.util.InputSourceUtils;
 
-public abstract class AbstractStringJavaTypeAdapter<ITEM_TYPE extends IStringItem>
-    extends AbstractJavaTypeAdapter<String, ITEM_TYPE> {
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 
-  @SuppressWarnings("null")
-  protected AbstractStringJavaTypeAdapter() {
-    super(String.class);
+import java.io.IOException;
+import java.net.URI;
+
+/**
+ * A common interface for implementation classes that load data resources.
+ */
+public interface IResourceLoader {
+  @Nullable
+  default EntityResolver getEntityResolver() {
+    // by default, do not support an entity resolver extension mechanism
+    // Subclasses can override this behavior
+    return null;
   }
 
-  @Override
-  public String parse(String value) {
-    return value;
-  }
-
-  @Override
-  public String copy(Object obj) {
-    // a Java string is immutable
-    return (String) obj;
+  @NotNull
+  default InputSource toInputSource(@NotNull URI uri) throws IOException {
+    return InputSourceUtils.toInputSource(uri, getEntityResolver());
   }
 }

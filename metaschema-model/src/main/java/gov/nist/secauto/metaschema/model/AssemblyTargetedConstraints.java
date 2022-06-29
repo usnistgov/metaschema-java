@@ -39,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class AssemblyTargetedConstraints
+class AssemblyTargetedConstraints
     extends AbstractTargetedConstraints<AssemblyConstraintSupport>
     implements IAssemblyConstraintSupport {
 

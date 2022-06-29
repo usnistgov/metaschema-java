@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -64,7 +64,7 @@ abstract class AbstractFlagProperty
   @Override
   public void copyBoundObject(Object fromInstance, Object toInstance) {
     Object value = getValue(fromInstance);
-    IJavaTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
+    IDataTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();
     setValue(toInstance, value == null ? null : adapter.copy(value));
   }
 

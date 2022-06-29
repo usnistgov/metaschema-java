@@ -30,7 +30,7 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -100,7 +100,7 @@ public @interface BoundFlag {
    * @return the data type adapter
    */
   @NotNull
-  Class<? extends IJavaTypeAdapter<?>> typeAdapter();
+  Class<? extends IDataTypeAdapter<?>> typeAdapter();
 
   /**
    * Get the allowed value constraints for this flag.

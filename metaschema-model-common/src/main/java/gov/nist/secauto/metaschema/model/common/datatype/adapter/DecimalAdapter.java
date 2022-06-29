@@ -28,8 +28,7 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import gov.nist.secauto.metaschema.model.common.datatype.AbstractJavaTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
@@ -43,7 +42,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 
 public class DecimalAdapter
-    extends AbstractJavaTypeAdapter<BigDecimal, IDecimalItem> {
+    extends AbstractDataTypeAdapter<BigDecimal, IDecimalItem> {
   public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
   @NotNull
   private static final BigDecimal DECIMAL_BOOLEAN_TRUE = new BigDecimal("1.0");
@@ -94,7 +93,7 @@ public class DecimalAdapter
 
   @Override
   protected @NotNull IDecimalItem castInternal(@NotNull IAnyAtomicItem item)
-      throws InvalidValueForCastFunctionMetapathException {
+      throws InvalidValueForCastFunctionException {
     IDecimalItem retval;
     if (item instanceof INumericItem) {
       if (item instanceof IDecimalItem) {

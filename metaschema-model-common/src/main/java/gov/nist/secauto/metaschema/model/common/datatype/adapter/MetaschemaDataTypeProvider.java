@@ -30,12 +30,12 @@ import com.google.auto.service.AutoService;
 
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeProvider;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-
+/**
+ * Provides for runtime discovery of all built-in implementations of the core Metaschema data types.
+ */
 @AutoService(IDataTypeProvider.class)
 public class MetaschemaDataTypeProvider // NOPMD - Used for service initialization
     extends AbstractDataTypeProvider {

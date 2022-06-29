@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 
 public class DateTime
-    extends AbstractAmbiguousDateTime<DateTime> {
+    extends AbstractAmbiguousTemporal<DateTime> {
 
   /**
    * Construct a new date/time object. This type supports ambiguous dates/times that were provided

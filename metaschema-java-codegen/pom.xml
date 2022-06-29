@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
@@ -93,6 +95,13 @@
 						</excludeRoots>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<configuration>
+						<excludePackageNames>gov.nist.secauto.metaschema.codegen.xmlbeans,org.apache.xmlbeans.metadata.*</excludePackageNames>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -113,9 +122,7 @@
 							<xmlConfigs>${project.basedir}/src/main/xsdconfig/metaschema-binding.xsdconfig</xmlConfigs>
 							<name>metaschema.codegen</name>
 							<partialMethods>ALL,-XGET,-XSET,-XGET_ARRAY,-XSET_ARRAY,-XGET_IDX,-XSET_IDX</partialMethods>
-							<!--
-							<repackage>gov.nist.secauto.metaschema.codegen.xmlbeans</repackage>
--->
+							<!-- <repackage>gov.nist.secauto.metaschema.codegen.xmlbeans</repackage> -->
 						</configuration>
 					</execution>
 				</executions>

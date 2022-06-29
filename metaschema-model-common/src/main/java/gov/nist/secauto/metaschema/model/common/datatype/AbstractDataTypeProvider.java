@@ -26,26 +26,35 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype;
 
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AbstractDataTypeProvider implements IDataTypeProvider {
-  private final Map<@NotNull String, IJavaTypeAdapter<?>> library = new HashMap<>(); // NOPMD - synchronized
-  private final Map<@NotNull Class<? extends IJavaTypeAdapter<?>>, // NOPMD - synchronized
-      IJavaTypeAdapter<?>> libraryByClass = new HashMap<>();
+/**
+ * A base implementation of an {@link IDataTypeProvider}, supporting dynamic loading of Metaschema data type
+ * extensions at runtime.
+ * <p>
+ * The {@link MetaschemaDataTypeProvider} class provides an example of how to use this class to provide new data types.
+ */
+public abstract class AbstractDataTypeProvider implements IDataTypeProvider {
+  private final Map<@NotNull String, IDataTypeAdapter<?>> library = new HashMap<>(); // NOPMD - synchronized
+  private final Map<@NotNull Class<? extends IDataTypeAdapter<?>>, // NOPMD - synchronized
+      IDataTypeAdapter<?>> libraryByClass = new HashMap<>();
 
   @SuppressWarnings("null")
   @Override
-  public Map<@NotNull String, ? extends IJavaTypeAdapter<?>> getJavaTypeAdapters() {
+  public Map<@NotNull String, ? extends IDataTypeAdapter<?>> getJavaTypeAdapters() {
     synchronized (this) {
       return Collections.unmodifiableMap(library);
     }
   }
 
-  public Map<@NotNull Class<? extends IJavaTypeAdapter<?>>, IJavaTypeAdapter<?>> getJavaTypeAdaptersByClass() {
+  public Map<@NotNull Class<? extends IDataTypeAdapter<?>>, IDataTypeAdapter<?>> getJavaTypeAdaptersByClass() {
     synchronized (this) {
       return Collections.unmodifiableMap(libraryByClass);
     }
@@ -53,7 +62,7 @@ public class AbstractDataTypeProvider implements IDataTypeProvider {
 
   @Override
   @SuppressWarnings("unchecked")
-  public <TYPE extends IJavaTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz) {
+  public <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz) {
     synchronized (this) {
       return (TYPE) libraryByClass.get(clazz);
     }
@@ -67,7 +76,7 @@ public class AbstractDataTypeProvider implements IDataTypeProvider {
    * @throws IllegalArgumentException
    *           if another type adapter is already bound to the same name
    */
-  protected void registerDatatype(@NotNull IJavaTypeAdapter<?> adapter) {
+  protected void registerDatatype(@NotNull IDataTypeAdapter<?> adapter) {
     String name = adapter.getName();
 
     registerDatatypeByName(name, adapter);
@@ -83,12 +92,12 @@ public class AbstractDataTypeProvider implements IDataTypeProvider {
    * @throws IllegalArgumentException
    *           if another type adapter is already bound to the same name
    */
-  protected void registerDatatypeByName(@NotNull String name, @NotNull IJavaTypeAdapter<?> adapter) {
-    IJavaTypeAdapter<?> duplicate;
+  protected void registerDatatypeByName(@NotNull String name, @NotNull IDataTypeAdapter<?> adapter) {
+    IDataTypeAdapter<?> duplicate;
     synchronized (this) {
       duplicate = library.put(name, adapter);
       @SuppressWarnings("unchecked")
-      Class<? extends IJavaTypeAdapter<?>> clazz = (Class<? extends IJavaTypeAdapter<?>>) adapter.getClass();
+      Class<? extends IDataTypeAdapter<?>> clazz = (Class<? extends IDataTypeAdapter<?>>) adapter.getClass();
       libraryByClass.put(clazz, adapter);
     }
     if (duplicate != null) {

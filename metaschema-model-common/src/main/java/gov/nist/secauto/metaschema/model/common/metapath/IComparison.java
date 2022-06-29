@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-public interface IComparison extends IBooleanLogicExpression {
+interface IComparison extends IBooleanLogicExpression {
   enum Operator {
     EQ,
     NE,
@@ -35,5 +35,4 @@ public interface IComparison extends IBooleanLogicExpression {
     GT,
     GE;
   }
-
 }

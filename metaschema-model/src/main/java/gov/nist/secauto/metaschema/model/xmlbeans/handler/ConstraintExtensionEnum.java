@@ -23,11 +23,12 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.xmlbeans.handler;
 
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 
-public class ConstraintExtensionEnum {
+public final class ConstraintExtensionEnum {
   private ConstraintExtensionEnum() {
     // disable construction
   }

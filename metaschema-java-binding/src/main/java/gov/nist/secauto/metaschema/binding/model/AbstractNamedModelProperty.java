@@ -71,7 +71,7 @@ abstract class AbstractNamedModelProperty // NOPMD - intentional
     super(parentClassBinding);
   }
   //
-  // protected abstract IJavaTypeAdapter<?> getJavaTypeAdapter();
+  // protected abstract IDataTypeAdapter<?> getJavaTypeAdapter();
   //
   // @Override
   // public Stream<INodeItem> newNodeItems(Object value, List<IPathSegment> precedingPath) {

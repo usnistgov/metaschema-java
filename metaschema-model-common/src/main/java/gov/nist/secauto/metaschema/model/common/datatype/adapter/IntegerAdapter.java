@@ -26,8 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
-import gov.nist.secauto.metaschema.model.common.datatype.AbstractIntegerAdapter;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
@@ -64,7 +63,7 @@ public class IntegerAdapter
 
   @Override
   protected @NotNull IIntegerItem castInternal(@NotNull IAnyAtomicItem item)
-      throws InvalidValueForCastFunctionMetapathException {
+      throws InvalidValueForCastFunctionException {
     IIntegerItem retval;
     if (item instanceof INumericItem) {
       if (item instanceof IIntegerItem) {

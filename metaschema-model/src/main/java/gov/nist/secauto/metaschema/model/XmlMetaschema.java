@@ -56,7 +56,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class XmlMetaschema
+class XmlMetaschema
     extends AbstractMetaschema {
   private static final Logger LOGGER = LogManager.getLogger(XmlMetaschema.class);
 

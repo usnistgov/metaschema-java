@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidArgumentFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidArgumentFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.function.UriFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
@@ -146,8 +146,8 @@ public final class FnResolveUri {
     IStringItem baseString = FunctionUtils.getFirstItem(baseSequence, true);
 
     if (baseString == null) {
-      throw new InvalidArgumentFunctionMetapathException(
-          InvalidArgumentFunctionMetapathException.INVALID_ARGUMENT_TO_RESOLVE_URI,
+      throw new InvalidArgumentFunctionException(
+          InvalidArgumentFunctionException.INVALID_ARGUMENT_TO_RESOLVE_URI,
           "Invalid argument to fn:resolve-uri().");
     }
     IAnyUriItem baseUri = IAnyUriItem.cast(baseString);

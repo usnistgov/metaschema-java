@@ -47,7 +47,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.DefaultMatchesConstra
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.ISource;
 import gov.nist.secauto.metaschema.model.common.datatype.DataTypeService;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
@@ -97,7 +97,7 @@ final class ConstraintFactory {
   }
 
   @Nullable
-  static IJavaTypeAdapter<?> toDataType(@NotNull Class<? extends IJavaTypeAdapter<?>> adapterClass) {
+  static IDataTypeAdapter<?> toDataType(@NotNull Class<? extends IDataTypeAdapter<?>> adapterClass) {
     return adapterClass.isAssignableFrom(NullJavaTypeAdapter.class) ? null
         : DataTypeService.getInstance().getJavaTypeAdapterByClass(adapterClass);
   }

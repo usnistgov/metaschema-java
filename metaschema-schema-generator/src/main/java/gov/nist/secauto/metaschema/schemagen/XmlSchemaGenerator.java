@@ -45,7 +45,7 @@ import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.UsedDefinitionModelWalker;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -376,7 +376,7 @@ public class XmlSchemaGenerator
       generateMetadata(definition, state);
     } // otherwise the metadata will appear on the element ref
 
-    IJavaTypeAdapter<?> datatype = definition.getJavaTypeAdapter();
+    IDataTypeAdapter<?> datatype = definition.getJavaTypeAdapter();
     String xmlContentType;
     if (datatype.isXmlMixed()) {
       xmlContentType = "complexContent";

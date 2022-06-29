@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -44,14 +44,14 @@ public interface IDayTimeDurationItem extends IDurationItem {
     try {
       return valueOf(MetaschemaDataTypeProvider.DAY_TIME_DURATION.parse(value));
     } catch (IllegalArgumentException ex) {
-      throw new InvalidValueForCastFunctionMetapathException(String.format("Unable to parse string value '%s'", value),
+      throw new InvalidValueForCastFunctionException(String.format("Unable to parse string value '%s'", value),
           ex);
     }
   }
 
   @NotNull
   public static IDayTimeDurationItem cast(@NotNull IAnyAtomicItem item)
-      throws InvalidValueForCastFunctionMetapathException {
+      throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.DAY_TIME_DURATION.cast(item);
   }
 

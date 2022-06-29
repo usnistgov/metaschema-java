@@ -31,7 +31,7 @@ import static gov.nist.secauto.metaschema.model.common.metapath.TestUtils.intege
 import static gov.nist.secauto.metaschema.model.common.metapath.TestUtils.string;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -148,7 +148,7 @@ class INumericItemTest {
   @ParameterizedTest
   @MethodSource("provideValuesForCastFail")
   void testCastFail(@NotNull IAnyAtomicItem item) {
-    Assertions.assertThrows(InvalidValueForCastFunctionMetapathException.class, () -> {
+    Assertions.assertThrows(InvalidValueForCastFunctionException.class, () -> {
       INumericItem.cast(item);
     });
   }

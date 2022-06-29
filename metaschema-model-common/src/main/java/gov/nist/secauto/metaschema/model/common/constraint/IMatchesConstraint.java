@@ -26,12 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
 import java.util.regex.Pattern;
 
+/**
+ * Represents a rule requiring the value of a field or flag to match a pattern and/or conform to an
+ * identified data type.
+ */
 public interface IMatchesConstraint extends IConstraint {
   Pattern getPattern();
 
-  IJavaTypeAdapter<?> getDataType();
+  IDataTypeAdapter<?> getDataType();
 }

@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model.xmlbeans.handler;
 
 import gov.nist.secauto.metaschema.model.common.datatype.DataTypeService;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
 import org.apache.xmlbeans.SimpleValue;
 
@@ -37,65 +37,65 @@ public final class DatatypesHandler {
   }
 
   /**
-   * Given an XMLBeans value, return the {@link IJavaTypeAdapter} instance with the given name, as
-   * determined by {@link IJavaTypeAdapter#getName()}.
+   * Given an XMLBeans value, return the {@link IDataTypeAdapter} instance with the given name, as
+   * determined by {@link IDataTypeAdapter#getName()}.
    * 
    * @param value
    *          the name of the data type
    * @return the data type instance
    */
-  public static IJavaTypeAdapter<?> decodeFieldDatatypesType(SimpleValue value) {
+  public static IDataTypeAdapter<?> decodeFieldDatatypesType(SimpleValue value) {
     return decode(value);
   }
 
   /**
    * Given a data type instance, set the name of the data type, as determined by
-   * {@link IJavaTypeAdapter#getName()}, in the provided target XMLBeans value.
+   * {@link IDataTypeAdapter#getName()}, in the provided target XMLBeans value.
    * 
    * @param datatype
    *          the data type instance
    * @param target
    *          XMLBeans value to apply the name to
    */
-  public static void encodeFieldDatatypesType(IJavaTypeAdapter<?> datatype, SimpleValue target) {
+  public static void encodeFieldDatatypesType(IDataTypeAdapter<?> datatype, SimpleValue target) {
     encode(datatype, target);
   }
 
   /**
-   * Given an XMLBeans value, return the {@link IJavaTypeAdapter} instance with the given name, as
-   * determined by {@link IJavaTypeAdapter#getName()}.
+   * Given an XMLBeans value, return the {@link IDataTypeAdapter} instance with the given name, as
+   * determined by {@link IDataTypeAdapter#getName()}.
    * 
    * @param value
    *          the name of the data type
    * @return the data type instance
    */
-  public static IJavaTypeAdapter<?> decodeSimpleDatatypesType(SimpleValue value) {
+  public static IDataTypeAdapter<?> decodeSimpleDatatypesType(SimpleValue value) {
     return decode(value);
   }
 
   /**
    * Given a data type instance, set the name of the data type, as determined by
-   * {@link IJavaTypeAdapter#getName()}, in the provided target XMLBeans value.
+   * {@link IDataTypeAdapter#getName()}, in the provided target XMLBeans value.
    * 
    * @param datatype
    *          the data type instance
    * @param target
    *          XMLBeans value to apply the name to
    */
-  public static void encodeSimpleDatatypesType(IJavaTypeAdapter<?> datatype, SimpleValue target) {
+  public static void encodeSimpleDatatypesType(IDataTypeAdapter<?> datatype, SimpleValue target) {
     encode(datatype, target);
   }
 
-  private static IJavaTypeAdapter<?> decode(SimpleValue target) {
+  private static IDataTypeAdapter<?> decode(SimpleValue target) {
     String name = target.getStringValue();
-    IJavaTypeAdapter<?> retval = DataTypeService.getInstance().getJavaTypeAdapterByName(name);
+    IDataTypeAdapter<?> retval = DataTypeService.getInstance().getJavaTypeAdapterByName(name);
     if (retval == null) {
       throw new IllegalStateException("Unable to find data type: " + name);
     }
     return retval;
   }
 
-  private static void encode(IJavaTypeAdapter<?> datatype, SimpleValue target) {
+  private static void encode(IDataTypeAdapter<?> datatype, SimpleValue target) {
     if (datatype != null) {
       target.setStringValue(datatype.getName());
     }

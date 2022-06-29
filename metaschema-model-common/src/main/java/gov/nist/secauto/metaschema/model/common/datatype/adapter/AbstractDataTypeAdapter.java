@@ -24,12 +24,12 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.datatype;
+package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 
-import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionMetapathException;
+import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
@@ -56,8 +56,8 @@ import javax.xml.stream.events.XMLEvent;
  * @param <ITEM_TYPE>
  *          the metapath item type corresponding to the raw Java type supported by the adapter
  */
-public abstract class AbstractJavaTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomicItem>
-    implements IJavaTypeAdapter<TYPE> {
+public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomicItem>
+    implements IDataTypeAdapter<TYPE> {
   public static final String DEFAULT_JSON_FIELD_NAME = "STRVALUE";
 
   @NotNull
@@ -69,7 +69,7 @@ public abstract class AbstractJavaTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
    * @param clazz
    *          the Java type this adapter supports
    */
-  protected AbstractJavaTypeAdapter(@NotNull Class<TYPE> clazz) {
+  protected AbstractDataTypeAdapter(@NotNull Class<TYPE> clazz) {
     this.clazz = clazz;
   }
 
@@ -187,10 +187,10 @@ public abstract class AbstractJavaTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
   public abstract ITEM_TYPE newItem(Object value);
 
   @Override
-  public ITEM_TYPE cast(IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+  public ITEM_TYPE cast(IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     ITEM_TYPE retval;
     if (item == null) {
-      throw new InvalidValueForCastFunctionMetapathException("item is null");
+      throw new InvalidValueForCastFunctionException("item is null");
     } else if (getItemClass().isAssignableFrom(item.getClass())) {
       @SuppressWarnings("unchecked")
       ITEM_TYPE typedItem = (ITEM_TYPE) item;
@@ -211,19 +211,19 @@ public abstract class AbstractJavaTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
    * @param item
    *          the item to cast
    * @return the item casted to this adapter's item type
-   * @throws InvalidValueForCastFunctionMetapathException
+   * @throws InvalidValueForCastFunctionException
    *           if the casting of the item is not possible because the item represents an invalid value
    *           for this adapter's item type
    */
   @NotNull
-  protected ITEM_TYPE castInternal(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionMetapathException {
+  protected ITEM_TYPE castInternal(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     // try string based casting as a fallback
     String itemString = item.asString();
     try {
       TYPE value = parse(itemString);
       return newItem(value);
     } catch (IllegalArgumentException ex) {
-      throw new InvalidValueForCastFunctionMetapathException(
+      throw new InvalidValueForCastFunctionException(
           String.format("The value '%s' is not compatible with the type '%s'", itemString, getItemClass().getName()),
           ex);
     }

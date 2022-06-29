@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.json.JsonUtil;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.model.common.datatype.IJavaTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +65,7 @@ class ClassDataTypeHandler implements IDataTypeHandler {
   }
 
   @Override
-  public IJavaTypeAdapter<?> getJavaTypeAdapter() {
+  public IDataTypeAdapter<?> getJavaTypeAdapter() {
     // this is always null
     return null;
   }

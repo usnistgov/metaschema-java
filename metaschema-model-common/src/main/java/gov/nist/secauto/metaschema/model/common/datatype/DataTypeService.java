@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype;
 
+import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -45,20 +47,20 @@ public class DataTypeService {
     return instance;
   }
 
-  private Map<String, IJavaTypeAdapter<?>> libraryByName;
+  private Map<String, IDataTypeAdapter<?>> libraryByName;
   @SuppressWarnings("rawtypes")
-  private Map<Class<? extends IJavaTypeAdapter>, IJavaTypeAdapter<?>> libraryByClass;
+  private Map<Class<? extends IDataTypeAdapter>, IDataTypeAdapter<?>> libraryByClass;
 
   public DataTypeService() {
     load();
   }
 
-  public synchronized IJavaTypeAdapter<?> getJavaTypeAdapterByName(String name) {
+  public synchronized IDataTypeAdapter<?> getJavaTypeAdapterByName(String name) {
     return libraryByName.get(name);
   }
 
-  public synchronized IJavaTypeAdapter<?>
-      getJavaTypeAdapterByClass(@SuppressWarnings("rawtypes") Class<? extends IJavaTypeAdapter> clazz) {
+  public synchronized IDataTypeAdapter<?>
+      getJavaTypeAdapterByClass(@SuppressWarnings("rawtypes") Class<? extends IDataTypeAdapter> clazz) {
     return libraryByClass.get(clazz);
   }
 
@@ -69,9 +71,9 @@ public class DataTypeService {
    *           if there are two adapters with the same name
    */
   private synchronized void load() throws IllegalStateException {
-    Map<String, IJavaTypeAdapter<?>> libraryByName = new HashMap<>();
+    Map<String, IDataTypeAdapter<?>> libraryByName = new HashMap<>();
     @SuppressWarnings("rawtypes")
-    Map<Class<? extends IJavaTypeAdapter>, IJavaTypeAdapter<?>> libraryByClass
+    Map<Class<? extends IDataTypeAdapter>, IDataTypeAdapter<?>> libraryByClass
         = new HashMap<>();
     ServiceLoader.load(IDataTypeProvider.class).stream()
         .map(Provider<IDataTypeProvider>::get)
@@ -80,10 +82,10 @@ public class DataTypeService {
         }).forEach(entry -> {
           String datatypeName = entry.getKey();
           @SuppressWarnings("null")
-          IJavaTypeAdapter<?> adapter = entry.getValue();
+          IDataTypeAdapter<?> adapter = entry.getValue();
           libraryByName.put(datatypeName, adapter);
           @SuppressWarnings("rawtypes")
-          Class<? extends IJavaTypeAdapter> clazz = adapter.getClass();
+          Class<? extends IDataTypeAdapter> clazz = adapter.getClass();
           libraryByClass.putIfAbsent(clazz, adapter);
         });
     this.libraryByName = libraryByName;
