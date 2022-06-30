@@ -94,7 +94,7 @@ public class FindingCollectingConstraintValidationHandler
       @NotNull List<@NotNull ? extends INodeItem> targets,
       @NotNull CharSequence message,
       Throwable cause) {
-    
+
     ConstraintValidationFinding finding = new ConstraintValidationFinding(constraints, message, cause, node, targets);
     findings.add(finding);
 

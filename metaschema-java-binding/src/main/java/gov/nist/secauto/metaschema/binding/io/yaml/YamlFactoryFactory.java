@@ -37,11 +37,13 @@ public final class YamlFactoryFactory {
   }
 
   public static YAMLFactory newYamlFactoryInstance() {
-    YAMLFactory retval = new YAMLFactory();
-    // retval.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
-    retval.enable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
-    retval.enable(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS);
-    return retval;
+
+    return YAMLFactory.builder()
+        .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+        .enable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+        .enable(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS)
+        .disable(YAMLGenerator.Feature.SPLIT_LINES)
+        .build();
   }
 
   public static YAMLFactory instance() {

@@ -42,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import java.net.URI;
 
 public interface INodeItemFactory {
-  
+
   @SuppressWarnings("null")
   @NotNull
   default INodeItem newNodeItem(@NotNull INamedDefinition definition, @NotNull Object value, @NotNull URI baseUri,
@@ -115,7 +115,7 @@ public interface INodeItemFactory {
 
   default IAssemblyNodeItem newAssemblyNodeItem(@NotNull IAssemblyDefinition definition, @NotNull Object value,
       @Nullable URI baseUri) {
-      return new RequiredValueAssemblyDefinitionNodeItemImpl(definition, value, baseUri);
+    return new RequiredValueAssemblyDefinitionNodeItemImpl(definition, value, baseUri);
   }
 
   @NotNull

@@ -33,8 +33,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.junit.jupiter.api.Test;
 
-class RootSlashOnlyTest extends AbstractExpressionTest {
-  
+class RootSlashOnlyTest
+    extends AbstractExpressionTest {
+
   @Test
   void testRootSlashOnlyPathUsingDocument() {
     DynamicContext dynamicContext = newDynamicContext();

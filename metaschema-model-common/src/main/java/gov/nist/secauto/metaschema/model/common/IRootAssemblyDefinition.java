@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.xml.namespace.QName;
 
 public interface IRootAssemblyDefinition extends IAssemblyDefinition {
-  
+
   @NotNull
   static <T extends IAssemblyDefinition> IRootAssemblyDefinition toRootAssemblyDefinition(@NotNull T rootDefinition) {
     return new RootAssemblyDefinitionWrapper<IAssemblyDefinition>(rootDefinition);

@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents an individual enumerated value associated with an {@link IAllowedValuesConstraint}.  
+ * Represents an individual enumerated value associated with an {@link IAllowedValuesConstraint}.
  */
 public interface IAllowedValue {
   /**

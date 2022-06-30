@@ -32,14 +32,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Provides a Java type adapter implementation for data types that are based on {@link ICustomJavaDataType}.
+ * Provides a Java type adapter implementation for data types that are based on
+ * {@link ICustomJavaDataType}.
  * 
  * @param <TYPE>
  *          the Java type this adapter supports, which is based on {@link ICustomJavaDataType}
  * @param <ITEM_TYPE>
  *          the Metapath item type associated with the adapter
  */
-public abstract class AbstractCustomJavaDataTypeAdapter<TYPE extends ICustomJavaDataType<TYPE>, ITEM_TYPE extends IAnyAtomicItem>
+public abstract class AbstractCustomJavaDataTypeAdapter<TYPE extends ICustomJavaDataType<
+    TYPE>, ITEM_TYPE extends IAnyAtomicItem>
     extends AbstractDataTypeAdapter<TYPE, ITEM_TYPE> {
 
   /**

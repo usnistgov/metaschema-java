@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import org.jetbrains.annotations.NotNull;
@@ -79,7 +80,7 @@ interface IExpressionVisitor<RESULT, CONTEXT> {
   RESULT visitNegate(@NotNull Negate expr, CONTEXT context);
 
   RESULT visitOr(@NotNull Or expr, CONTEXT context);
-  
+
   RESULT visitParentItem(@NotNull ParentItem parentContextItem, CONTEXT context);
 
   RESULT visitPredicate(@NotNull Predicate predicate, CONTEXT context);

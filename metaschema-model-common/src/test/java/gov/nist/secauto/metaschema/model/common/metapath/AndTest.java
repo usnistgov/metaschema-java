@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,8 +38,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.List;
 import java.util.stream.Stream;
 
-class AndTest extends AbstractExpressionTest {
-  
+class AndTest
+    extends AbstractExpressionTest {
+
   private static Stream<Arguments> testAnd() {
     return Stream.of(
         Arguments.of(IBooleanItem.TRUE, IBooleanItem.TRUE, IBooleanItem.TRUE),

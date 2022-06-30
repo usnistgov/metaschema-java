@@ -62,7 +62,7 @@ class AssemblyInstanceNodeItemImpl
   public IAssemblyNodeItem getParentContentNodeItem() {
     return getParentNodeItem();
   }
-  
+
   @Override
   public Object getValue() {
     // there is no value

@@ -71,7 +71,8 @@ public interface IMarkupText {
    * @throws XMLStreamException
    *           if an error occurred while writing
    */
-  void writeHtml(@NotNull OutputStream outputStream, @Nullable String namespace, @Nullable String prefix) throws XMLStreamException;
+  void writeHtml(@NotNull OutputStream outputStream, @Nullable String namespace, @Nullable String prefix)
+      throws XMLStreamException;
 
   @NotNull
   String toHtml();

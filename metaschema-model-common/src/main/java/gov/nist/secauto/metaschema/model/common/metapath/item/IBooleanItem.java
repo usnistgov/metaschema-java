@@ -55,7 +55,7 @@ public interface IBooleanItem extends IAnyAtomicItem {
     } else {
       try {
         Boolean bool = MetaschemaDataTypeProvider.BOOLEAN.parse(value);
-        retval =  valueOf(bool);
+        retval = valueOf(bool);
       } catch (IllegalArgumentException ex) {
         throw new InvalidValueForCastFunctionException(String.format("Unable to parse string value '%s'", value),
             ex);

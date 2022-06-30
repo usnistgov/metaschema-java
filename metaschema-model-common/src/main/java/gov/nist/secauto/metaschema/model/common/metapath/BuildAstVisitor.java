@@ -400,7 +400,7 @@ class BuildAstVisitor
       FunctioncallContext fcCtx = ctx.getChild(FunctioncallContext.class, idx + 1);
       String name = fcCtx.eqname().getText();
 
-      Stream<@NotNull IExpression> args  = parseArgumentList(fcCtx.argumentlist());
+      Stream<@NotNull IExpression> args = parseArgumentList(fcCtx.argumentlist());
       args = Stream.concat(Stream.of(left), args);
 
       return new FunctionCall(name, args.collect(Collectors.toUnmodifiableList()));

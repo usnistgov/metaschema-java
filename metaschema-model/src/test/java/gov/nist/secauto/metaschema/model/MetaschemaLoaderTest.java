@@ -73,7 +73,7 @@ class MetaschemaLoaderTest {
         = loader.load(metaschemaUri);
     assertFalse(metaschema.getRootAssemblyDefinitions().isEmpty(), "no roots found");
   }
-  
+
   @Test
   void testConstraints() throws MetaschemaException, IOException { // NOPMD - intentional
     ConstraintLoader constraintLoader = new ConstraintLoader();

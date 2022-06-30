@@ -29,9 +29,11 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents a rule that generates a key-based index containing references to data items found in a Metaschema data instance.
+ * Represents a rule that generates a key-based index containing references to data items found in a
+ * Metaschema data instance.
  * <p>
- * The generated index can be used to check cross-references between Metaschema data objects using the {@link IIndexHasKeyConstraint}.
+ * The generated index can be used to check cross-references between Metaschema data objects using
+ * the {@link IIndexHasKeyConstraint}.
  */
 public interface IIndexConstraint extends IKeyConstraint {
   @NotNull

@@ -36,8 +36,8 @@ public interface INamedModelInstance extends INamedInstance, IModelInstance {
   INamedModelDefinition getDefinition();
 
   /**
-   * Get the item values for the provided {@code instanceValue}. An instance may be singular or
-   * many valued.
+   * Get the item values for the provided {@code instanceValue}. An instance may be singular or many
+   * valued.
    * 
    * @param instanceValue
    *          the instance

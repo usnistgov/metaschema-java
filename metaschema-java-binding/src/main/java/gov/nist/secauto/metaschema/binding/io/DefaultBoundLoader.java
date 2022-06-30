@@ -256,7 +256,7 @@ public class DefaultBoundLoader implements IBoundLoader {
     }
 
     IDeserializer<?> deserializer = getDeserializer(clazz, format, getConfiguration());
-    return  (IDocumentNodeItem) deserializer.deserializeToNodeItem(bis, documentUri);
+    return (IDocumentNodeItem) deserializer.deserializeToNodeItem(bis, documentUri);
   }
 
   @NotNull
@@ -379,7 +379,7 @@ public class DefaultBoundLoader implements IBoundLoader {
 
     IDeserializer<CLASS> deserializer = getDeserializer(clazz, format, getConfiguration());
     INodeItem nodeItem = deserializer.deserializeToNodeItem(bis, documentUri);
-    return (CLASS)nodeItem.getValue();
+    return (CLASS) nodeItem.getValue();
   }
 
   @NotNull

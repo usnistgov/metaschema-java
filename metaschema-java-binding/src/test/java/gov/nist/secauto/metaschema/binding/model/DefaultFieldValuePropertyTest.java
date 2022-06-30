@@ -201,7 +201,7 @@ class DefaultFieldValuePropertyTest {
 
   @SuppressWarnings("PMD")
   @MetaschemaField(
-      name="simple-field",
+      name = "simple-field",
       metaschema = TestMetaschema.class,
       isCollapsible = true)
   public static class SimpleField {
@@ -305,7 +305,7 @@ class DefaultFieldValuePropertyTest {
 
   @SuppressWarnings("PMD")
   @MetaschemaField(
-      name= "simple-field2", 
+      name = "simple-field2",
       metaschema = TestMetaschema.class,
       isCollapsible = true)
   public static class SimpleField2 {

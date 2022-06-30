@@ -84,12 +84,11 @@ public class DefaultXmlSerializer<CLASS>
   public void serialize(CLASS data, Writer writer) throws IOException {
     XMLStreamWriter2 streamWriter = newXMLStreamWriter(writer);
     IOException caughtException = null;
-      IAssemblyClassBinding classBinding = getClassBinding();
-      IXmlWritingContext writingContext = new DefaultXmlWritingContext(streamWriter);
+    IAssemblyClassBinding classBinding = getClassBinding();
+    IXmlWritingContext writingContext = new DefaultXmlWritingContext(streamWriter);
 
-      RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
+    RootAssemblyDefinition root = new RootAssemblyDefinition(classBinding);
 
-      
     try {
       root.writeRoot(data, writingContext);
       streamWriter.flush();

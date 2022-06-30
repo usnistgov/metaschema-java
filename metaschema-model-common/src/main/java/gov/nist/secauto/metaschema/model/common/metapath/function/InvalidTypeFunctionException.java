@@ -54,7 +54,7 @@ public class InvalidTypeFunctionException
   protected static String generateMessage(@NotNull IItem item) {
     String retval;
     if (item instanceof INodeItem) {
-      INodeItem nodeItem = (INodeItem)item;
+      INodeItem nodeItem = (INodeItem) item;
       retval = String.format("The %s node item at path '%s' has no typed value",
           nodeItem.getNodeItemType().name().toLowerCase(Locale.ROOT),
           nodeItem.getMetapath());
@@ -63,7 +63,7 @@ public class InvalidTypeFunctionException
     }
     return retval;
   }
-  
+
   @Override
   protected String getCodePrefix() {
     return "FOTY";

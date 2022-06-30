@@ -36,7 +36,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.NodeItemType;
 import org.jmock.Expectations;
 import org.junit.jupiter.api.Test;
 
-class FlagTest extends AbstractExpressionTest {
+class FlagTest
+    extends AbstractExpressionTest {
   @Test
   void testFlagWithName() {
     DynamicContext dynamicContext = newDynamicContext();

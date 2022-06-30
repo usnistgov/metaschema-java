@@ -41,7 +41,7 @@ public interface IRootAssemblyNodeItem extends IRequiredValueAssemblyNodeItem {
 
   @NotNull
   IDocumentNodeItem getDocumentNodeItem();
-  
+
   @Override
   @NotNull
   default IDocumentNodeItem getParentNodeItem() {

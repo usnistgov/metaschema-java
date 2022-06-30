@@ -31,7 +31,8 @@ import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents a rule requiring a Metaschema assembly data instance to have elements with a minimum and/or maximum occurrence.
+ * Represents a rule requiring a Metaschema assembly data instance to have elements with a minimum
+ * and/or maximum occurrence.
  */
 public interface ICardinalityConstraint extends IConstraint {
   /**

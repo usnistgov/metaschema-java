@@ -31,14 +31,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * A common base implementation of a custom Java object providing an underlying implementation of a data type.
+ * A common base implementation of a custom Java object providing an underlying implementation of a
+ * data type.
  * 
  * @param <TYPE>
  *          the bound object type supported by this data type
  * @param <VALUE>
  *          the inner value of the data type object
  */
-public abstract class AbstractCustomJavaDataType<TYPE extends ICustomJavaDataType<TYPE>, VALUE> implements ICustomJavaDataType<TYPE> {
+public abstract class AbstractCustomJavaDataType<TYPE extends ICustomJavaDataType<TYPE>, VALUE>
+    implements ICustomJavaDataType<TYPE> {
   @NotNull
   private final VALUE value;
 

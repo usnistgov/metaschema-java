@@ -98,7 +98,6 @@ class Step implements IExpression { // NOPMD - intentional
     return stepExpression;
   }
 
-
   @Override
   public Class<@NotNull ? extends IItem> getStaticResultType() {
     return staticResultType;
@@ -152,7 +151,6 @@ class Step implements IExpression { // NOPMD - intentional
       return result.asStream();
     }));
   }
-  
 
   @SuppressWarnings("null")
   @Override

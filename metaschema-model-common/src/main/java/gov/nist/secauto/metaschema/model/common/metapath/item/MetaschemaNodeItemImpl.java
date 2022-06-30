@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
@@ -38,7 +39,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class MetaschemaNodeItemImpl extends AbstractMetaschemaNodeItem {
+class MetaschemaNodeItemImpl
+    extends AbstractMetaschemaNodeItem {
 
   public MetaschemaNodeItemImpl(@NotNull IMetaschema metaschema) {
     super(metaschema);
@@ -51,7 +53,7 @@ class MetaschemaNodeItemImpl extends AbstractMetaschemaNodeItem {
             Collectors.toMap(
                 IFlagDefinition::getEffectiveName,
                 def -> ModelFactoryImpl.instance().newFlagNodeItem(def, getBaseUri()),
-                (v1,v2) -> v2,
+                (v1, v2) -> v2,
                 LinkedHashMap::new)));
   }
 
@@ -59,10 +61,10 @@ class MetaschemaNodeItemImpl extends AbstractMetaschemaNodeItem {
   @Override
   protected Map<@NotNull String, List<@NotNull IModelNodeItem>> newModelItems() {
     Stream<@NotNull IFieldNodeItem> fieldStream = getMetaschema().getFieldDefinitions().stream()
-      .map(def -> ModelFactoryImpl.instance().newFieldNodeItem(def, getBaseUri()));
+        .map(def -> ModelFactoryImpl.instance().newFieldNodeItem(def, getBaseUri()));
     Stream<@NotNull IAssemblyNodeItem> assemblyStream = getMetaschema().getAssemblyDefinitions().stream()
         .map(def -> ModelFactoryImpl.instance().newAssemblyNodeItem(def, getBaseUri()));
-    
+
     return CollectionUtil.unmodifiableMap(Stream.concat(fieldStream, assemblyStream)
         .collect(
             Collectors.collectingAndThen(

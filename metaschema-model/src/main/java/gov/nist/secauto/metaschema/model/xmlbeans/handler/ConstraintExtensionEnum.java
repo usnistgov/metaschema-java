@@ -41,7 +41,8 @@ public final class ConstraintExtensionEnum {
    * @param target
    *          the XML value to cast to a boolean
    */
-  public static void encodeExtensibleEnumType(IAllowedValuesConstraint.Extensible obj, org.apache.xmlbeans.SimpleValue target) {
+  public static void encodeExtensibleEnumType(IAllowedValuesConstraint.Extensible obj,
+      org.apache.xmlbeans.SimpleValue target) {
     if (obj != null) {
       switch (obj) {
       case NONE:

@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
@@ -40,7 +41,6 @@ public abstract class AbstractMetaschemaNodeItem implements IMetaschemaNodeItem 
   private final IMetaschema metaschema;
   private Map<@NotNull String, IFlagNodeItem> flags;
   private Map<@NotNull String, ? extends List<@NotNull ? extends IModelNodeItem>> modelItems;
-
 
   public AbstractMetaschemaNodeItem(@NotNull IMetaschema metaschema) {
     this.metaschema = metaschema;
@@ -82,7 +82,6 @@ public abstract class AbstractMetaschemaNodeItem implements IMetaschemaNodeItem 
   public IFlagNodeItem getFlagByName(@NotNull String name) {
     return initFlags().get(name);
   }
-  
 
   protected Map<@NotNull String, ? extends List<@NotNull ? extends IModelNodeItem>> initModelItems() {
     synchronized (this) {

@@ -36,10 +36,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A base implementation of an {@link IDataTypeProvider}, supporting dynamic loading of Metaschema data type
- * extensions at runtime.
+ * A base implementation of an {@link IDataTypeProvider}, supporting dynamic loading of Metaschema
+ * data type extensions at runtime.
  * <p>
- * The {@link MetaschemaDataTypeProvider} class provides an example of how to use this class to provide new data types.
+ * The {@link MetaschemaDataTypeProvider} class provides an example of how to use this class to
+ * provide new data types.
  */
 public abstract class AbstractDataTypeProvider implements IDataTypeProvider {
   private final Map<@NotNull String, IDataTypeAdapter<?>> library = new HashMap<>(); // NOPMD - synchronized

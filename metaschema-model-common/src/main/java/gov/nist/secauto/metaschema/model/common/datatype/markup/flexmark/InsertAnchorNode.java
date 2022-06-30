@@ -63,7 +63,7 @@ public class InsertAnchorNode
   public void setIdReference(@NotNull BasedSequence value) {
     this.idReference = value;
   }
-  
+
   @Override
   @NotNull
   public BasedSequence[] getSegments() {

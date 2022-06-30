@@ -90,7 +90,6 @@ interface IBoundJavaField extends IBoundNamedInstance {
     return (Class<?>) getType();
   }
 
-
   /**
    * Get the current value from the provided {@code parentInstance} object. The provided object must
    * be of the type associated with the definition containing this property.

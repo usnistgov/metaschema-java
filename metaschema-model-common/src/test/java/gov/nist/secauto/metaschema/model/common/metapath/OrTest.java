@@ -38,8 +38,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.List;
 import java.util.stream.Stream;
 
-class OrTest extends AbstractExpressionTest {
-  
+class OrTest
+    extends AbstractExpressionTest {
+
   private static Stream<Arguments> testOr() {
     return Stream.of(
         Arguments.of(IBooleanItem.TRUE, IBooleanItem.TRUE, IBooleanItem.TRUE),

@@ -49,7 +49,6 @@ class AbstractMetaschemaLoaderStrategy implements IMetaschemaLoaderStrategy {
   @NotNull
   private final Map<@NotNull Class<?>, IClassBinding> classBindingsByClass = new HashMap<>(); // NOPMD - intentional
 
-
   protected AbstractMetaschemaLoaderStrategy(@NotNull IBindingContext bindingContext) {
     this.bindingContext = bindingContext;
   }
@@ -76,7 +75,7 @@ class AbstractMetaschemaLoaderStrategy implements IMetaschemaLoaderStrategy {
   protected IMetaschema newMetaschema(@NotNull Class<? extends AbstractBoundMetaschema> clazz) {
     return AbstractBoundMetaschema.createInstance(clazz, getBindingContext());
   }
-  
+
   @Override
   public IClassBinding getClassBinding(@NotNull Class<?> clazz) {
     IClassBinding retval;
@@ -105,7 +104,7 @@ class AbstractMetaschemaLoaderStrategy implements IMetaschemaLoaderStrategy {
     }
     return retval;
   }
-  
+
   @Override
   public Map<@NotNull Class<?>, IClassBinding> getClassBindingsByClass() {
     synchronized (this) {

@@ -32,8 +32,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-class Intersect extends AbstractFilterExpression {
-  
+class Intersect
+    extends AbstractFilterExpression {
+
   protected Intersect(@NotNull IExpression left, @NotNull IExpression right) {
     super(left, right);
   }

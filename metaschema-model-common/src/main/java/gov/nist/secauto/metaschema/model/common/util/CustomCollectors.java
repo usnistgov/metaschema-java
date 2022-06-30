@@ -65,7 +65,6 @@ public final class CustomCollectors {
           list.get(last));
     };
   }
-  
 
   /**
    * Produce a new stream with duplicates removed based on the provided {@code keyMapper}. When a
@@ -101,7 +100,8 @@ public final class CustomCollectors {
    *          the stream to reduce
    * @param keyMapper
    *          the key function to use to find unique items
-   * @param duplicateHander used to determine which of two duplicates to keep
+   * @param duplicateHander
+   *          used to determine which of two duplicates to keep
    * @return a new stream
    */
   public static <V, K> Stream<V> distinctByKey(
@@ -128,8 +128,7 @@ public final class CustomCollectors {
       @NotNull Function<? super T, ? extends K> keyMapper,
       @NotNull Function<? super T, ? extends V> valueMapper,
       @NotNull DuplicateHandler<K, V> duplicateHander,
-      Supplier<M> supplier
-      ) {
+      Supplier<M> supplier) {
     return Collector.of(
         supplier,
         (map, item) -> {

@@ -55,8 +55,8 @@ import javax.xml.namespace.QName;
 public interface IBindingContext extends IMetaschemaLoaderStrategy {
 
   /**
-   * Get the singleton {@link IBindingContext} instance, which can be used to load information that binds a model to a
-   * set of Java classes.
+   * Get the singleton {@link IBindingContext} instance, which can be used to load information that
+   * binds a model to a set of Java classes.
    * 
    * @return a new binding context
    */

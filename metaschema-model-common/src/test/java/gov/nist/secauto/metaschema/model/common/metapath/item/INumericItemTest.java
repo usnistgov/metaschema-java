@@ -137,7 +137,6 @@ class INumericItemTest {
     assertEquals(expected, result);
   }
 
-
   private static Stream<Arguments> provideValuesForCastFail() {
     return Stream.of(
         Arguments.of(string("x123")),
