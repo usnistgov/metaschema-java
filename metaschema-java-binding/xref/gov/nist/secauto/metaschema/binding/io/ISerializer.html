@@ -70,7 +70,7 @@
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">   *           if an error occurred while writing data to the stream</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">   */</em>
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>    <strong class="jxr_keyword">default</strong> <strong class="jxr_keyword">void</strong> serialize(@NotNull CLASS data, @NotNull OutputStream os) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      OutputStreamWriter writer = <strong class="jxr_keyword">new</strong> OutputStreamWriter(os);
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      OutputStreamWriter writer = <strong class="jxr_keyword">new</strong> OutputStreamWriter(os, StandardCharsets.UTF_8);
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      serialize(data, writer);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      writer.flush();
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>    }

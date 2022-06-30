@@ -72,13 +72,14 @@
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>    <strong class="jxr_keyword">default</strong> <a name="IDocumentNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IDocumentNodeItem.html#IDocumentNodeItem">IDocumentNodeItem</a> loadAsNodeItem(@NotNull InputStream is, @NotNull URI documentUri) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      InputSource source = toInputSource(documentUri);
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      source.setByteStream(is);
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>      <strong class="jxr_keyword">return</strong> loadAsNodeItem(source);
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>    }
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>  
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>    @NotNull
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>    <a name="IDocumentNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IDocumentNodeItem.html#IDocumentNodeItem">IDocumentNodeItem</a> loadAsNodeItem(@NotNull InputSource source) <strong class="jxr_keyword">throws</strong> IOException;
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>  
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>  }
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>      <em class="jxr_comment">// TODO: deal with charset?</em>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <strong class="jxr_keyword">return</strong> loadAsNodeItem(source);
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>    }
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>    @NotNull
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>    <a name="IDocumentNodeItem" href="../../../../../../../gov/nist/secauto/metaschema/model/common/metapath/item/IDocumentNodeItem.html#IDocumentNodeItem">IDocumentNodeItem</a> loadAsNodeItem(@NotNull InputSource source) <strong class="jxr_keyword">throws</strong> IOException;
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2022 <a href="https://www.nist.gov">National Institute of Standards and Technology</a>. All rights reserved.</div>
