@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>gov.nist.secauto.metaschema</groupId>
 		<artifactId>metaschema-framework</artifactId>
-		<version>0.8.1</version>
+		<version>0.8.2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>metaschema-model-common</artifactId>
