@@ -74,7 +74,7 @@ public final class FnStartsWith {
 
     return ISequence.of(fnStartsWith(arg1, arg2));
   }
-  
+
   private FnStartsWith() {
     // disable construction
   }

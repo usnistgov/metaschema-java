@@ -55,7 +55,6 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
   @NotNull
   IRootAssemblyNodeItem getRootAssemblyNodeItem();
 
-
   @Override
   default IRequiredValueModelNodeItem getParentContentNodeItem() {
     // there is no parent
@@ -116,6 +115,7 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
   default Stream<@NotNull ? extends IModelNodeItem> modelItems() {
     return Stream.of(getRootAssemblyNodeItem());
   }
+
   @SuppressWarnings("null")
   @Override
   default @NotNull List<@NotNull ? extends IRequiredValueModelNodeItem> getModelItemsByName(String name) {

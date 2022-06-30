@@ -62,7 +62,7 @@ public interface ISerializer<CLASS> extends IMutableConfiguration<SerializationF
    *           if an error occurred while writing data to the stream
    */
   default void serialize(@NotNull CLASS data, @NotNull OutputStream os) throws IOException {
-    OutputStreamWriter writer = new OutputStreamWriter(os);
+    OutputStreamWriter writer = new OutputStreamWriter(os, StandardCharsets.UTF_8);
     serialize(data, writer);
     writer.flush();
   }

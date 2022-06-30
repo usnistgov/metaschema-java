@@ -43,22 +43,23 @@ class AssemblyTargetedConstraints
     extends AbstractTargetedConstraints<AssemblyConstraintSupport>
     implements IAssemblyConstraintSupport {
 
-  public AssemblyTargetedConstraints(@NotNull MetapathExpression targetExpression, @NotNull AssemblyConstraintSupport constraints) {
+  public AssemblyTargetedConstraints(@NotNull MetapathExpression targetExpression,
+      @NotNull AssemblyConstraintSupport constraints) {
     super(targetExpression, constraints);
   }
 
   @Override
-  public  List<@NotNull ? extends IIndexConstraint> getIndexConstraints() {
+  public List<@NotNull ? extends IIndexConstraint> getIndexConstraints() {
     return getConstraintSupport().getIndexConstraints();
   }
 
   @Override
-  public  List<@NotNull ? extends IUniqueConstraint> getUniqueConstraints() {
+  public List<@NotNull ? extends IUniqueConstraint> getUniqueConstraints() {
     return getConstraintSupport().getUniqueConstraints();
   }
 
   @Override
-  public  List<@NotNull ? extends ICardinalityConstraint> getHasCardinalityConstraints() {
+  public List<@NotNull ? extends ICardinalityConstraint> getHasCardinalityConstraints() {
     return getConstraintSupport().getHasCardinalityConstraints();
   }
 
@@ -76,10 +77,10 @@ class AssemblyTargetedConstraints
   public void addConstraint(@NotNull ICardinalityConstraint constraint) {
     getConstraintSupport().addConstraint(constraint);
   }
-  
+
   @Override
   public void target(@NotNull IAssemblyDefinition definition) {
-    applyTo((INamedDefinition)definition);
+    applyTo((INamedDefinition) definition);
     applyTo(definition);
   }
 

@@ -47,14 +47,16 @@ class IBase64BinaryItemTest {
 
   @Test
   void testCastSame() {
-    ByteBuffer buf = ObjectUtils.notNull(ByteBuffer.allocate(16).putLong(-9223372036854775808L).putLong(9223372036854775807L));
+    ByteBuffer buf
+        = ObjectUtils.notNull(ByteBuffer.allocate(16).putLong(-9223372036854775808L).putLong(9223372036854775807L));
     IBase64BinaryItem item = IBase64BinaryItem.valueOf(buf);
     assertEquals(IBase64BinaryItem.cast(item), item);
   }
 
   @Test
   void testCastString() {
-    ByteBuffer buf = ObjectUtils.notNull(ByteBuffer.allocate(16).putLong(-9223372036854775808L).putLong(9223372036854775807L));
+    ByteBuffer buf
+        = ObjectUtils.notNull(ByteBuffer.allocate(16).putLong(-9223372036854775808L).putLong(9223372036854775807L));
     IBase64BinaryItem expected = IBase64BinaryItem.valueOf(buf);
     IBase64BinaryItem actual = IBase64BinaryItem.cast(IStringItem.valueOf("gAAAAAAAAAB//////////w=="));
     Assertions.assertAll(

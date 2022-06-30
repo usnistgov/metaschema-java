@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.binding;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -53,13 +54,11 @@ class DefaultBindingContextTest {
     IBindingContext bindingContext = new DefaultBindingContext(CollectionUtil.singleton(constraintSet));
     IMetaschema metaschema = bindingContext.getMetaschemaInstanceByClass(TestMetaschema.class);
 
-    IAssemblyDefinition root =  metaschema.getExportedAssemblyDefinitionByName("root");
-    
-    
+    IAssemblyDefinition root = metaschema.getExportedAssemblyDefinitionByName("root");
+
     assertNotNull(root, "root not found");
     List<? extends IConstraint> constraints = root.getConstraints();
     assertFalse(constraints.isEmpty(), "a constraint was expected");
   }
-
 
 }

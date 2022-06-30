@@ -31,7 +31,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Represents a container of rules constraining the effective model of a Metaschema field or flag data instance.
+ * Represents a container of rules constraining the effective model of a Metaschema field or flag
+ * data instance.
  */
 public interface IValueConstraintSupport extends IConstraintSupport {
   /**

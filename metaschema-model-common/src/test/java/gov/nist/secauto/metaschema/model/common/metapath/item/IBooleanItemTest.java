@@ -52,11 +52,10 @@ public class IBooleanItemTest {
         () -> assertEquals(IBooleanItem.valueOf(ObjectUtils.notNull(Boolean.FALSE)), IBooleanItem.FALSE),
         () -> assertEquals(IBooleanItem.valueOf("1"), IBooleanItem.TRUE, "1"),
         () -> assertEquals(IBooleanItem.valueOf("0"), IBooleanItem.FALSE, "0"),
-        () -> assertEquals(IBooleanItem.valueOf(""), IBooleanItem.FALSE,""),
+        () -> assertEquals(IBooleanItem.valueOf(""), IBooleanItem.FALSE, ""),
         () -> assertEquals(IBooleanItem.valueOf("true"), IBooleanItem.TRUE),
         () -> assertEquals(IBooleanItem.valueOf("false"), IBooleanItem.FALSE));
   }
-  
 
   private static Stream<Arguments> provideValuesForCast() {
     return Stream.of(
@@ -80,5 +79,5 @@ public class IBooleanItemTest {
     IBooleanItem result = IBooleanItem.cast(item);
     assertEquals(expected, result);
   }
-   
+
 }

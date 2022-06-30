@@ -58,7 +58,7 @@ class MetapathExpressionTest {
     assertNotNull(result, "null result");
     assertTrue(!result.isEmpty(), "result was empty");
     assertEquals(1, result.size(), "unexpected size");
-    assertEquals(true, ((IBooleanItem)result.asList().iterator().next()).toBoolean(), "unexpected result");
+    assertEquals(true, ((IBooleanItem) result.asList().iterator().next()).toBoolean(), "unexpected result");
   }
 
 }

@@ -44,7 +44,7 @@ import java.nio.file.Path;
 
 public interface IDocumentLoader extends IResourceLoader {
   void setEntityResolver(@NotNull EntityResolver resolver);
-  
+
   @NotNull
   default IDocumentNodeItem loadAsNodeItem(@NotNull URL url) throws IOException, URISyntaxException {
     return loadAsNodeItem(toInputSource(ObjectUtils.notNull(url.toURI())));
@@ -64,6 +64,7 @@ public interface IDocumentLoader extends IResourceLoader {
   default IDocumentNodeItem loadAsNodeItem(@NotNull InputStream is, @NotNull URI documentUri) throws IOException {
     InputSource source = toInputSource(documentUri);
     source.setByteStream(is);
+    // TODO: deal with charset?
     return loadAsNodeItem(source);
   }
 

@@ -118,7 +118,7 @@ public class MockItemFactory {
           allowing(flag).getParentNodeItem();
           will(returnValue(item));
         });
-        
+
         Map<@NotNull String, List<IModelNodeItem>> modelItemsMap = toModelItemsMap(modelItems);
         allowing(item).getModelItems();
         will(returnValue(modelItemsMap.values()));

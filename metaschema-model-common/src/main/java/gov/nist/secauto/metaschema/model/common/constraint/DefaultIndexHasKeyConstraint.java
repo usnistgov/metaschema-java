@@ -40,7 +40,8 @@ public class DefaultIndexHasKeyConstraint
   private final String indexName;
 
   /**
-   * Create a key reference constraint, which uses a set of key fields to build a key to match against an index.
+   * Create a key reference constraint, which uses a set of key fields to build a key to match against
+   * an index.
    * 
    * @param id
    *          the optional identifier for the constraint

@@ -197,7 +197,8 @@ class DefaultFlagPropertyTest {
   }
 
   @SuppressWarnings("PMD")
-  @MetaschemaAssembly(name= "simple-assembly", metaschema = TestMetaschema.class, rootName = "test", rootNamespace = "http://example.com/ns")
+  @MetaschemaAssembly(name = "simple-assembly", metaschema = TestMetaschema.class, rootName = "test",
+      rootNamespace = "http://example.com/ns")
   private static class SimpleAssembly {
     @BoundFlag(useName = "id", typeAdapter = StringAdapter.class)
     private String _id;

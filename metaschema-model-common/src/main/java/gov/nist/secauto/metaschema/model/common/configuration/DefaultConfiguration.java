@@ -102,7 +102,7 @@ public class DefaultConfiguration<T extends Enum<T> & IConfigurationFeature>
     getFeatureSet().remove(feature);
     return this;
   }
-  
+
   @Override
   @SuppressWarnings("null")
   public IMutableConfiguration<T> applyConfiguration(@NotNull IConfiguration<T> original) {

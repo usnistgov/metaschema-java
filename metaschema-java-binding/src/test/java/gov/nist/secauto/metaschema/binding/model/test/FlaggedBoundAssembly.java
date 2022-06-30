@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.BooleanAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 
-@MetaschemaAssembly(name= "flagged-bound-assembly", metaschema = TestMetaschema.class)
+@MetaschemaAssembly(name = "flagged-bound-assembly", metaschema = TestMetaschema.class)
 public class FlaggedBoundAssembly {
   @JsonKey
   @BoundFlag(useName = "assembly-required-flag", typeAdapter = StringAdapter.class, required = true)

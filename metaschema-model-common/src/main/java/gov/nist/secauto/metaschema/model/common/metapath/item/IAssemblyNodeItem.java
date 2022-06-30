@@ -49,7 +49,7 @@ public interface IAssemblyNodeItem extends IModelNodeItem {
   @Override
   default IAssemblyNodeItem getParentContentNodeItem() {
     INodeItem parent = getParentNodeItem();
-    return parent instanceof IAssemblyNodeItem ? (IAssemblyNodeItem)parent : null;
+    return parent instanceof IAssemblyNodeItem ? (IAssemblyNodeItem) parent : null;
   }
 
   @Override

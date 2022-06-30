@@ -31,7 +31,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Represents a container of rules constraining the effective model of a Metaschema assembly data instance.
+ * Represents a container of rules constraining the effective model of a Metaschema assembly data
+ * instance.
  */
 public interface IAssemblyConstraintSupport extends IValueConstraintSupport {
   /**
@@ -57,7 +58,6 @@ public interface IAssemblyConstraintSupport extends IValueConstraintSupport {
    */
   @NotNull
   List<@NotNull ? extends ICardinalityConstraint> getHasCardinalityConstraints();
-
 
   void addConstraint(@NotNull IIndexConstraint constraint);
 

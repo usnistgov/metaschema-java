@@ -73,7 +73,8 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
   }
 
   @NotNull
-  private final Map<gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter<?>, String> datatypeToTypeMap = new HashMap<>();
+  private final Map<gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter<?>,
+      String> datatypeToTypeMap = new HashMap<>();
   @NotNull
   private final Map<INamedDefinition, String> definitionToNameMap
       = new HashMap<>();

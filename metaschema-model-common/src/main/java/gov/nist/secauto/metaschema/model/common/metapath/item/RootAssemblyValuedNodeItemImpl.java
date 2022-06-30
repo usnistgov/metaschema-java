@@ -69,7 +69,7 @@ class RootAssemblyValuedNodeItemImpl
   public IDocumentNodeItem getDocumentNodeItem() {
     return parent;
   }
-  
+
   @Override
   public IRequiredValueAssemblyNodeItem getParentContentNodeItem() {
     // there is no parent assembly

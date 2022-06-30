@@ -37,7 +37,7 @@ final class ParentItem
     extends AbstractPathExpression<INodeItem> {
   @NotNull
   private static final ParentItem SINGLETON = new ParentItem();
-  
+
   @NotNull
   public static ParentItem instance() {
     return SINGLETON;

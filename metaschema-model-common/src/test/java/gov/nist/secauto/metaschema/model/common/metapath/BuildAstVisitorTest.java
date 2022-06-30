@@ -87,8 +87,8 @@ class BuildAstVisitorTest {
     parser.addErrorListener(new FailingErrorListener());
 
     ParseTree tree = parser.expr();
-//    CSTPrinter cstPrinter = new CSTPrinter(System.out);
-//    cstPrinter.print(tree, Arrays.asList(parser.getRuleNames()));
+    // CSTPrinter cstPrinter = new CSTPrinter(System.out);
+    // cstPrinter.print(tree, Arrays.asList(parser.getRuleNames()));
 
     return new BuildAstVisitor().visit(tree);
   }

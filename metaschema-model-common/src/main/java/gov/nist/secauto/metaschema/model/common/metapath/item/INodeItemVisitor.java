@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface INodeItemVisitor<RESULT, CONTEXT> {
   RESULT visitDocument(@NotNull IDocumentNodeItem item, CONTEXT context);
-  
+
   RESULT visitFlag(@NotNull IFlagNodeItem item, CONTEXT context);
 
   RESULT visitField(@NotNull IFieldNodeItem item, CONTEXT context);

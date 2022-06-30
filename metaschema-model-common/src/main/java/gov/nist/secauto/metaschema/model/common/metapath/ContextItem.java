@@ -37,7 +37,7 @@ final class ContextItem
     extends AbstractPathExpression<INodeItem> {
   @NotNull
   private static final ContextItem SINGLETON = new ContextItem();
-  
+
   @NotNull
   public static ContextItem instance() {
     return SINGLETON;

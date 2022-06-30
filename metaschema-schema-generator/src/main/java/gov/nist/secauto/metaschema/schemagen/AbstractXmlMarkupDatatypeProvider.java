@@ -39,7 +39,6 @@ import java.util.stream.Collectors;
 public abstract class AbstractXmlMarkupDatatypeProvider
     extends AbstractXmlDatatypeProvider {
 
-
   @Override
   protected InputStream getSchemaResource() {
     return JDom2XmlSchemaLoader.class.getClassLoader()
@@ -48,7 +47,7 @@ public abstract class AbstractXmlMarkupDatatypeProvider
 
   @NotNull
   protected abstract String getSchemaResourcePath();
-  
+
   @Override
   protected List<@NotNull Element> queryElements(JDom2XmlSchemaLoader loader) {
     return loader.getContent(

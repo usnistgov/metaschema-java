@@ -37,7 +37,7 @@ public interface IRequiredValueNodeItem extends INodeItem {
 
   @Override
   IRequiredValueNodeItem getParentNodeItem();
-  
+
   @Override
   IRequiredValueModelNodeItem getParentContentNodeItem();
 

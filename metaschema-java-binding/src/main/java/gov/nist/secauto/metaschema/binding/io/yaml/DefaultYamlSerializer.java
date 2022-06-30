@@ -32,6 +32,8 @@ import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.DefaultJsonSerializer;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 
+import org.jetbrains.annotations.NotNull;
+
 public class DefaultYamlSerializer<CLASS>
     extends DefaultJsonSerializer<CLASS> {
 
