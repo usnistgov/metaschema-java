@@ -8,7 +8,7 @@
 	</parent>
 	<groupId>gov.nist.secauto.metaschema</groupId>
 	<artifactId>metaschema-framework</artifactId>
-	<version>0.8.1-SNAPSHOT</version>
+	<version>0.8.1</version>
 
 	<packaging>pom</packaging>
 
@@ -25,7 +25,7 @@
 		<url>https://github.com/usnistgov/metaschema-java/tree/main</url>
 		<connection>scm:git:git@github.com/usnistgov/metaschema-java.git</connection>
 		<developerConnection>scm:git:git@github.com:usnistgov/metaschema-java.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>v0.8.1</tag>
   </scm>
 
 	<distributionManagement>
