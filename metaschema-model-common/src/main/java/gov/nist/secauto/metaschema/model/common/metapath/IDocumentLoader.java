@@ -70,5 +70,4 @@ public interface IDocumentLoader extends IResourceLoader {
 
   @NotNull
   IDocumentNodeItem loadAsNodeItem(@NotNull InputSource source) throws IOException;
-
 }

@@ -101,7 +101,7 @@ public abstract class AbstractDeserializer<CLASS>
       DefaultConstraintValidator validator = new DefaultConstraintValidator(
           dynamicContext,
           getConstraintValidationHandler());
-      validator.visit(nodeItem);
+      validator.validate(nodeItem);
       validator.finalizeValidation();
     }
     return nodeItem;

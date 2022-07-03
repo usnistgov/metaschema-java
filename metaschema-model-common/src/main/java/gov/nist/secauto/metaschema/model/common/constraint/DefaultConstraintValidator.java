@@ -96,12 +96,20 @@ public class DefaultConstraintValidator implements IConstraintValidator {
     return metapathContext;
   }
 
-  public void visit(@NotNull INodeItem item) {
+  @Override
+  public void validate(@NotNull INodeItem item) {
     item.accept(new Visitor(), null);
   }
 
-  @Override
-  public void validate(@NotNull IFlagNodeItem item) {
+  /**
+   * Validate the provided flag item against any associated constraints.
+   * 
+   * @param item
+   *          the flag item to validate
+   * @throws MetapathException
+   *           if an error occurred while evaluating a Metapath used in a constraint
+   */
+  protected void validateFlag(@NotNull IFlagNodeItem item) {
     IFlagDefinition definition = item.getDefinition();
 
     validateExpect(definition.getExpectConstraints(), item);
@@ -110,8 +118,15 @@ public class DefaultConstraintValidator implements IConstraintValidator {
     validateMatches(definition.getMatchesConstraints(), item);
   }
 
-  @Override
-  public void validate(@NotNull IFieldNodeItem item) {
+  /**
+   * Validate the provided field item against any associated constraints.
+   * 
+   * @param item
+   *          the field item to validate
+   * @throws MetapathException
+   *           if an error occurred while evaluating a Metapath used in a constraint
+   */
+  protected void validateField(@NotNull IFieldNodeItem item) {
     IFieldDefinition definition = item.getDefinition();
 
     validateExpect(definition.getExpectConstraints(), item);
@@ -120,8 +135,15 @@ public class DefaultConstraintValidator implements IConstraintValidator {
     validateMatches(definition.getMatchesConstraints(), item);
   }
 
-  @Override
-  public void validate(@NotNull IAssemblyNodeItem item) {
+  /**
+   * Validate the provided assembly item against any associated constraints.
+   * 
+   * @param item
+   *          the assembly item to validate
+   * @throws MetapathException
+   *           if an error occurred while evaluating a Metapath used in a constraint
+   */
+  protected void validateAssembly(@NotNull IAssemblyNodeItem item) {
     IAssemblyDefinition definition = item.getDefinition();
 
     validateExpect(definition.getExpectConstraints(), item);
@@ -541,7 +563,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
     }
 
     public void validate() {
-      boolean pass = false;
+      boolean pass = true;
       List<@NotNull IAllowedValuesConstraint> failedConstraints = new LinkedList<>();
 
       for (IAllowedValuesConstraint allowedValues : constraints) {
@@ -556,26 +578,27 @@ public class DefaultConstraintValidator implements IConstraintValidator {
 
         IAllowedValue match = allowedValues.getAllowedValue(value);
         if (match == null) {
-          if (IAllowedValuesConstraint.Extensible.NONE.equals(allowedValues.getExtensible())
-              && !allowedValues.isAllowedOther()) {
-            // failure
+          if (!allowedValues.isAllowedOther()) {
+            pass = false;
+          }
+
+          if (IAllowedValuesConstraint.Extensible.NONE.equals(allowedValues.getExtensible())) {
+            // hard failure, since no other values can satisfy this constraint
             failedConstraints = CollectionUtil.singletonList(allowedValues);
             break;
           }
           failedConstraints.add(allowedValues);
-        } else {
-          pass = true;
-          break;
-        }
+        } // this constraint passes, but we need to make sure other constraints do as well
       }
 
-      if (!pass) {
+      // it's not a failure if allow others is true
+      if (!pass && !allowOthers) {
         getConstraintValidationHandler().handleAllowedValuesViolation(failedConstraints, item);
       }
     }
   }
 
-  private class Visitor
+  class Visitor
       extends AbstractNodeItemVisitor<Void, Void> {
     @Override
     public Void visitDocument(@NotNull IDocumentNodeItem item, Void context) {
@@ -584,7 +607,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
 
     @Override
     public Void visitFlag(@NotNull IFlagNodeItem item, Void context) {
-      validate(item);
+      validateFlag(item);
       super.visitFlag(item, context);
       handleAllowedValues(item);
       return null;
@@ -592,7 +615,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
 
     @Override
     public Void visitField(@NotNull IFieldNodeItem item, Void context) {
-      validate(item);
+      validateField(item);
       super.visitField(item, context);
       handleAllowedValues(item);
       return null;
@@ -600,7 +623,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
 
     @Override
     public Void visitAssembly(@NotNull IAssemblyNodeItem item, Void context) {
-      validate(item);
+      validateAssembly(item);
       super.visitAssembly(item, context);
       return null;
     }
