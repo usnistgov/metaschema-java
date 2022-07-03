@@ -27,9 +27,7 @@
 package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
+import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -39,34 +37,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface IConstraintValidator {
   /**
-   * Validate the provided flag item against any associated constraints.
+   * Validate the provided item against any associated constraints.
    * 
    * @param item
-   *          the flag item to validate
+   *          the item to validate
    * @throws MetapathException
    *           if an error occurred while evaluating a Metapath used in a constraint
    */
-  void validate(@NotNull IFlagNodeItem item);
-
-  /**
-   * Validate the provided field item against any associated constraints.
-   * 
-   * @param item
-   *          the field item to validate
-   * @throws MetapathException
-   *           if an error occurred while evaluating a Metapath used in a constraint
-   */
-  void validate(@NotNull IFieldNodeItem item);
-
-  /**
-   * Validate the provided assembly item against any associated constraints.
-   * 
-   * @param item
-   *          the assembly item to validate
-   * @throws MetapathException
-   *           if an error occurred while evaluating a Metapath used in a constraint
-   */
-  void validate(@NotNull IAssemblyNodeItem item);
+  void validate(@NotNull INodeItem item);
 
   /**
    * Complete any validations that require full analysis of the content model.

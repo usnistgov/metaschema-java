@@ -260,7 +260,7 @@ public class DefaultBindingContext implements IBindingContext {
     context.setDocumentLoader(newBoundLoader());
     FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();
     DefaultConstraintValidator validator = new DefaultConstraintValidator(context, handler);
-    validator.visit(nodeItem);
+    validator.validate(nodeItem);
     return handler;
   }
 
