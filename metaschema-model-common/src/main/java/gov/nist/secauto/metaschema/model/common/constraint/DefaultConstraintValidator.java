@@ -64,6 +64,11 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Used to perform constraint validation over one or more node items.
+ * <p>
+ * This class is not thread safe.
+ */
 public class DefaultConstraintValidator implements IConstraintValidator {
   private static final Logger LOGGER = LogManager.getLogger(DefaultConstraintValidator.class);
 
@@ -219,7 +224,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
       throw new MetapathException(msg);
     }
 
-    Map<@NotNull String, INodeItem> indexItems = new HashMap<>();
+    Map<@NotNull String, INodeItem> indexItems = new HashMap<>(); // NOPMD - not multithreaded
     targets.asStream()
         .forEachOrdered(item -> {
           @NotNull
@@ -263,7 +268,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
 
   protected void validateUnique(@NotNull IUniqueConstraint constraint,
       @NotNull IAssemblyNodeItem node, @NotNull ISequence<? extends INodeItem> targets) {
-    Map<@NotNull String, INodeItem> keyToItemMap = new HashMap<>();
+    Map<@NotNull String, INodeItem> keyToItemMap = new HashMap<>(); // NOPMD - not multithreaded
 
     targets.asStream()
         .forEachOrdered(item -> {
@@ -352,7 +357,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
         //
         List<@NotNull INodeItem> items = keyRefItems.get(key);
         if (items == null) {
-          items = new LinkedList<>();
+          items = new LinkedList<>(); // NOPMD - intentional
           keyRefItems.put(key, items);
         }
         items.add(item);
@@ -406,7 +411,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
 
   private void rethrowConstraintError(@NotNull IConstraint constraint, INodeItem item,
       MetapathException ex) {
-    StringBuilder builder = new StringBuilder();
+    StringBuilder builder = new StringBuilder(94);
     builder.append("A ")
         .append(constraint.getClass().getName())
         .append(" constraint");
@@ -415,20 +420,30 @@ public class DefaultConstraintValidator implements IConstraintValidator {
     if (id == null) {
       builder.append(" targeting the metapath '")
           .append(constraint.getTarget().getPath())
-          .append("'");
+          .append('\'');
     } else {
       builder.append(" with id '")
           .append(id)
-          .append("'");
+          .append('\'');
     }
 
-    builder.append(" resulted in an unexpected error. The error was: ")
+    builder.append(", matching the item at path '")
+        .append(item.getMetapath())
+        .append("', resulted in an unexpected error. The error was: ")
         .append(ex.getLocalizedMessage());
 
     throw new MetapathException(builder.toString(), ex);
   }
 
-  protected void updateValueStatus(@NotNull INodeItem targetItem, @NotNull IAllowedValuesConstraint allowedValue) {
+  /**
+   * Add a new allowed value to the value status tracker.
+   * 
+   * @param targetItem
+   *          the item whose value is targeted by the constraint
+   * @param allowedValues
+   *          the set of allowed values
+   */
+  protected void updateValueStatus(@NotNull INodeItem targetItem, @NotNull IAllowedValuesConstraint allowedValues) {
     // constraint.getAllowedValues().containsKey(value)
 
     @Nullable
@@ -438,7 +453,7 @@ public class DefaultConstraintValidator implements IConstraintValidator {
       valueMap.put(targetItem, valueStatus);
     }
 
-    valueStatus.registerAllowedValue(allowedValue);
+    valueStatus.registerAllowedValue(allowedValues);
   }
 
   protected void handleAllowedValues(@NotNull INodeItem targetItem) {
@@ -538,10 +553,14 @@ public class DefaultConstraintValidator implements IConstraintValidator {
   }
 
   private class ValueStatus {
+    @NotNull
     private final List<@NotNull IAllowedValuesConstraint> constraints = new LinkedList<>();
+    @NotNull
     private final String value;
+    @NotNull
     private final INodeItem item;
     private boolean allowOthers = true;
+    @NotNull
     private IAllowedValuesConstraint.Extensible extensible = IAllowedValuesConstraint.Extensible.EXTERNAL;
 
     public ValueStatus(@NotNull INodeItem item) {
@@ -556,44 +575,47 @@ public class DefaultConstraintValidator implements IConstraintValidator {
         allowOthers = false;
       }
 
-      if (allowedValues.getExtensible().ordinal() > extensible.ordinal()) {
+      IAllowedValuesConstraint.Extensible newExtensible = allowedValues.getExtensible();
+      if (newExtensible.ordinal() > extensible.ordinal()) {
         // record the most restrictive value
         extensible = allowedValues.getExtensible();
+      } else if (IAllowedValuesConstraint.Extensible.NONE.equals(newExtensible)
+          && IAllowedValuesConstraint.Extensible.NONE.equals(extensible)) {
+        // this is an error, where there are two none constraints that conflict
+        throw new MetapathException(
+            String.format("Multiple constraints have extensibility scope=none at path '%s'", item.getMetapath()));
+      } else if (allowedValues.getExtensible().ordinal() < extensible.ordinal()) {
+        String msg = String.format(
+            "An allowed values constraint with an extensibility scope '%s'"
+                + " exceeds the allowed scope '%s' at path '%s'",
+            allowedValues.getExtensible().name(), extensible.name(), item.getMetapath());
+        LOGGER.atError().log(msg);
+        throw new MetapathException(msg);
       }
     }
 
     public void validate() {
-      boolean pass = true;
-      List<@NotNull IAllowedValuesConstraint> failedConstraints = new LinkedList<>();
-
-      for (IAllowedValuesConstraint allowedValues : constraints) {
-        if (allowedValues.getExtensible().ordinal() < extensible.ordinal()) {
-          String msg = String.format(
-              "An allowed values constraint with an extensibility scope '%s'"
-                  + " exceeds the allowed scope '%s' at path '%s'",
-              allowedValues.getExtensible().name(), extensible.name(), item.getMetapath());
-          LOGGER.atError().log(msg);
-          throw new MetapathException(msg);
-        }
-
-        IAllowedValue match = allowedValues.getAllowedValue(value);
-        if (match == null) {
-          if (!allowedValues.isAllowedOther()) {
-            pass = false;
-          }
-
-          if (IAllowedValuesConstraint.Extensible.NONE.equals(allowedValues.getExtensible())) {
+      if (!constraints.isEmpty()) {
+        boolean match = false;
+        List<@NotNull IAllowedValuesConstraint> failedConstraints = new LinkedList<>();
+        for (IAllowedValuesConstraint allowedValues : constraints) {
+          IAllowedValue matchingValue = allowedValues.getAllowedValue(value);
+          if (matchingValue != null) {
+            match = true;
+          } else if (IAllowedValuesConstraint.Extensible.NONE.equals(allowedValues.getExtensible())) {
             // hard failure, since no other values can satisfy this constraint
             failedConstraints = CollectionUtil.singletonList(allowedValues);
+            match = false;
             break;
-          }
-          failedConstraints.add(allowedValues);
-        } // this constraint passes, but we need to make sure other constraints do as well
-      }
+          } else {
+            failedConstraints.add(allowedValues);
+          } // this constraint passes, but we need to make sure other constraints do as well
+        }
 
-      // it's not a failure if allow others is true
-      if (!pass && !allowOthers) {
-        getConstraintValidationHandler().handleAllowedValuesViolation(failedConstraints, item);
+        // it's not a failure if allow others is true
+        if (!match && !allowOthers) {
+          getConstraintValidationHandler().handleAllowedValuesViolation(failedConstraints, item);
+        }
       }
     }
   }
