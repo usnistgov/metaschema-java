@@ -138,7 +138,7 @@
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
 		<dependency.woodstox.version>6.3.0</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.1.0</dependency.xmlbeans.version>
-		<dependency.xmlresolver.version>4.4.0</dependency.xmlresolver.version>
+		<dependency.xmlresolver.version>4.4.1</dependency.xmlresolver.version>
 
 		<plugin.license.version>4.2.rc3</plugin.license.version>
 		<plugin.antlr4test.version>1.21</plugin.antlr4test.version>
