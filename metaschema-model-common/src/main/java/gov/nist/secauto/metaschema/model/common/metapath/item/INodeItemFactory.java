@@ -28,20 +28,34 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.IModelContainer;
 import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public interface INodeItemFactory {
+  static INodeItemFactory instance() {
+    return DefaultNodeItemFactory.instance();
+  }
 
   @SuppressWarnings("null")
   @NotNull
@@ -81,57 +95,154 @@ public interface INodeItemFactory {
 
   @NotNull
   default IFieldNodeItem newFieldNodeItem(@NotNull IFieldDefinition definition, @Nullable URI baseUri) {
-    return new FieldDefinitionNodeItemImpl(definition, baseUri);
+    return new FieldDefinitionNodeItemImpl(definition, baseUri, this);
   }
 
   @NotNull
-  default IFieldNodeItem newFieldNodeItem(@NotNull IFieldInstance instance,
+  default IFieldNodeItem newFieldNodeItem(
+      @NotNull IFieldInstance instance,
       @NotNull IAssemblyNodeItem parentNodeItem) {
-    return new FieldInstanceNodeItemImpl(instance, parentNodeItem, 1);
+    return new FieldInstanceNodeItemImpl(instance, parentNodeItem, 1, this);
   }
 
   @NotNull
   default IRequiredValueFieldNodeItem newFieldNodeItem(@NotNull IFieldDefinition definition,
       @NotNull Object value, @Nullable URI baseUri) {
-    return new RequiredValueFieldDefinitionNodeItemImpl(definition, value, baseUri);
+    return new RequiredValueFieldDefinitionNodeItemImpl(definition, value, baseUri, this);
   }
 
   @NotNull
   default IRequiredValueFieldNodeItem newFieldNodeItem(@NotNull IFieldInstance instance,
       @NotNull IRequiredValueAssemblyNodeItem parent, int position, @NotNull Object value) {
-    return new RequiredValueFieldInstanceNodeItemImpl(instance, parent, position, value);
+    return new RequiredValueFieldInstanceNodeItemImpl(instance, parent, position, value, this);
   }
 
   @NotNull
   default IAssemblyNodeItem newAssemblyNodeItem(@NotNull IAssemblyDefinition definition, @Nullable URI baseUri) {
-    return new AssemblyDefinitionNodeItemImpl(definition, baseUri);
+    return new AssemblyDefinitionNodeItemImpl(definition, baseUri, this);
   }
 
   @NotNull
   default IAssemblyNodeItem newAssemblyNodeItem(@NotNull IAssemblyInstance instance,
       @NotNull IAssemblyNodeItem parent) {
-    return new AssemblyInstanceNodeItemImpl(instance, parent, 1);
+    return new AssemblyInstanceNodeItemImpl(instance, parent, 1, this);
   }
 
   default IAssemblyNodeItem newAssemblyNodeItem(@NotNull IAssemblyDefinition definition, @NotNull Object value,
       @Nullable URI baseUri) {
-    return new RequiredValueAssemblyDefinitionNodeItemImpl(definition, value, baseUri);
+    return new RequiredValueAssemblyDefinitionNodeItemImpl(definition, value, baseUri, this);
   }
 
   @NotNull
   default IRequiredValueAssemblyNodeItem newAssemblyNodeItem(@NotNull IAssemblyInstance instance,
       @NotNull IRequiredValueAssemblyNodeItem parent, int position, @NotNull Object value) {
-    return new RequiredValueAssemblyInstanceNodeItemImpl(instance, parent, position, value);
+    return new RequiredValueAssemblyInstanceNodeItemImpl(instance, parent, position, value, this);
   }
 
   @NotNull
   default IDocumentNodeItem newDocumentNodeItem(@NotNull IRootAssemblyDefinition definition, @NotNull Object value,
       @NotNull URI documentUri) {
-    return new DocumentNodeItemImpl(definition, value, documentUri);
+    return new DocumentNodeItemImpl(definition, value, documentUri, this);
   }
 
   @NotNull
   default IMetaschemaNodeItem newMetaschemaNodeItem(@NotNull IMetaschema metaschema) {
-    return new MetaschemaNodeItemImpl(metaschema);
+    return new MetaschemaNodeItemImpl(metaschema, this);
+  }
+
+  @NotNull
+  default Map<@NotNull String, IFlagNodeItem> generateFlags(@NotNull IModelNodeItem parent) {
+    Map<@NotNull String, IFlagNodeItem> retval = new LinkedHashMap<>(); // NOPMD - intentional
+
+    for (IFlagInstance instance : parent.getDefinition().getFlagInstances()) {
+      IFlagNodeItem item = newFlagNodeItem(instance, parent);
+      retval.put(instance.getEffectiveName(), item);
+    }
+    return retval.isEmpty() ? CollectionUtil.emptyMap() : CollectionUtil.unmodifiableMap(retval);
+  }
+
+  @NotNull
+  default Map<@NotNull String, IRequiredValueFlagNodeItem> generateFlagsWithValues(
+      @NotNull IRequiredValueModelNodeItem parent) {
+    Map<@NotNull String, IRequiredValueFlagNodeItem> retval = new LinkedHashMap<>(); // NOPMD - intentional
+
+    Object parentValue = parent.getValue();
+    for (IFlagInstance instance : parent.getDefinition().getFlagInstances()) {
+      Object instanceValue = instance.getValue(parentValue);
+      if (instanceValue != null) {
+        IRequiredValueFlagNodeItem item = newFlagNodeItem(instance, parent, instanceValue);
+        retval.put(instance.getEffectiveName(), item);
+      }
+    }
+    return retval.isEmpty() ? CollectionUtil.emptyMap() : CollectionUtil.unmodifiableMap(retval);
+  }
+
+  @NotNull
+  default Map<@NotNull String, List<@NotNull IModelNodeItem>> generateModelItems(@NotNull IAssemblyNodeItem parent) {
+    Map<@NotNull String, List<@NotNull IModelNodeItem>> retval = new LinkedHashMap<>(); // NOPMD - intentional
+
+    for (INamedModelInstance instance : CollectionUtil.toIterable(getNamedModelInstances(parent.getDefinition()))) {
+      @NotNull
+      IModelNodeItem item;
+      if (instance instanceof IAssemblyInstance) {
+        item = newAssemblyNodeItem((IAssemblyInstance) instance, parent);
+      } else if (instance instanceof IFieldInstance) {
+        item = newFieldNodeItem((IFieldInstance) instance, parent);
+      } else {
+        throw new UnsupportedOperationException("unsupported instance type: " + instance.getClass().getName());
+      }
+      retval.put(instance.getEffectiveName(), Collections.singletonList(item));
+    }
+    return retval.isEmpty() ? CollectionUtil.emptyMap() : CollectionUtil.unmodifiableMap(retval);
+  }
+
+  @SuppressWarnings("null")
+  @NotNull
+  default Stream<@NotNull INamedModelInstance> getNamedModelInstances(@NotNull IModelContainer container) {
+    return container.getModelInstances().stream()
+        .flatMap(instance -> {
+          Stream<@NotNull INamedModelInstance> retval;
+          if (instance instanceof IAssemblyInstance || instance instanceof IFieldInstance) {
+            retval = Stream.of((INamedModelInstance)instance);
+          } else if (instance instanceof IChoiceInstance) {
+            // descend into the choice
+            retval = getNamedModelInstances((IChoiceInstance)instance);
+          } else {
+            throw new UnsupportedOperationException("unsupported instance type: " + instance.getClass().getName());
+          }
+          return retval;
+        });
+  }
+  
+  
+  @NotNull
+  default Map<@NotNull String, List<@NotNull IRequiredValueModelNodeItem>> generateModelItemsWithValues(
+      @NotNull IRequiredValueAssemblyNodeItem parent) {
+    Map<@NotNull String, List<@NotNull IRequiredValueModelNodeItem>> retval // NOPMD - intentional
+        = new LinkedHashMap<>();
+
+    Object parentValue = parent.getValue();
+    for (INamedModelInstance instance : CollectionUtil.toIterable(getNamedModelInstances(parent.getDefinition()))) {
+      Object instanceValue = instance.getValue(parentValue);
+
+      Stream<@NotNull ? extends Object> itemValues = instance.getItemValues(instanceValue).stream();
+      AtomicInteger index = new AtomicInteger(); // NOPMD - intentional
+      List<@NotNull IRequiredValueModelNodeItem> items = itemValues.map(itemValue -> {
+        @NotNull
+        IRequiredValueModelNodeItem item;
+        if (instance instanceof IAssemblyInstance) {
+          item = newAssemblyNodeItem((IAssemblyInstance) instance, parent, index.incrementAndGet(),
+              itemValue);
+        } else if (instance instanceof IFieldInstance) {
+          item = newFieldNodeItem((IFieldInstance) instance, parent, index.incrementAndGet(),
+              itemValue);
+        } else {
+          throw new UnsupportedOperationException("unsupported instance type: " + instance.getClass().getName());
+        }
+        return item;
+      }).collect(Collectors.toUnmodifiableList());
+      retval.put(instance.getEffectiveName(), items);
+    }
+    return retval.isEmpty() ? CollectionUtil.emptyMap() : CollectionUtil.unmodifiableMap(retval);
   }
 }

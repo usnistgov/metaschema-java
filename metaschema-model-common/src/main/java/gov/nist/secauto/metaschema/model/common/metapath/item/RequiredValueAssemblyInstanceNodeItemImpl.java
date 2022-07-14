@@ -32,33 +32,41 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * A {@link INodeItem} supported by a {@link IAssemblyInstance}, that must have an associated value.
  */
 class RequiredValueAssemblyInstanceNodeItemImpl
     extends
-    AbstractAssemblyInstanceNodeItem<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem,
-        IRequiredValueAssemblyNodeItem>
+    AbstractAssemblyInstanceNodeItem<
+        IRequiredValueFlagNodeItem,
+        IRequiredValueModelNodeItem,
+        IRequiredValueAssemblyNodeItem,
+        AbstractModelNodeContext.Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
     implements IRequiredValueAssemblyNodeItem {
   @NotNull
   private final Object value;
 
-  public RequiredValueAssemblyInstanceNodeItemImpl(@NotNull IAssemblyInstance instance,
+  public RequiredValueAssemblyInstanceNodeItemImpl(
+      @NotNull IAssemblyInstance instance,
       @NotNull IRequiredValueAssemblyNodeItem parent,
-      int position, @NotNull Object value) {
-    super(instance, parent, position);
+      int position,
+      @NotNull Object value,
+      @NotNull INodeItemFactory factory) {
+    super(instance, parent, position, factory);
     this.value = value;
   }
 
   @Override
-  protected Map<@NotNull String, IRequiredValueFlagNodeItem> newFlags() {
-    return ModelFactoryImpl.instance().generateFlagsWithValues(this);
-  }
-
-  @Override
-  protected Map<@NotNull String, ? extends List<@NotNull ? extends IRequiredValueModelNodeItem>> newModelItems() {
-    return ModelFactoryImpl.instance().generateModelItemsWithValues(this);
+  protected @NotNull Supplier<Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
+      newModelSupplier(@NotNull INodeItemFactory factory) {
+    return () -> {
+      Map<@NotNull String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
+      Map<@NotNull String, List<@NotNull IRequiredValueModelNodeItem>> modelItems
+          = factory.generateModelItemsWithValues(this);
+      return new AbstractModelNodeContext.Model<>(flags, modelItems);
+    };
   }
 
   @Override

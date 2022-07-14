@@ -32,29 +32,35 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * A {@link INodeItem} supported by a {@link IAssemblyInstance}, that does not have an associated
  * value.
  */
 class AssemblyInstanceNodeItemImpl
-    extends AbstractAssemblyInstanceNodeItem<IFlagNodeItem, IModelNodeItem, IAssemblyNodeItem> {
+    extends AbstractAssemblyInstanceNodeItem<
+        IFlagNodeItem,
+        IModelNodeItem,
+        IAssemblyNodeItem,
+        AbstractModelNodeContext.Model<IFlagNodeItem, IModelNodeItem>> {
 
   public AssemblyInstanceNodeItemImpl(
       @NotNull IAssemblyInstance instance,
       @NotNull IAssemblyNodeItem parent,
-      int position) {
-    super(instance, parent, position);
+      int position,
+      @NotNull INodeItemFactory factory) {
+    super(instance, parent, position, factory);
   }
 
   @Override
-  protected Map<@NotNull String, IFlagNodeItem> newFlags() {
-    return ModelFactoryImpl.instance().generateFlags(this);
-  }
-
-  @Override
-  protected Map<@NotNull String, ? extends List<@NotNull ? extends IModelNodeItem>> newModelItems() {
-    return ModelFactoryImpl.instance().generateModelItems(this);
+  protected @NotNull Supplier<Model<IFlagNodeItem, IModelNodeItem>>
+      newModelSupplier(@NotNull INodeItemFactory factory) {
+    return () -> {
+      Map<@NotNull String, IFlagNodeItem> flags = factory.generateFlags(this);
+      Map<@NotNull String, List<@NotNull IModelNodeItem>> modelItems = factory.generateModelItems(this);
+      return new AbstractModelNodeContext.Model<>(flags, modelItems);
+    };
   }
 
   @Override

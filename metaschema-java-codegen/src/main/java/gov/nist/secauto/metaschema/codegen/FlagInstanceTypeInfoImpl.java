@@ -39,6 +39,7 @@ import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
@@ -68,7 +69,17 @@ class FlagInstanceTypeInfoImpl
     IFlagInstance instance = getInstance();
 
     AnnotationSpec.Builder annotation
-        = AnnotationSpec.builder(BoundFlag.class).addMember("useName", "$S", instance.getEffectiveName());
+        = AnnotationSpec.builder(BoundFlag.class);
+
+    if (instance.getFormalName() != null) {
+      annotation.addMember("formalName", "$S", instance.getFormalName());
+    }
+
+    if (instance.getDescription() != null) {
+      annotation.addMember("description", "$S", instance.getDescription().toMarkdown());
+    }
+
+    annotation.addMember("useName", "$S", instance.getEffectiveName());
 
     if (instance.isRequired()) {
       annotation.addMember("required", "$L", true);
@@ -83,6 +94,11 @@ class FlagInstanceTypeInfoImpl
     AnnotationUtils.applyIndexHasKeyConstraints(annotation, definition.getIndexHasKeyConstraints());
     AnnotationUtils.applyMatchesConstraints(annotation, definition.getMatchesConstraints());
     AnnotationUtils.applyExpectConstraints(annotation, definition.getExpectConstraints());
+
+    MarkupMultiline remarks = instance.getRemarks();
+    if (remarks != null) {
+      annotation.addMember("remarks", "$S", remarks.toMarkdown());
+    }
 
     builder.addAnnotation(annotation.build());
 

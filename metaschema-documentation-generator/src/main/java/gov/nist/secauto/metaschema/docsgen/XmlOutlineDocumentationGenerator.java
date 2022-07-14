@@ -44,9 +44,4 @@ public class XmlOutlineDocumentationGenerator
       throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException {
     return cfg.getTemplate("xml-outline.ftlx");
   }
-
-  @Override
-  protected void buildModel(Configuration cfg, Map<String, Object> root) throws IOException, TemplateException {
-    // nothing to add
-  }
 }

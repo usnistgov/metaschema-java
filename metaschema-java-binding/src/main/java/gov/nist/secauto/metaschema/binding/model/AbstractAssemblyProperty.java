@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
@@ -112,10 +111,5 @@ abstract class AbstractAssemblyProperty
         getModelType().name().toLowerCase(Locale.ROOT),
         getParentClassBinding().getBoundClass().getName(),
         getName());
-  }
-
-  @Override
-  public MarkupMultiline getRemarks() {
-    throw new UnsupportedOperationException();
   }
 }

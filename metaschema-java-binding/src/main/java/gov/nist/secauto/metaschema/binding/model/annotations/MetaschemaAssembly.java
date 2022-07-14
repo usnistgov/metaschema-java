@@ -44,6 +44,25 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target(TYPE)
 public @interface MetaschemaAssembly {
+  /**
+   * Get the documentary formal name of the assembly.
+   * <p>
+   * If the value is "##none", then the description will be considered {@code null}.
+   * 
+   * @return a markdown string or {@code "##none"} if no formal name is provided
+   */
+  @NotNull
+  String formalName() default "##none";
+
+  /**
+   * Get the documentary description of the assembly.
+   * <p>
+   * If the value is "##none", then the description will be considered {@code null}.
+   * 
+   * @return a markdown string or {@code "##none"} if no description is provided
+   */
+  @NotNull
+  String description() default "##none";
 
   /**
    * Get the metaschema class that "owns" this assembly, which is the concrete implementation of the
@@ -138,4 +157,12 @@ public @interface MetaschemaAssembly {
    */
   @NotNull
   HasCardinality[] hasCardinality() default {};
+
+  /**
+   * Get any remarks for this assembly.
+   * 
+   * @return a markdown string or {@code "##none"} if no remarks are provided
+   */
+  @NotNull
+  String remarks() default "##none";
 }

@@ -82,7 +82,6 @@ public class XmlSuiteTest
 
   @Override
   protected BiFunction<@NotNull IMetaschema, @NotNull Writer, Void> getGeneratorSupplier() {
-    // TODO Auto-generated method stub
     return XML_SCHEMA_PROVIDER;
   }
 

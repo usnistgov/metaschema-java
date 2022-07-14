@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -35,12 +36,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * A {@link INodeItem} supported by a {@link IFieldDefinition}, that must have an associated value.
  */
 class RequiredValueFieldDefinitionNodeItemImpl
-    extends AbstractModelNodeItem<IRequiredValueFlagNodeItem>
+    extends AbstractNodeContext<
+        IRequiredValueFlagNodeItem,
+        AbstractNodeContext.Flags<IRequiredValueFlagNodeItem>>
     implements IRequiredValueFieldNodeItem {
   @NotNull
   private final IFieldDefinition definition;
@@ -53,16 +57,24 @@ class RequiredValueFieldDefinitionNodeItemImpl
    */
   private IAnyAtomicItem atomicItem;
 
-  public RequiredValueFieldDefinitionNodeItemImpl(@NotNull IFieldDefinition definition, @NotNull Object value,
-      @Nullable URI baseUri) {
+  public RequiredValueFieldDefinitionNodeItemImpl(
+      @NotNull IFieldDefinition definition,
+      @NotNull Object value,
+      @Nullable URI baseUri,
+      @NotNull INodeItemFactory factory) {
+    super(factory);
     this.definition = definition;
     this.value = value;
     this.baseUri = baseUri;
   }
 
   @Override
-  protected Map<@NotNull String, IRequiredValueFlagNodeItem> newFlags() {
-    return ModelFactoryImpl.instance().generateFlagsWithValues(this);
+  protected @NotNull Supplier<Flags<IRequiredValueFlagNodeItem>>
+      newModelSupplier(@NotNull INodeItemFactory factory) {
+    return () -> {
+      Map<@NotNull String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
+      return new Flags<>(flags);
+    };
   }
 
   @Override
@@ -103,8 +115,11 @@ class RequiredValueFieldDefinitionNodeItemImpl
   public IAnyAtomicItem toAtomicItem() {
     synchronized (this) {
       if (atomicItem == null) {
-        atomicItem = getInstance().getDefinition().getJavaTypeAdapter().newItem(
-            getDefinition().getFieldValue(getValue()));
+        Object fieldValue = getDefinition().getFieldValue(getValue());
+        if (fieldValue == null) {
+          throw new InvalidTypeMetapathException(this, "The field item does not have a field value");
+        }
+        atomicItem = getInstance().getDefinition().getJavaTypeAdapter().newItem(fieldValue);
       }
     }
     return ObjectUtils.notNull(atomicItem);

@@ -34,6 +34,8 @@ import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -52,12 +54,33 @@ import java.lang.annotation.Target;
 @Target({ FIELD })
 public @interface BoundField {
   /**
+   * Get the documentary formal name of the field.
+   * <p>
+   * If the value is "##none", then the description will be considered {@code null}.
+   * 
+   * @return a markdown string or {@code "##none"} if no formal name is provided
+   */
+  @NotNull
+  String formalName() default "##none";
+
+  /**
+   * Get the documentary description of the field.
+   * <p>
+   * If the value is "##none", then the description will be considered {@code null}.
+   * 
+   * @return a markdown string or {@code "##none"} if no description is provided
+   */
+  @NotNull
+  String description() default "##none";
+
+  /**
    * The model name to use for singleton values. This name will be used for associated XML elements.
    * <p>
    * If the value is "##default", then element name is derived from the JavaBean property name.
    * 
    * @return the name
    */
+  @NotNull
   String useName() default "##default";
 
   /**
@@ -70,6 +93,7 @@ public @interface BoundField {
    * 
    * @return the namespace
    */
+  @NotNull
   String namespace() default "##default";
 
   /**
@@ -101,6 +125,7 @@ public @interface BoundField {
    * 
    * @return the name
    */
+  @NotNull
   String groupName() default "##none";
 
   /**
@@ -111,6 +136,7 @@ public @interface BoundField {
    * 
    * @return the namespace
    */
+  @NotNull
   String groupNamespace() default "##default";
 
   /**
@@ -132,6 +158,7 @@ public @interface BoundField {
    * 
    * @return the JSON collection strategy
    */
+  @NotNull
   JsonGroupAsBehavior inJson() default JsonGroupAsBehavior.NONE;
 
   /**
@@ -139,6 +166,7 @@ public @interface BoundField {
    * 
    * @return the XML collection strategy
    */
+  @NotNull
   XmlGroupAsBehavior inXml() default XmlGroupAsBehavior.UNGROUPED;
 
   /**
@@ -146,6 +174,7 @@ public @interface BoundField {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
+  @NotNull
   AllowedValues[] allowedValues() default {};
 
   /**
@@ -153,6 +182,7 @@ public @interface BoundField {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
+  @NotNull
   Matches[] matches() default {};
 
   /**
@@ -160,6 +190,7 @@ public @interface BoundField {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
+  @NotNull
   IndexHasKey[] indexHasKey() default {};
 
   /**
@@ -167,5 +198,14 @@ public @interface BoundField {
    * 
    * @return the expected constraints or an empty array if no expected constraints are defined
    */
+  @NotNull
   Expect[] expect() default {};
+
+  /**
+   * Get any remarks for this field.
+   * 
+   * @return a markdown string or {@code "##none"} if no remarks are provided
+   */
+  @NotNull
+  String remarks() default "##none";
 }

@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import gov.nist.secauto.metaschema.model.common.configuration.DefaultConfiguration;
+import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.model.common.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.model.common.metapath.function.DefaultFunction.CallingContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
@@ -57,6 +60,8 @@ public class DynamicContext { // NOPMD - intentional data class
   private final Map<@NotNull URI, IDocumentNodeItem> availableDocuments;
   private final Map<@NotNull CallingContext, ISequence<?>> functionResultCache;
   private CachingLoader documentLoader;
+  @NotNull
+  private final IMutableConfiguration<MetapathEvaluationFeature> configuration;
 
   @SuppressWarnings("null")
   public DynamicContext(@NotNull StaticContext staticContext) {
@@ -68,6 +73,8 @@ public class DynamicContext { // NOPMD - intentional data class
     this.currentDateTime = ZonedDateTime.now(clock);
     this.availableDocuments = new HashMap<>();
     this.functionResultCache = new HashMap<>();
+    this.configuration = new DefaultConfiguration<>(MetapathEvaluationFeature.class);
+    this.configuration.enableFeature(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES);
   }
 
   @NotNull
@@ -101,6 +108,17 @@ public class DynamicContext { // NOPMD - intentional data class
 
   public ISequence<?> getCachedResult(@NotNull CallingContext callingContext) {
     return functionResultCache.get(callingContext);
+  }
+
+  @NotNull
+  public DynamicContext disablePredicateEvaluation() {
+    this.configuration.disableFeature(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES);
+    return this;
+  }
+
+  @NotNull
+  public IConfiguration<MetapathEvaluationFeature> getConfiguration() {
+    return configuration;
   }
 
   public void cacheResult(@NotNull CallingContext callingContext, @NotNull ISequence<?> result) {

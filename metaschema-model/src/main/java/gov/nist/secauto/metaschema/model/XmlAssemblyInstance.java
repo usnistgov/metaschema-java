@@ -30,7 +30,9 @@ import gov.nist.secauto.metaschema.model.common.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.AssemblyReferenceType;
@@ -75,6 +77,16 @@ class XmlAssemblyInstance
     // This will always be not null
     return ObjectUtils.notNull(getContainingMetaschema()
         .getScopedAssemblyDefinitionByName(getName()));
+  }
+
+  @Override
+  public String getFormalName() {
+    return getXmlAssembly().isSetFormalName() ? getXmlAssembly().getFormalName() : null;
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+    return getXmlAssembly().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription()) : null;
   }
 
   @SuppressWarnings("null")

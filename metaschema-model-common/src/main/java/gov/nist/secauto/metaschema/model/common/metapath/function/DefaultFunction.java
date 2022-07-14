@@ -183,6 +183,7 @@ public class DefaultFunction
 
       if (argument == null) {
         throw new InvalidTypeMetapathException(
+            null,
             String.format("argument signature doesn't match '%d'", function.toSignature()));
       }
 
@@ -195,6 +196,7 @@ public class DefaultFunction
       case ONE: {
         if (size != 1) {
           throw new InvalidTypeMetapathException(
+              null,
               String.format("a sequence of one expected, but found '%d'", size));
         }
 
@@ -205,6 +207,7 @@ public class DefaultFunction
       case ZERO_OR_ONE: {
         if (size > 1) {
           throw new InvalidTypeMetapathException(
+              null,
               String.format("a sequence of zero or one expected, but found '%d'", size));
         }
 
@@ -215,12 +218,14 @@ public class DefaultFunction
       case ONE_OR_MORE:
         if (size < 1) {
           throw new InvalidTypeMetapathException(
+              null,
               String.format("a sequence of zero or more expected, but found '%d'", size));
         }
         break;
       case ZERO:
         if (size != 0) {
           throw new InvalidTypeMetapathException(
+              null,
               String.format("an empty sequence expected, but found '%d'", size));
         }
         break;
@@ -239,6 +244,7 @@ public class DefaultFunction
         Class<? extends IItem> itemClass = item.getClass();
         if (!argumentClass.isAssignableFrom(itemClass)) {
           throw new InvalidTypeMetapathException(
+              item,
               String.format("The type '%s' is not a subtype of '%s'", itemClass.getName(), argumentClass.getName()));
         }
       }
@@ -289,6 +295,7 @@ public class DefaultFunction
         // item = requiredSequenceType.
         if (!requiredSequenceTypeClass.isInstance(item)) {
           throw new InvalidTypeMetapathException(
+              item,
               String.format("The type '%s' is not a subtype of '%s'", item.getClass().getName(),
                   requiredSequenceTypeClass.getName()));
         }
@@ -367,7 +374,7 @@ public class DefaultFunction
   public String toSignature() {
     StringBuilder builder = new StringBuilder()
         .append(getName()) // name
-        .append("("); // arguments
+        .append('('); // arguments
 
     List<IArgument> arguments = getArguments();
     if (arguments.isEmpty()) {

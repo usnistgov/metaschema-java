@@ -39,8 +39,9 @@ import org.jetbrains.annotations.NotNull;
  * @param <P>
  *          the parent node item type
  */
-abstract class AbstractFieldInstanceNodeItem<F extends IFlagNodeItem, P extends IAssemblyNodeItem>
-    extends AbstractModelNodeItem<F>
+abstract class AbstractFieldInstanceNodeItem<F extends IFlagNodeItem, P extends IAssemblyNodeItem, L extends AbstractNodeContext.Flags<
+    F>>
+    extends AbstractNodeContext<F, L>
     implements IFieldNodeItem {
   @NotNull
   private final IFieldInstance instance;
@@ -48,7 +49,12 @@ abstract class AbstractFieldInstanceNodeItem<F extends IFlagNodeItem, P extends 
   @NotNull
   private final P parent;
 
-  public AbstractFieldInstanceNodeItem(@NotNull IFieldInstance instance, @NotNull P parent, int position) {
+  public AbstractFieldInstanceNodeItem(
+      @NotNull IFieldInstance instance,
+      @NotNull P parent,
+      int position,
+      @NotNull INodeItemFactory factory) {
+    super(factory);
     this.instance = instance;
     this.parent = parent;
     if (position < 1) {

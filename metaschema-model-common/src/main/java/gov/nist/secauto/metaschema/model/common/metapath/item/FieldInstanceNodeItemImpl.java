@@ -32,21 +32,33 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * A {@link INodeItem} supported by a {@link IFieldInstance}, that does not have an associated
  * value.
  */
 class FieldInstanceNodeItemImpl
-    extends AbstractFieldInstanceNodeItem<IFlagNodeItem, IAssemblyNodeItem> {
+    extends AbstractFieldInstanceNodeItem<
+        IFlagNodeItem,
+        IAssemblyNodeItem,
+        AbstractNodeContext.Flags<IFlagNodeItem>> {
 
-  public FieldInstanceNodeItemImpl(@NotNull IFieldInstance instance, @NotNull IAssemblyNodeItem parent, int position) {
-    super(instance, parent, position);
+  public FieldInstanceNodeItemImpl(
+      @NotNull IFieldInstance instance,
+      @NotNull IAssemblyNodeItem parent,
+      int position,
+      @NotNull INodeItemFactory factory) {
+    super(instance, parent, position, factory);
   }
 
   @Override
-  protected Map<@NotNull String, IFlagNodeItem> newFlags() {
-    return ModelFactoryImpl.instance().generateFlags(this);
+  protected @NotNull Supplier<Flags<IFlagNodeItem>>
+      newModelSupplier(@NotNull INodeItemFactory factory) {
+    return () -> {
+      Map<@NotNull String, IFlagNodeItem> flags = factory.generateFlags(this);
+      return new Flags<>(flags);
+    };
   }
 
   @Override

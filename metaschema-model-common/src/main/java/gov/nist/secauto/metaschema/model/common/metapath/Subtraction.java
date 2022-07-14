@@ -123,6 +123,7 @@ class Subtraction
     }
     if (retval == null) {
       throw new InvalidTypeMetapathException(
+          null,
           String.format("The expression '%s - %s' is not supported", minuend.getClass().getName(),
               subtrahend.getClass().getName()));
     }

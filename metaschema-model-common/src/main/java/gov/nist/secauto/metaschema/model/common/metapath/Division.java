@@ -112,6 +112,7 @@ class Division
     }
     if (retval == null) {
       throw new InvalidTypeMetapathException(
+          null,
           String.format("The expression '%s / %s' is not supported", dividend.getClass().getName(),
               divisor.getClass().getName()));
     }

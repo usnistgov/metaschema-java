@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.model.common.AbstractFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.FlagReferenceType;
@@ -69,6 +70,17 @@ class XmlFlagInstance
     // this will always be not null
     return ObjectUtils.notNull(getContainingDefinition().getContainingMetaschema()
         .getScopedFlagDefinitionByName(getName()));
+  }
+
+  @Override
+  public String getFormalName() {
+    return getXmlFlag().isSetFormalName() ? getXmlFlag().getFormalName() : null;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public MarkupLine getDescription() {
+    return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription()) : null;
   }
 
   @SuppressWarnings("null")

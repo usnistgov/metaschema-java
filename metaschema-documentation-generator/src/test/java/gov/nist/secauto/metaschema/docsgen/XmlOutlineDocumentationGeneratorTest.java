@@ -60,7 +60,7 @@ class XmlOutlineDocumentationGeneratorTest {
     List<@NotNull IMetaschema> metaschemas = new LinkedList<>();
     @NotNull
     IMetaschema metaschema
-        = loader.loadXmlMetaschema(new URL(
+        = loader.load(new URL(
             "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
     
     metaschemas.add(metaschema);

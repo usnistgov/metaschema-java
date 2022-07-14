@@ -27,22 +27,21 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
-public abstract class AbstractMetaschemaNodeItem implements IMetaschemaNodeItem {
+public abstract class AbstractMetaschemaNodeItem
+    extends
+    AbstractModelNodeContext<IFlagNodeItem, IModelNodeItem,
+        AbstractModelNodeContext.Model<IFlagNodeItem, IModelNodeItem>>
+    implements IMetaschemaNodeItem {
   @NotNull
   private final IMetaschema metaschema;
-  private Map<@NotNull String, IFlagNodeItem> flags;
-  private Map<@NotNull String, ? extends List<@NotNull ? extends IModelNodeItem>> modelItems;
 
-  public AbstractMetaschemaNodeItem(@NotNull IMetaschema metaschema) {
+  public AbstractMetaschemaNodeItem(@NotNull IMetaschema metaschema, @NotNull INodeItemFactory factory) {
+    super(factory);
     this.metaschema = metaschema;
   }
 
@@ -50,7 +49,6 @@ public abstract class AbstractMetaschemaNodeItem implements IMetaschemaNodeItem 
     return metaschema;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public IMetaschema getValue() {
     return metaschema;
@@ -59,51 +57,5 @@ public abstract class AbstractMetaschemaNodeItem implements IMetaschemaNodeItem 
   @Override
   public URI getBaseUri() {
     return metaschema.getLocation();
-  }
-
-  protected Map<@NotNull String, IFlagNodeItem> initFlags() {
-    synchronized (this) {
-      if (this.flags == null) {
-        this.flags = newFlags();
-      }
-    }
-    return this.flags;
-  }
-
-  protected abstract Map<@NotNull String, IFlagNodeItem> newFlags();
-
-  @SuppressWarnings("null")
-  @Override
-  public Collection<@NotNull IFlagNodeItem> getFlags() {
-    return initFlags().values();
-  }
-
-  @Override
-  public IFlagNodeItem getFlagByName(@NotNull String name) {
-    return initFlags().get(name);
-  }
-
-  protected Map<@NotNull String, ? extends List<@NotNull ? extends IModelNodeItem>> initModelItems() {
-    synchronized (this) {
-      if (this.modelItems == null) {
-        this.modelItems = newModelItems();
-      }
-    }
-    return this.modelItems;
-  }
-
-  protected abstract Map<@NotNull String, ? extends List<@NotNull ? extends IModelNodeItem>> newModelItems();
-
-  @SuppressWarnings("null")
-  @Override
-  public Collection<@NotNull ? extends List<@NotNull ? extends IModelNodeItem>> getModelItems() {
-    return initModelItems().values();
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public List<@NotNull ? extends IModelNodeItem> getModelItemsByName(String name) {
-    List<@NotNull ? extends IModelNodeItem> result = initModelItems().get(name);
-    return result == null ? CollectionUtil.emptyList() : result;
   }
 }

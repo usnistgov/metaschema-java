@@ -111,6 +111,18 @@ class XmlInlineFlagDefinition
     return getContainingDefinition().getContainingMetaschema();
   }
 
+  @Override
+  public String getFormalName() {
+    return getXmlFlag().isSetFormalName() ? getXmlFlag().getFormalName() : null;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public MarkupLine getDescription() {
+    return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription())
+        : null;
+  }
+
   @SuppressWarnings("null")
   @Override
   public String getName() {
@@ -176,14 +188,12 @@ class XmlInlineFlagDefinition
 
     @Override
     public String getFormalName() {
-      return getXmlFlag().isSetFormalName() ? getXmlFlag().getFormalName() : null;
+      return XmlInlineFlagDefinition.this.getFormalName();
     }
 
-    @SuppressWarnings("null")
     @Override
     public MarkupLine getDescription() {
-      return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription())
-          : null;
+      return XmlInlineFlagDefinition.this.getDescription();
     }
 
     @SuppressWarnings("null")

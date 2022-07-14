@@ -82,6 +82,7 @@ public interface ISequence<ITEM_TYPE extends IItem> {
   @NotNull
   List<@NotNull ITEM_TYPE> asList();
 
+  // TODO: rename to "stream"
   @NotNull
   Stream<@NotNull ITEM_TYPE> asStream();
 

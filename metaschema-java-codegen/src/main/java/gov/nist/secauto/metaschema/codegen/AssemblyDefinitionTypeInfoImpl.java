@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.model.common.IModelContainer;
 import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -120,6 +121,11 @@ class AssemblyDefinitionTypeInfoImpl
       metaschemaAssembly.addMember("rootName", "$S", definition.getRootName());
     }
     buildConstraints(metaschemaAssembly);
+
+    MarkupMultiline remarks = definition.getRemarks();
+    if (remarks != null) {
+      metaschemaAssembly.addMember("remarks", "$S", remarks.toMarkdown());
+    }
 
     builder.addAnnotation(metaschemaAssembly.build());
 

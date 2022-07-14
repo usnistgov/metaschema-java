@@ -39,6 +39,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.NullJavaTypeAdapter
 import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
@@ -106,6 +107,24 @@ class DefaultFieldValueProperty
   @Override
   public IDataTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
+  }
+
+  @Override
+  public String getFormalName() {
+    // a field value doesn't have a formal name
+    return null;
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+    // a field value doesn't have a formal name
+    return null;
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    // a field value doesn't have a formal name
+    return null;
   }
 
   @Override
@@ -250,12 +269,6 @@ class DefaultFieldValueProperty
   public @NotNull ModelType getModelType() {
     // TODO: is this right? Is there a way to not make this derived from a property?
     return ModelType.FIELD;
-  }
-
-  @Override
-  public @Nullable MarkupMultiline getRemarks() {
-    // TODO: implement?
-    return null;
   }
 
   @Override

@@ -33,6 +33,8 @@ import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -50,6 +52,26 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target({ FIELD })
 public @interface BoundAssembly {
+  /**
+   * Get the documentary formal name of the assembly.
+   * <p>
+   * If the value is "##none", then the description will be considered {@code null}.
+   * 
+   * @return a markdown string or {@code "##none"} if no formal name is provided
+   */
+  @NotNull
+  String formalName() default "##none";
+
+  /**
+   * Get the documentary description of the assembly.
+   * <p>
+   * If the value is "##none", then the description will be considered {@code null}.
+   * 
+   * @return a markdown string or {@code "##none"} if no description is provided
+   */
+  @NotNull
+  String description() default "##none";
+
   /**
    * The model name to use for singleton values. This name will be used for associated XML elements.
    * <p>
@@ -113,4 +135,12 @@ public @interface BoundAssembly {
    * @return the XML collection strategy
    */
   XmlGroupAsBehavior inXml() default XmlGroupAsBehavior.UNGROUPED;
+
+  /**
+   * Get any remarks for this field.
+   * 
+   * @return a markdown string or {@code "##none"} if no remarks are provided
+   */
+  @NotNull
+  String remarks() default "##none";
 }

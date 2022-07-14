@@ -29,9 +29,12 @@ package gov.nist.secauto.metaschema.binding.model;
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 
@@ -73,6 +76,21 @@ class DefaultAssemblyProperty
   public IAssemblyClassBinding getDefinition() {
     Class<?> itemType = getItemType();
     return (IAssemblyClassBinding) getParentClassBinding().getBindingContext().getClassBinding(itemType);
+  }
+
+  @Override
+  public String getFormalName() {
+    return ModelUtil.resolveToString(getAssemblyAnnotation().formalName());
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+    return ModelUtil.resolveToMarkupLine(getAssemblyAnnotation().description());
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    return ModelUtil.resolveToMarkupMultiline(getAssemblyAnnotation().remarks());
   }
 
   @Override

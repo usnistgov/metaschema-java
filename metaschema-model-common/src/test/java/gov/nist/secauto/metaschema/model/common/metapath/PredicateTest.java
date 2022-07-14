@@ -85,7 +85,7 @@ class PredicateTest
 
   @Test
   void testPredicateWithoutValues() {
-    DynamicContext dynamicContext = newDynamicContext();
+    DynamicContext dynamicContext = newDynamicContext().disablePredicateEvaluation();
 
     @SuppressWarnings("null")
     IExpression stepExpr = context.mock(IExpression.class);

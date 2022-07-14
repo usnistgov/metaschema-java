@@ -32,12 +32,16 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * A {@link INodeItem} supported by a {@link IFieldInstance}, that must have an associated value.
  */
 class RequiredValueFieldInstanceNodeItemImpl
-    extends AbstractFieldInstanceNodeItem<IRequiredValueFlagNodeItem, IRequiredValueAssemblyNodeItem>
+    extends AbstractFieldInstanceNodeItem<
+        IRequiredValueFlagNodeItem,
+        IRequiredValueAssemblyNodeItem,
+        AbstractNodeContext.Flags<IRequiredValueFlagNodeItem>>
     implements IRequiredValueFieldNodeItem {
 
   @NotNull
@@ -51,14 +55,19 @@ class RequiredValueFieldInstanceNodeItemImpl
       @NotNull IFieldInstance instance,
       @NotNull IRequiredValueAssemblyNodeItem parent,
       int position,
-      @NotNull Object value) {
-    super(instance, parent, position);
+      @NotNull Object value,
+      @NotNull INodeItemFactory factory) {
+    super(instance, parent, position, factory);
     this.value = value;
   }
 
   @Override
-  protected Map<@NotNull String, IRequiredValueFlagNodeItem> newFlags() {
-    return ModelFactoryImpl.instance().generateFlagsWithValues(this);
+  protected @NotNull Supplier<Flags<IRequiredValueFlagNodeItem>>
+      newModelSupplier(@NotNull INodeItemFactory factory) {
+    return () -> {
+      Map<@NotNull String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
+      return new Flags<>(flags);
+    };
   }
 
   @Override

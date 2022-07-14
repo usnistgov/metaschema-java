@@ -52,6 +52,8 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -138,6 +140,21 @@ public class DefaultAssemblyClassBinding
    */
   public MetaschemaAssembly getMetaschemaAssemblyAnnotation() {
     return metaschemaAssembly;
+  }
+
+  @Override
+  public String getFormalName() {
+    return ModelUtil.resolveToString(getMetaschemaAssemblyAnnotation().formalName());
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+    return ModelUtil.resolveToMarkupLine(getMetaschemaAssemblyAnnotation().description());
+  }
+
+  @Override
+  public @Nullable MarkupMultiline getRemarks() {
+    return ModelUtil.resolveToMarkupMultiline(getMetaschemaAssemblyAnnotation().description());
   }
 
   @Override

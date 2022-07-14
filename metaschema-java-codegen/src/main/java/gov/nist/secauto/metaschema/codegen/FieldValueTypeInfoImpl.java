@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -74,6 +75,11 @@ class FieldValueTypeInfoImpl
     } // else do nothing, the annotation will be on the flag
 
     fieldValue.addMember("typeAdapter", "$T.class", valueDataType.getClass());
+
+    MarkupMultiline remarks = definition.getRemarks();
+    if (remarks != null) {
+      fieldValue.addMember("remarks", "$S", remarks.toMarkdown());
+    }
 
     builder.addAnnotation(fieldValue.build());
     return CollectionUtil.emptySet();

@@ -179,7 +179,7 @@ public class MarkupParser {
       buffer.append(attribute.getName().getLocalPart());
       buffer.append("=\"");
       buffer.append(attribute.getValue());
-      buffer.append("\"");
+      buffer.append('"');
     }
 
     XMLEvent next = reader.peek();
@@ -188,7 +188,7 @@ public class MarkupParser {
       // consume end element event
       reader.nextEvent();
     } else {
-      buffer.append(">");
+      buffer.append('>');
 
       // parse until the start's END_ELEMENT is reached
       parseContents(reader, start, buffer);
