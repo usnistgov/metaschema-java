@@ -104,6 +104,19 @@ class XmlInlineAssemblyDefinition
     return assemblyDefinition;
   }
 
+  @Override
+  public String getFormalName() {
+    return getXmlAssembly().isSetFormalName() ? getXmlAssembly().getFormalName() : null;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public MarkupLine getDescription() {
+    return getXmlAssembly().isSetDescription()
+        ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription())
+        : null;
+  }
+
   @SuppressWarnings("null")
   @Override
   public String getName() {
@@ -202,15 +215,12 @@ class XmlInlineAssemblyDefinition
 
     @Override
     public String getFormalName() {
-      return getXmlAssembly().isSetFormalName() ? getXmlAssembly().getFormalName() : null;
+      return XmlInlineAssemblyDefinition.this.getFormalName();
     }
 
-    @SuppressWarnings("null")
     @Override
     public MarkupLine getDescription() {
-      return getXmlAssembly().isSetDescription()
-          ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription())
-          : null;
+      return XmlInlineAssemblyDefinition.this.getDescription();
     }
 
     @Override

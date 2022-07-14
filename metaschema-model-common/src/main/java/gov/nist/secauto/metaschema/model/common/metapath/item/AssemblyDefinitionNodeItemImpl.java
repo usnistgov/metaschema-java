@@ -35,13 +35,18 @@ import org.jetbrains.annotations.Nullable;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * a new {@link INodeItem} instance, that is orphaned from any parent nodes, supported by an
  * {@link IAssemblyDefinition}.
  */
 class AssemblyDefinitionNodeItemImpl
-    extends AbstractAssemblyNodeItem<IFlagNodeItem, IModelNodeItem> {
+    extends AbstractModelNodeContext<
+        IFlagNodeItem,
+        IModelNodeItem,
+        AbstractModelNodeContext.Model<IFlagNodeItem, IModelNodeItem>>
+    implements IAssemblyNodeItem {
   @NotNull
   private final IAssemblyDefinition definition;
 
@@ -50,26 +55,32 @@ class AssemblyDefinitionNodeItemImpl
 
   /**
    * Construct a new {@link INodeItem} instance, that is orphaned from any parent nodes, based on the
-   * provided field {@code definition}.
+   * provided assembly {@code definition}.
    * 
    * @param definition
    *          the field
    * @param baseUri
    *          an optional base URI to use for resolving relative URIs
+   * @param factory
+   *          the factory to use to instantiate new node items
    */
-  public AssemblyDefinitionNodeItemImpl(@NotNull IAssemblyDefinition definition, @Nullable URI baseUri) {
+  public AssemblyDefinitionNodeItemImpl(
+      @NotNull IAssemblyDefinition definition,
+      @Nullable URI baseUri,
+      @NotNull INodeItemFactory factory) {
+    super(factory);
     this.definition = definition;
     this.baseUri = baseUri;
   }
 
   @Override
-  protected Map<@NotNull String, IFlagNodeItem> newFlags() {
-    return ModelFactoryImpl.instance().generateFlags(this);
-  }
-
-  @Override
-  protected Map<@NotNull String, List<@NotNull IModelNodeItem>> newModelItems() {
-    return ModelFactoryImpl.instance().generateModelItems(this);
+  protected @NotNull Supplier<Model<IFlagNodeItem, IModelNodeItem>>
+      newModelSupplier(@NotNull INodeItemFactory factory) {
+    return () -> {
+      Map<@NotNull String, IFlagNodeItem> flags = factory.generateFlags(this);
+      Map<@NotNull String, List<@NotNull IModelNodeItem>> modelItems = factory.generateModelItems(this);
+      return new Model<>(flags, modelItems);
+    };
   }
 
   @Override

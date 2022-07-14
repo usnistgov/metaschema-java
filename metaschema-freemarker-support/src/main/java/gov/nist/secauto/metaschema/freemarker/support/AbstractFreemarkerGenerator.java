@@ -26,21 +26,14 @@
 
 package gov.nist.secauto.metaschema.freemarker.support;
 
-import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.UsedDefinitionModelWalker;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.core.ParseException;
@@ -92,30 +85,6 @@ public abstract class AbstractFreemarkerGenerator implements IFreemarkerGenerato
   @Override
   public void generateFromMetaschema(@NotNull IMetaschema metaschema, Writer out)
       throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException {
-    Collection<@NotNull ? extends IDefinition> definitions
-        = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
-    generate(metaschema, definitions, out);
-  }
-
-  protected void generate(@NotNull IMetaschema metaschema, Collection<@NotNull ? extends IDefinition> definitions,
-      Writer out)
-      throws TemplateNotFoundException, MalformedTemplateNameException, TemplateException, ParseException, IOException {
-    Objects.requireNonNull(definitions, "definitions");
-    Set<IMetaschema> metaschemas = new LinkedHashSet<>();
-    Set<IAssemblyDefinition> rootAssemblies = new LinkedHashSet<>();
-    for (IDefinition definition : definitions) {
-      IMetaschema containingMetaschema = definition.getContainingMetaschema();
-      if (!metaschemas.contains(containingMetaschema)) {
-        metaschemas.add(containingMetaschema);
-      }
-
-      if (definition instanceof IAssemblyDefinition) {
-        IAssemblyDefinition assemblyDefinition = (IAssemblyDefinition) definition;
-        if (assemblyDefinition.isRoot()) {
-          rootAssemblies.add(assemblyDefinition);
-        }
-      }
-    }
 
     Configuration cfg = newConfiguration();
 
@@ -134,14 +103,10 @@ public abstract class AbstractFreemarkerGenerator implements IFreemarkerGenerato
     // Create the root hash. We use a Map here, but it could be a JavaBean too.
     Map<String, Object> root = new HashMap<>(); // NOPMD - Freemarker templates run in a single thread
 
-    // add metaschema model
-    root.put("metaschema", metaschema);
-    root.put("metaschemas", metaschemas);
-    root.put("definitions", definitions);
-    root.put("root-definitions", rootAssemblies);
-
     Template template = getTemplate(cfg);
-    buildModel(cfg, root);
+
+    // add metaschema model
+    buildModel(cfg, root, metaschema);
 
     template.process(root, out);
   }
@@ -149,5 +114,5 @@ public abstract class AbstractFreemarkerGenerator implements IFreemarkerGenerato
   protected abstract Template getTemplate(Configuration cfg)
       throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException;
 
-  protected abstract void buildModel(Configuration cfg, Map<String, Object> root) throws IOException, TemplateException;
+  protected abstract void buildModel(@NotNull Configuration cfg, @NotNull Map<String, Object> root, @NotNull IMetaschema metaschema) throws IOException, TemplateException;
 }

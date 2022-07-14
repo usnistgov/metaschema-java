@@ -230,15 +230,15 @@ public interface IMetaschema {
   @Nullable
   IFlagDefinition getFlagDefinitionByName(@NotNull String name);
 
-  /**
-   * Retrieves the information elements matching the path.
-   * 
-   * @param path
-   *          a MetaPath expression
-   * @return the matching information elements or an empty collection
-   */
-  @NotNull
-  Collection<@NotNull ? extends IModelElement> getInfoElementsByMetapath(@NotNull String path);
+//  /**
+//   * Retrieves the information elements matching the path.
+//   * 
+//   * @param path
+//   *          a MetaPath expression
+//   * @return the matching information elements or an empty collection
+//   */
+//  @NotNull
+//  Collection<@NotNull ? extends IModelElement> getInfoElementsByMetapath(@NotNull String path);
 
   /**
    * Retrieves the assembly definition with a matching name from either: 1) the top-level assembly

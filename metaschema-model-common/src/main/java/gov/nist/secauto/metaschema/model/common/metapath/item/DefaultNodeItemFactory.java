@@ -26,9 +26,14 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 public final class DefaultNodeItemFactory implements INodeItemFactory {
-  static final INodeItemFactory SINGLETON = new INodeItemFactory() {
-  };
+  static final INodeItemFactory SINGLETON = new DefaultNodeItemFactory();
 
   public static INodeItemFactory instance() {
     return SINGLETON;
@@ -37,4 +42,42 @@ public final class DefaultNodeItemFactory implements INodeItemFactory {
   private DefaultNodeItemFactory() {
     // prevent construction
   }
+
+  @Override
+  public @NotNull IAssemblyNodeItem newAssemblyNodeItem(@NotNull IAssemblyInstance instance,
+      @NotNull IAssemblyNodeItem parent) {
+    
+    IAssemblyNodeItem retval = null;
+    if (!instance.getDefinition().isInline()) {
+      // if not inline, need to check for a cycle
+      IAssemblyNodeItem cycle = getCycledInstance(instance.getEffectiveName(), instance.getDefinition(), parent);
+      if (cycle != null) {
+        // generate a cycle wrapper of the original node item
+        retval = new CycledAssemblyInstanceNodeItemImpl(instance, parent, cycle);
+      }
+    }
+
+    if (retval == null) {
+      retval = INodeItemFactory.super.newAssemblyNodeItem(instance, parent);
+    }
+    return retval;
+  }
+
+  @Nullable
+  private IAssemblyNodeItem getCycledInstance(@NotNull String effectiveName, @NotNull IAssemblyDefinition definition,
+      @NotNull IAssemblyNodeItem parent) {
+    IAssemblyNodeItem retval = null;
+
+    IAssemblyDefinition parentDefinition = parent.getDefinition();
+    if (parent.getName().equals(effectiveName) && parentDefinition.equals(definition)) {
+      retval = parent;
+    } else {
+      IAssemblyNodeItem ancestor = parent.getParentContentNodeItem();
+      if (ancestor != null) {
+        retval = getCycledInstance(effectiveName, definition, ancestor);
+      }
+    }
+    return retval;
+  }
+
 }

@@ -35,8 +35,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
@@ -121,18 +119,6 @@ abstract class AbstractClassBinding implements IClassBinding {
   }
 
   @Override
-  public String getFormalName() { // NOPMD - remove after implementation
-    // TODO: implement
-    return null;
-  }
-
-  @Override
-  public MarkupLine getDescription() { // NOPMD - remove after implementation
-    // TODO: implement
-    return null;
-  }
-
-  @Override
   public @NotNull ModuleScopeEnum getModuleScope() {
     // TODO: is this the right value?
     return ModuleScopeEnum.INHERITED;
@@ -155,12 +141,6 @@ abstract class AbstractClassBinding implements IClassBinding {
   @Override
   public IMetaschema getContainingMetaschema() {
     return initMetaschema();
-  }
-
-  @Override
-  public MarkupMultiline getRemarks() { // NOPMD - remove after implementation
-    // TODO: implement
-    return null;
   }
 
   /**

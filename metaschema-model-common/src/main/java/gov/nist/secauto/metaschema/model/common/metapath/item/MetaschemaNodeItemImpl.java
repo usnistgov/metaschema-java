@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,40 +37,44 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class MetaschemaNodeItemImpl
     extends AbstractMetaschemaNodeItem {
 
-  public MetaschemaNodeItemImpl(@NotNull IMetaschema metaschema) {
-    super(metaschema);
+  public MetaschemaNodeItemImpl(@NotNull IMetaschema metaschema, @NotNull INodeItemFactory factory) {
+    super(metaschema, factory);
   }
 
   @Override
-  protected Map<@NotNull String, IFlagNodeItem> newFlags() {
-    return CollectionUtil.unmodifiableMap(getMetaschema().getFlagDefinitions().stream()
-        .collect(
-            Collectors.toMap(
-                IFlagDefinition::getEffectiveName,
-                def -> ModelFactoryImpl.instance().newFlagNodeItem(def, getBaseUri()),
-                (v1, v2) -> v2,
-                LinkedHashMap::new)));
+  protected @NotNull Supplier<Model<IFlagNodeItem, IModelNodeItem>>
+      newModelSupplier(@NotNull INodeItemFactory factory) {
+    return () -> {
+      // build flags from Metaschema definitions
+      Map<@NotNull String, IFlagNodeItem> flags
+          = CollectionUtil.unmodifiableMap(getMetaschema().getFlagDefinitions().stream()
+              .collect(
+                  Collectors.toMap(
+                      IFlagDefinition::getEffectiveName,
+                      def -> factory.newFlagNodeItem(def, getBaseUri()),
+                      (v1, v2) -> v2,
+                      LinkedHashMap::new)));
+
+      // build model items from Metaschema definitions
+      Stream<@NotNull IFieldNodeItem> fieldStream = getMetaschema().getFieldDefinitions().stream()
+          .map(def -> factory.newFieldNodeItem(def, getBaseUri()));
+      Stream<@NotNull IAssemblyNodeItem> assemblyStream = getMetaschema().getAssemblyDefinitions().stream()
+          .map(def -> factory.newAssemblyNodeItem(def, getBaseUri()));
+
+      Map<@NotNull String, List<@NotNull IModelNodeItem>> modelItems
+          = ObjectUtils.notNull(Stream.concat(fieldStream, assemblyStream)
+              .collect(
+                  Collectors.collectingAndThen(
+                      Collectors.groupingBy(IModelNodeItem::getName),
+                      Collections::unmodifiableMap)));
+      return new Model<>(flags, modelItems);
+    };
   }
-
-  @SuppressWarnings("null")
-  @Override
-  protected Map<@NotNull String, List<@NotNull IModelNodeItem>> newModelItems() {
-    Stream<@NotNull IFieldNodeItem> fieldStream = getMetaschema().getFieldDefinitions().stream()
-        .map(def -> ModelFactoryImpl.instance().newFieldNodeItem(def, getBaseUri()));
-    Stream<@NotNull IAssemblyNodeItem> assemblyStream = getMetaschema().getAssemblyDefinitions().stream()
-        .map(def -> ModelFactoryImpl.instance().newAssemblyNodeItem(def, getBaseUri()));
-
-    return CollectionUtil.unmodifiableMap(Stream.concat(fieldStream, assemblyStream)
-        .collect(
-            Collectors.collectingAndThen(
-                Collectors.groupingBy(IModelNodeItem::getName),
-                Collections::unmodifiableMap)));
-  }
-
 }

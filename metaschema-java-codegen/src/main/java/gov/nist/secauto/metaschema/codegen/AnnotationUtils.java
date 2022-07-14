@@ -53,8 +53,10 @@ import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFactory;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem;
@@ -238,13 +240,18 @@ final class AnnotationUtils {
       @NotNull IAssemblyDefinition definition,
       @NotNull AnnotationSpec.Builder annotation,
       @NotNull List<@NotNull ? extends ICardinalityConstraint> constraints) {
+
+    DynamicContext dynamicContext = new StaticContext().newDynamicContext();
+    dynamicContext.disablePredicateEvaluation();
+
     for (ICardinalityConstraint constraint : constraints) {
       Integer minOccurs = constraint.getMinOccurs();
       Integer maxOccurs = constraint.getMaxOccurs();
 
       IAssemblyNodeItem definitionNodeItem = DefaultNodeItemFactory.instance().newAssemblyNodeItem(definition, null);
 
-      ISequence<? extends IDefinitionNodeItem> instanceSet = constraint.matchTargets(definitionNodeItem);
+      ISequence<? extends IDefinitionNodeItem> instanceSet
+          = constraint.matchTargets(definitionNodeItem, dynamicContext);
 
       for (IDefinitionNodeItem item : instanceSet.asList()) {
         INamedInstance instance = item.getInstance();

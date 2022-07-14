@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>gov.nist.secauto</groupId>
@@ -25,8 +27,8 @@
 		<url>https://github.com/usnistgov/metaschema-java/tree/main</url>
 		<connection>scm:git:git@github.com/usnistgov/metaschema-java.git</connection>
 		<developerConnection>scm:git:git@github.com:usnistgov/metaschema-java.git</developerConnection>
-	  <tag>v0.8.1</tag>
-  </scm>
+		<tag>v0.8.1</tag>
+	</scm>
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -136,6 +138,7 @@
 		<dependency.moxy.version>3.0.2</dependency.moxy.version>
 		<dependency.saxon.version>11.3</dependency.saxon.version>
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
+		<dependency.thymeleaf.version>3.0.15.RELEASE</dependency.thymeleaf.version>
 		<dependency.woodstox.version>6.3.0</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.1.0</dependency.xmlbeans.version>
 		<dependency.xmlresolver.version>4.4.0</dependency.xmlresolver.version>
@@ -143,6 +146,9 @@
 		<plugin.license.version>4.2.rc3</plugin.license.version>
 		<plugin.antlr4test.version>1.21</plugin.antlr4test.version>
 		<plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
+		<maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
+		<maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+		<checkstyle.maven-checkstyle-plugin.version>10.3.1</checkstyle.maven-checkstyle-plugin.version>
 	</properties>
 
 	<repositories>
@@ -156,7 +162,7 @@
 			</releases>
 			<snapshots>
 				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
+				<updatePolicy>always</updatePolicy>
 				<checksumPolicy>fail</checksumPolicy>
 			</snapshots>
 		</repository>
@@ -354,6 +360,12 @@
 			</dependency>
 
 			<dependency>
+				<groupId>org.thymeleaf</groupId>
+				<artifactId>thymeleaf</artifactId>
+				<version>${dependency.thymeleaf.version}</version>
+			</dependency>
+
+			<dependency>
 				<groupId>org.antlr</groupId>
 				<artifactId>antlr4-runtime</artifactId>
 				<version>${dependency.antlr4.version}</version>
@@ -370,6 +382,13 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+
+			<dependency>
+				<groupId>nl.talsmasoftware</groupId>
+				<artifactId>lazy4j</artifactId>
+				<version>1.0.2</version>
+			</dependency>
+
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-core</artifactId>
@@ -475,7 +494,9 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven-compiler-plugin.version}</version>
 					<configuration>
 						<forceJavacCompilerUse>true</forceJavacCompilerUse>
 					</configuration>
@@ -586,6 +607,21 @@
 					<configuration>
 						<deployAtEnd>true</deployAtEnd>
 					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-checkstyle-plugin</artifactId>
+					<version>${maven-checkstyle-plugin.version}</version>
+					<configuration>
+						<excludes>module\-info\.java$</excludes>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>com.puppycrawl.tools</groupId>
+							<artifactId>checkstyle</artifactId>
+							<version>${checkstyle.maven-checkstyle-plugin.version}</version>
+						</dependency>
+					</dependencies>
 				</plugin>
 			</plugins>
 		</pluginManagement>

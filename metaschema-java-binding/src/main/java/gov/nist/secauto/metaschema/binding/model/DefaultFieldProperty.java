@@ -36,11 +36,11 @@ import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
@@ -106,7 +106,7 @@ class DefaultFieldProperty
   }
 
   @Override
-  public @NotNull Field getField() {
+  public Field getField() {
     return field;
   }
 
@@ -134,6 +134,16 @@ class DefaultFieldProperty
       }
     }
     return ObjectUtils.notNull(definition);
+  }
+
+  @Override
+  public String getFormalName() {
+    return ModelUtil.resolveToString(getFieldAnnotation().formalName());
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+    return ModelUtil.resolveToMarkupLine(getFieldAnnotation().description());
   }
 
   @Override
@@ -181,6 +191,11 @@ class DefaultFieldProperty
     return getFieldAnnotation().inXml();
   }
 
+  @Override
+  public MarkupMultiline getRemarks() {
+    return ModelUtil.resolveToMarkupMultiline(getFieldAnnotation().remarks());
+  }
+
   /**
    * Used to generate the instances for the constraints in a lazy fashion when the constraints are
    * first accessed.
@@ -192,12 +207,6 @@ class DefaultFieldProperty
       }
     }
   }
-
-  //
-  // @Override
-  // public IPathSegment newPathSegment(int position) {
-  // return FormatterFactory.instance().newFieldPathSegment(this, position);
-  // }
 
   private class ScalarFieldDefinition implements IBoundFieldDefinition {
 
@@ -219,6 +228,16 @@ class DefaultFieldProperty
     @Override
     public IBoundFieldInstance getInlineInstance() {
       return DefaultFieldProperty.this;
+    }
+
+    @Override
+    public String getFormalName() {
+      return DefaultFieldProperty.this.getFormalName();
+    }
+
+    @Override
+    public MarkupLine getDescription() {
+      return DefaultFieldProperty.this.getDescription();
     }
 
     @Override
@@ -336,18 +355,6 @@ class DefaultFieldProperty
     public void addConstraint(@NotNull IExpectConstraint constraint) {
       checkModelConstraints();
       constraints.addConstraint(constraint);
-    }
-
-    @Override
-    public String getFormalName() {
-      // TODO: implement
-      return null;
-    }
-
-    @Override
-    public MarkupLine getDescription() {
-      // TODO: implement
-      return null;
     }
 
     @Override

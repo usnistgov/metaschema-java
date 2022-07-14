@@ -107,6 +107,7 @@ class Multiplication
     }
     if (retval == null) {
       throw new InvalidTypeMetapathException(
+          null,
           String.format("The expression '%s * %s' is not supported", leftItem.getClass().getName(),
               rightItem.getClass().getName()));
     }

@@ -42,8 +42,9 @@ class DocumentNodeItemImpl
   public DocumentNodeItemImpl(
       @NotNull IRootAssemblyDefinition root,
       @NotNull Object rootValue,
-      @NotNull URI documentUri) {
-    this.root = new RootAssemblyValuedNodeItemImpl(root, this, rootValue);
+      @NotNull URI documentUri,
+      @NotNull INodeItemFactory factory) {
+    this.root = new RootAssemblyValuedNodeItemImpl(root, this, rootValue, factory);
     this.documentUri = documentUri;
   }
 

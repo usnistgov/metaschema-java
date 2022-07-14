@@ -26,34 +26,67 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
+import gov.nist.secauto.metaschema.model.common.metapath.INodeContext;
+
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Supplier;
 
-abstract class AbstractModelNodeItem<F extends IFlagNodeItem>
-    implements IModelNodeItem {
-  private Map<@NotNull String, F> flags;
+import nl.talsmasoftware.lazy4j.Lazy;
 
-  protected Map<@NotNull String, F> initFlags() {
-    synchronized (this) {
-      if (this.flags == null) {
-        this.flags = newFlags();
-      }
-    }
-    return this.flags;
+abstract class AbstractNodeContext<F extends IFlagNodeItem, L extends AbstractNodeContext.Flags<F>>
+    implements INodeContext {
+
+  private final Lazy<L> model;
+
+  protected AbstractNodeContext(@NotNull INodeItemFactory factory) {
+    this.model = Lazy.lazy(newModelSupplier(factory));
   }
 
-  protected abstract Map<@NotNull String, F> newFlags();
+  @NotNull
+  protected abstract Supplier<L> newModelSupplier(@NotNull INodeItemFactory factory);
 
   @SuppressWarnings("null")
+  @NotNull
+  protected L getModel() {
+    return model.get();
+  }
+
   @Override
   public Collection<@NotNull F> getFlags() {
-    return initFlags().values();
+    return getModel().getFlags();
   }
 
   @Override
   public F getFlagByName(@NotNull String name) {
-    return initFlags().get(name);
+    return getModel().getFlagByName(name);
+  }
+
+  /**
+   * Provides an abstract implementation of a lazy loaded collection of flags.
+   *
+   * @param <F>
+   *          the type of the flag items
+   */
+  protected static class Flags<F extends IFlagNodeItem> {
+    private final Map<@NotNull String, F> flags;
+
+    protected Flags(@NotNull Map<@NotNull String, F> flags) {
+      this.flags = flags;
+    }
+
+    @Nullable
+    public F getFlagByName(@NotNull String name) {
+      return flags.get(name);
+    }
+
+    @NotNull
+    @SuppressWarnings("null")
+    public Collection<@NotNull F> getFlags() {
+      return flags.values();
+    }
   }
 }

@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import gov.nist.secauto.metaschema.model.common.metapath.item.ICycledAssemblyNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
@@ -99,11 +100,16 @@ abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
     Stream<? extends IFlagNodeItem> flags = nodeContext.flags();
     Stream<? extends INodeItem> modelItems = nodeContext.modelItems();
 
-    @SuppressWarnings("null")
-    Stream<? extends INodeItem> childMatches = Stream.concat(flags, modelItems)
-        .flatMap(instance -> {
-          return searchExpression(expression, dynamicContext, instance);
-        });
+    Stream<? extends INodeItem> childMatches;
+    if (nodeContext instanceof ICycledAssemblyNodeItem) {
+      // hack to prevent stack overflow
+      childMatches = Stream.empty();
+    } else {
+      childMatches = Stream.concat(flags, modelItems)
+          .flatMap(instance -> {
+            return searchExpression(expression, dynamicContext, instance);
+          });
+    }
 
     @SuppressWarnings("null")
     @NotNull

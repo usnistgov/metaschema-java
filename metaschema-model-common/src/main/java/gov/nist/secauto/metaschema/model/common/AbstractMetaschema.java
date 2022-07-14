@@ -123,19 +123,12 @@ public abstract class AbstractMetaschema
     return exportedAssemblyDefinitions;
   }
 
-  @Override
-  public Collection<@NotNull ? extends IModelElement> getInfoElementsByMetapath(String path) {
-    // TODO: implement path evaluation
-    throw new UnsupportedOperationException();
-  }
-
   /**
    * Processes the definitions exported by the Metaschema, saving a list of all exported by specific
    * model types.
    */
   protected void initExports() {
     synchronized (this) {
-
       if (exportedFlagDefinitions == null) {
         // Populate the stream with the definitions from this metaschema
         Predicate<@NotNull IDefinition> filter = IMetaschema.allNonLocalDefinitions();

@@ -24,42 +24,50 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.item;
+package gov.nist.secauto.metaschema.docsgen;
 
-import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.MetaschemaLoader;
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 
+import org.apache.commons.io.output.TeeOutputStream;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-public abstract class AbstractAssemblyNodeItem<F extends IFlagNodeItem, M extends IModelNodeItem>
-    extends AbstractModelNodeItem<F>
-    implements IAssemblyNodeItem {
-  private Map<@NotNull String, ? extends List<@NotNull ? extends M>> modelItems;
+import freemarker.core.ParseException;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateNotFoundException;
 
-  protected Map<@NotNull String, ? extends List<@NotNull ? extends M>> initModelItems() {
-    synchronized (this) {
-      if (this.modelItems == null) {
-        this.modelItems = newModelItems();
-      }
+class XmlReferenceDocumentationGeneratorTest {
+
+  @Test
+  void test() throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException,
+      MetaschemaException, TemplateException {
+    XmlReferenceDocumentationGenerator generator = new XmlReferenceDocumentationGenerator();
+
+    MetaschemaLoader loader = new MetaschemaLoader();
+
+    List<@NotNull IMetaschema> metaschemas = new LinkedList<>();
+    @NotNull
+    IMetaschema metaschema
+        = loader.load(new URL(
+            "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.4/src/metaschema/oscal_complete_metaschema.xml"));
+    
+    metaschemas.add(metaschema);
+
+    try (OutputStream fos = Files.newOutputStream(Paths.get("xml-reference.html"))) {
+      TeeOutputStream out = new TeeOutputStream(System.out, fos);
+      generator.generateFromMetaschema(metaschema, new OutputStreamWriter(out));
     }
-    return this.modelItems;
-  }
-
-  protected abstract Map<@NotNull String, ? extends List<@NotNull ? extends M>> newModelItems();
-
-  @SuppressWarnings("null")
-  @Override
-  public Collection<@NotNull ? extends List<@NotNull ? extends M>> getModelItems() {
-    return initModelItems().values();
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public List<@NotNull ? extends M> getModelItemsByName(String name) {
-    List<@NotNull ? extends M> result = initModelItems().get(name);
-    return result == null ? CollectionUtil.emptyList() : result;
   }
 }

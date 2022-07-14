@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -62,6 +63,7 @@ public interface INodeContext {
    *          the effective name of the flag
    * @return the flag with the matching effective name or {@code null} if no match was found
    */
+  @Nullable
   IFlagNodeItem getFlagByName(@NotNull String name);
 
   /**

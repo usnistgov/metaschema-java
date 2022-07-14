@@ -122,6 +122,7 @@ abstract class AbstractComparison // NOPMD - unavoidable
       retval = binaryCompare((IBase64BinaryItem) left, operator, (IBase64BinaryItem) right);
     } else {
       throw new InvalidTypeMetapathException(
+          null,
           String.format("invalid types for comparison: %s %s %s", left.getClass().getName(),
               operator.name().toLowerCase(Locale.ROOT), right.getClass().getName()));
     }
@@ -441,6 +442,7 @@ abstract class AbstractComparison // NOPMD - unavoidable
 
     if (retval == null) {
       throw new InvalidTypeMetapathException(
+          null,
           String.format("The item types '%s' and '%s' are not comparable",
               left.getClass().getName(),
               right.getClass().getName()));

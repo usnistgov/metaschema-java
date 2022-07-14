@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnBoolean;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IRequiredValueNodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -91,7 +90,7 @@ class Predicate implements IExpression {
 
     ISequence<?> retval = getBase().accept(dynamicContext, context);
 
-    if (context instanceof IRequiredValueNodeItem) {
+    if (dynamicContext.getConfiguration().isFeatureEnabled(MetapathEvaluationFeature.METAPATH_EVALUATE_PREDICATES)) {
       // evaluate the predicates for this step
       AtomicInteger index = new AtomicInteger();
 

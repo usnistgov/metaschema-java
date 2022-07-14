@@ -27,6 +27,8 @@
 package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -96,4 +98,39 @@ public final class ModelUtil {
     return retval;
   }
 
+  /**
+   * Get the markup value of a markdown string.
+   * 
+   * @param annotationValue
+   *          markdown text or {@code "##none"} if no text is provided
+   * @return the markup line content or {@code null} if no markup content was provided
+   */
+  @Nullable
+  public static MarkupLine resolveToMarkupLine(@NotNull String annotationValue) {
+    return "##none".equals(annotationValue) ? null : MarkupLine.fromMarkdown(annotationValue);
+  }
+  
+
+  /**
+   * Get the markup value of a markdown string.
+   * 
+   * @param annotationValue
+   *          markdown text or {@code "##none"} if no text is provided
+   * @return the markup line content or {@code null} if no markup content was provided
+   */
+  @Nullable
+  public static MarkupMultiline resolveToMarkupMultiline(@NotNull String annotationValue) {
+    return "##none".equals(annotationValue) ? null : MarkupMultiline.fromMarkdown(annotationValue);
+  }
+
+  /**
+   * Get the string value of a string.
+   * 
+   * @param annotationValue
+   *          text or {@code "##none"} if no text is provided
+   * @return the string content or {@code null} if no string content was provided
+   */
+  public static String resolveToString(@NotNull String annotationValue) {
+    return "##none".equals(annotationValue) ? null : annotationValue;
+  }
 }

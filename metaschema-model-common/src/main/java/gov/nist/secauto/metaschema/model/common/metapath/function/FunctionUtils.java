@@ -126,6 +126,7 @@ public final class FunctionUtils {
       List<ITEM> items = sequence.asList();
       if (requireSingleton && items.size() != 1) {
         throw new InvalidTypeMetapathException(
+            null,
             String.format("sequence expected to contain one item, but found '%d'", items.size()));
       }
       retval = items.iterator().next();
@@ -172,21 +173,6 @@ public final class FunctionUtils {
   }
 
   /**
-   * Gets the provided item value as a {@link INumericItem} value. If the item is {@code null}, then a
-   * {@code null} value is returned.
-   * 
-   * @param item
-   *          the value to convert
-   * @return the numeric item value
-   * @throws TypeMetapathException
-   *           if the item cannot be cast to a numeric value
-   */
-  @Nullable
-  public static INumericItem toNumericOrNull(@Nullable IAnyAtomicItem item) throws TypeMetapathException {
-    return item == null ? null : toNumeric(item);
-  }
-
-  /**
    * Gets the provided item value as a {@link INumericItem} value.
    * 
    * @param item
@@ -200,8 +186,23 @@ public final class FunctionUtils {
     try {
       return IDecimalItem.cast(item);
     } catch (InvalidValueForCastFunctionException ex) {
-      throw new InvalidTypeMetapathException(ex.getLocalizedMessage(), ex);
+      throw new InvalidTypeMetapathException(item, ex.getLocalizedMessage(), ex);
     }
+  }
+
+  /**
+   * Gets the provided item value as a {@link INumericItem} value. If the item is {@code null}, then a
+   * {@code null} value is returned.
+   * 
+   * @param item
+   *          the value to convert
+   * @return the numeric item value
+   * @throws TypeMetapathException
+   *           if the item cannot be cast to a numeric value
+   */
+  @Nullable
+  public static INumericItem toNumericOrNull(@Nullable IAnyAtomicItem item) throws TypeMetapathException {
+    return item == null ? null : toNumeric(item);
   }
 
   @SuppressWarnings("unchecked")

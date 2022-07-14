@@ -28,19 +28,23 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
+import gov.nist.secauto.metaschema.model.common.metapath.item.AbstractNodeContext.Flags;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * a new {@link INodeItem} instance, that is orphaned from any parent nodes, supported by an
  * {@link IFieldDefinition}.
  */
 class FieldDefinitionNodeItemImpl
-    extends AbstractModelNodeItem<IFlagNodeItem>
+    extends AbstractNodeContext<
+        IFlagNodeItem,
+        AbstractNodeContext.Flags<IFlagNodeItem>>
     implements IFieldNodeItem {
   @NotNull
   private final IFieldDefinition definition;
@@ -55,15 +59,25 @@ class FieldDefinitionNodeItemImpl
    *          the field
    * @param baseUri
    *          an optional base URI to use for resolving relative URIs
+   * @param factory
+   *          the factory to use to instantiate new node items
    */
-  public FieldDefinitionNodeItemImpl(@NotNull IFieldDefinition definition, @Nullable URI baseUri) {
+  public FieldDefinitionNodeItemImpl(
+      @NotNull IFieldDefinition definition,
+      @Nullable URI baseUri,
+      @NotNull INodeItemFactory factory) {
+    super(factory);
     this.definition = definition;
     this.baseUri = baseUri;
   }
 
   @Override
-  protected Map<@NotNull String, IFlagNodeItem> newFlags() {
-    return ModelFactoryImpl.instance().generateFlags(this);
+  protected @NotNull Supplier<Flags<IFlagNodeItem>>
+      newModelSupplier(@NotNull INodeItemFactory factory) {
+    return () -> {
+      Map<@NotNull String, IFlagNodeItem> flags = factory.generateFlags(this);
+      return new Flags<>(flags);
+    };
   }
 
   @Override

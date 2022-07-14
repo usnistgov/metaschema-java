@@ -44,12 +44,14 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Ignore;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
@@ -57,6 +59,7 @@ import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -124,6 +127,21 @@ public class DefaultFieldClassBinding
   @NotNull
   public MetaschemaField getMetaschemaFieldAnnotation() {
     return metaschemaField;
+  }
+
+  @Override
+  public String getFormalName() {
+    return ModelUtil.resolveToString(getMetaschemaFieldAnnotation().formalName());
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+    return ModelUtil.resolveToMarkupLine(getMetaschemaFieldAnnotation().description());
+  }
+
+  @Override
+  public @Nullable MarkupMultiline getRemarks() {
+    return ModelUtil.resolveToMarkupMultiline(getMetaschemaFieldAnnotation().description());
   }
 
   @Override

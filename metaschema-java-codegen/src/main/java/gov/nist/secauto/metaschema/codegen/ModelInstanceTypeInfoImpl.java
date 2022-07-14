@@ -47,6 +47,7 @@ import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
@@ -154,6 +155,14 @@ class ModelInstanceTypeInfoImpl
           modelInstance.getName(), modelInstance.getClass().getName()));
     }
 
+    if (modelInstance.getFormalName() != null) {
+      fieldAnnoation.addMember("formalName", "$S", modelInstance.getFormalName());
+    }
+
+    if (modelInstance.getDescription() != null) {
+      fieldAnnoation.addMember("description", "$S", modelInstance.getDescription().toMarkdown());
+    }
+    
     fieldAnnoation.addMember("useName", "$S", modelInstance.getEffectiveName());
 
     INamedModelDefinition definition = modelInstance.getDefinition();
@@ -222,6 +231,12 @@ class ModelInstanceTypeInfoImpl
       fieldAnnoation.addMember("inXml", "$T.$L",
           XmlGroupAsBehavior.class, xmlGroupAsBehavior.toString());
     }
+    
+    MarkupMultiline remarks = modelInstance.getRemarks();
+    if (remarks != null) {
+      fieldAnnoation.addMember("remarks", "$S", remarks.toMarkdown());
+    }
+
     builder.addAnnotation(fieldAnnoation.build());
     return retval.isEmpty() ? CollectionUtil.emptySet() : CollectionUtil.unmodifiableSet(retval);
   }

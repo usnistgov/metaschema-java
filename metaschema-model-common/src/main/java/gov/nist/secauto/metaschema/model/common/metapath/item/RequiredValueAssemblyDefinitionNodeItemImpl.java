@@ -35,12 +35,16 @@ import org.jetbrains.annotations.Nullable;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * A {@link INodeItem} supported by a {@link IAssemblyInstance}, that must have an associated value.
  */
 class RequiredValueAssemblyDefinitionNodeItemImpl
-    extends AbstractAssemblyNodeItem<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>
+    extends AbstractModelNodeContext<
+        IRequiredValueFlagNodeItem,
+        IRequiredValueModelNodeItem,
+        AbstractModelNodeContext.Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
     implements IRequiredValueAssemblyNodeItem {
   @NotNull
   private final IAssemblyDefinition definition;
@@ -49,21 +53,26 @@ class RequiredValueAssemblyDefinitionNodeItemImpl
   @NotNull
   private final Object value;
 
-  public RequiredValueAssemblyDefinitionNodeItemImpl(@NotNull IAssemblyDefinition definition, @NotNull Object value,
-      @Nullable URI baseUri) {
+  public RequiredValueAssemblyDefinitionNodeItemImpl(
+      @NotNull IAssemblyDefinition definition,
+      @NotNull Object value,
+      @Nullable URI baseUri,
+      @NotNull INodeItemFactory factory) {
+    super(factory);
     this.definition = definition;
     this.value = value;
     this.baseUri = baseUri;
   }
 
   @Override
-  protected Map<@NotNull String, IRequiredValueFlagNodeItem> newFlags() {
-    return ModelFactoryImpl.instance().generateFlagsWithValues(this);
-  }
-
-  @Override
-  protected Map<@NotNull String, ? extends List<@NotNull ? extends IRequiredValueModelNodeItem>> newModelItems() {
-    return ModelFactoryImpl.instance().generateModelItemsWithValues(this);
+  protected @NotNull Supplier<Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
+      newModelSupplier(@NotNull INodeItemFactory factory) {
+    return () -> {
+      Map<@NotNull String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
+      Map<@NotNull String, List<@NotNull IRequiredValueModelNodeItem>> modelItems
+          = factory.generateModelItemsWithValues(this);
+      return new AbstractModelNodeContext.Model<>(flags, modelItems);
+    };
   }
 
   @Override

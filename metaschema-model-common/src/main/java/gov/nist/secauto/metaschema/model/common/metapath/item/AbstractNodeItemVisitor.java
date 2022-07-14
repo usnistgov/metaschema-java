@@ -26,39 +26,41 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public abstract class AbstractNodeItemVisitor<RESULT, CONTEXT> implements INodeItemVisitor<RESULT, CONTEXT> {
+  public final RESULT visit(@NotNull INodeItemVisitable item, CONTEXT context) {
+    return item.accept(this, context);
+  }
+
   protected abstract RESULT defaultResult();
 
-  protected RESULT visitFlags(@NotNull IModelNodeItem item, CONTEXT context) {
+  protected RESULT visitFlags(@NotNull INodeItem item, CONTEXT context) {
     RESULT result = defaultResult();
     for (IFlagNodeItem flag : item.getFlags()) {
       if (!shouldVisitNextChild(flag, result, context)) {
         break;
       }
 
-      RESULT childResult = ObjectUtils.notNull(flag).accept(this, context);
-      result = aggregateResult(result, childResult);
+      RESULT childResult = flag.accept(this, context);
+      result = aggregateResult(result, childResult, context);
     }
     return result;
   }
 
-  protected RESULT visitModelChildren(@NotNull IAssemblyNodeItem item, CONTEXT context) {
+  protected RESULT visitModelChildren(@NotNull INodeItem item, CONTEXT context) {
     RESULT result = defaultResult();
 
     for (List<@NotNull ? extends IModelNodeItem> childItems : item.getModelItems()) {
-      for (IModelNodeItem childItem : ObjectUtils.notNull(childItems)) {
+      for (IModelNodeItem childItem : childItems) {
         if (!shouldVisitNextChild(childItem, result, context)) {
           break;
         }
 
         RESULT childResult = childItem.accept(this, context);
-        result = aggregateResult(result, childResult);
+        result = aggregateResult(result, childResult, context);
       }
     }
     return result;
@@ -77,32 +79,38 @@ public abstract class AbstractNodeItemVisitor<RESULT, CONTEXT> implements INodeI
   }
 
   @SuppressWarnings("unused")
-  protected RESULT aggregateResult(RESULT result, RESULT childResult) {
+  protected RESULT aggregateResult(RESULT result, RESULT childResult, CONTEXT context) {
     // this is the default behavior, which can be overridden
     return childResult;
   }
 
-  public RESULT visit(@NotNull INodeItemVisitable item, CONTEXT context) {
-    return item.accept(this, context);
-  }
-
   @Override
   public RESULT visitDocument(IDocumentNodeItem item, CONTEXT context) {
+    // this is the default behavior, which can be overridden
     return visitAssembly(item.getRootAssemblyNodeItem(), context);
   }
 
   @Override
   public RESULT visitFlag(IFlagNodeItem item, CONTEXT context) {
+    // this is the default behavior, which can be overridden
     return defaultResult();
   }
 
   @Override
   public RESULT visitField(IFieldNodeItem item, CONTEXT context) {
+    // this is the default behavior, which can be overridden
     return visitFlags(item, context);
   }
 
   @Override
   public RESULT visitAssembly(IAssemblyNodeItem item, CONTEXT context) {
-    return aggregateResult(visitFlags(item, context), visitModelChildren(item, context));
+    // this is the default behavior, which can be overridden
+    return aggregateResult(visitFlags(item, context), visitModelChildren(item, context), context);
+  }
+
+  @Override
+  public RESULT visitMetaschema(IMetaschemaNodeItem item, CONTEXT context) {
+    // this is the default behavior, which can be overridden
+    return aggregateResult(visitFlags(item, context), visitModelChildren(item, context), context);
   }
 }

@@ -109,7 +109,6 @@ public final class FnBoolean {
    *          the sequence to evaluate
    * @return the effective boolean value
    */
-  // TODO: fix misspelled Primative
   public static boolean fnBooleanAsPrimitive(@NotNull ISequence<?> sequence) {
     boolean retval = false;
     if (!sequence.isEmpty()) {

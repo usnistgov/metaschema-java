@@ -31,8 +31,10 @@ import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractAssemblyInstanceNodeItem<F extends IFlagNodeItem, M extends IModelNodeItem, P extends INodeItem>
-    extends AbstractAssemblyNodeItem<F, M> {
+public abstract class AbstractAssemblyInstanceNodeItem<F extends IFlagNodeItem, M extends IModelNodeItem, P extends INodeItem, L extends AbstractModelNodeContext.Model<
+    F, M>>
+    extends AbstractModelNodeContext<F, M, L>
+    implements IAssemblyNodeItem {
 
   @NotNull
   private final IAssemblyInstance instance;
@@ -40,7 +42,25 @@ public abstract class AbstractAssemblyInstanceNodeItem<F extends IFlagNodeItem, 
   @NotNull
   private final P parent;
 
-  public AbstractAssemblyInstanceNodeItem(@NotNull IAssemblyInstance instance, @NotNull P parent, int position) {
+  /**
+   * Construct a new {@link INodeItem} instance, that has a parent node, based on the provided field
+   * {@code definition}.
+   * 
+   * @param instance
+   *          the instance to construct the node item for
+   * @param parent
+   *          the parent assembly
+   * @param position
+   *          the position relative to this item's siblings
+   * @param factory
+   *          the factory to use to instantiate new node items
+   */
+  protected AbstractAssemblyInstanceNodeItem(
+      @NotNull IAssemblyInstance instance,
+      @NotNull P parent,
+      int position,
+      @NotNull INodeItemFactory factory) {
+    super(factory);
     this.instance = instance;
     this.position = position;
     this.parent = parent;

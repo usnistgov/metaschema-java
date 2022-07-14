@@ -171,9 +171,4 @@ abstract class AbstractFieldProperty
         getParentClassBinding().getBoundClass().getName(),
         getName());
   }
-
-  @Override
-  public MarkupMultiline getRemarks() {
-    throw new UnsupportedOperationException();
-  }
 }

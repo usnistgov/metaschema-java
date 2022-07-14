@@ -35,11 +35,11 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
+import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.model.common.constraint.IExpectConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IIndexHasKeyConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
-import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.InternalModelSource;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
@@ -63,6 +63,7 @@ class DefaultFlagProperty
   @NotNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   private InternalFlagDefinition definition;
+  private IValueConstraintSupport constraints;
 
   /**
    * Construct a new bound flag instance based on a Java property. The name of the property is bound
@@ -73,6 +74,7 @@ class DefaultFlagProperty
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */
+  @SuppressWarnings("null")
   public DefaultFlagProperty(@NotNull Field field, @NotNull IClassBinding parentClassBinding) {
     super(parentClassBinding);
     this.field = ObjectUtils.requireNonNull(field, "field");
@@ -118,6 +120,16 @@ class DefaultFlagProperty
   }
 
   @Override
+  public String getFormalName() {
+    return ModelUtil.resolveToString(getFlagAnnotation().formalName());
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+    return ModelUtil.resolveToMarkupLine(getFlagAnnotation().description());
+  }
+
+  @Override
   public String getUseName() {
     return ModelUtil.resolveLocalName(getFlagAnnotation().useName(), getJavaPropertyName());
   }
@@ -129,7 +141,7 @@ class DefaultFlagProperty
 
   @Override
   public MarkupMultiline getRemarks() {
-    throw new UnsupportedOperationException();
+    return ModelUtil.resolveToMarkupMultiline(getFlagAnnotation().remarks());
   }
 
   @SuppressWarnings("null")
@@ -153,19 +165,27 @@ class DefaultFlagProperty
         getField().getName());
   }
 
-  private class InternalFlagDefinition implements IFlagDefinition {
-    private IValueConstraintSupport constraints;
-
-    /**
-     * Used to generate the instances for the constraints in a lazy fashion when the constraints are
-     * first accessed.
-     */
-    protected void checkModelConstraints() {
-      synchronized (this) {
-        if (constraints == null) {
-          constraints = new ValueConstraintSupport(getFlagAnnotation(), InternalModelSource.instance());
-        }
+  /**
+   * Used to generate the instances for the constraints in a lazy fashion when the constraints are
+   * first accessed.
+   */
+  protected void checkModelConstraints() {
+    synchronized (this) {
+      if (constraints == null) {
+        constraints = new ValueConstraintSupport(getFlagAnnotation(), InternalModelSource.instance());
       }
+    }
+  }
+
+  private class InternalFlagDefinition implements IFlagDefinition {
+    @Override
+    public String getFormalName() {
+      return DefaultFlagProperty.this.getFormalName();
+    }
+
+    @Override
+    public MarkupLine getDescription() {
+      return DefaultFlagProperty.this.getDescription();
     }
 
     @Override
@@ -255,18 +275,6 @@ class DefaultFlagProperty
     public void addConstraint(@NotNull IExpectConstraint constraint) {
       checkModelConstraints();
       constraints.addConstraint(constraint);
-    }
-
-    @Override
-    public String getFormalName() {
-      // TODO: implement
-      return null;
-    }
-
-    @Override
-    public MarkupLine getDescription() {
-      // TODO: implement
-      return null;
     }
 
     @Override

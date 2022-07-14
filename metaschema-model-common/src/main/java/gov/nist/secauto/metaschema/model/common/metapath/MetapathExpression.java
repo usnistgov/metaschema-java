@@ -257,7 +257,7 @@ public class MetapathExpression {
       result = item == null ? "" : FnData.fnDataItem(item).asString();
       break;
     default:
-      throw new InvalidTypeMetapathException(String.format("unsupported result type '%s'", resultType.name()));
+      throw new InvalidTypeMetapathException(null, String.format("unsupported result type '%s'", resultType.name()));
     }
 
     @SuppressWarnings("unchecked")

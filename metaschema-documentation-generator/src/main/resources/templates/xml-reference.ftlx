@@ -1,0 +1,50 @@
+<#macro rootAssembly root>
+  <h1 class="toc1">${root.nodeItem.name}</h1>
+  <p><span class="usa-tag">Formal Name</span> ${root.definition.formalName}</p>
+  <p><span class="usa-tag">Element Name</span> {${root.definition.rootXmlQName.namespaceURI}}${root.definition.rootXmlQName.localPart}</p>
+  <p><span class="usa-tag">Description</span> ${root.definition.description.toHtml()?no_esc?markup_string?replace("<p>", "", "f")?no_esc}
+  <#if root.definition.remarks??><p><span class="usa-tag">Remarks</span> ${markupToHTML(root.definition.remarks, "http://www.w3.org/1999/xhtml", "")?no_esc?markup_string?replace("<p>", "", "f")?no_esc}</#if>
+  <#list root.flags as flag>
+  </#list>
+  <#list root.modelItems as item>
+  <@modelItem item=item depth=2 />
+  </#list>
+</#macro>
+<#macro modelItem item depth>
+  <h${depth} class="toc${depth}">${item.nodeItem.name}</h${depth}>
+  <#if item.instance.formalName??>
+  <p><span class="usa-tag">Formal Name</span> ${item.instance.formalName}</p>
+  <#else>
+  <p><span class="usa-tag">Formal Name</span> ${item.definition.formalName}</p>
+  </#if>
+  <#if item.instance.xmlQName??>
+  <p><span class="usa-tag">Element</span> {${item.instance.xmlQName.namespaceURI}}${item.instance.xmlQName.localPart}</p>
+  <#else>
+  <p><span class="usa-tag">Element</span> Markup Content</p>
+  </#if>
+  <#if item.instance.description??>
+  <p><span class="usa-tag">Description</span> ${item.instance.description.toHtml()?no_esc?markup_string?replace("<p>", "", "f")?no_esc}
+  <#else>
+  <p><span class="usa-tag">Description</span> ${item.definition.description.toHtml()?no_esc?markup_string?replace("<p>", "", "f")?no_esc}
+  </#if>
+  <#if item.definition.remarks?? && item.instance.remarks??>
+  	<p><span class="usa-tag">Remarks</span> ${markupToHTML(item.instance.remarks, "http://www.w3.org/1999/xhtml", "")?no_esc?markup_string?replace("<p>", "", "f")?no_esc}
+  	${markupToHTML(item.definition.remarks, "http://www.w3.org/1999/xhtml", "")?no_esc}
+  <#elseif item.instance.remarks??>
+  	<p><span class="usa-tag">Remarks</span> ${markupToHTML(item.instance.remarks, "http://www.w3.org/1999/xhtml", "")?no_esc?markup_string?replace("<p>", "", "f")?no_esc}
+  <#elseif item.definition.remarks??>
+  	<p><span class="usa-tag">Remarks</span> ${markupToHTML(item.definition.remarks, "http://www.w3.org/1999/xhtml", "")?no_esc?markup_string?replace("<p>", "", "f")?no_esc}
+  </#if>
+  <#list item.modelItems as child>
+  <@modelItem item=child depth=depth+1 />
+  </#list>
+</#macro>
+<html>
+  <head>
+  </head>
+  <body>
+<#list roots as root>
+  <@rootAssembly root=root />
+</#list>
+  </body>
+</html>

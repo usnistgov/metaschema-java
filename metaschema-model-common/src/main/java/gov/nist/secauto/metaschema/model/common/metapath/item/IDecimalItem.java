@@ -36,32 +36,21 @@ import java.math.BigDecimal;
 public interface IDecimalItem extends INumericItem {
   @SuppressWarnings("null")
   @NotNull
-  public static final IDecimalItem ZERO = valueOf(BigDecimal.ZERO);
+  IDecimalItem ZERO = valueOf(BigDecimal.ZERO);
 
   @SuppressWarnings("null")
   @NotNull
-  public static IDecimalItem valueOf(long value) {
+  static IDecimalItem valueOf(long value) {
     return valueOf(BigDecimal.valueOf(value));
   }
 
   @NotNull
-  public static IDecimalItem valueOf(double value) throws NumberFormatException {
-    try {
-      // it is important to use this BigDecimal constructor to preserve the precision of the double value
-      return valueOf(new BigDecimal(value));
-    } catch (NumberFormatException ex) {
-      throw new InvalidValueForCastFunctionException(String.format("Unable to parse double value '%n'", value),
-          ex);
-    }
-  }
-
-  @NotNull
-  public static IDecimalItem valueOf(@NotNull BigDecimal value) {
+  static IDecimalItem valueOf(@NotNull BigDecimal value) {
     return new DecimalItemImpl(value);
   }
 
   @NotNull
-  public static IDecimalItem valueOf(@NotNull String value) {
+  static IDecimalItem valueOf(@NotNull String value) {
     try {
       return valueOf(MetaschemaDataTypeProvider.DECIMAL.parse(value));
     } catch (IllegalArgumentException ex) {
@@ -70,7 +59,7 @@ public interface IDecimalItem extends INumericItem {
     }
   }
 
-  public static @NotNull IDecimalItem cast(@NotNull IAnyAtomicItem item)
+  static @NotNull IDecimalItem cast(@NotNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.DECIMAL.cast(item);
   }

@@ -118,6 +118,13 @@ class MetaschemaClassGenerator {
       metaschemaAnnotation.addMember("imports", "$T.class", typeResolver.getClassName(metaschemaImport));
     }
 
+    {
+      MarkupMultiline remarks = metaschema.getRemarks();
+      if (remarks != null) {
+        metaschemaAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
+      }
+    }
+
     builder.addAnnotation(metaschemaAnnotation.build());
 
     builder.addField(

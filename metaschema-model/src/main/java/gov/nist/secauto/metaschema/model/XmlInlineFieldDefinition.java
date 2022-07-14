@@ -116,6 +116,18 @@ class XmlInlineFieldDefinition
     return retval;
   }
 
+  @Override
+  public String getFormalName() {
+    return getXmlField().isSetFormalName() ? getXmlField().getFormalName() : null;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public MarkupLine getDescription() {
+    return getXmlField().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlField().getDescription())
+        : null;
+  }
+
   @SuppressWarnings("null")
   @Override
   public String getName() {
@@ -212,14 +224,12 @@ class XmlInlineFieldDefinition
 
     @Override
     public String getFormalName() {
-      return getXmlField().isSetFormalName() ? getXmlField().getFormalName() : null;
+      return XmlInlineFieldDefinition.this.getFormalName();
     }
 
-    @SuppressWarnings("null")
     @Override
     public MarkupLine getDescription() {
-      return getXmlField().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlField().getDescription())
-          : null;
+      return XmlInlineFieldDefinition.this.getDescription();
     }
 
     @Override

@@ -34,6 +34,7 @@ import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
@@ -125,8 +126,18 @@ class AbstractModelDefinitionTypeInfo<DEF extends INamedModelDefinition>
   }
 
   protected void buildCommonProperties(@NotNull AnnotationSpec.Builder annotation) {
-    annotation.addMember("name", "$S", getDefinition().getName());
-    IMetaschema metaschema = getDefinition().getContainingMetaschema();
+    INamedDefinition definition = getDefinition();
+
+    if (definition.getFormalName() != null) {
+      annotation.addMember("formalName", "$S", definition.getFormalName());
+    }
+
+    if (definition.getDescription() != null) {
+      annotation.addMember("description", "$S", definition.getDescription().toMarkdown());
+    }
+
+    annotation.addMember("name", "$S", definition.getName());
+    IMetaschema metaschema = definition.getContainingMetaschema();
     annotation.addMember("metaschema", "$T.class", getTypeResolver().getClassName(metaschema));
   }
 

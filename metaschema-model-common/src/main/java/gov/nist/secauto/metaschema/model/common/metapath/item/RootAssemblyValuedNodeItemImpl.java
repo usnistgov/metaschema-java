@@ -32,9 +32,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 class RootAssemblyValuedNodeItemImpl
-    extends AbstractAssemblyNodeItem<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>
+    extends AbstractModelNodeContext<
+        IRequiredValueFlagNodeItem,
+        IRequiredValueModelNodeItem,
+        AbstractModelNodeContext.Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
     implements IRootAssemblyNodeItem {
   @NotNull
   private final IRootAssemblyDefinition definition;
@@ -43,21 +47,26 @@ class RootAssemblyValuedNodeItemImpl
   @NotNull
   private final Object value;
 
-  public RootAssemblyValuedNodeItemImpl(@NotNull IRootAssemblyDefinition definition, @NotNull IDocumentNodeItem parent,
-      @NotNull Object value) {
+  public RootAssemblyValuedNodeItemImpl(
+      @NotNull IRootAssemblyDefinition definition,
+      @NotNull IDocumentNodeItem parent,
+      @NotNull Object value,
+      @NotNull INodeItemFactory factory) {
+    super(factory);
     this.definition = definition;
     this.parent = parent;
     this.value = value;
   }
 
   @Override
-  protected Map<@NotNull String, IRequiredValueFlagNodeItem> newFlags() {
-    return ModelFactoryImpl.instance().generateFlagsWithValues(this);
-  }
-
-  @Override
-  protected Map<@NotNull String, ? extends List<@NotNull ? extends IRequiredValueModelNodeItem>> newModelItems() {
-    return ModelFactoryImpl.instance().generateModelItemsWithValues(this);
+  protected @NotNull Supplier<Model<IRequiredValueFlagNodeItem, IRequiredValueModelNodeItem>>
+      newModelSupplier(@NotNull INodeItemFactory factory) {
+    return () -> {
+      Map<@NotNull String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
+      Map<@NotNull String, List<@NotNull IRequiredValueModelNodeItem>> modelItems
+          = factory.generateModelItemsWithValues(this);
+      return new AbstractModelNodeContext.Model<>(flags, modelItems);
+    };
   }
 
   @Override

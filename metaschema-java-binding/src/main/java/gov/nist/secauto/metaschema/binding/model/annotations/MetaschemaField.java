@@ -44,6 +44,25 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target(TYPE)
 public @interface MetaschemaField {
+  /**
+   * Get the documentary formal name of the field.
+   * <p>
+   * If the value is "##none", then the description will be considered {@code null}.
+   * 
+   * @return a markdown string or {@code "##none"} if no formal name is provided
+   */
+  @NotNull
+  String formalName() default "##none";
+
+  /**
+   * Get the documentary description of the field.
+   * <p>
+   * If the value is "##none", then the description will be considered {@code null}.
+   * 
+   * @return a markdown string or {@code "##none"} if no description is provided
+   */
+  @NotNull
+  String description() default "##none";
 
   /**
    * Name of the field.
@@ -105,4 +124,12 @@ public @interface MetaschemaField {
    */
   @NotNull
   Expect[] expect() default {};
+
+  /**
+   * Get any remarks for this field.
+   * 
+   * @return a markdown string or {@code "##none"} if no remarks are provided
+   */
+  @NotNull
+  String remarks() default "##none";
 }

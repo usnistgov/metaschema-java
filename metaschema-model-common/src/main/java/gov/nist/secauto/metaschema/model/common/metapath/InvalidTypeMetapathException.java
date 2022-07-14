@@ -28,6 +28,9 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 public class InvalidTypeMetapathException
     extends TypeMetapathException {
 
@@ -36,21 +39,32 @@ public class InvalidTypeMetapathException
    */
   private static final long serialVersionUID = 1L;
 
-  public InvalidTypeMetapathException(IItem item, Throwable cause) {
+  @Nullable
+  private final IItem item;
+
+  public InvalidTypeMetapathException(@NotNull IItem item, @NotNull Throwable cause) {
     super(TypeMetapathException.INVALID_TYPE_ERROR, String.format("Invalid data type '%s'", item.getClass().getName()),
         cause);
+    this.item = item;
   }
 
-  public InvalidTypeMetapathException(IItem item) {
+  public InvalidTypeMetapathException(@NotNull IItem item) {
     super(TypeMetapathException.INVALID_TYPE_ERROR, String.format("Invalid data type '%s'", item.getClass().getName()));
+    this.item = item;
   }
 
-  public InvalidTypeMetapathException(String message, Throwable cause) {
+  public InvalidTypeMetapathException(@Nullable IItem item, @Nullable String message, @NotNull Throwable cause) {
     super(TypeMetapathException.INVALID_TYPE_ERROR, message, cause);
+    this.item = item;
   }
 
-  public InvalidTypeMetapathException(String message) {
+  public InvalidTypeMetapathException(@Nullable IItem item, @Nullable String message) {
     super(TypeMetapathException.INVALID_TYPE_ERROR, message);
+    this.item = item;
   }
 
+  @Nullable
+  public IItem getItem() {
+    return item;
+  }
 }

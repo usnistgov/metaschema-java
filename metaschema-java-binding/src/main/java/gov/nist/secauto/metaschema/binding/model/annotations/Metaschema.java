@@ -30,6 +30,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -42,4 +44,12 @@ public @interface Metaschema {
   Class<?>[] assemblies() default {};
 
   Class<? extends AbstractBoundMetaschema>[] imports() default {};
+
+  /**
+   * Get any remarks for this metaschema.
+   * 
+   * @return a markdown string or {@code "##none"} if no remarks are provided
+   */
+  @NotNull
+  String remarks() default "##none";
 }
