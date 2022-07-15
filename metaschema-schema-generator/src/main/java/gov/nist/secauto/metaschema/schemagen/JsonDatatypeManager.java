@@ -40,16 +40,18 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class JsonDatatypeManager
     extends AbstractDatatypeManager {
   private static final JsonNode JSON_DATA;
-  private static final Map<String, String> DATATYPE_DEPENDENCY_MAP = new HashMap<>();
+  private static final Map<String, List<String>> DATATYPE_DEPENDENCY_MAP = new HashMap<>();
   private static final Pattern DEFINITION_REF_PATTERN = Pattern.compile("^#/definitions/(.+)$");
   private static final Map<String, JsonNode> JSON_DATATYPES = new HashMap<>();
 
@@ -68,13 +70,9 @@ public class JsonDatatypeManager
       if (!refNode.isMissingNode()) {
         JSON_DATATYPES.put(ref, refNode);
 
-        JsonNode refKeyword = refNode.get("$ref");
-        if (refKeyword != null) {
-          Matcher matcher = DEFINITION_REF_PATTERN.matcher(refKeyword.asText());
-          if (matcher.matches()) {
-            String dependency = matcher.group(1);
-            DATATYPE_DEPENDENCY_MAP.put(ref, dependency);
-          }
+        List<String> dependencies = getDependencies(refNode).collect(Collectors.toList());
+        if (!dependencies.isEmpty()) {
+          DATATYPE_DEPENDENCY_MAP.put(ref, dependencies);
         }
       }
     }
@@ -84,17 +82,38 @@ public class JsonDatatypeManager
     return JSON_DATA;
   }
 
+  private static Stream<String> getDependencies(@NotNull JsonNode node) {
+    Stream<String> retval = Stream.empty();
+    for (Map.Entry<String, JsonNode> entry : CollectionUtil.toIterable(node.fields())) {
+      JsonNode value = entry.getValue();
+      if ("$ref".equals(entry.getKey())) {
+        Matcher matcher = DEFINITION_REF_PATTERN.matcher(value.asText());
+        if (matcher.matches()) {
+          String dependency = matcher.group(1);
+          retval = Stream.concat(retval, Stream.of(dependency));
+        }
+      }
+      
+      if (value.isArray()) {
+        for (JsonNode child : CollectionUtil.toIterable(value.elements())) {
+          retval = Stream.concat(retval, getDependencies(child));
+        }
+      }
+    }
+    return retval;
+  }
+
   public void generateDatatypes(@NotNull ObjectNode definitionsObject) throws IOException {
     Set<String> requiredJsonDatatypes = getUsedTypes();
     // resolve dependencies
     for (String datatype : CollectionUtil.toIterable(requiredJsonDatatypes.stream()
         .flatMap(datatype -> {
           Stream<String> result;
-          String dependency = DATATYPE_DEPENDENCY_MAP.get(datatype);
-          if (dependency == null) {
+          List<String> dependencies = DATATYPE_DEPENDENCY_MAP.get(datatype);
+          if (dependencies == null) {
             result = Stream.of(datatype);
           } else {
-            result = Stream.of(datatype, dependency);
+            result = Stream.concat(Stream.of(datatype), dependencies.stream());
           }
           return result;
         }).distinct()
