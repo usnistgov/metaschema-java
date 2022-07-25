@@ -33,7 +33,7 @@ import java.util.Collection;
 
 public interface INamedModelInstance extends INamedInstance, IModelInstance {
   @Override
-  INamedModelDefinition getDefinition();
+  IModelDefinition getDefinition();
 
   /**
    * Get the item values for the provided {@code instanceValue}. An instance may be singular or many

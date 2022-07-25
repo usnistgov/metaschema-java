@@ -24,30 +24,43 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common;
+package gov.nist.secauto.metaschema.codegen;
+
+import gov.nist.secauto.metaschema.model.common.IDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-/**
- * A trait indicating that the implementation is a localized definition that is declared in-line as
- * an instance.
- * 
- * @param <INSTANCE>
- *          the associated instance type
- */
-// TODO: rename to IInlineDefinition
-public interface IInlineNamedDefinition<INSTANCE extends INamedInstance> extends IDefinition {
-  @Override
-  default boolean isInline() {
-    return true;
-  }
+import java.util.Collection;
+
+public interface IDefinitionTypeInfo {
+  @NotNull
+  IDefinition getDefinition();
 
   /**
-   * Retrieves the {@link INamedInstance} associated with this definition.
+   * Gets the resolver which can be used to lookup Java type information for Metaschema objects.
    * 
-   * @return the associated instance
+   * @return the type resolver
    */
-  @Override
   @NotNull
-  INSTANCE getInlineInstance();
+  ITypeResolver getTypeResolver();
+
+  /**
+   * Check's if the Java class to be generated will have a property with the given name.
+   * 
+   * @param propertyName
+   *          the property name to look for
+   * @return {@code true} if there is an associated property with the name or {@code false} otherwise
+   */
+  boolean hasPropertyWithName(@NotNull String propertyName);
+
+  @Nullable
+  IInstanceTypeInfo getInstanceTypeInfo(@NotNull INamedInstance instance);
+
+  @NotNull
+  Collection<ITypeInfo> getPropertyTypeInfos();
+
+  @NotNull
+  Collection<IInstanceTypeInfo> getInstanceTypeInfos();
 }

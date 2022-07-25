@@ -31,7 +31,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +40,7 @@ import java.util.Set;
 
 import javax.lang.model.element.Modifier;
 
-abstract class AbstractTypeInfo<PARENT extends INamedDefinitionTypeInfo> implements ITypeInfo {
+abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements ITypeInfo {
   @NotNull
   private final PARENT parentDefinition;
   private String propertyName;
@@ -66,7 +66,7 @@ abstract class AbstractTypeInfo<PARENT extends INamedDefinitionTypeInfo> impleme
     synchronized (this) {
       if (this.propertyName == null) {
         String name = ClassUtils.toPropertyName(getBaseName());
-        INamedDefinitionTypeInfo parent = getParentDefinitionTypeInfo();
+        IDefinitionTypeInfo parent = getParentDefinitionTypeInfo();
 
         // first check if a property already exists with the same name
 
@@ -103,11 +103,11 @@ abstract class AbstractTypeInfo<PARENT extends INamedDefinitionTypeInfo> impleme
   }
 
   @Override
-  public Set<@NotNull INamedModelDefinition> build(@NotNull TypeSpec.Builder builder, ITypeResolver typeResolver) {
+  public Set<@NotNull IModelDefinition> build(@NotNull TypeSpec.Builder builder, ITypeResolver typeResolver) {
     FieldSpec.Builder field = FieldSpec.builder(getJavaFieldType(), getJavaFieldName())
         .addModifiers(Modifier.PRIVATE);
 
-    final Set<@NotNull INamedModelDefinition> retval = buildField(field);
+    final Set<@NotNull IModelDefinition> retval = buildField(field);
 
     FieldSpec valueField = ObjectUtils.notNull(field.build());
     builder.addField(valueField);
@@ -159,7 +159,7 @@ abstract class AbstractTypeInfo<PARENT extends INamedDefinitionTypeInfo> impleme
    * @return the set of definitions used by this field
    */
   @NotNull
-  protected abstract Set<@NotNull INamedModelDefinition> buildField(@NotNull FieldSpec.Builder builder);
+  protected abstract Set<@NotNull IModelDefinition> buildField(@NotNull FieldSpec.Builder builder);
 
   /**
    * Generate the getter for the property.

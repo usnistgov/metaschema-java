@@ -32,7 +32,7 @@ import com.squareup.javapoet.TypeSpec;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,12 +41,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 
-public interface INamedModelDefinitionTypeInfo extends INamedDefinitionTypeInfo {
+public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
 
   @NotNull
-  static INamedModelDefinitionTypeInfo newTypeInfo(@NotNull INamedModelDefinition definition,
+  static IModelDefinitionTypeInfo newTypeInfo(@NotNull IModelDefinition definition,
       @NotNull ITypeResolver typeResolver) {
-    INamedModelDefinitionTypeInfo retval;
+    IModelDefinitionTypeInfo retval;
     switch (definition.getModelType()) {
     case ASSEMBLY:
       retval = IAssemblyDefinitionTypeInfo.newTypeInfo((IAssemblyDefinition) definition, typeResolver);
@@ -63,7 +63,7 @@ public interface INamedModelDefinitionTypeInfo extends INamedDefinitionTypeInfo 
   }
 
   @Override
-  INamedModelDefinition getDefinition();
+  IModelDefinition getDefinition();
 
   /**
    * Get the class type information for the base class of the generated class, .

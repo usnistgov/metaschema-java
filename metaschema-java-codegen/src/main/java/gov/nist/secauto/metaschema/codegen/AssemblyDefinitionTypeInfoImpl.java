@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.IModelContainer;
 import gov.nist.secauto.metaschema.model.common.IModelInstance;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -108,8 +108,8 @@ class AssemblyDefinitionTypeInfoImpl
   }
 
   @Override
-  protected Set<INamedModelDefinition> buildClass(TypeSpec.Builder builder, ClassName className) throws IOException {
-    Set<INamedModelDefinition> retval = new HashSet<>();
+  protected Set<IModelDefinition> buildClass(TypeSpec.Builder builder, ClassName className) throws IOException {
+    Set<IModelDefinition> retval = new HashSet<>();
     retval.addAll(super.buildClass(builder, className));
 
     AnnotationSpec.Builder metaschemaAssembly = ObjectUtils.notNull(AnnotationSpec.builder(MetaschemaAssembly.class));

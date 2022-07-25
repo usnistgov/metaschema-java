@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.codegen;
 
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +41,7 @@ public interface IDefinitionProduction {
    * @return the definition
    */
   @NotNull
-  INamedModelDefinition getDefinition();
+  IModelDefinition getDefinition();
 
   /**
    * Get information about the Java class generated from the definition.

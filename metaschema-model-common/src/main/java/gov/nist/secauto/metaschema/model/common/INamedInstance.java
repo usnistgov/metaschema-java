@@ -94,7 +94,7 @@ public interface INamedInstance extends IInstance, INamedModelElement {
   default String toCoordinates() {
     IDefinition definition = getDefinition();
 
-    INamedModelDefinition containingDefinition = getContainingDefinition();
+    IModelDefinition containingDefinition = getContainingDefinition();
     String retval;
     if (containingDefinition == null) {
       retval = String.format("%s:%s@%d(%d)",

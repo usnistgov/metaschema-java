@@ -35,7 +35,7 @@ import com.squareup.javapoet.TypeSpec;
 import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -56,9 +56,9 @@ import java.util.stream.Collectors;
 
 import javax.lang.model.element.Modifier;
 
-class AbstractModelDefinitionTypeInfo<DEF extends INamedModelDefinition>
+class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
     extends AbstractDefinitionTypeInfo<DEF>
-    implements INamedModelDefinitionTypeInfo {
+    implements IModelDefinitionTypeInfo {
   @NotNull
   private final ClassName className;
   @Nullable
@@ -142,7 +142,7 @@ class AbstractModelDefinitionTypeInfo<DEF extends INamedModelDefinition>
   }
 
   protected void buildConstraints(@NotNull AnnotationSpec.Builder annotation) {
-    INamedModelDefinition definition = getDefinition();
+    IModelDefinition definition = getDefinition();
     AnnotationUtils.applyAllowedValuesConstraints(annotation, definition.getAllowedValuesConstraints());
     AnnotationUtils.applyIndexHasKeyConstraints(annotation, definition.getIndexHasKeyConstraints());
     AnnotationUtils.applyMatchesConstraints(annotation, definition.getMatchesConstraints());
@@ -185,12 +185,12 @@ class AbstractModelDefinitionTypeInfo<DEF extends INamedModelDefinition>
       builder.superclass(baseClassName);
     }
 
-    Set<@NotNull INamedModelDefinition> additionalChildClasses = buildClass(builder, className);
+    Set<@NotNull IModelDefinition> additionalChildClasses = buildClass(builder, className);
 
     ITypeResolver typeResolver = getTypeResolver();
 
-    for (INamedModelDefinition definition : additionalChildClasses) {
-      INamedModelDefinitionTypeInfo typeInfo = typeResolver.getTypeInfo(definition);
+    for (IModelDefinition definition : additionalChildClasses) {
+      IModelDefinitionTypeInfo typeInfo = typeResolver.getTypeInfo(definition);
       TypeSpec childClass = typeInfo.generateChildClass();
       builder.addType(childClass);
     }
@@ -209,7 +209,7 @@ class AbstractModelDefinitionTypeInfo<DEF extends INamedModelDefinition>
    *           if an error occurred while building the class
    */
   @NotNull
-  protected Set<@NotNull INamedModelDefinition> buildClass(@NotNull TypeSpec.Builder builder,
+  protected Set<@NotNull IModelDefinition> buildClass(@NotNull TypeSpec.Builder builder,
       @NotNull ClassName className)
       throws IOException {
     MarkupLine description = getDefinition().getDescription();
@@ -217,7 +217,7 @@ class AbstractModelDefinitionTypeInfo<DEF extends INamedModelDefinition>
       builder.addJavadoc(description.toHtml());
     }
 
-    Set<@NotNull INamedModelDefinition> additionalChildClasses = new HashSet<>();
+    Set<@NotNull IModelDefinition> additionalChildClasses = new HashSet<>();
 
     // generate a no-arg constructor
     builder.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC).build());

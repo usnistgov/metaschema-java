@@ -206,7 +206,7 @@ public interface IMetaschema {
    */
   @SuppressWarnings("null")
   @NotNull
-  default List<@NotNull ? extends INamedModelDefinition> getAssemblyAndFieldDefinitions() {
+  default List<@NotNull ? extends IModelDefinition> getAssemblyAndFieldDefinitions() {
     return Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())
         .collect(Collectors.toList());
   }

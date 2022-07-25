@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.codegen;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -102,5 +102,5 @@ public interface ITypeInfo {
    * @return the set of additional child definitions that need to be built
    */
   @NotNull
-  Set<@NotNull INamedModelDefinition> build(@NotNull TypeSpec.Builder builder, @NotNull ITypeResolver typeResolver);
+  Set<@NotNull IModelDefinition> build(@NotNull TypeSpec.Builder builder, @NotNull ITypeResolver typeResolver);
 }

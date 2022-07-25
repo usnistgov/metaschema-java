@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.binding.IBindingMatcher;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.codegen.IProduction;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ public class DynamicBindingContext
     production.getDefinitionProductionsAsStream()
         .filter(definitionProduction -> {
           boolean retval = false;
-          INamedModelDefinition definition = definitionProduction.getDefinition();
+          IModelDefinition definition = definitionProduction.getDefinition();
           if (definition instanceof IAssemblyDefinition) {
             IAssemblyDefinition assembly = (IAssemblyDefinition) definition;
             if (assembly.isRoot()) {

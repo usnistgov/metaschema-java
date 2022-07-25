@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ModelWalker;
@@ -119,7 +119,7 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
     }
 
     private boolean isChoiceSibling(@NotNull INamedInstance instance) {
-      INamedModelDefinition containingDefinition = instance.getContainingDefinition();
+      IModelDefinition containingDefinition = instance.getContainingDefinition();
       return containingDefinition instanceof IAssemblyDefinition
           && !((IAssemblyDefinition) containingDefinition).getChoiceInstances().isEmpty();
     }

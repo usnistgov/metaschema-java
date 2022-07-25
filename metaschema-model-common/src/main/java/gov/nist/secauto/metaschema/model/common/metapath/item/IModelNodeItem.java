@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
 public interface IModelNodeItem extends IDefinitionNodeItem {
 
@@ -47,5 +47,5 @@ public interface IModelNodeItem extends IDefinitionNodeItem {
   INodeItem getParentNodeItem();
 
   @Override
-  INamedModelDefinition getDefinition();
+  IModelDefinition getDefinition();
 }

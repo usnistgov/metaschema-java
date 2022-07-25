@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
  * Java class type information for an {@link IAssemblyDefinition} used for generating a Java class
  * for the definition.
  */
-public interface IAssemblyDefinitionTypeInfo extends INamedModelDefinitionTypeInfo {
+public interface IAssemblyDefinitionTypeInfo extends IModelDefinitionTypeInfo {
 
   /**
    * Construct a new type info based on the provided definition.

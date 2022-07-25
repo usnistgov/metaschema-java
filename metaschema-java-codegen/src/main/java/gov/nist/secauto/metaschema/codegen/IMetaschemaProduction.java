@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +43,7 @@ public interface IMetaschemaProduction {
   IGeneratedClass getGeneratedMetaschema();
 
   @NotNull
-  Collection<@NotNull ? extends INamedModelDefinition> getGlobalDefinitions();
+  Collection<@NotNull ? extends IModelDefinition> getGlobalDefinitions();
 
   @NotNull
   Collection<@NotNull IDefinitionProduction> getDefinitionProductions();

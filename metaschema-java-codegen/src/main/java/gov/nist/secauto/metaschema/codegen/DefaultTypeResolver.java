@@ -31,9 +31,9 @@ import com.squareup.javapoet.ClassName;
 import gov.nist.secauto.metaschema.codegen.binding.config.IBindingConfiguration;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.IInlineNamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IInlineDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
@@ -49,7 +49,7 @@ class DefaultTypeResolver implements ITypeResolver {
   private static final Logger LOGGER = LogManager.getLogger(DefaultTypeResolver.class);
 
   private final Map<String, Set<String>> packageToClassNamesMap = new HashMap<>();
-  private final Map<INamedModelDefinition, ClassName> definitionToTypeMap = new HashMap<>();
+  private final Map<IModelDefinition, ClassName> definitionToTypeMap = new HashMap<>();
   private final Map<IMetaschema, ClassName> metaschemaToTypeMap = new HashMap<>();
   private final Map<IAssemblyDefinition, IAssemblyDefinitionTypeInfo> assemblyDefinitionToTypeInfoMap = new HashMap<>();
   private final Map<IFieldDefinition, IFieldDefinitionTypeInfo> fieldDefinitionToTypeInfoMap = new HashMap<>();
@@ -90,8 +90,8 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public INamedModelDefinitionTypeInfo getTypeInfo(@NotNull INamedModelDefinition definition) {
-    INamedModelDefinitionTypeInfo retval;
+  public IModelDefinitionTypeInfo getTypeInfo(@NotNull IModelDefinition definition) {
+    IModelDefinitionTypeInfo retval;
     if (definition instanceof IAssemblyDefinition) {
       retval = getTypeInfo((IAssemblyDefinition) definition);
     } else if (definition instanceof IFieldDefinition) {
@@ -103,14 +103,14 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public ClassName getClassName(@NotNull INamedModelDefinition definition) {
+  public ClassName getClassName(@NotNull IModelDefinition definition) {
     ClassName retval = definitionToTypeMap.get(definition);
     if (retval == null) {
       String packageName = getBindingConfiguration().getPackageNameForMetaschema(definition.getContainingMetaschema());
       if (definition.isInline()) {
         // this is a local definition, which means a child class needs to be generated
-        INamedModelDefinition parentDefinition = ObjectUtils.notNull(
-            ((IInlineNamedDefinition<?>) definition).getInlineInstance().getContainingDefinition());
+        IModelDefinition parentDefinition = ObjectUtils.notNull(
+            ((IInlineDefinition<?>) definition).getInlineInstance().getContainingDefinition());
         ClassName parentClassName = getClassName(parentDefinition);
         String name = generateClassName(ObjectUtils.notNull(parentClassName.canonicalName()), definition);
         retval = parentClassName.nestedClass(name);
@@ -161,7 +161,7 @@ class DefaultTypeResolver implements ITypeResolver {
     return classNames.add(className);
   }
 
-  private String generateClassName(@NotNull String packageOrTypeName, @NotNull INamedModelDefinition definition) {
+  private String generateClassName(@NotNull String packageOrTypeName, @NotNull IModelDefinition definition) {
     @NotNull
     String className = getBindingConfiguration().getClassName(definition);
 
@@ -191,7 +191,7 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public ClassName getBaseClassName(INamedModelDefinition definition) {
+  public ClassName getBaseClassName(IModelDefinition definition) {
     String className = bindingConfiguration.getQualifiedBaseClassName(definition);
     ClassName retval = null;
     if (className != null) {

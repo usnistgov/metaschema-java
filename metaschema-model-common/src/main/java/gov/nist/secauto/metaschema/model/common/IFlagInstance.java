@@ -44,7 +44,7 @@ public interface IFlagInstance extends INamedInstance, IFlag {
   }
 
   @Override
-  INamedModelDefinition getContainingDefinition();
+  IModelDefinition getContainingDefinition();
 
   @Override
   IFlagDefinition getDefinition();

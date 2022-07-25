@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.binding.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
@@ -48,9 +48,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 class FlagInstanceTypeInfoImpl
-    extends AbstractInstanceTypeInfo<IFlagInstance, INamedDefinitionTypeInfo>
+    extends AbstractInstanceTypeInfo<IFlagInstance, IDefinitionTypeInfo>
     implements IFlagInstanceTypeInfo {
-  public FlagInstanceTypeInfoImpl(@NotNull IFlagInstance instance, @NotNull INamedDefinitionTypeInfo parentDefinition) {
+  public FlagInstanceTypeInfoImpl(@NotNull IFlagInstance instance, @NotNull IDefinitionTypeInfo parentDefinition) {
     super(instance, parentDefinition);
   }
 
@@ -65,7 +65,7 @@ class FlagInstanceTypeInfoImpl
   }
 
   @Override
-  protected Set<@NotNull INamedModelDefinition> buildField(FieldSpec.Builder builder) {
+  protected Set<@NotNull IModelDefinition> buildField(FieldSpec.Builder builder) {
     IFlagInstance instance = getInstance();
 
     AnnotationSpec.Builder annotation
@@ -102,7 +102,7 @@ class FlagInstanceTypeInfoImpl
 
     builder.addAnnotation(annotation.build());
 
-    INamedModelDefinition parent = instance.getContainingDefinition();
+    IModelDefinition parent = instance.getContainingDefinition();
     if (parent != null && parent.hasJsonKey() && instance.equals(parent.getJsonKeyFlagInstance())) {
       builder.addAnnotation(JsonKey.class);
     }

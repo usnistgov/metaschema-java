@@ -26,25 +26,25 @@
 
 package gov.nist.secauto.metaschema.codegen;
 
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
 class DefinitionProductionImpl implements IDefinitionProduction {
 
   @NotNull
-  private final INamedModelDefinition definition;
+  private final IModelDefinition definition;
   @NotNull
   private final DefaultGeneratedDefinitionClass generatedClass;
 
-  public DefinitionProductionImpl(@NotNull INamedModelDefinition definition,
+  public DefinitionProductionImpl(@NotNull IModelDefinition definition,
       @NotNull DefaultGeneratedDefinitionClass generatedClass) {
     this.definition = definition;
     this.generatedClass = generatedClass;
   }
 
   @Override
-  public INamedModelDefinition getDefinition() {
+  public IModelDefinition getDefinition() {
     return definition;
   }
 

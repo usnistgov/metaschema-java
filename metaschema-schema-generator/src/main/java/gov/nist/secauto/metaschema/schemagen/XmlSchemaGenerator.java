@@ -38,7 +38,7 @@ import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.IValuedDefinition;
 import gov.nist.secauto.metaschema.model.common.ModelType;
@@ -469,7 +469,7 @@ public class XmlSchemaGenerator
           modelInstance.getMaxOccurs() == -1 ? "unbounded" : String.format("%d", modelInstance.getMaxOccurs()));
     }
 
-    INamedModelDefinition definition = modelInstance.getDefinition();
+    IModelDefinition definition = modelInstance.getDefinition();
     if (ModelType.FIELD.equals(definition.getModelType()) && definition.getFlagInstances().isEmpty()) {
       // always generate a datatype reference for fields with no flags
       generateTypeReferenceForDefinition(definition, state);
@@ -526,7 +526,7 @@ public class XmlSchemaGenerator
     return builder.toString();
   }
 
-  private CharSequence getTypeReferenceForComplexDefinition(@NotNull INamedModelDefinition definition,
+  private CharSequence getTypeReferenceForComplexDefinition(@NotNull IModelDefinition definition,
       @NotNull GenerationState state) {
     StringBuilder builder = new StringBuilder();
     String xmlNS = state.getNS(definition);

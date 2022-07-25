@@ -38,7 +38,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-abstract class AbstractDefinitionTypeInfo<DEF extends IDefinition> implements INamedDefinitionTypeInfo {
+abstract class AbstractDefinitionTypeInfo<DEF extends IDefinition> implements IDefinitionTypeInfo {
   private static final Logger LOGGER = LogManager.getLogger(AbstractDefinitionTypeInfo.class);
   @NotNull
   private final DEF definition;

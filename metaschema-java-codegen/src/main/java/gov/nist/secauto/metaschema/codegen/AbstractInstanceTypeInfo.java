@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.codegen;
 import com.squareup.javapoet.FieldSpec;
 
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
@@ -37,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-abstract class AbstractInstanceTypeInfo<INSTANCE extends INamedInstance, PARENT extends INamedDefinitionTypeInfo>
+abstract class AbstractInstanceTypeInfo<INSTANCE extends INamedInstance, PARENT extends IDefinitionTypeInfo>
     extends AbstractTypeInfo<PARENT>
     implements IInstanceTypeInfo {
   @NotNull
@@ -54,7 +54,7 @@ abstract class AbstractInstanceTypeInfo<INSTANCE extends INamedInstance, PARENT 
   }
 
   @Override
-  protected Set<@NotNull INamedModelDefinition> buildField(@NotNull FieldSpec.Builder builder) {
+  protected Set<@NotNull IModelDefinition> buildField(@NotNull FieldSpec.Builder builder) {
     MarkupLine description = getInstance().getDescription();
     if (description != null) {
       builder.addJavadoc("$S", description.toHtml());
