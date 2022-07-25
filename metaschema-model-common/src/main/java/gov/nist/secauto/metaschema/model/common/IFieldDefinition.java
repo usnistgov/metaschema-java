@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface IFieldDefinition extends INamedValuedDefinition, INamedModelDefinition, IField {
+public interface IFieldDefinition extends IValuedDefinition, INamedModelDefinition, IField {
   @Override
   IFieldInstance getInlineInstance();
 
