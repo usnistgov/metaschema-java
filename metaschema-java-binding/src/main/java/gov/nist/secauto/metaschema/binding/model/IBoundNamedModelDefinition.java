@@ -31,8 +31,18 @@ import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 public interface IBoundNamedModelDefinition extends INamedModelDefinition {
+
+  @Override
+  default @NotNull Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+    // TODO: implement
+    throw new UnsupportedOperationException();
+  }
 
   @Override
   IBoundFlagInstance getFlagInstanceByName(String name);

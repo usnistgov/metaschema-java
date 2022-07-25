@@ -51,6 +51,10 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 class DefaultFlagProperty
     extends AbstractFlagProperty
@@ -186,6 +190,12 @@ class DefaultFlagProperty
     @Override
     public MarkupLine getDescription() {
       return DefaultFlagProperty.this.getDescription();
+    }
+
+    @Override
+    public @NotNull Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+      // TODO: implement
+      throw new UnsupportedOperationException();
     }
 
     @Override

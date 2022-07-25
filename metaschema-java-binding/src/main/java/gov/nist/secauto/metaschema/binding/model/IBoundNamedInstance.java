@@ -40,6 +40,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -47,6 +49,12 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 public interface IBoundNamedInstance extends INamedInstance {
+
+  @Override
+  default @NotNull Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+    // TODO: implement
+    throw new UnsupportedOperationException();
+  }
 
   /**
    * Get the {@link IClassBinding} for the Java class within which this property exists.

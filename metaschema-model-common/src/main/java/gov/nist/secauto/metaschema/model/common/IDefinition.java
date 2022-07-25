@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+
 import org.jetbrains.annotations.NotNull;
 
 public interface IDefinition extends INamedModelElement {
@@ -59,5 +61,15 @@ public interface IDefinition extends INamedModelElement {
   default String toCoordinates() {
     return String.format("%s:%s:%s(%d)", getContainingMetaschema().getShortName(), getModelType(),
         getName(), hashCode());
+  }
+
+  @Override
+  default String getEffectiveFormalName() {
+    return getFormalName();
+  }
+
+  @Override
+  default MarkupLine getEffectiveDescription() {
+    return getDescription();
   }
 }

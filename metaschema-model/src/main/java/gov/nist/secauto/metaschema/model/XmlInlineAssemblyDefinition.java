@@ -52,6 +52,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineAssemblyDefinitionType;
 
@@ -63,6 +64,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 /**
  * Represents a Metaschema assembly definition declared locally as an instance.
@@ -115,6 +119,12 @@ class XmlInlineAssemblyDefinition
     return getXmlAssembly().isSetDescription()
         ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription())
         : null;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlAssembly().getPropList()));
   }
 
   @SuppressWarnings("null")
@@ -221,6 +231,11 @@ class XmlInlineAssemblyDefinition
     @Override
     public MarkupLine getDescription() {
       return XmlInlineAssemblyDefinition.this.getDescription();
+    }
+
+    @Override
+    public @NotNull Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+      return XmlInlineAssemblyDefinition.this.getProperties();
     }
 
     @Override

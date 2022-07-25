@@ -32,10 +32,16 @@ import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.FlagReferenceType;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 class XmlFlagInstance
     extends AbstractFlagInstance {
@@ -81,6 +87,12 @@ class XmlFlagInstance
   @Override
   public MarkupLine getDescription() {
     return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription()) : null;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlFlag().getPropList()));
   }
 
   @SuppressWarnings("null")

@@ -27,9 +27,15 @@
 package gov.nist.secauto.metaschema.model.common;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 /**
  * A marker interface for Metaschema constructs that can be members of a Metaschema definition's
@@ -37,18 +43,82 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface INamedModelElement extends IModelElement {
   /**
-   * The formal display name for a definition.
+   * The formal display name.
    * 
    * @return the formal name
    */
   String getFormalName();
 
   /**
-   * Get the text that describes the basic use of the definition.
+   * The resolved formal display name, which allows an instance to override a definition's name.
+   * 
+   * @return the formal name
+   */
+  String getEffectiveFormalName();
+
+  /**
+   * Get the text that describes the basic use of the element.
    * 
    * @return a line of markup text
    */
   MarkupLine getDescription();
+
+  /**
+   * Get the text that describes the basic use of the element, which allows an instance to override a
+   * definition's description.
+   * 
+   * @return a line of markup text
+   */
+  MarkupLine getEffectiveDescription();
+
+  /**
+   * Get the mapping of property name to values for the model element.
+   * 
+   * @return the mapping
+   */
+  @NotNull
+  Map<@NotNull QName, Set<@NotNull String>> getProperties();
+
+  /**
+   * Determine if a property is defined.
+   * 
+   * @param qname
+   *          the qualified name of the property
+   * @return {@code true} if the property is defined or {@code false} otherwise
+   */
+  default boolean hasProperty(@NotNull QName qname) {
+    return getProperties().containsKey(qname);
+  }
+
+  /**
+   * Get the values associated with a given property.
+   * 
+   * @param qname
+   *          the qualified name of the property
+   * @return the values or an empty set
+   */
+  @NotNull
+  default Set<@NotNull String> getPropertyValues(@NotNull QName qname) {
+    Set<@NotNull String> retval = getProperties().get(qname);
+    if (retval == null) {
+      retval = CollectionUtil.emptySet();
+    }
+    return retval;
+  }
+
+  /**
+   * Determine if a given property, with a given {@code qname}, has the identified {@code value}.
+   * 
+   * @param qname
+   *          the qualified name of the property
+   * @param value
+   *          the expected property value
+   * @return {@code true} if the property value is defined or {@code false} otherwise
+   */
+  default boolean hasPropertyValue(@NotNull QName qname, @NotNull String value) {
+    Set<@NotNull String> values = getProperties().get(qname);
+    return values == null ? false : values.contains(value);
+  }
 
   // @NotNull
   // default QName getXmlQName() {

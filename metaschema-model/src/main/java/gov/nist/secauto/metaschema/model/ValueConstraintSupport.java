@@ -91,18 +91,18 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
       XmlObject obj = cursor.getObject();
       if (obj instanceof AllowedValuesType) {
         DefaultAllowedValuesConstraint constraint
-            = ConstraintFactory.newAllowedValuesConstraint((AllowedValuesType) obj, source);
+            = ModelFactory.newAllowedValuesConstraint((AllowedValuesType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof MatchesConstraintType) {
         DefaultMatchesConstraint constraint
-            = ConstraintFactory.newMatchesConstraint((MatchesConstraintType) obj, source);
+            = ModelFactory.newMatchesConstraint((MatchesConstraintType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof IndexHasKeyConstraintType) {
         DefaultIndexHasKeyConstraint constraint
-            = ConstraintFactory.newIndexHasKeyConstraint((IndexHasKeyConstraintType) obj, source);
+            = ModelFactory.newIndexHasKeyConstraint((IndexHasKeyConstraintType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof ExpectConstraintType) {
-        DefaultExpectConstraint constraint = ConstraintFactory.newExpectConstraint((ExpectConstraintType) obj, source);
+        DefaultExpectConstraint constraint = ModelFactory.newExpectConstraint((ExpectConstraintType) obj, source);
         addConstraint(constraint);
       }
     }
@@ -127,19 +127,19 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
       XmlObject obj = cursor.getObject();
       if (obj instanceof ScopedAllowedValuesType) {
         DefaultAllowedValuesConstraint constraint
-            = ConstraintFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj, source);
+            = ModelFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof ScopedMatchesConstraintType) {
         DefaultMatchesConstraint constraint
-            = ConstraintFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj, source);
+            = ModelFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
         DefaultIndexHasKeyConstraint constraint
-            = ConstraintFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj, source);
+            = ModelFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof ScopedExpectConstraintType) {
         DefaultExpectConstraint constraint
-            = ConstraintFactory.newExpectConstraint((ScopedExpectConstraintType) obj, source);
+            = ModelFactory.newExpectConstraint((ScopedExpectConstraintType) obj, source);
         addConstraint(constraint);
       }
     }
