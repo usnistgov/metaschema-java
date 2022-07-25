@@ -41,6 +41,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 /**
  * Wraps an {@link IAssemblyDefinition} that is a {@link IRootAssemblyDefinition}.
@@ -74,6 +78,11 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implem
   @Override
   public MarkupLine getDescription() {
     return getRootDefinition().getDescription();
+  }
+
+  @Override
+  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+    return getRootDefinition().getProperties();
   }
 
   @Override
@@ -262,5 +271,4 @@ public class RootAssemblyDefinitionWrapper<T extends IAssemblyDefinition> implem
   public void addConstraint(@NotNull IExpectConstraint constraint) {
     getRootDefinition().addConstraint(constraint);
   }
-
 }

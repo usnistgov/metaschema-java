@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSuppo
 /**
  * This marker interface is used for some collections that contain various named definitions.
  */
+// TODO: merge with IDefinition?
 public interface INamedDefinition extends IDefinition, IValueConstraintSupport {
   /**
    * Determine if the definition is defined inline, meaning the definition is declared where it is

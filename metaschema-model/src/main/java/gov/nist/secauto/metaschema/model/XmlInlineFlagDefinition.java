@@ -44,12 +44,17 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapte
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineFlagDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 class XmlInlineFlagDefinition
     extends AbstractFlagInstance {
@@ -125,6 +130,12 @@ class XmlInlineFlagDefinition
 
   @SuppressWarnings("null")
   @Override
+  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlFlag().getPropList()));
+  }
+
+  @SuppressWarnings("null")
+  @Override
   public String getName() {
     return getXmlFlag().getName();
   }
@@ -194,6 +205,11 @@ class XmlInlineFlagDefinition
     @Override
     public MarkupLine getDescription() {
       return XmlInlineFlagDefinition.this.getDescription();
+    }
+
+    @Override
+    public @NotNull Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+      return XmlInlineFlagDefinition.this.getProperties();
     }
 
     @SuppressWarnings("null")

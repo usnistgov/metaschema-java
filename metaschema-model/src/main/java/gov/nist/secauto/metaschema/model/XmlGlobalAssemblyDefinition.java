@@ -47,6 +47,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
 
@@ -56,6 +57,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - intentional
 
@@ -337,6 +341,12 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
   public MarkupLine getDescription() {
     return getXmlAssembly().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlAssembly().getDescription())
         : null;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlAssembly().getPropList()));
   }
 
   @Override

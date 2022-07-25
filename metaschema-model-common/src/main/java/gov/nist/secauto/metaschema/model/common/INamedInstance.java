@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
+import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
+
 import org.jetbrains.annotations.NotNull;
 
 import javax.xml.namespace.QName;
@@ -110,5 +112,17 @@ public interface INamedInstance extends IInstance, INamedModelElement {
     }
 
     return retval;
+  }
+
+  @Override
+  default String getEffectiveFormalName() {
+    String result = getFormalName();
+    return result == null ? getDefinition().getFormalName() : result;
+  }
+
+  @Override
+  default MarkupLine getEffectiveDescription() {
+    MarkupLine result = getDescription();
+    return result == null ? getDefinition().getDescription() : result;
   }
 }

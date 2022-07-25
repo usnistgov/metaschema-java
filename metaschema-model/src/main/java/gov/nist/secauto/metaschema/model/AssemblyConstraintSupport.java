@@ -107,31 +107,31 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
       XmlObject obj = cursor.getObject();
       if (obj instanceof ScopedAllowedValuesType) {
         DefaultAllowedValuesConstraint constraint
-            = ConstraintFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj, source);
+            = ModelFactory.newAllowedValuesConstraint((ScopedAllowedValuesType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof ScopedIndexConstraintType) {
         DefaultIndexConstraint constraint
-            = ConstraintFactory.newIndexConstraint((ScopedIndexConstraintType) obj, source);
+            = ModelFactory.newIndexConstraint((ScopedIndexConstraintType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof ScopedIndexHasKeyConstraintType) {
         DefaultIndexHasKeyConstraint constraint
-            = ConstraintFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj, source);
+            = ModelFactory.newIndexHasKeyConstraint((ScopedIndexHasKeyConstraintType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof ScopedKeyConstraintType) {
         DefaultUniqueConstraint constraint
-            = ConstraintFactory.newUniqueConstraint((ScopedKeyConstraintType) obj, source);
+            = ModelFactory.newUniqueConstraint((ScopedKeyConstraintType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof HasCardinalityConstraintType) {
         DefaultCardinalityConstraint constraint
-            = ConstraintFactory.newCardinalityConstraint((HasCardinalityConstraintType) obj, source);
+            = ModelFactory.newCardinalityConstraint((HasCardinalityConstraintType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof ScopedMatchesConstraintType) {
         DefaultMatchesConstraint constraint
-            = ConstraintFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj, source);
+            = ModelFactory.newMatchesConstraint((ScopedMatchesConstraintType) obj, source);
         addConstraint(constraint);
       } else if (obj instanceof ScopedExpectConstraintType) {
         DefaultExpectConstraint constraint
-            = ConstraintFactory.newExpectConstraint((ScopedExpectConstraintType) obj, source);
+            = ModelFactory.newExpectConstraint((ScopedExpectConstraintType) obj, source);
         addConstraint(constraint);
       }
     }

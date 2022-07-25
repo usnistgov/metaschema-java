@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.FieldReferenceType;
 
@@ -42,6 +43,10 @@ import org.jetbrains.annotations.NotNull;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 class XmlFieldInstance
     extends AbstractFieldInstance {
@@ -103,7 +108,14 @@ class XmlFieldInstance
   @SuppressWarnings("null")
   @Override
   public MarkupLine getDescription() {
-    return getXmlField().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlField().getDescription()) : null;
+    return getXmlField().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlField().getDescription())
+        : null;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlField().getPropList()));
   }
 
   @SuppressWarnings("null")

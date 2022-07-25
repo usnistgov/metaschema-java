@@ -42,12 +42,17 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapte
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFlagDefinitionType;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 class XmlGlobalFlagDefinition implements IFlagDefinition {
   @NotNull
@@ -190,6 +195,12 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   @Override
   public MarkupLine getDescription() {
     return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription()) : null;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlFlag().getPropList()));
   }
 
   @SuppressWarnings("null")

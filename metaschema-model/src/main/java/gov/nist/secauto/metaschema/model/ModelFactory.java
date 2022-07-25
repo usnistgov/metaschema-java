@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.model;
 
+import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValue;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.DefaultCardinalityConstraint;
@@ -50,6 +51,7 @@ import gov.nist.secauto.metaschema.model.xmlbeans.HasCardinalityConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.IndexHasKeyConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.KeyConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.MatchesConstraintType;
+import gov.nist.secauto.metaschema.model.xmlbeans.PropertyType;
 import gov.nist.secauto.metaschema.model.xmlbeans.RemarksType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedAllowedValuesType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedExpectConstraintType;
@@ -65,9 +67,13 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-final class ConstraintFactory {
-  private ConstraintFactory() {
+import javax.xml.namespace.QName;
+
+final class ModelFactory {
+  private ModelFactory() {
     // disable
   }
 
@@ -84,6 +90,22 @@ final class ConstraintFactory {
   @Nullable
   private static MarkupMultiline remarks(@Nullable RemarksType remarks) {
     return remarks == null ? null : MarkupStringConverter.toMarkupString(remarks);
+  }
+
+  @SuppressWarnings("null")
+  @NotNull
+  static Map<@NotNull QName, Set<@NotNull String>> toProperties(@NotNull List<@NotNull PropertyType> properties) {
+    return properties.stream()
+        .map(prop -> {
+          String name = prop.getName();
+          String namespace = prop.isSetNamespace() ? prop.getNamespace() : IMetaschema.METASCHEMA_XML_NS;
+          QName qname = new QName(namespace, name);
+          String value = prop.getValue();
+
+          return Map.entry(qname, value);
+        })
+        .collect(Collectors.groupingBy(Map.Entry<QName, String>::getKey,
+            Collectors.mapping(Map.Entry<QName, String>::getValue, Collectors.toSet())));
   }
 
   @NotNull

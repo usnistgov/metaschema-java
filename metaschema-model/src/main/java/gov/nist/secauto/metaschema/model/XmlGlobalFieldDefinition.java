@@ -44,6 +44,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapte
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalFieldDefinitionType;
 
@@ -52,6 +53,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 class XmlGlobalFieldDefinition implements IFieldDefinition {
   @NotNull
@@ -188,6 +192,12 @@ class XmlGlobalFieldDefinition implements IFieldDefinition {
   public MarkupLine getDescription() {
     return getXmlField().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlField().getDescription())
         : null;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlField().getPropList()));
   }
 
   /**
