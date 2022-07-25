@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-public interface IFlagDefinition extends INamedValuedDefinition, IFlag {
+public interface IFlagDefinition extends IValuedDefinition, IFlag {
   @Override
   IFlagInstance getInlineInstance();
 }

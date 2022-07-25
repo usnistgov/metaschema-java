@@ -40,7 +40,7 @@ import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
-import gov.nist.secauto.metaschema.model.common.INamedValuedDefinition;
+import gov.nist.secauto.metaschema.model.common.IValuedDefinition;
 import gov.nist.secauto.metaschema.model.common.ModelType;
 import gov.nist.secauto.metaschema.model.common.UsedDefinitionModelWalker;
 import gov.nist.secauto.metaschema.model.common.XmlGroupAsBehavior;
@@ -514,7 +514,7 @@ public class XmlSchemaGenerator
     writer.writeAttribute("type", ref.toString());
   }
 
-  private CharSequence getTypeReferenceForSimpleValuedDefinition(@NotNull INamedValuedDefinition definition,
+  private CharSequence getTypeReferenceForSimpleValuedDefinition(@NotNull IValuedDefinition definition,
       @NotNull GenerationState state) {
     StringBuilder builder = new StringBuilder();
     String namespace = state.getDatatypeNS();
