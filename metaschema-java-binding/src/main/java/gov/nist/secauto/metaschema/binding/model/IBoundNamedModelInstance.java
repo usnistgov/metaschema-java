@@ -55,7 +55,7 @@ public interface IBoundNamedModelInstance extends IBoundNamedInstance, INamedMod
   IAssemblyClassBinding getParentClassBinding();
 
   @Override
-  IBoundNamedModelDefinition getDefinition();
+  IBoundModelDefinition getDefinition();
 
   @NotNull
   IModelPropertyInfo newPropertyInfo();

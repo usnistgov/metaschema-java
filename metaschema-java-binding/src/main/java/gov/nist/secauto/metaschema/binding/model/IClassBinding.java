@@ -53,7 +53,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-public interface IClassBinding extends IBoundNamedModelDefinition {
+public interface IClassBinding extends IBoundModelDefinition {
   @NotNull
   IBindingContext getBindingContext();
 
