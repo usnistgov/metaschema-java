@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +36,7 @@ import java.util.Set;
 public interface IDatatypeManager {
   String getTypeNameForDatatype(@NotNull IDataTypeAdapter<?> datatype);
 
-  String getTypeNameForDefinition(@NotNull INamedDefinition definition, @NotNull IGenerationState<?, ?> state);
+  String getTypeNameForDefinition(@NotNull IDefinition definition, @NotNull IGenerationState<?, ?> state);
 
   Set<String> getUsedTypes();
 }

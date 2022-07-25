@@ -29,13 +29,13 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IModelContainer;
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
@@ -59,7 +59,7 @@ public interface INodeItemFactory {
 
   @SuppressWarnings("null")
   @NotNull
-  default INodeItem newNodeItem(@NotNull INamedDefinition definition, @NotNull Object value, @NotNull URI baseUri,
+  default INodeItem newNodeItem(@NotNull IDefinition definition, @NotNull Object value, @NotNull URI baseUri,
       boolean rootNode) {
     INodeItem retval;
     if (definition instanceof IAssemblyDefinition) {

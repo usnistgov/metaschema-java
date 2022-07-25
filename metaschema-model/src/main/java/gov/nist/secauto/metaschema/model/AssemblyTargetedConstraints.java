@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.constraint.AbstractTargetedConstraints;
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.constraint.ICardinalityConstraint;
@@ -80,7 +80,7 @@ class AssemblyTargetedConstraints
 
   @Override
   public void target(@NotNull IAssemblyDefinition definition) {
-    applyTo((INamedDefinition) definition);
+    applyTo((IDefinition) definition);
     applyTo(definition);
   }
 

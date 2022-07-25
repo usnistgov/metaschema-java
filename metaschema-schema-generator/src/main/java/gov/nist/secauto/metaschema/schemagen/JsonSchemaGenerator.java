@@ -35,7 +35,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.UsedDefinitionModelWalker;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
@@ -91,7 +90,7 @@ public class JsonSchemaGenerator
     jsonGenerator.writeStringField("$comment", metaschema.getName().toMarkdown());
     jsonGenerator.writeStringField("type", "object");
 
-    Collection<@NotNull ? extends INamedDefinition> definitions
+    Collection<@NotNull ? extends IDefinition> definitions
         = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
 
     IInlineStrategy inlineStrategy = newInlineStrategy(configuration, definitions);
@@ -118,14 +117,14 @@ public class JsonSchemaGenerator
   }
 
   protected void generateDefinitions(
-      @NotNull Collection<@NotNull ? extends INamedDefinition> definitions,
+      @NotNull Collection<@NotNull ? extends IDefinition> definitions,
       @NotNull GenerationState state) throws IOException {
     if (!definitions.isEmpty()) {
       JsonGenerator writer = state.getWriter();
 
       ObjectNode definitionsObject = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
 
-      for (INamedDefinition definition : definitions) {
+      for (IDefinition definition : definitions) {
         if (!state.isInline(definition)) {
           JsonDefinitionGenerator.generateDefinition(definition, definitionsObject, state);
         }

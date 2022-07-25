@@ -30,6 +30,6 @@ package gov.nist.secauto.metaschema.model.common;
  * This marker interface is used for some collections that contain various named definitions that
  * have an associated value.
  */
-public interface INamedValuedDefinition extends IValuedDefinition, INamedDefinition {
+public interface INamedValuedDefinition extends IValuedDefinition {
 
 }

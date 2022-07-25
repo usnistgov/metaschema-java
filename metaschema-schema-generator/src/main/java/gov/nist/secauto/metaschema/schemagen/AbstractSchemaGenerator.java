@@ -29,11 +29,11 @@ package gov.nist.secauto.metaschema.schemagen;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
@@ -51,7 +51,7 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
 
   @NotNull
   protected IInlineStrategy newInlineStrategy(@NotNull IConfiguration<SchemaGenerationFeature> configuration,
-      @NotNull Collection<@NotNull ? extends INamedDefinition> definitions) {
+      @NotNull Collection<@NotNull ? extends IDefinition> definitions) {
     IInlineStrategy retval;
     if (!configuration.isFeatureEnabled(SchemaGenerationFeature.INLINE_DEFINITIONS)) {
       retval = IInlineStrategy.NONE_INLINE;
@@ -65,18 +65,18 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
 
   private static class ChoiceInlineStrategy implements IInlineStrategy {
     @NotNull
-    private final Map<INamedDefinition, Boolean> definitionInlinedMap;
+    private final Map<IDefinition, Boolean> definitionInlinedMap;
 
-    public ChoiceInlineStrategy(@NotNull Collection<@NotNull ? extends INamedDefinition> definitions) {
+    public ChoiceInlineStrategy(@NotNull Collection<@NotNull ? extends IDefinition> definitions) {
       ChoiceModelWalker walker = new ChoiceModelWalker();
-      for (INamedDefinition definition : definitions) {
+      for (IDefinition definition : definitions) {
         walker.walkDefinition(definition);
       }
       definitionInlinedMap = walker.getDefinitionInlinedMap();
     }
 
     @Override
-    public boolean isInline(@NotNull INamedDefinition definition) {
+    public boolean isInline(@NotNull IDefinition definition) {
       Boolean inlined = definitionInlinedMap.get(definition);
       return inlined != null && inlined;
     }
@@ -85,11 +85,11 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
   private static class ChoiceModelWalker
       extends ModelWalker<@NotNull Integer> {
     @NotNull
-    private final Map<INamedDefinition, Boolean> definitionInlinedMap = new HashMap<>(); // NOPMD - intentional
-    private final Stack<INamedDefinition> visitStack = new Stack<>();
+    private final Map<IDefinition, Boolean> definitionInlinedMap = new HashMap<>(); // NOPMD - intentional
+    private final Stack<IDefinition> visitStack = new Stack<>();
 
     @NotNull
-    protected Map<INamedDefinition, Boolean> getDefinitionInlinedMap() {
+    protected Map<IDefinition, Boolean> getDefinitionInlinedMap() {
       return CollectionUtil.unmodifiableMap(definitionInlinedMap);
     }
 
@@ -105,7 +105,7 @@ public abstract class AbstractSchemaGenerator implements ISchemaGenerator {
      * @param inline
      *          the status to update to
      */
-    protected void updateInlineStatus(@NotNull INamedDefinition definition, boolean inline) {
+    protected void updateInlineStatus(@NotNull IDefinition definition, boolean inline) {
       Boolean value = definitionInlinedMap.get(definition);
 
       if (value == null || (value && value != inline)) { // NOPMD - readability

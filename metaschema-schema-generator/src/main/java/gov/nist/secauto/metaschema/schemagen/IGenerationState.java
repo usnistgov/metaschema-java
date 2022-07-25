@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +34,7 @@ public interface IGenerationState<WRITER, DATATYPE_MANAGER extends IDatatypeMana
   @NotNull
   WRITER getWriter();
 
-  boolean isInline(@NotNull INamedDefinition definition);
+  boolean isInline(@NotNull IDefinition definition);
 
   @NotNull
   DATATYPE_MANAGER getDatatypeManager();

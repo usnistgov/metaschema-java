@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.ResultType;
@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.DefaultNodeItemFac
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -51,23 +52,25 @@ public interface IConstraintSet {
 
   @NotNull
   static Set<@NotNull IConstraintSet> resolveConstraintSets(@NotNull Set<@NotNull IConstraintSet> constraintSets) {
-    return constraintSets.stream()
+    return ObjectUtils.notNull(constraintSets.stream()
         .flatMap(set -> resolveConstraintSet(set))
         .distinct()
-        .collect(Collectors.toUnmodifiableSet());
+        .collect(Collectors.toUnmodifiableSet()));
   }
 
   @NotNull
   private static Stream<@NotNull IConstraintSet> resolveConstraintSet(@NotNull IConstraintSet constraintSet) {
-    return Stream.concat(Stream.of(constraintSet), constraintSet.getImportedConstraintSets().stream());
+    return ObjectUtils.notNull(Stream.concat(
+        Stream.of(constraintSet),
+        constraintSet.getImportedConstraintSets().stream()));
   }
 
   @NotNull
   static List<@NotNull ITargetedConstaints> getTargetedConstraintsForMetaschema(
       @NotNull Set<@NotNull IConstraintSet> constraintSets, @NotNull IMetaschema metaschema) {
-    return resolveConstraintSets(constraintSets).stream()
+    return ObjectUtils.notNull(resolveConstraintSets(constraintSets).stream()
         .flatMap(set -> set.getTargetedConstraintsForMetaschema(metaschema))
-        .collect(Collectors.toUnmodifiableList());
+        .collect(Collectors.toUnmodifiableList()));
   }
 
   static void applyConstraintSetToMetaschema(@NotNull Set<@NotNull IConstraintSet> constraintSets,
@@ -86,7 +89,7 @@ public interface IConstraintSet {
             targetExpression.getPath(),
             metaschema.getQName()));
       } else if (node instanceof IDefinitionNodeItem) {
-        INamedDefinition nodeDefinition = ((IDefinitionNodeItem) node).getDefinition();
+        IDefinition nodeDefinition = ((IDefinitionNodeItem) node).getDefinition();
         IMetaschema nodeMetaschema = nodeDefinition.getContainingMetaschema();
         if (!metaschema.equals(nodeMetaschema)) {
           throw new MetaschemaException(

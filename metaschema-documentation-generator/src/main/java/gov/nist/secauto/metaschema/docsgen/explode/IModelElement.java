@@ -2,7 +2,7 @@
 package gov.nist.secauto.metaschema.docsgen.explode;
 
 import gov.nist.secauto.metaschema.docsgen.explode.IModelElementVisitor.IModelElementVisitable;
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem;
@@ -32,5 +32,5 @@ public interface IModelElement extends IModelElementVisitable {
   INamedInstance getInstance();
 
   @NotNull
-  INamedDefinition getDefinition();
+  IDefinition getDefinition();
 }

@@ -36,7 +36,6 @@ import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
@@ -82,7 +81,7 @@ public final class JsonDefinitionGenerator {
     }
   }
 
-  public static void generateDefinition(@NotNull INamedDefinition definition, @NotNull ObjectNode parentNode,
+  public static void generateDefinition(@NotNull IDefinition definition, @NotNull ObjectNode parentNode,
       @NotNull GenerationState state)
       throws IOException {
     JsonDatatypeManager datatypeManager = state.getDatatypeManager();

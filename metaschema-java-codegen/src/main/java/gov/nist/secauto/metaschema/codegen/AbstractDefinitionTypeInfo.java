@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.codegen;
 
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +38,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-abstract class AbstractDefinitionTypeInfo<DEF extends INamedDefinition> implements INamedDefinitionTypeInfo {
+abstract class AbstractDefinitionTypeInfo<DEF extends IDefinition> implements INamedDefinitionTypeInfo {
   private static final Logger LOGGER = LogManager.getLogger(AbstractDefinitionTypeInfo.class);
   @NotNull
   private final DEF definition;
