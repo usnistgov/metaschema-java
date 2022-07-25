@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.ModelType;
 
 import org.jmock.Expectations;
@@ -52,7 +52,7 @@ class DefaultBindingConfigurationTest {
 
   @RegisterExtension
   JUnit5Mockery context = new JUnit5Mockery();
-  private final INamedModelDefinition definition = context.mock(INamedModelDefinition.class);
+  private final IModelDefinition definition = context.mock(IModelDefinition.class);
   private final IMetaschema metaschema = context.mock(IMetaschema.class);
 
   @Test

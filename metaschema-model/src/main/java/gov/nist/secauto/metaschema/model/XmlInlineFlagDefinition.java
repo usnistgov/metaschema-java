@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model;
 
 import gov.nist.secauto.metaschema.model.common.AbstractFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.IInlineNamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IInlineDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.constraint.IAllowedValuesConstraint;
@@ -72,7 +72,7 @@ class XmlInlineFlagDefinition
    * @param parent
    *          the parent definition, which must be a definition type that can contain flags.
    */
-  public XmlInlineFlagDefinition(@NotNull InlineFlagDefinitionType xmlFlag, @NotNull INamedModelDefinition parent) {
+  public XmlInlineFlagDefinition(@NotNull InlineFlagDefinitionType xmlFlag, @NotNull IModelDefinition parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
     this.flagDefinition = new InternalFlagDefinition();
@@ -170,7 +170,7 @@ class XmlInlineFlagDefinition
   /**
    * The corresponding definition for the local flag instance.
    */
-  public class InternalFlagDefinition implements IFlagDefinition, IInlineNamedDefinition<XmlInlineFlagDefinition> {
+  public class InternalFlagDefinition implements IFlagDefinition, IInlineDefinition<XmlInlineFlagDefinition> {
 
     @Override
     public boolean isInline() {

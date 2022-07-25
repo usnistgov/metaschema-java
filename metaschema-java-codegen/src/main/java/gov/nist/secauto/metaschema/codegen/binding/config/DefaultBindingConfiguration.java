@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.codegen.xmlbeans.ObjectDefinitionBindingType;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.xmlbeans.XmlException;
@@ -76,7 +76,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
    */
   @Nullable
   public IDefinitionBindingConfiguration
-      getBindingConfigurationForDefinition(@NotNull INamedModelDefinition definition) {
+      getBindingConfigurationForDefinition(@NotNull IModelDefinition definition) {
     String metaschemaUri = ObjectUtils.notNull(definition.getContainingMetaschema().getLocation().toString());
     String definitionName = definition.getName();
 
@@ -100,7 +100,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   }
 
   @Override
-  public String getQualifiedBaseClassName(INamedModelDefinition definition) {
+  public String getQualifiedBaseClassName(IModelDefinition definition) {
     IDefinitionBindingConfiguration config = getBindingConfigurationForDefinition(definition);
 
     String retval = null;
@@ -111,7 +111,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   }
 
   @Override
-  public String getClassName(INamedModelDefinition definition) {
+  public String getClassName(IModelDefinition definition) {
     IDefinitionBindingConfiguration config = getBindingConfigurationForDefinition(definition);
 
     String retval = null;

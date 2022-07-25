@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSu
 import javax.xml.namespace.QName;
 
 public interface IAssemblyDefinition
-    extends INamedModelDefinition, IModelContainer, IAssembly, IAssemblyConstraintSupport {
+    extends IModelDefinition, IModelContainer, IAssembly, IAssemblyConstraintSupport {
 
   /**
    * Check if the assembly is a top-level root assembly.

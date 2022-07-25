@@ -34,7 +34,7 @@ public interface IFlagInstanceTypeInfo extends IInstanceTypeInfo {
   @NotNull
   static IFlagInstanceTypeInfo newTypeInfo(
       @NotNull IFlagInstance instance,
-      @NotNull INamedDefinitionTypeInfo parentDefinition) {
+      @NotNull IDefinitionTypeInfo parentDefinition) {
     return new FlagInstanceTypeInfoImpl(instance, parentDefinition);
   }
 

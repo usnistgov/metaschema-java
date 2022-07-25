@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.AbstractFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.IInlineNamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IInlineDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.model.common.MetaschemaModelConstants;
@@ -218,7 +218,7 @@ class XmlInlineFieldDefinition
   /**
    * The corresponding definition for the local flag instance.
    */
-  public class InternalFieldDefinition implements IFieldDefinition, IInlineNamedDefinition<XmlInlineFieldDefinition> {
+  public class InternalFieldDefinition implements IFieldDefinition, IInlineDefinition<XmlInlineFieldDefinition> {
     private XmlFlagContainerSupport flagContainer;
     private IValueConstraintSupport constraints;
 

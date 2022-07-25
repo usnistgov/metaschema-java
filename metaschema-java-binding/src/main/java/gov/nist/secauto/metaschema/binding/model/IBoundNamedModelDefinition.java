@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +36,7 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-public interface IBoundNamedModelDefinition extends INamedModelDefinition {
+public interface IBoundNamedModelDefinition extends IModelDefinition {
 
   @Override
   default @NotNull Map<@NotNull QName, Set<@NotNull String>> getProperties() {

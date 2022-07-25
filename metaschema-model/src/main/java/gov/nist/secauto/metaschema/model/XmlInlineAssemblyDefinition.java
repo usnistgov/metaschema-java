@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.IInlineNamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IInlineDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
@@ -208,7 +208,7 @@ class XmlInlineAssemblyDefinition
    * The corresponding definition for the local flag instance.
    */
   public class InternalAssemblyDefinition
-      implements IAssemblyDefinition, IInlineNamedDefinition<XmlInlineAssemblyDefinition> {
+      implements IAssemblyDefinition, IInlineDefinition<XmlInlineAssemblyDefinition> {
     private XmlFlagContainerSupport flagContainer;
     private XmlModelContainerSupport modelContainer;
     private IAssemblyConstraintSupport constraints;

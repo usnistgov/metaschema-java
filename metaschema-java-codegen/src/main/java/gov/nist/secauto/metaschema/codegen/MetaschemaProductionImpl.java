@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.codegen;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +50,7 @@ class MetaschemaProductionImpl implements IMetaschemaProduction {
   @NotNull
   private final IGeneratedClass generatedMetaschema;
   @NotNull
-  private final Map<@NotNull INamedModelDefinition, IDefinitionProduction> definitionProductions;
+  private final Map<@NotNull IModelDefinition, IDefinitionProduction> definitionProductions;
   @NotNull
   private final String packageName;
 
@@ -66,7 +66,7 @@ class MetaschemaProductionImpl implements IMetaschemaProduction {
     Stream<@NotNull DefinitionProductionImpl> productions
         = Stream.concat(metaschema.getAssemblyDefinitions().stream(), metaschema.getFieldDefinitions().stream())
             .map(definition -> {
-              INamedModelDefinitionTypeInfo typeInfo = null;
+              IModelDefinitionTypeInfo typeInfo = null;
               if (definition instanceof IAssemblyDefinition) {
                 typeInfo = IAssemblyDefinitionTypeInfo.newTypeInfo((IAssemblyDefinition) definition, typeResolver);
               } else if (definition instanceof IFieldDefinition) {
@@ -80,7 +80,7 @@ class MetaschemaProductionImpl implements IMetaschemaProduction {
             })
             .flatMap(ObjectUtils::filterNull)
             .map(typeInfo -> {
-              INamedModelDefinition definition = typeInfo.getDefinition();
+              IModelDefinition definition = typeInfo.getDefinition();
               DefaultGeneratedDefinitionClass generatedClass;
               try {
                 generatedClass = typeInfo.generateClass(targetDirectory);
@@ -106,7 +106,7 @@ class MetaschemaProductionImpl implements IMetaschemaProduction {
 
     @NotNull
     @SuppressWarnings("null")
-    Map<@NotNull INamedModelDefinition, IDefinitionProduction> retval = productions.collect(
+    Map<@NotNull IModelDefinition, IDefinitionProduction> retval = productions.collect(
         Collectors.toUnmodifiableMap(DefinitionProductionImpl::getDefinition, Function.identity()));
 
     this.definitionProductions = retval;
@@ -126,7 +126,7 @@ class MetaschemaProductionImpl implements IMetaschemaProduction {
 
   @Override
   @SuppressWarnings("null")
-  public Collection<@NotNull ? extends INamedModelDefinition> getGlobalDefinitions() {
+  public Collection<@NotNull ? extends IModelDefinition> getGlobalDefinitions() {
     return definitionProductions.keySet();
   }
 

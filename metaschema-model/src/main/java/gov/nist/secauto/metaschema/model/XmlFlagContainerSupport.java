@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.xmlbeans.FlagReferenceType;
 import gov.nist.secauto.metaschema.model.xmlbeans.GlobalAssemblyDefinitionType;
@@ -139,7 +139,7 @@ class XmlFlagContainerSupport {
 
   @NotNull
   private static Map<@NotNull String, IFlagInstance> parseLocalFlags(@NotNull XmlObject xmlObject,
-      @NotNull INamedModelDefinition parent) {
+      @NotNull IModelDefinition parent) {
     // handle flags
     XmlCursor cursor = xmlObject.newCursor();
     cursor.selectPath(

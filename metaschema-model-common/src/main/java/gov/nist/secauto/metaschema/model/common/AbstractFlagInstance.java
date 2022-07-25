@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractFlagInstance implements IFlagInstance {
   @NotNull
-  private final INamedModelDefinition parent;
+  private final IModelDefinition parent;
 
   /**
    * Create a new flag instance.
@@ -38,12 +38,12 @@ public abstract class AbstractFlagInstance implements IFlagInstance {
    * @param parent
    *          the parent definition, which must be a definition type that can contain flags.
    */
-  public AbstractFlagInstance(@NotNull INamedModelDefinition parent) {
+  public AbstractFlagInstance(@NotNull IModelDefinition parent) {
     this.parent = parent;
   }
 
   @Override
-  public INamedModelDefinition getContainingDefinition() {
+  public IModelDefinition getContainingDefinition() {
     return parent;
   }
 

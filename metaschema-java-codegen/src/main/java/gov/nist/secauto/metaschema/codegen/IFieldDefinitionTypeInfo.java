@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
  * Java class type information for an {@link IFieldDefinition} used for generating a Java class for
  * the definition.
  */
-public interface IFieldDefinitionTypeInfo extends INamedModelDefinitionTypeInfo {
+public interface IFieldDefinitionTypeInfo extends IModelDefinitionTypeInfo {
 
   /**
    * Construct a new type info based on the provided definition.

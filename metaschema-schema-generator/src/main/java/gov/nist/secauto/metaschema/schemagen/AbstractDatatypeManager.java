@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.schemagen;
 import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
@@ -142,7 +142,7 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
     StringBuilder builder = new StringBuilder();
     if (definition.isInline()) {
       INamedInstance inlineInstance = definition.getInlineInstance();
-      INamedModelDefinition parentDefinition = inlineInstance.getContainingDefinition();
+      IModelDefinition parentDefinition = inlineInstance.getContainingDefinition();
       if (parentDefinition == null) {
         throw new IllegalStateException();
       }

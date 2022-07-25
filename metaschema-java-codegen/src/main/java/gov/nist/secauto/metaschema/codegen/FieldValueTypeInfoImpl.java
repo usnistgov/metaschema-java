@@ -33,7 +33,7 @@ import com.squareup.javapoet.TypeName;
 
 import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
@@ -63,7 +63,7 @@ class FieldValueTypeInfoImpl
   }
 
   @Override
-  protected @NotNull Set<@NotNull INamedModelDefinition> buildField(FieldSpec.Builder builder) {
+  protected @NotNull Set<@NotNull IModelDefinition> buildField(FieldSpec.Builder builder) {
     IFieldDefinition definition = getParentDefinitionTypeInfo().getDefinition();
     AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(BoundFieldValue.class);
 

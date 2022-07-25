@@ -26,14 +26,14 @@
 
 package gov.nist.secauto.metaschema.codegen;
 
-import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
 public interface IGeneratedDefinitionClass extends IGeneratedClass {
 
   @NotNull
-  INamedModelDefinition getDefinition();
+  IModelDefinition getDefinition();
 
   /**
    * Indicates if the class represents a root Metaschema assembly which can be the top-level
