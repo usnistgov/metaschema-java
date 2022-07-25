@@ -36,7 +36,7 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-public interface IBoundNamedModelDefinition extends IModelDefinition {
+public interface IBoundModelDefinition extends IModelDefinition {
 
   @Override
   default @NotNull Map<@NotNull QName, Set<@NotNull String>> getProperties() {

@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface IBoundFieldDefinition extends IBoundNamedModelDefinition, IFieldDefinition {
+public interface IBoundFieldDefinition extends IBoundModelDefinition, IFieldDefinition {
 
   @Override
   @NotNull
