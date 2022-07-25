@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.codegen;
 
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,9 +34,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
+// TODO: rename to IDefinitionTypeInfo
 public interface INamedDefinitionTypeInfo {
   @NotNull
-  INamedDefinition getDefinition();
+  IDefinition getDefinition();
 
   /**
    * Gets the resolver which can be used to lookup Java type information for Metaschema objects.

@@ -27,9 +27,9 @@
 package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
 import org.jetbrains.annotations.NotNull;
@@ -110,7 +110,7 @@ public abstract class AbstractTargetedConstraints<T extends IValueConstraintSupp
     getConstraintSupport().addConstraint(constraint);
   }
 
-  protected void applyTo(@NotNull INamedDefinition definition) {
+  protected void applyTo(@NotNull IDefinition definition) {
     getAllowedValuesConstraints().forEach(constraint -> definition.addConstraint(constraint));
     getMatchesConstraints().forEach(constraint -> definition.addConstraint(constraint));
     getIndexHasKeyConstraints().forEach(constraint -> definition.addConstraint(constraint));

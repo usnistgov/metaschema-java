@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ public interface IDefinitionNodeItem extends INodeItem {
    * @return the definition
    */
   @NotNull
-  INamedDefinition getDefinition();
+  IDefinition getDefinition();
 
   /**
    * Retrieve the instance associated with this path segment.

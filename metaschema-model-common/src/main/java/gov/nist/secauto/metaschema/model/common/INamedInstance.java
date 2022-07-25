@@ -45,7 +45,7 @@ public interface INamedInstance extends IInstance, INamedModelElement {
    * @return the corresponding definition
    */
   @NotNull
-  INamedDefinition getDefinition();
+  IDefinition getDefinition();
 
   /**
    * Get the XML qualified name to use in XML.
@@ -92,7 +92,7 @@ public interface INamedInstance extends IInstance, INamedModelElement {
   @SuppressWarnings("null")
   @Override
   default String toCoordinates() {
-    INamedDefinition definition = getDefinition();
+    IDefinition definition = getDefinition();
 
     INamedModelDefinition containingDefinition = getContainingDefinition();
     String retval;

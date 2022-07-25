@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +34,7 @@ public interface IInlineStrategy {
   @NotNull
   public static final IInlineStrategy NONE_INLINE = new IInlineStrategy() {
     @Override
-    public boolean isInline(@NotNull INamedDefinition definition) {
+    public boolean isInline(@NotNull IDefinition definition) {
       return false;
     }
   };
@@ -42,10 +42,10 @@ public interface IInlineStrategy {
   @NotNull
   public static final IInlineStrategy DEFINED_AS_INLINE = new IInlineStrategy() {
     @Override
-    public boolean isInline(@NotNull INamedDefinition definition) {
+    public boolean isInline(@NotNull IDefinition definition) {
       return definition.isInline();
     }
   };
 
-  boolean isInline(@NotNull INamedDefinition definition);
+  boolean isInline(@NotNull IDefinition definition);
 }

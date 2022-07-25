@@ -40,7 +40,7 @@ import java.util.function.Function;
  */
 public class UsedDefinitionModelWalker
     extends DefinitionCollectingModelWalker {
-  private static final Function<INamedDefinition, Boolean> FILTER = (def) -> {
+  private static final Function<IDefinition, Boolean> FILTER = (def) -> {
     return true;
     // return def.isGlobal();
     // return def.isGlobal() || (def instanceof AssemblyDefinition &&
@@ -55,7 +55,7 @@ public class UsedDefinitionModelWalker
    * @return the collection of used definitions
    */
   @NotNull
-  public static Collection<@NotNull ? extends INamedDefinition>
+  public static Collection<@NotNull ? extends IDefinition>
       collectUsedDefinitions(Collection<@NotNull ? extends IAssemblyDefinition> definitions) {
     UsedDefinitionModelWalker walker = new UsedDefinitionModelWalker();
     for (IAssemblyDefinition definition : definitions) {
@@ -73,7 +73,7 @@ public class UsedDefinitionModelWalker
    * @return a collection of matching definitions
    */
   @NotNull
-  public static Collection<@NotNull ? extends INamedDefinition>
+  public static Collection<@NotNull ? extends IDefinition>
       collectUsedDefinitionsFromMetaschema(@NotNull Collection<@NotNull ? extends IMetaschema> metaschemas) {
     Set<@NotNull IAssemblyDefinition> definitions = new HashSet<>();
     for (IMetaschema metaschema : metaschemas) {
@@ -101,7 +101,7 @@ public class UsedDefinitionModelWalker
    * @return a collection of matching definitions
    */
   @NotNull
-  public static Collection<@NotNull ? extends INamedDefinition>
+  public static Collection<@NotNull ? extends IDefinition>
       collectUsedDefinitionsFromMetaschema(@NotNull IMetaschema metaschema) {
     return collectUsedDefinitionsFromMetaschema(CollectionUtil.singleton(metaschema));
   }

@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +58,7 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
   }
 
   @Override
-  public boolean isInline(@NotNull INamedDefinition definition) {
+  public boolean isInline(@NotNull IDefinition definition) {
     return inlineStrategy.isInline(definition);
   }
 
@@ -66,7 +66,7 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
     return getDatatypeManager().getTypeNameForDatatype(datatype);
   }
 
-  public String getTypeNameForDefinition(@NotNull INamedDefinition definition) {
+  public String getTypeNameForDefinition(@NotNull IDefinition definition) {
     return getDatatypeManager().getTypeNameForDefinition(definition, this);
   }
 }

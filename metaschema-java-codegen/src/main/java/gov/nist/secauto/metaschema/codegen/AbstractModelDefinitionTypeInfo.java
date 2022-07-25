@@ -32,9 +32,9 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
@@ -126,7 +126,7 @@ class AbstractModelDefinitionTypeInfo<DEF extends INamedModelDefinition>
   }
 
   protected void buildCommonProperties(@NotNull AnnotationSpec.Builder annotation) {
-    INamedDefinition definition = getDefinition();
+    IDefinition definition = getDefinition();
 
     if (definition.getFormalName() != null) {
       annotation.addMember("formalName", "$S", definition.getFormalName());

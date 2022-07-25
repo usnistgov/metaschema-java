@@ -26,11 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
+import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface IDefinition extends INamedModelElement {
+public interface IDefinition extends INamedModelElement, IValueConstraintSupport {
 
   @NotNull
   ModuleScopeEnum DEFAULT_DEFINITION_MODEL_SCOPE = ModuleScopeEnum.INHERITED;
@@ -72,4 +73,20 @@ public interface IDefinition extends INamedModelElement {
   default MarkupLine getEffectiveDescription() {
     return getDescription();
   }
+
+  /**
+   * Determine if the definition is defined inline, meaning the definition is declared where it is
+   * used.
+   * 
+   * @return {@code true} if the definition is declared inline or {@code false} if the definition is
+   *         able to be globally referenced
+   */
+  boolean isInline();
+
+  /**
+   * If {@link #isInline()} is {@code true}, return the instance the definition is inlined for.
+   * 
+   * @return the instance or {@code null} otherwise
+   */
+  INamedInstance getInlineInstance();
 }

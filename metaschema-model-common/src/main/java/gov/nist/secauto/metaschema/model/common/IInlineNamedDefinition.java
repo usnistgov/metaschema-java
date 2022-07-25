@@ -35,7 +35,8 @@ import org.jetbrains.annotations.NotNull;
  * @param <INSTANCE>
  *          the associated instance type
  */
-public interface IInlineNamedDefinition<INSTANCE extends INamedInstance> extends INamedDefinition {
+// TODO: rename to IInlineDefinition
+public interface IInlineNamedDefinition<INSTANCE extends INamedInstance> extends IDefinition {
   @Override
   default boolean isInline() {
     return true;

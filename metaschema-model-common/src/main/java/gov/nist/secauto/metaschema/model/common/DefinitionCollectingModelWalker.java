@@ -46,9 +46,9 @@ public abstract class DefinitionCollectingModelWalker
     extends ModelWalker<Void> {
   private static final Logger LOGGER = LogManager.getLogger(DefinitionCollectingModelWalker.class);
 
-  private final Function<INamedDefinition, Boolean> filter;
+  private final Function<IDefinition, Boolean> filter;
   @NotNull
-  private final Set<INamedDefinition> definitions = new LinkedHashSet<>();
+  private final Set<@NotNull IDefinition> definitions = new LinkedHashSet<>();
 
   @Override
   protected Void getDefaultData() { // NOPMD - intentional
@@ -61,7 +61,7 @@ public abstract class DefinitionCollectingModelWalker
    * @param filter
    *          the filter to match definitions against
    */
-  protected DefinitionCollectingModelWalker(Function<INamedDefinition, Boolean> filter) {
+  protected DefinitionCollectingModelWalker(Function<IDefinition, Boolean> filter) {
     Objects.requireNonNull(filter, "filter");
     this.filter = filter;
   }
@@ -71,7 +71,7 @@ public abstract class DefinitionCollectingModelWalker
    * 
    * @return the filter
    */
-  protected Function<INamedDefinition, Boolean> getFilter() {
+  protected Function<IDefinition, Boolean> getFilter() {
     return filter;
   }
 
@@ -81,7 +81,7 @@ public abstract class DefinitionCollectingModelWalker
    * @return the collection of definitions
    */
   @NotNull
-  public Collection<@NotNull ? extends INamedDefinition> getDefinitions() {
+  public Collection<@NotNull ? extends IDefinition> getDefinitions() {
     return definitions;
   }
 

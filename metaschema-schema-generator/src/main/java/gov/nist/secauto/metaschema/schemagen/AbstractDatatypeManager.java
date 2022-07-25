@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
@@ -76,7 +76,7 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
   private final Map<gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter<?>,
       String> datatypeToTypeMap = new HashMap<>();
   @NotNull
-  private final Map<INamedDefinition, String> definitionToNameMap
+  private final Map<IDefinition, String> definitionToNameMap
       = new HashMap<>();
 
   @SuppressWarnings("null")
@@ -105,7 +105,7 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
   }
 
   @Override
-  public String getTypeNameForDefinition(@NotNull INamedDefinition definition, @NotNull IGenerationState<?, ?> state) {
+  public String getTypeNameForDefinition(@NotNull IDefinition definition, @NotNull IGenerationState<?, ?> state) {
     String retval = definitionToNameMap.get(definition);
     if (retval == null) {
       StringBuilder builder = new StringBuilder()
@@ -137,7 +137,7 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
    *          the metaschema of the left node
    * @return the unique type name
    */
-  private CharSequence getTypeContext(@NotNull INamedDefinition definition,
+  private CharSequence getTypeContext(@NotNull IDefinition definition,
       @NotNull IMetaschema childMetaschema, @NotNull IGenerationState<?, ?> state) {
     StringBuilder builder = new StringBuilder();
     if (definition.isInline()) {

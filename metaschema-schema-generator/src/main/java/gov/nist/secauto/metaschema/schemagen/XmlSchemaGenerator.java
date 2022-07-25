@@ -30,13 +30,13 @@ import com.ctc.wstx.stax.WstxOutputFactory;
 
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IChoiceInstance;
+import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IModelInstance;
-import gov.nist.secauto.metaschema.model.common.INamedDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.INamedModelDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
@@ -141,7 +141,7 @@ public class XmlSchemaGenerator
       @NotNull
       String targetNS = metaschema.getXmlNamespace().toASCIIString();
 
-      Collection<@NotNull ? extends INamedDefinition> definitions
+      Collection<@NotNull ? extends IDefinition> definitions
           = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
 
       Set<String> visitedNamespaces = new HashSet<>();
@@ -157,8 +157,8 @@ public class XmlSchemaGenerator
 
       Collection<@NotNull IAssemblyDefinition> rootAssemblyDefinitions
           = new LinkedList<>();
-      Set<@NotNull INamedDefinition> globalDefinitions = new LinkedHashSet<>();
-      for (INamedDefinition definition : definitions) {
+      Set<@NotNull IDefinition> globalDefinitions = new LinkedHashSet<>();
+      for (IDefinition definition : definitions) {
         String xmlNS = definition.getContainingMetaschema().getXmlNamespace().toASCIIString();
 
         if (!(definition instanceof IFlagDefinition) && !targetNS.equals(xmlNS)) {
@@ -196,7 +196,7 @@ public class XmlSchemaGenerator
         }
       }
 
-      for (INamedDefinition definition : definitions) {
+      for (IDefinition definition : definitions) {
         generateComplexType(definition, state);
       }
 
@@ -211,7 +211,7 @@ public class XmlSchemaGenerator
   }
 
   protected void generateMetadata(@NotNull IMetaschema metaschema, XMLStreamWriter2 writer) throws XMLStreamException {
-    String targetNS = metaschema.getXmlNamespace().toASCIIString();
+    String targetNS = ObjectUtils.notNull(metaschema.getXmlNamespace().toASCIIString());
     writer.writeStartElement(NS_XML_SCHEMA, "annotation");
     writer.writeStartElement(NS_XML_SCHEMA, "appinfo");
 
@@ -286,7 +286,7 @@ public class XmlSchemaGenerator
     writer.writeEndElement(); // xs:annotation
   }
 
-  private void generateMetadata(@NotNull INamedDefinition definition, @NotNull GenerationState state)
+  private void generateMetadata(@NotNull IDefinition definition, @NotNull GenerationState state)
       throws XMLStreamException {
     String formalName = definition.getFormalName();
     MarkupLine description = definition.getDescription();
@@ -311,7 +311,7 @@ public class XmlSchemaGenerator
     writer.writeEndElement();
   }
 
-  private void generateComplexType(@NotNull INamedDefinition definition, @NotNull GenerationState state)
+  private void generateComplexType(@NotNull IDefinition definition, @NotNull GenerationState state)
       throws XMLStreamException {
     switch (definition.getModelType()) {
     case ASSEMBLY:
@@ -486,7 +486,7 @@ public class XmlSchemaGenerator
     writer.writeEndElement(); // xs:element
   }
 
-  private void generateTypeReferenceForDefinition(@NotNull INamedDefinition definition, @NotNull GenerationState state)
+  private void generateTypeReferenceForDefinition(@NotNull IDefinition definition, @NotNull GenerationState state)
       throws XMLStreamException {
     CharSequence ref;
     switch (definition.getModelType()) {
@@ -543,19 +543,15 @@ public class XmlSchemaGenerator
     XMLStreamWriter2 writer = state.getWriter();
     writer.writeStartElement("xs", "sequence", NS_XML_SCHEMA);
 
-    if (!grouped) {
-      if (fieldInstance.getMinOccurs() != 1) {
-        writer.writeAttribute("minOccurs", String.format("%d", fieldInstance.getMinOccurs()));
-      }
+    // minOccurs=1 is the default
+    if (!grouped && fieldInstance.getMinOccurs() != 1) {
+      writer.writeAttribute("minOccurs", String.format("%d", fieldInstance.getMinOccurs()));
     }
 
-    writer.writeAttribute("maxOccurs", "unbounded");
-    //
-    // if (fieldInstance.getMaxOccurs() != 1) {
-    // writer.writeAttribute("maxOccurs",
-    // fieldInstance.getMaxOccurs() == -1 ? "unbounded" : String.format("%d",
-    // fieldInstance.getMaxOccurs()));
-    // }
+    if (fieldInstance.getMaxOccurs() != 1) {
+      writer.writeAttribute("maxOccurs",
+          fieldInstance.getMaxOccurs() == -1 ? "unbounded" : String.format("%d", fieldInstance.getMaxOccurs()));
+    }
 
     generateInstanceMetadata(fieldInstance, true, state);
 
@@ -573,7 +569,7 @@ public class XmlSchemaGenerator
     MarkupMultiline definitionRemarks = null;
 
     if (full) {
-      INamedDefinition definition = instance.getDefinition();
+      IDefinition definition = instance.getDefinition();
       if (formalName == null) {
         formalName = definition.getFormalName();
       }
@@ -582,6 +578,7 @@ public class XmlSchemaGenerator
         description = definition.getDescription();
       }
 
+      // TODO: combine definition and instance remarks
       definitionRemarks = definition.getRemarks();
     }
 
@@ -724,7 +721,7 @@ public class XmlSchemaGenerator
 
     @SuppressWarnings("null")
     @NotNull
-    public String getNS(@NotNull INamedDefinition definition) {
+    public String getNS(@NotNull IDefinition definition) {
       return definition.getContainingMetaschema().getXmlNamespace().toASCIIString();
     }
 

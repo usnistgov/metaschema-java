@@ -37,7 +37,8 @@ import java.util.Collection;
  * These definitions contain flags, and potentially a simple value (for a field) or complex model
  * contents (for an assembly).
  */
-public interface INamedModelDefinition extends INamedDefinition {
+// TODO: rename to IModelDefinition
+public interface INamedModelDefinition extends IDefinition {
   /**
    * Identifies if the field has flags or not.
    * 
