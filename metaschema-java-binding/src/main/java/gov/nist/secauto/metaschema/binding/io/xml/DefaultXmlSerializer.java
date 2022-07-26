@@ -36,7 +36,6 @@ import gov.nist.secauto.metaschema.binding.model.RootAssemblyDefinition;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -44,33 +43,39 @@ import java.io.Writer;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class DefaultXmlSerializer<CLASS>
     extends AbstractSerializer<CLASS> {
   private XMLOutputFactory2 xmlOutputFactory;
 
-  public DefaultXmlSerializer(@NotNull IBindingContext bindingContext, @NotNull IAssemblyClassBinding classBinding) {
+  public DefaultXmlSerializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
+  @NonNull
   protected XMLOutputFactory2 getXMLOutputFactory() {
     synchronized (this) {
       if (xmlOutputFactory == null) {
-        xmlOutputFactory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
+        xmlOutputFactory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
+        assert xmlOutputFactory instanceof WstxOutputFactory;
         xmlOutputFactory.configureForSpeed();
         xmlOutputFactory.setProperty(WstxOutputProperties.P_USE_DOUBLE_QUOTES_IN_XML_DECL, true);
         xmlOutputFactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
       }
+      assert xmlOutputFactory != null;
       return xmlOutputFactory;
     }
   }
 
-  protected void setXMLOutputFactory(@NotNull XMLOutputFactory2 xmlOutputFactory) {
+  protected void setXMLOutputFactory(@NonNull XMLOutputFactory2 xmlOutputFactory) {
     synchronized (this) {
       this.xmlOutputFactory = xmlOutputFactory;
     }
   }
 
-  protected XMLStreamWriter2 newXMLStreamWriter(@NotNull Writer writer) throws IOException {
+  @NonNull
+  protected XMLStreamWriter2 newXMLStreamWriter(@NonNull Writer writer) throws IOException {
     try {
       XMLStreamWriter2 streamWriter = (XMLStreamWriter2) getXMLOutputFactory().createXMLStreamWriter(writer);
       streamWriter = new IndentingXmlStreamWriter2(streamWriter);

@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,16 +38,24 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public final class CustomCollectors {
   private CustomCollectors() {
     // disable
   }
 
-  public static Collector<CharSequence, ?, String> joiningWithOxfordComma(@NotNull String conjunction) {
+  @SuppressWarnings("null")
+  @NonNull
+  public static <T> Function<T, T> identity() {
+    return Function.identity();
+  }
+
+  public static Collector<CharSequence, ?, String> joiningWithOxfordComma(@NonNull String conjunction) {
     return Collectors.collectingAndThen(Collectors.toList(), withOxfordComma(conjunction));
   }
 
-  private static Function<List<CharSequence>, String> withOxfordComma(@NotNull String conjunction) {
+  private static Function<List<CharSequence>, String> withOxfordComma(@NonNull String conjunction) {
     return list -> {
       int size = list.size();
       if (size < 2) {
@@ -82,8 +88,8 @@ public final class CustomCollectors {
    * @return a new stream
    */
   public static <V, K> Stream<V> distinctByKey(
-      @NotNull Stream<V> stream,
-      @NotNull Function<? super V, ? extends K> keyMapper) {
+      @NonNull Stream<V> stream,
+      @NonNull Function<? super V, ? extends K> keyMapper) {
     return distinctByKey(stream, keyMapper, (key, value1, value2) -> value2);
   }
 
@@ -105,65 +111,69 @@ public final class CustomCollectors {
    * @return a new stream
    */
   public static <V, K> Stream<V> distinctByKey(
-      @NotNull Stream<V> stream,
-      @NotNull Function<? super V, ? extends K> keyMapper,
-      @NotNull DuplicateHandler<K, V> duplicateHander) {
+      @NonNull Stream<V> stream,
+      @NonNull Function<? super V, ? extends K> keyMapper,
+      @NonNull DuplicateHandler<K, V> duplicateHander) {
     Map<K, V> uniqueRoles = stream
         .collect(CustomCollectors.toMap(
             keyMapper,
-            Function.identity(),
+            CustomCollectors.identity(),
             duplicateHander,
             LinkedHashMap::new));
     return uniqueRoles.values().stream();
   }
 
+  @NonNull
   public static <T, K, V> Collector<T, ?, Map<K, V>> toMap(
-      @NotNull Function<? super T, ? extends K> keyMapper,
-      @NotNull Function<? super T, ? extends V> valueMapper,
-      @NotNull DuplicateHandler<K, V> duplicateHander) {
+      @NonNull Function<? super T, ? extends K> keyMapper,
+      @NonNull Function<? super T, ? extends V> valueMapper,
+      @NonNull DuplicateHandler<K, V> duplicateHander) {
     return toMap(keyMapper, valueMapper, duplicateHander, HashMap::new);
   }
 
+  @NonNull
   public static <T, K, V, M extends Map<K, V>> Collector<T, ?, M> toMap(
-      @NotNull Function<? super T, ? extends K> keyMapper,
-      @NotNull Function<? super T, ? extends V> valueMapper,
-      @NotNull DuplicateHandler<K, V> duplicateHander,
+      @NonNull Function<? super T, ? extends K> keyMapper,
+      @NonNull Function<? super T, ? extends V> valueMapper,
+      @NonNull DuplicateHandler<K, V> duplicateHander,
       Supplier<M> supplier) {
-    return Collector.of(
-        supplier,
-        (map, item) -> {
-          K key = keyMapper.apply(item);
-          V value = Objects.requireNonNull(valueMapper.apply(item));
-          V oldValue = map.get(key);
-          if (oldValue != null) {
-            value = duplicateHander.handle(key, oldValue, value);
-          }
-          map.put(key, value);
-        },
-        (map1, map2) -> {
-          map2.forEach((key, value) -> {
-            V oldValue = map1.get(key);
-            if (oldValue != null) {
-              value = duplicateHander.handle(key, oldValue, value);
-            }
-            map1.put(key, value);
-          });
-          return map1;
-        });
+    return ObjectUtils.notNull(
+        Collector.of(
+            supplier,
+            (map, item) -> {
+              K key = keyMapper.apply(item);
+              V value = Objects.requireNonNull(valueMapper.apply(item));
+              V oldValue = map.get(key);
+              if (oldValue != null) {
+                value = duplicateHander.handle(key, oldValue, value);
+              }
+              map.put(key, value);
+            },
+            (map1, map2) -> {
+              map2.forEach((key, value) -> {
+                V oldValue = map1.get(key);
+                V newValue = value;
+                if (oldValue != null) {
+                  newValue = duplicateHander.handle(key, oldValue, value);
+                }
+                map1.put(key, newValue);
+              });
+              return map1;
+            }));
   }
 
   @FunctionalInterface
   public interface DuplicateHandler<K, V> {
-    @NotNull
-    V handle(K key, @NotNull V value1, V value2);
+    @NonNull
+    V handle(K key, @NonNull V value1, V value2);
   }
 
-  @NotNull
+  @NonNull
   public static <T> BinaryOperator<T> useFirstMapper() {
     return (value1, value2) -> value1;
   }
 
-  @NotNull
+  @NonNull
   public static <T> BinaryOperator<T> useLastMapper() {
     return (value1, value2) -> value2;
   }

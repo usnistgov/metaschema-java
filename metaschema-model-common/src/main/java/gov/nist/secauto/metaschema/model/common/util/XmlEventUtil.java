@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.model.common.util;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamReader2;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +37,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamConstants;
@@ -77,13 +78,13 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  private static Object escape(@NotNull String data) {
+  @NonNull
+  private static Object escape(@NonNull String data) {
     return data.chars().mapToObj(c -> (char) c).map(c -> escape(c)).collect(Collectors.joining());
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   private static String escape(char ch) {
     String retval;
     switch (ch) {
@@ -107,14 +108,14 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    *          the event to generate the message for
    * @return the message
    */
-  @NotNull
+  @NonNull
   public static CharSequence toString(XMLEvent xmlEvent) {
     CharSequence retval;
     if (xmlEvent == null) {
       retval = "EOF";
     } else {
       @SuppressWarnings("null")
-      @NotNull
+      @NonNull
       StringBuilder builder = new StringBuilder()
           .append(toEventName(xmlEvent));
       QName name = toQName(xmlEvent);
@@ -144,8 +145,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * @return the message
    */
   @SuppressWarnings("null")
-  @NotNull
-  public static CharSequence toString(@NotNull Location location) {
+  @NonNull
+  public static CharSequence toString(@NonNull Location location) {
     return new StringBuilder()
         .append(location.getLineNumber())
         .append(':')
@@ -159,18 +160,18 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    *          the stream reader
    * @return the generated string
    */
-  @NotNull
-  public static CharSequence toString(@NotNull XMLStreamReader2 reader) { // NO_UCD (unused code)
+  @NonNull
+  public static CharSequence toString(@NonNull XMLStreamReader2 reader) { // NO_UCD (unused code)
     int type = reader.getEventType();
 
     @SuppressWarnings("null")
-    @NotNull
+    @NonNull
     StringBuilder builder = new StringBuilder().append(toEventName(type));
     QName name = reader.getName();
     if (name != null) {
       builder.append(": ").append(name.toString());
     }
-    if (XMLEvent.CHARACTERS == type) {
+    if (XMLStreamConstants.CHARACTERS == type) {
       String text = reader.getText();
       if (text != null) {
         builder.append(" '").append(escape(text)).append('\'');
@@ -190,7 +191,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    *          the event to identify the location for
    * @return the location or {@code null} if the location is unknown
    */
-  public static Location toLocation(@NotNull XMLEvent event) {
+  @Nullable
+  public static Location toLocation(@NonNull XMLEvent event) {
     Location retval = null;
     if (event.isStartElement()) {
       StartElement start = event.asStartElement();
@@ -210,9 +212,10 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * 
    * @param event
    *          the event to get the {@link QName} for
-   * @return the name of the node
+   * @return the name of the node or {@code null} if the event is not a start or end element
    */
-  public static QName toQName(@NotNull XMLEvent event) {
+  @Nullable
+  public static QName toQName(@NonNull XMLEvent event) {
     QName retval = null;
     if (event.isStartElement()) {
       StartElement start = event.asStartElement();
@@ -231,7 +234,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    *          the event to get the event name for
    * @return the event name
    */
-  public static String toEventName(@NotNull XMLEvent event) {
+  @NonNull
+  public static String toEventName(@NonNull XMLEvent event) {
     return toEventName(event.getEventType());
   }
 
@@ -243,6 +247,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    *          the event constant to get the event name for as defined by {@link XMLStreamConstants}
    * @return the event name
    */
+  @NonNull
   public static String toEventName(int eventType) {
     String retval = EVENT_NAME_MAP.get(eventType);
     if (retval == null) {
@@ -263,7 +268,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * @throws XMLStreamException
    *           if an error occurred while advancing the stream
    */
-  public static XMLEvent advanceTo(@NotNull XMLEventReader2 reader, int eventType)
+  @Nullable
+  public static XMLEvent advanceTo(@NonNull XMLEventReader2 reader, int eventType)
       throws XMLStreamException { // NO_UCD (unused code)
     XMLEvent xmlEvent;
     do {
@@ -293,7 +299,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * @throws XMLStreamException
    *           if an error occurred while advancing the stream
    */
-  public static XMLEvent skipProcessingInstructions(@NotNull XMLEventReader2 reader) throws XMLStreamException {
+  @NonNull
+  public static XMLEvent skipProcessingInstructions(@NonNull XMLEventReader2 reader) throws XMLStreamException {
     XMLEvent nextEvent;
     while ((nextEvent = reader.peek()).isProcessingInstruction()) {
       nextEvent = reader.nextEvent();
@@ -311,7 +318,10 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * @throws XMLStreamException
    *           if an error occurred while advancing the stream
    */
-  public static XMLEvent skipWhitespace(@NotNull XMLEventReader2 reader) throws XMLStreamException {
+  @SuppressWarnings("null")
+  @NonNull
+  public static XMLEvent skipWhitespace(@NonNull XMLEventReader2 reader) throws XMLStreamException {
+    @NonNull
     XMLEvent nextEvent;
     while ((nextEvent = reader.peek()).isCharacters()) {
       Characters characters = nextEvent.asCharacters();
@@ -338,7 +348,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    *           if an error occurred while looking at the next event
    */
   @SuppressWarnings("null")
-  public static boolean isNextEventEndElement(@NotNull XMLEventReader2 reader, @NotNull QName name)
+  public static boolean isNextEventEndElement(@NonNull XMLEventReader2 reader, @NonNull QName name)
       throws XMLStreamException {
     return isNextEventEndElement(reader, name.getLocalPart(), name.getNamespaceURI());
   }
@@ -357,7 +367,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * @throws XMLStreamException
    *           if an error occurred while looking at the next event
    */
-  public static boolean isNextEventEndElement(@NotNull XMLEventReader2 reader, @NotNull String expectedLocalName,
+  public static boolean isNextEventEndElement(@NonNull XMLEventReader2 reader, @NonNull String expectedLocalName,
       String expectedNamespace) throws XMLStreamException {
     Objects.requireNonNull(reader, "reader");
     Objects.requireNonNull(expectedLocalName, "expectedLocalName");

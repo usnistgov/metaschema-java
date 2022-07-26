@@ -26,11 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Indicates that the Metaschema definition type has a complex model that can contain flags, field,
@@ -53,16 +53,16 @@ public interface IModelContainer {
    * 
    * @return an ordered mapping of use name to model instance
    */
-  @NotNull
-  Collection<@NotNull ? extends INamedModelInstance> getNamedModelInstances();
+  @NonNull
+  Collection<? extends INamedModelInstance> getNamedModelInstances();
 
   /**
    * Get all field instances within the container.
    * 
    * @return a mapping of use name to field instance
    */
-  @NotNull
-  Collection<@NotNull ? extends IFieldInstance> getFieldInstances();
+  @NonNull
+  Collection<? extends IFieldInstance> getFieldInstances();
 
   /**
    * Get the field instance contained within the model with the associated use name.
@@ -80,8 +80,8 @@ public interface IModelContainer {
    * 
    * @return a mapping of use name to assembly instance
    */
-  @NotNull
-  Collection<@NotNull ? extends IAssemblyInstance> getAssemblyInstances();
+  @NonNull
+  Collection<? extends IAssemblyInstance> getAssemblyInstances();
 
   /**
    * Get the assembly instance contained within the model with the associated use name.
@@ -99,14 +99,14 @@ public interface IModelContainer {
    * 
    * @return a list of choice instances
    */
-  @NotNull
-  List<@NotNull ? extends IChoiceInstance> getChoiceInstances();
+  @NonNull
+  List<? extends IChoiceInstance> getChoiceInstances();
 
   /**
    * Get all model instances within the container.
    * 
    * @return an ordered collection of model instances
    */
-  @NotNull
-  Collection<@NotNull ? extends IModelInstance> getModelInstances();
+  @NonNull
+  Collection<? extends IModelInstance> getModelInstances();
 }

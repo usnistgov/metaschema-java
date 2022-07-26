@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.junit.jupiter.api.Test;
 
@@ -49,7 +50,8 @@ class DefaultBindingContextTest {
   @Test
   void testConstraints() throws MetaschemaException, IOException { // NOPMD - intentional
     ConstraintLoader constraintLoader = new ConstraintLoader();
-    IConstraintSet constraintSet = constraintLoader.load(Paths.get("src/test/resources/content/constraints.xml"));
+    IConstraintSet constraintSet = constraintLoader.load(
+        ObjectUtils.notNull(Paths.get("src/test/resources/content/constraints.xml")));
 
     IBindingContext bindingContext = new DefaultBindingContext(CollectionUtil.singleton(constraintSet));
     IMetaschema metaschema = bindingContext.getMetaschemaInstanceByClass(TestMetaschema.class);

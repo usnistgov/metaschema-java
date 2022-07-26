@@ -29,12 +29,12 @@ package gov.nist.secauto.metaschema.binding.model.annotations;
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.regex.Pattern;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Identifies a Metapath expression referencing a value that is used in generating a key as part of
@@ -53,7 +53,7 @@ public @interface KeyField {
    * 
    * @return the target metapath
    */
-  @NotNull
+  @NonNull
   String target() default ".";
 
   /**
@@ -63,7 +63,7 @@ public @interface KeyField {
    * 
    * @return a pattern string or an empty string if no pattern is provided
    */
-  @NotNull
+  @NonNull
   String pattern() default "";
 
   /**
@@ -71,6 +71,6 @@ public @interface KeyField {
    * 
    * @return an encoded markdown string or an empty string if no remarks are provided
    */
-  @NotNull
+  @NonNull
   String remarks() default "";
 }

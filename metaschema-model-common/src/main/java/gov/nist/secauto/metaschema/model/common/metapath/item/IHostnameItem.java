@@ -29,11 +29,11 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IHostnameItem extends IStringItem {
-  @NotNull
-  public static IHostnameItem valueOf(@NotNull String value) {
+  @NonNull
+  public static IHostnameItem valueOf(@NonNull String value) {
     try {
       return new HostnameItemImpl(MetaschemaDataTypeProvider.HOSTNAME.parse(value));
     } catch (IllegalArgumentException ex) {
@@ -42,8 +42,8 @@ public interface IHostnameItem extends IStringItem {
     }
   }
 
-  @NotNull
-  public static IHostnameItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  @NonNull
+  public static IHostnameItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.HOSTNAME.cast(item);
   }
 

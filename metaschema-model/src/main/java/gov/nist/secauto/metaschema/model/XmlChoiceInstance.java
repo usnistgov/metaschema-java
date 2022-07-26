@@ -36,16 +36,17 @@ import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.xmlbeans.ChoiceType;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class XmlChoiceInstance
     extends AbstractChoiceInstance {
-  @NotNull
+  @NonNull
   private final ChoiceType xmlChoice;
   private XmlModelContainerSupport modelContainer;
 
@@ -58,8 +59,8 @@ class XmlChoiceInstance
    *          the parent assembly definition that contains this choice
    */
   public XmlChoiceInstance(
-      @NotNull ChoiceType xmlChoice,
-      @NotNull IAssemblyDefinition containingAssembly) {
+      @NonNull ChoiceType xmlChoice,
+      @NonNull IAssemblyDefinition containingAssembly) {
     super(containingAssembly);
     this.xmlChoice = xmlChoice;
 
@@ -76,7 +77,7 @@ class XmlChoiceInstance
    * 
    * @return the underlying XML data
    */
-  @NotNull
+  @NonNull
   protected ChoiceType getXmlChoice() {
     return xmlChoice;
   }
@@ -93,7 +94,7 @@ class XmlChoiceInstance
     }
   }
 
-  private Map<@NotNull String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
+  private Map<String, ? extends INamedModelInstance> getNamedModelInstanceMap() {
     initModelContainer();
     return modelContainer.getNamedModelInstanceMap();
   }
@@ -105,11 +106,11 @@ class XmlChoiceInstance
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull Collection<@NotNull ? extends INamedModelInstance> getNamedModelInstances() {
+  public @NonNull Collection<? extends INamedModelInstance> getNamedModelInstances() {
     return getNamedModelInstanceMap().values();
   }
 
-  private Map<@NotNull String, ? extends IFieldInstance> getFieldInstanceMap() {
+  private Map<String, ? extends IFieldInstance> getFieldInstanceMap() {
     initModelContainer();
     return modelContainer.getFieldInstanceMap();
   }
@@ -121,11 +122,11 @@ class XmlChoiceInstance
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IFieldInstance> getFieldInstances() {
+  public Collection<? extends IFieldInstance> getFieldInstances() {
     return getFieldInstanceMap().values();
   }
 
-  private Map<@NotNull String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
+  private Map<String, ? extends IAssemblyInstance> getAssemblyInstanceMap() {
     initModelContainer();
     return modelContainer.getAssemblyInstanceMap();
   }
@@ -137,25 +138,25 @@ class XmlChoiceInstance
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IAssemblyInstance> getAssemblyInstances() {
+  public Collection<? extends IAssemblyInstance> getAssemblyInstances() {
     return getAssemblyInstanceMap().values();
   }
 
   @Override
-  public List<@NotNull ? extends IChoiceInstance> getChoiceInstances() {
+  public List<? extends IChoiceInstance> getChoiceInstances() {
     initModelContainer();
     return modelContainer.getChoiceInstances();
   }
 
   @Override
-  public List<@NotNull ? extends IModelInstance> getModelInstances() {
+  public List<? extends IModelInstance> getModelInstances() {
     initModelContainer();
     return modelContainer.getModelInstances();
   }
 
   @Override
   public MarkupMultiline getRemarks() {
-    // TODO: add support if remarks are added
+    // TODO: add support when remarks are added
     return null;
   }
 }

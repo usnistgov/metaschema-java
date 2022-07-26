@@ -26,23 +26,23 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IAssemblyInstance extends INamedModelInstance, IAssembly {
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   @Override
   default String getXmlNamespace() {
     return INamedModelInstance.super.getXmlNamespace();
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   @Override
   default QName getXmlQName() {
     return INamedModelInstance.super.getXmlQName();
@@ -50,12 +50,11 @@ public interface IAssemblyInstance extends INamedModelInstance, IAssembly {
 
   @Override
   default String getJsonName() {
-    @NotNull
+    @NonNull
     String retval;
     if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      @SuppressWarnings("null")
-      @NotNull
-      String groupAsName = Objects.requireNonNull(getGroupAsName(), "null group-as name");
+      @NonNull
+      String groupAsName = ObjectUtils.requireNonNull(getGroupAsName(), "null group-as name");
       retval = groupAsName;
     } else {
       retval = getEffectiveName();

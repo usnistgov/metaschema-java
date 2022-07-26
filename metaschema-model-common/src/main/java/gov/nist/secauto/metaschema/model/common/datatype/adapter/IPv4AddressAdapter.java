@@ -28,8 +28,7 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIPv4AddressItem;
 
-import org.jetbrains.annotations.NotNull;
-
+import edu.umd.cs.findbugs.annotations.NonNull;
 import inet.ipaddr.AddressStringException;
 import inet.ipaddr.IPAddressString;
 import inet.ipaddr.IPAddressStringParameters;
@@ -74,7 +73,7 @@ public class IPv4AddressAdapter
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull Class<IIPv4AddressItem> getItemClass() {
+  public @NonNull Class<IIPv4AddressItem> getItemClass() {
     return IIPv4AddressItem.class;
   }
 

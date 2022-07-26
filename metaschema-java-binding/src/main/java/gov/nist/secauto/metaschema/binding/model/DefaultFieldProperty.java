@@ -48,31 +48,31 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DefaultFieldProperty
     extends AbstractFieldProperty
     implements IBoundJavaCollectionField {
 
-  @NotNull
+  @NonNull
   private final Field field;
-  @NotNull
+  @NonNull
   private final BoundField fieldAnnotation;
-  @NotNull
+  @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   private IBoundFieldDefinition definition;
   private IValueConstraintSupport constraints;
 
-  public static DefaultFieldProperty createInstance(@NotNull IAssemblyClassBinding parentClassBinding,
-      @NotNull Field field) {
+  public static DefaultFieldProperty createInstance(@NonNull IAssemblyClassBinding parentClassBinding,
+      @NonNull Field field) {
     return new DefaultFieldProperty(parentClassBinding, field);
   }
 
-  public DefaultFieldProperty(@NotNull IAssemblyClassBinding parentClassBinding, @NotNull Field field) {
+  public DefaultFieldProperty(@NonNull IAssemblyClassBinding parentClassBinding, @NonNull Field field) {
     super(parentClassBinding);
     this.field = ObjectUtils.requireNonNull(field, "field");
 
@@ -110,12 +110,12 @@ class DefaultFieldProperty
     return field;
   }
 
-  @NotNull
+  @NonNull
   public BoundField getFieldAnnotation() {
     return fieldAnnotation;
   }
 
-  @NotNull
+  @NonNull
   protected IDataTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
   }
@@ -132,8 +132,8 @@ class DefaultFieldProperty
           definition = (IFieldClassBinding) classBinding;
         }
       }
+      return ObjectUtils.notNull(definition);
     }
-    return ObjectUtils.notNull(definition);
   }
 
   @Override
@@ -211,7 +211,7 @@ class DefaultFieldProperty
   private class ScalarFieldDefinition implements IBoundFieldDefinition {
 
     @Override
-    public @NotNull Object getFieldValue(@NotNull Object item) {
+    public @NonNull Object getFieldValue(@NonNull Object item) {
       return item;
     }
 
@@ -266,9 +266,8 @@ class DefaultFieldProperty
       return null;
     }
 
-    @SuppressWarnings("null")
     @Override
-    public Collection<@NotNull ? extends IBoundFlagInstance> getFlagInstances() {
+    public Collection<? extends IBoundFlagInstance> getFlagInstances() {
       return CollectionUtil.emptyList();
     }
 
@@ -334,31 +333,31 @@ class DefaultFieldProperty
     }
 
     @Override
-    public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+    public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
       checkModelConstraints();
       constraints.addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IMatchesConstraint constraint) {
+    public void addConstraint(@NonNull IMatchesConstraint constraint) {
       checkModelConstraints();
       constraints.addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+    public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
       checkModelConstraints();
       constraints.addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IExpectConstraint constraint) {
+    public void addConstraint(@NonNull IExpectConstraint constraint) {
       checkModelConstraints();
       constraints.addConstraint(constraint);
     }
 
     @Override
-    public @NotNull ModuleScopeEnum getModuleScope() {
+    public @NonNull ModuleScopeEnum getModuleScope() {
       // TODO: is this the right value?
       return ModuleScopeEnum.INHERITED;
     }

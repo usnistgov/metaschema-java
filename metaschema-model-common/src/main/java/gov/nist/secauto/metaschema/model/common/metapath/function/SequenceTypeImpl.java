@@ -66,10 +66,9 @@ class SequenceTypeImpl implements ISequenceType {
     StringBuilder builder = new StringBuilder();
 
     // name
-    builder.append(getType().getName());
-
-    // occurrence
-    builder.append(getOccurrence().getIndicator());
+    builder.append(getType().getName())
+        // occurrence
+        .append(getOccurrence().getIndicator());
 
     return builder.toString();
   }
@@ -82,13 +81,13 @@ class SequenceTypeImpl implements ISequenceType {
   @Override
   public boolean equals(Object obj) {
     if (this == obj) {
-      return true;
+      return true; // NOPMD - readability
     }
     if (obj == null) {
-      return false;
+      return false; // NOPMD - readability
     }
     if (getClass() != obj.getClass()) {
-      return false;
+      return false; // NOPMD - readability
     }
     SequenceTypeImpl other = (SequenceTypeImpl) obj;
     return occurrence == other.occurrence && Objects.equals(type, other.type);

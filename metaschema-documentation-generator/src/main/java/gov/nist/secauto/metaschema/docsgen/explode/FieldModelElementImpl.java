@@ -4,29 +4,28 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFieldNodeItem;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class FieldModelElementImpl
     extends AbstractModelElement<IFieldNodeItem>
     implements IFieldModelElement {
 
-  protected FieldModelElementImpl(@NotNull IFieldNodeItem nodeItem) {
+  protected FieldModelElementImpl(@NonNull IFieldNodeItem nodeItem) {
     super(nodeItem);
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(@NotNull IModelElementVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+  public <RESULT, CONTEXT> RESULT accept(@NonNull IModelElementVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitField(this, context);
   }
 
   @Override
-  public @NotNull IFieldDefinition getDefinition() {
+  public IFieldDefinition getDefinition() {
     return getNodeItem().getDefinition();
   }
 
   @Override
-  public @Nullable IFieldInstance getInstance() {
+  public IFieldInstance getInstance() {
     return getNodeItem().getInstance();
   }
 }

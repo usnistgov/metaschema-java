@@ -29,25 +29,25 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.UUID;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IUuidItem extends IAnyAtomicItem {
 
-  @NotNull
-  public static IUuidItem valueOf(@NotNull UUID value) {
+  @NonNull
+  public static IUuidItem valueOf(@NonNull UUID value) {
     return new UuidItemImpl(value);
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   public static IUuidItem random() {
     return valueOf(UUID.randomUUID());
   }
 
-  @NotNull
-  public static IUuidItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  @NonNull
+  public static IUuidItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.UUID.cast(item);
   }
 

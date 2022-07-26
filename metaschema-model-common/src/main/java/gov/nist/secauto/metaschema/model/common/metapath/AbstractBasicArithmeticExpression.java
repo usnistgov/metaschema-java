@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 abstract class AbstractBasicArithmeticExpression
     extends AbstractArithmeticExpression<IAnyAtomicItem> {
@@ -42,12 +42,12 @@ abstract class AbstractBasicArithmeticExpression
    * @param right
    *          the second item
    */
-  public AbstractBasicArithmeticExpression(@NotNull IExpression left, @NotNull IExpression right) {
+  public AbstractBasicArithmeticExpression(@NonNull IExpression left, @NonNull IExpression right) {
     super(left, right, IAnyAtomicItem.class);
   }
 
   @Override
-  public Class<@NotNull IAnyAtomicItem> getBaseResultType() {
+  public Class<IAnyAtomicItem> getBaseResultType() {
     return IAnyAtomicItem.class;
   }
 
@@ -68,7 +68,7 @@ abstract class AbstractBasicArithmeticExpression
    *          the second item
    * @return the result of the operation or an empty {@link ISequence} if either item is {@code null}
    */
-  @NotNull
+  @NonNull
   protected ISequence<? extends IAnyAtomicItem> resultOrEmpty(@Nullable IAnyAtomicItem leftItem,
       @Nullable IAnyAtomicItem rightItem) {
     ISequence<? extends IAnyAtomicItem> retval;
@@ -90,6 +90,6 @@ abstract class AbstractBasicArithmeticExpression
    *          the second item
    * @return the result of the operation
    */
-  @NotNull
-  protected abstract IAnyAtomicItem operation(@NotNull IAnyAtomicItem left, @NotNull IAnyAtomicItem right);
+  @NonNull
+  protected abstract IAnyAtomicItem operation(@NonNull IAnyAtomicItem left, @NonNull IAnyAtomicItem right);
 }

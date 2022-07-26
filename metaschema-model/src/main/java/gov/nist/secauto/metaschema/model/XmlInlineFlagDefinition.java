@@ -48,19 +48,19 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.InlineFlagDefinitionType;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class XmlInlineFlagDefinition
     extends AbstractFlagInstance {
-  @NotNull
+  @NonNull
   private final InlineFlagDefinitionType xmlFlag;
-  @NotNull
+  @NonNull
   private final InternalFlagDefinition flagDefinition;
   private IValueConstraintSupport constraints;
 
@@ -72,7 +72,7 @@ class XmlInlineFlagDefinition
    * @param parent
    *          the parent definition, which must be a definition type that can contain flags.
    */
-  public XmlInlineFlagDefinition(@NotNull InlineFlagDefinitionType xmlFlag, @NotNull IModelDefinition parent) {
+  public XmlInlineFlagDefinition(@NonNull InlineFlagDefinitionType xmlFlag, @NonNull IModelDefinition parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
     this.flagDefinition = new InternalFlagDefinition();
@@ -128,9 +128,8 @@ class XmlInlineFlagDefinition
         : null;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+  public Map<QName, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlFlag().getPropList()));
   }
 
@@ -162,7 +161,7 @@ class XmlInlineFlagDefinition
   }
 
   @Override
-  public Object getValue(@NotNull Object parentValue) {
+  public Object getValue(@NonNull Object parentValue) {
     // there is no value
     return null;
   }
@@ -208,7 +207,7 @@ class XmlInlineFlagDefinition
     }
 
     @Override
-    public @NotNull Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+    public Map<QName, Set<String>> getProperties() {
       return XmlInlineFlagDefinition.this.getProperties();
     }
 
@@ -249,25 +248,25 @@ class XmlInlineFlagDefinition
     }
 
     @Override
-    public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+    public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
       checkModelConstraints();
       constraints.addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IMatchesConstraint constraint) {
+    public void addConstraint(@NonNull IMatchesConstraint constraint) {
       checkModelConstraints();
       constraints.addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+    public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
       checkModelConstraints();
       constraints.addConstraint(constraint);
     }
 
     @Override
-    public void addConstraint(@NotNull IExpectConstraint constraint) {
+    public void addConstraint(@NonNull IExpectConstraint constraint) {
       checkModelConstraints();
       constraints.addConstraint(constraint);
     }

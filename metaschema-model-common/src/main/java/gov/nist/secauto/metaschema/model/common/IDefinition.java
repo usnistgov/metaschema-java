@@ -29,11 +29,11 @@ package gov.nist.secauto.metaschema.model.common;
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IDefinition extends INamedModelElement, IValueConstraintSupport {
 
-  @NotNull
+  @NonNull
   ModuleScopeEnum DEFAULT_DEFINITION_MODEL_SCOPE = ModuleScopeEnum.INHERITED;
 
   /**
@@ -41,7 +41,7 @@ public interface IDefinition extends INamedModelElement, IValueConstraintSupport
    * 
    * @return the module scope
    */
-  @NotNull
+  @NonNull
   ModuleScopeEnum getModuleScope();
 
   /**

@@ -32,8 +32,7 @@ import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -42,6 +41,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 // TODO: make all read and write methods take the value, not the parent instance as an argument
 interface IModelPropertyInfo {
   /**
@@ -49,7 +50,7 @@ interface IModelPropertyInfo {
    * 
    * @return the property
    */
-  @NotNull
+  @NonNull
   IBoundNamedModelInstance getProperty();
 
   /**
@@ -57,10 +58,10 @@ interface IModelPropertyInfo {
    *
    * @return the raw type of the bound object
    */
-  @NotNull
+  @NonNull
   Class<?> getItemType();
 
-  @NotNull
+  @NonNull
   IPropertyCollector newPropertyCollector();
 
   // TODO is the following needed?
@@ -78,12 +79,12 @@ interface IModelPropertyInfo {
    * @throws IOException
    *           if there was an error when reading JSON data
    */
-  void readValue(@NotNull IPropertyCollector collector, @Nullable Object parentInstance,
-      @NotNull IJsonParsingContext context)
+  void readValue(@NonNull IPropertyCollector collector, @Nullable Object parentInstance,
+      @NonNull IJsonParsingContext context)
       throws IOException;
 
-  boolean readValue(@NotNull IPropertyCollector collector, @Nullable Object parentInstance, @NotNull StartElement start,
-      @NotNull IXmlParsingContext context)
+  boolean readValue(@NonNull IPropertyCollector collector, @Nullable Object parentInstance, @NonNull StartElement start,
+      @NonNull IXmlParsingContext context)
       throws IOException, XMLStreamException;
 
   /**
@@ -100,22 +101,22 @@ interface IModelPropertyInfo {
    * @throws IOException
    *           if an error occurred while writing to the output stream
    */
-  void writeValue(@NotNull Object value, @NotNull QName parentName, @NotNull IXmlWritingContext context)
+  void writeValue(@NonNull Object value, @NonNull QName parentName, @NonNull IXmlWritingContext context)
       throws XMLStreamException, IOException;
 
-  void writeValue(@NotNull Object parentInstance, @NotNull IJsonWritingContext context) throws IOException;
+  void writeValue(@NonNull Object parentInstance, @NonNull IJsonWritingContext context) throws IOException;
 
-  boolean isValueSet(@NotNull Object parentInstance) throws IOException;
+  boolean isValueSet(@NonNull Object parentInstance) throws IOException;
 
-  @NotNull
-  default Collection<@NotNull ? extends Object> getItemsFromParentInstance(@NotNull Object parentInstance) {
+  @NonNull
+  default Collection<? extends Object> getItemsFromParentInstance(@NonNull Object parentInstance) {
     Object value = getProperty().getValue(parentInstance);
     return getItemsFromValue(value);
   }
 
-  @NotNull
-  Collection<@NotNull ? extends Object> getItemsFromValue(Object value);
+  @NonNull
+  Collection<? extends Object> getItemsFromValue(Object value);
 
-  void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull IPropertyCollector collector)
+  void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
       throws BindingException;
 }

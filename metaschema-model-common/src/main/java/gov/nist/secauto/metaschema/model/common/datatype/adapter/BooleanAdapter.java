@@ -35,9 +35,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class BooleanAdapter
     extends AbstractDataTypeAdapter<Boolean, IBooleanItem> {
@@ -95,7 +95,7 @@ public class BooleanAdapter
   }
 
   @Override
-  protected @NotNull IBooleanItem castInternal(@NotNull IAnyAtomicItem item) {
+  protected @NonNull IBooleanItem castInternal(@NonNull IAnyAtomicItem item) {
     IBooleanItem retval;
     if (item instanceof INumericItem) {
       retval = castToBoolean((INumericItem) item);
@@ -107,13 +107,13 @@ public class BooleanAdapter
     return retval;
   }
 
-  @NotNull
-  protected IBooleanItem castToBoolean(@NotNull INumericItem item) {
+  @NonNull
+  protected IBooleanItem castToBoolean(@NonNull INumericItem item) {
     return IBooleanItem.valueOf(item.toEffectiveBoolean());
   }
 
-  @NotNull
-  protected IBooleanItem castToBoolean(@NotNull IStringItem item) throws InvalidValueForCastFunctionException {
+  @NonNull
+  protected IBooleanItem castToBoolean(@NonNull IStringItem item) throws InvalidValueForCastFunctionException {
     IBooleanItem retval;
     try {
       INumericItem numeric = INumericItem.cast(item);

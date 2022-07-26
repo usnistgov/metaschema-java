@@ -31,19 +31,20 @@ import com.fasterxml.jackson.core.JsonFactory;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.DefaultJsonSerializer;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DefaultYamlSerializer<CLASS>
     extends DefaultJsonSerializer<CLASS> {
 
-  public DefaultYamlSerializer(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
+  public DefaultYamlSerializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
   @Override
   protected JsonFactory getJsonFactoryInstance() {
-    return YamlFactoryFactory.instance();
+    return ObjectUtils.notNull(YamlFactoryFactory.instance());
   }
 
 }

@@ -43,8 +43,6 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.JsonSchemaGenerator.GenerationState;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -55,12 +53,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public final class JsonPropertyGenerator {
   private JsonPropertyGenerator() {
     // disable construction
   }
 
-  public static void generateDescription(IInstance instance, @NotNull ObjectNode propertyNode) {
+  public static void generateDescription(IInstance instance, @NonNull ObjectNode propertyNode) {
     MarkupMultiline remarks = instance.getRemarks();
     if (remarks != null) {
       propertyNode.put("description", remarks.toMarkdown());
@@ -68,9 +68,9 @@ public final class JsonPropertyGenerator {
   }
 
   public static void generateFlagProperty(
-      @NotNull IFlagInstance flag,
-      @NotNull InstanceProperties properties,
-      @NotNull GenerationState state) throws IOException {
+      @NonNull IFlagInstance flag,
+      @NonNull InstanceProperties properties,
+      @NonNull GenerationState state) throws IOException {
     String propertyName = flag.getJsonName();
     ObjectNode type = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
     generateInstancePropertyDefinitionOrRef(flag, type, state);
@@ -81,9 +81,9 @@ public final class JsonPropertyGenerator {
   }
 
   public static void generateSimpleFieldValueInstance(
-      @NotNull IFieldDefinition definition,
-      @NotNull InstanceProperties properties,
-      @NotNull GenerationState state) {
+      @NonNull IFieldDefinition definition,
+      @NonNull InstanceProperties properties,
+      @NonNull GenerationState state) {
     String propertyName = definition.getJsonValueKeyName();
     properties.addProperty(propertyName,
         ObjectUtils.notNull(JsonNodeFactory.instance.objectNode()
@@ -92,19 +92,19 @@ public final class JsonPropertyGenerator {
   }
 
   public static void generateCollapsibleFieldValueInstance(
-      @NotNull IFieldDefinition definition,
-      @NotNull InstanceProperties properties,
-      @NotNull GenerationState state) {
+      @NonNull IFieldDefinition definition,
+      @NonNull InstanceProperties properties,
+      @NonNull GenerationState state) {
     String propertyName = definition.getJsonValueKeyName();
 
     properties.addProperty(propertyName, generateCollapsibleFieldValueType(definition, state));
     properties.addRequired(propertyName);
   }
 
-  @NotNull
+  @NonNull
   public static ObjectNode generateCollapsibleFieldValueType(
-      @NotNull IFieldDefinition definition,
-      @NotNull GenerationState state) {
+      @NonNull IFieldDefinition definition,
+      @NonNull GenerationState state) {
     String definitionRef = state.getDatatypeManager().getJsonDefinitionRefForDatatype(definition.getJavaTypeAdapter());
 
     ObjectNode retval = JsonNodeFactory.instance.objectNode();
@@ -120,15 +120,13 @@ public final class JsonPropertyGenerator {
   }
 
   public static void generateInstanceProperty(
-      @NotNull INamedModelInstance instance,
-      @NotNull InstanceProperties properties,
-      @NotNull GenerationState state) throws IOException {
+      @NonNull INamedModelInstance instance,
+      @NonNull InstanceProperties properties,
+      @NonNull GenerationState state) throws IOException {
     JsonDatatypeManager datatypeManager = state.getDatatypeManager();
 
-    String propertyName = instance.getJsonName();
-
     @SuppressWarnings("null")
-    @NotNull
+    @NonNull
     ObjectNode instanceJsonObject = JsonNodeFactory.instance.objectNode();
     int maxOccurs = instance.getMaxOccurs();
     int minOccurs = instance.getMinOccurs();
@@ -138,7 +136,7 @@ public final class JsonPropertyGenerator {
         instanceJsonObject.put("type", "array");
 
         @SuppressWarnings("null")
-        @NotNull
+        @NonNull
         ObjectNode items = instanceJsonObject.putObject("items");
         generateInstancePropertyDefinitionOrRef(instance, items, state);
         instanceJsonObject.put("minItems", Math.max(1, minOccurs));
@@ -151,14 +149,14 @@ public final class JsonPropertyGenerator {
         ArrayNode oneOf = instanceJsonObject.putArray("oneOf");
 
         @SuppressWarnings("null")
-        @NotNull
+        @NonNull
         ObjectNode singleton = oneOf.addObject();
         generateInstancePropertyDefinitionOrRef(instance, singleton, state);
         ObjectNode arrayObject = oneOf.addObject();
         arrayObject.put("type", "array");
 
         @SuppressWarnings("null")
-        @NotNull
+        @NonNull
         ObjectNode items = arrayObject.putObject("items");
         generateInstancePropertyDefinitionOrRef(instance, items, state);
         arrayObject.put("minItems", Math.max(2, minOccurs));
@@ -181,7 +179,7 @@ public final class JsonPropertyGenerator {
                 datatypeManager.getJsonDefinitionRefForDatatype(jsonKey.getDefinition().getJavaTypeAdapter()));
         // TODO: is this correct?
         @SuppressWarnings("null")
-        @NotNull
+        @NonNull
         ObjectNode additional = instanceJsonObject.putObject("additionalProperties");
         generateInstancePropertyDefinitionOrRef(instance, additional, state);
         break;
@@ -194,6 +192,7 @@ public final class JsonPropertyGenerator {
       generateInstancePropertyDefinitionOrRef(instance, instanceJsonObject, state);
     }
 
+    String propertyName = instance.getJsonName();
     properties.addProperty(propertyName, instanceJsonObject);
 
     if (minOccurs > 0) {
@@ -202,26 +201,25 @@ public final class JsonPropertyGenerator {
   }
 
   public static void generateInstancePropertyDefinitionOrRef(
-      @NotNull INamedInstance instance,
-      @NotNull ObjectNode instanceNode,
-      @NotNull GenerationState state) throws IOException {
+      @NonNull INamedInstance instance,
+      @NonNull ObjectNode instanceNode,
+      @NonNull GenerationState state) throws IOException {
 
-    if (!state.isInline(instance.getDefinition())) {
+    if (state.isInline(instance.getDefinition())) {
+      JsonDefinitionGenerator.generateDefinition(instance.getDefinition(), instanceNode, state);
+    } else {
       String definitionRef
           = state.getDatatypeManager().getJsonDefinitionRefForDefinition(instance.getDefinition(), state);
       instanceNode.put("$ref", definitionRef);
-    } else {
-      JsonDefinitionGenerator.generateDefinition(instance.getDefinition(), instanceNode, state);
     }
   }
 
-  @NotNull
   public static void generateChoices(
-      @NotNull Collection<@NotNull ? extends IChoiceInstance> choices,
-      @NotNull InstanceProperties properties,
-      @NotNull ObjectNode definitionNode,
-      @NotNull GenerationState state) throws IOException {
-    List<@NotNull InstanceProperties> propertyChoices = CollectionUtil.singletonList(properties);
+      @NonNull Collection<? extends IChoiceInstance> choices,
+      @NonNull InstanceProperties properties,
+      @NonNull ObjectNode definitionNode,
+      @NonNull GenerationState state) throws IOException {
+    List<InstanceProperties> propertyChoices = CollectionUtil.singletonList(properties);
     propertyChoices = explodeChoices(choices, propertyChoices, state);
 
     if (propertyChoices.size() == 1) {
@@ -238,15 +236,15 @@ public final class JsonPropertyGenerator {
     }
   }
 
-  protected static List<@NotNull InstanceProperties> explodeChoices(
-      @NotNull Collection<@NotNull ? extends IChoiceInstance> choices,
-      @NotNull List<InstanceProperties> propertyChoices,
-      @NotNull GenerationState state) throws IOException {
+  private static List<InstanceProperties> explodeChoices(
+      @NonNull Collection<? extends IChoiceInstance> choices,
+      @NonNull List<InstanceProperties> propertyChoices,
+      @NonNull GenerationState state) throws IOException {
 
     List<InstanceProperties> retval = propertyChoices;
 
     for (IChoiceInstance choice : choices) {
-      List<InstanceProperties> newRetval = new LinkedList<>();
+      List<InstanceProperties> newRetval = new LinkedList<>(); // NOPMD - intentional
       for (IModelInstance optionInstance : choice.getModelInstances()) {
         if (ModelType.CHOICE.equals(optionInstance.getModelType())) {
           // recurse
@@ -258,7 +256,7 @@ public final class JsonPropertyGenerator {
           // iterate over the old array of choices and append new choice
           for (InstanceProperties oldInstanceProperties : retval) {
             @SuppressWarnings("null")
-            @NotNull
+            @NonNull
             InstanceProperties newInstanceProperties = oldInstanceProperties.copy();
 
             // add the choice
@@ -283,7 +281,7 @@ public final class JsonPropertyGenerator {
       this(new LinkedHashMap<>(), new LinkedHashSet<>());
     }
 
-    protected InstanceProperties(@NotNull Map<String, ObjectNode> properties, @NotNull Set<String> required) {
+    protected InstanceProperties(@NonNull Map<String, ObjectNode> properties, @NonNull Set<String> required) {
       this.properties = properties;
       this.required = required;
     }
@@ -296,11 +294,11 @@ public final class JsonPropertyGenerator {
       return Collections.unmodifiableSet(required);
     }
 
-    public void addProperty(@NotNull String name, @NotNull ObjectNode def) {
+    public void addProperty(@NonNull String name, @NonNull ObjectNode def) {
       properties.put(name, def);
     }
 
-    public void addRequired(@NotNull String name) {
+    public void addRequired(@NonNull String name) {
       required.add(name);
     }
 
@@ -308,7 +306,7 @@ public final class JsonPropertyGenerator {
       return new InstanceProperties(new LinkedHashMap<>(properties), new LinkedHashSet<>(required));
     }
 
-    public void generate(@NotNull ObjectNode definitionNode) {
+    public void generate(@NonNull ObjectNode definitionNode) {
       if (!properties.isEmpty()) {
         ObjectNode propertiesNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
         for (Map.Entry<String, ObjectNode> entry : properties.entrySet()) {

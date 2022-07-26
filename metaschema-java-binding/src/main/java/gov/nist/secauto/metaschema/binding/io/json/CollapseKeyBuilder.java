@@ -32,8 +32,6 @@ import gov.nist.secauto.metaschema.binding.model.IBoundFieldValueInstance;
 import gov.nist.secauto.metaschema.binding.model.IBoundFlagInstance;
 import gov.nist.secauto.metaschema.binding.model.IFieldClassBinding;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,12 +41,14 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class CollapseKeyBuilder {
   private final IFieldClassBinding classBinding;
-  private final List<@NotNull IBoundFlagInstance> flagProperties;
-  private final Map<@NotNull CollapseKey, List<@NotNull Object>> keyToValuesMap;
+  private final List<IBoundFlagInstance> flagProperties;
+  private final Map<CollapseKey, List<Object>> keyToValuesMap;
 
   public CollapseKeyBuilder(IFieldClassBinding classBinding) {
     this.classBinding = classBinding;
@@ -60,18 +60,18 @@ public class CollapseKeyBuilder {
     return classBinding;
   }
 
-  protected List<@NotNull IBoundFlagInstance> getFlagProperties() {
+  protected List<IBoundFlagInstance> getFlagProperties() {
     return flagProperties;
   }
 
-  public void addAll(Collection<@NotNull ? extends Object> instances) {
+  public void addAll(Collection<? extends Object> instances) {
     for (Object instance : instances) {
       add(instance);
     }
   }
 
   // TODO: check and handle nullness of values
-  public void add(@NotNull Object instance) {
+  public void add(@NonNull Object instance) {
     int size = getFlagProperties().size();
     Object[] flagValues = new Object[size];
     int index = 0;
@@ -80,7 +80,7 @@ public class CollapseKeyBuilder {
     }
 
     CollapseKey key = new CollapseKey(flagValues);
-    List<@NotNull Object> values = this.keyToValuesMap.get(key);
+    List<Object> values = this.keyToValuesMap.get(key);
     if (values == null) {
       values = new LinkedList<>();
       this.keyToValuesMap.put(key, values);
@@ -90,12 +90,12 @@ public class CollapseKeyBuilder {
     values.add(value);
   }
 
-  public void write(boolean writeObjectWrapper, @NotNull IJsonWritingContext context) throws IOException {
+  public void write(boolean writeObjectWrapper, @NonNull IJsonWritingContext context) throws IOException {
     IFieldClassBinding classBinding = getClassBinding();
     IBoundFlagInstance jsonKey = classBinding.getJsonKeyFlagInstance();
     IBoundFlagInstance jsonValueKey = classBinding.getJsonValueKeyFlagInstance();
     IBoundFieldValueInstance fieldValue = classBinding.getFieldValueInstance();
-    List<@NotNull IBoundFlagInstance> flagProperties = getFlagProperties();
+    List<IBoundFlagInstance> flagProperties = getFlagProperties();
 
     // first build an index of the flag properties
     List<Integer> flagIndex;
@@ -120,7 +120,7 @@ public class CollapseKeyBuilder {
 
     JsonGenerator writer = context.getWriter(); // NOPMD - intentional
     // for each key, we need to write the properties
-    for (Map.Entry<@NotNull CollapseKey, List<@NotNull Object>> entry : keyToValuesMap.entrySet()) {
+    for (Map.Entry<CollapseKey, List<Object>> entry : keyToValuesMap.entrySet()) {
       CollapseKey key = entry.getKey();
 
       Object[] flagValues = key.getFlagValues();
@@ -149,7 +149,7 @@ public class CollapseKeyBuilder {
       }
 
       // finally write the field value
-      List<@NotNull Object> fieldValues = entry.getValue();
+      List<Object> fieldValues = entry.getValue();
       if (!fieldValues.isEmpty()) {
         String valueKeyName;
         if (jsonValueKey == null || jsonValueKeyIndex == null) {
@@ -184,8 +184,9 @@ public class CollapseKeyBuilder {
     private final Object[] flagValues;
     private Integer cachedHashCode;
 
-    public CollapseKey(Object... flagValues) {
-      this.flagValues = Arrays.copyOf(flagValues, flagValues.length);
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "access is restricted")
+    public CollapseKey(Object... values) {
+      this.flagValues = Arrays.copyOf(values, values.length);
     }
 
     protected Object[] getFlagValues() {
@@ -201,23 +202,23 @@ public class CollapseKeyBuilder {
           cachedHashCode = prime * cachedHashCode + getEnclosingInstance().hashCode();
           cachedHashCode = prime * cachedHashCode + Arrays.hashCode(flagValues);
         }
+        return cachedHashCode;
       }
-      return cachedHashCode;
     }
 
     @Override
     public boolean equals(Object obj) {
       if (this == obj) {
-        return true;
+        return true; // NOPMD - readability
       }
       if (!(obj instanceof CollapseKey)) {
-        return false;
+        return false; // NOPMD - readability
       }
       CollapseKey other = (CollapseKey) obj;
       if (!getEnclosingInstance().equals(other.getEnclosingInstance())) {
-        return false;
+        return false; // NOPMD - readability
       }
-      return Objects.equals(flagValues, other.flagValues);
+      return Arrays.equals(flagValues, other.flagValues);
     }
 
     private CollapseKeyBuilder getEnclosingInstance() {

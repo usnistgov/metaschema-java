@@ -27,19 +27,20 @@
 package gov.nist.secauto.metaschema.schemagen;
 
 import org.codehaus.stax2.XMLStreamWriter2;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
-public interface IDatatypeProvider {
-  @NotNull
-  Map<@NotNull String, IDatatypeContent> getDatatypes();
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-  @NotNull
-  Set<String> generateDatatypes(Set<@NotNull String> requiredTypes, @NotNull XMLStreamWriter2 writer)
+public interface IDatatypeProvider {
+  @NonNull
+  Map<String, IDatatypeContent> getDatatypes();
+
+  @NonNull
+  Set<String> generateDatatypes(Set<String> requiredTypes, @NonNull XMLStreamWriter2 writer)
       throws XMLStreamException;
 
 }

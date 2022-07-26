@@ -29,14 +29,14 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class RelativeDoubleSlashPath
     extends AbstractRelativePathExpression {
 
-  protected RelativeDoubleSlashPath(@NotNull IExpression left, @NotNull IExpression right) {
+  protected RelativeDoubleSlashPath(@NonNull IExpression left, @NonNull IExpression right) {
     super(left, right);
   }
 
@@ -53,6 +53,7 @@ class RelativeDoubleSlashPath
 
     Stream<? extends INodeItem> result = ObjectUtils.notNull(leftResult.asStream()
         .flatMap(item -> {
+          assert item != null;
           // evaluate the right path in the context of the left
           return search(getRight(), dynamicContext, item);
         }));

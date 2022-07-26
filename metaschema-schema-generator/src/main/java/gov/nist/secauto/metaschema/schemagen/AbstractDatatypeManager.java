@@ -28,11 +28,9 @@ package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
-import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
+import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,8 +40,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public abstract class AbstractDatatypeManager implements IDatatypeManager {
-  @NotNull
+  @NonNull
   private static final Map<String, String> DATATYPE_TRANSLATION_MAP = new LinkedHashMap<>();
 
   static {
@@ -72,15 +72,15 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
     DATATYPE_TRANSLATION_MAP.put("year-month-duration", "YearMonthDurationDatatype");
   }
 
-  @NotNull
-  private final Map<gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter<?>,
+  @NonNull
+  private final Map<IDataTypeAdapter<?>,
       String> datatypeToTypeMap = new HashMap<>();
-  @NotNull
+  @NonNull
   private final Map<IDefinition, String> definitionToNameMap
       = new HashMap<>();
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   protected static Map<String, String> getDatatypeTranslationMap() {
     return Collections.unmodifiableMap(DATATYPE_TRANSLATION_MAP);
   }
@@ -92,8 +92,8 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
 
   @SuppressWarnings("null")
   @Override
-  @NotNull
-  public String getTypeNameForDatatype(@NotNull IDataTypeAdapter<?> datatype) {
+  @NonNull
+  public String getTypeNameForDatatype(@NonNull IDataTypeAdapter<?> datatype) {
     synchronized (this) {
       String name = datatypeToTypeMap.get(datatype);
       if (name == null) {
@@ -105,7 +105,7 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
   }
 
   @Override
-  public String getTypeNameForDefinition(@NotNull IDefinition definition, @NotNull IGenerationState<?, ?> state) {
+  public String getTypeNameForDefinition(@NonNull IDefinition definition, @NonNull IGenerationState<?, ?> state) {
     String retval = definitionToNameMap.get(definition);
     if (retval == null) {
       StringBuilder builder = new StringBuilder()
@@ -137,8 +137,8 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
    *          the metaschema of the left node
    * @return the unique type name
    */
-  private CharSequence getTypeContext(@NotNull IDefinition definition,
-      @NotNull IMetaschema childMetaschema, @NotNull IGenerationState<?, ?> state) {
+  private CharSequence getTypeContext(@NonNull IDefinition definition,
+      @NonNull IMetaschema childMetaschema, @NonNull IGenerationState<?, ?> state) {
     StringBuilder builder = new StringBuilder();
     if (definition.isInline()) {
       INamedInstance inlineInstance = definition.getInlineInstance();
@@ -154,7 +154,7 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
     return builder;
   }
 
-  @NotNull
+  @NonNull
   protected static CharSequence toCamelCase(String text) {
     StringBuilder builder = new StringBuilder();
     for (String segment : text.split("\\p{Punct}")) {

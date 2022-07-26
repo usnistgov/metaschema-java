@@ -34,8 +34,7 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -49,30 +48,32 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public abstract class AbstractBoundMetaschema
     extends AbstractMetaschema {
-  @NotNull
+  @NonNull
   private final IBindingContext bindingContext;
-  private Map<@NotNull String, IAssemblyClassBinding> assemblyDefinitions;
-  private Map<@NotNull String, IFieldClassBinding> fieldDefinitions;
+  private Map<String, IAssemblyClassBinding> assemblyDefinitions;
+  private Map<String, IFieldClassBinding> fieldDefinitions;
 
-  @NotNull
+  @NonNull
   public static IMetaschema createInstance(
-      @NotNull Class<? extends AbstractBoundMetaschema> clazz,
-      @NotNull IBindingContext bindingContext) {
+      @NonNull Class<? extends AbstractBoundMetaschema> clazz,
+      @NonNull IBindingContext bindingContext) {
 
     if (!clazz.isAnnotationPresent(Metaschema.class)) {
       throw new IllegalStateException(String.format("The class '%s' is missing the '%s' annotation",
           clazz.getCanonicalName(), Metaschema.class.getCanonicalName()));
     }
 
-    @SuppressWarnings("null")
     Metaschema metaschemaAnnotation = clazz.getAnnotation(Metaschema.class);
 
-    List<@NotNull IMetaschema> importedMetaschemas;
+    List<IMetaschema> importedMetaschemas;
     if (metaschemaAnnotation.imports().length > 0) {
       importedMetaschemas = new ArrayList<>(metaschemaAnnotation.imports().length);
       for (Class<? extends AbstractBoundMetaschema> importClass : metaschemaAnnotation.imports()) {
+        assert importClass != null;
         IMetaschema metaschemaImport = bindingContext.getMetaschemaInstanceByClass(importClass);
         importedMetaschemas.add(metaschemaImport);
       }
@@ -82,11 +83,11 @@ public abstract class AbstractBoundMetaschema
     return createInstance(clazz, bindingContext, importedMetaschemas);
   }
 
-  @NotNull
+  @NonNull
   public static IMetaschema createInstance(
-      @NotNull Class<? extends AbstractBoundMetaschema> clazz,
-      @NotNull IBindingContext bindingContext,
-      @NotNull List<@NotNull ? extends IMetaschema> importedMetaschemas) {
+      @NonNull Class<? extends AbstractBoundMetaschema> clazz,
+      @NonNull IBindingContext bindingContext,
+      @NonNull List<? extends IMetaschema> importedMetaschemas) {
 
     Constructor<? extends AbstractBoundMetaschema> constructor;
     try {
@@ -96,19 +97,19 @@ public abstract class AbstractBoundMetaschema
     }
 
     try {
-      return constructor.newInstance(importedMetaschemas, bindingContext);
+      return ObjectUtils.notNull(constructor.newInstance(importedMetaschemas, bindingContext));
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
       throw new IllegalArgumentException(ex);
     }
   }
 
-  public AbstractBoundMetaschema(@NotNull List<@NotNull ? extends IMetaschema> importedMetaschema,
-      @NotNull IBindingContext bindingContext) {
+  public AbstractBoundMetaschema(@NonNull List<? extends IMetaschema> importedMetaschema,
+      @NonNull IBindingContext bindingContext) {
     super(importedMetaschema);
     this.bindingContext = bindingContext;
   }
 
-  @NotNull
+  @NonNull
   protected IBindingContext getBindingContext() {
     return bindingContext;
   }
@@ -119,7 +120,7 @@ public abstract class AbstractBoundMetaschema
     return null;
   }
 
-  @NotNull
+  @NonNull
   protected Class<?>[] getAssemblyClasses() {
     Class<?>[] retval;
     if (getClass().isAnnotationPresent(Metaschema.class)) {
@@ -131,7 +132,7 @@ public abstract class AbstractBoundMetaschema
     return retval;
   }
 
-  @NotNull
+  @NonNull
   protected Class<?>[] getFieldClasses() {
     Class<?>[] retval;
     if (getClass().isAnnotationPresent(Metaschema.class)) {
@@ -148,12 +149,18 @@ public abstract class AbstractBoundMetaschema
       if (assemblyDefinitions == null) {
         IBindingContext bindingContext = getBindingContext();
         this.assemblyDefinitions = Arrays.stream(getAssemblyClasses())
-            .map(clazz -> (IAssemblyClassBinding) bindingContext.getClassBinding(clazz))
+            .map(clazz -> {
+              assert clazz != null;
+              return (IAssemblyClassBinding) bindingContext.getClassBinding(clazz);
+            })
             .collect(Collectors.toUnmodifiableMap(
                 IAssemblyClassBinding::getName,
                 Function.identity()));
         this.fieldDefinitions = Arrays.stream(getFieldClasses())
-            .map(clazz -> (IFieldClassBinding) bindingContext.getClassBinding(clazz))
+            .map(clazz -> {
+              assert clazz != null;
+              return (IFieldClassBinding) bindingContext.getClassBinding(clazz);
+            })
             .collect(Collectors.toUnmodifiableMap(
                 IFieldClassBinding::getName,
                 Function.identity()));
@@ -163,23 +170,22 @@ public abstract class AbstractBoundMetaschema
   }
 
   @SuppressWarnings("null")
-  protected @NotNull Map<@NotNull String, ? extends IAssemblyDefinition> getAssemblyDefinitionMap() {
+  protected @NonNull Map<String, ? extends IAssemblyDefinition> getAssemblyDefinitionMap() {
     initDefinitions();
     return assemblyDefinitions;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IAssemblyDefinition> getAssemblyDefinitions() {
+  public Collection<? extends IAssemblyDefinition> getAssemblyDefinitions() {
     return getAssemblyDefinitionMap().values();
   }
 
   @Override
-  public IAssemblyDefinition getAssemblyDefinitionByName(@NotNull String name) {
+  public IAssemblyDefinition getAssemblyDefinitionByName(@NonNull String name) {
     return getAssemblyDefinitionMap().get(name);
   }
 
-  @SuppressWarnings("null")
   protected Map<String, ? extends IFieldDefinition> getFieldDefinitionMap() {
     initDefinitions();
     return fieldDefinitions;
@@ -187,30 +193,30 @@ public abstract class AbstractBoundMetaschema
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IFieldDefinition> getFieldDefinitions() {
+  public Collection<? extends IFieldDefinition> getFieldDefinitions() {
     return getFieldDefinitionMap().values();
   }
 
   @Override
-  public IFieldDefinition getFieldDefinitionByName(@NotNull String name) {
+  public IFieldDefinition getFieldDefinitionByName(@NonNull String name) {
     return getFieldDefinitionMap().get(name);
   }
 
-  @NotNull
-  public Map<@NotNull String, ? extends IFlagDefinition> getFlagDefinitionMap() {
+  @NonNull
+  public Map<String, ? extends IFlagDefinition> getFlagDefinitionMap() {
     // Flags are always inline
     return CollectionUtil.emptyMap();
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IFlagDefinition> getFlagDefinitions() {
+  public Collection<? extends IFlagDefinition> getFlagDefinitions() {
     // Flags are always inline
     return Collections.emptyList();
   }
 
   @Override
-  public IFlagDefinition getFlagDefinitionByName(@NotNull String name) { // NOPMD - intentional
+  public IFlagDefinition getFlagDefinitionByName(@NonNull String name) { // NOPMD - intentional
     // Flags are always inline
     return null;
   }

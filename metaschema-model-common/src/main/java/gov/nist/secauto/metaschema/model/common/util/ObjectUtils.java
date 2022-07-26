@@ -26,17 +26,30 @@
 
 package gov.nist.secauto.metaschema.model.common.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public final class ObjectUtils {
   private ObjectUtils() {
     // disable construction
   }
 
-  public static <T> @NotNull T notNull(T obj) {
+  /**
+   * Assert that the provided object is not {@code null}.
+   * <p>
+   * This method sets the expectation that the provided object is not {@code null} in cases where a
+   * non-null value is required.
+   * 
+   * @param <T>
+   *          the object type
+   * @param obj
+   *          the object
+   * @return the object
+   */
+  @NonNull
+  public static <T> T notNull(T obj) {
     assert obj != null;
     return obj;
   }
@@ -52,7 +65,7 @@ public final class ObjectUtils {
    * @throws NullPointerException
    *           if {@code obj} is {@code null}
    */
-  @NotNull
+  @NonNull
   public static <T> T requireNonNull(T obj) {
     if (obj == null) {
       throw new NullPointerException(); // NOPMD
@@ -74,17 +87,26 @@ public final class ObjectUtils {
    * @throws NullPointerException
    *           if {@code obj} is {@code null}
    */
-  @NotNull
-  public static <T> T requireNonNull(T obj, @NotNull String message) {
+  @NonNull
+  public static <T> T requireNonNull(T obj, @NonNull String message) {
     if (obj == null) {
       throw new NullPointerException(message); // NOPMD
     }
     return obj;
   }
 
+  /**
+   * A filter used to remove null items from a stream.
+   * 
+   * @param <T>
+   *          the item type
+   * @param item
+   *          the item to filter
+   * @return the item as a steam or an empty stream if the item is {@code null}
+   */
   @SuppressWarnings("null")
-  @NotNull
-  public static <T> Stream<@NotNull T> filterNull(T item) {
+  @NonNull
+  public static <T> Stream<T> filterNull(T item) {
     return Objects.nonNull(item) ? Stream.of(item) : Stream.empty();
   }
 }

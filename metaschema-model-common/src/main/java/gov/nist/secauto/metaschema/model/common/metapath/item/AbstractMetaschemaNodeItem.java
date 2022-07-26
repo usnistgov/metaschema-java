@@ -28,19 +28,19 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractMetaschemaNodeItem
     extends
     AbstractModelNodeContext<IFlagNodeItem, IModelNodeItem,
         AbstractModelNodeContext.Model<IFlagNodeItem, IModelNodeItem>>
     implements IMetaschemaNodeItem {
-  @NotNull
+  @NonNull
   private final IMetaschema metaschema;
 
-  public AbstractMetaschemaNodeItem(@NotNull IMetaschema metaschema, @NotNull INodeItemFactory factory) {
+  public AbstractMetaschemaNodeItem(@NonNull IMetaschema metaschema, @NonNull INodeItemFactory factory) {
     super(factory);
     this.metaschema = metaschema;
   }

@@ -33,22 +33,21 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDocumentNodeItem;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public final class FnDoc {
   // private static final Logger logger = LogManager.getLogger(FnDoc.class);
 
-  @NotNull
+  @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("doc")
       .deterministic()
@@ -69,21 +68,15 @@ public final class FnDoc {
   }
 
   @SuppressWarnings("unused")
-  @NotNull
-  private static ISequence<IDocumentNodeItem> execute(@NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> arguments, @NotNull DynamicContext dynamicContext,
+  @NonNull
+  private static ISequence<IDocumentNodeItem> execute(@NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments, @NonNull DynamicContext dynamicContext,
       INodeItem focus) {
-    ISequence<? extends IStringItem> arg = FunctionUtils.asType(arguments.get(0));
+    ISequence<? extends IStringItem> arg = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
 
-    IItem item = FunctionUtils.getFirstItem(arg, true);
+    IStringItem item = FunctionUtils.getFirstItem(arg, true);
 
-    ISequence<IDocumentNodeItem> retval;
-    if (item == null) {
-      retval = ISequence.empty();
-    } else {
-      retval = ISequence.of(fnDoc(FunctionUtils.asType(item), dynamicContext));
-    }
-    return retval;
+    return item == null ? ISequence.empty() : ISequence.of(fnDoc(item, dynamicContext));
   }
 
   /**
@@ -99,7 +92,7 @@ public final class FnDoc {
    *          the Metapath dynamic context
    * @return the loaded document node item
    */
-  public static IDocumentNodeItem fnDoc(@NotNull IStringItem uri, @NotNull DynamicContext context) {
+  public static IDocumentNodeItem fnDoc(@NonNull IStringItem uri, @NonNull DynamicContext context) {
     URI documentUri;
     try {
       documentUri = URI.create(uri.asString());

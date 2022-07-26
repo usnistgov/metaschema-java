@@ -36,7 +36,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class GeneralComparison
     extends AbstractComparison {
@@ -51,7 +51,7 @@ class GeneralComparison
    * @param right
    *          the expression to compare with
    */
-  protected GeneralComparison(@NotNull IExpression left, @NotNull Operator operator, @NotNull IExpression right) {
+  protected GeneralComparison(@NonNull IExpression left, @NonNull Operator operator, @NonNull IExpression right) {
     super(left, operator, right);
   }
 
@@ -78,16 +78,16 @@ class GeneralComparison
    *          the second set of items to compare
    * @return a or an empty {@link ISequence} if either item is {@code null}
    */
-  @NotNull
+  @NonNull
   protected IBooleanItem valueCompairison( // NOPMD - acceptable complexity
-      @NotNull ISequence<? extends IAnyAtomicItem> leftItems,
-      @NotNull Operator operator,
-      @NotNull ISequence<? extends IAnyAtomicItem> rightItems) {
+      @NonNull ISequence<? extends IAnyAtomicItem> leftItems,
+      @NonNull Operator operator,
+      @NonNull ISequence<? extends IAnyAtomicItem> rightItems) {
 
     IBooleanItem retval = IBooleanItem.FALSE;
     for (IAnyAtomicItem left : leftItems.asList()) {
       for (IAnyAtomicItem right : rightItems.asList()) {
-        @NotNull
+        @NonNull
         IAnyAtomicItem leftCast;
         IAnyAtomicItem rightCast;
         if (left instanceof IUntypedAtomicItem) {
@@ -124,8 +124,8 @@ class GeneralComparison
    *          the item to cast
    * @return the casted item
    */
-  @NotNull
-  protected IAnyAtomicItem applyGeneralComparisonCast(@NotNull IAnyAtomicItem item, @NotNull IAnyAtomicItem other) {
+  @NonNull
+  protected IAnyAtomicItem applyGeneralComparisonCast(@NonNull IAnyAtomicItem item, @NonNull IAnyAtomicItem other) {
     IAnyAtomicItem retval;
     if (item instanceof INumericItem) {
       retval = IDecimalItem.cast(other);

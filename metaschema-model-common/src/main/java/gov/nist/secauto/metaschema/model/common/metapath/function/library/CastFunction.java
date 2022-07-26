@@ -34,18 +34,19 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionExecutor;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
 
-public class CastFunction<ITEM extends IAnyAtomicItem> implements IFunctionExecutor {
-  @NotNull
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public final class CastFunction<ITEM extends IAnyAtomicItem> implements IFunctionExecutor {
+  @NonNull
   private final ICastExecutor<ITEM> castExecutor;
 
-  @NotNull
-  public static <ITEM extends IAnyAtomicItem> IFunction signature(@NotNull String name,
-      @NotNull Class<ITEM> resulingAtomicType, @NotNull ICastExecutor<ITEM> executor) {
+  @NonNull
+  static <ITEM extends IAnyAtomicItem> IFunction signature(@NonNull String name,
+      @NonNull Class<ITEM> resulingAtomicType, @NonNull ICastExecutor<ITEM> executor) {
     return IFunction.builder()
         .name(name)
         .argument(IArgument.newBuilder()
@@ -55,30 +56,32 @@ public class CastFunction<ITEM extends IAnyAtomicItem> implements IFunctionExecu
             .build())
         .returnType(resulingAtomicType)
         .returnZeroOrOne()
-        .functionHandler(CastFunction.castExecutor(executor))
+        .functionHandler(CastFunction.newCastExecutor(executor))
         .build();
   }
 
-  @NotNull
-  public static <ITEM extends IAnyAtomicItem> CastFunction<ITEM> castExecutor(@NotNull ICastExecutor<ITEM> executor) {
+  @NonNull
+  private static <ITEM extends IAnyAtomicItem> CastFunction<ITEM>
+      newCastExecutor(@NonNull ICastExecutor<ITEM> executor) {
     return new CastFunction<ITEM>(executor);
   }
 
-  public CastFunction(@NotNull ICastExecutor<ITEM> castExecutor) {
+  private CastFunction(@NonNull ICastExecutor<ITEM> castExecutor) {
     this.castExecutor = castExecutor;
   }
 
   @Override
-  public ISequence<ITEM> execute(@NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> arguments,
-      @NotNull DynamicContext dynamicContext,
+  public ISequence<ITEM> execute(@NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
       INodeItem focus) {
 
-    ISequence<? extends IAnyAtomicItem> arg = FunctionUtils.asType(arguments.get(0));
+    ISequence<? extends IAnyAtomicItem> arg = FunctionUtils.asType(
+        ObjectUtils.notNull(arguments.get(0)));
 
     IAnyAtomicItem item = FunctionUtils.getFirstItem(arg, true);
     if (item == null) {
-      return ISequence.empty();
+      return ISequence.empty(); // NOPMD - readability
     }
 
     ITEM castItem = castExecutor.cast(item);
@@ -87,7 +90,14 @@ public class CastFunction<ITEM extends IAnyAtomicItem> implements IFunctionExecu
 
   @FunctionalInterface
   public interface ICastExecutor<ITEM extends IAnyAtomicItem> {
-    @NotNull
-    ITEM cast(@NotNull IAnyAtomicItem item);
+    /**
+     * Cast the provided {@code item}.
+     * 
+     * @param item
+     *          the item to cast
+     * @return the item cast to the appropriate type
+     */
+    @NonNull
+    ITEM cast(@NonNull IAnyAtomicItem item);
   }
 }

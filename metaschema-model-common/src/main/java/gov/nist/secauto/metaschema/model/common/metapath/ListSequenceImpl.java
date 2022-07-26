@@ -28,35 +28,33 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-class ListSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> {
-  @NotNull
-  private final List<@NotNull ITEM_TYPE> items;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-  public ListSequenceImpl(@NotNull Collection<@NotNull ITEM_TYPE> items) {
+class ListSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> {
+  @NonNull
+  private final List<ITEM_TYPE> items;
+
+  public ListSequenceImpl(@NonNull Collection<ITEM_TYPE> items) {
     this(new ArrayList<>(items), false);
   }
 
-  public ListSequenceImpl(@NotNull List<@NotNull ITEM_TYPE> items, boolean copy) {
+  public ListSequenceImpl(@NonNull List<ITEM_TYPE> items, boolean copy) {
     this.items = copy ? new ArrayList<>(items) : items;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public List<@NotNull ITEM_TYPE> asList() {
+  public List<ITEM_TYPE> asList() {
     return Collections.unmodifiableList(items);
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Stream<@NotNull ITEM_TYPE> asStream() {
+  public Stream<ITEM_TYPE> asStream() {
     return items.stream();
   }
 

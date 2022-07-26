@@ -30,13 +30,15 @@ import gov.nist.secauto.metaschema.model.common.util.ModelWalker;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Supports walking a portion of a metaschema model collecting a set of definitions that match the
@@ -47,8 +49,8 @@ public abstract class DefinitionCollectingModelWalker
   private static final Logger LOGGER = LogManager.getLogger(DefinitionCollectingModelWalker.class);
 
   private final Function<IDefinition, Boolean> filter;
-  @NotNull
-  private final Set<@NotNull IDefinition> definitions = new LinkedHashSet<>();
+  @NonNull
+  private final Set<IDefinition> definitions = new LinkedHashSet<>();
 
   @Override
   protected Void getDefaultData() { // NOPMD - intentional
@@ -80,8 +82,9 @@ public abstract class DefinitionCollectingModelWalker
    * 
    * @return the collection of definitions
    */
-  @NotNull
-  public Collection<@NotNull ? extends IDefinition> getDefinitions() {
+  @NonNull
+  @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "interface doesn't allow modification")
+  public Collection<? extends IDefinition> getDefinitions() {
     return definitions;
   }
 

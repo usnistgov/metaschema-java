@@ -29,10 +29,10 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.regex.Pattern;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Represents a component of a key used in a key-based index.
@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
  * can be used to extract a portion of the value for use in generating an index key.
  */
 public interface IKeyField {
-  @NotNull
+  @NonNull
   MetapathExpression getTarget();
 
   /**

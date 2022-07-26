@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractFlagInstance implements IFlagInstance {
-  @NotNull
+  @NonNull
   private final IModelDefinition parent;
 
   /**
@@ -38,7 +38,7 @@ public abstract class AbstractFlagInstance implements IFlagInstance {
    * @param parent
    *          the parent definition, which must be a definition type that can contain flags.
    */
-  public AbstractFlagInstance(@NotNull IModelDefinition parent) {
+  public AbstractFlagInstance(@NonNull IModelDefinition parent) {
     this.parent = parent;
   }
 

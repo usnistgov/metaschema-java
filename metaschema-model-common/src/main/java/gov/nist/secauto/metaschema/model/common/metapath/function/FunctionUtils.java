@@ -35,19 +35,19 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public final class FunctionUtils {
+  public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
+
   private FunctionUtils() {
     // disable
   }
-
-  public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
 
   /**
    * Converts a {@link INumericItem} value to an integer value.
@@ -58,7 +58,7 @@ public final class FunctionUtils {
    * @throws ArithmeticException
    *           if the provided value will not exactly fit in an {@code int}
    */
-  public static int asInteger(@NotNull INumericItem value) throws ArithmeticException {
+  public static int asInteger(@NonNull INumericItem value) {
     return asInteger(value.asInteger());
   }
 
@@ -71,7 +71,7 @@ public final class FunctionUtils {
    * @throws ArithmeticException
    *           if the provided value will not exactly fit in an {@code int}
    */
-  public static int asInteger(@NotNull BigInteger value) throws ArithmeticException {
+  public static int asInteger(@NonNull BigInteger value) {
     return value.intValueExact();
   }
 
@@ -84,7 +84,7 @@ public final class FunctionUtils {
    * @throws ArithmeticException
    *           if the provided value will not exactly fit in an {@code long}
    */
-  public static long asLong(@NotNull INumericItem value) throws ArithmeticException {
+  public static long asLong(@NonNull INumericItem value) {
     return asLong(value.asInteger());
   }
 
@@ -97,7 +97,7 @@ public final class FunctionUtils {
    * @throws ArithmeticException
    *           if the provided value will not exactly fit in an {@code long}
    */
-  public static long asLong(@NotNull BigInteger value) throws ArithmeticException {
+  public static long asLong(@NonNull BigInteger value) {
     return value.longValueExact();
   }
 
@@ -118,7 +118,7 @@ public final class FunctionUtils {
    *           if the sequence contains more than one item and requireSingleton is {@code true}
    */
   @Nullable
-  public static <ITEM extends IItem> ITEM getFirstItem(@NotNull ISequence<ITEM> sequence, boolean requireSingleton)
+  public static <ITEM extends IItem> ITEM getFirstItem(@NonNull ISequence<ITEM> sequence, boolean requireSingleton)
       throws TypeMetapathException {
     @Nullable
     ITEM retval = null;
@@ -150,7 +150,7 @@ public final class FunctionUtils {
    * 
    */
   @Nullable
-  public static INumericItem toNumeric(@NotNull ISequence<?> sequence, boolean requireSingleton) {
+  public static INumericItem toNumeric(@NonNull ISequence<?> sequence, boolean requireSingleton) {
     IItem item = getFirstItem(sequence, requireSingleton);
     return item == null ? null : toNumeric(item);
   }
@@ -165,8 +165,8 @@ public final class FunctionUtils {
    *           if the sequence contains more than one item, or the item cannot be cast to a numeric
    *           value
    */
-  @NotNull
-  public static INumericItem toNumeric(@NotNull IItem item) throws TypeMetapathException {
+  @NonNull
+  public static INumericItem toNumeric(@NonNull IItem item) throws TypeMetapathException {
     // atomize
     IAnyAtomicItem atomicItem = FnData.fnDataItem(item);
     return toNumeric(atomicItem);
@@ -181,8 +181,8 @@ public final class FunctionUtils {
    * @throws TypeMetapathException
    *           if the item cannot be cast to a numeric value
    */
-  @NotNull
-  public static INumericItem toNumeric(@NotNull IAnyAtomicItem item) throws TypeMetapathException {
+  @NonNull
+  public static INumericItem toNumeric(@NonNull IAnyAtomicItem item) throws TypeMetapathException {
     try {
       return IDecimalItem.cast(item);
     } catch (InvalidValueForCastFunctionException ex) {
@@ -211,8 +211,8 @@ public final class FunctionUtils {
   }
 
   @SuppressWarnings("unchecked")
-  @NotNull
-  public static <TYPE extends IItem> ISequence<TYPE> asType(@NotNull ISequence<?> sequence) {
+  @NonNull
+  public static <TYPE extends IItem> ISequence<TYPE> asType(@NonNull ISequence<?> sequence) {
     return (ISequence<TYPE>) sequence;
   }
 }

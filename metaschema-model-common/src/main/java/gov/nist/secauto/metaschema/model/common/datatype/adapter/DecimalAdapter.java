@@ -35,18 +35,18 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class DecimalAdapter
     extends AbstractDataTypeAdapter<BigDecimal, IDecimalItem> {
   public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
-  @NotNull
+  @NonNull
   private static final BigDecimal DECIMAL_BOOLEAN_TRUE = new BigDecimal("1.0");
-  @NotNull
+  @NonNull
   private static final BigDecimal DECIMAL_BOOLEAN_FALSE = new BigDecimal("0.0");
 
   @SuppressWarnings("null")
@@ -81,7 +81,7 @@ public class DecimalAdapter
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull Class<IDecimalItem> getItemClass() {
+  public @NonNull Class<IDecimalItem> getItemClass() {
     return IDecimalItem.class;
   }
 
@@ -92,7 +92,7 @@ public class DecimalAdapter
   }
 
   @Override
-  protected @NotNull IDecimalItem castInternal(@NotNull IAnyAtomicItem item)
+  protected @NonNull IDecimalItem castInternal(@NonNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     IDecimalItem retval;
     if (item instanceof INumericItem) {

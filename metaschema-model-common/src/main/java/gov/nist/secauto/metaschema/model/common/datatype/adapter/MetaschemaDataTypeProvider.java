@@ -31,7 +31,7 @@ import com.google.auto.service.AutoService;
 import gov.nist.secauto.metaschema.model.common.datatype.AbstractDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.IDataTypeProvider;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides for runtime discovery of all built-in implementations of the core Metaschema data types.
@@ -39,60 +39,60 @@ import org.jetbrains.annotations.NotNull;
 @AutoService(IDataTypeProvider.class)
 public class MetaschemaDataTypeProvider // NOPMD - Used for service initialization
     extends AbstractDataTypeProvider {
-  @NotNull
+  @NonNull
   public static final Base64Adapter BASE64 = new Base64Adapter();
-  @NotNull
+  @NonNull
   public static final BooleanAdapter BOOLEAN = new BooleanAdapter();
-  @NotNull
+  @NonNull
   public static final DateAdapter DATE = new DateAdapter();
-  @NotNull
+  @NonNull
   public static final DateWithTZAdapter DATE_WITH_TZ = new DateWithTZAdapter();
-  @NotNull
+  @NonNull
   public static final DateTimeAdapter DATE_TIME = new DateTimeAdapter();
-  @NotNull
+  @NonNull
   public static final DateTimeWithTZAdapter DATE_TIME_WITH_TZ = new DateTimeWithTZAdapter();
-  @NotNull
+  @NonNull
   public static final IPv4AddressAdapter IP_V4_ADDRESS = new IPv4AddressAdapter();
-  @NotNull
+  @NonNull
   public static final IPv6AddressAdapter IP_V6_ADDRESS = new IPv6AddressAdapter();
-  @NotNull
+  @NonNull
   public static final UriAdapter URI = new UriAdapter();
-  @NotNull
+  @NonNull
   public static final UriReferenceAdapter URI_REFERENCE = new UriReferenceAdapter();
-  @NotNull
+  @NonNull
   public static final UuidAdapter UUID = new UuidAdapter();
 
-  @NotNull
+  @NonNull
   public static final DayTimeAdapter DAY_TIME_DURATION = new DayTimeAdapter();
-  @NotNull
+  @NonNull
   public static final YearMonthAdapter YEAR_MONTH_DURATION = new YearMonthAdapter();
 
-  @NotNull
+  @NonNull
   public static final DecimalAdapter DECIMAL = new DecimalAdapter();
-  @NotNull
+  @NonNull
   public static final IntegerAdapter INTEGER = new IntegerAdapter();
-  @NotNull
+  @NonNull
   public static final NonNegativeIntegerAdapter NON_NEGATIVE_INTEGER = new NonNegativeIntegerAdapter();
-  @NotNull
+  @NonNull
   public static final PositiveIntegerAdapter POSITIVE_INTEGER = new PositiveIntegerAdapter();
 
-  @NotNull
+  @NonNull
   public static final EmailAddressAdapter EMAIL_ADDRESS = new EmailAddressAdapter();
-  @NotNull
+  @NonNull
   public static final HostnameAdapter HOSTNAME = new HostnameAdapter();
-  @NotNull
+  @NonNull
   public static final NcNameAdapter NCNAME = new NcNameAdapter();
-  @NotNull
+  @NonNull
   public static final StringAdapter STRING = new StringAdapter();
-  @NotNull
+  @NonNull
   public static final TokenAdapter TOKEN = new TokenAdapter();
 
-  @NotNull
+  @NonNull
   public static final MarkupLineAdapter MARKUP_LINE = new MarkupLineAdapter();
-  @NotNull
+  @NonNull
   public static final MarkupMultilineAdapter MARKUP_MULTILINE = new MarkupMultilineAdapter();
 
-  @NotNull
+  @NonNull
   public static final StringAdapter DEFAULT_DATA_TYPE = STRING;
 
   public MetaschemaDataTypeProvider() {

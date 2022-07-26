@@ -36,19 +36,19 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public final class FnRound {
   private static final String NAME = "round";
 
-  @NotNull
+  @NonNull
   static IFunction signature() {
     return NumericFunction.signature(NAME, INumericItem::round);
   }
 
-  @NotNull
+  @NonNull
   static IFunction signatureWithPrecision() {
     return IFunction.builder()
         .name(NAME)
@@ -73,25 +73,27 @@ public final class FnRound {
   }
 
   @SuppressWarnings("unused")
-  @NotNull
+  @NonNull
   private static ISequence<INumericItem> executeTwoArg(
-      @NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> arguments,
-      @NotNull DynamicContext dynamicContext,
+      @NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
       INodeItem focus) {
-    ISequence<? extends INumericItem> sequence = FunctionUtils.asType(arguments.get(0));
+    ISequence<? extends INumericItem> sequence = FunctionUtils.asType(
+        ObjectUtils.requireNonNull(arguments.get(0)));
     if (sequence.isEmpty()) {
-      return ISequence.empty();
+      return ISequence.empty(); // NOPMD - readability
     }
 
     INumericItem item = FunctionUtils.getFirstItem(sequence, true);
     if (item == null) {
-      return ISequence.empty();
+      return ISequence.empty(); // NOPMD - readability
     }
 
-    @NotNull
+    @NonNull
     IIntegerItem precision = ObjectUtils.notNull(
-        FunctionUtils.getFirstItem(FunctionUtils.asType(arguments.get(1)), true));
+        FunctionUtils.getFirstItem(FunctionUtils.asType(
+            ObjectUtils.requireNonNull(arguments.get(1))), true));
 
     INumericItem result = item.round(precision);
     return ISequence.of(result);

@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 
 import gov.nist.secauto.metaschema.model.common.IModelInstance;
 
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Represents a rule requiring a Metaschema assembly data instance to have elements with a minimum

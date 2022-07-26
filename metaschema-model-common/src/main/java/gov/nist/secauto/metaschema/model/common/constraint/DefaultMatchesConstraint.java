@@ -30,10 +30,10 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapte
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.regex.Pattern;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class DefaultMatchesConstraint
     extends AbstractConstraint
@@ -61,9 +61,9 @@ public class DefaultMatchesConstraint
    */
   public DefaultMatchesConstraint(
       @Nullable String id,
-      @NotNull ISource source,
-      @NotNull Level level,
-      @NotNull MetapathExpression target,
+      @NonNull ISource source,
+      @NonNull Level level,
+      @NonNull MetapathExpression target,
       @Nullable Pattern pattern,
       @Nullable IDataTypeAdapter<?> dataType,
       @Nullable MarkupMultiline remarks) {

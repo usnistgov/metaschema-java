@@ -39,24 +39,24 @@ import gov.nist.secauto.metaschema.model.common.UsedDefinitionModelWalker;
 import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class JsonSchemaGenerator
     extends AbstractSchemaGenerator {
-  @NotNull
+  @NonNull
   private final JsonFactory jsonFactory;
 
   public JsonSchemaGenerator() {
     this(new JsonFactory());
   }
 
-  public JsonSchemaGenerator(@NotNull JsonFactory jsonFactory) {
+  public JsonSchemaGenerator(@NonNull JsonFactory jsonFactory) {
     this.jsonFactory = jsonFactory;
   }
 
@@ -65,8 +65,8 @@ public class JsonSchemaGenerator
   }
 
   @Override
-  public void generateFromMetaschema(@NotNull IMetaschema metaschema, @NotNull Writer out,
-      @NotNull IConfiguration<SchemaGenerationFeature> configuration) throws IOException {
+  public void generateFromMetaschema(@NonNull IMetaschema metaschema, @NonNull Writer out,
+      @NonNull IConfiguration<SchemaGenerationFeature> configuration) throws IOException {
     JsonGenerator jsonGenerator = getJsonFactory().createGenerator(out);
     jsonGenerator.setCodec(new ObjectMapper());
     jsonGenerator.useDefaultPrettyPrinter();
@@ -76,8 +76,8 @@ public class JsonSchemaGenerator
     jsonGenerator.flush();
   }
 
-  protected void generateSchemaMetadata(@NotNull IMetaschema metaschema, @NotNull JsonGenerator jsonGenerator,
-      @NotNull IConfiguration<SchemaGenerationFeature> configuration)
+  protected void generateSchemaMetadata(@NonNull IMetaschema metaschema, @NonNull JsonGenerator jsonGenerator,
+      @NonNull IConfiguration<SchemaGenerationFeature> configuration)
       throws IOException {
     jsonGenerator.writeStartObject();
 
@@ -90,7 +90,7 @@ public class JsonSchemaGenerator
     jsonGenerator.writeStringField("$comment", metaschema.getName().toMarkdown());
     jsonGenerator.writeStringField("type", "object");
 
-    Collection<@NotNull ? extends IDefinition> definitions
+    Collection<? extends IDefinition> definitions
         = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
 
     IInlineStrategy inlineStrategy = newInlineStrategy(configuration, definitions);
@@ -99,7 +99,7 @@ public class JsonSchemaGenerator
 
     generateDefinitions(definitions, state);
 
-    Set<@NotNull IAssemblyDefinition> rootAssemblies = new LinkedHashSet<>();
+    Set<IAssemblyDefinition> rootAssemblies = new LinkedHashSet<>();
 
     for (IDefinition definition : definitions) {
       if (definition instanceof IAssemblyDefinition) {
@@ -117,14 +117,15 @@ public class JsonSchemaGenerator
   }
 
   protected void generateDefinitions(
-      @NotNull Collection<@NotNull ? extends IDefinition> definitions,
-      @NotNull GenerationState state) throws IOException {
+      @NonNull Collection<? extends IDefinition> definitions,
+      @NonNull GenerationState state) throws IOException {
     if (!definitions.isEmpty()) {
       JsonGenerator writer = state.getWriter();
 
       ObjectNode definitionsObject = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
 
       for (IDefinition definition : definitions) {
+        assert definition != null;
         if (!state.isInline(definition)) {
           JsonDefinitionGenerator.generateDefinition(definition, definitionsObject, state);
         }
@@ -141,8 +142,8 @@ public class JsonSchemaGenerator
   }
 
   protected void generateRootProperties(
-      @NotNull Set<@NotNull IAssemblyDefinition> rootAssemblies,
-      @NotNull GenerationState state) throws IOException {
+      @NonNull Set<IAssemblyDefinition> rootAssemblies,
+      @NonNull GenerationState state) throws IOException {
     JsonGenerator writer = state.getWriter();
     // generate root properties
     writer.writeFieldName("properties");
@@ -165,7 +166,7 @@ public class JsonSchemaGenerator
     // generate root requires
     if (rootAssemblies.size() == 1) {
       @SuppressWarnings("null")
-      @NotNull
+      @NonNull
       IAssemblyDefinition root = rootAssemblies.iterator().next();
       generateRootRequired(root, writer);
     } else {
@@ -173,6 +174,7 @@ public class JsonSchemaGenerator
       writer.writeStartArray();
 
       for (IAssemblyDefinition root : rootAssemblies) {
+        assert root != null;
         writer.writeStartObject();
         generateRootRequired(root, writer);
         writer.writeEndObject();
@@ -184,7 +186,7 @@ public class JsonSchemaGenerator
     writer.writeBooleanField("additionalProperties", false);
   }
 
-  protected void generateRootRequired(@NotNull IAssemblyDefinition root, @NotNull JsonGenerator jsonGenerator)
+  protected void generateRootRequired(@NonNull IAssemblyDefinition root, @NonNull JsonGenerator jsonGenerator)
       throws IOException {
     jsonGenerator.writeFieldName("required");
     jsonGenerator.writeStartArray();
@@ -196,7 +198,7 @@ public class JsonSchemaGenerator
   public static class GenerationState
       extends AbstractGenerationState<JsonGenerator, JsonDatatypeManager> {
 
-    public GenerationState(@NotNull JsonGenerator writer, @NotNull IInlineStrategy inlineStrategy) {
+    public GenerationState(@NonNull JsonGenerator writer, @NonNull IInlineStrategy inlineStrategy) {
       super(writer, new JsonDatatypeManager(), inlineStrategy);
     }
   }

@@ -29,26 +29,26 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigInteger;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IIntegerItem extends IDecimalItem {
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   IIntegerItem ONE = valueOf(BigInteger.ONE);
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   IIntegerItem ZERO = valueOf(BigInteger.ZERO);
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   IIntegerItem NEGATIVE_ONE = valueOf(BigInteger.ONE.negate());
 
-  @NotNull
+  @NonNull
   static IIntegerItem valueOf(long value) {
     @SuppressWarnings("null")
-    @NotNull
+    @NonNull
     BigInteger bigInteger = BigInteger.valueOf(value);
     return valueOf(bigInteger);
   }
@@ -62,13 +62,13 @@ public interface IIntegerItem extends IDecimalItem {
    * @throws NumberFormatException
    *           if the provided value is not a valid representation of a {@link BigInteger}
    */
-  @NotNull
-  static IIntegerItem valueOf(@NotNull String value) {
+  @NonNull
+  static IIntegerItem valueOf(@NonNull String value) {
     return valueOf(new BigInteger(value));
   }
 
-  @NotNull
-  static IIntegerItem valueOf(@NotNull BigInteger value) {
+  @NonNull
+  static IIntegerItem valueOf(@NonNull BigInteger value) {
     int signum = value.signum();
 
     IIntegerItem retval;
@@ -82,8 +82,8 @@ public interface IIntegerItem extends IDecimalItem {
     return retval;
   }
 
-  @NotNull
-  static IIntegerItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  @NonNull
+  static IIntegerItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.INTEGER.cast(item);
   }
 

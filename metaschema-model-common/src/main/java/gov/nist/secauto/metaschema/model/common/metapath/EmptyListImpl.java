@@ -28,8 +28,6 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
@@ -38,13 +36,13 @@ class EmptyListImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> {
 
   @SuppressWarnings("null")
   @Override
-  public List<@NotNull ITEM_TYPE> asList() {
+  public List<ITEM_TYPE> asList() {
     return Collections.emptyList();
   }
 
   @SuppressWarnings("null")
   @Override
-  public Stream<@NotNull ITEM_TYPE> asStream() {
+  public Stream<ITEM_TYPE> asStream() {
     return Stream.empty();
   }
 
@@ -61,11 +59,11 @@ class EmptyListImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> {
   @Override
   public boolean equals(Object other) {
     if (other == this) {
-      return true;
+      return true; // NOPMD - readability
     }
 
     if (!(other instanceof ISequence)) {
-      return false;
+      return false; // NOPMD - readability
     }
 
     return ((ISequence<?>) other).isEmpty();

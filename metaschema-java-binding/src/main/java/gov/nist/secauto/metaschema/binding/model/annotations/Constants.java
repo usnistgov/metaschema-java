@@ -24,9 +24,13 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.model.common.metapath.function;
+package gov.nist.secauto.metaschema.binding.model.annotations;
 
-class LoadedFunctionsLibrary
-    extends AbstractFunctionLibrary {
+public final class Constants {
+  public static final String NO_STRING_VALUE = "##none";
+  public static final String DEFAULT_STRING_VALUE = "##default";
 
+  private Constants() {
+    // disable construction
+  }
 }

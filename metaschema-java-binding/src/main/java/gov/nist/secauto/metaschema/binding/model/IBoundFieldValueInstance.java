@@ -30,13 +30,13 @@ import gov.nist.secauto.metaschema.binding.io.json.IJsonParsingContext;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundFieldValueInstance extends IBoundNamedInstance {
 
-  @NotNull
+  @NonNull
   IDataTypeAdapter<?> getJavaTypeAdapter();
 
   /**
@@ -45,11 +45,11 @@ public interface IBoundFieldValueInstance extends IBoundNamedInstance {
    * 
    * @return the value key name
    */
-  @NotNull
+  @NonNull
   String getJsonValueKeyName();
 
-  Object readValue(@NotNull Object parentInstance, @NotNull IJsonParsingContext context)
+  Object readValue(@NonNull IJsonParsingContext context)
       throws IOException;
 
-  void writeValue(Object value, @NotNull IJsonWritingContext context) throws IOException;
+  void writeValue(Object value, @NonNull IJsonWritingContext context) throws IOException;
 }

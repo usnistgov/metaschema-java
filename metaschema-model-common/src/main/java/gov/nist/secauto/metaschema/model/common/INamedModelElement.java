@@ -29,13 +29,13 @@ package gov.nist.secauto.metaschema.model.common;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * A marker interface for Metaschema constructs that can be members of a Metaschema definition's
@@ -76,8 +76,8 @@ public interface INamedModelElement extends IModelElement {
    * 
    * @return the mapping
    */
-  @NotNull
-  Map<@NotNull QName, Set<@NotNull String>> getProperties();
+  @NonNull
+  Map<QName, Set<String>> getProperties();
 
   /**
    * Determine if a property is defined.
@@ -86,7 +86,7 @@ public interface INamedModelElement extends IModelElement {
    *          the qualified name of the property
    * @return {@code true} if the property is defined or {@code false} otherwise
    */
-  default boolean hasProperty(@NotNull QName qname) {
+  default boolean hasProperty(@NonNull QName qname) {
     return getProperties().containsKey(qname);
   }
 
@@ -97,9 +97,9 @@ public interface INamedModelElement extends IModelElement {
    *          the qualified name of the property
    * @return the values or an empty set
    */
-  @NotNull
-  default Set<@NotNull String> getPropertyValues(@NotNull QName qname) {
-    Set<@NotNull String> retval = getProperties().get(qname);
+  @NonNull
+  default Set<String> getPropertyValues(@NonNull QName qname) {
+    Set<String> retval = getProperties().get(qname);
     if (retval == null) {
       retval = CollectionUtil.emptySet();
     }
@@ -115,16 +115,16 @@ public interface INamedModelElement extends IModelElement {
    *          the expected property value
    * @return {@code true} if the property value is defined or {@code false} otherwise
    */
-  default boolean hasPropertyValue(@NotNull QName qname, @NotNull String value) {
-    Set<@NotNull String> values = getProperties().get(qname);
-    return values == null ? false : values.contains(value);
+  default boolean hasPropertyValue(@NonNull QName qname, @NonNull String value) {
+    Set<String> values = getProperties().get(qname);
+    return values != null && values.contains(value);
   }
 
-  // @NotNull
+  // @NonNull
   // default QName getXmlQName() {
   // String namespace = getXmlNamespace();
   //
-  // @NotNull
+  // @NonNull
   // QName retval;
   // if (namespace != null) {
   // retval = new QName(namespace, getEffectiveName());
@@ -139,7 +139,7 @@ public interface INamedModelElement extends IModelElement {
    * 
    * @return the JSON property name
    */
-  @NotNull
+  @NonNull
   default String getJsonName() {
     return getEffectiveName();
   }
@@ -155,7 +155,7 @@ public interface INamedModelElement extends IModelElement {
    * @see #getUseName()
    * @see #getName()
    */
-  @NotNull
+  @NonNull
   default String getEffectiveName() {
     @Nullable
     String useName = getUseName();
@@ -167,7 +167,7 @@ public interface INamedModelElement extends IModelElement {
    * 
    * @return the name
    */
-  @NotNull
+  @NonNull
   String getName();
 
   /**

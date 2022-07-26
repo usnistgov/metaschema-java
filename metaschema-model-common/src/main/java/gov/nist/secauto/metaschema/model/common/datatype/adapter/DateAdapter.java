@@ -33,8 +33,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -44,6 +43,8 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DateAdapter
     extends AbstractCustomJavaDataTypeAdapter<Date, IDateItem> {
@@ -55,7 +56,6 @@ public class DateAdapter
       + ")"
       + "(Z|[+-][0-9]{2}:[0-9]{2})?$");
 
-  @SuppressWarnings("null")
   DateAdapter() {
     super(Date.class);
   }
@@ -66,27 +66,26 @@ public class DateAdapter
   }
 
   @Override
-  public Date parse(String value) throws IllegalArgumentException {
-    String parseValue = value;
+  public Date parse(String value) {
     Matcher matcher = DATE_TIMEZONE.matcher(value);
     if (!matcher.matches()) {
       throw new IllegalArgumentException("Invalid date: " + value);
     }
 
-    parseValue = String.format("%sT00:00:00%s", matcher.group(1), matcher.group(2) == null ? "" : matcher.group(2));
+    String parseValue
+        = String.format("%sT00:00:00%s", matcher.group(1), matcher.group(2) == null ? "" : matcher.group(2));
     try {
       TemporalAccessor accessor = DateFormats.DATE_TIME_WITH_TZ.parse(parseValue);
-      return new Date(ZonedDateTime.from(accessor), true);
+      return new Date(ObjectUtils.notNull(ZonedDateTime.from(accessor)), true);
     } catch (DateTimeParseException ex) {
       try {
         TemporalAccessor accessor = DateFormats.DATE_TIME_WITHOUT_TZ.parse(parseValue);
         LocalDate date = LocalDate.from(accessor);
-        return new Date(ZonedDateTime.of(date, LocalTime.MIN, ZoneOffset.UTC), false);
+        return new Date(ObjectUtils.notNull(ZonedDateTime.of(date, LocalTime.MIN, ZoneOffset.UTC)), false);
       } catch (DateTimeParseException ex2) {
-
         IllegalArgumentException newEx = new IllegalArgumentException(ex2.getLocalizedMessage(), ex2);
         newEx.addSuppressed(ex);
-        throw newEx;
+        throw newEx; // NOPMD - false positive
       }
     }
   }
@@ -97,21 +96,20 @@ public class DateAdapter
     String retval;
     if (value.hasTimeZone()) {
       @SuppressWarnings("null")
-      @NotNull
+      @NonNull
       String formatted = DateFormats.DATE_WITH_TZ.format(value.getValue());
       retval = formatted;
     } else {
       @SuppressWarnings("null")
-      @NotNull
+      @NonNull
       String formatted = DateFormats.DATE_WITHOUT_TZ.format(value.getValue());
       retval = formatted;
     }
     return retval;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public @NotNull Class<IDateItem> getItemClass() {
+  public @NonNull Class<IDateItem> getItemClass() {
     return IDateItem.class;
   }
 
@@ -122,7 +120,7 @@ public class DateAdapter
   }
 
   @Override
-  protected @NotNull IDateItem castInternal(@NotNull IAnyAtomicItem item) {
+  protected @NonNull IDateItem castInternal(@NonNull IAnyAtomicItem item) {
     IDateItem retval;
     if (item instanceof IDateTimeItem) {
       ZonedDateTime value = ((IDateTimeItem) item).asZonedDateTime();

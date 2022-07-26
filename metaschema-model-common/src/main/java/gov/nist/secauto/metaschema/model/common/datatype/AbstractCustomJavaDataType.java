@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A common base implementation of a custom Java object providing an underlying implementation of a
@@ -41,15 +41,15 @@ import java.util.Objects;
  */
 public abstract class AbstractCustomJavaDataType<TYPE extends ICustomJavaDataType<TYPE>, VALUE>
     implements ICustomJavaDataType<TYPE> {
-  @NotNull
+  @NonNull
   private final VALUE value;
 
-  protected AbstractCustomJavaDataType(@NotNull VALUE value) {
+  protected AbstractCustomJavaDataType(@NonNull VALUE value) {
     Objects.requireNonNull(value, "value");
     this.value = value;
   }
 
-  @NotNull
+  @NonNull
   public VALUE getValue() {
     return value;
   }

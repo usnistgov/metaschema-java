@@ -53,7 +53,7 @@ public @interface XmlSchema {
    * 
    * @return a namespace string in the form of a URI
    */
-  String namespace() default "##none";
+  String namespace() default Constants.NO_STRING_VALUE;
 
   /**
    * The location of the associated XML schema.
@@ -69,8 +69,18 @@ public @interface XmlSchema {
    */
   String jsonSchemaLocation() default NO_LOCATION;
 
+  /**
+   * Get the default XML element form.
+   * 
+   * @return the XML element form
+   */
   XmlNsForm xmlElementFormDefault() default XmlNsForm.UNSET;
 
+  /**
+   * Get the default XML attribute form.
+   * 
+   * @return the XML attribute form
+   */
   XmlNsForm xmlAttributeFormDefault() default XmlNsForm.UNSET;
 
   /**
@@ -78,5 +88,5 @@ public @interface XmlSchema {
    * <p>
    * The value "##none" was chosen because ## is not a valid sequence in xs:anyURI.
    */
-  String NO_LOCATION = "##none";
+  String NO_LOCATION = Constants.NO_STRING_VALUE;
 }

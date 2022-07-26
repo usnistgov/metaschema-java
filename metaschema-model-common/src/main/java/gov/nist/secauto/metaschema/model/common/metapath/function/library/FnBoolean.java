@@ -40,13 +40,13 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IUntypedAtomicItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public final class FnBoolean {
-  @NotNull
+  @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("boolean")
       .deterministic()
@@ -67,14 +67,13 @@ public final class FnBoolean {
   }
 
   @SuppressWarnings("unused")
-  @NotNull
-  private static ISequence<IBooleanItem> execute(@NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> arguments,
-      @NotNull DynamicContext dynamicContext,
+  @NonNull
+  private static ISequence<IBooleanItem> execute(@NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
       INodeItem focus) {
 
-    @SuppressWarnings("null")
-    ISequence<?> items = arguments.iterator().next();
+    ISequence<?> items = ObjectUtils.requireNonNull(arguments.iterator().next());
 
     IBooleanItem result = fnBoolean(items);
     return ISequence.of(result);
@@ -90,7 +89,7 @@ public final class FnBoolean {
    *          the sequence to evaluate
    * @return the effective boolean value of the sequence
    */
-  @NotNull
+  @NonNull
   public static IBooleanItem fnBoolean(@Nullable ISequence<?> sequence) {
     IBooleanItem retval;
     if (sequence == null) {
@@ -109,7 +108,7 @@ public final class FnBoolean {
    *          the sequence to evaluate
    * @return the effective boolean value
    */
-  public static boolean fnBooleanAsPrimitive(@NotNull ISequence<?> sequence) {
+  public static boolean fnBooleanAsPrimitive(@NonNull ISequence<?> sequence) {
     boolean retval = false;
     if (!sequence.isEmpty()) {
       List<? extends IItem> items = sequence.asList();
@@ -131,7 +130,7 @@ public final class FnBoolean {
    *          the item to evaluate
    * @return the effective boolean value
    */
-  public static boolean fnBooleanAsPrimitive(@NotNull IItem item) {
+  public static boolean fnBooleanAsPrimitive(@NonNull IItem item) {
     boolean retval;
     if (item instanceof IBooleanItem) {
       retval = ((IBooleanItem) item).toBoolean();

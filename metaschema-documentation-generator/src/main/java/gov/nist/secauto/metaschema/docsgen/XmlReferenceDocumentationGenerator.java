@@ -28,11 +28,10 @@ package gov.nist.secauto.metaschema.docsgen;
 
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.Map;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import freemarker.core.ParseException;
 import freemarker.template.Configuration;
 import freemarker.template.MalformedTemplateNameException;
@@ -50,8 +49,8 @@ public class XmlReferenceDocumentationGenerator
   }
 
   @Override
-  protected void buildModel(@NotNull Configuration cfg, @NotNull Map<String, Object> root,
-      @NotNull IMetaschema metaschema) throws IOException, TemplateException {
+  protected void buildModel(@NonNull Configuration cfg, @NonNull Map<String, Object> root,
+      @NonNull IMetaschema metaschema) throws IOException, TemplateException {
     super.buildModel(cfg, root, metaschema);
     root.put("test", "test string");
   }

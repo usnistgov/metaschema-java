@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.AbstractMarkupSt
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupParser;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IMarkupItem;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractMarkupAdapter<TYPE extends AbstractMarkupString<TYPE>>
     extends AbstractCustomJavaDataTypeAdapter<TYPE, IMarkupItem> {
@@ -52,7 +52,7 @@ public abstract class AbstractMarkupAdapter<TYPE extends AbstractMarkupString<TY
    * @param clazz
    *          the markup type class
    */
-  protected AbstractMarkupAdapter(@NotNull Class<TYPE> clazz) {
+  protected AbstractMarkupAdapter(@NonNull Class<TYPE> clazz) {
     super(clazz);
   }
 

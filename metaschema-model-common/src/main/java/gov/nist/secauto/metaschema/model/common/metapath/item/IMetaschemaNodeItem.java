@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IMetaschemaNodeItem extends INodeItem {
 
@@ -55,12 +55,12 @@ public interface IMetaschemaNodeItem extends INodeItem {
   }
 
   @Override
-  default String format(@NotNull IPathFormatter formatter) {
+  default String format(@NonNull IPathFormatter formatter) {
     return formatter.formatMetaschema(this);
   }
 
   @Override
-  default <RESULT, CONTEXT> RESULT accept(@NotNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+  default <RESULT, CONTEXT> RESULT accept(@NonNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitMetaschema(this, context);
   }
 }

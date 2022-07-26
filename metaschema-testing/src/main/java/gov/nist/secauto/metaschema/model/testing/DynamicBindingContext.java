@@ -34,14 +34,13 @@ import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.namespace.QName;
 
 public class DynamicBindingContext
     extends DefaultBindingContext {
 
-  public DynamicBindingContext(@NotNull IProduction production, ClassLoader classLoader) {
+  public DynamicBindingContext(@NonNull IProduction production, ClassLoader classLoader) {
     production.getDefinitionProductionsAsStream()
         .filter(definitionProduction -> {
           boolean retval = false;
@@ -70,7 +69,7 @@ public class DynamicBindingContext
     private final IAssemblyDefinition definition;
     private final Class<IAssemblyClassBinding> clazz;
 
-    public DynamicBindingMatcher(@NotNull IAssemblyDefinition definition, @NotNull Class<IAssemblyClassBinding> clazz) {
+    public DynamicBindingMatcher(@NonNull IAssemblyDefinition definition, @NonNull Class<IAssemblyClassBinding> clazz) {
       this.definition = definition;
       this.clazz = clazz;
     }
@@ -84,13 +83,13 @@ public class DynamicBindingContext
     }
 
     @SuppressWarnings("null")
-    @NotNull
+    @NonNull
     protected QName getRootQName() {
       return getDefinition().getRootXmlQName();
     }
 
     @SuppressWarnings("null")
-    @NotNull
+    @NonNull
     protected String getRootJsonName() {
       return getDefinition().getRootJsonName();
     }

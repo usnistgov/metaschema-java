@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A {@link INodeItem} supported by a {@link IFlagInstance}, that must have an associated value.
@@ -38,7 +38,7 @@ class RequiredValueFlagInstanceNodeItemImpl
     extends AbstractFlagInstanceNodeItem<IRequiredValueModelNodeItem>
     implements IRequiredValueFlagNodeItem {
 
-  @NotNull
+  @NonNull
   private final Object value;
 
   /**
@@ -47,27 +47,27 @@ class RequiredValueFlagInstanceNodeItemImpl
   private IAnyAtomicItem atomicItem;
 
   public RequiredValueFlagInstanceNodeItemImpl(
-      @NotNull IFlagInstance instance,
-      @NotNull IRequiredValueModelNodeItem parent,
-      @NotNull Object value) {
+      @NonNull IFlagInstance instance,
+      @NonNull IRequiredValueModelNodeItem parent,
+      @NonNull Object value) {
     super(instance, parent);
     this.value = value;
   }
 
   @Override
-  @NotNull
+  @NonNull
   public Object getValue() {
     return value;
   }
 
   @Override
-  @NotNull
+  @NonNull
   public IAnyAtomicItem toAtomicItem() {
     synchronized (this) {
       if (atomicItem == null) {
         atomicItem = getInstance().getDefinition().getJavaTypeAdapter().newItem(getValue());
       }
+      return ObjectUtils.notNull(atomicItem);
     }
-    return ObjectUtils.notNull(atomicItem);
   }
 }

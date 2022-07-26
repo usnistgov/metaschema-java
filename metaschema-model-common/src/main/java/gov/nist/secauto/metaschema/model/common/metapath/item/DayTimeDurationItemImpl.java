@@ -29,15 +29,15 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.DayTimeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.Duration;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DayTimeDurationItemImpl
     extends AbstractAnyAtomicItem<Duration>
     implements IDayTimeDurationItem {
 
-  public DayTimeDurationItemImpl(@NotNull Duration value) {
+  public DayTimeDurationItemImpl(@NonNull Duration value) {
     super(value);
   }
 

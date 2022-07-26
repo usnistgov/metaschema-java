@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common.metapath.function.library;
 
 import com.google.auto.service.AutoService;
 
-import gov.nist.secauto.metaschema.model.common.metapath.function.AbstractFunctionLibrary;
+import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionLibrary;
 import gov.nist.secauto.metaschema.model.common.metapath.function.IFunctionLibrary;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
@@ -44,7 +44,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
 @AutoService(IFunctionLibrary.class)
 public class DefaultFunctionLibrary
-    extends AbstractFunctionLibrary {
+    extends FunctionLibrary {
 
   /**
    * Initialize the built-in function library.

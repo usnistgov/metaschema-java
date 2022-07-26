@@ -29,33 +29,33 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigInteger;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IPositiveIntegerItem extends IIntegerItem {
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   public static final IPositiveIntegerItem ONE = valueOf(BigInteger.ONE);
 
-  @NotNull
-  public static IPositiveIntegerItem valueOf(@NotNull IIntegerItem value) {
+  @NonNull
+  public static IPositiveIntegerItem valueOf(@NonNull IIntegerItem value) {
     return valueOf(value.asInteger());
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   public static IPositiveIntegerItem valueOf(long value) {
     return valueOf(BigInteger.valueOf(value));
   }
 
-  @NotNull
-  public static IPositiveIntegerItem valueOf(@NotNull BigInteger value) {
+  @NonNull
+  public static IPositiveIntegerItem valueOf(@NonNull BigInteger value) {
     return new PositiveIntegerItemImpl(value);
   }
 
-  @NotNull
-  public static IPositiveIntegerItem valueOf(@NotNull String value) {
+  @NonNull
+  public static IPositiveIntegerItem valueOf(@NonNull String value) {
     try {
       return valueOf(MetaschemaDataTypeProvider.POSITIVE_INTEGER.parse(value));
     } catch (IllegalArgumentException ex) {
@@ -64,8 +64,8 @@ public interface IPositiveIntegerItem extends IIntegerItem {
     }
   }
 
-  @NotNull
-  public static IPositiveIntegerItem cast(@NotNull IAnyAtomicItem item) {
+  @NonNull
+  public static IPositiveIntegerItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.POSITIVE_INTEGER.cast(item);
   }
 }

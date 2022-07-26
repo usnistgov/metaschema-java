@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Objects;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * An immutable representation of an {@link IExpression} that has two sub-expression children.
@@ -41,9 +41,9 @@ import java.util.Objects;
  */
 abstract class AbstractBinaryExpression<L extends IExpression, R extends IExpression>
     extends AbstractExpression {
-  @NotNull
+  @NonNull
   private final L left;
-  @NotNull
+  @NonNull
   private final R right;
 
   /**
@@ -55,7 +55,7 @@ abstract class AbstractBinaryExpression<L extends IExpression, R extends IExpres
    *          the second sub-expression to evaluate
    */
   @SuppressWarnings("null")
-  public AbstractBinaryExpression(@NotNull L left, @NotNull R right) {
+  public AbstractBinaryExpression(@NonNull L left, @NonNull R right) {
     this.left = Objects.requireNonNull(left);
     this.right = Objects.requireNonNull(right);
   }
@@ -65,7 +65,7 @@ abstract class AbstractBinaryExpression<L extends IExpression, R extends IExpres
    * 
    * @return the first sub-expression
    */
-  @NotNull
+  @NonNull
   public L getLeft() {
     return left;
   }
@@ -75,14 +75,14 @@ abstract class AbstractBinaryExpression<L extends IExpression, R extends IExpres
    * 
    * @return the second sub-expression
    */
-  @NotNull
+  @NonNull
   public R getRight() {
     return right;
   }
 
   @SuppressWarnings("null")
   @Override
-  public List<@NotNull ? extends IExpression> getChildren() {
+  public List<? extends IExpression> getChildren() {
     return List.of(left, right);
   }
 }

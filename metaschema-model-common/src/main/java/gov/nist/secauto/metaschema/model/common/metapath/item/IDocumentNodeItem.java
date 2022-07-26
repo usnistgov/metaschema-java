@@ -27,14 +27,15 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IDocumentNodeItem extends IRequiredValueNodeItem {
   @Override
@@ -52,7 +53,7 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
    * 
    * @return the root assembly
    */
-  @NotNull
+  @NonNull
   IRootAssemblyNodeItem getRootAssemblyNodeItem();
 
   @Override
@@ -72,11 +73,11 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
    * 
    * @return the document's URI
    */
-  @NotNull
+  @NonNull
   URI getDocumentUri();
 
   @Override
-  @NotNull
+  @NonNull
   default URI getBaseUri() {
     return getDocumentUri();
   }
@@ -86,7 +87,7 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
    */
   @SuppressWarnings("null")
   @Override
-  default Collection<@NotNull ? extends IRequiredValueFlagNodeItem> getFlags() {
+  default Collection<? extends IRequiredValueFlagNodeItem> getFlags() {
     // a document does not have flags
     return Collections.emptyList();
   }
@@ -95,7 +96,7 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
    * Documents do not have flag items. This call should return {@code null}.
    */
   @Override
-  default IRequiredValueFlagNodeItem getFlagByName(@NotNull String name) {
+  default IRequiredValueFlagNodeItem getFlagByName(@NonNull String name) {
     // a document does not have flags
     return null;
   }
@@ -105,43 +106,43 @@ public interface IDocumentNodeItem extends IRequiredValueNodeItem {
    */
   @SuppressWarnings("null")
   @Override
-  default @NotNull Stream<@NotNull ? extends IRequiredValueFlagNodeItem> flags() {
+  default @NonNull Stream<? extends IRequiredValueFlagNodeItem> flags() {
     // a document does not have flags
     return Stream.empty();
   }
 
   @SuppressWarnings("null")
   @Override
-  default Stream<@NotNull ? extends IModelNodeItem> modelItems() {
+  default Stream<? extends IModelNodeItem> modelItems() {
     return Stream.of(getRootAssemblyNodeItem());
   }
 
   @SuppressWarnings("null")
   @Override
-  default @NotNull List<@NotNull ? extends IRequiredValueModelNodeItem> getModelItemsByName(String name) {
+  default @NonNull List<? extends IRequiredValueModelNodeItem> getModelItemsByName(String name) {
     IRootAssemblyNodeItem root = getRootAssemblyNodeItem();
     return root.getName().equals(name) ? Collections.singletonList(root) : Collections.emptyList();
   }
 
   @SuppressWarnings("null")
   @Override
-  default @NotNull Collection<@NotNull ? extends List<@NotNull ? extends IRequiredValueModelNodeItem>> getModelItems() {
+  default @NonNull Collection<? extends List<? extends IRequiredValueModelNodeItem>> getModelItems() {
     return Collections.singletonList(Collections.singletonList(getRootAssemblyNodeItem()));
   }
 
   @Override
-  default @NotNull String format(@NotNull IPathFormatter formatter) {
+  default @NonNull String format(@NonNull IPathFormatter formatter) {
     return formatter.formatDocument(this);
   }
 
   @Override
-  default <RESULT, CONTEXT> RESULT accept(@NotNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+  default <RESULT, CONTEXT> RESULT accept(@NonNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitDocument(this, context);
   }
 
   @Override
-  @NotNull
+  @NonNull
   default Object getValue() {
-    return getRootAssemblyNodeItem().getValue();
+    return ObjectUtils.requireNonNull(getRootAssemblyNodeItem().getValue());
   }
 }

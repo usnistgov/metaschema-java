@@ -31,11 +31,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.binding.model.AbstractBoundMetaschema;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This annotation indicates that the target class represents a Metaschema field.
@@ -51,7 +51,7 @@ public @interface MetaschemaField {
    * 
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
-  @NotNull
+  @NonNull
   String formalName() default "##none";
 
   /**
@@ -61,7 +61,7 @@ public @interface MetaschemaField {
    * 
    * @return a markdown string or {@code "##none"} if no description is provided
    */
-  @NotNull
+  @NonNull
   String description() default "##none";
 
   /**
@@ -69,7 +69,7 @@ public @interface MetaschemaField {
    * 
    * @return the name
    */
-  @NotNull
+  @NonNull
   String name();
 
   /**
@@ -78,7 +78,7 @@ public @interface MetaschemaField {
    * 
    * @return the metaschema class
    */
-  @NotNull
+  @NonNull
   Class<? extends AbstractBoundMetaschema> metaschema();
 
   /**
@@ -98,7 +98,7 @@ public @interface MetaschemaField {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
-  @NotNull
+  @NonNull
   AllowedValues[] allowedValues() default {};
 
   /**
@@ -106,7 +106,7 @@ public @interface MetaschemaField {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
-  @NotNull
+  @NonNull
   Matches[] matches() default {};
 
   /**
@@ -114,7 +114,7 @@ public @interface MetaschemaField {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
-  @NotNull
+  @NonNull
   IndexHasKey[] indexHasKey() default {};
 
   /**
@@ -122,7 +122,7 @@ public @interface MetaschemaField {
    * 
    * @return the expected constraints or an empty array if no expected constraints are defined
    */
-  @NotNull
+  @NonNull
   Expect[] expect() default {};
 
   /**
@@ -130,6 +130,6 @@ public @interface MetaschemaField {
    * 
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
-  @NotNull
+  @NonNull
   String remarks() default "##none";
 }

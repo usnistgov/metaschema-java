@@ -61,7 +61,7 @@ class AndTest
     IExpression exp2 = context.mock(IExpression.class, "exp2");
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         atMost(1).of(exp1).accept(dynamicContext, nodeContext);
         will(returnValue(ISequence.of(bool1)));
         atMost(1).of(exp2).accept(dynamicContext, nodeContext);

@@ -29,13 +29,14 @@ package gov.nist.secauto.metaschema.codegen;
 import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.Collection;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IDefinitionTypeInfo {
-  @NotNull
+  @NonNull
   IDefinition getDefinition();
 
   /**
@@ -43,7 +44,7 @@ public interface IDefinitionTypeInfo {
    * 
    * @return the type resolver
    */
-  @NotNull
+  @NonNull
   ITypeResolver getTypeResolver();
 
   /**
@@ -53,14 +54,14 @@ public interface IDefinitionTypeInfo {
    *          the property name to look for
    * @return {@code true} if there is an associated property with the name or {@code false} otherwise
    */
-  boolean hasPropertyWithName(@NotNull String propertyName);
+  boolean hasPropertyWithName(@NonNull String propertyName);
 
   @Nullable
-  IInstanceTypeInfo getInstanceTypeInfo(@NotNull INamedInstance instance);
+  IInstanceTypeInfo getInstanceTypeInfo(@NonNull INamedInstance instance);
 
-  @NotNull
+  @NonNull
   Collection<ITypeInfo> getPropertyTypeInfos();
 
-  @NotNull
+  @NonNull
   Collection<IInstanceTypeInfo> getInstanceTypeInfos();
 }

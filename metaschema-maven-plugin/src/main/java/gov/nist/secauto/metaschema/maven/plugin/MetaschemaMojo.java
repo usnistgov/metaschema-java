@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.codegen.binding.config.DefaultBindingConfigur
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
@@ -57,6 +58,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Goal which generates Java source files for a given set of Metaschema definitions.
@@ -185,6 +188,7 @@ public class MetaschemaMojo
    * 
    * @return The active MojoExecution.
    */
+  @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "this is a data holder")
   public MojoExecution getMojoExecution() {
     return mojoExecution;
   }
@@ -370,7 +374,9 @@ public class MetaschemaMojo
       getLog().debug(String.format("Using outputDirectory: %s", outputDir.getPath()));
 
       if (!outputDir.exists()) {
-        outputDir.mkdirs();
+        if (!outputDir.mkdirs()) {
+          throw new MojoExecutionException("Unable to create output directory: " + outputDir);
+        }
       }
 
       // generate Java sources based on provided metaschema sources
@@ -402,13 +408,18 @@ public class MetaschemaMojo
 
       try {
         getLog().info("Generating Java classes in: " + getOutputDirectory().getPath());
-        JavaGenerator.generate(metaschemaCollection, getOutputDirectory().toPath(), bindingConfiguration);
+        JavaGenerator.generate(metaschemaCollection, ObjectUtils.notNull(getOutputDirectory().toPath()),
+            bindingConfiguration);
       } catch (IOException ex) {
         throw new MojoExecutionException("Creation of Java classes failed.", ex);
       }
 
       // create the stale file
-      staleFileDirectory.mkdirs();
+      if (!staleFileDirectory.exists()) {
+        if (!staleFileDirectory.mkdirs()) {
+          throw new MojoExecutionException("Unable to create output directory: " + staleFileDirectory);
+        }
+      }
       try (OutputStream os
           = Files.newOutputStream(staleFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE,
               StandardOpenOption.TRUNCATE_EXISTING)) {

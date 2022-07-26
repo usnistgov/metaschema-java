@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import org.jetbrains.annotations.NotNull;
-
 import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IFlagInstance extends INamedInstance, IFlag {
   @Override
@@ -37,7 +37,7 @@ public interface IFlagInstance extends INamedInstance, IFlag {
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   @Override
   default QName getXmlQName() {
     return INamedInstance.super.getXmlQName();

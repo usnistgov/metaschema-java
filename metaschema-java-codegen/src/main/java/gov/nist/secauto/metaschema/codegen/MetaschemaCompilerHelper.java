@@ -32,9 +32,10 @@ import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 
+import java.security.AccessController;
 import org.apache.logging.log4j.LogManager;
+import java.security.PrivilegedAction;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -53,6 +54,8 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 /**
  * This class provides methods to generate and dynamically compile Java code based on a Metaschema.
  * The {@link #getClassLoader(Path, ClassLoader)} method can be used to get a {@link ClassLoader}
@@ -66,27 +69,27 @@ public final class MetaschemaCompilerHelper {
     // disable construction
   }
 
-  public static IProduction compileMetaschema(@NotNull Path metaschemaPath, @NotNull Path classDir)
+  public static IProduction compileMetaschema(@NonNull Path metaschemaPath, @NonNull Path classDir)
       throws IOException, MetaschemaException {
     return compileMetaschema(metaschemaPath, classDir, new DefaultBindingConfiguration());
   }
 
-  public static IProduction compileMetaschema(@NotNull Path metaschemaPath, @NotNull Path classDir,
-      @NotNull IBindingConfiguration bindingConfiguration)
+  public static IProduction compileMetaschema(@NonNull Path metaschemaPath, @NonNull Path classDir,
+      @NonNull IBindingConfiguration bindingConfiguration)
       throws IOException, MetaschemaException {
     IMetaschema metaschema = LOADER.load(metaschemaPath);
     return compileMetaschema(metaschema, classDir, bindingConfiguration);
   }
 
-  public static IProduction compileMetaschema(@NotNull IMetaschema metaschema, @NotNull Path classDir)
+  public static IProduction compileMetaschema(@NonNull IMetaschema metaschema, @NonNull Path classDir)
       throws IOException {
     return compileMetaschema(metaschema, classDir, new DefaultBindingConfiguration());
   }
 
-  public static IProduction compileMetaschema(@NotNull IMetaschema metaschema, @NotNull Path classDir,
-      @NotNull IBindingConfiguration bindingConfiguration) throws IOException {
+  public static IProduction compileMetaschema(@NonNull IMetaschema metaschema, @NonNull Path classDir,
+      @NonNull IBindingConfiguration bindingConfiguration) throws IOException {
     IProduction production = JavaGenerator.generate(metaschema, classDir, bindingConfiguration);
-    List<@NotNull IGeneratedClass> classesToCompile = production.getGeneratedClasses().collect(Collectors.toList());
+    List<IGeneratedClass> classesToCompile = production.getGeneratedClasses().collect(Collectors.toList());
 
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     if (!compileGeneratedClasses(classesToCompile, diagnostics, classDir)) {
@@ -101,12 +104,17 @@ public final class MetaschemaCompilerHelper {
     return production;
   }
 
-  public static ClassLoader getClassLoader(@NotNull Path classDir, @NotNull ClassLoader parent) {
-    try {
-      return new URLClassLoader(new URL[] { classDir.toUri().toURL() }, parent);
-    } catch (MalformedURLException ex) {
-      throw new IllegalStateException("unable to configure class loader", ex);
-    }
+  public static ClassLoader getClassLoader(@NonNull final Path classDir, @NonNull final ClassLoader parent) {
+    return AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
+      @Override
+      public URLClassLoader run() {
+        try {
+          return new URLClassLoader(new URL[] { classDir.toUri().toURL() }, parent);
+        } catch (MalformedURLException ex) {
+          throw new IllegalStateException("unable to configure class loader", ex);
+        }
+      }
+    });
   }
 
   private static boolean compile(
@@ -129,7 +137,7 @@ public final class MetaschemaCompilerHelper {
   }
 
   private static boolean compileGeneratedClasses(
-      List<@NotNull IGeneratedClass> classesToCompile,
+      List<IGeneratedClass> classesToCompile,
       DiagnosticCollector<JavaFileObject> diagnostics,
       Path classDir) throws IOException {
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();

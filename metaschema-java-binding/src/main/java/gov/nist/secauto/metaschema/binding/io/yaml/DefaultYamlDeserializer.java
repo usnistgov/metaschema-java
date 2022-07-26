@@ -31,11 +31,14 @@ import com.fasterxml.jackson.core.JsonFactory;
 import gov.nist.secauto.metaschema.binding.IBindingContext;
 import gov.nist.secauto.metaschema.binding.io.json.DefaultJsonDeserializer;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DefaultYamlDeserializer<CLASS>
     extends DefaultJsonDeserializer<CLASS> {
 
-  public DefaultYamlDeserializer(IBindingContext bindingContext, IAssemblyClassBinding classBinding) {
+  public DefaultYamlDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
@@ -46,7 +49,7 @@ public class DefaultYamlDeserializer<CLASS>
 
   @Override
   protected JsonFactory getJsonFactoryInstance() {
-    return YamlFactoryFactory.instance();
+    return ObjectUtils.notNull(YamlFactoryFactory.instance());
   }
 
 }

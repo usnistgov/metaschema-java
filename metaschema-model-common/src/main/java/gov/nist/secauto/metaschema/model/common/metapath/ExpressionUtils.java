@@ -28,28 +28,28 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 final class ExpressionUtils {
   private ExpressionUtils() {
     // disable
   }
 
-  @NotNull
-  public static <RESULT_TYPE> Class<@NotNull ? extends RESULT_TYPE> analyzeStaticResultType(
-      @NotNull Class<@NotNull RESULT_TYPE> baseType,
-      @NotNull List<@NotNull IExpression> expressions) {
+  @NonNull
+  public static <RESULT_TYPE> Class<? extends RESULT_TYPE> analyzeStaticResultType(
+      @NonNull Class<RESULT_TYPE> baseType,
+      @NonNull List<IExpression> expressions) {
 
-    Class<@NotNull ? extends RESULT_TYPE> retval;
+    Class<? extends RESULT_TYPE> retval;
     if (expressions.isEmpty()) {
       // no expressions, so use the base type
       retval = baseType;
     } else {
-      List<@NotNull Class<@NotNull ?>> expressionClasses = ObjectUtils.notNull(expressions.stream()
+      List<Class<?>> expressionClasses = ObjectUtils.notNull(expressions.stream()
           .map(expr -> expr.getStaticResultType()).collect(Collectors.toList()));
 
       // check if the expression classes, are derived from the base type
@@ -62,10 +62,10 @@ final class ExpressionUtils {
     return retval;
   }
 
-  @NotNull
-  private static <RESULT_TYPE> Class<@NotNull ? extends RESULT_TYPE> findCommonBase(
-      @NotNull Class<@NotNull RESULT_TYPE> baseType,
-      @NotNull List<@NotNull Class<@NotNull ?>> expressionClasses) {
+  @NonNull
+  private static <RESULT_TYPE> Class<? extends RESULT_TYPE> findCommonBase(
+      @NonNull Class<RESULT_TYPE> baseType,
+      @NonNull List<Class<?>> expressionClasses) {
     Class<? extends RESULT_TYPE> retval;
     if (expressionClasses.size() == 1) {
       @SuppressWarnings("unchecked")
@@ -96,25 +96,25 @@ final class ExpressionUtils {
   }
 
   @Nullable
-  private static Class<@NotNull ?> getCommonBaseClass(@NotNull Class<@NotNull ?> baseType,
-      @NotNull Class<@NotNull ?> first, @NotNull List<@NotNull Class<@NotNull ?>> expressionClasses) {
+  private static Class<?> getCommonBaseClass(@NonNull Class<?> baseType,
+      @NonNull Class<?> first, @NonNull List<Class<?>> expressionClasses) {
     boolean match = true;
-    for (Class<@NotNull ?> clazz : expressionClasses) {
+    for (Class<?> clazz : expressionClasses) {
       if (!first.isAssignableFrom(clazz)) {
         match = false;
         break;
       }
     }
 
-    Class<@NotNull ?> retval;
+    Class<?> retval = null;
     if (match) {
       retval = first;
     } else {
-      retval = null;
       for (Class<?> clazz : first.getInterfaces()) {
+        assert clazz != null;
         // ensure the new interface is a sublass of the baseType
         if (baseType.isAssignableFrom(clazz)) {
-          Class<@NotNull ?> newBase = getCommonBaseClass(baseType, clazz, expressionClasses);
+          Class<?> newBase = getCommonBaseClass(baseType, clazz, expressionClasses);
           if (newBase != null) {
             retval = newBase;
             break;
@@ -125,8 +125,8 @@ final class ExpressionUtils {
     return retval;
   }
 
-  private static boolean checkDerivedFrom(@NotNull Class<@NotNull ?> baseType,
-      @NotNull List<@NotNull Class<@NotNull ?>> expressionClasses) {
+  private static boolean checkDerivedFrom(@NonNull Class<?> baseType,
+      @NonNull List<Class<?>> expressionClasses) {
     boolean retval = true;
     for (Class<?> clazz : expressionClasses) {
       if (!baseType.isAssignableFrom(clazz)) {

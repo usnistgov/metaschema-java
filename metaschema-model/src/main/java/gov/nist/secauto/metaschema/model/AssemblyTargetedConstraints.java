@@ -35,56 +35,57 @@ import gov.nist.secauto.metaschema.model.common.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.model.common.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class AssemblyTargetedConstraints
     extends AbstractTargetedConstraints<AssemblyConstraintSupport>
     implements IAssemblyConstraintSupport {
 
-  public AssemblyTargetedConstraints(@NotNull MetapathExpression targetExpression,
-      @NotNull AssemblyConstraintSupport constraints) {
+  public AssemblyTargetedConstraints(@NonNull MetapathExpression targetExpression,
+      @NonNull AssemblyConstraintSupport constraints) {
     super(targetExpression, constraints);
   }
 
   @Override
-  public List<@NotNull ? extends IIndexConstraint> getIndexConstraints() {
+  public List<? extends IIndexConstraint> getIndexConstraints() {
     return getConstraintSupport().getIndexConstraints();
   }
 
   @Override
-  public List<@NotNull ? extends IUniqueConstraint> getUniqueConstraints() {
+  public List<? extends IUniqueConstraint> getUniqueConstraints() {
     return getConstraintSupport().getUniqueConstraints();
   }
 
   @Override
-  public List<@NotNull ? extends ICardinalityConstraint> getHasCardinalityConstraints() {
+  public List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
     return getConstraintSupport().getHasCardinalityConstraints();
   }
 
   @Override
-  public void addConstraint(@NotNull IIndexConstraint constraint) {
+  public void addConstraint(@NonNull IIndexConstraint constraint) {
     getConstraintSupport().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IUniqueConstraint constraint) {
+  public void addConstraint(@NonNull IUniqueConstraint constraint) {
     getConstraintSupport().addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull ICardinalityConstraint constraint) {
+  public void addConstraint(@NonNull ICardinalityConstraint constraint) {
     getConstraintSupport().addConstraint(constraint);
   }
 
   @Override
-  public void target(@NotNull IAssemblyDefinition definition) {
+  public void target(@NonNull IAssemblyDefinition definition) {
     applyTo((IDefinition) definition);
     applyTo(definition);
   }
 
-  protected void applyTo(@NotNull IAssemblyDefinition definition) {
+  @SuppressWarnings("null")
+  protected void applyTo(@NonNull IAssemblyDefinition definition) {
     getIndexConstraints().forEach(constraint -> definition.addConstraint(constraint));
     getUniqueConstraints().forEach(constraint -> definition.addConstraint(constraint));
     getHasCardinalityConstraints().forEach(constraint -> definition.addConstraint(constraint));

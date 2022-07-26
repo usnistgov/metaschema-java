@@ -31,25 +31,26 @@ import gov.nist.secauto.metaschema.model.common.INamedInstance;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 abstract class AbstractDefinitionTypeInfo<DEF extends IDefinition> implements IDefinitionTypeInfo {
   private static final Logger LOGGER = LogManager.getLogger(AbstractDefinitionTypeInfo.class);
-  @NotNull
+  @NonNull
   private final DEF definition;
-  @NotNull
+  @NonNull
   private final ITypeResolver typeResolver;
-  @NotNull
-  private final Map<@NotNull String, ITypeInfo> propertyNameToInstanceTypeInfoMap = new LinkedHashMap<>();
-  @NotNull
-  private final Map<@NotNull INamedInstance, IInstanceTypeInfo> instanceToInstanceTypeInfoMap = new LinkedHashMap<>();
+  @NonNull
+  private final Map<String, ITypeInfo> propertyNameToInstanceTypeInfoMap = new LinkedHashMap<>();
+  @NonNull
+  private final Map<INamedInstance, IInstanceTypeInfo> instanceToInstanceTypeInfoMap = new LinkedHashMap<>();
 
-  public AbstractDefinitionTypeInfo(@NotNull DEF definition, @NotNull ITypeResolver typeResolver) {
+  public AbstractDefinitionTypeInfo(@NonNull DEF definition, @NonNull ITypeResolver typeResolver) {
     this.definition = definition;
     this.typeResolver = typeResolver;
   }
@@ -77,7 +78,7 @@ abstract class AbstractDefinitionTypeInfo<DEF extends IDefinition> implements ID
    * @param typeInfo
    *          the instance type info to add
    */
-  protected final void addPropertyTypeInfo(@NotNull ITypeInfo typeInfo) {
+  protected final void addPropertyTypeInfo(@NonNull ITypeInfo typeInfo) {
     String name = typeInfo.getPropertyName();
     ITypeInfo oldContext = propertyNameToInstanceTypeInfoMap.put(name, typeInfo);
     if (oldContext != null) {
@@ -93,7 +94,7 @@ abstract class AbstractDefinitionTypeInfo<DEF extends IDefinition> implements ID
   }
 
   @Override
-  public boolean hasPropertyWithName(@NotNull String propertyName) {
+  public boolean hasPropertyWithName(@NonNull String propertyName) {
     synchronized (this) {
       return propertyNameToInstanceTypeInfoMap.containsKey(propertyName);
     }
@@ -108,7 +109,7 @@ abstract class AbstractDefinitionTypeInfo<DEF extends IDefinition> implements ID
 
   @Override
   @Nullable
-  public IInstanceTypeInfo getInstanceTypeInfo(@NotNull INamedInstance instance) {
+  public IInstanceTypeInfo getInstanceTypeInfo(@NonNull INamedInstance instance) {
     initInstanceTypeInfos();
     return instanceToInstanceTypeInfoMap.get(instance);
   }

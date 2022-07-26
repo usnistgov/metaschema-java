@@ -37,8 +37,6 @@ import gov.nist.secauto.metaschema.binding.model.annotations.XmlSchema;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupText;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
@@ -47,16 +45,18 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class PackageProductionImpl implements IPackageProduction {
-  @NotNull
+  @NonNull
   private final String javaPackage;
-  @NotNull
+  @NonNull
   private final URI xmlNamespace;
-  @NotNull
+  @NonNull
   private final DefaultGeneratedClass packageInfoClass;
 
-  public PackageProductionImpl(@NotNull String javaPackage, @NotNull URI xmlNamespace,
-      @NotNull List<@NotNull IMetaschemaProduction> metaschemaProductions, @NotNull Path targetDirectory)
+  public PackageProductionImpl(@NonNull String javaPackage, @NonNull URI xmlNamespace,
+      @NonNull List<IMetaschemaProduction> metaschemaProductions, @NonNull Path targetDirectory)
       throws IOException {
     this.javaPackage = javaPackage;
     this.xmlNamespace = xmlNamespace;
@@ -95,7 +95,7 @@ class PackageProductionImpl implements IPackageProduction {
         = new DefaultGeneratedClass(packageInfo, ObjectUtils.notNull(ClassName.get(javaPackage, "package-info")));
   }
 
-  public static String formatMarkdown(@NotNull IMarkupText markup) {
+  public static String formatMarkdown(@NonNull IMarkupText markup) {
     Formatter.Builder builder = Formatter.builder();
     builder.set(ObjectUtils.notNull(Formatter.FORMAT_FLAGS), LineAppendable.F_WHITESPACE_REMOVAL);
     // builder.set(Formatter.ESCAPE_SPECIAL_CHARS, false);

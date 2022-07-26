@@ -33,18 +33,19 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface ITypeResolver {
-  @NotNull
-  IAssemblyDefinitionTypeInfo getTypeInfo(@NotNull IAssemblyDefinition definition);
+  @NonNull
+  IAssemblyDefinitionTypeInfo getTypeInfo(@NonNull IAssemblyDefinition definition);
 
-  @NotNull
-  IFieldDefinitionTypeInfo getTypeInfo(@NotNull IFieldDefinition definition);
+  @NonNull
+  IFieldDefinitionTypeInfo getTypeInfo(@NonNull IFieldDefinition definition);
 
-  @NotNull
-  IModelDefinitionTypeInfo getTypeInfo(@NotNull IModelDefinition definition);
+  @NonNull
+  IModelDefinitionTypeInfo getTypeInfo(@NonNull IModelDefinition definition);
 
   /**
    * Get the name of the class associated with the provided metaschema.
@@ -53,8 +54,8 @@ public interface ITypeResolver {
    *          a metaschema that will be built as a class
    * @return the class name information for the metaschema
    */
-  @NotNull
-  ClassName getClassName(@NotNull IMetaschema metaschema);
+  @NonNull
+  ClassName getClassName(@NonNull IMetaschema metaschema);
 
   /**
    * Get the name of the class associated with the provided definition.
@@ -63,8 +64,8 @@ public interface ITypeResolver {
    *          a definition that may be built as a subclass
    * @return the class name information for the definition
    */
-  @NotNull
-  ClassName getClassName(@NotNull IModelDefinition definition);
+  @NonNull
+  ClassName getClassName(@NonNull IModelDefinition definition);
 
   /**
    * Get the name of the base class to use for the class associated with the provided definition.
@@ -74,7 +75,7 @@ public interface ITypeResolver {
    * @return the name of the base class or {@code null} if no base class is to be used
    */
   @Nullable
-  ClassName getBaseClassName(@NotNull IModelDefinition definition);
+  ClassName getBaseClassName(@NonNull IModelDefinition definition);
 
   /**
    * Get the Java package name to use for the provided Metaschema.
@@ -83,6 +84,6 @@ public interface ITypeResolver {
    *          the Metaschema
    * @return the Java package name
    */
-  @NotNull
-  String getPackageName(@NotNull IMetaschema metaschema);
+  @NonNull
+  String getPackageName(@NonNull IMetaschema metaschema);
 }

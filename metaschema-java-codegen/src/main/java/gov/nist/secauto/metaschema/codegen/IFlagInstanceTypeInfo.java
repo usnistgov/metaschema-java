@@ -28,13 +28,13 @@ package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IFlagInstanceTypeInfo extends IInstanceTypeInfo {
-  @NotNull
+  @NonNull
   static IFlagInstanceTypeInfo newTypeInfo(
-      @NotNull IFlagInstance instance,
-      @NotNull IDefinitionTypeInfo parentDefinition) {
+      @NonNull IFlagInstance instance,
+      @NonNull IDefinitionTypeInfo parentDefinition) {
     return new FlagInstanceTypeInfoImpl(instance, parentDefinition);
   }
 

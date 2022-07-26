@@ -36,30 +36,30 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.HashMap;
 import java.util.Map;
 
-class AbstractMetaschemaLoaderStrategy implements IMetaschemaLoaderStrategy {
-  @NotNull
-  private final IBindingContext bindingContext;
-  @NotNull
-  private final Map<@NotNull Class<?>, IMetaschema> metaschemasByClass = new HashMap<>(); // NOPMD - intentional
-  @NotNull
-  private final Map<@NotNull Class<?>, IClassBinding> classBindingsByClass = new HashMap<>(); // NOPMD - intentional
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-  protected AbstractMetaschemaLoaderStrategy(@NotNull IBindingContext bindingContext) {
+class AbstractMetaschemaLoaderStrategy implements IMetaschemaLoaderStrategy {
+  @NonNull
+  private final IBindingContext bindingContext;
+  @NonNull
+  private final Map<Class<?>, IMetaschema> metaschemasByClass = new HashMap<>(); // NOPMD - intentional
+  @NonNull
+  private final Map<Class<?>, IClassBinding> classBindingsByClass = new HashMap<>(); // NOPMD - intentional
+
+  protected AbstractMetaschemaLoaderStrategy(@NonNull IBindingContext bindingContext) {
     this.bindingContext = bindingContext;
   }
 
-  @NotNull
+  @NonNull
   public IBindingContext getBindingContext() {
     return bindingContext;
   }
 
   @Override
-  public IMetaschema getMetaschemaInstanceByClass(@NotNull Class<? extends AbstractBoundMetaschema> clazz) {
+  public IMetaschema getMetaschemaInstanceByClass(@NonNull Class<? extends AbstractBoundMetaschema> clazz) {
     IMetaschema retval;
     synchronized (this) {
       retval = metaschemasByClass.get(clazz);
@@ -71,13 +71,13 @@ class AbstractMetaschemaLoaderStrategy implements IMetaschemaLoaderStrategy {
     return ObjectUtils.notNull(retval);
   }
 
-  @NotNull
-  protected IMetaschema newMetaschema(@NotNull Class<? extends AbstractBoundMetaschema> clazz) {
+  @NonNull
+  protected IMetaschema newMetaschema(@NonNull Class<? extends AbstractBoundMetaschema> clazz) {
     return AbstractBoundMetaschema.createInstance(clazz, getBindingContext());
   }
 
   @Override
-  public IClassBinding getClassBinding(@NotNull Class<?> clazz) {
+  public IClassBinding getClassBinding(@NonNull Class<?> clazz) {
     IClassBinding retval;
     synchronized (this) {
       retval = classBindingsByClass.get(clazz);
@@ -89,8 +89,8 @@ class AbstractMetaschemaLoaderStrategy implements IMetaschemaLoaderStrategy {
     return ObjectUtils.notNull(retval);
   }
 
-  @NotNull
-  protected IClassBinding newClassBinding(@NotNull Class<?> clazz) {
+  @NonNull
+  protected IClassBinding newClassBinding(@NonNull Class<?> clazz) {
     IClassBinding retval;
     if (clazz.isAnnotationPresent(MetaschemaAssembly.class)) {
       retval = DefaultAssemblyClassBinding.createInstance(clazz, getBindingContext());
@@ -106,7 +106,7 @@ class AbstractMetaschemaLoaderStrategy implements IMetaschemaLoaderStrategy {
   }
 
   @Override
-  public Map<@NotNull Class<?>, IClassBinding> getClassBindingsByClass() {
+  public Map<Class<?>, IClassBinding> getClassBindingsByClass() {
     synchronized (this) {
       return CollectionUtil.unmodifiableMap(classBindingsByClass);
     }

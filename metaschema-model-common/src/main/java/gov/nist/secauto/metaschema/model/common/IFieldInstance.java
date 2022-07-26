@@ -26,11 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IFieldInstance extends INamedModelInstance, IField {
   @Override
@@ -45,13 +45,10 @@ public interface IFieldInstance extends INamedModelInstance, IField {
 
   @Override
   default String getJsonName() {
-    @NotNull
+    @NonNull
     String retval;
     if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      @SuppressWarnings("null")
-      @NotNull
-      String groupAsName = Objects.requireNonNull(getGroupAsName(), "null group-as name");
-      retval = groupAsName;
+      retval = ObjectUtils.requireNonNull(getGroupAsName(), "null group-as name");
     } else {
       retval = getEffectiveName();
     }

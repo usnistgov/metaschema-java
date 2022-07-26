@@ -29,29 +29,28 @@ package gov.nist.secauto.metaschema.codegen;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IMetaschemaProduction {
 
-  @NotNull
+  @NonNull
   IMetaschema getMetaschema();
 
-  @NotNull
+  @NonNull
   IGeneratedClass getGeneratedMetaschema();
 
-  @NotNull
-  Collection<@NotNull ? extends IModelDefinition> getGlobalDefinitions();
+  @NonNull
+  Collection<? extends IModelDefinition> getGlobalDefinitions();
 
-  @NotNull
-  Collection<@NotNull IDefinitionProduction> getDefinitionProductions();
+  @NonNull
+  Collection<IDefinitionProduction> getDefinitionProductions();
 
-  @NotNull
+  @NonNull
   String getPackageName();
 
-  @NotNull
-  Stream<@NotNull IGeneratedClass> getGeneratedClasses();
-
+  @NonNull
+  Stream<IGeneratedClass> getGeneratedClasses();
 }

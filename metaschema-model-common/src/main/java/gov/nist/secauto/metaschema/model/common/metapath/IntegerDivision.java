@@ -31,8 +31,8 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunct
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class IntegerDivision
     extends AbstractArithmeticExpression<IIntegerItem> {
@@ -46,12 +46,12 @@ class IntegerDivision
    * @param divisor
    *          the expression whose item result will be divided by
    */
-  protected IntegerDivision(@NotNull IExpression dividend, @NotNull IExpression divisor) {
+  protected IntegerDivision(@NonNull IExpression dividend, @NonNull IExpression divisor) {
     super(dividend, divisor, IIntegerItem.class);
   }
 
   @Override
-  public Class<@NotNull IIntegerItem> getBaseResultType() {
+  public Class<IIntegerItem> getBaseResultType() {
     return IIntegerItem.class;
   }
 
@@ -79,7 +79,7 @@ class IntegerDivision
    *          the item to divide by
    * @return the quotient result or an empty {@link ISequence} if either item is {@code null}
    */
-  @NotNull
+  @NonNull
   protected static ISequence<? extends IIntegerItem> resultOrEmpty(@Nullable INumericItem dividend,
       @Nullable INumericItem divisor) {
     ISequence<? extends IIntegerItem> retval;
@@ -101,7 +101,7 @@ class IntegerDivision
    *          the item to divide by
    * @return the quotient result
    */
-  public static IIntegerItem divide(@NotNull INumericItem dividend, @NotNull INumericItem divisor) {
+  public static IIntegerItem divide(@NonNull INumericItem dividend, @NonNull INumericItem divisor) {
     return OperationFunctions.opNumericIntegerDivide(dividend, divisor);
   }
 }

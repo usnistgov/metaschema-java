@@ -38,8 +38,6 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.FieldReferenceType;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,11 +46,13 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class XmlFieldInstance
     extends AbstractFieldInstance {
   // private static final Logger logger = LogManager.getLogger(XmlFieldInstance.class);
 
-  @NotNull
+  @NonNull
   private final FieldReferenceType xmlField;
 
   /**
@@ -64,7 +64,7 @@ class XmlFieldInstance
    * @param parent
    *          the field definition this object is an instance of
    */
-  public XmlFieldInstance(@NotNull FieldReferenceType xmlField, @NotNull IAssemblyDefinition parent) {
+  public XmlFieldInstance(@NonNull FieldReferenceType xmlField, @NonNull IAssemblyDefinition parent) {
     super(parent);
     this.xmlField = xmlField;
   }
@@ -112,9 +112,8 @@ class XmlFieldInstance
         : null;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+  public Map<QName, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlField().getPropList()));
   }
 
@@ -193,14 +192,14 @@ class XmlFieldInstance
   }
 
   @Override
-  public Object getValue(@NotNull Object parentValue) {
+  public Object getValue(@NonNull Object parentValue) {
     // there is no value
     return null;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ?> getItemValues(Object instanceValue) {
+  public Collection<?> getItemValues(Object instanceValue) {
     // there are no item values
     return Collections.emptyList();
   }

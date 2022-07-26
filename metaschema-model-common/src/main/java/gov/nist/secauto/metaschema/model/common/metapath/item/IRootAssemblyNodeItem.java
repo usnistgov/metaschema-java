@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IRootAssemblyNodeItem extends IRequiredValueAssemblyNodeItem {
 
@@ -39,11 +39,11 @@ public interface IRootAssemblyNodeItem extends IRequiredValueAssemblyNodeItem {
     return getDefinition().getRootName();
   }
 
-  @NotNull
+  @NonNull
   IDocumentNodeItem getDocumentNodeItem();
 
   @Override
-  @NotNull
+  @NonNull
   default IDocumentNodeItem getParentNodeItem() {
     return getDocumentNodeItem();
   }
@@ -75,7 +75,7 @@ public interface IRootAssemblyNodeItem extends IRequiredValueAssemblyNodeItem {
   }
 
   @Override
-  default String format(@NotNull IPathFormatter formatter) {
+  default String format(@NonNull IPathFormatter formatter) {
     return formatter.formatRootAssembly(this);
   }
 }

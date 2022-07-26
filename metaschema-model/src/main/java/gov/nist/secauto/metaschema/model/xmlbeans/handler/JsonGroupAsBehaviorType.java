@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.model.xmlbeans.handler;
 
 import gov.nist.secauto.metaschema.model.common.JsonGroupAsBehavior;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public final class JsonGroupAsBehaviorType {
   private JsonGroupAsBehaviorType() {
     // disable construction
@@ -41,6 +43,7 @@ public final class JsonGroupAsBehaviorType {
    * @param target
    *          the XML value to cast to a boolean
    */
+  @SuppressFBWarnings("SF_SWITCH_NO_DEFAULT")
   public static void encodeJsonGroupAsBehaviorType(JsonGroupAsBehavior obj, org.apache.xmlbeans.SimpleValue target) {
     if (obj != null) {
       switch (obj) {

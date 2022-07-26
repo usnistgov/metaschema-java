@@ -31,12 +31,12 @@ import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.net.URI;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * A {@link INodeItem} supported by a {@link IFieldDefinition}, that must have an associated value.
@@ -46,11 +46,11 @@ class RequiredValueFieldDefinitionNodeItemImpl
         IRequiredValueFlagNodeItem,
         AbstractNodeContext.Flags<IRequiredValueFlagNodeItem>>
     implements IRequiredValueFieldNodeItem {
-  @NotNull
+  @NonNull
   private final IFieldDefinition definition;
   @Nullable
   private final URI baseUri;
-  @NotNull
+  @NonNull
   private final Object value;
   /**
    * Used to cache this object as an atomic item.
@@ -58,10 +58,10 @@ class RequiredValueFieldDefinitionNodeItemImpl
   private IAnyAtomicItem atomicItem;
 
   public RequiredValueFieldDefinitionNodeItemImpl(
-      @NotNull IFieldDefinition definition,
-      @NotNull Object value,
+      @NonNull IFieldDefinition definition,
+      @NonNull Object value,
       @Nullable URI baseUri,
-      @NotNull INodeItemFactory factory) {
+      @NonNull INodeItemFactory factory) {
     super(factory);
     this.definition = definition;
     this.value = value;
@@ -69,10 +69,10 @@ class RequiredValueFieldDefinitionNodeItemImpl
   }
 
   @Override
-  protected @NotNull Supplier<Flags<IRequiredValueFlagNodeItem>>
-      newModelSupplier(@NotNull INodeItemFactory factory) {
+  protected @NonNull Supplier<Flags<IRequiredValueFlagNodeItem>>
+      newModelSupplier(@NonNull INodeItemFactory factory) {
     return () -> {
-      Map<@NotNull String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
+      Map<String, IRequiredValueFlagNodeItem> flags = factory.generateFlagsWithValues(this);
       return new Flags<>(flags);
     };
   }
@@ -84,7 +84,7 @@ class RequiredValueFieldDefinitionNodeItemImpl
   }
 
   @Override
-  @NotNull
+  @NonNull
   public Object getValue() {
     return value;
   }
@@ -111,7 +111,7 @@ class RequiredValueFieldDefinitionNodeItemImpl
   }
 
   @Override
-  @NotNull
+  @NonNull
   public IAnyAtomicItem toAtomicItem() {
     synchronized (this) {
       if (atomicItem == null) {
@@ -121,7 +121,7 @@ class RequiredValueFieldDefinitionNodeItemImpl
         }
         atomicItem = getInstance().getDefinition().getJavaTypeAdapter().newItem(fieldValue);
       }
+      return ObjectUtils.notNull(atomicItem);
     }
-    return ObjectUtils.notNull(atomicItem);
   }
 }

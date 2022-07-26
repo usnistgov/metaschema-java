@@ -44,6 +44,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
@@ -53,14 +54,17 @@ import javax.xml.stream.events.StartElement;
 
 public class MarkupXmlEventWriter
     extends AbstractMarkupXmlWriter<XMLEventWriter> {
+  @NonNull
   protected final XMLEventFactory2 eventFactory;
 
-  public MarkupXmlEventWriter(String namespace, boolean handleBlockElements, XMLEventFactory2 eventFactory) {
+  public MarkupXmlEventWriter(@NonNull String namespace, boolean handleBlockElements,
+      @NonNull XMLEventFactory2 eventFactory) {
     super(namespace, handleBlockElements);
     Objects.requireNonNull(eventFactory, "eventFactory");
     this.eventFactory = eventFactory;
   }
 
+  @NonNull
   protected XMLEventFactory2 getEventFactory() {
     return eventFactory;
   }
@@ -145,7 +149,7 @@ public class MarkupXmlEventWriter
   protected void handleHtmlBlock(HtmlBlock node, XMLEventWriter writer) throws XMLStreamException {
     Document doc = Jsoup.parse(node.getChars().toString());
     try {
-      doc.getElementsByTag("html").first().getElementsByTag("body").first().traverse(new StreamNodeVisitor(writer));
+      doc.body().traverse(new StreamNodeVisitor(writer));
     } catch (InlineHtmlXmlStreamException ex) {
       throw (XMLStreamException) ex.getCause();
     }
@@ -155,7 +159,7 @@ public class MarkupXmlEventWriter
   protected void handleHtmlInline(HtmlInline node, XMLEventWriter writer) throws XMLStreamException {
     Document doc = Jsoup.parse(node.getChars().toString());
     try {
-      doc.getElementsByTag("html").first().getElementsByTag("body").first().traverse(new StreamNodeVisitor(writer));
+      doc.body().traverse(new StreamNodeVisitor(writer));
     } catch (InlineHtmlXmlStreamException ex) {
       throw (XMLStreamException) ex.getCause();
     }

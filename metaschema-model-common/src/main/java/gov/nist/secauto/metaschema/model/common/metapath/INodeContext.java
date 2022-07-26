@@ -30,12 +30,12 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IModelNodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface INodeContext {
 
@@ -44,7 +44,7 @@ public interface INodeContext {
    * 
    * @return the context node
    */
-  @NotNull
+  @NonNull
   INodeItem getNodeItem();
 
   /**
@@ -53,8 +53,8 @@ public interface INodeContext {
    * 
    * @return a collection of flags
    */
-  @NotNull
-  Collection<@NotNull ? extends IFlagNodeItem> getFlags();
+  @NonNull
+  Collection<? extends IFlagNodeItem> getFlags();
 
   /**
    * Lookup a flag and value data on this node by it's effective name.
@@ -64,7 +64,7 @@ public interface INodeContext {
    * @return the flag with the matching effective name or {@code null} if no match was found
    */
   @Nullable
-  IFlagNodeItem getFlagByName(@NotNull String name);
+  IFlagNodeItem getFlagByName(@NonNull String name);
 
   /**
    * Get the flags and value data associated with this node as a stream.
@@ -72,8 +72,8 @@ public interface INodeContext {
    * @return the stream of flags or an empty stream if none exist
    */
   @SuppressWarnings("null")
-  @NotNull
-  default Stream<@NotNull ? extends IFlagNodeItem> flags() {
+  @NonNull
+  default Stream<? extends IFlagNodeItem> flags() {
     return getFlags().stream();
   }
 
@@ -84,11 +84,11 @@ public interface INodeContext {
    * 
    * @return a collection of list(s), with each list containing the items for a given model instance
    */
-  @NotNull
-  Collection<@NotNull ? extends List<@NotNull ? extends IModelNodeItem>> getModelItems();
+  @NonNull
+  Collection<? extends List<? extends IModelNodeItem>> getModelItems();
 
-  @NotNull
-  List<@NotNull ? extends IModelNodeItem> getModelItemsByName(String name);
+  @NonNull
+  List<? extends IModelNodeItem> getModelItemsByName(String name);
 
   /**
    * Get the model items (i.e., fields, assemblies) and value data associated this node as a stream.
@@ -96,8 +96,8 @@ public interface INodeContext {
    * @return the stream of model items or an empty stream if none exist
    */
   @SuppressWarnings("null")
-  @NotNull
-  default Stream<@NotNull ? extends IModelNodeItem> modelItems() {
+  @NonNull
+  default Stream<? extends IModelNodeItem> modelItems() {
     return getModelItems().stream().flatMap(list -> list.stream());
   }
 }

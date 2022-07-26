@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collections;
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 interface ILiteralExpression<RESULT_TYPE extends IAnyAtomicItem, VALUE> extends IExpression {
   /**
@@ -39,7 +39,7 @@ interface ILiteralExpression<RESULT_TYPE extends IAnyAtomicItem, VALUE> extends 
    * 
    * @return the value
    */
-  @NotNull
+  @NonNull
   VALUE getValue();
 
   @Override
@@ -52,7 +52,7 @@ interface ILiteralExpression<RESULT_TYPE extends IAnyAtomicItem, VALUE> extends 
 
   @SuppressWarnings("null")
   @Override
-  default List<@NotNull ? extends IExpression> getChildren() {
+  default List<? extends IExpression> getChildren() {
     // a literal never has children
     return Collections.emptyList();
   }

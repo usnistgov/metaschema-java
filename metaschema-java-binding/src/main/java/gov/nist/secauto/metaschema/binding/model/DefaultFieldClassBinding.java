@@ -58,13 +58,11 @@ import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -78,12 +76,15 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class DefaultFieldClassBinding
     extends AbstractClassBinding
     implements IFieldClassBinding {
   private static final Logger LOGGER = LogManager.getLogger(DefaultFieldClassBinding.class);
 
-  @NotNull
+  @NonNull
   private final MetaschemaField metaschemaField;
   private IBoundFieldValueInstance fieldValue;
   private IBoundFlagInstance jsonValueKeyFlagInstance;
@@ -99,9 +100,9 @@ public class DefaultFieldClassBinding
    *          the Metaschema binding environment context
    * @return the Metaschema field binding for the class
    */
-  @NotNull
-  public static DefaultFieldClassBinding createInstance(@NotNull Class<?> clazz,
-      @NotNull IBindingContext bindingContext) {
+  @NonNull
+  public static DefaultFieldClassBinding createInstance(@NonNull Class<?> clazz,
+      @NonNull IBindingContext bindingContext) {
     Objects.requireNonNull(clazz, "clazz");
     if (!clazz.isAnnotationPresent(MetaschemaField.class)) {
       throw new IllegalArgumentException(
@@ -119,12 +120,12 @@ public class DefaultFieldClassBinding
    * @param bindingContext
    *          the class binding context for which this class is participating
    */
-  protected DefaultFieldClassBinding(@NotNull Class<?> clazz, @NotNull IBindingContext bindingContext) {
+  protected DefaultFieldClassBinding(@NonNull Class<?> clazz, @NonNull IBindingContext bindingContext) {
     super(clazz, bindingContext);
     this.metaschemaField = ObjectUtils.notNull(clazz.getAnnotation(MetaschemaField.class));
   }
 
-  @NotNull
+  @NonNull
   public MetaschemaField getMetaschemaFieldAnnotation() {
     return metaschemaField;
   }
@@ -186,8 +187,10 @@ public class DefaultFieldClassBinding
 
   /**
    * Initialize the flag instances for this class.
+   * 
+   * @return the field value instance
    */
-  protected void initalizeFieldValueInstance() {
+  protected IBoundFieldValueInstance initalizeFieldValueInstance() {
     synchronized (this) {
       if (this.fieldValue == null) {
         java.lang.reflect.Field field = getFieldValueField(getBoundClass());
@@ -200,6 +203,7 @@ public class DefaultFieldClassBinding
 
         this.fieldValue = new DefaultFieldValueProperty(this, field);
       }
+      return this.fieldValue;
     }
   }
 
@@ -216,13 +220,12 @@ public class DefaultFieldClassBinding
   @SuppressWarnings("null")
   @Override
   public IBoundFieldValueInstance getFieldValueInstance() {
-    initalizeFieldValueInstance();
-    return fieldValue;
+    return initalizeFieldValueInstance();
   }
 
   @Override
-  public Object getFieldValue(@NotNull Object item) {
-    return getFieldValueInstance().getValue(item);
+  public Object getFieldValue(@NonNull Object item) {
+    return ObjectUtils.requireNonNull(getFieldValueInstance().getValue(item));
   }
 
   @Override
@@ -235,6 +238,7 @@ public class DefaultFieldClassBinding
   }
 
   @Override
+  @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "access is restricted using interface")
   public IBoundFlagInstance getJsonValueKeyFlagInstance() {
     initalizeFlagInstances();
     return jsonValueKeyFlagInstance;
@@ -278,7 +282,7 @@ public class DefaultFieldClassBinding
   }
 
   @Override
-  public List<@NotNull Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
+  public List<Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
       throws IOException {
     JsonParser jsonParser = context.getReader(); // NOPMD - intentional
 
@@ -292,7 +296,7 @@ public class DefaultFieldClassBinding
       JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
     }
 
-    List<@NotNull Object> retval;
+    List<Object> retval;
     if (isCollapsible()) {
       retval = readCollapsed(parentInstance, requiresJsonKey, context);
     } else {
@@ -305,23 +309,23 @@ public class DefaultFieldClassBinding
     return retval;
   }
 
-  @NotNull
-  private Object readNormal(Object parentInstance, boolean requiresJsonKey, @NotNull IJsonParsingContext context)
+  @NonNull
+  private Object readNormal(@Nullable Object parentInstance, boolean requiresJsonKey,
+      @NonNull IJsonParsingContext context)
       throws IOException {
     Predicate<IBoundFlagInstance> flagFilter = null;
 
-    IBoundFlagInstance jsonKey;
+    IBoundFlagInstance jsonKey = null;
     if (requiresJsonKey) {
-      jsonKey = getJsonKeyFlagInstance();
-      if (jsonKey == null) {
+      IBoundFlagInstance instance = getJsonKeyFlagInstance();
+      if (instance == null) {
         throw new IOException("This property is configured to use a JSON key, but no JSON key was found");
       }
 
       flagFilter = (flag) -> {
-        return !jsonKey.equals(flag);
+        return !instance.equals(flag);
       };
-    } else {
-      jsonKey = null;
+      jsonKey = instance;
     }
 
     IBoundFlagInstance jsonValueKey = getJsonValueKeyFlagInstance();
@@ -337,7 +341,7 @@ public class DefaultFieldClassBinding
       }
     }
 
-    Map<@NotNull String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
+    Map<String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
 
     try {
       Object instance = newInstance();
@@ -349,6 +353,7 @@ public class DefaultFieldClassBinding
       if (jsonKey != null) {
         // if there is a json key, the first field will be the key
         String key = jsonParser.currentName();
+        assert key != null;
         jsonKey.setValue(instance, jsonKey.readValueFromString(key));
 
         // advance past the field name
@@ -368,7 +373,7 @@ public class DefaultFieldClassBinding
       if (properties.isEmpty()) {
         // this may be a value key value, an unrecognized flag, or the field value
         IBoundFieldValueInstance fieldValue = getFieldValueInstance();
-        Object value = fieldValue.readValue(instance, context);
+        Object value = fieldValue.readValue(context);
         if (value != null) {
           fieldValue.setValue(instance, value);
         }
@@ -382,6 +387,7 @@ public class DefaultFieldClassBinding
         // now parse each property until the end object is reached
         while (!jsonParser.hasTokenId(JsonToken.END_OBJECT.id())) {
           String propertyName = jsonParser.getCurrentName();
+          assert propertyName != null;
           // JsonUtil.assertAndAdvance(jsonParser, JsonToken.FIELD_NAME);
 
           IBoundNamedInstance namedProperty = properties.get(propertyName);
@@ -430,7 +436,7 @@ public class DefaultFieldClassBinding
       }
 
       // set undefined properties
-      for (Map.Entry<@NotNull String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
+      for (Map.Entry<String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
         if (!handledProperties.contains(entry.getKey())) {
           IBoundNamedInstance property = ObjectUtils.notNull(entry.getValue());
           // use the default value of the collector
@@ -459,24 +465,23 @@ public class DefaultFieldClassBinding
     }
   }
 
-  @NotNull
-  private List<@NotNull Object> readCollapsed(Object parentInstance, boolean requiresJsonKey,
+  @NonNull
+  private List<Object> readCollapsed(@Nullable Object parentInstance, boolean requiresJsonKey,
       IJsonParsingContext context) throws IOException {
 
     Predicate<IBoundFlagInstance> flagFilter = null;
 
-    IBoundFlagInstance jsonKey;
+    IBoundFlagInstance jsonKey = null;
     if (requiresJsonKey) {
-      jsonKey = getJsonKeyFlagInstance();
-      if (jsonKey == null) {
+      IBoundFlagInstance instance = getJsonKeyFlagInstance();
+      if (instance == null) {
         throw new IOException("This property is configured to use a JSON key, but no JSON key was found");
       }
 
       flagFilter = (flag) -> {
-        return !jsonKey.equals(flag);
+        return !instance.equals(flag);
       };
-    } else {
-      jsonKey = null;
+      jsonKey = instance;
     }
 
     IBoundFlagInstance jsonValueKey = getJsonValueKeyFlagInstance();
@@ -492,7 +497,7 @@ public class DefaultFieldClassBinding
       }
     }
 
-    Map<@NotNull String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
+    Map<String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
 
     Map<IBoundNamedInstance, Supplier<? extends Object>> parsedProperties = new HashMap<>(); // NOPMD - intentional
 
@@ -504,6 +509,7 @@ public class DefaultFieldClassBinding
     if (jsonKey != null) {
       // if there is a json key, the first field will be the key
       String key = jsonParser.currentName();
+      assert key != null;
       Supplier<? extends Object> jsonKeySupplier = jsonKey.readValueAndSupply(key);
       parsedProperties.put(jsonKey, jsonKeySupplier);
 
@@ -543,10 +549,11 @@ public class DefaultFieldClassBinding
         if (jsonValueKey != null) {
           // treat this as the value key
           String key = jsonParser.nextFieldName();
+          assert key != null;
           Supplier<? extends Object> supplier = jsonValueKey.readValueAndSupply(key);
           parsedProperties.put(jsonValueKey, supplier);
 
-          values = handleCollapsedValues(parentInstance, context);
+          values = handleCollapsedValues(context);
           handled = true;
         } else {
           String valueKeyName = fieldValue.getJsonValueKeyName();
@@ -554,7 +561,7 @@ public class DefaultFieldClassBinding
             // advance past the field
             jsonParser.nextToken();
             // treat this as the field value
-            values = handleCollapsedValues(parentInstance, context);
+            values = handleCollapsedValues(context);
             handled = true;
           }
         }
@@ -572,7 +579,7 @@ public class DefaultFieldClassBinding
     }
 
     // set undefined properties
-    for (Map.Entry<@NotNull String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
+    for (Map.Entry<String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
       if (!handledProperties.contains(entry.getKey())) {
         // use the default value of the collector
         IBoundNamedInstance property = ObjectUtils.notNull(entry.getValue());
@@ -608,7 +615,7 @@ public class DefaultFieldClassBinding
 
         callAfterDeserialize(item, parentInstance);
 
-        retval = Collections.singletonList(item);
+        retval = CollectionUtil.singletonList(item);
       } catch (BindingException ex) {
         throw new IOException(ex);
       }
@@ -620,7 +627,7 @@ public class DefaultFieldClassBinding
 
           callBeforeDeserialize(item, parentInstance);
 
-          fieldValue.setValue(item, value);
+          initalizeFieldValueInstance().setValue(item, value);
 
           for (Map.Entry<IBoundNamedInstance, Supplier<? extends Object>> entry : parsedProperties.entrySet()) {
             IBoundNamedInstance property = entry.getKey();
@@ -640,9 +647,8 @@ public class DefaultFieldClassBinding
     return retval;
   }
 
-  @NotNull
-  private List<? extends Object> handleCollapsedValues(@NotNull Object parentInstance,
-      @NotNull IJsonParsingContext context)
+  @NonNull
+  private List<? extends Object> handleCollapsedValues(@NonNull IJsonParsingContext context)
       throws IOException {
     IBoundFieldValueInstance fieldValue = getFieldValueInstance();
 
@@ -652,14 +658,14 @@ public class DefaultFieldClassBinding
     if (jsonParser.hasToken(JsonToken.START_ARRAY)) {
       JsonUtil.assertAndAdvance(jsonParser, JsonToken.START_ARRAY);
       while (!jsonParser.hasToken(JsonToken.END_ARRAY)) {
-        Object value = fieldValue.readValue(parentInstance, context);
+        Object value = fieldValue.readValue(context);
         if (value != null) {
           collector.add(value);
         }
       }
       JsonUtil.assertAndAdvance(jsonParser, JsonToken.END_ARRAY);
     } else {
-      Object value = fieldValue.readValue(parentInstance, context);
+      Object value = fieldValue.readValue(context);
       if (value != null) {
         collector.add(value);
       }
@@ -685,14 +691,14 @@ public class DefaultFieldClassBinding
   }
 
   private void writeCollapsed(Collection<? extends Object> items, boolean writeObjectWrapper,
-      IJsonWritingContext context) throws IOException {
+      @NonNull IJsonWritingContext context) throws IOException {
     CollapseKeyBuilder builder = new CollapseKeyBuilder(this);
     builder.addAll(items);
 
     builder.write(writeObjectWrapper, context);
   }
 
-  private void writeNormal(Collection<@NotNull ? extends Object> items, boolean writeObjectWrapper,
+  private void writeNormal(Collection<? extends Object> items, boolean writeObjectWrapper,
       IJsonWritingContext context)
       throws IOException {
     if (items.isEmpty()) {
@@ -721,11 +727,12 @@ public class DefaultFieldClassBinding
       }
     }
 
-    Map<@NotNull String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
+    Map<String, ? extends IBoundNamedInstance> properties = getNamedInstances(flagFilter);
 
     JsonGenerator writer = context.getWriter(); // NOPMD - intentional
 
     for (Object item : items) {
+      assert item != null;
       if (writeObjectWrapper) {
         writer.writeStartObject();
       }
@@ -817,31 +824,31 @@ public class DefaultFieldClassBinding
   }
 
   @Override
-  public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IMatchesConstraint constraint) {
+  public void addConstraint(@NonNull IMatchesConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IExpectConstraint constraint) {
+  public void addConstraint(@NonNull IExpectConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
 
   @Override
-  protected void copyBoundObjectInternal(@NotNull Object fromInstance, @NotNull Object toInstance)
+  protected void copyBoundObjectInternal(@NonNull Object fromInstance, @NonNull Object toInstance)
       throws BindingException {
     super.copyBoundObjectInternal(fromInstance, toInstance);
 

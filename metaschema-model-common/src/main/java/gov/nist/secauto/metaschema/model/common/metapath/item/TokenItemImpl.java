@@ -29,13 +29,13 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.TokenAdapter;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class TokenItemImpl
     extends AbstractStringItem
     implements ITokenItem {
 
-  public TokenItemImpl(@NotNull String value) {
+  public TokenItemImpl(@NonNull String value) {
     super(value);
   }
 

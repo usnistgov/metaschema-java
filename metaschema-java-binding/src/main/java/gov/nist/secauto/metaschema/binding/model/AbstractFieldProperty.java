@@ -30,27 +30,28 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Locale;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractFieldProperty
     extends AbstractNamedModelProperty
     implements IBoundFieldInstance {
 
-  public AbstractFieldProperty(@NotNull IAssemblyClassBinding parentClassBinding) {
+  public AbstractFieldProperty(@NonNull IAssemblyClassBinding parentClassBinding) {
     super(parentClassBinding);
   }
 
@@ -112,7 +113,8 @@ abstract class AbstractFieldProperty
         // Consume the start element
         currentStart
             = ObjectUtils.notNull(
-                XmlEventUtil.consumeAndAssert(eventReader, XMLEvent.START_ELEMENT, getXmlQName()).asStartElement());
+                XmlEventUtil.consumeAndAssert(eventReader, XMLStreamConstants.START_ELEMENT, getXmlQName())
+                    .asStartElement());
       } else {
         parse = false;
       }
@@ -124,7 +126,7 @@ abstract class AbstractFieldProperty
 
       if (parseWrapper) {
         // consume the end element
-        XmlEventUtil.consumeAndAssert(context.getReader(), XMLEvent.END_ELEMENT, currentStart.getName());
+        XmlEventUtil.consumeAndAssert(context.getReader(), XMLStreamConstants.END_ELEMENT, currentStart.getName());
       }
     }
 

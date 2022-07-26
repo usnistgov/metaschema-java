@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Represents a rule that generates a key-based index containing references to data items found in a
@@ -36,6 +36,6 @@ import org.jetbrains.annotations.NotNull;
  * the {@link IIndexHasKeyConstraint}.
  */
 public interface IIndexConstraint extends IKeyConstraint {
-  @NotNull
+  @NonNull
   String getName();
 }

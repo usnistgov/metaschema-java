@@ -32,8 +32,6 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -44,18 +42,20 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class MetaschemaProductionImpl implements IMetaschemaProduction {
-  @NotNull
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+class MetaschemaProductionImpl implements IMetaschemaProduction { // NOPMD - intended
+  @NonNull
   private final IMetaschema metaschema;
-  @NotNull
+  @NonNull
   private final IGeneratedClass generatedMetaschema;
-  @NotNull
-  private final Map<@NotNull IModelDefinition, IDefinitionProduction> definitionProductions;
-  @NotNull
+  @NonNull
+  private final Map<IModelDefinition, IDefinitionProduction> definitionProductions;
+  @NonNull
   private final String packageName;
 
-  public MetaschemaProductionImpl(@NotNull IMetaschema metaschema, @NotNull ITypeResolver typeResolver,
-      @NotNull Path targetDirectory) throws IOException {
+  public MetaschemaProductionImpl(@NonNull IMetaschema metaschema, @NonNull ITypeResolver typeResolver,
+      @NonNull Path targetDirectory) throws IOException {
     this.metaschema = metaschema;
 
     MetaschemaClassGenerator generator = new MetaschemaClassGenerator(metaschema, typeResolver);
@@ -63,7 +63,7 @@ class MetaschemaProductionImpl implements IMetaschemaProduction {
 
     Set<String> classNames = new HashSet<>();
 
-    Stream<@NotNull DefinitionProductionImpl> productions
+    Stream<DefinitionProductionImpl> productions
         = Stream.concat(metaschema.getAssemblyDefinitions().stream(), metaschema.getFieldDefinitions().stream())
             .map(definition -> {
               IModelDefinitionTypeInfo typeInfo = null;
@@ -84,7 +84,7 @@ class MetaschemaProductionImpl implements IMetaschemaProduction {
               DefaultGeneratedDefinitionClass generatedClass;
               try {
                 generatedClass = typeInfo.generateClass(targetDirectory);
-              } catch (RuntimeException ex) {
+              } catch (RuntimeException ex) { // NOPMD - intended
                 throw new IllegalStateException(
                     String.format("Unable to generate class for definition '%s' in Metaschema '%s'",
                         definition.getName(),
@@ -104,9 +104,9 @@ class MetaschemaProductionImpl implements IMetaschemaProduction {
               return new DefinitionProductionImpl(definition, generatedClass);
             });
 
-    @NotNull
+    @NonNull
     @SuppressWarnings("null")
-    Map<@NotNull IModelDefinition, IDefinitionProduction> retval = productions.collect(
+    Map<IModelDefinition, IDefinitionProduction> retval = productions.collect(
         Collectors.toUnmodifiableMap(DefinitionProductionImpl::getDefinition, Function.identity()));
 
     this.definitionProductions = retval;
@@ -126,13 +126,13 @@ class MetaschemaProductionImpl implements IMetaschemaProduction {
 
   @Override
   @SuppressWarnings("null")
-  public Collection<@NotNull ? extends IModelDefinition> getGlobalDefinitions() {
+  public Collection<? extends IModelDefinition> getGlobalDefinitions() {
     return definitionProductions.keySet();
   }
 
   @Override
   @SuppressWarnings("null")
-  public Collection<@NotNull IDefinitionProduction> getDefinitionProductions() {
+  public Collection<IDefinitionProduction> getDefinitionProductions() {
     return definitionProductions.values();
   }
 
@@ -142,7 +142,7 @@ class MetaschemaProductionImpl implements IMetaschemaProduction {
   }
 
   @Override
-  public Stream<@NotNull IGeneratedClass> getGeneratedClasses() {
+  public Stream<IGeneratedClass> getGeneratedClasses() {
     return ObjectUtils.notNull(Stream.concat(
         Stream.of(getGeneratedMetaschema()),
         getDefinitionProductions().stream()

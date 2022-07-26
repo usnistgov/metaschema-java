@@ -28,17 +28,22 @@ package gov.nist.secauto.metaschema.binding.io.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import java.util.Objects;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class DefaultJsonWritingContext implements IJsonWritingContext {
+  @NonNull
   private final JsonGenerator jsonGenerator;
 
-  public DefaultJsonWritingContext(JsonGenerator jsonGenerator) {
-    Objects.requireNonNull(jsonGenerator, "jsonGenerator");
-    this.jsonGenerator = jsonGenerator;
+  @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "this is a data holder")
+  public DefaultJsonWritingContext(@NonNull JsonGenerator jsonGenerator) {
+    this.jsonGenerator = ObjectUtils.requireNonNull(jsonGenerator, "jsonGenerator");
   }
 
   @Override
+  @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "this is a data holder")
   public JsonGenerator getWriter() {
     return jsonGenerator;
   }

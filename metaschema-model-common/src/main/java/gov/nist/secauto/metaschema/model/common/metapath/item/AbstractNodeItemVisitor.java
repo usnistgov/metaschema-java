@@ -26,20 +26,21 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public abstract class AbstractNodeItemVisitor<RESULT, CONTEXT> implements INodeItemVisitor<RESULT, CONTEXT> {
-  public final RESULT visit(@NotNull INodeItemVisitable item, CONTEXT context) {
+  public final RESULT visit(@NonNull INodeItemVisitable item, CONTEXT context) {
     return item.accept(this, context);
   }
 
   protected abstract RESULT defaultResult();
 
-  protected RESULT visitFlags(@NotNull INodeItem item, CONTEXT context) {
+  protected RESULT visitFlags(@NonNull INodeItem item, CONTEXT context) {
     RESULT result = defaultResult();
     for (IFlagNodeItem flag : item.getFlags()) {
+      assert flag != null;
       if (!shouldVisitNextChild(flag, result, context)) {
         break;
       }
@@ -50,11 +51,12 @@ public abstract class AbstractNodeItemVisitor<RESULT, CONTEXT> implements INodeI
     return result;
   }
 
-  protected RESULT visitModelChildren(@NotNull INodeItem item, CONTEXT context) {
+  protected RESULT visitModelChildren(@NonNull INodeItem item, CONTEXT context) {
     RESULT result = defaultResult();
 
-    for (List<@NotNull ? extends IModelNodeItem> childItems : item.getModelItems()) {
+    for (List<? extends IModelNodeItem> childItems : item.getModelItems()) {
       for (IModelNodeItem childItem : childItems) {
+        assert childItem != null;
         if (!shouldVisitNextChild(childItem, result, context)) {
           break;
         }
@@ -67,13 +69,13 @@ public abstract class AbstractNodeItemVisitor<RESULT, CONTEXT> implements INodeI
   }
 
   @SuppressWarnings("unused")
-  protected boolean shouldVisitNextChild(@NotNull INodeItem item, RESULT result, CONTEXT context) {
+  protected boolean shouldVisitNextChild(@NonNull INodeItem item, RESULT result, CONTEXT context) {
     // this is the default behavior, which can be overridden
     return true;
   }
 
   @SuppressWarnings("unused")
-  protected boolean shouldVisitNextChild(@NotNull IRequiredValueModelNodeItem item, RESULT result, CONTEXT context) {
+  protected boolean shouldVisitNextChild(@NonNull IRequiredValueModelNodeItem item, RESULT result, CONTEXT context) {
     // this is the default behavior, which can be overridden
     return true;
   }

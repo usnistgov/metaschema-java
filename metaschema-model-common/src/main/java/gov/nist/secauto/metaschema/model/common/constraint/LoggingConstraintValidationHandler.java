@@ -32,35 +32,37 @@ import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public class LoggingConstraintValidationHandler
     extends AbstractConstraintValidationHandler {
   private static final Logger LOGGER = LogManager.getLogger(DefaultConstraintValidator.class);
-  @NotNull
+  @NonNull
   private IPathFormatter pathFormatter = IPathFormatter.METAPATH_PATH_FORMATER;
 
   @Override
-  @NotNull
+  @NonNull
   public IPathFormatter getPathFormatter() {
     return pathFormatter;
   }
 
   @SuppressWarnings("null")
-  public void setPathFormatter(@NotNull IPathFormatter pathFormatter) {
+  public void setPathFormatter(@NonNull IPathFormatter pathFormatter) {
     this.pathFormatter = Objects.requireNonNull(pathFormatter, "pathFormatter");
   }
 
-  protected LogBuilder getLogBuilder(@NotNull Level level) {
+  protected LogBuilder getLogBuilder(@NonNull Level level) {
     LogBuilder retval;
     switch (level) {
     case CRITICAL:
@@ -82,11 +84,11 @@ public class LoggingConstraintValidationHandler
   }
 
   @Override
-  protected String toPath(@NotNull INodeItem nodeItem) {
+  protected String toPath(@NonNull INodeItem nodeItem) {
     return nodeItem.toPath(getPathFormatter());
   }
 
-  protected boolean isLogged(@NotNull Level level) {
+  protected boolean isLogged(@NonNull Level level) {
     boolean retval;
     switch (level) {
     case CRITICAL:
@@ -108,9 +110,9 @@ public class LoggingConstraintValidationHandler
   }
 
   protected void logConstraint(
-      @NotNull Level level,
-      @NotNull INodeItem node,
-      @NotNull CharSequence message,
+      @NonNull Level level,
+      @NonNull INodeItem node,
+      @NonNull CharSequence message,
       @Nullable Throwable cause) {
     LogBuilder builder = getLogBuilder(level);
     if (cause != null) {
@@ -122,9 +124,9 @@ public class LoggingConstraintValidationHandler
 
   @Override
   public void handleCardinalityMinimumViolation(
-      @NotNull ICardinalityConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull ISequence<? extends INodeItem> targets) {
+      @NonNull ICardinalityConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull ISequence<? extends INodeItem> targets) {
     Level level = constraint.getLevel();
     if (isLogged(level)) {
       logConstraint(level, node, newCardinalityMinimumViolationMessage(constraint, node, targets), null);
@@ -133,9 +135,9 @@ public class LoggingConstraintValidationHandler
 
   @Override
   public void handleCardinalityMaximumViolation(
-      @NotNull ICardinalityConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull ISequence<? extends INodeItem> targets) {
+      @NonNull ICardinalityConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull ISequence<? extends INodeItem> targets) {
     Level level = constraint.getLevel();
     if (isLogged(level)) {
       logConstraint(level, node, newCardinalityMaximumViolationMessage(constraint, node, targets), null);
@@ -144,10 +146,10 @@ public class LoggingConstraintValidationHandler
 
   @Override
   public void handleIndexDuplicateKeyViolation(
-      @NotNull IIndexConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem oldItem,
-      @NotNull INodeItem target) {
+      @NonNull IIndexConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem oldItem,
+      @NonNull INodeItem target) {
     Level level = constraint.getLevel();
     if (isLogged(level)) {
       logConstraint(level, target, newIndexDuplicateKeyViolationMessage(constraint, node, oldItem, target), null);
@@ -156,10 +158,10 @@ public class LoggingConstraintValidationHandler
 
   @Override
   public void handleUniqueKeyViolation(
-      @NotNull IUniqueConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem oldItem,
-      @NotNull INodeItem target) {
+      @NonNull IUniqueConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem oldItem,
+      @NonNull INodeItem target) {
     Level level = constraint.getLevel();
     if (isLogged(level)) {
       logConstraint(level, target, newUniqueKeyViolationMessage(constraint, node, oldItem, target), null);
@@ -169,10 +171,10 @@ public class LoggingConstraintValidationHandler
   @SuppressWarnings("null")
   @Override
   public void handleKeyMatchError(
-      @NotNull IKeyConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem target,
-      @NotNull MetapathException cause) {
+      @NonNull IKeyConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull MetapathException cause) {
     Level level = constraint.getLevel();
     if (isLogged(level)) {
       logConstraint(level, target, cause.getLocalizedMessage(), cause);
@@ -181,10 +183,10 @@ public class LoggingConstraintValidationHandler
 
   @Override
   public void handleMatchPatternViolation(
-      @NotNull IMatchesConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem target,
-      @NotNull String value) {
+      @NonNull IMatchesConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull String value) {
     Level level = constraint.getLevel();
     if (isLogged(level)) {
       logConstraint(level, target, newMatchPatternViolationMessage(constraint, node, target, value), null);
@@ -193,11 +195,11 @@ public class LoggingConstraintValidationHandler
 
   @Override
   public void handleMatchDatatypeViolation(
-      @NotNull IMatchesConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem target,
-      @NotNull String value,
-      @NotNull IllegalArgumentException cause) {
+      @NonNull IMatchesConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull String value,
+      @NonNull IllegalArgumentException cause) {
     Level level = constraint.getLevel();
     if (isLogged(level)) {
       logConstraint(level, target, newMatchDatatypeViolationMessage(constraint, node, target, value), cause);
@@ -206,10 +208,10 @@ public class LoggingConstraintValidationHandler
 
   @Override
   public void handleExpectViolation(
-      @NotNull IExpectConstraint constraint,
-      @NotNull INodeItem node,
-      @NotNull INodeItem target,
-      @NotNull DynamicContext dynamicContext) {
+      @NonNull IExpectConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull DynamicContext dynamicContext) {
     Level level = constraint.getLevel();
     if (isLogged(level)) {
       logConstraint(level, target, newExpectViolationMessage(constraint, node, target, dynamicContext), null);
@@ -217,14 +219,13 @@ public class LoggingConstraintValidationHandler
   }
 
   @Override
-  public void handleAllowedValuesViolation(@NotNull List<@NotNull IAllowedValuesConstraint> failedConstraints,
-      @NotNull INodeItem target) {
+  public void handleAllowedValuesViolation(@NonNull List<IAllowedValuesConstraint> failedConstraints,
+      @NonNull INodeItem target) {
 
-    @SuppressWarnings("null")
-    Level level = failedConstraints.stream()
+    Level level = ObjectUtils.notNull(failedConstraints.stream()
         .map(IConstraint::getLevel)
         .max(Comparator.comparing(Level::ordinal))
-        .get();
+        .get());
     if (isLogged(level)) {
       logConstraint(level, target, newAllowedValuesViolationMessage(failedConstraints, target), null);
     }

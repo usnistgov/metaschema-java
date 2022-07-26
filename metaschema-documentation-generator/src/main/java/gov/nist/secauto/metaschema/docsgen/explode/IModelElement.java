@@ -7,30 +7,33 @@ import gov.nist.secauto.metaschema.model.common.INamedInstance;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 import java.util.Set;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+/**
+ * A marker interface that identifies a Metaschema construct as part of a definition's model.
+ */
 public interface IModelElement extends IModelElementVisitable {
-  @NotNull
+  @NonNull
   IDefinitionNodeItem getNodeItem();
 
-  @NotNull
-  List<@NotNull IModelElement> getFlags();
+  @NonNull
+  List<IModelElement> getFlags();
 
-  @NotNull
-  List<@NotNull IModelElement> getModelItems();
+  @NonNull
+  List<IModelElement> getModelItems();
 
-  void addConstraint(@NotNull IConstraint constraint);
+  void addConstraint(@NonNull IConstraint constraint);
 
-  @NotNull
-  Set<@NotNull IConstraint> getConstraints();
+  @NonNull
+  Set<IConstraint> getConstraints();
 
   @Nullable
   INamedInstance getInstance();
 
-  @NotNull
+  @NonNull
   IDefinition getDefinition();
 }

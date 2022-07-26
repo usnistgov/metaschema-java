@@ -26,19 +26,19 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IDatatypeContent {
-  @NotNull
+  @NonNull
   String getTypeName();
 
-  @NotNull
-  List<@NotNull String> getDependencies();
+  @NonNull
+  List<String> getDependencies();
 
-  void write(@NotNull XMLStreamWriter writer) throws XMLStreamException;
+  void write(@NonNull XMLStreamWriter writer) throws XMLStreamException;
 }

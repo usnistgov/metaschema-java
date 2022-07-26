@@ -35,8 +35,6 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -48,10 +46,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IBoundNamedInstance extends INamedInstance {
 
   @Override
-  default @NotNull Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+  default @NonNull Map<QName, Set<String>> getProperties() {
     // TODO: implement
     throw new UnsupportedOperationException();
   }
@@ -61,7 +61,7 @@ public interface IBoundNamedInstance extends INamedInstance {
    * 
    * @return the containing class's binding
    */
-  @NotNull
+  @NonNull
   IClassBinding getParentClassBinding();
 
   /**
@@ -85,7 +85,7 @@ public interface IBoundNamedInstance extends INamedInstance {
    * 
    * @return the item type of the bound object
    */
-  @NotNull
+  @NonNull
   Class<?> getItemType();
 
   /**
@@ -97,7 +97,7 @@ public interface IBoundNamedInstance extends INamedInstance {
    * @return the value if available, or {@code null} otherwise
    */
   @Override
-  Object getValue(@NotNull Object parentInstance);
+  Object getValue(@NonNull Object parentInstance);
 
   /**
    * Set the provided value on the provided object. The provided object must be of the item's type
@@ -109,9 +109,9 @@ public interface IBoundNamedInstance extends INamedInstance {
    *          a value, which may be a simple {@link Type} or a {@link ParameterizedType} for a
    *          collection
    */
-  void setValue(@NotNull Object parentInstance, Object value);
+  void setValue(@NonNull Object parentInstance, Object value);
 
-  @NotNull
+  @NonNull
   IPropertyCollector newPropertyCollector();
 
   /**
@@ -132,7 +132,7 @@ public interface IBoundNamedInstance extends INamedInstance {
    * @throws IOException
    *           if there was an error when reading JSON data
    */
-  boolean read(@NotNull Object objectInstance, @NotNull IJsonParsingContext context) throws IOException;
+  boolean read(@NonNull Object objectInstance, @NonNull IJsonParsingContext context) throws IOException;
 
   /**
    * Read JSON data associated with this property and return it.
@@ -148,7 +148,7 @@ public interface IBoundNamedInstance extends INamedInstance {
    * @throws IOException
    *           if there was an error when reading JSON data
    */
-  Object read(@NotNull IJsonParsingContext context) throws IOException;
+  Object read(@NonNull IJsonParsingContext context) throws IOException;
 
   /**
    * Read the XML data associated with this property and apply it to the provided
@@ -167,7 +167,7 @@ public interface IBoundNamedInstance extends INamedInstance {
    * @throws XMLStreamException
    *           if there was an error generating an {@link XMLEvent} from the XML
    */
-  boolean read(@NotNull Object objectInstance, @NotNull StartElement parent, @NotNull IXmlParsingContext context)
+  boolean read(@NonNull Object objectInstance, @NonNull StartElement parent, @NonNull IXmlParsingContext context)
       throws IOException, XMLStreamException;
 
   // /**
@@ -190,10 +190,10 @@ public interface IBoundNamedInstance extends INamedInstance {
   // IXmlBindingSupplier getXmlItemSupplier(IBindingContext context)
   // throws BindingException;
 
-  boolean write(@NotNull Object parentInstance, @NotNull QName parentName, @NotNull IXmlWritingContext context)
+  boolean write(@NonNull Object parentInstance, @NonNull QName parentName, @NonNull IXmlWritingContext context)
       throws XMLStreamException, IOException;
 
-  void write(@NotNull Object parentInstance, @NotNull IJsonWritingContext context) throws IOException;
+  void write(@NonNull Object parentInstance, @NonNull IJsonWritingContext context) throws IOException;
 
   /**
    * Copy this instance from one parent object to another.
@@ -205,5 +205,5 @@ public interface IBoundNamedInstance extends INamedInstance {
    * @throws BindingException
    *           if an error occurred while processing the object bindings
    */
-  void copyBoundObject(@NotNull Object fromInstance, @NotNull Object toInstance) throws BindingException;
+  void copyBoundObject(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException;
 }

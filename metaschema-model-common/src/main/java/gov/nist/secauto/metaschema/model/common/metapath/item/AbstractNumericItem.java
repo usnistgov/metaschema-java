@@ -26,13 +26,13 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractNumericItem<TYPE>
     extends AbstractAnyAtomicItem<TYPE>
     implements INumericItem {
 
-  public AbstractNumericItem(@NotNull TYPE value) {
+  public AbstractNumericItem(@NonNull TYPE value) {
     super(value);
   }
 

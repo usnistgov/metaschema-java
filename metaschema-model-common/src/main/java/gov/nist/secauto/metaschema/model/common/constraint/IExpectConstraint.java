@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Represents a rule requiring a Metaschema assembly, field, or flag data instance to pass a
@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
  */
 
 public interface IExpectConstraint extends IConstraint {
-  @NotNull
+  @NonNull
   MetapathExpression getTest();
 
   /**
@@ -51,5 +51,5 @@ public interface IExpectConstraint extends IConstraint {
    */
   String getMessage();
 
-  CharSequence generateMessage(@NotNull INodeItem item, @NotNull DynamicContext context);
+  CharSequence generateMessage(@NonNull INodeItem item, @NonNull DynamicContext context);
 }

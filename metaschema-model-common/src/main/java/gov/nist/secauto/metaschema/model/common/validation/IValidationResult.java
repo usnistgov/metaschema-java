@@ -28,16 +28,16 @@ package gov.nist.secauto.metaschema.model.common.validation;
 
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collections;
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides data that is the result of a completed content validation.
  */
 public interface IValidationResult {
-  @NotNull
+  @NonNull
   IValidationResult PASSING_RESULT = new IValidationResult() {
 
     @Override
@@ -72,7 +72,7 @@ public interface IValidationResult {
    * 
    * @return the highest finding severity level
    */
-  @NotNull
+  @NonNull
   Level getHighestSeverity();
 
   /**
@@ -80,6 +80,6 @@ public interface IValidationResult {
    * 
    * @return the list
    */
-  @NotNull
-  List<@NotNull ? extends IValidationFinding> getFindings();
+  @NonNull
+  List<? extends IValidationFinding> getFindings();
 }

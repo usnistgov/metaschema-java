@@ -31,18 +31,18 @@ import gov.nist.secauto.metaschema.model.common.constraint.AbstractTargetedConst
 import gov.nist.secauto.metaschema.model.common.constraint.IValueConstraintSupport;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class FieldTargetedConstraints
     extends AbstractTargetedConstraints<IValueConstraintSupport> {
 
-  public FieldTargetedConstraints(@NotNull MetapathExpression targetExpression,
-      @NotNull IValueConstraintSupport constraints) {
+  public FieldTargetedConstraints(@NonNull MetapathExpression targetExpression,
+      @NonNull IValueConstraintSupport constraints) {
     super(targetExpression, constraints);
   }
 
   @Override
-  public void target(@NotNull IFieldDefinition definition) {
+  public void target(@NonNull IFieldDefinition definition) {
     applyTo(definition);
   }
 }

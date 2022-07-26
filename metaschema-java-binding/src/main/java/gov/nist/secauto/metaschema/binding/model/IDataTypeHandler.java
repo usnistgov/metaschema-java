@@ -30,11 +30,12 @@ import gov.nist.secauto.metaschema.binding.io.BindingException;
 import gov.nist.secauto.metaschema.binding.io.json.IJsonWritingContext;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Collection;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 // TODO: get rid of functional interfaces
 interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSupplier, IXmlBindingConsumer {
@@ -43,7 +44,7 @@ interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSupplier, IX
    * 
    * @return the model instance
    */
-  @NotNull
+  @NonNull
   IBoundNamedModelInstance getProperty();
 
   /**
@@ -88,8 +89,8 @@ interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSupplier, IX
    * @throws IOException
    *           if an error occurred while writing
    */
-  void writeItems(@NotNull Collection<@NotNull ? extends Object> items, boolean writeObjectWrapper,
-      @NotNull IJsonWritingContext context)
+  void writeItems(@NonNull Collection<? extends Object> items, boolean writeObjectWrapper,
+      @NonNull IJsonWritingContext context)
       throws IOException;
 
   /**
@@ -103,6 +104,6 @@ interface IDataTypeHandler extends IJsonBindingSupplier, IXmlBindingSupplier, IX
    * @throws BindingException
    *           if an error occurred while analyzing the bound objects
    */
-  @NotNull
-  Object copyItem(@NotNull Object item, @Nullable Object parentInstance) throws BindingException;
+  @NonNull
+  Object copyItem(@NonNull Object item, @Nullable Object parentInstance) throws BindingException;
 }

@@ -40,9 +40,11 @@ import org.codehaus.stax2.ri.evt.NamespaceEventImpl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 import freemarker.template.TemplateMethodModelEx;
@@ -75,10 +77,12 @@ public class MarkupToHtmlMethod implements TemplateMethodModelEx {
 
     IMarkupText text = (IMarkupText) markupObject;
     String namespace = DeepUnwrap.unwrap((TemplateModel) arguments.get(1)).toString();
+    assert namespace != null;
 
     MarkupXmlStreamWriter writingVisitor = new MarkupXmlStreamWriter(namespace, text instanceof MarkupMultiline);
 
-    XMLOutputFactory2 factory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
+    XMLOutputFactory2 factory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
+    assert factory instanceof WstxOutputFactory;
     factory.setProperty(WstxOutputProperties.P_OUTPUT_VALIDATE_STRUCTURE, false);
     try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
       XMLStreamWriter2 xmlStreamWriter = (XMLStreamWriter2) factory.createXMLStreamWriter(os);
@@ -87,7 +91,7 @@ public class MarkupToHtmlMethod implements TemplateMethodModelEx {
       xmlStreamWriter.setNamespaceContext(nsContext);
       writingVisitor.visitChildren(text.getDocument(), xmlStreamWriter);
       xmlStreamWriter.flush();
-      return os.toString();
+      return os.toString(StandardCharsets.UTF_8);
     } catch (XMLStreamException | IOException ex) {
       throw new TemplateModelException(ex);
     }

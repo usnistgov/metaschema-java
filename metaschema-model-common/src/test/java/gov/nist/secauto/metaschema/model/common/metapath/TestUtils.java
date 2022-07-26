@@ -34,13 +34,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 
-public class TestUtils {
-  public static IDecimalItem decimal(String value) {
-    return IDecimalItem.valueOf(new BigDecimal(value, MathContext.DECIMAL64));
+public final class TestUtils {
+  private TestUtils() {
+    // disable construction
   }
 
-  public static IDecimalItem decimal(double value) {
-    return IDecimalItem.valueOf(new BigDecimal(value));
+  public static IDecimalItem decimal(String value) {
+    return IDecimalItem.valueOf(new BigDecimal(value, MathContext.DECIMAL64));
   }
 
   @SuppressWarnings("null")

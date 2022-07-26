@@ -1,16 +1,16 @@
 
 package gov.nist.secauto.metaschema.docsgen.explode;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IModelElementVisitor<RESULT, CONTEXT> {
-  RESULT visitAssembly(@NotNull IAssemblyModelElement element, CONTEXT context);
+  RESULT visitAssembly(@NonNull IAssemblyModelElement element, CONTEXT context);
 
-  RESULT visitField(@NotNull IFieldModelElement element, CONTEXT context);
+  RESULT visitField(@NonNull IFieldModelElement element, CONTEXT context);
 
-  RESULT visitFlag(@NotNull IFlagModelElement element, CONTEXT context);
+  RESULT visitFlag(@NonNull IFlagModelElement element, CONTEXT context);
 
   interface IModelElementVisitable {
-    <RESULT, CONTEXT> RESULT accept(@NotNull IModelElementVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
+    <RESULT, CONTEXT> RESULT accept(@NonNull IModelElementVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
   }
 }

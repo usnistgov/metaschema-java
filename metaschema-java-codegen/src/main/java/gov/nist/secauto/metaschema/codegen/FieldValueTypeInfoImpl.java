@@ -35,35 +35,34 @@ import gov.nist.secauto.metaschema.binding.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Set;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class FieldValueTypeInfoImpl
     extends AbstractTypeInfo<IFieldDefinitionTypeInfo>
     implements IFieldValueTypeInfo {
 
-  public FieldValueTypeInfoImpl(@NotNull IFieldDefinitionTypeInfo parentDefinition) {
+  public FieldValueTypeInfoImpl(@NonNull IFieldDefinitionTypeInfo parentDefinition) {
     super(parentDefinition);
   }
 
   @Override
-  public @NotNull String getBaseName() {
+  public String getBaseName() {
     return "value";
   }
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull TypeName getJavaFieldType() {
+  public TypeName getJavaFieldType() {
     return ClassName.get(
         getParentDefinitionTypeInfo().getDefinition().getJavaTypeAdapter().getJavaClass());
   }
 
   @Override
-  protected @NotNull Set<@NotNull IModelDefinition> buildField(FieldSpec.Builder builder) {
+  protected Set<IModelDefinition> buildField(FieldSpec.Builder builder) {
     IFieldDefinition definition = getParentDefinitionTypeInfo().getDefinition();
     AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(BoundFieldValue.class);
 
@@ -75,11 +74,6 @@ class FieldValueTypeInfoImpl
     } // else do nothing, the annotation will be on the flag
 
     fieldValue.addMember("typeAdapter", "$T.class", valueDataType.getClass());
-
-    MarkupMultiline remarks = definition.getRemarks();
-    if (remarks != null) {
-      fieldValue.addMember("remarks", "$S", remarks.toMarkdown());
-    }
 
     builder.addAnnotation(fieldValue.build());
     return CollectionUtil.emptySet();

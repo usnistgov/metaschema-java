@@ -42,7 +42,6 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -53,10 +52,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class ListPropertyInfo
     extends AbstractModelPropertyInfo {
 
-  public ListPropertyInfo(@NotNull IBoundNamedModelInstance property) {
+  public ListPropertyInfo(@NonNull IBoundNamedModelInstance property) {
     super(property);
   }
 
@@ -73,14 +74,13 @@ class ListPropertyInfo
   }
 
   @Override
-  public List<@NotNull ? extends Object> getItemsFromParentInstance(Object parentInstance) {
+  public List<? extends Object> getItemsFromParentInstance(Object parentInstance) {
     Object value = getProperty().getValue(parentInstance);
     return getItemsFromValue(value);
   }
 
-  @SuppressWarnings("null")
   @Override
-  public List<@NotNull ? extends Object> getItemsFromValue(Object value) {
+  public List<? extends Object> getItemsFromValue(Object value) {
     return value == null ? CollectionUtil.emptyList() : (List<?>) value;
   }
 
@@ -130,7 +130,7 @@ class ListPropertyInfo
 
       // this is a singleton, just parse the value as a single item
       IBoundNamedModelInstance property = getProperty();
-      List<@NotNull Object> values = property.readItem(parentInstance, false, context);
+      List<Object> values = property.readItem(parentInstance, false, context);
       collector.addAll(values);
 
       // if (isObject) {
@@ -150,7 +150,7 @@ class ListPropertyInfo
         // JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
         // }
 
-        List<@NotNull Object> values = getProperty().readItem(parentInstance, false, context);
+        List<Object> values = getProperty().readItem(parentInstance, false, context);
         collector.addAll(values);
 
         // if (isObject) {
@@ -168,15 +168,15 @@ class ListPropertyInfo
   public void writeValue(Object value, QName parentName, IXmlWritingContext context)
       throws XMLStreamException, IOException {
     IBoundNamedModelInstance property = getProperty();
-    List<@NotNull ? extends Object> items = getItemsFromValue(value);
+    List<? extends Object> items = getItemsFromValue(value);
     for (Object item : items) {
-      property.writeItem(item, parentName, context);
+      property.writeItem(ObjectUtils.requireNonNull(item), parentName, context);
     }
   }
 
   @Override
   public void writeValue(Object parentInstance, IJsonWritingContext context) throws IOException {
-    List<@NotNull ? extends Object> items = getItemsFromParentInstance(parentInstance);
+    List<? extends Object> items = getItemsFromParentInstance(parentInstance);
 
     JsonGenerator writer = context.getWriter(); // NOPMD - intentional
 
@@ -203,12 +203,12 @@ class ListPropertyInfo
   }
 
   @Override
-  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull IPropertyCollector collector)
+  public void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
       throws BindingException {
     IBoundNamedModelInstance property = getProperty();
 
     for (Object item : getItemsFromParentInstance(fromInstance)) {
-      collector.add(property.copyItem(item, toInstance));
+      collector.add(property.copyItem(ObjectUtils.requireNonNull(item), toInstance));
     }
   }
 }

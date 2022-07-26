@@ -35,11 +35,11 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlParsingContext;
 import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.model.common.IRootAssemblyDefinition;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IRootAssemblyClassBinding extends IAssemblyClassBinding, IRootAssemblyDefinition {
 
@@ -75,8 +75,8 @@ public interface IRootAssemblyClassBinding extends IAssemblyClassBinding, IRootA
    * @throws IOException
    *           if an error occurred while reading the JSON
    */
-  @NotNull
-  Object readRoot(@NotNull IJsonParsingContext context) throws IOException;
+  @NonNull
+  Object readRoot(@NonNull IJsonParsingContext context) throws IOException;
 
   /**
    * Parses XML into a bound object. This assembly must be a root assembly for which a call to
@@ -91,8 +91,8 @@ public interface IRootAssemblyClassBinding extends IAssemblyClassBinding, IRootA
    *           if an error occurred while reading the input
    */
   // TODO: merge the XMLStreamException into IOException
-  @NotNull
-  Object readRoot(@NotNull IXmlParsingContext context) throws XMLStreamException, IOException;
+  @NonNull
+  Object readRoot(@NonNull IXmlParsingContext context) throws XMLStreamException, IOException;
 
   /**
    * Writes data in a bound object to JSON. This assembly must be a root assembly for which a call to
@@ -105,7 +105,7 @@ public interface IRootAssemblyClassBinding extends IAssemblyClassBinding, IRootA
    * @throws IOException
    *           if an error occurred while reading the JSON
    */
-  void writeRoot(@NotNull Object instance, @NotNull IJsonWritingContext context) throws IOException;
+  void writeRoot(@NonNull Object instance, @NonNull IJsonWritingContext context) throws IOException;
 
   /**
    * Writes data in a bound object to XML. This assembly must be a root assembly for which a call to
@@ -121,5 +121,5 @@ public interface IRootAssemblyClassBinding extends IAssemblyClassBinding, IRootA
    *           if an error occurred while writing the output
    */
   // TODO: merge the XMLStreamException into IOException
-  void writeRoot(@NotNull Object instance, @NotNull IXmlWritingContext context) throws XMLStreamException, IOException;
+  void writeRoot(@NonNull Object instance, @NonNull IXmlWritingContext context) throws XMLStreamException, IOException;
 }

@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * The common interface for all data type implementations supported by a custom Java class.
@@ -40,6 +40,6 @@ public interface ICustomJavaDataType<TYPE extends ICustomJavaDataType<TYPE>> {
    * 
    * @return the copy
    */
-  @NotNull
+  @NonNull
   TYPE copy();
 }

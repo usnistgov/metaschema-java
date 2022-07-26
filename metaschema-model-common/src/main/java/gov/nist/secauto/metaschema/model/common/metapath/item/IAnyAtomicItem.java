@@ -28,17 +28,17 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IAnyAtomicItem extends IAtomicValuedItem {
 
   @Override
-  default @NotNull IAnyAtomicItem toAtomicItem() {
+  default @NonNull IAnyAtomicItem toAtomicItem() {
     return this;
   }
 
   @Override
-  @NotNull
+  @NonNull
   Object getValue();
 
   /**
@@ -47,7 +47,7 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
    * @return the string value value of the item
    */
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   default String asString() {
     return getValue().toString();
   }
@@ -58,7 +58,7 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
    * @return a new string item
    */
   // TODO: rename to asStringItem
-  @NotNull
+  @NonNull
   default IStringItem newStringItem() {
     return IStringItem.valueOf(asString());
   }

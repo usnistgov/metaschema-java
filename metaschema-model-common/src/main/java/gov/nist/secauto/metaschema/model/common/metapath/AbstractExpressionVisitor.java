@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides base support for processing a Metapath expression based on the visitor pattern.
@@ -60,7 +60,7 @@ abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpression
    *          used to pass additional state
    * @return the aggegated result
    */
-  protected RESULT visitChildren(@NotNull IExpression expr, CONTEXT context) {
+  protected RESULT visitChildren(@NonNull IExpression expr, CONTEXT context) {
     RESULT result = defaultResult();
 
     for (IExpression childExpr : expr.getChildren()) {
@@ -88,7 +88,7 @@ abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpression
    *          additional state to pass between nodes visited
    * @return {@code true} if the child should be visited, or {@code false} otherwise
    */
-  protected boolean shouldVisitNextChild(@NotNull IExpression parent, @NotNull IExpression child, RESULT result,
+  protected boolean shouldVisitNextChild(@NonNull IExpression parent, @NonNull IExpression child, RESULT result,
       CONTEXT context) {
     // allow visitation of the child
     return true;
@@ -155,7 +155,7 @@ abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpression
   }
 
   @Override
-  public RESULT visitExcept(@NotNull Except expr, CONTEXT context) {
+  public RESULT visitExcept(@NonNull Except expr, CONTEXT context) {
     return visitChildren(expr, context);
   }
 
@@ -180,7 +180,7 @@ abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExpression
   }
 
   @Override
-  public RESULT visitIntersect(@NotNull Intersect expr, CONTEXT context) {
+  public RESULT visitIntersect(@NonNull Intersect expr, CONTEXT context) {
     return visitChildren(expr, context);
   }
 

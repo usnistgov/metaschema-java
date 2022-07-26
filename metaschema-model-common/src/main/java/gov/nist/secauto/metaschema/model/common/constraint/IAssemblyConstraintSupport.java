@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Represents a container of rules constraining the effective model of a Metaschema assembly data
@@ -40,28 +40,28 @@ public interface IAssemblyConstraintSupport extends IValueConstraintSupport {
    * 
    * @return the constraints or an empty list
    */
-  @NotNull
-  List<@NotNull ? extends IIndexConstraint> getIndexConstraints();
+  @NonNull
+  List<? extends IIndexConstraint> getIndexConstraints();
 
   /**
    * Get the collection of unique constraints, if any.
    * 
    * @return the constraints or an empty list
    */
-  @NotNull
-  List<@NotNull ? extends IUniqueConstraint> getUniqueConstraints();
+  @NonNull
+  List<? extends IUniqueConstraint> getUniqueConstraints();
 
   /**
    * Get the collection of cardinality constraints, if any.
    * 
    * @return the constraints or an empty list
    */
-  @NotNull
-  List<@NotNull ? extends ICardinalityConstraint> getHasCardinalityConstraints();
+  @NonNull
+  List<? extends ICardinalityConstraint> getHasCardinalityConstraints();
 
-  void addConstraint(@NotNull IIndexConstraint constraint);
+  void addConstraint(@NonNull IIndexConstraint constraint);
 
-  void addConstraint(@NotNull IUniqueConstraint constraint);
+  void addConstraint(@NonNull IUniqueConstraint constraint);
 
-  void addConstraint(@NotNull ICardinalityConstraint constraint);
+  void addConstraint(@NonNull ICardinalityConstraint constraint);
 }

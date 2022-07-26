@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
+
 import org.jmock.Mockery;
 import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -34,16 +35,23 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import java.io.File;
 import java.net.URI;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class AbstractExpressionTest {
+  @NonNull
   @RegisterExtension
   Mockery context = new JUnit5Mockery();
 
-  @SuppressWarnings("null")
-  @NotNull
+  /**
+   * Construct a new dynamic context for testing.
+   * 
+   * @return the dynamic context
+   */
+  @NonNull
   protected DynamicContext newDynamicContext() {
     StaticContext staticContext = new StaticContext();
 
-    URI baseUri = new File("").getAbsoluteFile().toURI();
+    URI baseUri = ObjectUtils.notNull(new File("").getAbsoluteFile().toURI());
     staticContext.setBaseUri(baseUri);
 
     return staticContext.newDynamicContext();

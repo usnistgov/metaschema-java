@@ -60,8 +60,7 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -81,13 +80,15 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class DefaultAssemblyClassBinding
     extends AbstractClassBinding
     implements IAssemblyClassBinding {
   private static final Logger LOGGER = LogManager.getLogger(DefaultAssemblyClassBinding.class);
 
   private final MetaschemaAssembly metaschemaAssembly;
-  private Map<@NotNull String, IBoundNamedModelInstance> modelInstances;
+  private Map<String, IBoundNamedModelInstance> modelInstances;
   private final QName xmlRootQName;
   private IAssemblyConstraintSupport constraints;
 
@@ -101,9 +102,9 @@ public class DefaultAssemblyClassBinding
    *          the Metaschema binding environment context
    * @return the Metaschema assembly binding for the class
    */
-  @NotNull
-  public static DefaultAssemblyClassBinding createInstance(@NotNull Class<?> clazz,
-      @NotNull IBindingContext bindingContext) {
+  @NonNull
+  public static DefaultAssemblyClassBinding createInstance(@NonNull Class<?> clazz,
+      @NonNull IBindingContext bindingContext) {
     return new DefaultAssemblyClassBinding(clazz, bindingContext);
   }
 
@@ -116,7 +117,7 @@ public class DefaultAssemblyClassBinding
    * @param bindingContext
    *          the class binding context for which this class is participating
    */
-  protected DefaultAssemblyClassBinding(@NotNull Class<?> clazz, @NotNull IBindingContext bindingContext) {
+  protected DefaultAssemblyClassBinding(@NonNull Class<?> clazz, @NonNull IBindingContext bindingContext) {
     super(clazz, bindingContext);
     Objects.requireNonNull(clazz, "clazz");
     if (!clazz.isAnnotationPresent(MetaschemaAssembly.class)) {
@@ -190,9 +191,9 @@ public class DefaultAssemblyClassBinding
     return xmlRootQName;
   }
 
-  protected Stream<@NotNull IBoundNamedModelInstance>
+  protected Stream<IBoundNamedModelInstance>
       getModelInstanceFieldStream(Class<?> clazz) {
-    Stream<@NotNull IBoundNamedModelInstance> superInstances;
+    Stream<IBoundNamedModelInstance> superInstances;
     Class<?> superClass = clazz.getSuperclass();
     if (superClass == null) {
       superInstances = Stream.empty();
@@ -204,13 +205,16 @@ public class DefaultAssemblyClassBinding
     return Stream.concat(superInstances, Arrays.stream(clazz.getDeclaredFields())
         // skip this field, since it is ignored
         .filter(field -> !field.isAnnotationPresent(Ignore.class))
-        .map(field -> newModelInstance(field))
+        .map(field -> {
+          assert field != null;
+          return newModelInstance(field);
+        })
         // skip fields that aren't a field or assembly instance
         .filter(Objects::nonNull)
         .map(ObjectUtils::notNull));
   }
 
-  protected IBoundNamedModelInstance newModelInstance(@NotNull java.lang.reflect.Field field) {
+  protected IBoundNamedModelInstance newModelInstance(@NonNull java.lang.reflect.Field field) {
     IBoundNamedModelInstance retval = null;
     if (field.isAnnotationPresent(BoundAssembly.class)) {
       retval = DefaultAssemblyProperty.createInstance(this, field);
@@ -237,7 +241,7 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public Collection<@NotNull ? extends IBoundNamedModelInstance> getModelInstances() {
+  public Collection<? extends IBoundNamedModelInstance> getModelInstances() {
     return getNamedModelInstances();
   }
 
@@ -247,20 +251,20 @@ public class DefaultAssemblyClassBinding
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  private Map<@NotNull String, ? extends IBoundNamedModelInstance> getNamedModelInstanceMap() {
+  @NonNull
+  private Map<String, ? extends IBoundNamedModelInstance> getNamedModelInstanceMap() {
     initalizeModelInstances();
     return modelInstances;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IBoundNamedModelInstance> getNamedModelInstances() {
+  public Collection<? extends IBoundNamedModelInstance> getNamedModelInstances() {
     return getNamedModelInstanceMap().values();
   }
 
   @Override
-  public Map<@NotNull String, ? extends IBoundNamedInstance>
+  public Map<String, ? extends IBoundNamedInstance>
       getNamedInstances(Predicate<IBoundFlagInstance> flagFilter) {
     return ObjectUtils.notNull(Stream.concat(
         super.getNamedInstances(flagFilter).values().stream()
@@ -271,8 +275,8 @@ public class DefaultAssemblyClassBinding
                 LinkedHashMap::new)));
   }
 
-  @NotNull
-  private Map<@NotNull String, ? extends IBoundFieldInstance> getFieldInstanceMap() {
+  @NonNull
+  private Map<String, ? extends IBoundFieldInstance> getFieldInstanceMap() {
     return ObjectUtils.notNull(getNamedModelInstances().stream()
         .filter(instance -> instance instanceof IBoundFieldInstance)
         .map(instance -> (IBoundFieldInstance) instance)
@@ -284,7 +288,7 @@ public class DefaultAssemblyClassBinding
 
   @SuppressWarnings("null")
   @Override
-  public Collection<@NotNull ? extends IBoundFieldInstance> getFieldInstances() {
+  public Collection<? extends IBoundFieldInstance> getFieldInstances() {
     return getFieldInstanceMap().values();
   }
 
@@ -293,8 +297,8 @@ public class DefaultAssemblyClassBinding
     return getFieldInstanceMap().get(name);
   }
 
-  @NotNull
-  private Map<@NotNull String, ? extends IBoundAssemblyInstance> getAssemblyInstanceMap() {
+  @NonNull
+  private Map<String, ? extends IBoundAssemblyInstance> getAssemblyInstanceMap() {
     return ObjectUtils.notNull(getNamedModelInstances().stream()
         .filter(instance -> instance instanceof IBoundAssemblyInstance)
         .map(instance -> (IBoundAssemblyInstance) instance)
@@ -306,7 +310,7 @@ public class DefaultAssemblyClassBinding
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull Collection<@NotNull ? extends IBoundAssemblyInstance> getAssemblyInstances() {
+  public @NonNull Collection<? extends IBoundAssemblyInstance> getAssemblyInstances() {
     return getAssemblyInstanceMap().values();
   }
 
@@ -382,43 +386,43 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+  public void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IMatchesConstraint constraint) {
+  public void addConstraint(@NonNull IMatchesConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+  public void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IExpectConstraint constraint) {
+  public void addConstraint(@NonNull IExpectConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IIndexConstraint constraint) {
+  public void addConstraint(@NonNull IIndexConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull IUniqueConstraint constraint) {
+  public void addConstraint(@NonNull IUniqueConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
 
   @Override
-  public void addConstraint(@NotNull ICardinalityConstraint constraint) {
+  public void addConstraint(@NonNull ICardinalityConstraint constraint) {
     checkModelConstraints();
     constraints.addConstraint(constraint);
   }
@@ -460,7 +464,7 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public List<@NotNull Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
+  public List<Object> readItem(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
       throws IOException {
 
     JsonUtil.assertCurrent(context.getReader(), JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
@@ -493,8 +497,8 @@ public class DefaultAssemblyClassBinding
    * @throws IOException
    *           if an error occurred while reading the JSON
    */
-  protected void readInternal(@NotNull Object instance, @Nullable Object parentInstance,
-      @NotNull IJsonParsingContext context) throws IOException {
+  protected void readInternal(@NonNull Object instance, @Nullable Object parentInstance,
+      @NonNull IJsonParsingContext context) throws IOException {
     JsonParser parser = context.getReader(); // NOPMD - intentional
 
     JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
@@ -502,11 +506,11 @@ public class DefaultAssemblyClassBinding
     try {
       callBeforeDeserialize(instance, parentInstance);
     } catch (BindingException ex) {
-      throw new IOException("an error occured calling the beforeDeserialize() method");
+      throw new IOException("an error occured calling the beforeDeserialize() method", ex);
     }
 
     IBoundFlagInstance jsonKey = getJsonKeyFlagInstance();
-    Map<@NotNull String, ? extends IBoundNamedInstance> properties;
+    Map<String, ? extends IBoundNamedInstance> properties;
     if (jsonKey == null) {
       properties = getNamedInstances(null);
     } else {
@@ -551,7 +555,7 @@ public class DefaultAssemblyClassBinding
 
     // set undefined properties
     // TODO: re-implement this by removing the parsed properties from the properties map to speed up
-    for (Map.Entry<@NotNull String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
+    for (Map.Entry<String, ? extends IBoundNamedInstance> entry : properties.entrySet()) {
       if (!handledProperties.contains(entry.getKey())) {
         // use the default value of the collector
         IBoundNamedInstance property = ObjectUtils.notNull(entry.getValue());
@@ -567,7 +571,7 @@ public class DefaultAssemblyClassBinding
     try {
       callAfterDeserialize(instance, parentInstance);
     } catch (BindingException ex) {
-      throw new IOException("an error occured calling the afterDeserialize() method");
+      throw new IOException("an error occured calling the afterDeserialize() method", ex);
     }
 
     JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
@@ -587,8 +591,8 @@ public class DefaultAssemblyClassBinding
    * @throws NullPointerException
    *           if there is a JSON key configured and the key property's value is {@code null}
    */
-  protected void writeInternal(@NotNull Object instance, boolean writeObjectWrapper,
-      @NotNull IJsonWritingContext context)
+  protected void writeInternal(@NonNull Object instance, boolean writeObjectWrapper,
+      @NonNull IJsonWritingContext context)
       throws IOException {
     JsonGenerator writer = context.getWriter(); // NOPMD - intentional
 
@@ -597,7 +601,7 @@ public class DefaultAssemblyClassBinding
     }
 
     IBoundFlagInstance jsonKey = getJsonKeyFlagInstance();
-    Map<@NotNull String, ? extends IBoundNamedInstance> properties;
+    Map<String, ? extends IBoundNamedInstance> properties;
     if (jsonKey == null) {
       properties = getNamedInstances(null);
     } else {
@@ -640,16 +644,17 @@ public class DefaultAssemblyClassBinding
   }
 
   @Override
-  public void writeItems(Collection<@NotNull ? extends Object> items, boolean writeObjectWrapper,
+  public void writeItems(Collection<? extends Object> items, boolean writeObjectWrapper,
       IJsonWritingContext context)
       throws IOException {
     for (Object item : items) {
+      assert item != null;
       writeInternal(item, writeObjectWrapper, context);
     }
   }
 
   @Override
-  protected void copyBoundObjectInternal(@NotNull Object fromInstance, @NotNull Object toInstance)
+  protected void copyBoundObjectInternal(@NonNull Object fromInstance, @NonNull Object toInstance)
       throws BindingException {
     super.copyBoundObjectInternal(fromInstance, toInstance);
 

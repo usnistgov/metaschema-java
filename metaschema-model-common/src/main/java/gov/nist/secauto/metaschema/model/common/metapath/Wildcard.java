@@ -28,8 +28,6 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -41,17 +39,17 @@ class Wildcard implements IExpression {
 
   @SuppressWarnings("null")
   @Override
-  public List<@NotNull ? extends IExpression> getChildren() {
+  public List<? extends IExpression> getChildren() {
     return Collections.emptyList();
   }
 
   @Override
-  public Class<@NotNull INodeItem> getBaseResultType() {
+  public Class<INodeItem> getBaseResultType() {
     return INodeItem.class;
   }
 
   @Override
-  public Class<@NotNull INodeItem> getStaticResultType() {
+  public Class<INodeItem> getStaticResultType() {
     return getBaseResultType();
   }
 

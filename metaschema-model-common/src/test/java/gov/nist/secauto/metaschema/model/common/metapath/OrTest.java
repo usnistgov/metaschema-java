@@ -35,13 +35,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.List;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class OrTest
     extends AbstractExpressionTest {
 
-  private static Stream<Arguments> testOr() {
+  private static Stream<Arguments> testOr() { // NOPMD - false positive
     return Stream.of(
         Arguments.of(IBooleanItem.TRUE, IBooleanItem.TRUE, IBooleanItem.TRUE),
         Arguments.of(IBooleanItem.TRUE, IBooleanItem.FALSE, IBooleanItem.TRUE),
@@ -49,19 +50,20 @@ class OrTest
         Arguments.of(IBooleanItem.FALSE, IBooleanItem.FALSE, IBooleanItem.FALSE));
   }
 
-  @SuppressWarnings("null")
   @ParameterizedTest
   @MethodSource
   void testOr(IBooleanItem bool1, IBooleanItem bool2, IBooleanItem expectedResult) {
     DynamicContext dynamicContext = newDynamicContext();
 
+    @SuppressWarnings("null")
+    @NonNull
     INodeContext nodeContext = context.mock(INodeContext.class);
 
     IExpression exp1 = context.mock(IExpression.class, "exp1");
     IExpression exp2 = context.mock(IExpression.class, "exp2");
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         atMost(1).of(exp1).accept(dynamicContext, nodeContext);
         will(returnValue(ISequence.of(bool1)));
         atMost(1).of(exp2).accept(dynamicContext, nodeContext);
@@ -69,9 +71,9 @@ class OrTest
       }
     });
 
-    Or expr = new Or(List.of(exp1, exp2));
+    Or expr = new Or(exp1, exp2);
 
     ISequence<?> result = expr.accept(dynamicContext, nodeContext);
-    assertEquals(ISequence.of(expectedResult), result);
+    assertEquals(ISequence.of(expectedResult), result, "Sequence does not match");
   }
 }

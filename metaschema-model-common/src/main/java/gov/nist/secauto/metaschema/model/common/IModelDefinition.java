@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * This marker interface identifies a definition that is intended to be part of an Assembly's model.
@@ -64,8 +64,8 @@ public interface IModelDefinition extends IDefinition {
    * 
    * @return the flags
    */
-  @NotNull
-  Collection<@NotNull ? extends IFlagInstance> getFlagInstances();
+  @NonNull
+  Collection<? extends IFlagInstance> getFlagInstances();
 
   /**
    * Indicates if a flag's value can be used as a property name in the containing object in JSON who's

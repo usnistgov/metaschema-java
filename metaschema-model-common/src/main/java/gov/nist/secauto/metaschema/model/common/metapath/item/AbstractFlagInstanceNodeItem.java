@@ -29,9 +29,9 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A {@link INodeItem} supported by a {@link IFlagInstance}.
@@ -41,12 +41,12 @@ import java.net.URI;
  */
 abstract class AbstractFlagInstanceNodeItem<P extends IModelNodeItem>
     implements IFlagNodeItem {
-  @NotNull
+  @NonNull
   private final IFlagInstance instance;
-  @NotNull
+  @NonNull
   private final P parent;
 
-  public AbstractFlagInstanceNodeItem(@NotNull IFlagInstance instance, @NotNull P parent) {
+  public AbstractFlagInstanceNodeItem(@NonNull IFlagInstance instance, @NonNull P parent) {
     this.instance = instance;
     this.parent = parent;
   }
@@ -57,19 +57,19 @@ abstract class AbstractFlagInstanceNodeItem<P extends IModelNodeItem>
   }
 
   @Override
-  @NotNull
+  @NonNull
   public IFlagInstance getInstance() {
     return instance;
   }
 
   @Override
-  @NotNull
+  @NonNull
   public P getParentContentNodeItem() {
     return getParentNodeItem();
   }
 
   @Override
-  @NotNull
+  @NonNull
   public P getParentNodeItem() {
     return parent;
   }

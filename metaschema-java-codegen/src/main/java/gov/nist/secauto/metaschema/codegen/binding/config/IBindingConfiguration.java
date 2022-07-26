@@ -29,8 +29,9 @@ package gov.nist.secauto.metaschema.codegen.binding.config;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBindingConfiguration {
 
@@ -41,8 +42,8 @@ public interface IBindingConfiguration {
    *          the Metaschema to generate a package name for
    * @return a Java package name
    */
-  @NotNull
-  String getPackageNameForMetaschema(@NotNull IMetaschema metaschema);
+  @NonNull
+  String getPackageNameForMetaschema(@NonNull IMetaschema metaschema);
 
   /**
    * Get the Java class name for the provided field or assembly definition.
@@ -51,8 +52,8 @@ public interface IBindingConfiguration {
    *          the definition to generate the Java class name for
    * @return a Java class name
    */
-  @NotNull
-  String getClassName(@NotNull IModelDefinition definition);
+  @NonNull
+  String getClassName(@NonNull IModelDefinition definition);
 
   /**
    * Get the Java class name for the provided Metaschema.
@@ -61,8 +62,8 @@ public interface IBindingConfiguration {
    *          the Metaschema to generate the Java class name for
    * @return a Java class name
    */
-  @NotNull
-  String getClassName(@NotNull IMetaschema metaschema);
+  @NonNull
+  String getClassName(@NonNull IMetaschema metaschema);
 
   /**
    * Get the Java class name of the base class to use for the class associated with the provided
@@ -73,5 +74,5 @@ public interface IBindingConfiguration {
    * @return the name of the base class or {@code null} if no base class is to be used
    */
   @Nullable
-  String getQualifiedBaseClassName(@NotNull IModelDefinition definition);
+  String getQualifiedBaseClassName(@NonNull IModelDefinition definition);
 }

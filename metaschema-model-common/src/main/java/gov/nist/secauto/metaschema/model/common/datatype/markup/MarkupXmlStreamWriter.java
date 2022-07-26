@@ -34,11 +34,11 @@ import com.vladsch.flexmark.util.ast.Node;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
 
-import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.NodeVisitor;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -46,7 +46,7 @@ import javax.xml.stream.XMLStreamWriter;
 public class MarkupXmlStreamWriter
     extends AbstractMarkupXmlWriter<XMLStreamWriter> {
 
-  public MarkupXmlStreamWriter(@NotNull String namespace, boolean handleBlockElements) {
+  public MarkupXmlStreamWriter(@NonNull String namespace, boolean handleBlockElements) {
     super(namespace, handleBlockElements);
   }
 
@@ -104,7 +104,7 @@ public class MarkupXmlStreamWriter
   protected void handleHtmlBlock(HtmlBlock node, XMLStreamWriter writer) throws XMLStreamException {
     Document doc = Jsoup.parse(node.getChars().toString());
     try {
-      doc.getElementsByTag("html").first().getElementsByTag("body").first().traverse(new StreamNodeVisitor(writer));
+      doc.body().traverse(new StreamNodeVisitor(writer));
     } catch (InlineHtmlXmlStreamException ex) {
       throw (XMLStreamException) ex.getCause();
     }
@@ -114,7 +114,7 @@ public class MarkupXmlStreamWriter
   protected void handleHtmlInline(HtmlInline node, XMLStreamWriter writer) throws XMLStreamException {
     Document doc = Jsoup.parse(node.getChars().toString());
     try {
-      doc.getElementsByTag("html").first().getElementsByTag("body").first().traverse(new StreamNodeVisitor(writer));
+      doc.body().traverse(new StreamNodeVisitor(writer));
     } catch (InlineHtmlXmlStreamException ex) {
       throw (XMLStreamException) ex.getCause();
     }

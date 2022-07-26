@@ -26,9 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
@@ -44,7 +46,7 @@ class BooleanAdapterTest {
   private JsonParser parser;
 
   @BeforeEach
-  private void initParser() throws Exception {
+  private void initParser() throws JsonParseException, IOException { // NOPMD
     adapter = new BooleanAdapter();
     JsonFactory factory = new JsonFactory();
     parser = factory.createParser(TEST_JSON);
@@ -58,8 +60,8 @@ class BooleanAdapterTest {
     parser.nextToken();
 
     Boolean obj = adapter.parse(parser);
-    assertTrue(obj);
-
-    assertTrue(JsonToken.END_OBJECT.equals(parser.currentToken()));
+    assertAll(
+        () -> assertTrue(obj, "object is not true"),
+        () -> assertTrue(JsonToken.END_OBJECT.equals(parser.currentToken()), "token is not at end object"));
   }
 }

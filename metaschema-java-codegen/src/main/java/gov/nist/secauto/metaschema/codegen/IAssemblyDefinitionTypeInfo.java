@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Java class type information for an {@link IAssemblyDefinition} used for generating a Java class
@@ -45,9 +45,9 @@ public interface IAssemblyDefinitionTypeInfo extends IModelDefinitionTypeInfo {
    *          a resolver used to look up related type information
    * @return the type info for the definition
    */
-  @NotNull
-  static IAssemblyDefinitionTypeInfo newTypeInfo(@NotNull IAssemblyDefinition definition,
-      @NotNull ITypeResolver typeResolver) {
+  @NonNull
+  static IAssemblyDefinitionTypeInfo newTypeInfo(@NonNull IAssemblyDefinition definition,
+      @NonNull ITypeResolver typeResolver) {
     return new AssemblyDefinitionTypeInfoImpl(definition, typeResolver);
   }
 

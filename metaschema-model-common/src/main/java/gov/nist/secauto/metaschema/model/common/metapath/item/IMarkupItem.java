@@ -32,25 +32,25 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IMarkupItem extends IUntypedAtomicItem {
 
   @Override
   IMarkupText getValue();
 
-  @NotNull
-  static IMarkupItem valueOf(@NotNull MarkupLine value) {
+  @NonNull
+  static IMarkupItem valueOf(@NonNull MarkupLine value) {
     return new MarkupLineItemImpl(value);
   }
 
-  @NotNull
-  static IMarkupItem valueOf(@NotNull MarkupMultiline value) {
+  @NonNull
+  static IMarkupItem valueOf(@NonNull MarkupMultiline value) {
     return new MarkupMultiLineItemImpl(value);
   }
 
-  @NotNull
-  static IMarkupItem cast(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  @NonNull
+  static IMarkupItem cast(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.MARKUP_MULTILINE.cast(item);
   }
 }

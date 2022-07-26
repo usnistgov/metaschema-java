@@ -28,11 +28,11 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundFieldDefinition extends IBoundModelDefinition, IFieldDefinition {
 
   @Override
-  @NotNull
-  Object getFieldValue(@NotNull Object item);
+  @NonNull
+  Object getFieldValue(@NonNull Object item);
 }

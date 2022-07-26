@@ -42,7 +42,7 @@ import java.util.stream.Stream;
 class ValueComparisonTest
     extends AbstractExpressionTest {
 
-  private static Stream<Arguments> testValueComparison() {
+  private static Stream<Arguments> testValueComparison() { // NOPMD - false positive
     return Stream.of(
         // boolean
         Arguments.of(IBooleanItem.TRUE, Operator.EQ, IBooleanItem.TRUE, IBooleanItem.TRUE),
@@ -71,7 +71,7 @@ class ValueComparisonTest
     IExpression exp2 = context.mock(IExpression.class, "exp2");
 
     context.checking(new Expectations() {
-      {
+      { // NOPMD - intentional
         atMost(1).of(exp1).accept(dynamicContext, nodeContext);
         will(returnValue(ISequence.of(leftItem)));
         atMost(1).of(exp2).accept(dynamicContext, nodeContext);
@@ -82,6 +82,6 @@ class ValueComparisonTest
     ValueComparison expr = new ValueComparison(exp1, operator, exp2);
 
     ISequence<?> result = expr.accept(dynamicContext, nodeContext);
-    assertEquals(ISequence.of(expectedResult), result);
+    assertEquals(ISequence.of(expectedResult), result, "Sequence does not match");
   }
 }

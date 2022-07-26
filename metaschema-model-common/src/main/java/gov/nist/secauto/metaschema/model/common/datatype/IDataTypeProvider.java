@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model.common.datatype;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Map;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A service interface used to provide implementations of data types represented as
@@ -41,8 +41,8 @@ import java.util.Map;
  * {@link DataTypeService}.
  */
 public interface IDataTypeProvider {
-  @NotNull
-  Map<String, @NotNull ? extends IDataTypeAdapter<?>> getJavaTypeAdapters();
+  @NonNull
+  Map<String, ? extends IDataTypeAdapter<?>> getJavaTypeAdapters();
 
-  <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz);
+  <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterInstance(@NonNull Class<TYPE> clazz);
 }

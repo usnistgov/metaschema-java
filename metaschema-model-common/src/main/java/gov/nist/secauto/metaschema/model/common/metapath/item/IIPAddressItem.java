@@ -27,5 +27,5 @@
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 public interface IIPAddressItem extends IUntypedAtomicItem {
-
+  // this interface does not have any additional methods
 }

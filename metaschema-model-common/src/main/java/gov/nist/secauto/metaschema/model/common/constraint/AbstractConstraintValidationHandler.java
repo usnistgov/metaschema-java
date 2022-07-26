@@ -34,24 +34,24 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public abstract class AbstractConstraintValidationHandler implements IConstraintValidationHandler {
-  @NotNull
+  @NonNull
   public abstract IPathFormatter getPathFormatter();
 
-  protected String toPath(@NotNull INodeItem nodeItem) {
+  protected String toPath(@NonNull INodeItem nodeItem) {
     return nodeItem.toPath(getPathFormatter());
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   protected String newCardinalityMinimumViolationMessage(
-      @NotNull ICardinalityConstraint constraint,
-      @SuppressWarnings("unused") @NotNull INodeItem node,
-      @NotNull ISequence<? extends INodeItem> targets) {
+      @NonNull ICardinalityConstraint constraint,
+      @SuppressWarnings("unused") @NonNull INodeItem node,
+      @NonNull ISequence<? extends INodeItem> targets) {
     // TODO: render the item paths instead of the expression
     return String.format(
         "The cardinality '%d' is below the required minimum '%d' for items matching the expression '%s'.",
@@ -59,11 +59,11 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   protected String newCardinalityMaximumViolationMessage(
-      @NotNull ICardinalityConstraint constraint,
-      @SuppressWarnings("unused") @NotNull INodeItem node,
-      @NotNull ISequence<? extends INodeItem> targets) {
+      @NonNull ICardinalityConstraint constraint,
+      @SuppressWarnings("unused") @NonNull INodeItem node,
+      @NonNull ISequence<? extends INodeItem> targets) {
     // TODO: render the item paths instead of the expression
     return String.format(
         "The cardinality '%d' is greater than the required maximum '%d' for items matching the expression '%s'.",
@@ -71,36 +71,36 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   protected String newIndexDuplicateKeyViolationMessage(
-      @NotNull IIndexConstraint constraint,
-      @SuppressWarnings("unused") @NotNull INodeItem node,
-      @NotNull INodeItem oldItem,
-      @NotNull INodeItem target) {
+      @NonNull IIndexConstraint constraint,
+      @SuppressWarnings("unused") @NonNull INodeItem node,
+      @NonNull INodeItem oldItem,
+      @NonNull INodeItem target) {
     // TODO: render the key paths
     return String.format("Index '%s' has duplicate key for items at paths '%s' and '%s'", constraint.getName(),
         toPath(oldItem), toPath(target));
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   protected String newUniqueKeyViolationMessage(
-      @SuppressWarnings("unused") @NotNull IUniqueConstraint constraint,
-      @SuppressWarnings("unused") @NotNull INodeItem node,
-      @NotNull INodeItem oldItem,
-      @NotNull INodeItem target) {
+      @SuppressWarnings("unused") @NonNull IUniqueConstraint constraint,
+      @SuppressWarnings("unused") @NonNull INodeItem node,
+      @NonNull INodeItem oldItem,
+      @NonNull INodeItem target) {
     // TODO: render the key paths
     return String.format("Unique constraint violation at paths '%s' and '%s'",
         toPath(oldItem), toPath(target));
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   protected String newMatchPatternViolationMessage(
-      @NotNull IMatchesConstraint constraint,
-      @SuppressWarnings("unused") @NotNull INodeItem node,
-      @NotNull INodeItem target,
-      @NotNull String value) {
+      @NonNull IMatchesConstraint constraint,
+      @SuppressWarnings("unused") @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull String value) {
     return String.format("Value '%s' did not match the pattern '%s' at path '%s'",
         value,
         constraint.getPattern().pattern(),
@@ -108,24 +108,24 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   protected String newMatchDatatypeViolationMessage(
-      @NotNull IMatchesConstraint constraint,
-      @SuppressWarnings("unused") @NotNull INodeItem node,
-      @NotNull INodeItem target,
-      @NotNull String value) {
+      @NonNull IMatchesConstraint constraint,
+      @SuppressWarnings("unused") @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull String value) {
     IDataTypeAdapter<?> adapter = constraint.getDataType();
     return String.format("Value '%s' did not conform to the data type '%s' at path '%s'", value,
         adapter.getName(), toPath(target));
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   protected CharSequence newExpectViolationMessage(
-      @NotNull IExpectConstraint constraint,
-      @SuppressWarnings("unused") @NotNull INodeItem node,
-      @NotNull INodeItem target,
-      @NotNull DynamicContext dynamicContext) {
+      @NonNull IExpectConstraint constraint,
+      @SuppressWarnings("unused") @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull DynamicContext dynamicContext) {
     CharSequence message;
     if (constraint.getMessage() != null) {
       message = constraint.generateMessage(target, dynamicContext);
@@ -138,10 +138,10 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   protected CharSequence newAllowedValuesViolationMessage(
-      @NotNull List<@NotNull IAllowedValuesConstraint> constraints,
-      @NotNull INodeItem target) {
+      @NonNull List<IAllowedValuesConstraint> constraints,
+      @NonNull INodeItem target) {
 
     String allowedValues = constraints.stream()
         .flatMap(constraint -> constraint.getAllowedValues().values().stream())

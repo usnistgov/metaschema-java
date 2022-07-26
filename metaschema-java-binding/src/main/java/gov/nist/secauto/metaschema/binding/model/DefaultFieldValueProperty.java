@@ -45,8 +45,6 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -55,19 +53,21 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class DefaultFieldValueProperty
     extends AbstractProperty<IFieldClassBinding>
     implements IBoundFieldValueInstance, IBoundJavaField {
   private static final Logger LOGGER = LogManager.getLogger(DefaultFieldValueProperty.class);
 
-  @NotNull
+  @NonNull
   private final Field field;
-  @NotNull
+  @NonNull
   private final BoundFieldValue fieldValue;
-  @NotNull
+  @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
 
-  public DefaultFieldValueProperty(@NotNull IFieldClassBinding fieldClassBinding, @NotNull Field field) {
+  public DefaultFieldValueProperty(@NonNull IFieldClassBinding fieldClassBinding, @NonNull Field field) {
     super(fieldClassBinding);
     this.field = ObjectUtils.requireNonNull(field, "field");
     this.fieldValue = ObjectUtils.requireNonNull(field.getAnnotation(BoundFieldValue.class));
@@ -82,7 +82,7 @@ class DefaultFieldValueProperty
   }
 
   @Override
-  public @NotNull Field getField() {
+  public @NonNull Field getField() {
     return field;
   }
 
@@ -91,7 +91,7 @@ class DefaultFieldValueProperty
   }
 
   @Override
-  public @NotNull IFieldClassBinding getDefinition() {
+  public @NonNull IFieldClassBinding getDefinition() {
     return getParentClassBinding();
   }
 
@@ -195,7 +195,7 @@ class DefaultFieldValueProperty
   }
 
   @Override
-  public Object readValue(Object parentInstance, IJsonParsingContext context) throws IOException {
+  public Object readValue(IJsonParsingContext context) throws IOException {
     return readInternal(context);
   }
 
@@ -266,7 +266,7 @@ class DefaultFieldValueProperty
   }
 
   @Override
-  public @NotNull ModelType getModelType() {
+  public @NonNull ModelType getModelType() {
     // TODO: is this right? Is there a way to not make this derived from a property?
     return ModelType.FIELD;
   }

@@ -28,33 +28,33 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class SingletonSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_TYPE> {
-  @NotNull
+  @NonNull
   private final ITEM_TYPE item;
 
-  public SingletonSequenceImpl(@NotNull ITEM_TYPE item) {
+  public SingletonSequenceImpl(@NonNull ITEM_TYPE item) {
     this.item = item;
   }
 
-  @NotNull
+  @NonNull
   protected ITEM_TYPE getItem() {
     return item;
   }
 
   @SuppressWarnings("null")
   @Override
-  public List<@NotNull ITEM_TYPE> asList() {
+  public List<ITEM_TYPE> asList() {
     return List.of(item);
   }
 
   @SuppressWarnings("null")
   @Override
-  public Stream<@NotNull ITEM_TYPE> asStream() {
+  public Stream<ITEM_TYPE> asStream() {
     return Stream.of(item);
   }
 
@@ -76,11 +76,11 @@ class SingletonSequenceImpl<ITEM_TYPE extends IItem> implements ISequence<ITEM_T
   @Override
   public boolean equals(Object other) {
     if (other == this) {
-      return true;
+      return true; // NOPMD - readability
     }
 
     if (!(other instanceof ISequence)) {
-      return false;
+      return false; // NOPMD - readability
     }
 
     return asList().equals(((ISequence<?>) other).asList());

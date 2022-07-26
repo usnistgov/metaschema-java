@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface INamedModelInstance extends INamedInstance, IModelInstance {
   @Override
@@ -43,8 +43,8 @@ public interface INamedModelInstance extends INamedInstance, IModelInstance {
    *          the instance
    * @return the item values or an empty collection if no item values exist
    */
-  @NotNull
-  Collection<@NotNull ?> getItemValues(Object instanceValue);
+  @NonNull
+  Collection<?> getItemValues(Object instanceValue);
 
   /**
    * Indicates if a flag's value can be used as a property name in the containing object in JSON who's

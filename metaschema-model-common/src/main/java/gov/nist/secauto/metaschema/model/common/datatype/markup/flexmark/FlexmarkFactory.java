@@ -42,22 +42,23 @@ import com.vladsch.flexmark.util.misc.Extension;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class FlexmarkFactory {
   private static final Logger LOGGER = LogManager.getLogger(FlexmarkFactory.class);
 
-  @NotNull
-  private static final FlexmarkFactory INSTANCE = new FlexmarkFactory();
+  @NonNull
+  private static final FlexmarkFactory SINGLETON = new FlexmarkFactory();
 
-  @NotNull
-  private static final Map<String, String> TYPOGRAPHIC_REPLACEMENT_MAP = new HashMap<>();
+  @NonNull
+  private static final Map<String, String> TYPOGRAPHIC_REPLACEMENT_MAP = new ConcurrentHashMap<>();
 
   static {
     TYPOGRAPHIC_REPLACEMENT_MAP.put("“", "\"");
@@ -81,23 +82,23 @@ public class FlexmarkFactory {
     TYPOGRAPHIC_REPLACEMENT_MAP.put("&emdash;", "—");
   }
 
-  @NotNull
-  public static FlexmarkFactory instance() {
-    return INSTANCE;
-  }
-
   private Parser markdownParser;
   private HtmlRenderer htmlRenderer;
   private Formatter formatter;
   private FlexmarkHtmlConverter htmlConverter;
 
-  @NotNull
-  public Document fromHtml(@NotNull String html) {
+  @NonNull
+  public static FlexmarkFactory instance() {
+    return SINGLETON;
+  }
+
+  @NonNull
+  public Document fromHtml(@NonNull String html) {
     return fromHtml(html, null, null);
   }
 
-  @NotNull
-  public Document fromHtml(@NotNull String html, FlexmarkHtmlConverter htmlParser, Parser markdownParser) {
+  @NonNull
+  public Document fromHtml(@NonNull String html, FlexmarkHtmlConverter htmlParser, Parser markdownParser) {
     Objects.requireNonNull(html, "html");
 
     FlexmarkHtmlConverter effectiveHtmlParser = htmlParser == null ? getFlexmarkHtmlConverter() : htmlParser;
@@ -110,12 +111,12 @@ public class FlexmarkFactory {
     return fromMarkdown(markdown, effectiveMarkdownParser);
   }
 
-  @NotNull
+  @NonNull
   public Document fromMarkdown(String markdown) {
     return fromMarkdown(markdown, getMarkdownParser());
   }
 
-  @NotNull
+  @NonNull
   public Document fromMarkdown(String markdown, Parser parser) {
     Objects.requireNonNull(markdown, "markdown");
     Objects.requireNonNull(parser, "parser");
@@ -124,7 +125,7 @@ public class FlexmarkFactory {
   }
 
   @SuppressWarnings("null")
-  protected void applyOptions(@NotNull BuilderBase<?> builder) {
+  protected void applyOptions(@NonNull BuilderBase<?> builder) {
     builder.set(Parser.FENCED_CODE_CONTENT_BLOCK, true);
     // GitHub-flavored tables
     builder.set(TablesExtension.COLUMN_SPANS, false);
@@ -155,7 +156,7 @@ public class FlexmarkFactory {
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   public Parser getMarkdownParser() {
     synchronized (this) {
       if (markdownParser == null) {
@@ -165,9 +166,9 @@ public class FlexmarkFactory {
     }
   }
 
-  @NotNull
+  @NonNull
   public Parser newMarkdownParser(DataHolder options) {
-    @NotNull
+    @NonNull
     Parser.Builder builder;
     if (options != null) {
       builder = Parser.builder(options);
@@ -179,7 +180,7 @@ public class FlexmarkFactory {
     return builder.build();
   }
 
-  @NotNull
+  @NonNull
   public HtmlRenderer getHtmlRenderer() {
     synchronized (this) {
       if (htmlRenderer == null) {
@@ -189,7 +190,7 @@ public class FlexmarkFactory {
     }
   }
 
-  @NotNull
+  @NonNull
   public HtmlRenderer newHtmlRenderer(DataHolder options) {
     HtmlRenderer.Builder builder;
     if (options != null) {
@@ -202,7 +203,7 @@ public class FlexmarkFactory {
     return builder.build();
   }
 
-  @NotNull
+  @NonNull
   public Formatter getFormatter() {
     synchronized (this) {
       if (formatter == null) {
@@ -212,7 +213,7 @@ public class FlexmarkFactory {
     }
   }
 
-  @NotNull
+  @NonNull
   public Formatter newFormatter(DataHolder options) {
     Formatter.Builder builder;
     if (options != null) {
@@ -225,7 +226,7 @@ public class FlexmarkFactory {
     return builder.build();
   }
 
-  @NotNull
+  @NonNull
   public FlexmarkHtmlConverter getFlexmarkHtmlConverter() {
     synchronized (this) {
       if (htmlConverter == null) {
@@ -235,7 +236,7 @@ public class FlexmarkFactory {
     }
   }
 
-  @NotNull
+  @NonNull
   public FlexmarkHtmlConverter newFlexmarkHtmlConverter(@Nullable DataHolder options) {
     FlexmarkHtmlConverter.Builder builder;
     if (options != null) {

@@ -26,10 +26,11 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath;
 
+import static gov.nist.secauto.metaschema.model.common.metapath.TestUtils.decimal;
+import static gov.nist.secauto.metaschema.model.common.metapath.TestUtils.integer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
-import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
@@ -37,24 +38,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.MathContext;
 import java.util.stream.Stream;
 
-class FunctionsTest {
-  private static IDecimalItem decimal(String value) {
-    return IDecimalItem.valueOf(new BigDecimal(value, MathContext.DECIMAL64));
-  }
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-  private static IDecimalItem decimal(double value) {
-    return IDecimalItem.valueOf(new BigDecimal(value, MathContext.DECIMAL64));
-  }
-
-  private static IIntegerItem integer(int value) {
-    return IIntegerItem.valueOf(BigInteger.valueOf(value));
-  }
-
+class OperationFunctionsTest {
   private static Stream<Arguments> provideValuesForIntegerDivide() {
     return Stream.of(
         Arguments.of(integer(10), integer(3), integer(3)),
@@ -70,22 +58,23 @@ class FunctionsTest {
 
   @ParameterizedTest
   @MethodSource("provideValuesForIntegerDivide")
-  void testIntegerDivide(INumericItem dividend, INumericItem divisor, IIntegerItem expected) {
+  void testIntegerDivide(@NonNull INumericItem dividend, @NonNull INumericItem divisor,
+      @NonNull IIntegerItem expected) {
     INumericItem result = OperationFunctions.opNumericIntegerDivide(dividend, divisor);
     assertEquals(expected, result);
   }
 
   private static Stream<Arguments> provideValuesForMod() {
     return Stream.of(
-        Arguments.of(integer(5), integer(3), decimal(2)),
-        Arguments.of(integer(6), integer(-2), decimal(0)),
+        Arguments.of(integer(5), integer(3), decimal("2")),
+        Arguments.of(integer(6), integer(-2), decimal("0")),
         Arguments.of(decimal("4.5"), decimal("1.2"), decimal("0.9")),
-        Arguments.of(integer(123), integer(6), decimal(3)));
+        Arguments.of(integer(123), integer(6), decimal("3")));
   }
 
   @ParameterizedTest
   @MethodSource("provideValuesForMod")
-  void test(INumericItem dividend, INumericItem divisor, INumericItem expected) {
+  void test(@NonNull INumericItem dividend, @NonNull INumericItem divisor, @NonNull INumericItem expected) {
     INumericItem result = OperationFunctions.opNumericMod(dividend, divisor);
     assertEquals(expected, result);
   }

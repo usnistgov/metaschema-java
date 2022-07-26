@@ -29,16 +29,16 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class Metapath
     extends AbstractNAryExpression {
 
-  @NotNull
-  private final Class<@NotNull ? extends IItem> staticResultType;
+  @NonNull
+  private final Class<? extends IItem> staticResultType;
 
   /**
    * Create a new internal metapath expression.
@@ -46,7 +46,7 @@ class Metapath
    * @param expressions
    *          the expressions to evaluate
    */
-  public Metapath(@NotNull List<@NotNull IExpression> expressions) {
+  public Metapath(@NonNull List<IExpression> expressions) {
     super(expressions);
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(IItem.class, expressions);
   }
@@ -63,7 +63,7 @@ class Metapath
 
   @Override
   public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
-    Stream<@NotNull ? extends IItem> retval = ObjectUtils.notNull(getChildren().stream()
+    Stream<? extends IItem> retval = ObjectUtils.notNull(getChildren().stream()
         .flatMap(child -> {
           ISequence<?> result = child.accept(dynamicContext, context);
           return result.asStream();

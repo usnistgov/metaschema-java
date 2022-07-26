@@ -31,9 +31,9 @@ import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Set;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface ITypeInfo {
 
@@ -43,7 +43,7 @@ public interface ITypeInfo {
    * 
    * @return the name
    */
-  @NotNull
+  @NonNull
   String getBaseName();
 
   /**
@@ -53,7 +53,7 @@ public interface ITypeInfo {
    * 
    * @return the item base name
    */
-  @NotNull
+  @NonNull
   default String getItemBaseName() {
     return getBaseName();
   }
@@ -63,7 +63,7 @@ public interface ITypeInfo {
    * 
    * @return the Java property name
    */
-  @NotNull
+  @NonNull
   String getPropertyName();
 
   /**
@@ -71,7 +71,7 @@ public interface ITypeInfo {
    * 
    * @return the Java field name
    */
-  @NotNull
+  @NonNull
   String getJavaFieldName();
 
   /**
@@ -79,7 +79,7 @@ public interface ITypeInfo {
    * 
    * @return the Java type for the field
    */
-  @NotNull
+  @NonNull
   TypeName getJavaFieldType();
 
   /**
@@ -87,7 +87,7 @@ public interface ITypeInfo {
    * 
    * @return the Java type for the item
    */
-  @NotNull
+  @NonNull
   default TypeName getJavaItemType() {
     return getJavaFieldType();
   }
@@ -101,6 +101,6 @@ public interface ITypeInfo {
    *          the resolver used to get type information
    * @return the set of additional child definitions that need to be built
    */
-  @NotNull
-  Set<@NotNull IModelDefinition> build(@NotNull TypeSpec.Builder builder, @NotNull ITypeResolver typeResolver);
+  @NonNull
+  Set<IModelDefinition> build(@NonNull TypeSpec.Builder builder, @NonNull ITypeResolver typeResolver);
 }

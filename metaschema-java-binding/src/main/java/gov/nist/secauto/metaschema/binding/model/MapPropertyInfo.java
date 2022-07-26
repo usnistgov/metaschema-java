@@ -40,8 +40,7 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
 import org.codehaus.stax2.XMLEventReader2;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -55,6 +54,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 class MapPropertyInfo
     extends AbstractModelPropertyInfo {
 
@@ -64,12 +66,12 @@ class MapPropertyInfo
     return value == null ? List.of() : ((Map<?, ?>) value).values();
   }
 
-  public MapPropertyInfo(@NotNull IBoundNamedModelInstance property) {
+  public MapPropertyInfo(@NonNull IBoundNamedModelInstance property) {
     super(property);
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   public Class<?> getKeyType() {
     ParameterizedType actualType = (ParameterizedType) getProperty().getType();
     // this is a Map so the first generic type is the key
@@ -82,7 +84,7 @@ class MapPropertyInfo
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   public Class<?> getValueType() {
     ParameterizedType actualType = (ParameterizedType) getProperty().getType();
     // this is a Map so the second generic type is the value
@@ -109,7 +111,7 @@ class MapPropertyInfo
       // a map item will always start with a FIELD_NAME, since this represents the key
       JsonUtil.assertCurrent(jsonParser, JsonToken.FIELD_NAME);
 
-      List<@NotNull Object> values = property.readItem(parentInstance, true, context);
+      List<Object> values = property.readItem(parentInstance, true, context);
       collector.addAll(values);
 
       // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all items have been
@@ -153,14 +155,14 @@ class MapPropertyInfo
       throws XMLStreamException, IOException {
     IBoundNamedModelInstance property = getProperty();
     @SuppressWarnings("unchecked")
-    Map<@NotNull String, ? extends Object> items = (Map<@NotNull String, ? extends Object>) value;
+    Map<String, ? extends Object> items = (Map<String, ? extends Object>) value;
     for (Object item : items.values()) {
       property.writeItem(ObjectUtils.notNull(item), parentName, context);
     }
   }
 
   public static class MapPropertyCollector implements IPropertyCollector {
-    @NotNull
+    @NonNull
     private final Map<String, Object> map = new LinkedHashMap<>(); // NOPMD - single threaded
     @Nullable
     private final IBoundFlagInstance jsonKey;
@@ -187,14 +189,15 @@ class MapPropertyInfo
     }
 
     @Override
-    public void addAll(Collection<@NotNull ?> items) {
+    public void addAll(Collection<?> items) {
       for (Object item : items) {
-        add(item);
+        add(ObjectUtils.requireNonNull(item));
       }
     }
 
-    @NotNull
+    @NonNull
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "this is a data holder")
     public Map<String, Object> getValue() {
       return map;
     }
@@ -202,7 +205,7 @@ class MapPropertyInfo
 
   @Override
   public void writeValue(Object parentInstance, IJsonWritingContext context) throws IOException {
-    Collection<@NotNull ? extends Object> items = getItemsFromParentInstance(parentInstance);
+    Collection<? extends Object> items = getItemsFromParentInstance(parentInstance);
 
     if (!items.isEmpty()) {
       JsonGenerator writer = context.getWriter();
@@ -222,12 +225,12 @@ class MapPropertyInfo
   }
 
   @Override
-  public void copy(@NotNull Object fromInstance, @NotNull Object toInstance, @NotNull IPropertyCollector collector)
+  public void copy(@NonNull Object fromInstance, @NonNull Object toInstance, @NonNull IPropertyCollector collector)
       throws BindingException {
     IBoundNamedModelInstance property = getProperty();
 
     for (Object item : getItemsFromParentInstance(fromInstance)) {
-      collector.add(property.copyItem(item, toInstance));
+      collector.add(property.copyItem(ObjectUtils.requireNonNull(item), toInstance));
     }
   }
 }

@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model.common.validation;
 
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides information about an individual finding that is the result of a completed content
@@ -42,7 +42,7 @@ public interface IValidationFinding {
    * 
    * @return the severity
    */
-  @NotNull
+  @NonNull
   IConstraint.Level getSeverity();
 
   /**
@@ -50,7 +50,7 @@ public interface IValidationFinding {
    * 
    * @return the document's URI
    */
-  @NotNull
+  @NonNull
   URI getDocumentUri();
   //
   // /**
@@ -72,7 +72,7 @@ public interface IValidationFinding {
    * 
    * @return the message
    */
-  @NotNull
+  @NonNull
   CharSequence getMessage();
 
   /**

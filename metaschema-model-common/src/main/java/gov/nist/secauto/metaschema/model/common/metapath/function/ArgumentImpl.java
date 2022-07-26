@@ -28,17 +28,17 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.IExpression;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class ArgumentImpl implements IArgument {
-  @NotNull
+  @NonNull
   private final String name;
-  @NotNull
+  @NonNull
   private final ISequenceType sequenceType;
 
-  protected ArgumentImpl(@NotNull String name, @NotNull ISequenceType sequenceType) {
+  protected ArgumentImpl(@NonNull String name, @NonNull ISequenceType sequenceType) {
     this.name = name;
     this.sequenceType = sequenceType;
   }
@@ -66,11 +66,9 @@ class ArgumentImpl implements IArgument {
     StringBuilder builder = new StringBuilder();
 
     // name
-    builder.append(getName());
-
-    builder.append(" as ");
-
-    builder.append(getSequenceType().toSignature());
+    builder.append(getName())
+        .append(" as ")
+        .append(getSequenceType().toSignature());
 
     return builder.toString();
   }
@@ -83,13 +81,13 @@ class ArgumentImpl implements IArgument {
   @Override
   public boolean equals(Object obj) {
     if (this == obj) {
-      return true;
+      return true; // NOPMD - readability
     }
     if (obj == null) {
-      return false;
+      return false; // NOPMD - readability
     }
     if (getClass() != obj.getClass()) {
-      return false;
+      return false; // NOPMD - readability
     }
     ArgumentImpl other = (ArgumentImpl) obj;
     return Objects.equals(name, other.name) && Objects.equals(sequenceType, other.sequenceType);

@@ -36,9 +36,9 @@ import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
+import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.IModelInstance;
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
-import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.INamedModelInstance;
 import gov.nist.secauto.metaschema.model.common.IValuedDefinition;
 import gov.nist.secauto.metaschema.model.common.ModelType;
@@ -48,6 +48,7 @@ import gov.nist.secauto.metaschema.model.common.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import net.sf.saxon.s9api.Processor;
@@ -59,47 +60,53 @@ import net.sf.saxon.s9api.XsltExecutable;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.stream.StreamSource;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class XmlSchemaGenerator
     extends AbstractSchemaGenerator {
   private static final String NS_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
   private static final String NS_XML_SCHEMA_VERSIONING = "http://www.w3.org/2007/XMLSchema-versioning";
 
-  @NotNull
+  @NonNull
+  private final XMLOutputFactory2 xmlOutputFactory;
+
+  @NonNull
   private static XMLOutputFactory2 defaultXMLOutputFactory() {
-    XMLOutputFactory2 xmlOutputFactory = (XMLOutputFactory2) WstxOutputFactory.newInstance();
+    XMLOutputFactory2 xmlOutputFactory = (XMLOutputFactory2) XMLOutputFactory.newInstance();
+    assert xmlOutputFactory instanceof WstxOutputFactory;
     xmlOutputFactory.configureForSpeed();
     xmlOutputFactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
     return xmlOutputFactory;
   }
 
-  @NotNull
-  private final XMLOutputFactory2 xmlOutputFactory;
-
   public XmlSchemaGenerator() {
     this(defaultXMLOutputFactory());
   }
 
-  public XmlSchemaGenerator(@NotNull XMLOutputFactory2 xmlOutputFactory) {
+  @SuppressFBWarnings("EI_EXPOSE_REP2")
+  public XmlSchemaGenerator(@NonNull XMLOutputFactory2 xmlOutputFactory) {
     this.xmlOutputFactory = xmlOutputFactory;
   }
 
@@ -108,8 +115,8 @@ public class XmlSchemaGenerator
   }
 
   @Override
-  public void generateFromMetaschema(@NotNull IMetaschema metaschema, @NotNull Writer out,
-      @NotNull IConfiguration<SchemaGenerationFeature> configuration) throws IOException {
+  public void generateFromMetaschema(@NonNull IMetaschema metaschema, @NonNull Writer out,
+      @NonNull IConfiguration<SchemaGenerationFeature> configuration) throws IOException {
 
     StringWriter stringWriter = new StringWriter();
     try (PrintWriter writer = new PrintWriter(stringWriter)) {
@@ -131,17 +138,17 @@ public class XmlSchemaGenerator
     }
   }
 
-  protected void generateDocument(@NotNull IMetaschema metaschema, @NotNull Writer out,
-      @NotNull IConfiguration<SchemaGenerationFeature> configuration) throws IOException {
+  protected void generateDocument(@NonNull IMetaschema metaschema, @NonNull Writer out,
+      @NonNull IConfiguration<SchemaGenerationFeature> configuration) throws IOException {
     try {
       @SuppressWarnings("null")
-      @NotNull
+      @NonNull
       XMLStreamWriter2 writer = (XMLStreamWriter2) xmlOutputFactory.createXMLStreamWriter(out);
       @SuppressWarnings("null")
-      @NotNull
+      @NonNull
       String targetNS = metaschema.getXmlNamespace().toASCIIString();
 
-      Collection<@NotNull ? extends IDefinition> definitions
+      Collection<? extends IDefinition> definitions
           = UsedDefinitionModelWalker.collectUsedDefinitionsFromMetaschema(metaschema);
 
       Set<String> visitedNamespaces = new HashSet<>();
@@ -155,9 +162,9 @@ public class XmlSchemaGenerator
       writer.writeDefaultNamespace(targetNS);
       writer.writeNamespace("vc", NS_XML_SCHEMA_VERSIONING);
 
-      Collection<@NotNull IAssemblyDefinition> rootAssemblyDefinitions
+      Collection<IAssemblyDefinition> rootAssemblyDefinitions
           = new LinkedList<>();
-      Set<@NotNull IDefinition> globalDefinitions = new LinkedHashSet<>();
+      Set<IDefinition> globalDefinitions = new LinkedHashSet<>();
       for (IDefinition definition : definitions) {
         String xmlNS = definition.getContainingMetaschema().getXmlNamespace().toASCIIString();
 
@@ -197,6 +204,7 @@ public class XmlSchemaGenerator
       }
 
       for (IDefinition definition : definitions) {
+        assert definition != null;
         generateComplexType(definition, state);
       }
 
@@ -210,37 +218,9 @@ public class XmlSchemaGenerator
     }
   }
 
-  protected void generateMetadata(@NotNull IMetaschema metaschema, XMLStreamWriter2 writer) throws XMLStreamException {
-    String targetNS = ObjectUtils.notNull(metaschema.getXmlNamespace().toASCIIString());
-    writer.writeStartElement(NS_XML_SCHEMA, "annotation");
-    writer.writeStartElement(NS_XML_SCHEMA, "appinfo");
-
-    writer.writeStartElement(targetNS, "schema-name");
-    metaschema.getName().writeHtml(writer, targetNS);
-    writer.writeEndElement();
-
-    writer.writeStartElement(targetNS, "schema-version");
-    writer.writeCharacters(metaschema.getVersion());
-    writer.writeEndElement();
-
-    writer.writeStartElement(targetNS, "short-name");
-    writer.writeCharacters(metaschema.getShortName());
-    writer.writeEndElement();
-
-    writer.writeEndElement();
-
-    MarkupMultiline remarks = metaschema.getRemarks();
-    if (remarks != null) {
-      writer.writeStartElement(NS_XML_SCHEMA, "documentation");
-      remarks.writeHtml(writer, targetNS);
-      writer.writeEndElement();
-    }
-
-    writer.writeEndElement();
-  }
-
-  private void generateDocumentation(String formalName, MarkupLine description, MarkupMultiline remarks,
-      @NotNull String xmlNS, @NotNull GenerationState state) throws XMLStreamException {
+  private static void generateDocumentation(String formalName, MarkupLine description,
+      @NonNull List<MarkupMultiline> remarks,
+      @NonNull String xmlNS, @NonNull GenerationState state) throws XMLStreamException {
     XMLStreamWriter2 writer = state.getWriter();
     writer.writeStartElement(NS_XML_SCHEMA, "annotation");
     if (formalName != null || description != null) {
@@ -278,26 +258,59 @@ public class XmlSchemaGenerator
       writer.writeEndElement(); // p
     }
 
-    if (remarks != null) {
-      remarks.writeHtml(writer, xmlNS);
+    for (MarkupMultiline remark : remarks) {
+      remark.writeHtml(writer, xmlNS);
     }
 
     writer.writeEndElement(); // xs:documentation
     writer.writeEndElement(); // xs:annotation
   }
 
-  private void generateMetadata(@NotNull IDefinition definition, @NotNull GenerationState state)
+  private static void generateMetadata(@NonNull IDefinition definition, @NonNull GenerationState state)
       throws XMLStreamException {
     String formalName = definition.getFormalName();
     MarkupLine description = definition.getDescription();
-    MarkupMultiline remarks = definition.getRemarks();
+    MarkupMultiline definitionRemarks = definition.getRemarks();
+    List<MarkupMultiline> remarks
+        = definitionRemarks == null ? CollectionUtil.emptyList() : ObjectUtils.notNull(List.of(definitionRemarks));
 
-    if (formalName != null || description != null || remarks != null) {
-      generateDocumentation(formalName, description, remarks, state.getNS(definition), state);
+    if (formalName != null || description != null || !remarks.isEmpty()) {
+      generateDocumentation(formalName, description, remarks, state.getNS(definition),
+          state);
     }
   }
 
-  private void generateRootElement(@NotNull IAssemblyDefinition definition, @NotNull GenerationState state)
+  protected static void generateMetadata(@NonNull IMetaschema metaschema, XMLStreamWriter2 writer)
+      throws XMLStreamException {
+    String targetNS = ObjectUtils.notNull(metaschema.getXmlNamespace().toASCIIString());
+    writer.writeStartElement(NS_XML_SCHEMA, "annotation");
+    writer.writeStartElement(NS_XML_SCHEMA, "appinfo");
+
+    writer.writeStartElement(targetNS, "schema-name");
+    metaschema.getName().writeHtml(writer, targetNS);
+    writer.writeEndElement();
+
+    writer.writeStartElement(targetNS, "schema-version");
+    writer.writeCharacters(metaschema.getVersion());
+    writer.writeEndElement();
+
+    writer.writeStartElement(targetNS, "short-name");
+    writer.writeCharacters(metaschema.getShortName());
+    writer.writeEndElement();
+
+    writer.writeEndElement();
+
+    MarkupMultiline remarks = metaschema.getRemarks();
+    if (remarks != null) {
+      writer.writeStartElement(NS_XML_SCHEMA, "documentation");
+      remarks.writeHtml(writer, targetNS);
+      writer.writeEndElement();
+    }
+
+    writer.writeEndElement();
+  }
+
+  private static void generateRootElement(@NonNull IAssemblyDefinition definition, @NonNull GenerationState state)
       throws XMLStreamException {
     assert definition.isRoot();
 
@@ -311,7 +324,7 @@ public class XmlSchemaGenerator
     writer.writeEndElement();
   }
 
-  private void generateComplexType(@NotNull IDefinition definition, @NotNull GenerationState state)
+  private void generateComplexType(@NonNull IDefinition definition, @NonNull GenerationState state)
       throws XMLStreamException {
     switch (definition.getModelType()) {
     case ASSEMBLY:
@@ -327,8 +340,8 @@ public class XmlSchemaGenerator
     }
   }
 
-  private void generateAssemblyDefinitionComplexType(@NotNull IAssemblyDefinition definition,
-      @NotNull GenerationState state)
+  private void generateAssemblyDefinitionComplexType(@NonNull IAssemblyDefinition definition,
+      @NonNull GenerationState state)
       throws XMLStreamException {
     XMLStreamWriter2 writer = state.getWriter();
     writer.writeStartElement("xs", "complexType", NS_XML_SCHEMA);
@@ -339,18 +352,20 @@ public class XmlSchemaGenerator
       generateMetadata(definition, state);
     } // otherwise the metadata will appear on the element ref
 
-    Collection<@NotNull ? extends IModelInstance> modelInstances = definition.getModelInstances();
+    Collection<? extends IModelInstance> modelInstances = definition.getModelInstances();
     if (!modelInstances.isEmpty()) {
       writer.writeStartElement("xs", "sequence", NS_XML_SCHEMA);
       for (IModelInstance modelInstance : modelInstances) {
+        assert modelInstance != null;
         generateModelInstance(modelInstance, state);
       }
       writer.writeEndElement();
     }
 
-    Collection<@NotNull ? extends IFlagInstance> flagInstances = definition.getFlagInstances();
+    Collection<? extends IFlagInstance> flagInstances = definition.getFlagInstances();
     if (!flagInstances.isEmpty()) {
       for (IFlagInstance flagInstance : flagInstances) {
+        assert flagInstance != null;
         generateFlagInstance(flagInstance, state);
       }
     }
@@ -358,9 +373,10 @@ public class XmlSchemaGenerator
     writer.writeEndElement();
   }
 
-  private void generateFieldDefinitionComplexType(@NotNull IFieldDefinition definition, @NotNull GenerationState state)
+  private static void generateFieldDefinitionComplexType(@NonNull IFieldDefinition definition,
+      @NonNull GenerationState state)
       throws XMLStreamException {
-    Collection<@NotNull ? extends IFlagInstance> flagInstances = definition.getFlagInstances();
+    Collection<? extends IFlagInstance> flagInstances = definition.getFlagInstances();
     if (flagInstances.isEmpty()) {
       // this is a simple field with only a datatype. no type definition needed
       return;
@@ -389,6 +405,7 @@ public class XmlSchemaGenerator
     writer.writeAttribute("base", state.getDatatypeManager().getTypeNameForDatatype(datatype));
 
     for (IFlagInstance flagInstance : flagInstances) {
+      assert flagInstance != null;
       generateFlagInstance(flagInstance, state);
     }
     writer.writeEndElement(); // xs:extension
@@ -397,7 +414,7 @@ public class XmlSchemaGenerator
     writer.writeEndElement(); // xs:complexType
   }
 
-  private void generateModelInstance(@NotNull IModelInstance modelInstance, @NotNull GenerationState state)
+  private void generateModelInstance(@NonNull IModelInstance modelInstance, @NonNull GenerationState state)
       throws XMLStreamException {
 
     XMLStreamWriter2 writer = state.getWriter();
@@ -451,17 +468,15 @@ public class XmlSchemaGenerator
     }
   }
 
-  private void generateNamedModelInstance(@NotNull INamedModelInstance modelInstance, boolean grouped,
-      @NotNull GenerationState state) throws XMLStreamException {
+  private void generateNamedModelInstance(@NonNull INamedModelInstance modelInstance, boolean grouped,
+      @NonNull GenerationState state) throws XMLStreamException {
     XMLStreamWriter2 writer = state.getWriter();
     writer.writeStartElement("xs", "element", NS_XML_SCHEMA);
 
     generateElementNameOrRef(modelInstance, state);
 
-    if (!grouped) {
-      if (modelInstance.getMinOccurs() != 1) {
-        writer.writeAttribute("minOccurs", String.format("%d", modelInstance.getMinOccurs()));
-      }
+    if (!grouped && modelInstance.getMinOccurs() != 1) {
+      writer.writeAttribute("minOccurs", String.format("%d", modelInstance.getMinOccurs()));
     }
 
     if (modelInstance.getMaxOccurs() != 1) {
@@ -486,7 +501,8 @@ public class XmlSchemaGenerator
     writer.writeEndElement(); // xs:element
   }
 
-  private void generateTypeReferenceForDefinition(@NotNull IDefinition definition, @NotNull GenerationState state)
+  private static void generateTypeReferenceForDefinition(@NonNull IDefinition definition,
+      @NonNull GenerationState state)
       throws XMLStreamException {
     CharSequence ref;
     switch (definition.getModelType()) {
@@ -514,8 +530,8 @@ public class XmlSchemaGenerator
     writer.writeAttribute("type", ref.toString());
   }
 
-  private CharSequence getTypeReferenceForSimpleValuedDefinition(@NotNull IValuedDefinition definition,
-      @NotNull GenerationState state) {
+  private static CharSequence getTypeReferenceForSimpleValuedDefinition(@NonNull IValuedDefinition definition,
+      @NonNull GenerationState state) {
     StringBuilder builder = new StringBuilder();
     String namespace = state.getDatatypeNS();
     if (!state.getDefaultNS().equals(namespace)) {
@@ -526,8 +542,8 @@ public class XmlSchemaGenerator
     return builder.toString();
   }
 
-  private CharSequence getTypeReferenceForComplexDefinition(@NotNull IModelDefinition definition,
-      @NotNull GenerationState state) {
+  private static CharSequence getTypeReferenceForComplexDefinition(@NonNull IModelDefinition definition,
+      @NonNull GenerationState state) {
     StringBuilder builder = new StringBuilder();
     String xmlNS = state.getNS(definition);
     if (!state.getDefaultNS().equals(xmlNS)) {
@@ -538,8 +554,8 @@ public class XmlSchemaGenerator
     return builder.toString();
   }
 
-  private void generateUnwrappedFieldInstance(@NotNull IFieldInstance fieldInstance, boolean grouped,
-      @NotNull GenerationState state) throws XMLStreamException {
+  private static void generateUnwrappedFieldInstance(@NonNull IFieldInstance fieldInstance, boolean grouped,
+      @NonNull GenerationState state) throws XMLStreamException {
     XMLStreamWriter2 writer = state.getWriter();
     writer.writeStartElement("xs", "sequence", NS_XML_SCHEMA);
 
@@ -562,11 +578,17 @@ public class XmlSchemaGenerator
     writer.writeEndElement(); // xs:sequence
   }
 
-  private void generateInstanceMetadata(@NotNull INamedInstance instance, boolean full, @NotNull GenerationState state)
+  private static void generateInstanceMetadata(@NonNull INamedInstance instance, boolean full,
+      @NonNull GenerationState state)
       throws XMLStreamException {
     String formalName = instance.getFormalName();
     MarkupLine description = instance.getDescription();
-    MarkupMultiline definitionRemarks = null;
+
+    List<MarkupMultiline> remarks = new ArrayList<>(2);
+    MarkupMultiline instanceRemarks = instance.getRemarks();
+    if (instanceRemarks != null) {
+      remarks.add(instanceRemarks);
+    }
 
     if (full) {
       IDefinition definition = instance.getDefinition();
@@ -578,23 +600,24 @@ public class XmlSchemaGenerator
         description = definition.getDescription();
       }
 
-      // TODO: combine definition and instance remarks
-      definitionRemarks = definition.getRemarks();
+      MarkupMultiline definitionRemarks = definition.getRemarks();
+      if (definitionRemarks != null) {
+        remarks.add(definitionRemarks);
+      }
     }
 
-    MarkupMultiline remarks = instance.getRemarks();
-
-    if (formalName != null || description != null || remarks != null) {
+    if (formalName != null || description != null || !remarks.isEmpty()) {
       generateDocumentation(formalName, description, remarks, state.getNS(instance), state);
     }
   }
 
-  private void generateChoiceModelInstance(@NotNull IChoiceInstance choice,
-      @NotNull GenerationState state) throws XMLStreamException {
+  private void generateChoiceModelInstance(@NonNull IChoiceInstance choice,
+      @NonNull GenerationState state) throws XMLStreamException {
     XMLStreamWriter2 writer = state.getWriter();
     writer.writeStartElement(NS_XML_SCHEMA, "choice");
 
     for (IModelInstance instance : choice.getModelInstances()) {
+      assert instance != null;
       generateModelInstance(instance, state);
     }
 
@@ -612,17 +635,17 @@ public class XmlSchemaGenerator
    * @throws XMLStreamException
    *           if an error occurred while writing the XML
    */
-  private boolean generateElementNameOrRef(@NotNull QName qname, @NotNull GenerationState state)
+  private static boolean generateElementNameOrRef(@NonNull QName qname, @NonNull GenerationState state)
       throws XMLStreamException {
     XMLStreamWriter2 writer = state.getWriter();
     String groupAsNamespace = qname.getNamespaceURI();
     boolean retval;
-    if (!state.getDefaultNS().equals(groupAsNamespace)) {
-      writer.writeAttribute("ref", String.format("%s:%s", state.getNSPrefix(groupAsNamespace), qname.getLocalPart()));
-      retval = false;
-    } else {
+    if (state.getDefaultNS().equals(groupAsNamespace)) {
       writer.writeAttribute("name", qname.getLocalPart());
       retval = true;
+    } else {
+      writer.writeAttribute("ref", String.format("%s:%s", state.getNSPrefix(groupAsNamespace), qname.getLocalPart()));
+      retval = false;
     }
     return retval;
   }
@@ -638,24 +661,24 @@ public class XmlSchemaGenerator
    * @throws XMLStreamException
    *           if an error occurred while writing the XML
    */
-  private boolean generateElementNameOrRef(@NotNull INamedInstance modelInstance, @NotNull GenerationState state)
+  private static boolean generateElementNameOrRef(@NonNull INamedInstance modelInstance, @NonNull GenerationState state)
       throws XMLStreamException {
     XMLStreamWriter2 writer = state.getWriter();
     QName qname = modelInstance.getXmlQName();
     String namespace = state.getNS(modelInstance);
 
     boolean retval;
-    if (!state.getDefaultNS().equals(namespace)) {
-      writer.writeAttribute("ref", String.format("%s:%s", state.getNSPrefix(namespace), qname.getLocalPart()));
-      retval = false;
-    } else {
+    if (state.getDefaultNS().equals(namespace)) {
       writer.writeAttribute("name", qname.getLocalPart());
       retval = true;
+    } else {
+      writer.writeAttribute("ref", String.format("%s:%s", state.getNSPrefix(namespace), qname.getLocalPart()));
+      retval = false;
     }
     return retval;
   }
 
-  private void generateFlagInstance(@NotNull IFlagInstance instance, @NotNull GenerationState state)
+  private static void generateFlagInstance(@NonNull IFlagInstance instance, @NonNull GenerationState state)
       throws XMLStreamException {
     XMLStreamWriter2 writer = state.getWriter();
     writer.writeStartElement("xs", "attribute", NS_XML_SCHEMA);
@@ -682,7 +705,7 @@ public class XmlSchemaGenerator
     writer.writeEndElement(); // xs:attribute
   }
 
-  private void generateFlagDefinitionSimpleType(@NotNull IFlagInstance instance, @NotNull GenerationState state)
+  private static void generateFlagDefinitionSimpleType(@NonNull IFlagInstance instance, @NonNull GenerationState state)
       throws XMLStreamException {
     XMLStreamWriter2 writer = state.getWriter();
     writer.writeStartElement("xs", "simpleType", NS_XML_SCHEMA);
@@ -696,38 +719,38 @@ public class XmlSchemaGenerator
 
   public static class GenerationState
       extends AbstractGenerationState<XMLStreamWriter2, XmlDatatypeManager> {
-    @NotNull
+    @NonNull
     private final String defaultNS;
-    @NotNull
-    private final Map<String, String> namespaceToPrefixMap = new HashMap<>();
+    @NonNull
+    private final Map<String, String> namespaceToPrefixMap = new ConcurrentHashMap<>();
 
-    private int prefixNum = 0;
+    private int prefixNum; // 0
 
-    public GenerationState(@NotNull XMLStreamWriter2 writer, @NotNull String defaultNS,
-        @NotNull IInlineStrategy inlineStrategy) {
+    public GenerationState(@NonNull XMLStreamWriter2 writer, @NonNull String defaultNS,
+        @NonNull IInlineStrategy inlineStrategy) {
       super(writer, new XmlDatatypeManager(), inlineStrategy);
       this.defaultNS = defaultNS;
     }
 
-    @NotNull
+    @NonNull
     public String getDefaultNS() {
       return defaultNS;
     }
 
-    @NotNull
+    @NonNull
     public String getDatatypeNS() {
       return getDefaultNS();
     }
 
     @SuppressWarnings("null")
-    @NotNull
-    public String getNS(@NotNull IDefinition definition) {
+    @NonNull
+    public String getNS(@NonNull IDefinition definition) {
       return definition.getContainingMetaschema().getXmlNamespace().toASCIIString();
     }
 
     @SuppressWarnings("null")
-    @NotNull
-    public String getNS(@NotNull INamedInstance instance) {
+    @NonNull
+    public String getNS(@NonNull INamedInstance instance) {
       String namespace = instance.getXmlNamespace();
       if (namespace == null) {
         namespace = instance.getContainingMetaschema().getXmlNamespace().toASCIIString();
@@ -736,10 +759,8 @@ public class XmlSchemaGenerator
     }
 
     public String getNSPrefix(String namespace) {
-      String retval;
-      if (getDefaultNS().equals(namespace)) {
-        retval = null;
-      } else {
+      String retval = null;
+      if (!getDefaultNS().equals(namespace)) {
         synchronized (this) {
           retval = namespaceToPrefixMap.get(namespace);
           if (retval == null) {

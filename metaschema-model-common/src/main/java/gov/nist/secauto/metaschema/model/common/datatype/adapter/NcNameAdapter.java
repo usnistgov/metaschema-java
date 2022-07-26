@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.INcNameItem;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class NcNameAdapter
     extends AbstractStringAdapter<INcNameItem> {
@@ -44,7 +44,7 @@ public class NcNameAdapter
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull Class<INcNameItem> getItemClass() {
+  public @NonNull Class<INcNameItem> getItemClass() {
     return INcNameItem.class;
   }
 

@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.model.common.validation;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint.Level;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -43,6 +42,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -54,8 +54,8 @@ public class XmlSchemaContentValidator implements IContentValidator {
   private final Schema schema;
 
   @SuppressWarnings("null")
-  @NotNull
-  private static Schema toSchema(@NotNull List<? extends Source> schemaSources) throws SAXException {
+  @NonNull
+  private static Schema toSchema(@NonNull List<? extends Source> schemaSources) throws SAXException {
     SchemaFactory schemafactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
     // schemafactory.setResourceResolver(new ClasspathResourceResolver());
     Schema retval;
@@ -67,11 +67,11 @@ public class XmlSchemaContentValidator implements IContentValidator {
     return retval;
   }
 
-  public XmlSchemaContentValidator(@NotNull List<? extends Source> schemaSources) throws SAXException {
+  public XmlSchemaContentValidator(@NonNull List<? extends Source> schemaSources) throws SAXException {
     this(toSchema(ObjectUtils.requireNonNull(schemaSources, "schemaSources")));
   }
 
-  protected XmlSchemaContentValidator(@NotNull Schema schema) {
+  protected XmlSchemaContentValidator(@NonNull Schema schema) {
     this.schema = ObjectUtils.requireNonNull(schema, "schema");
   }
 
@@ -80,7 +80,7 @@ public class XmlSchemaContentValidator implements IContentValidator {
   }
 
   @Override
-  public IValidationResult validate(@NotNull InputSource source) throws IOException {
+  public IValidationResult validate(@NonNull InputSource source) throws IOException {
     String systemId = source.getSystemId();
     URI uri = ObjectUtils.notNull(URI.create(source.getSystemId()));
 
@@ -101,8 +101,8 @@ public class XmlSchemaContentValidator implements IContentValidator {
     return retval;
   }
 
-  @NotNull
-  public IValidationResult validate(Source xmlSource, @NotNull URI documentUri) throws IOException {
+  @NonNull
+  public IValidationResult validate(Source xmlSource, @NonNull URI documentUri) throws IOException {
     Validator validator = schema.newValidator();
     XmlValidationErrorHandler errorHandler = new XmlValidationErrorHandler(documentUri);
     validator.setErrorHandler(errorHandler);
@@ -115,15 +115,15 @@ public class XmlSchemaContentValidator implements IContentValidator {
   }
 
   public static class XmlValidationFinding implements IValidationFinding {
-    @NotNull
+    @NonNull
     private final URI documentUri;
-    @NotNull
+    @NonNull
     private final SAXParseException exception;
-    @NotNull
+    @NonNull
     private final Level severity;
 
-    public XmlValidationFinding(@NotNull Level severity, @NotNull SAXParseException exception,
-        @NotNull URI documentUri) {
+    public XmlValidationFinding(@NonNull Level severity, @NonNull SAXParseException exception,
+        @NonNull URI documentUri) {
       this.documentUri = ObjectUtils.requireNonNull(documentUri, "documentUri");
       this.exception = ObjectUtils.requireNonNull(exception, "exception");
       this.severity = ObjectUtils.requireNonNull(severity, "severity");
@@ -147,7 +147,7 @@ public class XmlSchemaContentValidator implements IContentValidator {
       return getCause().getLocalizedMessage();
     }
 
-    @NotNull
+    @NonNull
     @Override
     public SAXParseException getCause() {
       return exception;
@@ -155,23 +155,23 @@ public class XmlSchemaContentValidator implements IContentValidator {
   }
 
   private static class XmlValidationErrorHandler implements ErrorHandler, IValidationResult {
-    @NotNull
+    @NonNull
     private final URI documentUri;
-    @NotNull
+    @NonNull
     private final List<XmlValidationFinding> findings = new LinkedList<>();
-    @NotNull
+    @NonNull
     private Level highestSeverity = Level.INFORMATIONAL;
 
-    public XmlValidationErrorHandler(@NotNull URI documentUri) {
+    public XmlValidationErrorHandler(@NonNull URI documentUri) {
       this.documentUri = ObjectUtils.requireNonNull(documentUri, "documentUri");
     }
 
-    @NotNull
+    @NonNull
     public URI getDocumentUri() {
       return documentUri;
     }
 
-    private void adjustHighestSeverity(@NotNull Level severity) {
+    private void adjustHighestSeverity(@NonNull Level severity) {
       if (highestSeverity.ordinal() < severity.ordinal()) {
         highestSeverity = severity;
       }
@@ -200,8 +200,8 @@ public class XmlSchemaContentValidator implements IContentValidator {
 
     @SuppressWarnings("null")
     @Override
-    @NotNull
-    public List<@NotNull XmlValidationFinding> getFindings() {
+    @NonNull
+    public List<XmlValidationFinding> getFindings() {
       return Collections.unmodifiableList(findings);
     }
 

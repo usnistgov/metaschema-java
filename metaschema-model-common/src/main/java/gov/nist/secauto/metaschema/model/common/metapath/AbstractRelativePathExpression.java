@@ -28,17 +28,17 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractRelativePathExpression
     extends AbstractPathExpression<INodeItem> {
-  @NotNull
+  @NonNull
   private final IExpression left;
-  @NotNull
+  @NonNull
   private final IExpression right;
-  @NotNull
+  @NonNull
   private final Class<? extends INodeItem> staticResultType;
 
   /**
@@ -50,7 +50,7 @@ abstract class AbstractRelativePathExpression
    *          the right part of the path
    */
   @SuppressWarnings("null")
-  public AbstractRelativePathExpression(@NotNull IExpression left, @NotNull IExpression right) {
+  public AbstractRelativePathExpression(@NonNull IExpression left, @NonNull IExpression right) {
     this.left = left;
     this.right = right;
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(getBaseResultType(), List.of(left, right));
@@ -61,7 +61,7 @@ abstract class AbstractRelativePathExpression
    * 
    * @return the expression
    */
-  @NotNull
+  @NonNull
   public IExpression getLeft() {
     return left;
   }
@@ -71,20 +71,20 @@ abstract class AbstractRelativePathExpression
    * 
    * @return the expression
    */
-  @NotNull
+  @NonNull
   public IExpression getRight() {
     return right;
   }
 
   @SuppressWarnings("null")
   @Override
-  public List<@NotNull ? extends IExpression> getChildren() {
+  public List<? extends IExpression> getChildren() {
     return List.of(left, right);
   }
 
   @SuppressWarnings("null")
   @Override
-  public final @NotNull Class<INodeItem> getBaseResultType() {
+  public final @NonNull Class<INodeItem> getBaseResultType() {
     return INodeItem.class;
   }
 

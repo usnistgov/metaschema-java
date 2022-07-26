@@ -26,16 +26,17 @@
 
 package gov.nist.secauto.metaschema.model.common.util;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class AutoCloser<T, E extends Exception> implements AutoCloseable {
-  @NotNull
+  @NonNull
   private final T object;
-  @NotNull
+  @NonNull
   private final Closer<T, E> lambda;
 
-  @NotNull
-  public static <T, E extends Exception> AutoCloser<T, E> autoClose(@NotNull T object, @NotNull Closer<T, E> lambda) {
+  @NonNull
+  public static <T, E extends Exception> AutoCloser<T, E> autoClose(@NonNull T object, @NonNull Closer<T, E> lambda) {
     return new AutoCloser<T, E>(object, lambda);
   }
 
@@ -48,23 +49,25 @@ public class AutoCloser<T, E extends Exception> implements AutoCloseable {
    * @param lambda
    *          the lambda to use as a callback on close
    */
-  public AutoCloser(@NotNull T object, @NotNull Closer<T, E> lambda) {
+  public AutoCloser(@NonNull T object, @NonNull Closer<T, E> lambda) {
     this.object = object;
     this.lambda = lambda;
   }
 
-  @NotNull
+  @NonNull
   public T getObject() {
     return object;
   }
 
   @Override
+  @SuppressFBWarnings("THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION")
   public void close() throws E {
     lambda.close(getObject());
   }
 
   @FunctionalInterface
   public interface Closer<T, E extends Exception> {
-    void close(@NotNull T object) throws E;
+    @SuppressFBWarnings("THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION")
+    void close(@NonNull T object) throws E;
   }
 }

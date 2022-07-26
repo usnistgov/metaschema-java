@@ -28,13 +28,13 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeItem>
     extends AbstractPathExpression<RESULT_TYPE> {
-  @NotNull
+  @NonNull
   private final IExpression test;
 
   /**
@@ -43,7 +43,7 @@ abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeItem>
    * @param test
    *          the expression to use to determine a match
    */
-  public AbstractNamedInstanceExpression(@NotNull IExpression test) {
+  public AbstractNamedInstanceExpression(@NonNull IExpression test) {
     this.test = test;
   }
 
@@ -52,14 +52,14 @@ abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeItem>
    * 
    * @return the test
    */
-  @NotNull
+  @NonNull
   public IExpression getTest() {
     return test;
   }
 
   @SuppressWarnings("null")
   @Override
-  public List<@NotNull ? extends IExpression> getChildren() {
+  public List<? extends IExpression> getChildren() {
     return List.of(test);
   }
 }

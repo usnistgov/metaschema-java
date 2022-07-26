@@ -31,17 +31,17 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class FunctionCall implements IExpression {
-  @NotNull
+  @NonNull
   private final String name;
-  @NotNull
-  private final List<@NotNull IExpression> arguments;
+  @NonNull
+  private final List<IExpression> arguments;
   private IFunction function;
 
   /**
@@ -53,7 +53,7 @@ class FunctionCall implements IExpression {
    *          the expressions used to provide arguments to the function call
    */
   @SuppressWarnings("null")
-  protected FunctionCall(@NotNull String name, @NotNull List<@NotNull IExpression> arguments) {
+  protected FunctionCall(@NonNull String name, @NonNull List<IExpression> arguments) {
     this.name = Objects.requireNonNull(name, "name");
     this.arguments = Objects.requireNonNull(arguments, "arguments");
   }
@@ -70,12 +70,12 @@ class FunctionCall implements IExpression {
       if (function == null) {
         function = FunctionService.getInstance().getFunction(name, arguments);
       }
+      return function;
     }
-    return function;
   }
 
   @Override
-  public List<@NotNull IExpression> getChildren() {
+  public List<IExpression> getChildren() {
     return arguments;
   }
 
@@ -101,8 +101,8 @@ class FunctionCall implements IExpression {
 
   @Override
   public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
-    List<@NotNull ISequence<?>> arguments = ObjectUtils.notNull(getChildren().stream().map(expression -> {
-      @NotNull
+    List<ISequence<?>> arguments = ObjectUtils.notNull(getChildren().stream().map(expression -> {
+      @NonNull
       ISequence<?> result = expression.accept(dynamicContext, context);
       return result;
     }).collect(Collectors.toList()));

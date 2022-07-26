@@ -54,36 +54,37 @@ import gov.nist.secauto.metaschema.model.xmlbeans.ScopedMatchesConstraintType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides support for parsing and maintaining a set of Metaschema constraints. Constraints are
  * parsed from XML.
  */
 class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
-  @NotNull
+  @NonNull
   private static final String PATH = "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
       + "$this/m:allowed-values|$this/m:index|$this/m:index-has-key|$this/m:is-unique|"
       + "$this/m:has-cardinality|$this/m:matches|$this/m:expect";
-  @NotNull
-  private final List<@NotNull IConstraint> constraints = new LinkedList<>();
-  @NotNull
-  private final List<@NotNull IAllowedValuesConstraint> allowedValuesConstraints = new LinkedList<>();
-  @NotNull
-  private final List<@NotNull IMatchesConstraint> matchesConstraints = new LinkedList<>();
-  @NotNull
-  private final List<@NotNull IIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
-  @NotNull
-  private final List<@NotNull IExpectConstraint> expectConstraints = new LinkedList<>();
-  @NotNull
-  private final List<@NotNull IIndexConstraint> indexConstraints = new LinkedList<>();
-  @NotNull
-  private final List<@NotNull IUniqueConstraint> uniqueConstraints = new LinkedList<>();
-  @NotNull
-  private final List<@NotNull ICardinalityConstraint> cardinalityConstraints = new LinkedList<>();
+  @NonNull
+  private final List<IConstraint> constraints = new LinkedList<>();
+  @NonNull
+  private final List<IAllowedValuesConstraint> allowedValuesConstraints = new LinkedList<>();
+  @NonNull
+  private final List<IMatchesConstraint> matchesConstraints = new LinkedList<>();
+  @NonNull
+  private final List<IIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
+  @NonNull
+  private final List<IExpectConstraint> expectConstraints = new LinkedList<>();
+  @NonNull
+  private final List<IIndexConstraint> indexConstraints = new LinkedList<>();
+  @NonNull
+  private final List<IUniqueConstraint> uniqueConstraints = new LinkedList<>();
+  @NonNull
+  private final List<ICardinalityConstraint> cardinalityConstraints = new LinkedList<>();
 
   public AssemblyConstraintSupport() {
     // do nothing
@@ -98,8 +99,8 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
    *          information about the source of the constraints
    */
   public AssemblyConstraintSupport( // NOPMD - unavoidable
-      @NotNull DefineAssemblyConstraintsType xmlConstraints,
-      @NotNull ISource source) {
+      @NonNull DefineAssemblyConstraintsType xmlConstraints,
+      @NonNull ISource source) {
     XmlCursor cursor = xmlConstraints.newCursor();
     cursor.selectPath(PATH);
 
@@ -138,63 +139,63 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
   }
 
   @Override
-  public List<@NotNull IConstraint> getConstraints() {
+  public List<IConstraint> getConstraints() {
     synchronized (this) {
       return constraints;
     }
   }
 
   @Override
-  public List<@NotNull IAllowedValuesConstraint> getAllowedValuesConstraints() {
+  public List<IAllowedValuesConstraint> getAllowedValuesConstraints() {
     synchronized (this) {
       return allowedValuesConstraints;
     }
   }
 
   @Override
-  public List<@NotNull IMatchesConstraint> getMatchesConstraints() {
+  public List<IMatchesConstraint> getMatchesConstraints() {
     synchronized (this) {
       return matchesConstraints;
     }
   }
 
   @Override
-  public List<@NotNull IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+  public List<IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
     synchronized (this) {
       return indexHasKeyConstraints;
     }
   }
 
   @Override
-  public List<@NotNull IExpectConstraint> getExpectConstraints() {
+  public List<IExpectConstraint> getExpectConstraints() {
     synchronized (this) {
       return expectConstraints;
     }
   }
 
   @Override
-  public List<@NotNull IIndexConstraint> getIndexConstraints() {
+  public List<IIndexConstraint> getIndexConstraints() {
     synchronized (this) {
       return indexConstraints;
     }
   }
 
   @Override
-  public List<@NotNull IUniqueConstraint> getUniqueConstraints() {
+  public List<IUniqueConstraint> getUniqueConstraints() {
     synchronized (this) {
       return uniqueConstraints;
     }
   }
 
   @Override
-  public List<@NotNull ICardinalityConstraint> getHasCardinalityConstraints() {
+  public List<ICardinalityConstraint> getHasCardinalityConstraints() {
     synchronized (this) {
       return cardinalityConstraints;
     }
   }
 
   @Override
-  public final void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+  public final void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
     synchronized (this) {
       constraints.add(constraint);
       allowedValuesConstraints.add(constraint);
@@ -202,7 +203,7 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
   }
 
   @Override
-  public final void addConstraint(@NotNull IMatchesConstraint constraint) {
+  public final void addConstraint(@NonNull IMatchesConstraint constraint) {
     synchronized (this) {
       constraints.add(constraint);
       matchesConstraints.add(constraint);
@@ -210,7 +211,7 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
   }
 
   @Override
-  public final void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+  public final void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
     synchronized (this) {
       constraints.add(constraint);
       indexHasKeyConstraints.add(constraint);
@@ -218,7 +219,7 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
   }
 
   @Override
-  public final void addConstraint(@NotNull IExpectConstraint constraint) {
+  public final void addConstraint(@NonNull IExpectConstraint constraint) {
     synchronized (this) {
       constraints.add(constraint);
       expectConstraints.add(constraint);
@@ -226,7 +227,7 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
   }
 
   @Override
-  public final void addConstraint(@NotNull IIndexConstraint constraint) {
+  public final void addConstraint(@NonNull IIndexConstraint constraint) {
     synchronized (this) {
       constraints.add(constraint);
       indexConstraints.add(constraint);
@@ -234,7 +235,7 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
   }
 
   @Override
-  public final void addConstraint(@NotNull IUniqueConstraint constraint) {
+  public final void addConstraint(@NonNull IUniqueConstraint constraint) {
     synchronized (this) {
       constraints.add(constraint);
       uniqueConstraints.add(constraint);
@@ -242,7 +243,7 @@ class AssemblyConstraintSupport implements IAssemblyConstraintSupport {
   }
 
   @Override
-  public final void addConstraint(@NotNull ICardinalityConstraint constraint) {
+  public final void addConstraint(@NonNull ICardinalityConstraint constraint) {
     synchronized (this) {
       constraints.add(constraint);
       cardinalityConstraints.add(constraint);

@@ -29,12 +29,12 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class StringItemImpl
     extends AbstractStringItem {
 
-  public StringItemImpl(@NotNull String value) {
+  public StringItemImpl(@NonNull String value) {
     super(value);
   }
 
@@ -54,17 +54,14 @@ class StringItemImpl
   @Override
   public boolean equals(Object obj) {
     if (this == obj) {
-      return true;
+      return true; // NOPMD - readability
     } else if (obj == null) {
-      return false;
+      return false; // NOPMD - readability
     } else if (getClass() != obj.getClass()) {
-      return false;
+      return false; // NOPMD - readability
     }
     StringItemImpl other = (StringItemImpl) obj;
-    if (!getValue().equals(other.getValue())) {
-      return false;
-    }
-    return true;
+    return getValue().equals(other.getValue());
   }
 
 }

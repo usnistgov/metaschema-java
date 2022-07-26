@@ -26,12 +26,12 @@
 
 package gov.nist.secauto.metaschema.binding;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class SimpleMetaschemaLoaderStrategy
     extends AbstractMetaschemaLoaderStrategy {
 
-  public SimpleMetaschemaLoaderStrategy(@NotNull IBindingContext bindingContext) {
+  public SimpleMetaschemaLoaderStrategy(@NonNull IBindingContext bindingContext) {
     super(bindingContext);
   }
 

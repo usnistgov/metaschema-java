@@ -30,15 +30,14 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression.ResultType;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Represents a rule constraining the model of a Metaschema assembly, field or flag. Provides a
@@ -74,17 +73,17 @@ public interface IConstraint {
   /**
    * The default level to use if no level is provided.
    */
-  @NotNull
+  @NonNull
   Level DEFAULT_LEVEL = Level.ERROR;
   /**
    * The default target Metapath expression to use if no target is provided.
    */
-  @NotNull
+  @NonNull
   MetapathExpression DEFAULT_TARGET = MetapathExpression.CONTEXT_NODE;
   /**
    * The default target Metapath expression to use if no target is provided.
    */
-  @NotNull
+  @NonNull
   String DEFAULT_TARGET_METAPATH = ".";
 
   /**
@@ -106,7 +105,7 @@ public interface IConstraint {
    * 
    * @return the level
    */
-  @NotNull
+  @NonNull
   Level getLevel();
 
   /**
@@ -114,7 +113,7 @@ public interface IConstraint {
    * 
    * @return a Metapath expression
    */
-  @NotNull
+  @NonNull
   MetapathExpression getTarget();
 
   /**
@@ -125,9 +124,9 @@ public interface IConstraint {
    * @return the matching nodes as a sequence
    * @see #getTarget()
    */
-  @NotNull
-  default ISequence<? extends IDefinitionNodeItem> matchTargets(@NotNull IDefinitionNodeItem contextNodeItem) {
-    return getTarget().evaluateAs(contextNodeItem, ResultType.SEQUENCE);
+  @NonNull
+  default ISequence<? extends IDefinitionNodeItem> matchTargets(@NonNull IDefinitionNodeItem contextNodeItem) {
+    return getTarget().evaluate(contextNodeItem);
   }
 
   /**
@@ -140,10 +139,10 @@ public interface IConstraint {
    * @return the matching nodes as a sequence
    * @see #getTarget()
    */
-  @NotNull
-  default ISequence<? extends IDefinitionNodeItem> matchTargets(@NotNull IDefinitionNodeItem contextNodeItem,
-      @NotNull DynamicContext dynamicContext) {
-    return getTarget().evaluateAs(contextNodeItem, ResultType.SEQUENCE, dynamicContext);
+  @NonNull
+  default ISequence<? extends IDefinitionNodeItem> matchTargets(@NonNull IDefinitionNodeItem contextNodeItem,
+      @NonNull DynamicContext dynamicContext) {
+    return getTarget().evaluate(contextNodeItem, dynamicContext);
   }
 
   /**
@@ -165,7 +164,7 @@ public interface IConstraint {
       EXTERNAL;
     }
 
-    @NotNull
+    @NonNull
     SourceType getSourceType();
 
     @Nullable
@@ -173,10 +172,10 @@ public interface IConstraint {
   }
 
   class InternalModelSource implements ISource {
-    @NotNull
+    @NonNull
     private static final ISource SINGLETON = new InternalModelSource();
 
-    @NotNull
+    @NonNull
     public static ISource instance() {
       return SINGLETON;
     }
@@ -198,13 +197,13 @@ public interface IConstraint {
   }
 
   class ExternalModelSource implements IConstraint.ISource {
-    @NotNull
-    private static final Map<@NotNull URI, ExternalModelSource> sources = new HashMap<>(); // NOPMD - intentional
-    @NotNull
+    @NonNull
+    private static final Map<URI, ExternalModelSource> sources = new HashMap<>(); // NOPMD - intentional
+    @NonNull
     private final URI modelUri;
 
-    @NotNull
-    public static ISource instance(@NotNull URI location) {
+    @NonNull
+    public static ISource instance(@NonNull URI location) {
       ISource retval;
       synchronized (sources) {
         retval = sources.get(location);
@@ -215,7 +214,7 @@ public interface IConstraint {
       return retval;
     }
 
-    private ExternalModelSource(@NotNull URI modelSource) {
+    private ExternalModelSource(@NonNull URI modelSource) {
       this.modelUri = modelSource;
     }
 
@@ -224,7 +223,7 @@ public interface IConstraint {
       return SourceType.MODEL;
     }
 
-    @NotNull
+    @NonNull
     @Override
     public URI getSource() {
       return modelUri;
@@ -232,14 +231,14 @@ public interface IConstraint {
   }
 
   class ExternalSource implements IConstraint.ISource {
-    @NotNull
-    private static final Map<@NotNull URI, ExternalSource> sources = new HashMap<>(); // NOPMD - intentional
+    @NonNull
+    private static final Map<URI, ExternalSource> sources = new HashMap<>(); // NOPMD - intentional
 
-    @NotNull
+    @NonNull
     private final URI modelUri;
 
-    @NotNull
-    public static ISource instance(@NotNull URI location) {
+    @NonNull
+    public static ISource instance(@NonNull URI location) {
       ISource retval;
       synchronized (sources) {
         retval = sources.get(location);
@@ -250,7 +249,7 @@ public interface IConstraint {
       return retval;
     }
 
-    private ExternalSource(@NotNull URI modelSource) {
+    private ExternalSource(@NonNull URI modelSource) {
       this.modelUri = modelSource;
     }
 
@@ -259,7 +258,7 @@ public interface IConstraint {
       return SourceType.EXTERNAL;
     }
 
-    @NotNull
+    @NonNull
     @Override
     public URI getSource() {
       return modelUri;

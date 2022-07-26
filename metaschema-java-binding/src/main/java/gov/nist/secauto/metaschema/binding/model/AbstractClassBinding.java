@@ -38,8 +38,7 @@ import gov.nist.secauto.metaschema.model.common.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -58,21 +57,23 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractClassBinding implements IClassBinding {
   // private static final Logger logger = LogManager.getLogger(AbstractClassBinding.class);
 
-  @NotNull
+  @NonNull
   private final IBindingContext bindingContext;
-  @NotNull
+  @NonNull
   private final Class<?> clazz;
   private final Method beforeDeserializeMethod;
   private final Method afterDeserializeMethod;
   private IMetaschema metaschema;
-  private Map<@NotNull String, IBoundFlagInstance> flagInstances;
+  private Map<String, IBoundFlagInstance> flagInstances;
   private IBoundFlagInstance jsonKeyFlag;
 
   /**
@@ -83,7 +84,7 @@ abstract class AbstractClassBinding implements IClassBinding {
    * @param bindingContext
    *          the class binding context for which this class is participating
    */
-  public AbstractClassBinding(@NotNull Class<?> clazz, @NotNull IBindingContext bindingContext) {
+  public AbstractClassBinding(@NonNull Class<?> clazz, @NonNull IBindingContext bindingContext) {
     this.bindingContext = ObjectUtils.requireNonNull(bindingContext, "bindingContext");
     this.clazz = ObjectUtils.requireNonNull(clazz, "clazz");
     this.beforeDeserializeMethod = ClassIntrospector.getMatchingMethod(clazz, "beforeDeserialize", Object.class);
@@ -119,7 +120,7 @@ abstract class AbstractClassBinding implements IClassBinding {
   }
 
   @Override
-  public @NotNull ModuleScopeEnum getModuleScope() {
+  public @NonNull ModuleScopeEnum getModuleScope() {
     // TODO: is this the right value?
     return ModuleScopeEnum.INHERITED;
   }
@@ -127,7 +128,7 @@ abstract class AbstractClassBinding implements IClassBinding {
   protected abstract Class<? extends AbstractBoundMetaschema> getMetaschemaClass();
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   protected IMetaschema initMetaschema() {
     synchronized (this) {
       if (metaschema == null) {
@@ -150,11 +151,11 @@ abstract class AbstractClassBinding implements IClassBinding {
    *          the class
    * @return an immutable collection of flag instances
    */
-  @NotNull
-  protected Collection<@NotNull Field> getFlagInstanceFields(Class<?> clazz) {
+  @NonNull
+  protected Collection<Field> getFlagInstanceFields(Class<?> clazz) {
     Field[] fields = clazz.getDeclaredFields();
 
-    List<@NotNull Field> retval = new LinkedList<>();
+    List<Field> retval = new LinkedList<>();
 
     Class<?> superClass = clazz.getSuperclass();
     if (superClass != null) {
@@ -183,11 +184,11 @@ abstract class AbstractClassBinding implements IClassBinding {
    * 
    * @return the initialized flag instances
    */
-  @NotNull
-  protected Map<@NotNull String, IBoundFlagInstance> initalizeFlagInstances() {
+  @NonNull
+  protected Map<String, IBoundFlagInstance> initalizeFlagInstances() {
     synchronized (this) {
       if (this.flagInstances == null) {
-        Map<@NotNull String, IBoundFlagInstance> flags = new LinkedHashMap<>(); // NOPMD - intentional use
+        Map<String, IBoundFlagInstance> flags = new LinkedHashMap<>(); // NOPMD - intentional use
         for (Field field : getFlagInstanceFields(clazz)) {
 
           if (field.isAnnotationPresent(BoundFlag.class)) {
@@ -199,8 +200,8 @@ abstract class AbstractClassBinding implements IClassBinding {
         }
         this.flagInstances = flags.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flags);
       }
+      return ObjectUtils.notNull(this.flagInstances);
     }
-    return ObjectUtils.notNull(this.flagInstances);
   }
 
   /**
@@ -215,7 +216,8 @@ abstract class AbstractClassBinding implements IClassBinding {
     }
   }
 
-  private Map<@NotNull String, IBoundFlagInstance> getFlagInstanceMap() {
+  @NonNull
+  private Map<String, IBoundFlagInstance> getFlagInstanceMap() {
     // check that the flag instances are lazy loaded
     return initalizeFlagInstances();
   }
@@ -227,7 +229,7 @@ abstract class AbstractClassBinding implements IClassBinding {
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull Collection<@NotNull ? extends IBoundFlagInstance> getFlagInstances() {
+  public @NonNull Collection<? extends IBoundFlagInstance> getFlagInstances() {
     return getFlagInstanceMap().values();
   }
 
@@ -243,8 +245,8 @@ abstract class AbstractClassBinding implements IClassBinding {
   }
 
   @Override
-  public Map<@NotNull String, ? extends IBoundNamedInstance> getNamedInstances(Predicate<IBoundFlagInstance> filter) {
-    Map<@NotNull String, ? extends IBoundFlagInstance> retval;
+  public Map<String, ? extends IBoundNamedInstance> getNamedInstances(Predicate<IBoundFlagInstance> filter) {
+    Map<String, ? extends IBoundFlagInstance> retval;
     if (filter == null) {
       retval = getFlagInstanceMap();
     } else {
@@ -263,7 +265,7 @@ abstract class AbstractClassBinding implements IClassBinding {
    * @throws BindingException
    *           if the instance cannot be created due to a binding error
    */
-  @NotNull
+  @NonNull
   protected <CLASS> CLASS newInstance() throws BindingException {
     Class<?> clazz = getBoundClass();
     try {
@@ -338,8 +340,8 @@ abstract class AbstractClassBinding implements IClassBinding {
     }
   }
 
-  protected void readInternal(@NotNull Object instance, @NotNull StartElement start,
-      @NotNull IXmlParsingContext context) throws IOException, XMLStreamException {
+  protected void readInternal(@NonNull Object instance, @NonNull StartElement start,
+      @NonNull IXmlParsingContext context) throws IOException, XMLStreamException {
     for (IBoundFlagInstance flag : getFlagInstances()) {
       flag.read(instance, start, context);
     }
@@ -347,11 +349,11 @@ abstract class AbstractClassBinding implements IClassBinding {
 
     XmlEventUtil.skipWhitespace(context.getReader());
 
-    XmlEventUtil.assertNext(context.getReader(), XMLEvent.END_ELEMENT, start.getName());
+    XmlEventUtil.assertNext(context.getReader(), XMLStreamConstants.END_ELEMENT, start.getName());
   }
 
-  protected abstract void readBody(@NotNull Object instance, @NotNull StartElement start,
-      @NotNull IXmlParsingContext context)
+  protected abstract void readBody(@NonNull Object instance, @NonNull StartElement start,
+      @NonNull IXmlParsingContext context)
       throws IOException, XMLStreamException;
 
   @Override
@@ -360,7 +362,7 @@ abstract class AbstractClassBinding implements IClassBinding {
     writeInternal(instance, parentName, context);
   }
 
-  protected void writeInternal(@NotNull Object instance, @NotNull QName parentName, @NotNull IXmlWritingContext context)
+  protected void writeInternal(@NonNull Object instance, @NonNull QName parentName, @NonNull IXmlWritingContext context)
       throws IOException, XMLStreamException {
     // write flags
     for (IBoundFlagInstance flag : getFlagInstances()) {
@@ -369,8 +371,8 @@ abstract class AbstractClassBinding implements IClassBinding {
     writeBody(instance, parentName, context);
   }
 
-  protected abstract void writeBody(@NotNull Object instance, @NotNull QName parentName,
-      @NotNull IXmlWritingContext context)
+  protected abstract void writeBody(@NonNull Object instance, @NonNull QName parentName,
+      @NonNull IXmlWritingContext context)
       throws XMLStreamException, IOException;
 
   @Override
@@ -386,7 +388,7 @@ abstract class AbstractClassBinding implements IClassBinding {
     return instance;
   }
 
-  protected void copyBoundObjectInternal(@NotNull Object fromInstance, @NotNull Object toInstance)
+  protected void copyBoundObjectInternal(@NonNull Object fromInstance, @NonNull Object toInstance)
       throws BindingException {
     for (IBoundFlagInstance property : getFlagInstances()) {
       property.copyBoundObject(fromInstance, toInstance);

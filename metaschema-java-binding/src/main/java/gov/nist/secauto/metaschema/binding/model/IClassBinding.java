@@ -38,8 +38,7 @@ import gov.nist.secauto.metaschema.binding.io.xml.IXmlWritingContext;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.codehaus.stax2.XMLStreamReader2;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -53,8 +52,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IClassBinding extends IBoundModelDefinition {
-  @NotNull
+  @NonNull
   IBindingContext getBindingContext();
 
   /**
@@ -62,7 +63,7 @@ public interface IClassBinding extends IBoundModelDefinition {
    * 
    * @return the bound class
    */
-  @NotNull
+  @NonNull
   Class<?> getBoundClass();
 
   // Provides a compatible return value
@@ -76,8 +77,8 @@ public interface IClassBinding extends IBoundModelDefinition {
    *          a filter to apply or {@code null} if no filtering is needed
    * @return a collection of properties
    */
-  @NotNull
-  Map<@NotNull String, ? extends IBoundNamedInstance>
+  @NonNull
+  Map<String, ? extends IBoundNamedInstance>
       getNamedInstances(@Nullable Predicate<IBoundFlagInstance> flagFilter);
 
   /**
@@ -90,7 +91,8 @@ public interface IClassBinding extends IBoundModelDefinition {
    * next token after the {@link JsonToken#END_OBJECT} for this class.
    * 
    * @param parentInstance
-   *          the parent Java object to store the data in
+   *          the parent Java object to store the data in, which can be {@code null} if there is no
+   *          parent
    * @param requiresJsonKey
    *          when {@code true} indicates that the item will have a JSON key
    * @param context
@@ -100,9 +102,9 @@ public interface IClassBinding extends IBoundModelDefinition {
    *           if an error occurred while reading the parsed content
    */
   // TODO: check if a boolean return value is needed
-  @NotNull
-  List<@NotNull Object> readItem(@Nullable Object parentInstance, boolean requiresJsonKey,
-      @NotNull IJsonParsingContext context)
+  @NonNull
+  List<Object> readItem(@Nullable Object parentInstance, boolean requiresJsonKey,
+      @NonNull IJsonParsingContext context)
       throws IOException;
 
   /**
@@ -117,7 +119,8 @@ public interface IClassBinding extends IBoundModelDefinition {
    * {@link XMLStreamConstants#START_ELEMENT} element associated with the Java class.
    * 
    * @param parentInstance
-   *          the Java instance for the object containing this object
+   *          the Java instance for the object containing this object, which can be {@code null} if
+   *          there is no parent
    * @param start
    *          the containing start element
    * @param context
@@ -128,21 +131,21 @@ public interface IClassBinding extends IBoundModelDefinition {
    * @throws XMLStreamException
    *           if an error occurred while parsing the content as XML
    */
-  @NotNull
-  Object readItem(@Nullable Object parentInstance, @NotNull StartElement start, @NotNull IXmlParsingContext context)
+  @NonNull
+  Object readItem(@Nullable Object parentInstance, @NonNull StartElement start, @NonNull IXmlParsingContext context)
       throws IOException, XMLStreamException;
 
-  void writeItem(@NotNull Object item, @NotNull QName parentName, @NotNull IXmlWritingContext context)
+  void writeItem(@NonNull Object item, @NonNull QName parentName, @NonNull IXmlWritingContext context)
       throws IOException, XMLStreamException;
 
-  default void writeItem(@NotNull Object item, boolean writeObjectWrapper, @NotNull IJsonWritingContext context)
+  default void writeItem(@NonNull Object item, boolean writeObjectWrapper, @NonNull IJsonWritingContext context)
       throws IOException {
     writeItems(CollectionUtil.singleton(item), writeObjectWrapper, context);
   }
 
   // for JSON, the entire value needs to be processed to deal with collapsable fields
-  void writeItems(@NotNull Collection<@NotNull ? extends Object> items, boolean writeObjectWrapper,
-      @NotNull IJsonWritingContext context)
+  void writeItems(@NonNull Collection<? extends Object> items, boolean writeObjectWrapper,
+      @NonNull IJsonWritingContext context)
       throws IOException;
 
   /**
@@ -156,6 +159,6 @@ public interface IClassBinding extends IBoundModelDefinition {
    * @throws BindingException
    *           if an error occurred copying content between java instances
    */
-  @NotNull
-  Object copyBoundObject(@NotNull Object item, Object parentInstance) throws BindingException;
+  @NonNull
+  Object copyBoundObject(@NonNull Object item, Object parentInstance) throws BindingException;
 }

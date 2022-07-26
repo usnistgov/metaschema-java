@@ -29,15 +29,14 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IPv4AddressAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 
-import org.jetbrains.annotations.NotNull;
-
+import edu.umd.cs.findbugs.annotations.NonNull;
 import inet.ipaddr.ipv4.IPv4Address;
 
 class IPv4AddressItemImpl
     extends AbstractAnyAtomicItem<IPv4Address>
     implements IIPv4AddressItem {
 
-  public IPv4AddressItemImpl(@NotNull IPv4Address value) {
+  public IPv4AddressItemImpl(@NonNull IPv4Address value) {
     super(value);
   }
 

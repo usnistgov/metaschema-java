@@ -28,12 +28,12 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDateItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DateWithTZAdapter
     extends AbstractDataTypeAdapter<ZonedDateTime, IDateItem> {
@@ -45,7 +45,6 @@ public class DateWithTZAdapter
       + ")"
       + "(Z|[+-][0-9]{2}:[0-9]{2})$");
 
-  @SuppressWarnings("null")
   DateWithTZAdapter() {
     super(ZonedDateTime.class);
   }
@@ -57,13 +56,12 @@ public class DateWithTZAdapter
 
   @SuppressWarnings("null")
   @Override
-  public ZonedDateTime parse(String value) throws IllegalArgumentException {
-    String parseValue = value;
+  public ZonedDateTime parse(String value) {
     Matcher matcher = DATE_TIMEZONE.matcher(value);
     if (!matcher.matches()) {
       throw new IllegalArgumentException("Invalid date: " + value);
     }
-    parseValue = String.format("%sT00:00:00%s", matcher.group(1), matcher.group(2));
+    String parseValue = String.format("%sT00:00:00%s", matcher.group(1), matcher.group(2));
     try {
       return ZonedDateTime.from(DateFormats.DATE_TIME_WITH_TZ.parse(parseValue));
     } catch (DateTimeParseException ex) {
@@ -83,9 +81,8 @@ public class DateWithTZAdapter
     return ZonedDateTime.from((ZonedDateTime) obj);
   }
 
-  @SuppressWarnings("null")
   @Override
-  public @NotNull Class<IDateItem> getItemClass() {
+  public @NonNull Class<IDateItem> getItemClass() {
     return IDateItem.class;
   }
 

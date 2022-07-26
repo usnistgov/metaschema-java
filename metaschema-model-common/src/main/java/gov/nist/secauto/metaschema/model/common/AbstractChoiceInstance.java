@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractChoiceInstance implements IChoiceInstance {
-  @NotNull
+  @NonNull
   private final IAssemblyDefinition parent;
 
   /**
@@ -38,7 +38,7 @@ public abstract class AbstractChoiceInstance implements IChoiceInstance {
    * @param parent
    *          the containing assembly definition
    */
-  public AbstractChoiceInstance(@NotNull IAssemblyDefinition parent) {
+  public AbstractChoiceInstance(@NonNull IAssemblyDefinition parent) {
     this.parent = parent;
   }
 

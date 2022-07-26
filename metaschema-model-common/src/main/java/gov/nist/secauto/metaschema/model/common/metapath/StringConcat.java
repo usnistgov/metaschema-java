@@ -30,9 +30,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnData
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class StringConcat
     extends AbstractNAryExpression {
@@ -44,11 +44,10 @@ class StringConcat
    * @param expressions
    *          the expressions to evaluate
    */
-  protected StringConcat(@NotNull List<@NotNull IExpression> expressions) {
+  protected StringConcat(@NonNull List<IExpression> expressions) {
     super(expressions);
   }
 
-  @SuppressWarnings("null")
   @Override
   public Class<IStringItem> getBaseResultType() {
     return IStringItem.class;
@@ -66,6 +65,7 @@ class StringConcat
 
   @Override
   public ISequence<?> accept(DynamicContext dynamicContext, INodeContext context) {
+    // TODO: replace with concat function when implemented
     StringBuilder builder = new StringBuilder();
     for (IExpression child : getChildren()) {
       ISequence<?> result = child.accept(dynamicContext, context);

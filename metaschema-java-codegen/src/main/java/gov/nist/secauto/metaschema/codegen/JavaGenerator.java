@@ -32,12 +32,13 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Objects;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides methods for generating Java classes based on a single or a collection of Metaschemas.
@@ -63,9 +64,9 @@ public final class JavaGenerator {
    *           if a build error occurred while generating the class
    */
   public static IProduction generate(
-      @NotNull IMetaschema metaschema,
-      @NotNull Path targetDir,
-      @NotNull IBindingConfiguration bindingConfiguration) throws IOException {
+      @NonNull IMetaschema metaschema,
+      @NonNull Path targetDir,
+      @NonNull IBindingConfiguration bindingConfiguration) throws IOException {
     return generate(CollectionUtil.singletonList(metaschema), targetDir, bindingConfiguration);
   }
 
@@ -83,11 +84,11 @@ public final class JavaGenerator {
    * @throws IOException
    *           if a build error occurred while generating the class
    */
-  @NotNull
+  @NonNull
   public static IProduction generate(
-      @NotNull Collection<@NotNull ? extends IMetaschema> metaschemas,
-      @NotNull Path targetDirectory,
-      @NotNull IBindingConfiguration bindingConfiguration) throws IOException {
+      @NonNull Collection<? extends IMetaschema> metaschemas,
+      @NonNull Path targetDirectory,
+      @NonNull IBindingConfiguration bindingConfiguration) throws IOException {
     Objects.requireNonNull(metaschemas, "metaschemas");
     Objects.requireNonNull(targetDirectory, "generationTargetDirectory");
     Objects.requireNonNull(bindingConfiguration, "bindingConfiguration");

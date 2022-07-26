@@ -77,7 +77,8 @@ class MetaschemaLoaderTest {
   @Test
   void testConstraints() throws MetaschemaException, IOException { // NOPMD - intentional
     ConstraintLoader constraintLoader = new ConstraintLoader();
-    IConstraintSet constraintSet = constraintLoader.load(Paths.get("src/test/resources/content/oscal-constraints.xml"));
+    IConstraintSet constraintSet = constraintLoader.load(
+        ObjectUtils.notNull(Paths.get("src/test/resources/content/oscal-constraints.xml")));
 
     MetaschemaLoader loader = new MetaschemaLoader(CollectionUtil.singleton(constraintSet));
     URI metaschemaUri = ObjectUtils.notNull(URI.create(

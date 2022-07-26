@@ -30,7 +30,7 @@ import com.vladsch.flexmark.util.ast.Document;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.FlexmarkFactory;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class MarkupMultiline
     extends AbstractMarkupString<MarkupMultiline> {
@@ -42,8 +42,8 @@ public class MarkupMultiline
    *          the HTML
    * @return the multiline markup instance
    */
-  @NotNull
-  public static MarkupMultiline fromHtml(@NotNull String html) {
+  @NonNull
+  public static MarkupMultiline fromHtml(@NonNull String html) {
     return new MarkupMultiline(FlexmarkFactory.instance().fromHtml(html));
   }
 
@@ -54,8 +54,8 @@ public class MarkupMultiline
    *          the markup
    * @return the multiline markup instance
    */
-  @NotNull
-  public static MarkupMultiline fromMarkdown(@NotNull String markdown) {
+  @NonNull
+  public static MarkupMultiline fromMarkdown(@NonNull String markdown) {
     return new MarkupMultiline(FlexmarkFactory.instance().fromMarkdown(markdown));
   }
 
@@ -65,7 +65,7 @@ public class MarkupMultiline
    * @param astNode
    *          the parsed markup AST
    */
-  public MarkupMultiline(@NotNull Document astNode) {
+  public MarkupMultiline(@NonNull Document astNode) {
     super(astNode);
   }
 

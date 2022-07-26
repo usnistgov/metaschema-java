@@ -26,16 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface INodeItemVisitor<RESULT, CONTEXT> {
-  RESULT visitDocument(@NotNull IDocumentNodeItem item, CONTEXT context);
+  RESULT visitDocument(@NonNull IDocumentNodeItem item, CONTEXT context);
 
-  RESULT visitFlag(@NotNull IFlagNodeItem item, CONTEXT context);
+  RESULT visitFlag(@NonNull IFlagNodeItem item, CONTEXT context);
 
-  RESULT visitField(@NotNull IFieldNodeItem item, CONTEXT context);
+  RESULT visitField(@NonNull IFieldNodeItem item, CONTEXT context);
 
-  RESULT visitAssembly(@NotNull IAssemblyNodeItem item, CONTEXT context);
+  RESULT visitAssembly(@NonNull IAssemblyNodeItem item, CONTEXT context);
 
-  RESULT visitMetaschema(@NotNull IMetaschemaNodeItem item, CONTEXT context);
+  RESULT visitMetaschema(@NonNull IMetaschemaNodeItem item, CONTEXT context);
 }

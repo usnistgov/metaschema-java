@@ -28,15 +28,15 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractModelPropertyInfo
     implements IModelPropertyInfo {
 
-  @NotNull
+  @NonNull
   private final IBoundNamedModelInstance property;
 
-  public AbstractModelPropertyInfo(@NotNull IBoundNamedModelInstance property) {
+  public AbstractModelPropertyInfo(@NonNull IBoundNamedModelInstance property) {
     this.property = ObjectUtils.requireNonNull(property, "property");
   }
 

@@ -33,12 +33,6 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 class FailingErrorListener
     extends BaseErrorListener {
-  private boolean syntaxError; // false;
-
-  public boolean isSyntaxError() {
-    return syntaxError;
-  }
-
   @Override
   public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine,
       String msg, RecognitionException ex) {

@@ -55,8 +55,6 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,6 +63,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * The implementation of a {@link IBindingContext} provided by this library.
@@ -81,14 +81,14 @@ import javax.xml.namespace.QName;
  */
 public class DefaultBindingContext implements IBindingContext {
   private static DefaultBindingContext singleton;
-  @NotNull
+  @NonNull
   private final IMetaschemaLoaderStrategy metaschemaLoaderStrategy;
-  @NotNull
+  @NonNull
   private final MetaschemaDataTypeProvider dataTypeProvider = new MetaschemaDataTypeProvider();
-  @NotNull
-  private final List<@NotNull IBindingMatcher> bindingMatchers = new LinkedList<>();
+  @NonNull
+  private final List<IBindingMatcher> bindingMatchers = new LinkedList<>();
 
-  @NotNull
+  @NonNull
   public static DefaultBindingContext instance() {
     synchronized (DefaultBindingContext.class) {
       if (singleton == null) {
@@ -104,7 +104,7 @@ public class DefaultBindingContext implements IBindingContext {
    * @param externalConstraintSets
    *          the set of external constraints to configure this binding to use
    */
-  public DefaultBindingContext(@NotNull Set<@NotNull IConstraintSet> externalConstraintSets) {
+  public DefaultBindingContext(@NonNull Set<IConstraintSet> externalConstraintSets) {
     // only allow extended classes
     metaschemaLoaderStrategy = new ExternalConstraintsMetaschemaLoaderStrategy(this, externalConstraintSets);
   }
@@ -118,23 +118,23 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public IMetaschema getMetaschemaInstanceByClass(@NotNull Class<? extends AbstractBoundMetaschema> clazz) {
+  public IMetaschema getMetaschemaInstanceByClass(@NonNull Class<? extends AbstractBoundMetaschema> clazz) {
     return metaschemaLoaderStrategy.getMetaschemaInstanceByClass(clazz);
   }
 
   @Override
-  public IClassBinding getClassBinding(@NotNull Class<?> clazz) {
+  public IClassBinding getClassBinding(@NonNull Class<?> clazz) {
     return metaschemaLoaderStrategy.getClassBinding(clazz);
   }
 
   @Override
-  public Map<@NotNull Class<?>, IClassBinding> getClassBindingsByClass() {
+  public Map<Class<?>, IClassBinding> getClassBindingsByClass() {
     return metaschemaLoaderStrategy.getClassBindingsByClass();
   }
 
   @Override
   public <TYPE extends IDataTypeAdapter<?>> TYPE
-      getJavaTypeAdapterInstance(@NotNull Class<TYPE> clazz) {
+      getJavaTypeAdapterInstance(@NonNull Class<TYPE> clazz) {
     return dataTypeProvider.getJavaTypeAdapterInstance(clazz);
   }
 
@@ -144,9 +144,9 @@ public class DefaultBindingContext implements IBindingContext {
    * A serializer returned by this method is thread-safe.
    */
   @Override
-  public <CLASS> ISerializer<CLASS> newSerializer(@NotNull Format format, @NotNull Class<CLASS> clazz) {
+  public <CLASS> ISerializer<CLASS> newSerializer(@NonNull Format format, @NonNull Class<CLASS> clazz) {
     Objects.requireNonNull(format, "format");
-    @NotNull
+    @NonNull
     IAssemblyClassBinding classBinding = (IAssemblyClassBinding) getClassBinding(clazz);
 
     ISerializer<CLASS> retval;
@@ -172,7 +172,7 @@ public class DefaultBindingContext implements IBindingContext {
    * A deserializer returned by this method is thread-safe.
    */
   @Override
-  public <CLASS> IDeserializer<CLASS> newDeserializer(@NotNull Format format, @NotNull Class<CLASS> clazz) {
+  public <CLASS> IDeserializer<CLASS> newDeserializer(@NonNull Format format, @NonNull Class<CLASS> clazz) {
     IAssemblyClassBinding classBinding = (IAssemblyClassBinding) getClassBinding(clazz);
 
     IDeserializer<CLASS> retval;
@@ -194,25 +194,25 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public void registerBindingMatcher(@NotNull IBindingMatcher matcher) {
+  public void registerBindingMatcher(@NonNull IBindingMatcher matcher) {
     synchronized (this) {
       bindingMatchers.add(matcher);
     }
   }
 
-  @NotNull
-  protected List<@NotNull ? extends IBindingMatcher> getBindingMatchers() {
+  @NonNull
+  protected List<? extends IBindingMatcher> getBindingMatchers() {
     synchronized (this) {
       return CollectionUtil.unmodifiableList(bindingMatchers);
     }
   }
 
-  public Map<@NotNull Class<? extends IDataTypeAdapter<?>>, IDataTypeAdapter<?>> getJavaTypeAdaptersByClass() {
+  public Map<Class<? extends IDataTypeAdapter<?>>, IDataTypeAdapter<?>> getJavaTypeAdaptersByClass() {
     return dataTypeProvider.getJavaTypeAdaptersByClass();
   }
 
   @Override
-  public Class<?> getBoundClassForXmlQName(@NotNull QName rootQName) {
+  public Class<?> getBoundClassForXmlQName(@NonNull QName rootQName) {
     Class<?> retval = null;
     for (IBindingMatcher matcher : getBindingMatchers()) {
       retval = matcher.getBoundClassForXmlQName(rootQName);
@@ -224,7 +224,7 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public Class<?> getBoundClassForJsonName(@NotNull String rootName) {
+  public Class<?> getBoundClassForJsonName(@NonNull String rootName) {
     Class<?> retval = null;
     for (IBindingMatcher matcher : getBindingMatchers()) {
       retval = matcher.getBoundClassForJsonName(rootName);
@@ -241,7 +241,7 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public <CLASS> CLASS copyBoundObject(@NotNull CLASS other, Object parentInstance) throws BindingException {
+  public <CLASS> CLASS copyBoundObject(@NonNull CLASS other, Object parentInstance) throws BindingException {
     IClassBinding classBinding = getClassBinding(other.getClass());
     @SuppressWarnings("unchecked")
     CLASS retval = (CLASS) classBinding.copyBoundObject(other, parentInstance);
@@ -249,13 +249,13 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public INodeItem toNodeItem(@NotNull Object boundObject, URI baseUri, boolean rootNode) {
+  public INodeItem toNodeItem(@NonNull Object boundObject, URI baseUri, boolean rootNode) {
     IClassBinding classBinding = getClassBinding(boundObject.getClass());
     return DefaultNodeItemFactory.instance().newNodeItem(classBinding, boundObject, baseUri, rootNode);
   }
 
   @Override
-  public IValidationResult validate(@NotNull INodeItem nodeItem) {
+  public IValidationResult validate(@NonNull INodeItem nodeItem) {
     DynamicContext context = new StaticContext().newDynamicContext();
     context.setDocumentLoader(newBoundLoader());
     FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();

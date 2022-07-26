@@ -36,11 +36,11 @@ import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * The base class of all format-specific deserializers.
@@ -62,8 +62,7 @@ public abstract class AbstractDeserializer<CLASS>
    * @param classBinding
    *          the bound class information for the Java type this deserializer is operating on
    */
-  @SuppressWarnings("null")
-  protected AbstractDeserializer(@NotNull IBindingContext bindingContext, @NotNull IAssemblyClassBinding classBinding) {
+  protected AbstractDeserializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding, DeserializationFeature.class);
   }
 
@@ -78,7 +77,7 @@ public abstract class AbstractDeserializer<CLASS>
   }
 
   @Override
-  public void setConstraintValidationHandler(@NotNull IConstraintValidationHandler constraintValidationHandler) {
+  public void setConstraintValidationHandler(@NonNull IConstraintValidationHandler constraintValidationHandler) {
     synchronized (this) {
       this.constraintValidationHandler = constraintValidationHandler;
     }
@@ -118,7 +117,7 @@ public abstract class AbstractDeserializer<CLASS>
    * @throws IOException
    *           if an error occurred while reading data from the stream
    */
-  @NotNull
-  protected abstract INodeItem deserializeToNodeItemInternal(@NotNull Reader reader, @NotNull URI documentUri)
+  @NonNull
+  protected abstract INodeItem deserializeToNodeItemInternal(@NonNull Reader reader, @NonNull URI documentUri)
       throws IOException;
 }

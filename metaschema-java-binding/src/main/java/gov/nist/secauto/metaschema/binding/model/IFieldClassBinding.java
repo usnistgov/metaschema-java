@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Represents a Metaschema field bound to a Java plain old java object (POJO) class.
@@ -41,6 +41,6 @@ public interface IFieldClassBinding extends IClassBinding, IBoundFieldDefinition
    * 
    * @return the value property
    */
-  @NotNull
+  @NonNull
   IBoundFieldValueInstance getFieldValueInstance();
 }

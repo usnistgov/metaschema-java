@@ -60,13 +60,12 @@ import com.vladsch.flexmark.util.ast.Node;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.DoubleQuoteNode;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.flexmark.InsertAnchorNode;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
@@ -88,16 +87,16 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
     ENTITY_MAP.put("&raquo;", "»");
   }
 
-  @NotNull
+  @NonNull
   private final String namespace;
   private final boolean handleBlockElements;
 
-  public AbstractMarkupXmlWriter(@NotNull String namespace, boolean handleBlockElements) {
+  public AbstractMarkupXmlWriter(@NonNull String namespace, boolean handleBlockElements) {
     this.namespace = namespace;
     this.handleBlockElements = handleBlockElements;
   }
 
-  @NotNull
+  @NonNull
   protected String getNamespace() {
     return namespace;
   }
@@ -320,7 +319,7 @@ public abstract class AbstractMarkupXmlWriter<WRITER> {
       if (matcher.matches()) {
         writeHtmlEntity(writer, matcher.group(1));
       } else {
-        writeText(writer, replacement);
+        writeText(writer, entityText);
       }
     }
   }

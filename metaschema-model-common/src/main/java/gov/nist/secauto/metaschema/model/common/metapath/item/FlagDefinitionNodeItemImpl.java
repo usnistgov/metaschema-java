@@ -29,17 +29,17 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagInstance;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.net.URI;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * a new {@link INodeItem} instance, that is orphaned from any parent nodes, supported by an
  * {@link IFlagDefinition}.
  */
 class FlagDefinitionNodeItemImpl implements IFlagNodeItem {
-  @NotNull
+  @NonNull
   private final IFlagDefinition definition;
   @Nullable
   private final URI baseUri;
@@ -53,7 +53,7 @@ class FlagDefinitionNodeItemImpl implements IFlagNodeItem {
    * @param baseUri
    *          an optional base URI to use for resolving relative URIs
    */
-  public FlagDefinitionNodeItemImpl(@NotNull IFlagDefinition definition, @Nullable URI baseUri) {
+  public FlagDefinitionNodeItemImpl(@NonNull IFlagDefinition definition, @Nullable URI baseUri) {
     this.definition = definition;
     this.baseUri = baseUri;
   }

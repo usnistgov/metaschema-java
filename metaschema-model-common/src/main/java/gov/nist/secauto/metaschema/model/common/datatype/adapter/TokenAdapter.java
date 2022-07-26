@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.ITokenItem;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class TokenAdapter
     extends AbstractStringAdapter<ITokenItem> {
@@ -44,7 +44,7 @@ public class TokenAdapter
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull Class<ITokenItem> getItemClass() {
+  public @NonNull Class<ITokenItem> getItemClass() {
     return ITokenItem.class;
   }
 

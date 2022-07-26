@@ -34,14 +34,14 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyUriItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.net.URI;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public final class FnStaticBaseUri {
-  @NotNull
+  @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("static-base-uri")
       .argument(IArgument.newBuilder()
@@ -55,10 +55,10 @@ public final class FnStaticBaseUri {
       .build();
 
   @SuppressWarnings("unused")
-  @NotNull
-  private static ISequence<IAnyUriItem> execute(@NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> arguments,
-      @NotNull DynamicContext dynamicContext,
+  @NonNull
+  private static ISequence<IAnyUriItem> execute(@NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
       INodeItem focus) {
 
     IAnyUriItem uri = fnStaticBaseUri(dynamicContext);
@@ -77,10 +77,9 @@ public final class FnStaticBaseUri {
    * @return the base URI or {@code null} if none was set
    */
   @Nullable
-  public static IAnyUriItem fnStaticBaseUri(@NotNull DynamicContext context) {
+  public static IAnyUriItem fnStaticBaseUri(@NonNull DynamicContext context) {
     URI staticBaseUri = context.getStaticContext().getBaseUri();
 
-    IAnyUriItem retval = staticBaseUri == null ? null : IAnyUriItem.valueOf(staticBaseUri);
-    return retval;
+    return staticBaseUri == null ? null : IAnyUriItem.valueOf(staticBaseUri);
   }
 }

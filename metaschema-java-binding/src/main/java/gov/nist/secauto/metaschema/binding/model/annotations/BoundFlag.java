@@ -32,11 +32,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Identifies that the annotation target is a bound property that represents a Metaschema flag.
@@ -52,8 +52,8 @@ public @interface BoundFlag {
    * 
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
-  @NotNull
-  String formalName() default "##none";
+  @NonNull
+  String formalName() default Constants.NO_STRING_VALUE;
 
   /**
    * Get the documentary description of the flag.
@@ -62,8 +62,8 @@ public @interface BoundFlag {
    * 
    * @return a markdown string or {@code "##none"} if no description is provided
    */
-  @NotNull
-  String description() default "##none";
+  @NonNull
+  String description() default Constants.NO_STRING_VALUE;
 
   /**
    * The model name to use for singleton values. This name will be used for associated XML attributes
@@ -73,8 +73,8 @@ public @interface BoundFlag {
    * 
    * @return the name
    */
-  @NotNull
-  String useName() default "##default";
+  @NonNull
+  String useName() default Constants.DEFAULT_STRING_VALUE;
 
   /**
    * XML target namespace of the XML Schema element.
@@ -84,8 +84,8 @@ public @interface BoundFlag {
    * 
    * @return the namespace
    */
-  @NotNull
-  String namespace() default "##none";
+  @NonNull
+  String namespace() default Constants.NO_STRING_VALUE;
 
   /**
    * Default value of this element.
@@ -102,7 +102,7 @@ public @interface BoundFlag {
    * 
    * @return the default value
    */
-  @NotNull
+  @NonNull
   String defaultValue() default "\u0000";
 
   /**
@@ -119,7 +119,7 @@ public @interface BoundFlag {
    * 
    * @return the data type adapter
    */
-  @NotNull
+  @NonNull
   Class<? extends IDataTypeAdapter<?>> typeAdapter();
 
   /**
@@ -127,7 +127,7 @@ public @interface BoundFlag {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
-  @NotNull
+  @NonNull
   AllowedValues[] allowedValues() default {};
 
   /**
@@ -135,7 +135,7 @@ public @interface BoundFlag {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
-  @NotNull
+  @NonNull
   Matches[] matches() default {};
 
   /**
@@ -143,7 +143,7 @@ public @interface BoundFlag {
    * 
    * @return the allowed values or an empty array if no allowed values constraints are defined
    */
-  @NotNull
+  @NonNull
   IndexHasKey[] indexHasKey() default {};
 
   /**
@@ -151,7 +151,7 @@ public @interface BoundFlag {
    * 
    * @return the expected constraints or an empty array if no expected constraints are defined
    */
-  @NotNull
+  @NonNull
   Expect[] expect() default {};
 
   /**
@@ -159,6 +159,6 @@ public @interface BoundFlag {
    * 
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
-  @NotNull
-  String remarks() default "##none";
+  @NonNull
+  String remarks() default Constants.NO_STRING_VALUE;
 }

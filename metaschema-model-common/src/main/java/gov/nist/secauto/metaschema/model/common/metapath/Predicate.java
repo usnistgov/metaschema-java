@@ -30,8 +30,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.library.FnBool
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
@@ -39,11 +37,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class Predicate implements IExpression {
-  @NotNull
+  @NonNull
   private final IExpression base;
-  @NotNull
-  private final List<@NotNull IExpression> predicates;
+  @NonNull
+  private final List<IExpression> predicates;
 
   /**
    * Construct a new predicate expression.
@@ -53,7 +53,7 @@ class Predicate implements IExpression {
    * @param predicates
    *          the expression(s) to apply as a filter
    */
-  protected Predicate(@NotNull IExpression base, @NotNull List<@NotNull IExpression> predicates) {
+  protected Predicate(@NonNull IExpression base, @NonNull List<IExpression> predicates) {
     this.base = base;
     this.predicates = predicates;
   }
@@ -63,7 +63,7 @@ class Predicate implements IExpression {
    * 
    * @return the sub-expression
    */
-  @NotNull
+  @NonNull
   public IExpression getBase() {
     return base;
   }
@@ -73,20 +73,20 @@ class Predicate implements IExpression {
    * 
    * @return the list of predicates
    */
-  @NotNull
-  public List<@NotNull IExpression> getPredicates() {
+  @NonNull
+  public List<IExpression> getPredicates() {
     return predicates;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public List<@NotNull ? extends IExpression> getChildren() {
-    return Stream.concat(Stream.of(getBase()), getPredicates().stream()).collect(Collectors.toList());
+  public List<? extends IExpression> getChildren() {
+    return ObjectUtils.notNull(
+        Stream.concat(Stream.of(getBase()), getPredicates().stream()).collect(Collectors.toList()));
   }
 
   @Override
-  public @NotNull ISequence<? extends IItem> accept(@NotNull DynamicContext dynamicContext,
-      @NotNull INodeContext context) {
+  public @NonNull ISequence<? extends IItem> accept(@NonNull DynamicContext dynamicContext,
+      @NonNull INodeContext context) {
 
     ISequence<?> retval = getBase().accept(dynamicContext, context);
 
@@ -100,7 +100,7 @@ class Predicate implements IExpression {
             return Map.entry(BigInteger.valueOf(index.incrementAndGet()), item);
           }).filter(entry -> {
             @SuppressWarnings("null")
-            @NotNull
+            @NonNull
             IItem item = entry.getValue();
 
             // return false if any predicate evaluates to false
@@ -131,7 +131,7 @@ class Predicate implements IExpression {
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(@NotNull IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+  public <RESULT, CONTEXT> RESULT accept(@NonNull IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitPredicate(this, context);
   }
 

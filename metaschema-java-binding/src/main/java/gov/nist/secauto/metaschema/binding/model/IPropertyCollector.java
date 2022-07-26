@@ -26,11 +26,11 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * The class is used to "collect" items together to assign to the property's field. For fields with
@@ -45,7 +45,7 @@ interface IPropertyCollector {
    * @throws IllegalStateException
    *           if the item cannot be added due to a model inconsistency
    */
-  void add(@NotNull Object item) throws IllegalStateException;
+  void add(@NonNull Object item);
 
   /**
    * Add a collection of item to the "collection", who's type depends on the property configuration.
@@ -55,7 +55,7 @@ interface IPropertyCollector {
    * @throws IllegalStateException
    *           if the item cannot be added due to a model inconsistency
    */
-  void addAll(@NotNull Collection<@NotNull ?> items);
+  void addAll(@NonNull Collection<?> items);
 
   /**
    * Get the current state of the "collection". For single valued "non-collections" this may return a

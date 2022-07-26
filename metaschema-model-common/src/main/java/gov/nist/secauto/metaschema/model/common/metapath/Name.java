@@ -30,9 +30,9 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeIte
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class Name // NOPMD - intentional
     implements IExpression {
@@ -45,7 +45,7 @@ class Name // NOPMD - intentional
    * @param value
    *          the literal value
    */
-  protected Name(@NotNull String value) {
+  protected Name(@NonNull String value) {
     this.value = value;
   }
 
@@ -54,17 +54,17 @@ class Name // NOPMD - intentional
   }
 
   @Override
-  public List<@NotNull IExpression> getChildren() {
+  public List<IExpression> getChildren() {
     return CollectionUtil.emptyList();
   }
 
   @Override
-  public Class<@NotNull INodeItem> getBaseResultType() {
+  public Class<INodeItem> getBaseResultType() {
     return INodeItem.class;
   }
 
   @Override
-  public Class<@NotNull INodeItem> getStaticResultType() {
+  public Class<INodeItem> getStaticResultType() {
     return getBaseResultType();
   }
 

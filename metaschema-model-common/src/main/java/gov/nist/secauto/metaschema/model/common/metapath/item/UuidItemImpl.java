@@ -29,15 +29,15 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.UuidAdapter;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.UUID;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class UuidItemImpl
     extends AbstractAnyAtomicItem<UUID>
     implements IUuidItem {
 
-  public UuidItemImpl(@NotNull UUID value) {
+  public UuidItemImpl(@NonNull UUID value) {
     super(value);
   }
 

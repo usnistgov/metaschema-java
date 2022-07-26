@@ -29,15 +29,15 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.UriReferenceAdapter;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class UriReferenceItemImpl
     extends AbstractAnyAtomicItem<URI>
     implements IUriReferenceItem {
 
-  public UriReferenceItemImpl(@NotNull URI value) {
+  public UriReferenceItemImpl(@NonNull URI value) {
     super(value);
   }
 

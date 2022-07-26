@@ -28,8 +28,8 @@ package gov.nist.secauto.metaschema.model.common;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * A marker interface for Metaschema constructs that can be members of a Metaschema definition's
@@ -42,7 +42,7 @@ public interface IModelElement {
    * 
    * @return the type
    */
-  @NotNull
+  @NonNull
   ModelType getModelType();
 
   /**
@@ -52,7 +52,7 @@ public interface IModelElement {
    * 
    * @return the coordinates
    */
-  @NotNull
+  @NonNull
   String toCoordinates();
 
   /**
@@ -68,6 +68,6 @@ public interface IModelElement {
    * 
    * @return the Metaschema instance
    */
-  @NotNull
+  @NonNull
   IMetaschema getContainingMetaschema();
 }

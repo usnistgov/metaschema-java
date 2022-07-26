@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.XmlSchemaContentValidator;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicNode;
@@ -49,7 +48,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public class XmlSuiteTest
+class XmlSuiteTest
     extends AbstractSchemaGeneratorTestSuite {
   // private static final XmlSchemaContentValidator SCHEMA_VALIDATOR;
 
@@ -65,7 +64,7 @@ public class XmlSuiteTest
   // }
 
   @Override
-  protected Supplier<@NotNull IContentValidator> getSchemaValidatorSupplier() {
+  protected Supplier<IContentValidator> getSchemaValidatorSupplier() {
     return null;
     // return () -> SCHEMA_VALIDATOR;
   }
@@ -76,25 +75,25 @@ public class XmlSuiteTest
   }
 
   @Override
-  protected Function<@NotNull Path, @NotNull XmlSchemaContentValidator> getContentValidatorSupplier() {
+  protected Function<Path, XmlSchemaContentValidator> getContentValidatorSupplier() {
     return XML_CONTENT_VALIDATOR_PROVIDER;
   }
 
   @Override
-  protected BiFunction<@NotNull IMetaschema, @NotNull Writer, Void> getGeneratorSupplier() {
+  protected BiFunction<IMetaschema, Writer, Void> getGeneratorSupplier() {
     return XML_SCHEMA_PROVIDER;
   }
 
   @Execution(ExecutionMode.SAME_THREAD)
   @DisplayName("XML Schema Generation")
   @TestFactory
-  public Stream<? extends DynamicNode> generateTests() {
+  Stream<? extends DynamicNode> generateTests() {
     return testFactory();
   }
 
   @Disabled
   @Test
-  void testChoiceMultiple() throws IOException, MetaschemaException {
+  void testChoiceMultiple() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     doTest(
         "choice/",
         "choice-multiple_metaschema.xml",
@@ -104,7 +103,7 @@ public class XmlSuiteTest
 
   @Disabled
   @Test
-  void testCollapsibleMultiple() throws IOException, MetaschemaException {
+  void testCollapsibleMultiple() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     doTest(
         "collapsible/",
         "collapsible_metaschema.xml",
@@ -115,7 +114,7 @@ public class XmlSuiteTest
 
   @Disabled
   @Test
-  void testJsonValueKeyField() throws IOException, MetaschemaException {
+  void testJsonValueKeyField() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     doTest(
         "json-value-key/",
         "json-value-key-field_metaschema.xml",
@@ -125,7 +124,7 @@ public class XmlSuiteTest
 
   @Disabled
   @Test
-  void testJsonValueKeyLabel() throws IOException, MetaschemaException {
+  void testJsonValueKeyLabel() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     doTest(
         "json-value-key/",
         "json-value-key-field_metaschema.xml",
@@ -135,7 +134,7 @@ public class XmlSuiteTest
 
   @Disabled
   @Test
-  void testByKey() throws IOException, MetaschemaException {
+  void testByKey() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     doTest(
         "group-as/",
         "group-as-by-key_metaschema.xml",

@@ -19,8 +19,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItemVisitor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.Deque;
 import java.util.HashMap;
@@ -28,24 +27,26 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class ExplosionVisitor
-    implements INodeItemVisitor<@NotNull IMutableModelElement, ExplosionVisitor.@NotNull Context> {
+    implements INodeItemVisitor<IMutableModelElement, ExplosionVisitor.Context> {
   private static final Logger LOGGER = LogManager.getLogger(ExplosionVisitor.class);
 
-  @NotNull
-  public final IModelElement visit(@NotNull INodeItemVisitable item, @NotNull DynamicContext dynamicContext) {
+  @NonNull
+  public final IModelElement visit(@NonNull INodeItemVisitable item, @NonNull DynamicContext dynamicContext) {
     return item.accept(this, new Context(dynamicContext));
   }
 
-  protected void visitFlags(@NotNull INodeItem item, @NotNull IMutableModelElement model, @NotNull Context context) {
+  protected void visitFlags(@NonNull INodeItem item, @NonNull IMutableModelElement model, @NonNull Context context) {
     for (IFlagNodeItem flag : item.getFlags()) {
       model.addFlag(flag.accept(this, context));
     }
   }
 
-  protected void visitModelChildren(@NotNull INodeItem item, @NotNull IMutableModelElement model,
-      @NotNull Context context) {
-    for (List<@NotNull ? extends IModelNodeItem> childItems : item.getModelItems()) {
+  protected void visitModelChildren(@NonNull INodeItem item, @NonNull IMutableModelElement model,
+      @NonNull Context context) {
+    for (List<? extends IModelNodeItem> childItems : item.getModelItems()) {
       for (IModelNodeItem childItem : childItems) {
         model.addModelItem(childItem.accept(this, context));
       }
@@ -72,7 +73,7 @@ public class ExplosionVisitor
     FieldModelElementImpl model = new FieldModelElementImpl(item);
     context.register(model);
     context.push(model);
-    
+
     visitFlags(item, model, context);
 
     localizeConstraints(item, context);
@@ -89,7 +90,7 @@ public class ExplosionVisitor
 
     if (!(item instanceof ICycledAssemblyNodeItem)) {
       context.push(model);
-  
+
       visitFlags(item, model, context);
       visitModelChildren(item, model, context);
 
@@ -101,23 +102,23 @@ public class ExplosionVisitor
   }
 
   @Override
-  public IMutableModelElement visitMetaschema(@NotNull IMetaschemaNodeItem item, Context context) {
+  public IMutableModelElement visitMetaschema(@NonNull IMetaschemaNodeItem item, Context context) {
     throw new UnsupportedOperationException();
   }
 
-  protected void localizeConstraints(@NotNull IDefinitionNodeItem item, @NotNull Context context) {
+  protected void localizeConstraints(@NonNull IDefinitionNodeItem item, @NonNull Context context) {
     for (IConstraint constraint : item.getDefinition().getConstraints()) {
       ISequence<?> result = constraint.matchTargets(item, context.getDynamicContext());
       if (result.isEmpty()) {
         throw new IllegalStateException("Constraint doesn't target anything");
       }
-      
+
       result.asStream().forEachOrdered(target -> {
         if (!(target instanceof IDefinitionNodeItem)) {
           throw new IllegalStateException("Constraint doesn't target a node");
         }
-        
-        IModelElement element = context.getModelElementForNodeItem((IDefinitionNodeItem)target);
+
+        IModelElement element = context.getModelElementForNodeItem((IDefinitionNodeItem) target);
         if (element == null) {
           throw new IllegalStateException("Model element doesn't exist.");
         }
@@ -126,21 +127,21 @@ public class ExplosionVisitor
     }
   }
 
-  class Context {
+  static class Context {
     private final Deque<IMutableModelElement> lifoStack = new LinkedList<>();
-    private final Map<@NotNull IDefinitionNodeItem, IModelElement> nodeItemToElementMap = new HashMap<>();
-    @NotNull
+    private final Map<IDefinitionNodeItem, IModelElement> nodeItemToElementMap = new HashMap<>();
+    @NonNull
     private final DynamicContext dynamicContext;
 
     public Context() {
       this.dynamicContext = new StaticContext().newDynamicContext().disablePredicateEvaluation();
     }
 
-    public Context(@NotNull DynamicContext dynamicContext) {
+    public Context(@NonNull DynamicContext dynamicContext) {
       this.dynamicContext = dynamicContext;
     }
 
-    @NotNull
+    @NonNull
     public DynamicContext getDynamicContext() {
       return dynamicContext;
     }
@@ -154,12 +155,12 @@ public class ExplosionVisitor
       lifoStack.push(element);
     }
 
-    public void register(@NotNull IModelElement element) {
+    public void register(@NonNull IModelElement element) {
       nodeItemToElementMap.put(element.getNodeItem(), element);
     }
 
     @Nullable
-    public IModelElement getModelElementForNodeItem(@NotNull IDefinitionNodeItem nodeItem) {
+    public IModelElement getModelElementForNodeItem(@NonNull IDefinitionNodeItem nodeItem) {
       return nodeItemToElementMap.get(nodeItem);
     }
   }

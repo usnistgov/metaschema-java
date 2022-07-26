@@ -38,12 +38,13 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DefaultTypeResolver implements ITypeResolver {
   private static final Logger LOGGER = LogManager.getLogger(DefaultTypeResolver.class);
@@ -54,10 +55,10 @@ class DefaultTypeResolver implements ITypeResolver {
   private final Map<IAssemblyDefinition, IAssemblyDefinitionTypeInfo> assemblyDefinitionToTypeInfoMap = new HashMap<>();
   private final Map<IFieldDefinition, IFieldDefinitionTypeInfo> fieldDefinitionToTypeInfoMap = new HashMap<>();
 
-  @NotNull
+  @NonNull
   private final IBindingConfiguration bindingConfiguration;
 
-  public DefaultTypeResolver(@NotNull IBindingConfiguration bindingConfiguration) {
+  public DefaultTypeResolver(@NonNull IBindingConfiguration bindingConfiguration) {
     this.bindingConfiguration = bindingConfiguration;
   }
 
@@ -66,7 +67,7 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public IAssemblyDefinitionTypeInfo getTypeInfo(@NotNull IAssemblyDefinition definition) {
+  public IAssemblyDefinitionTypeInfo getTypeInfo(@NonNull IAssemblyDefinition definition) {
     synchronized (this) {
       IAssemblyDefinitionTypeInfo retval = assemblyDefinitionToTypeInfoMap.get(definition);
       if (retval == null) {
@@ -78,7 +79,7 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public IFieldDefinitionTypeInfo getTypeInfo(@NotNull IFieldDefinition definition) {
+  public IFieldDefinitionTypeInfo getTypeInfo(@NonNull IFieldDefinition definition) {
     synchronized (this) {
       IFieldDefinitionTypeInfo retval = fieldDefinitionToTypeInfoMap.get(definition);
       if (retval == null) {
@@ -90,7 +91,7 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public IModelDefinitionTypeInfo getTypeInfo(@NotNull IModelDefinition definition) {
+  public IModelDefinitionTypeInfo getTypeInfo(@NonNull IModelDefinition definition) {
     IModelDefinitionTypeInfo retval;
     if (definition instanceof IAssemblyDefinition) {
       retval = getTypeInfo((IAssemblyDefinition) definition);
@@ -103,7 +104,7 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public ClassName getClassName(@NotNull IModelDefinition definition) {
+  public ClassName getClassName(@NonNull IModelDefinition definition) {
     ClassName retval = definitionToTypeMap.get(definition);
     if (retval == null) {
       String packageName = getBindingConfiguration().getPackageNameForMetaschema(definition.getContainingMetaschema());
@@ -143,7 +144,7 @@ class DefaultTypeResolver implements ITypeResolver {
     return ObjectUtils.notNull(retval);
   }
 
-  protected boolean isClassNameClash(@NotNull String packageOrTypeName, @NotNull String className) {
+  protected boolean isClassNameClash(@NonNull String packageOrTypeName, @NonNull String className) {
     Set<String> classNames = packageToClassNamesMap.get(packageOrTypeName);
     if (classNames == null) {
       classNames = new HashSet<>();
@@ -152,7 +153,7 @@ class DefaultTypeResolver implements ITypeResolver {
     return classNames.contains(className);
   }
 
-  protected boolean addClassName(@NotNull String packageOrTypeName, @NotNull String className) {
+  protected boolean addClassName(@NonNull String packageOrTypeName, @NonNull String className) {
     Set<String> classNames = packageToClassNamesMap.get(packageOrTypeName);
     if (classNames == null) {
       classNames = new HashSet<>();
@@ -161,8 +162,8 @@ class DefaultTypeResolver implements ITypeResolver {
     return classNames.add(className);
   }
 
-  private String generateClassName(@NotNull String packageOrTypeName, @NotNull IModelDefinition definition) {
-    @NotNull
+  private String generateClassName(@NonNull String packageOrTypeName, @NonNull IModelDefinition definition) {
+    @NonNull
     String className = getBindingConfiguration().getClassName(definition);
 
     Set<String> classNames = packageToClassNamesMap.get(packageOrTypeName);
@@ -201,7 +202,7 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public String getPackageName(@NotNull IMetaschema metaschema) {
+  public String getPackageName(@NonNull IMetaschema metaschema) {
     return bindingConfiguration.getPackageNameForMetaschema(metaschema);
   }
 }

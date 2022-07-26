@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,11 +46,13 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public abstract class AbstractLoader<T> {
   private static final Logger LOGGER = LogManager.getLogger(ConstraintLoader.class);
 
-  @NotNull
-  private final Map<@NotNull URI, T> cache = new LinkedHashMap<>(); // NOPMD - intentional
+  @NonNull
+  private final Map<URI, T> cache = new LinkedHashMap<>(); // NOPMD - intentional
 
   /**
    * Retrieve the set of loaded resources.
@@ -59,8 +60,8 @@ public abstract class AbstractLoader<T> {
    * @return the set of loaded resources
    */
   @SuppressWarnings("null")
-  @NotNull
-  public Collection<@NotNull T> getLoadedConstraintSets() {
+  @NonNull
+  public Collection<T> getLoadedConstraintSets() {
     return CollectionUtil.unmodifiableCollection(cache.values());
   }
 
@@ -69,8 +70,8 @@ public abstract class AbstractLoader<T> {
    * 
    * @return the mapping
    */
-  @NotNull
-  protected Map<@NotNull URI, T> getCachedEntries() {
+  @NonNull
+  protected Map<URI, T> getCachedEntries() {
     return CollectionUtil.unmodifiableMap(cache);
   }
 
@@ -85,8 +86,8 @@ public abstract class AbstractLoader<T> {
    * @throws IOException
    *           if an error occurred parsing the resource
    */
-  @NotNull
-  public T load(@NotNull URI resource) throws MetaschemaException, IOException {
+  @NonNull
+  public T load(@NonNull URI resource) throws MetaschemaException, IOException {
     if (!resource.isAbsolute()) {
       throw new IllegalArgumentException(String.format("The URI '%s' must be absolute.", resource.toString()));
     }
@@ -104,8 +105,8 @@ public abstract class AbstractLoader<T> {
    * @throws IOException
    *           if an error occurred parsing the resource
    */
-  @NotNull
-  public T load(@NotNull Path path) throws MetaschemaException, IOException {
+  @NonNull
+  public T load(@NonNull Path path) throws MetaschemaException, IOException {
     return loadInternal(ObjectUtils.notNull(path.toUri()), new Stack<>());
   }
 
@@ -120,8 +121,8 @@ public abstract class AbstractLoader<T> {
    * @throws IOException
    *           if an error occurred parsing the resource
    */
-  @NotNull
-  public T load(@NotNull File file) throws MetaschemaException, IOException {
+  @NonNull
+  public T load(@NonNull File file) throws MetaschemaException, IOException {
     return loadInternal(ObjectUtils.notNull(file.toURI()), new Stack<>());
   }
 
@@ -136,8 +137,8 @@ public abstract class AbstractLoader<T> {
    * @throws IOException
    *           if an error occurred parsing the resource
    */
-  @NotNull
-  public T load(@NotNull URL url) throws MetaschemaException, IOException {
+  @NonNull
+  public T load(@NonNull URL url) throws MetaschemaException, IOException {
     try {
       URI resource = url.toURI();
       return loadInternal(ObjectUtils.notNull(resource), new Stack<>());
@@ -169,8 +170,8 @@ public abstract class AbstractLoader<T> {
    * @throws IOException
    *           if an error occurred parsing the resource
    */
-  @NotNull
-  protected T loadInternal(@NotNull URI resource, @NotNull Stack<@NotNull URI> visitedResources)
+  @NonNull
+  protected T loadInternal(@NonNull URI resource, @NonNull Stack<URI> visitedResources)
       throws MetaschemaException, MalformedURLException, IOException {
     // first check if the current resource has been visited to prevent cycles
     if (visitedResources.contains(resource)) {
@@ -197,7 +198,7 @@ public abstract class AbstractLoader<T> {
     return ObjectUtils.notNull(retval);
   }
 
-  protected abstract T parseResource(@NotNull URI resource, @NotNull Stack<@NotNull URI> visitedResources)
+  protected abstract T parseResource(@NonNull URI resource, @NonNull Stack<URI> visitedResources)
       throws IOException;
 
 }

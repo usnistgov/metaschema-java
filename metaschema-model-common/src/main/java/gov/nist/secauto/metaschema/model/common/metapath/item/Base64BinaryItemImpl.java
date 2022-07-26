@@ -29,15 +29,15 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.Base64Adapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.nio.ByteBuffer;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class Base64BinaryItemImpl
     extends AbstractAnyAtomicItem<ByteBuffer>
     implements IBase64BinaryItem {
 
-  public Base64BinaryItemImpl(@NotNull ByteBuffer value) {
+  public Base64BinaryItemImpl(@NonNull ByteBuffer value) {
     super(value);
   }
 

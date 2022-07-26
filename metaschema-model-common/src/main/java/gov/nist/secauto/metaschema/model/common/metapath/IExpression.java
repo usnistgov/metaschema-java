@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IExpression {
   /**
@@ -38,8 +38,8 @@ public interface IExpression {
    * 
    * @return a list of expressions, which may be empty
    */
-  @NotNull
-  List<@NotNull ? extends IExpression> getChildren();
+  @NonNull
+  List<? extends IExpression> getChildren();
 
   /**
    * The minimum expected result type to be produced when evaluating the expression. The result may be
@@ -47,7 +47,7 @@ public interface IExpression {
    * 
    * @return the base result type
    */
-  @NotNull
+  @NonNull
   default Class<? extends IItem> getBaseResultType() {
     return IItem.class;
   }
@@ -61,7 +61,7 @@ public interface IExpression {
    * 
    * @return the result type
    */
-  @NotNull
+  @NonNull
   default Class<? extends IItem> getStaticResultType() {
     return getBaseResultType();
   }
@@ -74,7 +74,7 @@ public interface IExpression {
    * @return a string representing the data elements of the expression
    */
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   default String toASTString() {
     return String.format("%s[]", getClass().getName());
   }
@@ -88,8 +88,8 @@ public interface IExpression {
    *          the initial focus node item
    * @return the result of evaluation
    */
-  @NotNull
-  ISequence<? extends IItem> accept(@NotNull DynamicContext dynamicContext, @NotNull INodeContext context);
+  @NonNull
+  ISequence<? extends IItem> accept(@NonNull DynamicContext dynamicContext, @NonNull INodeContext context);
 
   /**
    * Provides a double dispatch callback for visitor handling.
@@ -104,5 +104,5 @@ public interface IExpression {
    *          the visitor context
    * @return the result of evaluation
    */
-  <RESULT, CONTEXT> RESULT accept(@NotNull IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
+  <RESULT, CONTEXT> RESULT accept(@NonNull IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context);
 }

@@ -28,26 +28,26 @@ package gov.nist.secauto.metaschema.model.common.metapath.function;
 
 import gov.nist.secauto.metaschema.model.common.metapath.IExpression;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-  @NotNull
-  private final Map<@NotNull String, NamedFunctionSet> library = new HashMap<>(); // NOPMD- intentional
+public class FunctionLibrary implements IFunctionLibrary {
+
+  @NonNull
+  private final Map<String, NamedFunctionSet> library = new HashMap<>(); // NOPMD - intentional
 
   /**
    * Get the map of function name to function signatures.
    * 
    * @return the mapping
    */
-  @NotNull
-  protected Map<@NotNull String, NamedFunctionSet> getLibrary() {
+  @NonNull
+  protected Map<String, NamedFunctionSet> getLibrary() {
     return library;
   }
 
@@ -60,7 +60,7 @@ public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
    *           if the provided function has the same arity as a previously registered function with
    *           the same name
    */
-  public void registerFunction(@NotNull IFunction function) {
+  public void registerFunction(@NonNull IFunction function) {
     String name = function.getName();
 
     IFunction duplicate;
@@ -79,7 +79,7 @@ public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
   }
 
   @Override
-  public Stream<@NotNull IFunction> getFunctionsAsStream() {
+  public Stream<IFunction> getFunctionsAsStream() {
     synchronized (this) {
       return getLibrary().values().stream().flatMap(set -> {
         return set.getFunctionsAsStream();
@@ -88,12 +88,12 @@ public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
   }
 
   @Override
-  public boolean hasFunction(@NotNull String name, @NotNull List<@NotNull IExpression> args) {
+  public boolean hasFunction(@NonNull String name, @NonNull List<IExpression> args) {
     return getFunction(name, args) != null;
   }
 
   @Override
-  public IFunction getFunction(@NotNull String name, @NotNull List<@NotNull IExpression> args) {
+  public IFunction getFunction(@NonNull String name, @NonNull List<IExpression> args) {
     IFunction retval;
     synchronized (this) {
       NamedFunctionSet functions = getLibrary().get(name);
@@ -103,15 +103,15 @@ public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
   }
 
   private static class NamedFunctionSet {
-    private final Map<@NotNull Integer, IFunction> arityToFunctionMap;
+    private final Map<Integer, IFunction> arityToFunctionMap;
 
     public NamedFunctionSet() {
       this.arityToFunctionMap = new HashMap<>();
     }
 
     @SuppressWarnings("null")
-    @NotNull
-    public Stream<@NotNull IFunction> getFunctionsAsStream() {
+    @NonNull
+    public Stream<IFunction> getFunctionsAsStream() {
       return arityToFunctionMap.values().stream();
     }
 
@@ -121,7 +121,7 @@ public abstract class AbstractFunctionLibrary implements IFunctionLibrary {
     }
 
     @Nullable
-    public IFunction addFunction(@NotNull IFunction function) {
+    public IFunction addFunction(@NonNull IFunction function) {
       return arityToFunctionMap.put(function.arity(), function);
     }
   }

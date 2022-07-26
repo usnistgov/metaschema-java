@@ -29,16 +29,16 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 abstract class AbstractKeyConstraint
     extends AbstractConstraint
     implements IKeyConstraint {
-  @NotNull
-  private final List<@NotNull DefaultKeyField> keyFields;
+  @NonNull
+  private final List<DefaultKeyField> keyFields;
 
   /**
    * Create a new key-based constraint, which uses a set of key fields to build a key.
@@ -58,10 +58,10 @@ abstract class AbstractKeyConstraint
    */
   public AbstractKeyConstraint(
       @Nullable String id,
-      @NotNull ISource source,
-      @NotNull Level level,
-      @NotNull MetapathExpression target,
-      @NotNull List<@NotNull DefaultKeyField> keyFields,
+      @NonNull ISource source,
+      @NonNull Level level,
+      @NonNull MetapathExpression target,
+      @NonNull List<DefaultKeyField> keyFields,
       @Nullable MarkupMultiline remarks) {
     super(id, source, level, target, remarks);
     if (keyFields.isEmpty()) {
@@ -71,7 +71,7 @@ abstract class AbstractKeyConstraint
   }
 
   @Override
-  public List<@NotNull DefaultKeyField> getKeyFields() {
+  public List<DefaultKeyField> getKeyFields() {
     return keyFields;
   }
 }

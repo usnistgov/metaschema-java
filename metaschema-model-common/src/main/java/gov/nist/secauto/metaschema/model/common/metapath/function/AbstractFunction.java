@@ -26,19 +26,19 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.function;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public abstract class AbstractFunction implements IFunction {
-  @NotNull
+  @NonNull
   private final String name;
-  @NotNull
+  @NonNull
   private final List<IArgument> arguments;
 
   AbstractFunction(
-      @NotNull String name,
-      @NotNull List<IArgument> arguments) {
+      @NonNull String name,
+      @NonNull List<IArgument> arguments) {
     this.name = name;
     this.arguments = arguments;
   }

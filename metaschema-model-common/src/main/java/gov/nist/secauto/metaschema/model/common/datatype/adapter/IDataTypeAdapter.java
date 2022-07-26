@@ -35,12 +35,12 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IAnyAtomicItem;
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.codehaus.stax2.evt.XMLEventFactory2;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.function.Supplier;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
@@ -55,7 +55,7 @@ public interface IDataTypeAdapter<TYPE> {
    * 
    * @return the name
    */
-  @NotNull
+  @NonNull
   String getName();
 
   /**
@@ -63,7 +63,7 @@ public interface IDataTypeAdapter<TYPE> {
    * 
    * @return the Java class
    */
-  @NotNull
+  @NonNull
   Class<TYPE> getJavaClass();
 
   /**
@@ -73,8 +73,8 @@ public interface IDataTypeAdapter<TYPE> {
    *          a value of the provided type
    * @return the typed value
    */
-  @NotNull
-  TYPE toValue(@NotNull Object value);
+  @NonNull
+  TYPE toValue(@NonNull Object value);
 
   /**
    * Gets the value as a string suitable for writing as text. This is intended for data types that
@@ -88,8 +88,8 @@ public interface IDataTypeAdapter<TYPE> {
    * @throws UnsupportedOperationException
    *           if the data type cannot be represented as a string
    */
-  @NotNull
-  String asString(@NotNull Object value);
+  @NonNull
+  String asString(@NonNull Object value);
 
   /**
    * Create a copy of the provided value.
@@ -98,8 +98,8 @@ public interface IDataTypeAdapter<TYPE> {
    *          the value to copy
    * @return the copy
    */
-  @NotNull
-  TYPE copy(@NotNull Object obj);
+  @NonNull
+  TYPE copy(@NonNull Object obj);
 
   /**
    * Determines if the data type is an atomic, scalar value. Complex structures such as Markup are not
@@ -116,7 +116,7 @@ public interface IDataTypeAdapter<TYPE> {
    * 
    * @return the java associated item type
    */
-  @NotNull
+  @NonNull
   Class<? extends IAnyAtomicItem> getItemClass();
 
   /**
@@ -127,8 +127,8 @@ public interface IDataTypeAdapter<TYPE> {
    * @return a new item
    */
   // TODO: markup types are not atomic values. Figure out a better base type (i.e., IValuedItem)
-  @NotNull
-  IAnyAtomicItem newItem(@NotNull Object value);
+  @NonNull
+  IAnyAtomicItem newItem(@NonNull Object value);
 
   /**
    * Cast the provided item to an item of this type, if possible.
@@ -139,7 +139,7 @@ public interface IDataTypeAdapter<TYPE> {
    * @throws InvalidValueForCastFunctionException
    *           if the provided item type cannot be cast to this item type
    */
-  @NotNull
+  @NonNull
   IAnyAtomicItem cast(IAnyAtomicItem item) throws InvalidValueForCastFunctionException;
 
   /**
@@ -164,7 +164,7 @@ public interface IDataTypeAdapter<TYPE> {
    * @return {@code true} if the adapter will parse the element, or {@code false} otherwise
    */
   // TODO: implement this
-  boolean canHandleQName(@NotNull QName nextElementQName);
+  boolean canHandleQName(@NonNull QName nextElementQName);
 
   /**
    * Parses a provided string. Used to parse XML attributes, simple XML character data, and JSON/YAML
@@ -176,8 +176,8 @@ public interface IDataTypeAdapter<TYPE> {
    * @throws IllegalArgumentException
    *           if the data is not valid to the data type
    */
-  @NotNull
-  TYPE parse(@NotNull String value);
+  @NonNull
+  TYPE parse(@NonNull String value);
 
   /**
    * This method is expected to parse content starting at the next event. Parsing will continue until
@@ -199,8 +199,8 @@ public interface IDataTypeAdapter<TYPE> {
    * @throws IOException
    *           if a parsing error occurs
    */
-  @NotNull
-  TYPE parse(@NotNull XMLEventReader2 eventReader) throws IOException;
+  @NonNull
+  TYPE parse(@NonNull XMLEventReader2 eventReader) throws IOException;
 
   /**
    * Parses a JSON property value.
@@ -211,8 +211,8 @@ public interface IDataTypeAdapter<TYPE> {
    * @throws IOException
    *           if a parsing error occurs
    */
-  @NotNull
-  TYPE parse(@NotNull JsonParser parser) throws IOException;
+  @NonNull
+  TYPE parse(@NonNull JsonParser parser) throws IOException;
 
   /**
    * Parses a provided string using {@link #parse(String)}.
@@ -227,8 +227,8 @@ public interface IDataTypeAdapter<TYPE> {
    *           if an error occurs while parsing
    * @see #parse(String)
    */
-  @NotNull
-  default Supplier<TYPE> parseAndSupply(@NotNull String value) throws IOException {
+  @NonNull
+  default Supplier<TYPE> parseAndSupply(@NonNull String value) throws IOException {
     TYPE retval = parse(value);
     return () -> copy(retval);
   }
@@ -247,8 +247,8 @@ public interface IDataTypeAdapter<TYPE> {
    * @see #parse(String)
    * @see #parse(XMLEventReader2)
    */
-  @NotNull
-  default Supplier<TYPE> parseAndSupply(@NotNull XMLEventReader2 eventReader) throws IOException {
+  @NonNull
+  default Supplier<TYPE> parseAndSupply(@NonNull XMLEventReader2 eventReader) throws IOException {
     TYPE retval = parse(eventReader);
     return () -> copy(retval);
   }
@@ -267,8 +267,8 @@ public interface IDataTypeAdapter<TYPE> {
    * @see #parse(String)
    * @see #parse(JsonParser)
    */
-  @NotNull
-  default Supplier<TYPE> parseAndSupply(@NotNull JsonParser parser) throws IOException {
+  @NonNull
+  default Supplier<TYPE> parseAndSupply(@NonNull JsonParser parser) throws IOException {
     TYPE retval = parse(parser);
     return () -> copy(retval);
   }
@@ -293,8 +293,8 @@ public interface IDataTypeAdapter<TYPE> {
    * @throws IOException
    *           if an unexpected error occurred while writing to the output stream
    */
-  void writeXml(@NotNull Object instance, @NotNull StartElement parent, @NotNull XMLEventFactory2 eventFactory,
-      @NotNull XMLEventWriter eventWriter)
+  void writeXml(@NonNull Object instance, @NonNull StartElement parent, @NonNull XMLEventFactory2 eventFactory,
+      @NonNull XMLEventWriter eventWriter)
       throws IOException, XMLStreamException;
 
   /**
@@ -313,7 +313,7 @@ public interface IDataTypeAdapter<TYPE> {
    * @throws XMLStreamException
    *           if an unexpected error occurred while processing the XML output
    */
-  void writeXmlCharacters(@NotNull Object instance, @NotNull QName parentName, @NotNull XMLStreamWriter2 writer)
+  void writeXmlCharacters(@NonNull Object instance, @NonNull QName parentName, @NonNull XMLStreamWriter2 writer)
       throws XMLStreamException;
 
   /**
@@ -326,7 +326,7 @@ public interface IDataTypeAdapter<TYPE> {
    * @throws IOException
    *           if an unexpected error occurred while writing the JSON/YAML output
    */
-  void writeJsonValue(@NotNull Object instance, @NotNull JsonGenerator writer) throws IOException;
+  void writeJsonValue(@NonNull Object instance, @NonNull JsonGenerator writer) throws IOException;
 
   /**
    * Gets the default value to use as the JSON/YAML field name for a Metaschema field value if no JSON
@@ -334,7 +334,7 @@ public interface IDataTypeAdapter<TYPE> {
    * 
    * @return the default field name to use
    */
-  @NotNull
+  @NonNull
   String getDefaultJsonValueKey();
 
   /**

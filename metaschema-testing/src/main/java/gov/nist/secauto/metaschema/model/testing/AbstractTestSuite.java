@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.codegen.MetaschemaCompilerHelper;
 import gov.nist.secauto.metaschema.model.MetaschemaLoader;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.MetaschemaException;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationFinding;
 import gov.nist.secauto.metaschema.model.common.validation.IValidationResult;
@@ -51,7 +52,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
@@ -79,26 +79,30 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public abstract class AbstractTestSuite {
   private static final Logger LOGGER = LogManager.getLogger(AbstractTestSuite.class);
   private static final MetaschemaLoader LOADER = new MetaschemaLoader();
 
-  @NotNull
+  @NonNull
   protected abstract Format getRequiredContentFormat();
 
-  @NotNull
+  @NonNull
   protected abstract URI getTestSuiteURI();
 
-  @NotNull
+  @NonNull
   protected abstract Path getGenerationPath();
 
-  @NotNull
-  protected abstract BiFunction<@NotNull IMetaschema, @NotNull Writer, Void> getGeneratorSupplier();
+  @NonNull
+  protected abstract BiFunction<IMetaschema, Writer, Void> getGeneratorSupplier();
 
-  protected abstract Supplier<@NotNull ? extends IContentValidator> getSchemaValidatorSupplier();
+  @Nullable
+  protected abstract Supplier<? extends IContentValidator> getSchemaValidatorSupplier();
 
-  @NotNull
-  protected abstract Function<Path, @NotNull ? extends IContentValidator> getContentValidatorSupplier();
+  @NonNull
+  protected abstract Function<Path, ? extends IContentValidator> getContentValidatorSupplier();
 
   protected Stream<? extends DynamicNode> testFactory() {
     try {
@@ -109,13 +113,9 @@ public abstract class AbstractTestSuite {
   }
 
   private Stream<? extends DynamicNode> generateTests() throws XmlException, IOException {
-    URI testSuiteUri = getTestSuiteURI();
-    URL testSuiteUrl = testSuiteUri.toURL();
-
     XmlOptions options = new XmlOptions();
     options.setBaseURI(null);
     options.setLoadLineNumbers();
-    TestSuiteDocument directive = TestSuiteDocument.Factory.parse(testSuiteUrl, options);
 
     Path generationPath = getGenerationPath();
     if (Files.exists(generationPath)) {
@@ -125,12 +125,16 @@ public abstract class AbstractTestSuite {
     } else {
       Files.createDirectories(generationPath);
     }
+
+    URI testSuiteUri = getTestSuiteURI();
+    URL testSuiteUrl = testSuiteUri.toURL();
+    TestSuiteDocument directive = TestSuiteDocument.Factory.parse(testSuiteUrl, options);
     return directive.getTestSuite().getTestCollectionList().stream()
         .flatMap(collection -> Stream.of(generateCollection(collection, testSuiteUri, generationPath)));
   }
 
-  protected void deleteCollectionOnExit(@NotNull Path path) {
-    Runtime.getRuntime().addShutdownHook(new Thread(
+  protected void deleteCollectionOnExit(@NonNull Path path) {
+    Runtime.getRuntime().addShutdownHook(new Thread( // NOPMD - this is not a webapp
         new Runnable() {
           @Override
           public void run() {
@@ -159,8 +163,8 @@ public abstract class AbstractTestSuite {
         }));
   }
 
-  private DynamicContainer generateCollection(@NotNull TestCollection collection, @NotNull URI testSuiteUri,
-      @NotNull Path generationPath) {
+  private DynamicContainer generateCollection(@NonNull TestCollection collection, @NonNull URI testSuiteUri,
+      @NonNull Path generationPath) {
     URI collectionUri = testSuiteUri.resolve(collection.getLocation());
 
     LOGGER.atInfo().log("Collection: " + collectionUri);
@@ -182,14 +186,14 @@ public abstract class AbstractTestSuite {
             .sequential());
   }
 
-  protected void produceSchema(@NotNull IMetaschema metaschema, @NotNull Path schemaPath) throws IOException {
+  protected void produceSchema(@NonNull IMetaschema metaschema, @NonNull Path schemaPath) throws IOException {
     produceSchema(metaschema, schemaPath, getGeneratorSupplier());
   }
 
-  protected void produceSchema(@NotNull IMetaschema metaschema, @NotNull Path schemaPath,
-      @NotNull BiFunction<@NotNull IMetaschema, @NotNull Writer, Void> schemaProducer) throws IOException {
+  protected void produceSchema(@NonNull IMetaschema metaschema, @NonNull Path schemaPath,
+      @NonNull BiFunction<IMetaschema, Writer, Void> schemaProducer) throws IOException {
     Path parentDir = schemaPath.getParent();
-    if (!Files.exists(parentDir)) {
+    if (parentDir != null && !Files.exists(parentDir)) {
       Files.createDirectories(parentDir);
     }
 
@@ -217,8 +221,8 @@ public abstract class AbstractTestSuite {
     };
   }
 
-  protected DynamicBindingContext produceDynamicBindingContext(@NotNull IMetaschema metaschema,
-      @NotNull Path generationDirPath) throws IOException {
+  protected DynamicBindingContext produceDynamicBindingContext(@NonNull IMetaschema metaschema,
+      @NonNull Path generationDirPath) throws IOException {
     Path classDir;
     try {
       classDir = Files.createTempDirectory(generationDirPath, "classes-");
@@ -231,8 +235,8 @@ public abstract class AbstractTestSuite {
         MetaschemaCompilerHelper.getClassLoader(classDir, Thread.currentThread().getContextClassLoader()));
   }
 
-  private DynamicContainer generateScenario(@NotNull TestScenario scenario, @NotNull URI collectionUri,
-      @NotNull Path collectionGenerationPath) {
+  private DynamicContainer generateScenario(@NonNull TestScenario scenario, @NonNull URI collectionUri,
+      @NonNull Path collectionGenerationPath) {
     Path scenarioGenerationPath;
     try {
       scenarioGenerationPath = Files.createTempDirectory(collectionGenerationPath, "scenario-");
@@ -252,7 +256,7 @@ public abstract class AbstractTestSuite {
     URI metaschemaUri = collectionUri.resolve(metaschemaDirective.getLocation());
 
     ExecutorService executor = Executors.newSingleThreadExecutor(); // NOPMD - intentional use of threads
-    Future<@NotNull IMetaschema> loadMetaschemaFuture = executor.submit(() -> {
+    Future<IMetaschema> loadMetaschemaFuture = executor.submit(() -> {
       IMetaschema metaschema;
       try {
         metaschema = LOADER.load(metaschemaUri.toURL());
@@ -262,8 +266,7 @@ public abstract class AbstractTestSuite {
       return metaschema;
     });
 
-    Future<@NotNull Path> generateSchemaFuture = executor.submit(() -> {
-      IMetaschema metaschema = loadMetaschemaFuture.get();
+    Future<Path> generateSchemaFuture = executor.submit(() -> {
       Path schemaPath;
       // determine what file to use for the schema
       try {
@@ -271,22 +274,23 @@ public abstract class AbstractTestSuite {
       } catch (IOException ex) {
         throw new JUnitException("Unable to create schema temp file", ex);
       }
+      IMetaschema metaschema = loadMetaschemaFuture.get();
       produceSchema(metaschema, schemaPath);
       return schemaPath;
     });
 
-    Future<@NotNull DynamicBindingContext> dynamicBindingContextFuture = executor.submit(() -> {
+    Future<DynamicBindingContext> dynamicBindingContextFuture = executor.submit(() -> {
       IMetaschema metaschema = loadMetaschemaFuture.get();
       DynamicBindingContext context;
       try {
         context = produceDynamicBindingContext(metaschema, scenarioGenerationPath);
-      } catch (Throwable ex) {
+      } catch (Exception ex) { // NOPMD - intentional
         throw new JUnitException("Unable to generate classes for metaschema: " + metaschemaUri, ex);
       }
       return context;
     });
 
-    Future<@NotNull IContentValidator> contentValidatorFuture = executor.submit(() -> {
+    Future<IContentValidator> contentValidatorFuture = executor.submit(() -> {
       Path schemaPath = generateSchemaFuture.get();
       return getContentValidatorSupplier().apply(schemaPath);
     });
@@ -295,13 +299,14 @@ public abstract class AbstractTestSuite {
     DynamicTest validateSchema = DynamicTest.dynamicTest(
         "Validate Schema",
         () -> {
-          Supplier<@NotNull ? extends IContentValidator> supplier = getSchemaValidatorSupplier();
+          Supplier<? extends IContentValidator> supplier = getSchemaValidatorSupplier();
           if (supplier != null) {
             Path schemaPath;
             try {
               schemaPath = generateSchemaFuture.get();
             } catch (ExecutionException ex) {
-              throw new JUnitException("failed to generate schema", ex.getCause());
+              throw new JUnitException( // NOPMD - cause is relevant, exception is not
+                  "failed to generate schema", ex.getCause());
             }
             validate(supplier.get(), schemaPath);
           }
@@ -325,7 +330,7 @@ public abstract class AbstractTestSuite {
   }
 
   @SuppressWarnings("unchecked")
-  protected Path convertContent(URI contentUri, @NotNull Path generationPath, @NotNull DynamicBindingContext context)
+  protected Path convertContent(URI contentUri, @NonNull Path generationPath, @NonNull DynamicBindingContext context)
       throws IOException {
     Object object;
     try {
@@ -340,7 +345,7 @@ public abstract class AbstractTestSuite {
 
     Path convertedContetPath;
     try {
-      convertedContetPath = Files.createTempFile(generationPath, "", "-content");
+      convertedContetPath = ObjectUtils.notNull(Files.createTempFile(generationPath, "", "-content"));
     } catch (IOException ex) {
       throw new JUnitException("Unable to create schema temp file", ex);
     }
@@ -353,16 +358,16 @@ public abstract class AbstractTestSuite {
   }
 
   private DynamicTest generateValidationCase(
-      @NotNull ContentCaseType contentCase,
-      @NotNull Future<@NotNull DynamicBindingContext> contextFuture,
-      @NotNull Future<@NotNull IContentValidator> contentValidatorFuture,
-      @NotNull URI collectionUri,
-      @NotNull Path generationPath) {
-    DynamicTest retval;
+      @NonNull ContentCaseType contentCase,
+      @NonNull Future<DynamicBindingContext> contextFuture,
+      @NonNull Future<IContentValidator> contentValidatorFuture,
+      @NonNull URI collectionUri,
+      @NonNull Path generationPath) {
 
     URI contentUri = collectionUri.resolve(contentCase.getLocation());
 
     Format format = contentCase.getSourceFormat();
+    DynamicTest retval = null;
     if (getRequiredContentFormat().equals(format)) {
       retval = DynamicTest.dynamicTest(
           String.format("Validate %s=%s: %s", format, contentCase.getValidationResult(),
@@ -373,7 +378,8 @@ public abstract class AbstractTestSuite {
             try {
               contentValidator = contentValidatorFuture.get();
             } catch (ExecutionException ex) {
-              throw new JUnitException("failed to produce the content validator", ex.getCause());
+              throw new JUnitException( // NOPMD - cause is relevant, exception is not
+                  "failed to produce the content validator", ex.getCause());
             }
 
             assertEquals(contentCase.getValidationResult(), validate(contentValidator, contentUri.toURL()),
@@ -389,12 +395,13 @@ public abstract class AbstractTestSuite {
             try {
               context = contextFuture.get();
             } catch (ExecutionException ex) {
-              throw new JUnitException("failed to produce the content validator", ex.getCause());
+              throw new JUnitException( // NOPMD - cause is relevant, exception is not
+                  "failed to produce the content validator", ex.getCause());
             }
             Path convertedContetPath;
             try {
               convertedContetPath = convertContent(contentUri, generationPath, context);
-            } catch (Exception ex) {
+            } catch (Exception ex) { // NOPMD - intentional
               throw new JUnitException("failed to convert content: " + contentUri, ex);
             }
 
@@ -402,19 +409,19 @@ public abstract class AbstractTestSuite {
             try {
               contentValidator = contentValidatorFuture.get();
             } catch (ExecutionException ex) {
-              throw new JUnitException("failed to produce the content validator", ex.getCause());
+              throw new JUnitException( // NOPMD - cause is relevant, exception is not
+                  "failed to produce the content validator",
+                  ex.getCause());
             }
             assertEquals(contentCase.getValidationResult(),
                 validate(contentValidator, convertedContetPath.toUri().toURL()),
                 String.format("validation of '%s' did not match expectation", convertedContetPath));
           });
-    } else {
-      retval = null;
     }
     return retval;
   }
 
-  private static boolean validate(@NotNull IContentValidator validator, @NotNull URL target) throws IOException {
+  private static boolean validate(@NonNull IContentValidator validator, @NonNull URL target) throws IOException {
     IValidationResult schemaValidationResult;
     try {
       schemaValidationResult = validator.validate(target);
@@ -424,7 +431,7 @@ public abstract class AbstractTestSuite {
     return processValidationResult(schemaValidationResult);
   }
 
-  protected static boolean validate(@NotNull IContentValidator validator, @NotNull Path target) throws IOException {
+  protected static boolean validate(@NonNull IContentValidator validator, @NonNull Path target) throws IOException {
     IValidationResult schemaValidationResult = validator.validate(target);
     if (!schemaValidationResult.isPassing()) {
       LOGGER.atError().log("Schema validation failed for: {}", target);
@@ -439,7 +446,7 @@ public abstract class AbstractTestSuite {
     return schemaValidationResult.isPassing();
   }
 
-  private static void logFinding(@NotNull IValidationFinding finding) {
+  private static void logFinding(@NonNull IValidationFinding finding) {
     LogBuilder logBuilder;
     switch (finding.getSeverity()) {
     case CRITICAL:

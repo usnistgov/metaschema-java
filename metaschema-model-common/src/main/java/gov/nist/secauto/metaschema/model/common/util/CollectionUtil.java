@@ -26,9 +26,6 @@
 
 package gov.nist.secauto.metaschema.model.common.util;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,6 +42,9 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public final class CollectionUtil {
 
   private CollectionUtil() {
@@ -60,8 +60,8 @@ public final class CollectionUtil {
    *          the stream to iterate over
    * @return the resulting iterable instance
    */
-  @NotNull
-  public static <T> Iterable<T> toIterable(@NotNull Stream<T> stream) {
+  @NonNull
+  public static <T> Iterable<T> toIterable(@NonNull Stream<T> stream) {
     Objects.requireNonNull(stream, "stream");
     return toIterable(stream.iterator());
   }
@@ -75,7 +75,7 @@ public final class CollectionUtil {
    *          the iterator
    * @return the resulting iterable instance
    */
-  @NotNull
+  @NonNull
   public static <T> Iterable<T> toIterable(Iterator<T> iterator) {
     Objects.requireNonNull(iterator, "iterator");
     return new Iterable<T>() {
@@ -86,8 +86,17 @@ public final class CollectionUtil {
     };
   }
 
-  @NotNull
-  public static <T> Iterable<T> toDescendingIterable(@NotNull List<T> list) {
+  /**
+   * Get a reverse {@link Iterable} for the provided {@link List}.
+   * 
+   * @param <T>
+   *          the type to iterate on
+   * @param list
+   *          the list of items to iterate over
+   * @return the resulting iterable instance
+   */
+  @NonNull
+  public static <T> Iterable<T> toDescendingIterable(@NonNull List<T> list) {
     return toIterable(descendingIterator(list));
   }
 
@@ -100,7 +109,7 @@ public final class CollectionUtil {
    *          the Iterable to convert to a list
    * @return the list
    */
-  @NotNull
+  @NonNull
   public static <T> List<T> toList(Iterable<T> iterable) {
     return ObjectUtils.notNull(StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList()));
   }
@@ -114,15 +123,24 @@ public final class CollectionUtil {
    *          the Iterator to convert to a list
    * @return the list
    */
-  @NotNull
+  @NonNull
   public static <T> List<T> toList(Iterator<T> iterator) {
-    return ObjectUtils
-        .notNull(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false)
+    return ObjectUtils.notNull(
+        StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false)
             .collect(Collectors.toList()));
   }
 
-  @NotNull
-  public static <T> Iterator<T> descendingIterator(@NotNull List<T> list) {
+  /**
+   * Get a reverse {@link Iterator} for the provided {@link List}.
+   * 
+   * @param <T>
+   *          the type to iterate on
+   * @param list
+   *          the list of items to iterate over
+   * @return the resulting Iterator instance
+   */
+  @NonNull
+  public static <T> Iterator<T> descendingIterator(@NonNull List<T> list) {
     Iterator<T> retval;
     if (list instanceof LinkedList) {
       retval = ((LinkedList<T>) list).descendingIterator();
@@ -136,76 +154,86 @@ public final class CollectionUtil {
     return ObjectUtils.notNull(retval);
   }
 
-  @NotNull
-  public static <T extends Collection<A>, A> T requireNonEmpty(@NotNull T collection, @NotNull String message) {
+  @NonNull
+  public static <T extends Collection<A>, A> T requireNonEmpty(@NonNull T collection, @NonNull String message) {
     if (collection.isEmpty()) {
       throw new IllegalStateException(message);
     }
     return collection;
   }
 
+  /**
+   * A wrapper of the {@link Collections#unmodifiableCollection(Collection)} method that ensure a
+   * {@link NonNull} result is returned.
+   * 
+   * @param <T>
+   *          the collection's item type
+   * @param collection
+   *          the collection
+   * @return a non-null unmodifiable instance of the provided collection
+   */
   @SuppressWarnings("null")
-  @NotNull
-  public static <T> Collection<T> unmodifiableCollection(@NotNull Collection<T> values) {
-    return Collections.unmodifiableCollection(values);
+  @NonNull
+  public static <T> Collection<T> unmodifiableCollection(@NonNull Collection<T> collection) {
+    return Collections.unmodifiableCollection(collection);
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  public static <T> Set<@NotNull T> singleton(@NotNull T value) {
+  @NonNull
+  public static <T> Set<T> singleton(@NonNull T value) {
     return Collections.singleton(value);
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   public static <T> Set<T> emptySet() {
     return Collections.emptySet();
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  public static <T> Set<T> unmodifiableSet(@NotNull Set<T> set) {
+  @NonNull
+  public static <T> Set<T> unmodifiableSet(@NonNull Set<T> set) {
     return Collections.unmodifiableSet(set);
   }
 
-  @NotNull
+  @NonNull
   public static <T> List<T> listOrEmpty(@Nullable List<T> list) {
     return list == null ? emptyList() : list;
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   public static <T> List<T> emptyList() {
     return Collections.emptyList();
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  public static <T> List<T> unmodifiableList(@NotNull List<T> list) {
+  @NonNull
+  public static <T> List<T> unmodifiableList(@NonNull List<T> list) {
     return Collections.unmodifiableList(list);
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  public static <T> List<@NotNull T> singletonList(@NotNull T instance) {
+  @NonNull
+  public static <T> List<T> singletonList(@NonNull T instance) {
     return Collections.singletonList(instance);
   }
 
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   public static <K, V> Map<K, V> emptyMap() {
     return Collections.emptyMap();
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  public static <K, V> Map<@NotNull K, V> singletonMap(@NotNull K key, @NotNull V value) {
+  @NonNull
+  public static <K, V> Map<K, V> singletonMap(@NonNull K key, @NonNull V value) {
     return Collections.singletonMap(key, value);
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  public static <K, V> Map<K, V> unmodifiableMap(@NotNull Map<K, V> map) {
+  @NonNull
+  public static <K, V> Map<K, V> unmodifiableMap(@NonNull Map<K, V> map) {
     return Collections.unmodifiableMap(map);
   }
 }

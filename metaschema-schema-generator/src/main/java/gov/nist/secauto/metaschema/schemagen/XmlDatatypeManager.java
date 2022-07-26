@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.schemagen;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLStreamWriter2;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,28 +37,29 @@ import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLStreamException;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class XmlDatatypeManager
     extends AbstractDatatypeManager {
   public static final String NS_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
 
-  @NotNull
-  private static final List<@NotNull IDatatypeProvider> DATATYPE_PROVIDERS;
+  @NonNull
+  private static final List<IDatatypeProvider> DATATYPE_PROVIDERS;
 
   static {
     DATATYPE_PROVIDERS = ObjectUtils.notNull(List.of(
         new XmlCoreDatatypeProvider(),
         new XmlProseCompositDatatypeProvider(
-            List.of(
+            ObjectUtils.notNull(List.of(
                 new XmlMarkupMultilineDatatypeProvider(),
-                new XmlMarkupLineDatatypeProvider()))));
+                new XmlMarkupLineDatatypeProvider())))));
   }
 
-  public void generateDatatypes(@NotNull XMLStreamWriter2 writer) throws XMLStreamException {
+  public void generateDatatypes(@NonNull XMLStreamWriter2 writer) throws XMLStreamException {
     // resolve dependencies
     Set<String> used = getUsedTypes();
 
-    @SuppressWarnings("null")
-    Set<@NotNull String> requiredTypes = getDatatypeTranslationMap().values().stream()
+    Set<String> requiredTypes = getDatatypeTranslationMap().values().stream()
         .filter(type -> used.contains(type))
         .collect(Collectors.toCollection(LinkedHashSet::new));
 

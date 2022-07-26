@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.xml.sax.InputSource;
@@ -47,30 +46,32 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class JsonSchemaContentValidator implements IContentValidator {
-  @NotNull
+  @NonNull
   private final Schema schema;
 
-  public JsonSchemaContentValidator(@NotNull InputStream schemaInputStream) {
+  public JsonSchemaContentValidator(@NonNull InputStream schemaInputStream) {
     this(new JSONObject(new JSONTokener(Objects.requireNonNull(schemaInputStream, "schemaInputStream"))));
   }
 
   @SuppressWarnings("null")
-  public JsonSchemaContentValidator(@NotNull JSONObject jsonSchema) {
+  public JsonSchemaContentValidator(@NonNull JSONObject jsonSchema) {
     this(SchemaLoader.load(Objects.requireNonNull(jsonSchema, "jsonSchema")));
   }
 
-  protected JsonSchemaContentValidator(@NotNull Schema schema) {
+  protected JsonSchemaContentValidator(@NonNull Schema schema) {
     this.schema = ObjectUtils.requireNonNull(schema, "schema");
   }
 
-  @NotNull
+  @NonNull
   public Schema getSchema() {
     return schema;
   }
 
   @Override
-  public IValidationResult validate(@NotNull InputSource source) throws IOException {
+  public IValidationResult validate(@NonNull InputSource source) throws IOException {
     URI uri = ObjectUtils.notNull(URI.create(source.getSystemId()));
 
     JSONObject json;
@@ -91,8 +92,8 @@ public class JsonSchemaContentValidator implements IContentValidator {
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  public IValidationResult validate(@NotNull JSONObject json, @NotNull URI documentUri) {
+  @NonNull
+  public IValidationResult validate(@NonNull JSONObject json, @NonNull URI documentUri) {
     IValidationResult retval;
     try {
       schema.validate(json);
@@ -107,9 +108,9 @@ public class JsonSchemaContentValidator implements IContentValidator {
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  protected Stream<JsonValidationFinding> handleValidationException(@NotNull ValidationException ex,
-      @NotNull URI documentUri) {
+  @NonNull
+  protected Stream<JsonValidationFinding> handleValidationException(@NonNull ValidationException ex,
+      @NonNull URI documentUri) {
     JsonValidationFinding finding = new JsonValidationFinding(ex, documentUri);
     Stream<JsonValidationFinding> childFindings = ex.getCausingExceptions().stream()
         .flatMap(exception -> {
@@ -119,12 +120,12 @@ public class JsonSchemaContentValidator implements IContentValidator {
   }
 
   public static class JsonValidationFinding implements IValidationFinding {
-    @NotNull
+    @NonNull
     private final ValidationException exception;
-    @NotNull
+    @NonNull
     private final URI documentUri;
 
-    public JsonValidationFinding(@NotNull ValidationException exception, @NotNull URI documentUri) {
+    public JsonValidationFinding(@NonNull ValidationException exception, @NonNull URI documentUri) {
       this.exception = ObjectUtils.requireNonNull(exception, "exception");
       this.documentUri = ObjectUtils.requireNonNull(documentUri, "documentUri");
     }
@@ -145,7 +146,7 @@ public class JsonSchemaContentValidator implements IContentValidator {
       return getCause().getLocalizedMessage();
     }
 
-    @NotNull
+    @NonNull
     @Override
     public ValidationException getCause() {
       return exception;
@@ -153,11 +154,11 @@ public class JsonSchemaContentValidator implements IContentValidator {
   }
 
   private static class JsonValidationResult implements IValidationResult {
-    @NotNull
+    @NonNull
     private final List<JsonValidationFinding> findings;
 
     @SuppressWarnings("null")
-    public JsonValidationResult(@NotNull List<JsonValidationFinding> findings) {
+    public JsonValidationResult(@NonNull List<JsonValidationFinding> findings) {
       this.findings = Collections.unmodifiableList(Objects.requireNonNull(findings, "findings"));
     }
 

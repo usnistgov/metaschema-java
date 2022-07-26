@@ -29,15 +29,15 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.DateWithTZAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.ZonedDateTime;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DateWithTimeZoneItemImpl
     extends AbstractAnyAtomicItem<ZonedDateTime>
     implements IDateItem {
 
-  public DateWithTimeZoneItemImpl(@NotNull ZonedDateTime value) {
+  public DateWithTimeZoneItemImpl(@NonNull ZonedDateTime value) {
     super(value);
   }
 

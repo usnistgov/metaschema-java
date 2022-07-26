@@ -28,13 +28,13 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IAnyUriItem extends IAnyAtomicItem {
-  @NotNull
-  public static IAnyUriItem valueOf(@NotNull URI value) {
+  @NonNull
+  public static IAnyUriItem valueOf(@NonNull URI value) {
     IAnyUriItem retval;
     if (value.isAbsolute() || value.isOpaque()) {
       retval = new AnyUriItemImpl(value);
@@ -44,8 +44,8 @@ public interface IAnyUriItem extends IAnyAtomicItem {
     return retval;
   }
 
-  @NotNull
-  public static IAnyUriItem cast(@NotNull IAnyAtomicItem item) {
+  @NonNull
+  public static IAnyUriItem cast(@NonNull IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.URI.cast(item);
   }
 

@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> implements IBoundNamedInstance {
-  @NotNull
+  @NonNull
   private final CLASS_BINDING parentClassBinding;
 
   /**
@@ -38,7 +38,7 @@ abstract class AbstractProperty<CLASS_BINDING extends IClassBinding> implements 
    * @param parentClassBinding
    *          the class binding for the field's containing class
    */
-  public AbstractProperty(@NotNull CLASS_BINDING parentClassBinding) {
+  public AbstractProperty(@NonNull CLASS_BINDING parentClassBinding) {
     this.parentClassBinding = parentClassBinding;
   }
 

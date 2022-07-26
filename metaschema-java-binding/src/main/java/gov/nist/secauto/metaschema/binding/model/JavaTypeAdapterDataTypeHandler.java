@@ -35,8 +35,6 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapte
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -45,9 +43,11 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 // TODO: implement can handle QName for XML parsing
 class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
-  @NotNull
+  @NonNull
   private final AbstractFieldProperty property;
 
   public JavaTypeAdapterDataTypeHandler(AbstractFieldProperty property) {
@@ -76,7 +76,7 @@ class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
   }
 
   @Override
-  public List<@NotNull Object> get(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
+  public List<Object> get(Object parentInstance, boolean requiresJsonKey, IJsonParsingContext context)
       throws IOException {
     if (requiresJsonKey) {
       throw new IOException("A scalar datatype cannot have a JSON key.");
@@ -99,16 +99,16 @@ class JavaTypeAdapterDataTypeHandler implements IDataTypeHandler {
 
   @Override
   public void writeItems(
-      Collection<@NotNull ? extends Object> items,
+      Collection<? extends Object> items,
       boolean writeObjectWrapper,
       IJsonWritingContext context) throws IOException {
     for (Object item : items) {
-      getJavaTypeAdapter().writeJsonValue(item, context.getWriter());
+      getJavaTypeAdapter().writeJsonValue(ObjectUtils.requireNonNull(item), context.getWriter());
     }
   }
 
   @Override
-  public Object copyItem(@NotNull Object fromItem, Object parentInstance) throws BindingException {
+  public Object copyItem(@NonNull Object fromItem, Object parentInstance) throws BindingException {
     return getJavaTypeAdapter().copy(fromItem);
   }
 }

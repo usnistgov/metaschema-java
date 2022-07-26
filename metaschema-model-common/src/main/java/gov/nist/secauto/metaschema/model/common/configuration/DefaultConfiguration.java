@@ -26,10 +26,12 @@
 
 package gov.nist.secauto.metaschema.model.common.configuration;
 
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
 import java.util.EnumSet;
 import java.util.Set;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides immutable access to configuration state.
@@ -39,8 +41,8 @@ import java.util.Set;
  */
 public class DefaultConfiguration<T extends Enum<T> & IConfigurationFeature>
     implements IMutableConfiguration<T> {
-  @NotNull
-  private Set<@NotNull T> featureSet;
+  @NonNull
+  private Set<T> featureSet;
 
   /**
    * Create a new configuration based on the provided feature enumeration.
@@ -49,7 +51,7 @@ public class DefaultConfiguration<T extends Enum<T> & IConfigurationFeature>
    *          the feature enumeration class
    */
   @SuppressWarnings("null")
-  public DefaultConfiguration(@NotNull Class<T> enumClass) {
+  public DefaultConfiguration(@NonNull Class<T> enumClass) {
     this.featureSet = EnumSet.noneOf(enumClass);
 
     for (T feature : enumClass.getEnumConstants()) {
@@ -66,8 +68,9 @@ public class DefaultConfiguration<T extends Enum<T> & IConfigurationFeature>
    * @param featureSet
    *          the set of enabled features
    */
-  public DefaultConfiguration(@NotNull Set<@NotNull T> featureSet) {
-    this.featureSet = featureSet;
+  @SuppressWarnings("null")
+  public DefaultConfiguration(@NonNull Set<T> featureSet) {
+    this.featureSet = EnumSet.copyOf(featureSet);
   }
 
   /**
@@ -77,35 +80,35 @@ public class DefaultConfiguration<T extends Enum<T> & IConfigurationFeature>
    *          the original configuration
    */
   @SuppressWarnings("null")
-  public DefaultConfiguration(@NotNull DefaultConfiguration<T> original) {
+  public DefaultConfiguration(@NonNull DefaultConfiguration<T> original) {
     this.featureSet = EnumSet.copyOf(original.featureSet);
   }
 
   @Override
-  public Set<@NotNull T> getFeatureSet() {
-    return featureSet;
+  public Set<T> getFeatureSet() {
+    return CollectionUtil.unmodifiableSet(featureSet);
   }
 
   @Override
-  public boolean isFeatureEnabled(@NotNull T feature) {
+  public boolean isFeatureEnabled(@NonNull T feature) {
     return featureSet.contains(feature);
   }
 
   @Override
-  public IMutableConfiguration<T> enableFeature(@NotNull T feature) {
-    getFeatureSet().add(feature);
+  public IMutableConfiguration<T> enableFeature(@NonNull T feature) {
+    this.featureSet.add(feature);
     return this;
   }
 
   @Override
-  public IMutableConfiguration<T> disableFeature(@NotNull T feature) {
-    getFeatureSet().remove(feature);
+  public IMutableConfiguration<T> disableFeature(@NonNull T feature) {
+    this.featureSet.remove(feature);
     return this;
   }
 
   @Override
   @SuppressWarnings("null")
-  public IMutableConfiguration<T> applyConfiguration(@NotNull IConfiguration<T> original) {
+  public IMutableConfiguration<T> applyConfiguration(@NonNull IConfiguration<T> original) {
     this.featureSet = EnumSet.copyOf(original.getFeatureSet());
     return this;
   }

@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDateTimeItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DateTimeWithTZAdapter
     extends AbstractDataTypeAdapter<ZonedDateTime, IDateTimeItem> {
@@ -70,7 +70,7 @@ public class DateTimeWithTZAdapter
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull Class<IDateTimeItem> getItemClass() {
+  public @NonNull Class<IDateTimeItem> getItemClass() {
     return IDateTimeItem.class;
   }
 

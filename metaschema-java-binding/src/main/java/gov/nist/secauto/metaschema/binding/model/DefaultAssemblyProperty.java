@@ -33,26 +33,25 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.lang.reflect.Field;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DefaultAssemblyProperty
     extends AbstractAssemblyProperty
     implements IBoundJavaCollectionField {
 
-  @NotNull
+  @NonNull
   private final Field field;
-  @NotNull
+  @NonNull
   private final BoundAssembly assembly;
 
-  public static DefaultAssemblyProperty createInstance(@NotNull IAssemblyClassBinding parentClassBinding,
-      @NotNull Field field) {
+  public static DefaultAssemblyProperty createInstance(@NonNull IAssemblyClassBinding parentClassBinding,
+      @NonNull Field field) {
     return new DefaultAssemblyProperty(parentClassBinding, field);
   }
 
-  protected DefaultAssemblyProperty(@NotNull IAssemblyClassBinding parentClassBinding, @NotNull Field field) {
+  protected DefaultAssemblyProperty(@NonNull IAssemblyClassBinding parentClassBinding, @NonNull Field field) {
     super(parentClassBinding);
     this.field = ObjectUtils.requireNonNull(field, "field");
     if (field.isAnnotationPresent(BoundAssembly.class)) {

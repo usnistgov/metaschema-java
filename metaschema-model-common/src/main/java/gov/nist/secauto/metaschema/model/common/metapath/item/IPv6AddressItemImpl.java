@@ -29,15 +29,14 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IPv6AddressAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 
-import org.jetbrains.annotations.NotNull;
-
+import edu.umd.cs.findbugs.annotations.NonNull;
 import inet.ipaddr.ipv6.IPv6Address;
 
 class IPv6AddressItemImpl
     extends AbstractAnyAtomicItem<IPv6Address>
     implements IIPv6AddressItem {
 
-  public IPv6AddressItemImpl(@NotNull IPv6Address value) {
+  public IPv6AddressItemImpl(@NonNull IPv6Address value) {
     super(value);
   }
 

@@ -29,13 +29,13 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.EmailAddressAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class EmailAddressItemImpl
     extends AbstractStringItem
     implements IEmailAddressItem {
 
-  public EmailAddressItemImpl(@NotNull String value) {
+  public EmailAddressItemImpl(@NonNull String value) {
     super(value);
   }
 

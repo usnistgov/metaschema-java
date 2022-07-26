@@ -26,19 +26,23 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractDatatypeContent implements IDatatypeContent {
-  @NotNull
-  private final String typeName;
-  @NotNull
-  private final List<@NotNull String> dependencies;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-  public AbstractDatatypeContent(@NotNull String typeName, @NotNull List<@NotNull String> dependencies) {
+public abstract class AbstractDatatypeContent implements IDatatypeContent {
+  @NonNull
+  private final String typeName;
+  @NonNull
+  private final List<String> dependencies;
+
+  public AbstractDatatypeContent(@NonNull String typeName, @NonNull List<String> dependencies) {
     this.typeName = typeName;
-    this.dependencies = dependencies;
+    this.dependencies = CollectionUtil.unmodifiableList(new ArrayList<>(dependencies));
   }
 
   @Override
@@ -47,7 +51,8 @@ public abstract class AbstractDatatypeContent implements IDatatypeContent {
   }
 
   @Override
-  public @NotNull List<@NotNull String> getDependencies() {
+  @SuppressFBWarnings("EI_EXPOSE_REP")
+  public List<String> getDependencies() {
     return dependencies;
   }
 }

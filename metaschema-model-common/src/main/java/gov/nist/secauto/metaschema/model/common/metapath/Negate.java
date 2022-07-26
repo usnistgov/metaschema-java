@@ -30,14 +30,14 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.model.common.metapath.function.OperationFunctions;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class Negate
     extends AbstractUnaryExpression {
 
-  @NotNull
+  @NonNull
   private final Class<? extends INumericItem> staticResultType;
 
   /**
@@ -47,13 +47,13 @@ class Negate
    *          the expression whose item result will be complemented
    */
   @SuppressWarnings("null")
-  protected Negate(@NotNull IExpression expr) {
+  protected Negate(@NonNull IExpression expr) {
     super(expr);
     this.staticResultType = ExpressionUtils.analyzeStaticResultType(INumericItem.class, List.of(expr));
   }
 
   @Override
-  public Class<@NotNull INumericItem> getBaseResultType() {
+  public Class<INumericItem> getBaseResultType() {
     return INumericItem.class;
   }
 

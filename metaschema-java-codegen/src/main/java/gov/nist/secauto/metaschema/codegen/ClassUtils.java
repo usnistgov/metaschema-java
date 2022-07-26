@@ -27,7 +27,8 @@
 package gov.nist.secauto.metaschema.codegen;
 
 import org.glassfish.jaxb.core.api.impl.NameConverter;
-import org.jetbrains.annotations.NotNull;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A variety of utility methods for normalizing Java class related names.
@@ -45,8 +46,8 @@ public final class ClassUtils {
    * @return a Java property name
    */
   @SuppressWarnings("null")
-  @NotNull
-  public static String toPropertyName(@NotNull String name) {
+  @NonNull
+  public static String toPropertyName(@NonNull String name) {
     return NameConverter.standard.toPropertyName(name);
   }
 
@@ -58,8 +59,8 @@ public final class ClassUtils {
    * @return a Java variable name
    */
   @SuppressWarnings("null")
-  @NotNull
-  public static String toVariableName(@NotNull String name) {
+  @NonNull
+  public static String toVariableName(@NonNull String name) {
     return NameConverter.standard.toVariableName(name);
   }
 
@@ -71,8 +72,8 @@ public final class ClassUtils {
    * @return a Java variable name
    */
   @SuppressWarnings("null")
-  @NotNull
-  public static String toClassName(@NotNull String name) {
+  @NonNull
+  public static String toClassName(@NonNull String name) {
     return NameConverter.standard.toClassName(name);
   }
 
@@ -84,8 +85,8 @@ public final class ClassUtils {
    * @return a Java variable name
    */
   @SuppressWarnings("null")
-  @NotNull
-  public static String toPackageName(@NotNull String name) {
+  @NonNull
+  public static String toPackageName(@NonNull String name) {
     return NameConverter.standard.toPackageName(name);
   }
 

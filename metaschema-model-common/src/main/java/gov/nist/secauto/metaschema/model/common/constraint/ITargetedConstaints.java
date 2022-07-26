@@ -31,15 +31,15 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFlagDefinition;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface ITargetedConstaints extends IValueConstraintSupport {
-  @NotNull
+  @NonNull
   MetapathExpression getTargetExpression();
 
-  void target(@NotNull IFlagDefinition definition);
+  void target(@NonNull IFlagDefinition definition);
 
-  void target(@NotNull IFieldDefinition definition);
+  void target(@NonNull IFieldDefinition definition);
 
-  void target(@NotNull IAssemblyDefinition definition);
+  void target(@NonNull IAssemblyDefinition definition);
 }

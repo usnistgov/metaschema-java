@@ -32,11 +32,12 @@ import gov.nist.secauto.metaschema.binding.model.annotations.Metaschema;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.net.URI;
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 @Metaschema(
     assemblies = {
@@ -52,8 +53,8 @@ import java.util.List;
 public class TestMetaschema
     extends AbstractBoundMetaschema {
 
-  public TestMetaschema(@NotNull List<@NotNull ? extends IMetaschema> importedMetaschema,
-      @NotNull IBindingContext bindingContext) {
+  public TestMetaschema(@NonNull List<? extends IMetaschema> importedMetaschema,
+      @NonNull IBindingContext bindingContext) {
     super(importedMetaschema, bindingContext);
   }
 
@@ -73,18 +74,18 @@ public class TestMetaschema
   }
 
   @Override
-  public @NotNull String getShortName() {
+  public String getShortName() {
     return "test-metaschema";
   }
 
   @Override
-  public @NotNull URI getXmlNamespace() {
-    return URI.create("https://csrc.nist.gov/ns/test/xml");
+  public URI getXmlNamespace() {
+    return ObjectUtils.notNull(URI.create("https://csrc.nist.gov/ns/test/xml"));
   }
 
   @Override
-  public @NotNull URI getJsonBaseUri() {
-    return URI.create("https://csrc.nist.gov/ns/test/json");
+  public URI getJsonBaseUri() {
+    return ObjectUtils.notNull(URI.create("https://csrc.nist.gov/ns/test/json"));
   }
 
 }

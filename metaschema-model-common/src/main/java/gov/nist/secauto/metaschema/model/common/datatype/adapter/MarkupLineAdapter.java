@@ -39,10 +39,10 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IMarkupItem;
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.codehaus.stax2.evt.XMLEventFactory2;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
@@ -126,7 +126,7 @@ public class MarkupLineAdapter
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull Class<IMarkupItem> getItemClass() {
+  public @NonNull Class<IMarkupItem> getItemClass() {
     return IMarkupItem.class;
   }
 

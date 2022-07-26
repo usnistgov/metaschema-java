@@ -28,24 +28,24 @@ package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.IDefinition;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IInlineStrategy {
-  @NotNull
-  public static final IInlineStrategy NONE_INLINE = new IInlineStrategy() {
+  @NonNull
+  IInlineStrategy NONE_INLINE = new IInlineStrategy() {
     @Override
-    public boolean isInline(@NotNull IDefinition definition) {
+    public boolean isInline(@NonNull IDefinition definition) {
       return false;
     }
   };
 
-  @NotNull
-  public static final IInlineStrategy DEFINED_AS_INLINE = new IInlineStrategy() {
+  @NonNull
+  IInlineStrategy DEFINED_AS_INLINE = new IInlineStrategy() {
     @Override
-    public boolean isInline(@NotNull IDefinition definition) {
+    public boolean isInline(@NonNull IDefinition definition) {
       return definition.isInline();
     }
   };
 
-  boolean isInline(@NotNull IDefinition definition);
+  boolean isInline(@NonNull IDefinition definition);
 }

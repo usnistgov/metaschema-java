@@ -29,13 +29,13 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.HostnameAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class HostnameItemImpl
     extends AbstractStringItem
     implements IHostnameItem {
 
-  public HostnameItemImpl(@NotNull String value) {
+  public HostnameItemImpl(@NonNull String value) {
     super(value);
   }
 

@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.ISequence;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.StaticContext;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jmock.Mockery;
 import org.jmock.auto.Mock;
@@ -43,8 +44,11 @@ import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 class MetapathExpressionTest {
   @RegisterExtension
+  @SuppressFBWarnings("URF_UNREAD_FIELD")
   Mockery context = new JUnit5Mockery();
 
   @Mock
@@ -53,8 +57,8 @@ class MetapathExpressionTest {
   @Test
   void test() {
     MetapathExpression path = MetapathExpression.compile("2 eq 1 + 1");
-    DynamicContext context = new StaticContext().newDynamicContext();
-    ISequence<?> result = path.evaluate(nodeContext, context);
+    DynamicContext dynamicContext = new StaticContext().newDynamicContext();
+    ISequence<?> result = path.evaluate(ObjectUtils.notNull(nodeContext), dynamicContext);
     assertNotNull(result, "null result");
     assertTrue(!result.isEmpty(), "result was empty");
     assertEquals(1, result.size(), "unexpected size");

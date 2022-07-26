@@ -36,10 +36,10 @@ import gov.nist.secauto.metaschema.model.common.util.XmlEventUtil;
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamWriter2;
 import org.codehaus.stax2.evt.XMLEventFactory2;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
@@ -60,7 +60,7 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
     implements IDataTypeAdapter<TYPE> {
   public static final String DEFAULT_JSON_FIELD_NAME = "STRVALUE";
 
-  @NotNull
+  @NonNull
   private final Class<TYPE> clazz;
 
   /**
@@ -69,7 +69,7 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
    * @param clazz
    *          the Java type this adapter supports
    */
-  protected AbstractDataTypeAdapter(@NotNull Class<TYPE> clazz) {
+  protected AbstractDataTypeAdapter(@NonNull Class<TYPE> clazz) {
     this.clazz = clazz;
   }
 
@@ -128,7 +128,7 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
 
       // trim leading and trailing whitespace
       @SuppressWarnings("null")
-      @NotNull
+      @NonNull
       String value = builder.toString().trim();
       return parse(value);
     } catch (XMLStreamException ex) {
@@ -215,8 +215,8 @@ public abstract class AbstractDataTypeAdapter<TYPE, ITEM_TYPE extends IAnyAtomic
    *           if the casting of the item is not possible because the item represents an invalid value
    *           for this adapter's item type
    */
-  @NotNull
-  protected ITEM_TYPE castInternal(@NotNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
+  @NonNull
+  protected ITEM_TYPE castInternal(@NonNull IAnyAtomicItem item) throws InvalidValueForCastFunctionException {
     // try string based casting as a fallback
     String itemString = item.asString();
     try {

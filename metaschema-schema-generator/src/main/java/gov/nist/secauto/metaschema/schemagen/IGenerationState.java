@@ -28,14 +28,14 @@ package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.IDefinition;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IGenerationState<WRITER, DATATYPE_MANAGER extends IDatatypeManager> {
-  @NotNull
+  @NonNull
   WRITER getWriter();
 
-  boolean isInline(@NotNull IDefinition definition);
+  boolean isInline(@NonNull IDefinition definition);
 
-  @NotNull
+  @NonNull
   DATATYPE_MANAGER getDatatypeManager();
 }

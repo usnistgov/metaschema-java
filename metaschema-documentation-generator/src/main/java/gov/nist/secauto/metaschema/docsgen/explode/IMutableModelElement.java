@@ -1,11 +1,11 @@
 package gov.nist.secauto.metaschema.docsgen.explode;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 interface IMutableModelElement extends IModelElement {
 
-  void addFlag(@NotNull IModelElement flag);
+  void addFlag(@NonNull IModelElement flag);
 
-  void addModelItem(@NotNull IModelElement modelItem);
+  void addModelItem(@NonNull IModelElement modelItem);
 
 }

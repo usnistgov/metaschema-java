@@ -32,9 +32,9 @@ import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.model.common.IMetaschema;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Map;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 interface IMetaschemaLoaderStrategy {
   /**
@@ -46,8 +46,8 @@ interface IMetaschemaLoaderStrategy {
    * @throws IllegalStateException
    *           if an error occured while processing the associated Metaschema information
    */
-  @NotNull
-  IMetaschema getMetaschemaInstanceByClass(@NotNull Class<? extends AbstractBoundMetaschema> clazz);
+  @NonNull
+  IMetaschema getMetaschemaInstanceByClass(@NonNull Class<? extends AbstractBoundMetaschema> clazz);
 
   /**
    * Get the {@link IClassBinding} instance for a {@link MetaschemaAssembly} or
@@ -59,9 +59,9 @@ interface IMetaschemaLoaderStrategy {
    * @throws IllegalArgumentException
    *           if the provided class is not bound to a Metaschema assembly or field
    */
-  @NotNull
-  IClassBinding getClassBinding(@NotNull Class<?> clazz);
+  @NonNull
+  IClassBinding getClassBinding(@NonNull Class<?> clazz);
 
-  @NotNull
-  Map<@NotNull Class<?>, IClassBinding> getClassBindingsByClass();
+  @NonNull
+  Map<Class<?>, IClassBinding> getClassBindingsByClass();
 }

@@ -137,6 +137,7 @@
 		<dependency.log4j2.version>2.18.0</dependency.log4j2.version>
 		<dependency.moxy.version>3.0.2</dependency.moxy.version>
 		<dependency.saxon.version>11.3</dependency.saxon.version>
+		<dependency.spotbugs-annotations.version>4.2.0</dependency.spotbugs-annotations.version>
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
 		<dependency.thymeleaf.version>3.0.15.RELEASE</dependency.thymeleaf.version>
 		<dependency.woodstox.version>6.3.0</dependency.woodstox.version>
@@ -149,6 +150,7 @@
 		<maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
 		<maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
 		<checkstyle.maven-checkstyle-plugin.version>10.3.1</checkstyle.maven-checkstyle-plugin.version>
+		<spotbugs-maven-plugin.version>4.7.1.1</spotbugs-maven-plugin.version>
 	</properties>
 
 	<repositories>
@@ -429,10 +431,11 @@
 			</dependency>
 
 			<dependency>
-				<groupId>org.jetbrains</groupId>
-				<artifactId>annotations</artifactId>
-				<version>${dependency.jetbrains-annotation.version}</version>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-annotations</artifactId>
+				<version>${dependency.spotbugs-annotations.version}</version>
 				<scope>provided</scope>
+				<optional>true</optional>
 			</dependency>
 			<!-- <dependency> <groupId>org.eclipse.jdt</groupId> <artifactId>org.eclipse.jdt.annotation</artifactId> 
 				<version>>${dependency.eclipse-jdt-annotation.version}</version> <scope>provided</scope> 
@@ -466,13 +469,19 @@
 				<artifactId>jmock-junit5</artifactId>
 				<version>${dependency.jmock-junit5.version}</version>
 				<scope>test</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>com.google.code.findbugs</groupId>
+						<artifactId>annotations</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
 		<dependency>
-			<groupId>org.jetbrains</groupId>
-			<artifactId>annotations</artifactId>
+			<groupId>com.github.spotbugs</groupId>
+			<artifactId>spotbugs-annotations</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -497,9 +506,9 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>${maven-compiler-plugin.version}</version>
-					<configuration>
-						<forceJavacCompilerUse>true</forceJavacCompilerUse>
-					</configuration>
+<!-- 					<configuration> -->
+<!-- 						<forceJavacCompilerUse>true</forceJavacCompilerUse> -->
+<!-- 					</configuration> -->
 				</plugin>
 				<plugin>
 					<groupId>org.apache.xmlbeans</groupId>
@@ -716,6 +725,23 @@
 							</dependency>
 						</dependencies>
 					</plugin>
+					<plugin>
+						<groupId>com.github.spotbugs</groupId>
+						<artifactId>spotbugs-maven-plugin</artifactId>
+						<version>${spotbugs-maven-plugin.version}</version>
+						<configuration>
+							<effort>Max</effort>
+							<threshold>Normal</threshold>
+							<xmlOutput>true</xmlOutput>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -765,6 +791,11 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-pmd-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>com.github.spotbugs</groupId>
+						<artifactId>spotbugs-maven-plugin</artifactId>
+						<version>${spotbugs-maven-plugin.version}</version>
 					</plugin>
 				</plugins>
 			</reporting>

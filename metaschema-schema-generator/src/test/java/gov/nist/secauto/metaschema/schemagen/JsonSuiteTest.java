@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.model.common.MetaschemaException;
 import gov.nist.secauto.metaschema.model.common.validation.IContentValidator;
 import gov.nist.secauto.metaschema.model.common.validation.JsonSchemaContentValidator;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicNode;
@@ -49,11 +48,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public class JsonSuiteTest
+class JsonSuiteTest
     extends AbstractSchemaGeneratorTestSuite {
 
   @Override
-  protected Supplier<@NotNull IContentValidator> getSchemaValidatorSupplier() {
+  protected Supplier<IContentValidator> getSchemaValidatorSupplier() {
     return () -> JSON_SCHEMA_VALIDATOR;
   }
 
@@ -63,25 +62,25 @@ public class JsonSuiteTest
   }
 
   @Override
-  protected Function<@NotNull Path, @NotNull JsonSchemaContentValidator> getContentValidatorSupplier() {
+  protected Function<Path, JsonSchemaContentValidator> getContentValidatorSupplier() {
     return JSON_CONTENT_VALIDATOR_PROVIDER;
   }
 
   @Override
-  protected BiFunction<@NotNull IMetaschema, @NotNull Writer, Void> getGeneratorSupplier() {
+  protected BiFunction<IMetaschema, Writer, Void> getGeneratorSupplier() {
     return JSON_SCHEMA_PROVIDER;
   }
 
   @Execution(ExecutionMode.SAME_THREAD)
   @DisplayName("JSON Schema Generation")
   @TestFactory
-  public Stream<? extends DynamicNode> generateTests() {
+  Stream<? extends DynamicNode> generateTests() {
     return testFactory();
   }
 
   @Disabled
   @Test
-  void testDatatypeUuid() throws IOException, MetaschemaException {
+  void testDatatypeUuid() throws IOException, MetaschemaException { // NOPMD - testing delegated to doTest
     doTest(
         "datatypes/",
         "datatypes-uuid_metaschema.xml",
@@ -91,7 +90,7 @@ public class JsonSuiteTest
 
   @Disabled
   @Test
-  void testChoice() throws IOException, MetaschemaException {
+  void testChoice() throws IOException, MetaschemaException { // NOPMD - testing delegated to doTest
     doTest(
         "choice/",
         "choice-multiple_metaschema.xml",
@@ -100,7 +99,7 @@ public class JsonSuiteTest
   }
 
   @Test
-  void testDatatypeCharStrings() throws IOException, MetaschemaException {
+  void testDatatypeCharStrings() throws IOException, MetaschemaException { // NOPMD - testing delegated to doTest
     doTest(
         "datatypes/",
         "charstrings_metaschema.xml",

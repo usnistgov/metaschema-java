@@ -71,9 +71,10 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractAstVisitor<R> // NOPMD
     extends metapath10BaseVisitor<R> {
@@ -90,7 +91,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the node handler
    * @return the result
    */
-  protected <T extends RuleContext> R handle(T ctx, @NotNull Function<T, R> handler) {
+  protected <T extends RuleContext> R handle(T ctx, @NonNull Function<T, R> handler) {
     T context = ObjectUtils.requireNonNull(ctx);
 
     R retval;
@@ -139,7 +140,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleExpr(@NotNull ExprContext ctx);
+  protected abstract R handleExpr(@NonNull ExprContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -159,7 +160,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleOrexpr(@NotNull OrexprContext ctx);
+  protected abstract R handleOrexpr(@NonNull OrexprContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -174,7 +175,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleAndexpr(@NotNull AndexprContext ctx);
+  protected abstract R handleAndexpr(@NonNull AndexprContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -189,7 +190,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleComparisonexpr(@NotNull ComparisonexprContext ctx);
+  protected abstract R handleComparisonexpr(@NonNull ComparisonexprContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -204,7 +205,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleStringconcatexpr(@NotNull StringconcatexprContext ctx);
+  protected abstract R handleStringconcatexpr(@NonNull StringconcatexprContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -219,7 +220,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleAdditiveexpr(@NotNull AdditiveexprContext ctx);
+  protected abstract R handleAdditiveexpr(@NonNull AdditiveexprContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -234,7 +235,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleMultiplicativeexpr(@NotNull MultiplicativeexprContext ctx);
+  protected abstract R handleMultiplicativeexpr(@NonNull MultiplicativeexprContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -249,7 +250,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleUnionexpr(@NotNull UnionexprContext ctx);
+  protected abstract R handleUnionexpr(@NonNull UnionexprContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -264,7 +265,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleIntersectexceptexpr(@NotNull IntersectexceptexprContext ctx);
+  protected abstract R handleIntersectexceptexpr(@NonNull IntersectexceptexprContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -279,7 +280,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleArrowexpr(@NotNull ArrowexprContext ctx);
+  protected abstract R handleArrowexpr(@NonNull ArrowexprContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -294,7 +295,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleUnaryexpr(@NotNull UnaryexprContext ctx);
+  protected abstract R handleUnaryexpr(@NonNull UnaryexprContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -326,7 +327,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handlePathexpr(@NotNull PathexprContext ctx);
+  protected abstract R handlePathexpr(@NonNull PathexprContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -341,7 +342,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleRelativepathexpr(@NotNull RelativepathexprContext ctx);
+  protected abstract R handleRelativepathexpr(@NonNull RelativepathexprContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -361,7 +362,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleAxisstep(@NotNull AxisstepContext ctx);
+  protected abstract R handleAxisstep(@NonNull AxisstepContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -376,7 +377,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleForwardstep(@NotNull ForwardstepContext ctx);
+  protected abstract R handleForwardstep(@NonNull ForwardstepContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -397,7 +398,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleAbbrevforwardstep(@NotNull AbbrevforwardstepContext ctx);
+  protected abstract R handleAbbrevforwardstep(@NonNull AbbrevforwardstepContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -412,7 +413,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleReversestep(@NotNull ReversestepContext ctx);
+  protected abstract R handleReversestep(@NonNull ReversestepContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -433,7 +434,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleAbbrevreversestep(@NotNull AbbrevreversestepContext ctx);
+  protected abstract R handleAbbrevreversestep(@NonNull AbbrevreversestepContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -453,7 +454,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleWildcard(@NotNull WildcardContext ctx);
+  protected abstract R handleWildcard(@NonNull WildcardContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -468,7 +469,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handlePostfixexpr(@NotNull PostfixexprContext ctx);
+  protected abstract R handlePostfixexpr(@NonNull PostfixexprContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -506,7 +507,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleStringLiteral(@NotNull LiteralContext ctx);
+  protected abstract R handleStringLiteral(@NonNull LiteralContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -521,7 +522,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleNumericLiteral(@NotNull NumericliteralContext ctx);
+  protected abstract R handleNumericLiteral(@NonNull NumericliteralContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -541,7 +542,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleContextitemexpr(@NotNull ContextitemexprContext ctx);
+  protected abstract R handleContextitemexpr(@NonNull ContextitemexprContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -556,7 +557,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleFunctioncall(@NotNull FunctioncallContext ctx);
+  protected abstract R handleFunctioncall(@NonNull FunctioncallContext ctx);
 
   @SuppressWarnings("null")
   @Override
@@ -576,7 +577,7 @@ abstract class AbstractAstVisitor<R> // NOPMD
    *          the provided expression context
    * @return the result
    */
-  protected abstract R handleEqname(@NotNull EqnameContext ctx);
+  protected abstract R handleEqname(@NonNull EqnameContext ctx);
 
   @SuppressWarnings("null")
   @Override

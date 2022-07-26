@@ -36,16 +36,16 @@ import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 import gov.nist.secauto.metaschema.model.xmlbeans.FlagReferenceType;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class XmlFlagInstance
     extends AbstractFlagInstance {
-  @NotNull
+  @NonNull
   private final FlagReferenceType xmlFlag;
 
   /**
@@ -57,7 +57,7 @@ class XmlFlagInstance
    * @param parent
    *          the field definition this object is an instance of
    */
-  public XmlFlagInstance(@NotNull FlagReferenceType xmlFlag, @NotNull IModelDefinition parent) {
+  public XmlFlagInstance(@NonNull FlagReferenceType xmlFlag, @NonNull IModelDefinition parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
   }
@@ -89,9 +89,8 @@ class XmlFlagInstance
     return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription()) : null;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+  public Map<QName, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlFlag().getPropList()));
   }
 
@@ -111,15 +110,6 @@ class XmlFlagInstance
   public MarkupMultiline getRemarks() {
     return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
   }
-  /*
-   * TODO: implement
-   * 
-   * 
-   * 
-   * @Override public String getAllowedValues() { String retval = null; if (xmlFlag.isSetRemarks()) {
-   * retval = xmlFlag.getAllowedValues(); } else if (isReference()) { // TODO: ??? retval =
-   * getFlagDefinition().getAllowedValues(); } return retval; }
-   */
 
   @Override
   public boolean isRequired() {
@@ -132,7 +122,7 @@ class XmlFlagInstance
   }
 
   @Override
-  public Object getValue(@NotNull Object parentValue) {
+  public Object getValue(@NonNull Object parentValue) {
     // there is no value
     return null;
   }

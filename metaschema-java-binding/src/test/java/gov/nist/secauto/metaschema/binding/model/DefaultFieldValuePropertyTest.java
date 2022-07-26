@@ -45,9 +45,9 @@ import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataT
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.codehaus.stax2.XMLEventReader2;
-import org.jetbrains.annotations.NotNull;
 import org.jmock.Expectations;
 import org.jmock.junit5.JUnit5Mockery;
 import org.junit.jupiter.api.Test;
@@ -59,7 +59,9 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
@@ -121,7 +123,8 @@ class DefaultFieldValuePropertyTest {
   void testXmlRead()
       throws JsonParseException, IOException, NoSuchFieldException, XMLStreamException {
     String xml = "<field xmlns='http://example.com/ns'>theValue</field>";
-    XMLInputFactory factory = WstxInputFactory.newInstance();
+    XMLInputFactory factory = XMLInputFactory.newInstance();
+    assert factory instanceof WstxInputFactory;
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
     Class<?> theClass = SimpleField.class;
 
@@ -144,15 +147,17 @@ class DefaultFieldValuePropertyTest {
 
     DefaultFieldValueProperty idProperty = new DefaultFieldValueProperty(classBinding, field);
 
-    assertEquals(XMLEvent.START_DOCUMENT, eventReader.nextEvent().getEventType());
+    assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
     XMLEvent event = eventReader.nextEvent();
-    assertEquals(XMLEvent.START_ELEMENT, event.getEventType());
+    assertEquals(XMLStreamConstants.START_ELEMENT, event.getEventType());
     StartElement start = event.asStartElement();
     // assertEquals("test", jsonParser.nextFieldName());
     // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
     // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
 
     SimpleField obj = new SimpleField();
+    assert start != null;
+    assert xmlParsingContext != null;
     idProperty.read(obj, start, xmlParsingContext);
 
     assertEquals("theValue", obj.getValue());
@@ -162,8 +167,8 @@ class DefaultFieldValuePropertyTest {
   public static class TestMetaschema
       extends AbstractBoundMetaschema {
 
-    public TestMetaschema(@NotNull List<@NotNull ? extends IMetaschema> importedMetaschema,
-        @NotNull IBindingContext bindingContext) {
+    public TestMetaschema(@NonNull List<? extends IMetaschema> importedMetaschema,
+        @NonNull IBindingContext bindingContext) {
       super(importedMetaschema, bindingContext);
     }
 
@@ -183,18 +188,18 @@ class DefaultFieldValuePropertyTest {
     }
 
     @Override
-    public @NotNull String getShortName() {
+    public String getShortName() {
       return "test-metaschema";
     }
 
     @Override
-    public @NotNull URI getXmlNamespace() {
-      return URI.create("https://csrc.nist.gov/ns/test/xml");
+    public URI getXmlNamespace() {
+      return ObjectUtils.notNull(URI.create("https://csrc.nist.gov/ns/test/xml"));
     }
 
     @Override
-    public @NotNull URI getJsonBaseUri() {
-      return URI.create("https://csrc.nist.gov/ns/test/json");
+    public URI getJsonBaseUri() {
+      return ObjectUtils.notNull(URI.create("https://csrc.nist.gov/ns/test/json"));
     }
 
   }
@@ -219,8 +224,7 @@ class DefaultFieldValuePropertyTest {
   }
 
   @Test
-  void testJsonDefaultNameRead()
-      throws JsonParseException, IOException, NoSuchFieldException, SecurityException {
+  void testJsonDefaultNameRead() throws JsonParseException, IOException, NoSuchFieldException {
     String json = "{ \"STRVALUE\": \"theValue\" }";
     JsonFactory factory = new JsonFactory();
     JsonParser jsonParser = factory.createParser(json);
@@ -266,7 +270,8 @@ class DefaultFieldValuePropertyTest {
   void testXmlDefaultNameRead()
       throws JsonParseException, IOException, NoSuchFieldException, XMLStreamException {
     String xml = "<field xmlns='http://example.com/ns'>theValue</field>";
-    XMLInputFactory factory = WstxInputFactory.newInstance();
+    XMLInputFactory factory = XMLInputFactory.newInstance();
+    assert factory instanceof WstxInputFactory;
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
     Class<?> theClass = SimpleField2.class;
 
@@ -289,15 +294,17 @@ class DefaultFieldValuePropertyTest {
 
     DefaultFieldValueProperty idProperty = new DefaultFieldValueProperty(classBinding, field);
 
-    assertEquals(XMLEvent.START_DOCUMENT, eventReader.nextEvent().getEventType());
+    assertEquals(XMLStreamConstants.START_DOCUMENT, eventReader.nextEvent().getEventType());
     XMLEvent event = eventReader.nextEvent();
-    assertEquals(XMLEvent.START_ELEMENT, event.getEventType());
+    assertEquals(XMLStreamConstants.START_ELEMENT, event.getEventType());
     StartElement start = event.asStartElement();
     // assertEquals("test", jsonParser.nextFieldName());
     // assertEquals(JsonToken.START_OBJECT, jsonParser.nextToken());
     // assertEquals(JsonToken.FIELD_NAME, jsonParser.nextToken());
 
     SimpleField2 obj = new SimpleField2();
+    assert start != null;
+    assert xmlParsingContext != null;
     idProperty.read(obj, start, xmlParsingContext);
 
     assertEquals("theValue", obj.getValue());

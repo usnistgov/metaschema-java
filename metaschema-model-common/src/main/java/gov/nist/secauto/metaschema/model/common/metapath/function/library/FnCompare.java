@@ -34,14 +34,15 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IIntegerItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class FnCompare {
 
-  @NotNull
+  @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("compare")
       .deterministic()
@@ -63,17 +64,17 @@ public class FnCompare {
       .build();
 
   @SuppressWarnings("unused")
-  @NotNull
+  @NonNull
   private static ISequence<IIntegerItem> execute(
-      @NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> arguments,
-      @NotNull DynamicContext dynamicContext,
+      @NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
       INodeItem focus) {
     IStringItem comparand1 = FunctionUtils.getFirstItem(
-        FunctionUtils.asType(arguments.get(0)), true);
+        FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0))), true);
 
     IStringItem comparand2 = FunctionUtils.getFirstItem(
-        FunctionUtils.asType(arguments.get(1)), true);
+        FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1))), true);
 
     ISequence<IIntegerItem> retval;
     if (comparand1 == null || comparand2 == null) {

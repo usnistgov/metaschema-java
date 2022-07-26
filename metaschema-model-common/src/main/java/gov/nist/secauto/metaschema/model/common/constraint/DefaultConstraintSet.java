@@ -30,8 +30,6 @@ import gov.nist.secauto.metaschema.model.common.IMetaschema;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
@@ -42,19 +40,31 @@ import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 
-public class DefaultConstraintSet implements IConstraintSet {
-  @NotNull
-  private final URI resourceLocation;
-  @NotNull
-  private final Set<@NotNull IConstraintSet> importedConstraintSets;
-  @NotNull
-  private final Map<@NotNull QName, List<@NotNull IScopedContraints>> scopedContraints;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
+public class DefaultConstraintSet implements IConstraintSet {
+  @NonNull
+  private final URI resourceLocation;
+  @NonNull
+  private final Set<IConstraintSet> importedConstraintSets;
+  @NonNull
+  private final Map<QName, List<IScopedContraints>> scopedContraints;
+
+  /**
+   * Construct a new constraint set.
+   * 
+   * @param resourceLocation
+   *          the resource the constraint was provided from
+   * @param scopedContraints
+   *          a set of constraints qualified by a scope path
+   * @param importedConstraintSets
+   *          constraint sets imported by this constraint set
+   */
   @SuppressWarnings("null")
   public DefaultConstraintSet(
-      @NotNull URI resourceLocation,
-      @NotNull List<@NotNull IScopedContraints> scopedContraints,
-      @NotNull Set<@NotNull IConstraintSet> importedConstraintSets) {
+      @NonNull URI resourceLocation,
+      @NonNull List<IScopedContraints> scopedContraints,
+      @NonNull Set<IConstraintSet> importedConstraintSets) {
     this.resourceLocation = resourceLocation;
     this.scopedContraints = scopedContraints.stream()
         .collect(
@@ -66,27 +76,32 @@ public class DefaultConstraintSet implements IConstraintSet {
     this.importedConstraintSets = CollectionUtil.unmodifiableSet(importedConstraintSets);
   }
 
-  @NotNull
+  /**
+   * Get the resource the constraint was provided from.
+   * 
+   * @return the resource
+   */
+  @NonNull
   protected URI getResourceLocation() {
     return resourceLocation;
   }
 
   @Override
-  public Map<@NotNull QName, List<@NotNull IScopedContraints>> getScopedContraints() {
+  public Map<QName, List<IScopedContraints>> getScopedContraints() {
     return scopedContraints;
   }
 
   @Override
-  public Set<@NotNull IConstraintSet> getImportedConstraintSets() {
+  public Set<IConstraintSet> getImportedConstraintSets() {
     return importedConstraintSets;
   }
 
   @Override
-  public Stream<@NotNull ITargetedConstaints> getTargetedConstraintsForMetaschema(@NotNull IMetaschema metaschema) {
+  public Stream<ITargetedConstaints> getTargetedConstraintsForMetaschema(@NonNull IMetaschema metaschema) {
     QName metaschemaQName = metaschema.getQName();
 
-    Map<@NotNull QName, List<@NotNull IScopedContraints>> map = getScopedContraints();
-    List<@NotNull IScopedContraints> scopes = map.getOrDefault(metaschemaQName, CollectionUtil.emptyList());
+    Map<QName, List<IScopedContraints>> map = getScopedContraints();
+    List<IScopedContraints> scopes = map.getOrDefault(metaschemaQName, CollectionUtil.emptyList());
     return ObjectUtils.notNull(scopes.stream()
         .flatMap(scoped -> scoped.getTargetedContraints().stream()));
   }

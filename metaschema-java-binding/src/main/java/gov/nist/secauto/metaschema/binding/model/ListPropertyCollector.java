@@ -26,15 +26,15 @@
 
 package gov.nist.secauto.metaschema.binding.model;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class ListPropertyCollector
     implements IPropertyCollector {
-  @NotNull
+  @NonNull
   private final List<Object> collection;
 
   public ListPropertyCollector() {
@@ -47,7 +47,7 @@ class ListPropertyCollector
     collection.add(item);
   }
 
-  @NotNull
+  @NonNull
   @Override
   public List<?> getValue() {
     return collection;

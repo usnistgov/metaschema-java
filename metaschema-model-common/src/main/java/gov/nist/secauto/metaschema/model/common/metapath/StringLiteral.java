@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class StringLiteral
     extends AbstractLiteralExpression<IStringItem, String> {
@@ -44,18 +44,18 @@ class StringLiteral
    * @param value
    *          the literal value
    */
-  protected StringLiteral(@NotNull String value) {
+  protected StringLiteral(@NonNull String value) {
     super(removeQuotes(value));
   }
 
   @Override
-  public Class<@NotNull IStringItem> getBaseResultType() {
+  public Class<IStringItem> getBaseResultType() {
     return IStringItem.class;
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  private static String removeQuotes(@NotNull String value) {
+  @NonNull
+  private static String removeQuotes(@NonNull String value) {
     Matcher matcher = QUOTE_PATTERN.matcher(value);
 
     String retval = value;

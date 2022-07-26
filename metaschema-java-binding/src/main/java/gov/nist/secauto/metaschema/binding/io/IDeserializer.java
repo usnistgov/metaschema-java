@@ -31,8 +31,6 @@ import gov.nist.secauto.metaschema.model.common.constraint.IConstraintValidation
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +42,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Implementations of this interface are able to read structured data into a bound object instance
@@ -63,10 +63,10 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
     return isFeatureEnabled(DeserializationFeature.DESERIALIZE_VALIDATE_CONSTRAINTS);
   }
 
-  @NotNull
+  @NonNull
   IConstraintValidationHandler getConstraintValidationHandler();
 
-  void setConstraintValidationHandler(@NotNull IConstraintValidationHandler constraintValidationHandler);
+  void setConstraintValidationHandler(@NonNull IConstraintValidationHandler constraintValidationHandler);
 
   /**
    * Read data from the {@link InputStream} into a bound class instance.
@@ -79,9 +79,9 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
    * @throws IOException
    *           if an error occurred while reading data from the stream
    */
-  @NotNull
-  default CLASS deserialize(@NotNull InputStream is, @NotNull URI documentUri) throws IOException {
-    return deserialize(new InputStreamReader(is), documentUri);
+  @NonNull
+  default CLASS deserialize(@NonNull InputStream is, @NonNull URI documentUri) throws IOException {
+    return deserialize(new InputStreamReader(is, StandardCharsets.UTF_8), documentUri);
   }
 
   /**
@@ -94,8 +94,8 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
    *           if an error occurred while writing data to the file indicated by the {@code path}
    *           parameter
    */
-  @NotNull
-  default CLASS deserialize(@NotNull Path path) throws IOException {
+  @NonNull
+  default CLASS deserialize(@NonNull Path path) throws IOException {
     try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
       return deserialize(ObjectUtils.notNull(reader), ObjectUtils.notNull(path.toUri()));
     }
@@ -110,8 +110,8 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
    * @throws IOException
    *           if an error occurred while reading data from the stream
    */
-  @NotNull
-  default CLASS deserialize(@NotNull File file) throws IOException {
+  @NonNull
+  default CLASS deserialize(@NonNull File file) throws IOException {
     return deserialize(ObjectUtils.notNull(file.toPath()));
   }
 
@@ -128,8 +128,8 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
    *           if the provided URL is not formatted strictly according to to RFC2396 and cannot be
    *           converted to a URI.
    */
-  @NotNull
-  default CLASS deserialize(@NotNull URL url) throws IOException, URISyntaxException {
+  @NonNull
+  default CLASS deserialize(@NonNull URL url) throws IOException, URISyntaxException {
     try (InputStream in = url.openStream()) {
       return deserialize(ObjectUtils.notNull(in), ObjectUtils.notNull(url.toURI()));
     }
@@ -147,11 +147,11 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
    * @throws IOException
    *           if an error occurred while reading data from the stream
    */
-  @SuppressWarnings({ "unchecked", "null" })
-  @NotNull
-  default CLASS deserialize(@NotNull Reader reader, @NotNull URI documentUri) throws IOException {
+  @SuppressWarnings("unchecked")
+  @NonNull
+  default CLASS deserialize(@NonNull Reader reader, @NonNull URI documentUri) throws IOException {
     INodeItem nodeItem = deserializeToNodeItem(reader, documentUri);
-    return (CLASS) nodeItem.getValue();
+    return (CLASS) ObjectUtils.requireNonNull(nodeItem.getValue());
   }
 
   /**
@@ -165,10 +165,10 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
    * @throws IOException
    *           if an error occurred while reading data from the stream
    */
-  @NotNull
-  default INodeItem deserializeToNodeItem(@NotNull InputStream is, @NotNull URI documentUri)
+  @NonNull
+  default INodeItem deserializeToNodeItem(@NonNull InputStream is, @NonNull URI documentUri)
       throws IOException {
-    return deserializeToNodeItem(new InputStreamReader(is), documentUri);
+    return deserializeToNodeItem(new InputStreamReader(is, StandardCharsets.UTF_8), documentUri);
   }
 
   /**
@@ -182,6 +182,6 @@ public interface IDeserializer<CLASS> extends IMutableConfiguration<Deserializat
    * @throws IOException
    *           if an error occurred while reading data from the stream
    */
-  @NotNull
-  INodeItem deserializeToNodeItem(@NotNull Reader reader, @NotNull URI documentUri) throws IOException;
+  @NonNull
+  INodeItem deserializeToNodeItem(@NonNull Reader reader, @NonNull URI documentUri) throws IOException;
 }

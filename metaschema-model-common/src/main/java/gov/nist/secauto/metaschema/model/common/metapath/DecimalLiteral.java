@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDecimalItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigDecimal;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DecimalLiteral
     extends AbstractLiteralExpression<IDecimalItem, BigDecimal> {
@@ -41,12 +41,12 @@ class DecimalLiteral
    * @param value
    *          the literal value
    */
-  protected DecimalLiteral(@NotNull BigDecimal value) {
+  protected DecimalLiteral(@NonNull BigDecimal value) {
     super(value);
   }
 
   @Override
-  public Class<@NotNull IDecimalItem> getBaseResultType() {
+  public Class<IDecimalItem> getBaseResultType() {
     return IDecimalItem.class;
   }
 

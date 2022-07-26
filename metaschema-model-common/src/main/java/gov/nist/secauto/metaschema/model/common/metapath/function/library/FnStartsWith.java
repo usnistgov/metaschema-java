@@ -34,15 +34,16 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IStringItem;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public final class FnStartsWith {
 
-  @NotNull
+  @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("starts-with")
       .argument(IArgument.newBuilder()
@@ -60,17 +61,15 @@ public final class FnStartsWith {
       .build();
 
   @SuppressWarnings("unused")
-  @NotNull
-  private static ISequence<IBooleanItem> execute(@NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> arguments,
-      @NotNull DynamicContext dynamicContext,
+  @NonNull
+  private static ISequence<IBooleanItem> execute(@NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
       INodeItem focus) {
-    @SuppressWarnings("unchecked")
-    IStringItem arg1
-        = FunctionUtils.getFirstItem((ISequence<IStringItem>) arguments.iterator().next(), true);
-    @SuppressWarnings("unchecked")
-    IStringItem arg2
-        = FunctionUtils.getFirstItem((ISequence<IStringItem>) arguments.iterator().next(), true);
+    IStringItem arg1 = FunctionUtils.getFirstItem(
+        FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0))), true);
+    IStringItem arg2 = FunctionUtils.getFirstItem(
+        FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1))), true);
 
     return ISequence.of(fnStartsWith(arg1, arg2));
   }

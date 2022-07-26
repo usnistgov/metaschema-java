@@ -30,14 +30,14 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IFieldInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.format.IPathFormatter;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedItem {
   @Override
@@ -76,7 +76,7 @@ public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedItem {
    */
   @SuppressWarnings("null")
   @Override
-  default Collection<@NotNull ? extends List<@NotNull ? extends IModelNodeItem>> getModelItems() {
+  default Collection<? extends List<? extends IModelNodeItem>> getModelItems() {
     // a field does not have model items
     return Collections.emptyList();
   }
@@ -86,7 +86,7 @@ public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedItem {
    */
   @SuppressWarnings("null")
   @Override
-  default List<@NotNull ? extends IModelNodeItem> getModelItemsByName(String name) {
+  default List<? extends IModelNodeItem> getModelItemsByName(String name) {
     // a field does not have model items
     return Collections.emptyList();
   }
@@ -95,19 +95,19 @@ public interface IFieldNodeItem extends IModelNodeItem, IAtomicValuedItem {
    * Fields do not have model items. This call should return an empty stream.
    */
   @SuppressWarnings("null")
-  @NotNull
+  @NonNull
   @Override
-  default Stream<@NotNull ? extends IModelNodeItem> modelItems() {
+  default Stream<? extends IModelNodeItem> modelItems() {
     return Stream.empty();
   }
 
   @Override
-  default @NotNull String format(@NotNull IPathFormatter formatter) {
+  default @NonNull String format(@NonNull IPathFormatter formatter) {
     return formatter.formatField(this);
   }
 
   @Override
-  default <RESULT, CONTEXT> RESULT accept(@NotNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+  default <RESULT, CONTEXT> RESULT accept(@NonNull INodeItemVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitField(this, context);
   }
 }

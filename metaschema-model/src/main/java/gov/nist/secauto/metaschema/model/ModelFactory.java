@@ -60,8 +60,7 @@ import gov.nist.secauto.metaschema.model.xmlbeans.ScopedIndexHasKeyConstraintTyp
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedKeyConstraintType;
 import gov.nist.secauto.metaschema.model.xmlbeans.ScopedMatchesConstraintType;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -72,17 +71,19 @@ import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 final class ModelFactory {
   private ModelFactory() {
     // disable
   }
 
-  @NotNull
+  @NonNull
   private static MetapathExpression target(@Nullable MetapathExpression target) {
     return target == null ? IConstraint.DEFAULT_TARGET : target;
   }
 
-  @NotNull
+  @NonNull
   private static Level level(@Nullable Level level) {
     return level == null ? IConstraint.DEFAULT_LEVEL : level;
   }
@@ -93,8 +94,8 @@ final class ModelFactory {
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  static Map<@NotNull QName, Set<@NotNull String>> toProperties(@NotNull List<@NotNull PropertyType> properties) {
+  @NonNull
+  static Map<QName, Set<String>> toProperties(@NonNull List<PropertyType> properties) {
     return properties.stream()
         .map(prop -> {
           String name = prop.getName();
@@ -108,9 +109,9 @@ final class ModelFactory {
             Collectors.mapping(Map.Entry<QName, String>::getValue, Collectors.toSet())));
   }
 
-  @NotNull
-  static Map<@NotNull String, DefaultAllowedValue> toAllowedValues(@NotNull AllowedValuesType xmlConstraint) {
-    Map<@NotNull String, DefaultAllowedValue> allowedValues // NOPMD - intentional
+  @NonNull
+  static Map<String, DefaultAllowedValue> toAllowedValues(@NonNull AllowedValuesType xmlConstraint) {
+    Map<String, DefaultAllowedValue> allowedValues // NOPMD - intentional
         = new LinkedHashMap<>(xmlConstraint.sizeOfEnumArray());
     for (EnumType xmlEnum : xmlConstraint.getEnumList()) {
       @SuppressWarnings("null")
@@ -122,25 +123,25 @@ final class ModelFactory {
     return CollectionUtil.unmodifiableMap(allowedValues);
   }
 
-  @NotNull
+  @NonNull
   static DefaultAllowedValuesConstraint newAllowedValuesConstraint(
-      @NotNull ScopedAllowedValuesType xmlConstraint,
-      @NotNull ISource source) {
+      @NonNull ScopedAllowedValuesType xmlConstraint,
+      @NonNull ISource source) {
     return newAllowedValuesConstraint(xmlConstraint, target(xmlConstraint.getTarget()), source);
   }
 
-  @NotNull
+  @NonNull
   static DefaultAllowedValuesConstraint newAllowedValuesConstraint(
-      @NotNull AllowedValuesType xmlConstraint,
-      @NotNull ISource source) {
+      @NonNull AllowedValuesType xmlConstraint,
+      @NonNull ISource source) {
     return newAllowedValuesConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);
   }
 
-  @NotNull
+  @NonNull
   static DefaultAllowedValuesConstraint newAllowedValuesConstraint(
-      @NotNull AllowedValuesType xmlConstraint,
-      @NotNull MetapathExpression target,
-      @NotNull ISource source) {
+      @NonNull AllowedValuesType xmlConstraint,
+      @NonNull MetapathExpression target,
+      @NonNull ISource source) {
     return new DefaultAllowedValuesConstraint(
         xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
         source,
@@ -153,25 +154,25 @@ final class ModelFactory {
         remarks(xmlConstraint.getRemarks()));
   }
 
-  @NotNull
+  @NonNull
   static DefaultMatchesConstraint newMatchesConstraint(
-      @NotNull ScopedMatchesConstraintType xmlConstraint,
-      @NotNull ISource source) {
+      @NonNull ScopedMatchesConstraintType xmlConstraint,
+      @NonNull ISource source) {
     return newMatchesConstraint(xmlConstraint, target(xmlConstraint.getTarget()), source);
   }
 
-  @NotNull
+  @NonNull
   static DefaultMatchesConstraint newMatchesConstraint(
-      @NotNull MatchesConstraintType xmlConstraint,
-      @NotNull ISource source) {
+      @NonNull MatchesConstraintType xmlConstraint,
+      @NonNull ISource source) {
     return newMatchesConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);
   }
 
-  @NotNull
+  @NonNull
   static DefaultMatchesConstraint newMatchesConstraint(
-      @NotNull MatchesConstraintType xmlConstraint,
-      @NotNull MetapathExpression target,
-      @NotNull ISource source) {
+      @NonNull MatchesConstraintType xmlConstraint,
+      @NonNull MetapathExpression target,
+      @NonNull ISource source) {
     return new DefaultMatchesConstraint(
         xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
         source,
@@ -182,9 +183,9 @@ final class ModelFactory {
         remarks(xmlConstraint.getRemarks()));
   }
 
-  @NotNull
-  static List<@NotNull DefaultKeyField> newKeyFields(@NotNull KeyConstraintType xmlConstraint) {
-    List<@NotNull DefaultKeyField> keyFields = new ArrayList<>(xmlConstraint.sizeOfKeyFieldArray());
+  @NonNull
+  static List<DefaultKeyField> newKeyFields(@NonNull KeyConstraintType xmlConstraint) {
+    List<DefaultKeyField> keyFields = new ArrayList<>(xmlConstraint.sizeOfKeyFieldArray());
     for (KeyConstraintType.KeyField xmlKeyField : xmlConstraint.getKeyFieldList()) {
       @SuppressWarnings("null")
       DefaultKeyField keyField
@@ -197,10 +198,10 @@ final class ModelFactory {
     return CollectionUtil.unmodifiableList(keyFields);
   }
 
-  @NotNull
+  @NonNull
   static DefaultUniqueConstraint newUniqueConstraint(
-      @NotNull ScopedKeyConstraintType xmlConstraint,
-      @NotNull ISource source) {
+      @NonNull ScopedKeyConstraintType xmlConstraint,
+      @NonNull ISource source) {
     return new DefaultUniqueConstraint(
         xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
         source,
@@ -210,10 +211,10 @@ final class ModelFactory {
         remarks(xmlConstraint.getRemarks()));
   }
 
-  @NotNull
+  @NonNull
   static DefaultIndexConstraint newIndexConstraint(
-      @NotNull ScopedIndexConstraintType xmlConstraint,
-      @NotNull ISource source) {
+      @NonNull ScopedIndexConstraintType xmlConstraint,
+      @NonNull ISource source) {
     return new DefaultIndexConstraint(
         xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
         source,
@@ -224,26 +225,26 @@ final class ModelFactory {
         remarks(xmlConstraint.getRemarks()));
   }
 
-  @NotNull
+  @NonNull
   static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(
-      @NotNull ScopedIndexHasKeyConstraintType xmlConstraint,
-      @NotNull ISource source) {
+      @NonNull ScopedIndexHasKeyConstraintType xmlConstraint,
+      @NonNull ISource source) {
     return newIndexHasKeyConstraint(xmlConstraint, target(xmlConstraint.getTarget()), source);
   }
 
-  @NotNull
+  @NonNull
   static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(
-      @NotNull IndexHasKeyConstraintType xmlConstraint,
-      @NotNull ISource source) {
+      @NonNull IndexHasKeyConstraintType xmlConstraint,
+      @NonNull ISource source) {
     return newIndexHasKeyConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);
 
   }
 
-  @NotNull
+  @NonNull
   static DefaultIndexHasKeyConstraint newIndexHasKeyConstraint(
-      @NotNull IndexHasKeyConstraintType xmlConstraint,
-      @NotNull MetapathExpression target,
-      @NotNull ISource source) {
+      @NonNull IndexHasKeyConstraintType xmlConstraint,
+      @NonNull MetapathExpression target,
+      @NonNull ISource source) {
     return new DefaultIndexHasKeyConstraint(
         xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
         source,
@@ -254,25 +255,25 @@ final class ModelFactory {
         remarks(xmlConstraint.getRemarks()));
   }
 
-  @NotNull
+  @NonNull
   static DefaultExpectConstraint newExpectConstraint(
-      @NotNull ScopedExpectConstraintType xmlConstraint,
-      @NotNull ISource source) {
+      @NonNull ScopedExpectConstraintType xmlConstraint,
+      @NonNull ISource source) {
     return newExpectConstraint(xmlConstraint, target(xmlConstraint.getTarget()), source);
   }
 
-  @NotNull
+  @NonNull
   static DefaultExpectConstraint newExpectConstraint(
-      @NotNull ExpectConstraintType xmlConstraint,
-      @NotNull ISource source) {
+      @NonNull ExpectConstraintType xmlConstraint,
+      @NonNull ISource source) {
     return newExpectConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);
   }
 
-  @NotNull
+  @NonNull
   static DefaultExpectConstraint newExpectConstraint(
-      @NotNull ExpectConstraintType xmlConstraint,
-      @NotNull MetapathExpression target,
-      @NotNull ISource source) {
+      @NonNull ExpectConstraintType xmlConstraint,
+      @NonNull MetapathExpression target,
+      @NonNull ISource source) {
     return new DefaultExpectConstraint(
         xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
         source,
@@ -283,10 +284,10 @@ final class ModelFactory {
         remarks(xmlConstraint.getRemarks()));
   }
 
-  @NotNull
+  @NonNull
   static DefaultCardinalityConstraint newCardinalityConstraint(
-      @NotNull HasCardinalityConstraintType xmlConstraint,
-      @NotNull ISource source) {
+      @NonNull HasCardinalityConstraintType xmlConstraint,
+      @NonNull ISource source) {
     return new DefaultCardinalityConstraint(
         xmlConstraint.isSetId() ? xmlConstraint.getId() : null, // NOPMD - intentional
         source,

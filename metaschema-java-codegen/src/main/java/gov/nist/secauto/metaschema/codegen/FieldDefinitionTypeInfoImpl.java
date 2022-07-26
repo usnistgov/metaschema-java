@@ -35,23 +35,23 @@ import gov.nist.secauto.metaschema.model.common.IFieldDefinition;
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class FieldDefinitionTypeInfoImpl
     extends AbstractModelDefinitionTypeInfo<IFieldDefinition>
     implements IFieldDefinitionTypeInfo {
 
-  public FieldDefinitionTypeInfoImpl(@NotNull IFieldDefinition definition, @NotNull ITypeResolver typeResolver) {
+  public FieldDefinitionTypeInfoImpl(@NonNull IFieldDefinition definition, @NonNull ITypeResolver typeResolver) {
     super(definition, typeResolver);
     addPropertyTypeInfo(IFieldValueTypeInfo.newTypeInfo(this));
   }
 
   @Override
-  protected Set<IModelDefinition> buildClass(@NotNull TypeSpec.Builder builder, @NotNull ClassName className)
+  protected Set<IModelDefinition> buildClass(@NonNull TypeSpec.Builder builder, @NonNull ClassName className)
       throws IOException {
     Set<IModelDefinition> retval = new HashSet<>();
     retval.addAll(super.buildClass(builder, className));

@@ -28,11 +28,11 @@ package gov.nist.secauto.metaschema.model.common.metapath.format;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A named segment of a path that can be formatted.
@@ -46,8 +46,8 @@ public interface IPathSegment {
    * 
    * @return the formatted path
    */
-  @NotNull
-  default String toPath(@NotNull IPathFormatter formatter) {
+  @NonNull
+  default String toPath(@NonNull IPathFormatter formatter) {
     return formatter.format(this);
   }
 
@@ -59,8 +59,8 @@ public interface IPathSegment {
    *          the path formatter
    * @return a textual representation of the path segment
    */
-  @NotNull
-  String format(@NotNull IPathFormatter formatter);
+  @NonNull
+  String format(@NonNull IPathFormatter formatter);
 
   /**
    * Get a list of path segments, starting at the root and descending.
@@ -68,8 +68,8 @@ public interface IPathSegment {
    * @return a list of path segments in descending order
    */
   @SuppressWarnings("null")
-  @NotNull
-  default List<@NotNull IPathSegment> getPath() {
+  @NonNull
+  default List<IPathSegment> getPath() {
     return getPathStream().collect(Collectors.toUnmodifiableList());
   }
 
@@ -78,8 +78,8 @@ public interface IPathSegment {
    * 
    * @return a stream of path segments in descending order
    */
-  @NotNull
-  Stream<@NotNull ? extends IPathSegment> getPathStream();
+  @NonNull
+  Stream<? extends IPathSegment> getPathStream();
 
   /**
    * Get the value associated with the path segment.

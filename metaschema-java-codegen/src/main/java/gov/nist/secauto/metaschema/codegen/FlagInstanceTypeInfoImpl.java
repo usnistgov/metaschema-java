@@ -43,14 +43,14 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Set;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class FlagInstanceTypeInfoImpl
     extends AbstractInstanceTypeInfo<IFlagInstance, IDefinitionTypeInfo>
     implements IFlagInstanceTypeInfo {
-  public FlagInstanceTypeInfoImpl(@NotNull IFlagInstance instance, @NotNull IDefinitionTypeInfo parentDefinition) {
+  public FlagInstanceTypeInfoImpl(@NonNull IFlagInstance instance, @NonNull IDefinitionTypeInfo parentDefinition) {
     super(instance, parentDefinition);
   }
 
@@ -65,7 +65,7 @@ class FlagInstanceTypeInfoImpl
   }
 
   @Override
-  protected Set<@NotNull IModelDefinition> buildField(FieldSpec.Builder builder) {
+  protected Set<IModelDefinition> buildField(@NonNull FieldSpec.Builder builder) {
     IFlagInstance instance = getInstance();
 
     AnnotationSpec.Builder annotation

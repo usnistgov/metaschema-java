@@ -30,18 +30,18 @@ import gov.nist.secauto.metaschema.model.common.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Map;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class DefaultAllowedValuesConstraint
     extends AbstractConstraint
     implements IAllowedValuesConstraint {
   private final boolean allowedOther;
   private final Extensible extensible;
-  @NotNull
-  private final Map<@NotNull String, DefaultAllowedValue> allowedValues;
+  @NonNull
+  private final Map<String, DefaultAllowedValue> allowedValues;
 
   /**
    * Construct a new allowed values constraint which ensures that a target instance's value match one
@@ -71,12 +71,12 @@ public class DefaultAllowedValuesConstraint
    */
   public DefaultAllowedValuesConstraint(
       @Nullable String id,
-      @NotNull ISource source,
-      @NotNull Level level,
-      @NotNull MetapathExpression target,
-      @NotNull Map<@NotNull String, DefaultAllowedValue> allowedValues,
+      @NonNull ISource source,
+      @NonNull Level level,
+      @NonNull MetapathExpression target,
+      @NonNull Map<String, DefaultAllowedValue> allowedValues,
       boolean allowedOther,
-      @NotNull Extensible extensible,
+      @NonNull Extensible extensible,
       @Nullable MarkupMultiline remarks) {
     super(id, source, level, target, remarks);
     this.allowedValues = allowedValues;
@@ -85,7 +85,7 @@ public class DefaultAllowedValuesConstraint
   }
 
   @Override
-  public Map<@NotNull String, DefaultAllowedValue> getAllowedValues() {
+  public Map<String, DefaultAllowedValue> getAllowedValues() {
     return allowedValues;
   }
 

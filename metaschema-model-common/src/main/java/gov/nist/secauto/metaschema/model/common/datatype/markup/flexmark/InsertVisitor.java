@@ -31,32 +31,32 @@ import com.vladsch.flexmark.util.ast.NodeVisitorBase;
 
 import gov.nist.secauto.metaschema.model.common.datatype.markup.IMarkupText;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class InsertVisitor
     extends NodeVisitorBase {
-  @NotNull
+  @NonNull
   private final List<InsertAnchorNode> inserts
       = new LinkedList<>();
-  @NotNull
+  @NonNull
   private final Predicate<InsertAnchorNode> filter;
 
   public InsertVisitor(
-      @NotNull Predicate<InsertAnchorNode> filter) {
+      @NonNull Predicate<InsertAnchorNode> filter) {
     this.filter = filter;
   }
 
-  public InsertVisitor processNode(@NotNull IMarkupText markup) {
+  public InsertVisitor processNode(@NonNull IMarkupText markup) {
     visit(markup.getDocument());
     return this;
   }
 
   @Override
-  protected void visit(@NotNull Node node) {
+  protected void visit(@NonNull Node node) {
     if (node instanceof InsertAnchorNode) {
       InsertAnchorNode insert = (InsertAnchorNode) node;
       if (filter.test(insert)) {
@@ -67,7 +67,7 @@ public class InsertVisitor
     }
   }
 
-  @NotNull
+  @NonNull
   public List<InsertAnchorNode> getInserts() {
     return inserts;
   }

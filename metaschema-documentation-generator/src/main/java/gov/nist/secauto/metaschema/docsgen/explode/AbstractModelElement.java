@@ -4,24 +4,25 @@ package gov.nist.secauto.metaschema.docsgen.explode;
 import gov.nist.secauto.metaschema.model.common.constraint.IConstraint;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IDefinitionNodeItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractModelElement<I extends IDefinitionNodeItem> implements IMutableModelElement {
-  @NotNull
-  private final I nodeItem;
-  @NotNull
-  private final List<@NotNull IModelElement> flags = new LinkedList<>();
-  @NotNull
-  private final List<@NotNull IModelElement> modelItems = new LinkedList<>();
-  @NotNull
-  private final Set<@NotNull IConstraint> constraints = new LinkedHashSet<>();
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-  protected AbstractModelElement(@NotNull I nodeItem) {
+public abstract class AbstractModelElement<I extends IDefinitionNodeItem> implements IMutableModelElement {
+  @NonNull
+  private final I nodeItem;
+  @NonNull
+  private final List<IModelElement> flags = new LinkedList<>();
+  @NonNull
+  private final List<IModelElement> modelItems = new LinkedList<>();
+  @NonNull
+  private final Set<IConstraint> constraints = new LinkedHashSet<>();
+
+  protected AbstractModelElement(@NonNull I nodeItem) {
     this.nodeItem = nodeItem;
   }
 
@@ -31,33 +32,36 @@ public abstract class AbstractModelElement<I extends IDefinitionNodeItem> implem
   }
 
   @Override
-  public List<@NotNull IModelElement> getFlags() {
+  @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "this is a data holder")
+  public List<IModelElement> getFlags() {
     return flags;
   }
 
   @Override
-  public List<@NotNull IModelElement> getModelItems() {
+  @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "this is a data holder")
+  public List<IModelElement> getModelItems() {
     return modelItems;
   }
 
   @Override
-  public void addFlag(@NotNull IModelElement flag) {
+  public void addFlag(@NonNull IModelElement flag) {
     flags.add(flag);
   }
 
   @Override
-  public void addModelItem(@NotNull IModelElement modelItem) {
+  public void addModelItem(@NonNull IModelElement modelItem) {
     modelItems.add(modelItem);
   }
 
   @Override
-  @NotNull
-  public Set<@NotNull IConstraint> getConstraints() {
+  @NonNull
+  @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "this is a data holder")
+  public Set<IConstraint> getConstraints() {
     return constraints;
   }
 
   @Override
-  public void addConstraint(@NotNull IConstraint constraint) {
+  public void addConstraint(@NonNull IConstraint constraint) {
     if (!this.constraints.contains(constraint)) {
       this.constraints.add(constraint);
     }

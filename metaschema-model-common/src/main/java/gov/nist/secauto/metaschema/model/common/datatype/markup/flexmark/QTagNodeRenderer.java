@@ -33,10 +33,10 @@ import com.vladsch.flexmark.html.renderer.NodeRendererFactory;
 import com.vladsch.flexmark.html.renderer.NodeRenderingHandler;
 import com.vladsch.flexmark.util.data.DataHolder;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collections;
 import java.util.Set;
+
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class QTagNodeRenderer implements NodeRenderer {
 

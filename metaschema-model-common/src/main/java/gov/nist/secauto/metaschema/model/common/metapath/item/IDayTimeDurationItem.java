@@ -29,18 +29,18 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.model.common.metapath.function.InvalidValueForCastFunctionException;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.Duration;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IDayTimeDurationItem extends IDurationItem {
-  @NotNull
-  public static IDayTimeDurationItem valueOf(@NotNull Duration value) {
+  @NonNull
+  public static IDayTimeDurationItem valueOf(@NonNull Duration value) {
     return new DayTimeDurationItemImpl(value);
   }
 
-  @NotNull
-  public static IDayTimeDurationItem valueOf(@NotNull String value) {
+  @NonNull
+  public static IDayTimeDurationItem valueOf(@NonNull String value) {
     try {
       return valueOf(MetaschemaDataTypeProvider.DAY_TIME_DURATION.parse(value));
     } catch (IllegalArgumentException ex) {
@@ -49,8 +49,8 @@ public interface IDayTimeDurationItem extends IDurationItem {
     }
   }
 
-  @NotNull
-  public static IDayTimeDurationItem cast(@NotNull IAnyAtomicItem item)
+  @NonNull
+  public static IDayTimeDurationItem cast(@NonNull IAnyAtomicItem item)
       throws InvalidValueForCastFunctionException {
     return MetaschemaDataTypeProvider.DAY_TIME_DURATION.cast(item);
   }

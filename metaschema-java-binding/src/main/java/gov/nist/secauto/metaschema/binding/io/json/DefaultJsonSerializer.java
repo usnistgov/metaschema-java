@@ -35,25 +35,25 @@ import gov.nist.secauto.metaschema.binding.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.binding.model.IAssemblyClassBinding;
 import gov.nist.secauto.metaschema.binding.model.RootAssemblyDefinition;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.io.Writer;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DefaultJsonSerializer<CLASS>
     extends AbstractSerializer<CLASS> {
   private JsonFactory jsonFactory;
 
-  public DefaultJsonSerializer(@NotNull IBindingContext bindingContext, @NotNull IAssemblyClassBinding classBinding) {
+  public DefaultJsonSerializer(@NonNull IBindingContext bindingContext, @NonNull IAssemblyClassBinding classBinding) {
     super(bindingContext, classBinding);
   }
 
-  @NotNull
+  @NonNull
   protected JsonFactory getJsonFactoryInstance() {
     return JsonFactoryFactory.instance();
   }
 
-  @NotNull
+  @NonNull
   protected JsonFactory getJsonFactory() {
     synchronized (this) {
       if (jsonFactory == null) {

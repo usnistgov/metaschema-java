@@ -26,9 +26,12 @@
 
 package gov.nist.secauto.metaschema.schemagen;
 
-import org.codehaus.stax2.XMLStreamWriter2;
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
+import org.codehaus.stax2.XMLStreamWriter2;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,31 +42,33 @@ import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLStreamException;
 
-public class CompositeDatatypeProvider implements IDatatypeProvider {
-  @NotNull
-  private final List<@NotNull IDatatypeProvider> proxiedProviders;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-  public CompositeDatatypeProvider(@NotNull List<@NotNull IDatatypeProvider> proxiedProviders) {
-    this.proxiedProviders = proxiedProviders;
+public class CompositeDatatypeProvider implements IDatatypeProvider {
+  @NonNull
+  private final List<IDatatypeProvider> proxiedProviders;
+
+  public CompositeDatatypeProvider(@NonNull List<IDatatypeProvider> proxiedProviders) {
+    this.proxiedProviders = CollectionUtil.unmodifiableList(new ArrayList<>(proxiedProviders));
   }
 
-  @NotNull
-  protected List<@NotNull IDatatypeProvider> getProxiedProviders() {
+  @NonNull
+  protected List<IDatatypeProvider> getProxiedProviders() {
     return proxiedProviders;
   }
 
   @Override
-  public @NotNull Map<@NotNull String, IDatatypeContent> getDatatypes() {
-    return proxiedProviders.stream()
+  public Map<String, IDatatypeContent> getDatatypes() {
+    return ObjectUtils.notNull(proxiedProviders.stream()
         .flatMap(provider -> provider.getDatatypes().values().stream())
         .collect(Collectors.toMap(content -> content.getTypeName(), Function.identity(), (e1, e2) -> e2,
-            LinkedHashMap::new));
+            LinkedHashMap::new)));
   }
 
   @Override
-  public Set<@NotNull String> generateDatatypes(Set<@NotNull String> requiredTypes, XMLStreamWriter2 writer)
+  public Set<String> generateDatatypes(Set<String> requiredTypes, XMLStreamWriter2 writer)
       throws XMLStreamException {
-    Set<@NotNull String> retval = new HashSet<>();
+    Set<String> retval = new HashSet<>();
 
     for (IDatatypeProvider provider : getProxiedProviders()) {
       retval.addAll(provider.generateDatatypes(requiredTypes, writer));

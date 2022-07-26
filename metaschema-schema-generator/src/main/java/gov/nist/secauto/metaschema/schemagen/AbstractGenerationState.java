@@ -29,19 +29,19 @@ package gov.nist.secauto.metaschema.schemagen;
 import gov.nist.secauto.metaschema.model.common.IDefinition;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends IDatatypeManager>
     implements IGenerationState<WRITER, DATATYPE_MANAGER> {
-  @NotNull
+  @NonNull
   private final WRITER writer;
-  @NotNull
+  @NonNull
   private final DATATYPE_MANAGER datatypeManager;
-  @NotNull
+  @NonNull
   private final IInlineStrategy inlineStrategy;
 
-  public AbstractGenerationState(@NotNull WRITER writer, @NotNull DATATYPE_MANAGER datatypeManager,
-      @NotNull IInlineStrategy inlineStrategy) {
+  public AbstractGenerationState(@NonNull WRITER writer, @NonNull DATATYPE_MANAGER datatypeManager,
+      @NonNull IInlineStrategy inlineStrategy) {
     this.writer = writer;
     this.datatypeManager = datatypeManager;
     this.inlineStrategy = inlineStrategy;
@@ -58,15 +58,15 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
   }
 
   @Override
-  public boolean isInline(@NotNull IDefinition definition) {
+  public boolean isInline(@NonNull IDefinition definition) {
     return inlineStrategy.isInline(definition);
   }
 
-  public String getTypeNameForDatatype(@NotNull IDataTypeAdapter<?> datatype) {
+  public String getTypeNameForDatatype(@NonNull IDataTypeAdapter<?> datatype) {
     return getDatatypeManager().getTypeNameForDatatype(datatype);
   }
 
-  public String getTypeNameForDefinition(@NotNull IDefinition definition) {
+  public String getTypeNameForDefinition(@NonNull IDefinition definition) {
     return getDatatypeManager().getTypeNameForDefinition(definition, this);
   }
 }

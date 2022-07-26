@@ -26,16 +26,16 @@
 
 package gov.nist.secauto.metaschema.model.common.metapath.item;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 /**
  * This marker interface indicates that the {@link IModelNodeItem} must have a value to exist.
  */
-public interface IRequiredValueModelNodeItem extends IModelNodeItem, IRequiredValueDefinitionNodeItem {
+public interface IRequiredValueModelNodeItem extends IModelNodeItem, IRequiredValueNodeItem {
 
   @Override
   IRequiredValueNodeItem getParentNodeItem();
@@ -44,26 +44,26 @@ public interface IRequiredValueModelNodeItem extends IModelNodeItem, IRequiredVa
   IRequiredValueAssemblyNodeItem getParentContentNodeItem();
 
   @Override
-  Collection<@NotNull ? extends IRequiredValueFlagNodeItem> getFlags();
+  Collection<? extends IRequiredValueFlagNodeItem> getFlags();
 
   @Override
-  IRequiredValueFlagNodeItem getFlagByName(@NotNull String name);
+  IRequiredValueFlagNodeItem getFlagByName(@NonNull String name);
 
   @SuppressWarnings("null")
   @Override
-  default Stream<@NotNull ? extends IRequiredValueFlagNodeItem> flags() {
+  default Stream<? extends IRequiredValueFlagNodeItem> flags() {
     return getFlags().stream();
   }
 
   @Override
-  Collection<@NotNull ? extends List<@NotNull ? extends IRequiredValueModelNodeItem>> getModelItems();
+  Collection<? extends List<? extends IRequiredValueModelNodeItem>> getModelItems();
 
   @Override
-  List<@NotNull ? extends IRequiredValueModelNodeItem> getModelItemsByName(String name);
+  List<? extends IRequiredValueModelNodeItem> getModelItemsByName(String name);
 
   @SuppressWarnings("null")
   @Override
-  default Stream<@NotNull ? extends IRequiredValueModelNodeItem> modelItems() {
+  default Stream<? extends IRequiredValueModelNodeItem> modelItems() {
     return getModelItems().stream().flatMap(list -> list.stream());
   }
 }

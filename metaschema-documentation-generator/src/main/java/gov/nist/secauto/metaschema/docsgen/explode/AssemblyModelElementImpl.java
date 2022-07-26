@@ -4,24 +4,24 @@ import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IAssemblyNodeItem;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class AssemblyModelElementImpl
     extends AbstractModelElement<IAssemblyNodeItem>
     implements IAssemblyModelElement {
 
-  protected AssemblyModelElementImpl(@NotNull IAssemblyNodeItem nodeItem) {
+  protected AssemblyModelElementImpl(@NonNull IAssemblyNodeItem nodeItem) {
     super(nodeItem);
   }
 
   @Override
-  public <RESULT, CONTEXT> RESULT accept(@NotNull IModelElementVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
+  public <RESULT, CONTEXT> RESULT accept(@NonNull IModelElementVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
     return visitor.visitAssembly(this, context);
   }
 
   @Override
-  public @NotNull IAssemblyDefinition getDefinition() {
+  public @NonNull IAssemblyDefinition getDefinition() {
     return getNodeItem().getDefinition();
   }
 

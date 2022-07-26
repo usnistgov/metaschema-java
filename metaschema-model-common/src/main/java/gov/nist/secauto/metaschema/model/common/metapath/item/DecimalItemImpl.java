@@ -29,16 +29,16 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.DecimalAdapter;
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.MetaschemaDataTypeProvider;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class DecimalItemImpl
     extends AbstractNumericItem<BigDecimal>
     implements IDecimalItem {
-  public DecimalItemImpl(@NotNull BigDecimal value) {
+  public DecimalItemImpl(@NonNull BigDecimal value) {
     super(value);
   }
 

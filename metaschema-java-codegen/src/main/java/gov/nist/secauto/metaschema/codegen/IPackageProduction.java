@@ -26,16 +26,16 @@
 
 package gov.nist.secauto.metaschema.codegen;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IPackageProduction {
 
-  @NotNull
+  @NonNull
   String getJavaPackage();
 
-  @NotNull
+  @NonNull
   URI getXmlNamespace();
 
   /**
@@ -43,7 +43,7 @@ public interface IPackageProduction {
    * 
    * @return the package-info class
    */
-  @NotNull
+  @NonNull
   IGeneratedClass getGeneratedClass();
 
 }

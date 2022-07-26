@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.codegen;
 
 import gov.nist.secauto.metaschema.model.common.INamedInstance;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IInstanceTypeInfo extends ITypeInfo {
-  @NotNull
+  @NonNull
   INamedInstance getInstance();
 }

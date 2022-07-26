@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.model.common.constraint;
 import gov.nist.secauto.metaschema.model.common.metapath.MetapathException;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This interface provides an entry point for performing validations over Metapath items associated
@@ -44,7 +44,7 @@ public interface IConstraintValidator {
    * @throws MetapathException
    *           if an error occurred while evaluating a Metapath used in a constraint
    */
-  void validate(@NotNull INodeItem item);
+  void validate(@NonNull INodeItem item);
 
   /**
    * Complete any validations that require full analysis of the content model.

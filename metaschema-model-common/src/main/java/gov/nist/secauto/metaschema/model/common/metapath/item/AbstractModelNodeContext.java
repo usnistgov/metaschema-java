@@ -28,12 +28,12 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extends IModelNodeItem, L extends AbstractModelNodeContext.Model<
     F, M>>
@@ -45,21 +45,21 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
    * @param factory
    *          the factory to use to instantiate new node items
    */
-  protected AbstractModelNodeContext(@NotNull INodeItemFactory factory) {
+  protected AbstractModelNodeContext(@NonNull INodeItemFactory factory) {
     super(factory);
   }
 
   @Override
-  protected abstract Supplier<L> newModelSupplier(@NotNull INodeItemFactory factory);
+  protected abstract Supplier<L> newModelSupplier(@NonNull INodeItemFactory factory);
 
   @Override
-  public Collection<@NotNull ? extends List<@NotNull ? extends M>> getModelItems() {
+  public Collection<? extends List<? extends M>> getModelItems() {
     return getModel().getModelItems();
   }
 
   @SuppressWarnings("null")
   @Override
-  public List<@NotNull ? extends M> getModelItemsByName(String name) {
+  public List<? extends M> getModelItemsByName(String name) {
     return getModel().getModelItemsByName(name);
   }
 
@@ -73,7 +73,7 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
    */
   protected static class Model<F extends IFlagNodeItem, M extends IModelNodeItem>
       extends Flags<F> {
-    private final Map<@NotNull String, List<@NotNull M>> modelItems;
+    private final Map<String, List<M>> modelItems;
 
     /**
      * Creates a new collection of flags and model items.
@@ -84,8 +84,8 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
      *          a mapping of model item name to a list of model items
      */
     protected Model(
-        @NotNull Map<@NotNull String, F> flags,
-        @NotNull Map<@NotNull String, List<@NotNull M>> modelItems) {
+        @NonNull Map<String, F> flags,
+        @NonNull Map<String, List<M>> modelItems) {
       super(flags);
       this.modelItems = modelItems;
     }
@@ -97,9 +97,9 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
      *          the name of the model items to retrieve
      * @return a lisy of matching model items or {@code null} if no match was found
      */
-    @NotNull
-    public List<@NotNull M> getModelItemsByName(@NotNull String name) {
-      List<@NotNull M> result = modelItems.get(name);
+    @NonNull
+    public List<M> getModelItemsByName(@NonNull String name) {
+      List<M> result = modelItems.get(name);
       return result == null ? CollectionUtil.emptyList() : result;
     }
 
@@ -109,8 +109,8 @@ public abstract class AbstractModelNodeContext<F extends IFlagNodeItem, M extend
      * @return a collection of lists containg model items grouped by names
      */
     @SuppressWarnings("null")
-    @NotNull
-    public Collection<@NotNull List<@NotNull M>> getModelItems() {
+    @NonNull
+    public Collection<List<M>> getModelItems() {
       return modelItems.values();
     }
 

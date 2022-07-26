@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.model.common.metapath.item;
 import gov.nist.secauto.metaschema.model.common.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.model.common.IAssemblyInstance;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public final class DefaultNodeItemFactory implements INodeItemFactory {
   static final INodeItemFactory SINGLETON = new DefaultNodeItemFactory();
@@ -44,9 +44,9 @@ public final class DefaultNodeItemFactory implements INodeItemFactory {
   }
 
   @Override
-  public @NotNull IAssemblyNodeItem newAssemblyNodeItem(@NotNull IAssemblyInstance instance,
-      @NotNull IAssemblyNodeItem parent) {
-    
+  public @NonNull IAssemblyNodeItem newAssemblyNodeItem(@NonNull IAssemblyInstance instance,
+      @NonNull IAssemblyNodeItem parent) {
+
     IAssemblyNodeItem retval = null;
     if (!instance.getDefinition().isInline()) {
       // if not inline, need to check for a cycle
@@ -64,8 +64,8 @@ public final class DefaultNodeItemFactory implements INodeItemFactory {
   }
 
   @Nullable
-  private IAssemblyNodeItem getCycledInstance(@NotNull String effectiveName, @NotNull IAssemblyDefinition definition,
-      @NotNull IAssemblyNodeItem parent) {
+  private IAssemblyNodeItem getCycledInstance(@NonNull String effectiveName, @NonNull IAssemblyDefinition definition,
+      @NonNull IAssemblyNodeItem parent) {
     IAssemblyNodeItem retval = null;
 
     IAssemblyDefinition parentDefinition = parent.getDefinition();

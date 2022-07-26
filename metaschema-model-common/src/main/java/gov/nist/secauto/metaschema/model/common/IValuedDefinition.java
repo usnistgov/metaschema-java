@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common;
 
 import gov.nist.secauto.metaschema.model.common.datatype.adapter.IDataTypeAdapter;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * This marker interface identifies Metaschema definition types that have associated values (i.e.,
@@ -40,6 +40,6 @@ public interface IValuedDefinition extends IDefinition {
    * 
    * @return the data type
    */
-  @NotNull
+  @NonNull
   IDataTypeAdapter<?> getJavaTypeAdapter();
 }

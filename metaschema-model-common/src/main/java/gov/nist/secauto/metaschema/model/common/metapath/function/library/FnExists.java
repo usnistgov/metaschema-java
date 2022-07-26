@@ -34,13 +34,14 @@ import gov.nist.secauto.metaschema.model.common.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IBooleanItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
-
-import org.jetbrains.annotations.NotNull;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public final class FnExists {
-  @NotNull
+  @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("exists")
       .deterministic()
@@ -61,12 +62,12 @@ public final class FnExists {
   }
 
   @SuppressWarnings("unused")
-  @NotNull
-  private static ISequence<IBooleanItem> execute(@NotNull IFunction function,
-      @NotNull List<@NotNull ISequence<?>> arguments,
-      @NotNull DynamicContext dynamicContext,
+  @NonNull
+  private static ISequence<IBooleanItem> execute(@NonNull IFunction function,
+      @NonNull List<ISequence<?>> arguments,
+      @NonNull DynamicContext dynamicContext,
       INodeItem focus) {
-    ISequence<?> items = FunctionUtils.asType(arguments.get(0));
+    ISequence<?> items = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
     return ISequence.of(fnExists(items));
   }
 

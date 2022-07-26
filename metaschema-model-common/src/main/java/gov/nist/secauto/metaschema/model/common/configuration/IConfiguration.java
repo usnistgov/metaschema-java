@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.configuration;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Set;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * The base feature interface for getting the configuration of processors and parsers in this
@@ -45,13 +45,13 @@ public interface IConfiguration<T extends Enum<T> & IConfigurationFeature> {
    *          the feature to check for
    * @return {@code true} if the feature is enabled, or {@code false} otherwise
    */
-  boolean isFeatureEnabled(@NotNull T feature);
+  boolean isFeatureEnabled(@NonNull T feature);
 
   /**
    * Get the set of enabled features.
    * 
    * @return the set of enabled features.
    */
-  @NotNull
-  Set<@NotNull T> getFeatureSet();
+  @NonNull
+  Set<T> getFeatureSet();
 }

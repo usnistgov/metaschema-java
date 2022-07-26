@@ -34,23 +34,23 @@ import com.squareup.javapoet.TypeSpec;
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Set;
 
 import javax.lang.model.element.Modifier;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements ITypeInfo {
-  @NotNull
+  @NonNull
   private final PARENT parentDefinition;
   private String propertyName;
   private String fieldName;
 
-  public AbstractTypeInfo(@NotNull PARENT parentDefinition) {
+  public AbstractTypeInfo(@NonNull PARENT parentDefinition) {
     this.parentDefinition = parentDefinition;
   }
 
-  @NotNull
+  @NonNull
   protected PARENT getParentDefinitionTypeInfo() {
     return parentDefinition;
   }
@@ -61,7 +61,7 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
    * @return the name
    */
   @Override
-  @NotNull
+  @NonNull
   public String getPropertyName() {
     synchronized (this) {
       if (this.propertyName == null) {
@@ -82,8 +82,8 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
         }
         this.propertyName = name;
       }
+      return ObjectUtils.notNull(this.propertyName);
     }
-    return ObjectUtils.notNull(this.propertyName);
   }
 
   /**
@@ -92,22 +92,23 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
    * @return the Java field name
    */
   @Override
-  @NotNull
+  @NonNull
   public final String getJavaFieldName() {
     synchronized (this) {
       if (this.fieldName == null) {
         this.fieldName = "_" + ClassUtils.toVariableName(getPropertyName());
       }
+      return ObjectUtils.notNull(this.fieldName);
     }
-    return ObjectUtils.notNull(this.fieldName);
   }
 
   @Override
-  public Set<@NotNull IModelDefinition> build(@NotNull TypeSpec.Builder builder, ITypeResolver typeResolver) {
+  public Set<IModelDefinition> build(@NonNull TypeSpec.Builder builder, ITypeResolver typeResolver) {
     FieldSpec.Builder field = FieldSpec.builder(getJavaFieldType(), getJavaFieldName())
         .addModifiers(Modifier.PRIVATE);
+    assert field != null;
 
-    final Set<@NotNull IModelDefinition> retval = buildField(field);
+    final Set<IModelDefinition> retval = buildField(field);
 
     FieldSpec valueField = ObjectUtils.notNull(field.build());
     builder.addField(valueField);
@@ -116,6 +117,7 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
       MethodSpec.Builder method = MethodSpec.methodBuilder("get" + getPropertyName())
           .returns(getJavaFieldType())
           .addModifiers(Modifier.PUBLIC);
+      assert method != null;
       buildGetter(method, valueField);
       builder.addMethod(method.build());
     }
@@ -126,6 +128,7 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
       MethodSpec.Builder method = MethodSpec.methodBuilder("set" + getPropertyName())
           .addModifiers(Modifier.PUBLIC)
           .addParameter(valueParam);
+      assert method != null;
       buildSetter(method, valueParam, valueField);
       builder.addMethod(method.build());
     }
@@ -145,9 +148,9 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
    *          the resolver used to get type information
    */
   protected void buildExtraMethods( // NOPMD - intentional
-      @NotNull TypeSpec.Builder builder,
-      @NotNull FieldSpec valueField,
-      @NotNull ITypeResolver typeResolver) {
+      @NonNull TypeSpec.Builder builder,
+      @NonNull FieldSpec valueField,
+      @NonNull ITypeResolver typeResolver) {
     // do nothing by default
   }
 
@@ -158,8 +161,8 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
    *          the field builder
    * @return the set of definitions used by this field
    */
-  @NotNull
-  protected abstract Set<@NotNull IModelDefinition> buildField(@NotNull FieldSpec.Builder builder);
+  @NonNull
+  protected abstract Set<IModelDefinition> buildField(@NonNull FieldSpec.Builder builder);
 
   /**
    * Generate the getter for the property.
@@ -169,7 +172,7 @@ abstract class AbstractTypeInfo<PARENT extends IDefinitionTypeInfo> implements I
    * @param valueField
    *          the field containing the value to get
    */
-  protected void buildGetter(@NotNull MethodSpec.Builder builder, @NotNull FieldSpec valueField) {
+  protected void buildGetter(@NonNull MethodSpec.Builder builder, @NonNull FieldSpec valueField) {
     builder.addStatement("return $N", valueField);
   }
 

@@ -64,11 +64,12 @@ import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 final class AnnotationUtils {
   private static final Logger LOGGER = LogManager.getLogger(AnnotationUtils.class);
@@ -110,7 +111,7 @@ final class AnnotationUtils {
   }
 
   public static void applyAllowedValuesConstraints(AnnotationSpec.Builder annotation,
-      List<@NotNull ? extends IAllowedValuesConstraint> constraints) {
+      List<? extends IAllowedValuesConstraint> constraints) {
     for (IAllowedValuesConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(AllowedValues.class);
       buildConstraint(AllowedValues.class, constraintAnnotation, constraint);
@@ -133,7 +134,7 @@ final class AnnotationUtils {
   }
 
   public static void applyIndexHasKeyConstraints(AnnotationSpec.Builder annotation,
-      List<@NotNull ? extends IIndexHasKeyConstraint> constraints) {
+      List<? extends IIndexHasKeyConstraint> constraints) {
     for (IIndexHasKeyConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(IndexHasKey.class);
       buildConstraint(IndexHasKey.class, constraintAnnotation, constraint);
@@ -146,8 +147,8 @@ final class AnnotationUtils {
     }
   }
 
-  private static void buildKeyFields(@NotNull Builder constraintAnnotation,
-      @NotNull List<@NotNull ? extends IKeyField> keyFields) {
+  private static void buildKeyFields(@NonNull Builder constraintAnnotation,
+      @NonNull List<? extends IKeyField> keyFields) {
     for (IKeyField key : keyFields) {
       AnnotationSpec.Builder keyAnnotation = AnnotationSpec.builder(KeyField.class);
 
@@ -172,7 +173,7 @@ final class AnnotationUtils {
   }
 
   public static void applyMatchesConstraints(AnnotationSpec.Builder annotation,
-      List<@NotNull ? extends IMatchesConstraint> constraints) {
+      List<? extends IMatchesConstraint> constraints) {
     for (IMatchesConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(Matches.class);
       buildConstraint(Matches.class, constraintAnnotation, constraint);
@@ -191,7 +192,7 @@ final class AnnotationUtils {
   }
 
   public static void applyExpectConstraints(AnnotationSpec.Builder annotation,
-      List<@NotNull ? extends IExpectConstraint> constraints) {
+      List<? extends IExpectConstraint> constraints) {
     for (IExpectConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(Expect.class);
 
@@ -209,7 +210,7 @@ final class AnnotationUtils {
   }
 
   public static void applyIndexConstraints(AnnotationSpec.Builder annotation,
-      List<@NotNull ? extends IIndexConstraint> constraints) {
+      List<? extends IIndexConstraint> constraints) {
     for (IIndexConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(Index.class);
 
@@ -224,7 +225,7 @@ final class AnnotationUtils {
   }
 
   public static void applyUniqueConstraints(AnnotationSpec.Builder annotation,
-      List<@NotNull ? extends IUniqueConstraint> constraints) {
+      List<? extends IUniqueConstraint> constraints) {
     for (IUniqueConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = ObjectUtils.notNull(AnnotationSpec.builder(IsUnique.class));
 
@@ -237,9 +238,9 @@ final class AnnotationUtils {
   }
 
   public static void applyHasCardinalityConstraints(
-      @NotNull IAssemblyDefinition definition,
-      @NotNull AnnotationSpec.Builder annotation,
-      @NotNull List<@NotNull ? extends ICardinalityConstraint> constraints) {
+      @NonNull IAssemblyDefinition definition,
+      @NonNull AnnotationSpec.Builder annotation,
+      @NonNull List<? extends ICardinalityConstraint> constraints) {
 
     DynamicContext dynamicContext = new StaticContext().newDynamicContext();
     dynamicContext.disablePredicateEvaluation();

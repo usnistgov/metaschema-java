@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Represents a container of rules constraining the effective model of a Metaschema field or flag
@@ -40,38 +40,38 @@ public interface IValueConstraintSupport extends IConstraintSupport {
    * 
    * @return the constraints or an empty list
    */
-  @NotNull
-  List<@NotNull ? extends IAllowedValuesConstraint> getAllowedValuesConstraints();
+  @NonNull
+  List<? extends IAllowedValuesConstraint> getAllowedValuesConstraints();
 
   /**
    * Get the collection of matches constraints, if any.
    * 
    * @return the constraints or an empty list
    */
-  @NotNull
-  List<@NotNull ? extends IMatchesConstraint> getMatchesConstraints();
+  @NonNull
+  List<? extends IMatchesConstraint> getMatchesConstraints();
 
   /**
    * Get the collection of index key reference constraints, if any.
    * 
    * @return the constraints or an empty list
    */
-  @NotNull
-  List<@NotNull ? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints();
+  @NonNull
+  List<? extends IIndexHasKeyConstraint> getIndexHasKeyConstraints();
 
   /**
    * Get the collection of expect constraints, if any.
    * 
    * @return the constraints or an empty list
    */
-  @NotNull
-  List<@NotNull ? extends IExpectConstraint> getExpectConstraints();
+  @NonNull
+  List<? extends IExpectConstraint> getExpectConstraints();
 
-  void addConstraint(@NotNull IAllowedValuesConstraint constraint);
+  void addConstraint(@NonNull IAllowedValuesConstraint constraint);
 
-  void addConstraint(@NotNull IMatchesConstraint constraint);
+  void addConstraint(@NonNull IMatchesConstraint constraint);
 
-  void addConstraint(@NotNull IIndexHasKeyConstraint constraint);
+  void addConstraint(@NonNull IIndexHasKeyConstraint constraint);
 
-  void addConstraint(@NotNull IExpectConstraint constraint);
+  void addConstraint(@NonNull IExpectConstraint constraint);
 }

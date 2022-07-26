@@ -34,13 +34,13 @@ import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class QTagDoubleQuoteNodePostProcessor
     extends NodePostProcessor {
 
   @Override
-  public void process(@NotNull NodeTracker state, @NotNull Node node) {
+  public void process(@NonNull NodeTracker state, @NonNull Node node) {
     if (node instanceof TypographicQuotes) {
       TypographicQuotes typographicQuotes = (TypographicQuotes) node;
       if (typographicQuotes.getOpeningMarker().matchChars("\"")) {
@@ -60,9 +60,9 @@ public class QTagDoubleQuoteNodePostProcessor
       addNodeWithExclusions(TypographicQuotes.class, DoNotDecorate.class);
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public NodePostProcessor apply(@NotNull Document document) {
+    public NodePostProcessor apply(@NonNull Document document) {
       return new QTagDoubleQuoteNodePostProcessor();
     }
   }

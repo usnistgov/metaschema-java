@@ -37,8 +37,6 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IMetaschemaNodeIte
 import gov.nist.secauto.metaschema.model.common.metapath.item.INodeItem;
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -48,34 +46,39 @@ import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IConstraintSet {
 
-  @NotNull
-  static Set<@NotNull IConstraintSet> resolveConstraintSets(@NotNull Set<@NotNull IConstraintSet> constraintSets) {
+  @NonNull
+  static Set<IConstraintSet> resolveConstraintSets(@NonNull Set<IConstraintSet> constraintSets) {
     return ObjectUtils.notNull(constraintSets.stream()
-        .flatMap(set -> resolveConstraintSet(set))
+        .flatMap(set -> resolveConstraintSet(ObjectUtils.notNull(set)))
         .distinct()
         .collect(Collectors.toUnmodifiableSet()));
   }
 
-  @NotNull
-  private static Stream<@NotNull IConstraintSet> resolveConstraintSet(@NotNull IConstraintSet constraintSet) {
+  @NonNull
+  private static Stream<IConstraintSet> resolveConstraintSet(@NonNull IConstraintSet constraintSet) {
     return ObjectUtils.notNull(Stream.concat(
         Stream.of(constraintSet),
         constraintSet.getImportedConstraintSets().stream()));
   }
 
-  @NotNull
-  static List<@NotNull ITargetedConstaints> getTargetedConstraintsForMetaschema(
-      @NotNull Set<@NotNull IConstraintSet> constraintSets, @NotNull IMetaschema metaschema) {
+  @NonNull
+  static List<ITargetedConstaints> getTargetedConstraintsForMetaschema(
+      @NonNull Set<IConstraintSet> constraintSets, @NonNull IMetaschema metaschema) {
     return ObjectUtils.notNull(resolveConstraintSets(constraintSets).stream()
         .flatMap(set -> set.getTargetedConstraintsForMetaschema(metaschema))
         .collect(Collectors.toUnmodifiableList()));
   }
 
-  static void applyConstraintSetToMetaschema(@NotNull Set<@NotNull IConstraintSet> constraintSets,
-      @NotNull IMetaschema metaschema) throws MetaschemaException {
-    Set<@NotNull IConstraintSet> resolvedConstraintSets = resolveConstraintSets(constraintSets);
+  @NonNull
+  Stream<ITargetedConstaints> getTargetedConstraintsForMetaschema(@NonNull IMetaschema metaschema);
+
+  static void applyConstraintSetToMetaschema(@NonNull Set<IConstraintSet> constraintSets,
+      @NonNull IMetaschema metaschema) throws MetaschemaException {
+    Set<IConstraintSet> resolvedConstraintSets = resolveConstraintSets(constraintSets);
 
     ConstraintComposingVisitor visitor = new ConstraintComposingVisitor();
     IMetaschemaNodeItem item = DefaultNodeItemFactory.instance().newMetaschemaNodeItem(metaschema);
@@ -104,7 +107,7 @@ public interface IConstraintSet {
 
   }
 
-  Collection<@NotNull IConstraintSet> getImportedConstraintSets();
+  Collection<IConstraintSet> getImportedConstraintSets();
 
   /**
    * Get the set of Metaschema scoped constraints to apply by a {@link QName} formed from the
@@ -112,9 +115,6 @@ public interface IConstraintSet {
    * 
    * @return the mapping of QName to scoped constraints
    */
-  @NotNull
-  Map<@NotNull QName, List<@NotNull IScopedContraints>> getScopedContraints();
-
-  @NotNull
-  Stream<@NotNull ITargetedConstaints> getTargetedConstraintsForMetaschema(@NotNull IMetaschema metaschema);
+  @NonNull
+  Map<QName, List<IScopedContraints>> getScopedContraints();
 }

@@ -28,20 +28,21 @@ package gov.nist.secauto.metaschema.codegen.binding.config;
 
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DefaultDefinitionBindingConfiguration implements IMutableDefinitionBindingConfiguration {
   @Nullable
   private String className;
   @Nullable
   private String baseClassName;
-  @NotNull
-  private final Set<@NotNull String> interfacesToImplement = new HashSet<>();
+  @NonNull
+  private final Set<String> interfacesToImplement = new HashSet<>();
 
   /**
    * Create a new definition binding configuration.
@@ -56,7 +57,7 @@ public class DefaultDefinitionBindingConfiguration implements IMutableDefinition
    * @param config
    *          the previous configuration
    */
-  public DefaultDefinitionBindingConfiguration(@NotNull IDefinitionBindingConfiguration config) {
+  public DefaultDefinitionBindingConfiguration(@NonNull IDefinitionBindingConfiguration config) {
     this.className = config.getClassName();
     this.baseClassName = config.getQualifiedBaseClassName();
     this.interfacesToImplement.addAll(config.getInterfacesToImplement());
@@ -83,7 +84,7 @@ public class DefaultDefinitionBindingConfiguration implements IMutableDefinition
   }
 
   @Override
-  public Collection<@NotNull String> getInterfacesToImplement() {
+  public Collection<String> getInterfacesToImplement() {
     return interfacesToImplement.isEmpty() ? CollectionUtil.emptySet()
         : CollectionUtil.unmodifiableCollection(interfacesToImplement);
   }

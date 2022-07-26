@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.model.common.metapath.item.IDayTimeDurationIt
 import gov.nist.secauto.metaschema.model.common.metapath.item.INumericItem;
 import gov.nist.secauto.metaschema.model.common.metapath.item.IYearMonthDurationItem;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class Division
     extends AbstractBasicArithmeticExpression {
@@ -46,7 +46,7 @@ class Division
    * @param divisor
    *          the expression whose result is to divide by
    */
-  protected Division(@NotNull IExpression dividend, @NotNull IExpression divisor) {
+  protected Division(@NonNull IExpression dividend, @NonNull IExpression divisor) {
     super(dividend, divisor);
   }
 
@@ -65,8 +65,8 @@ class Division
    * @return the quotient result or an empty {@link ISequence} if either item is {@code null}
    */
   @Override
-  @NotNull
-  protected IAnyAtomicItem operation(@NotNull IAnyAtomicItem dividend, @NotNull IAnyAtomicItem divisor) {
+  @NonNull
+  protected IAnyAtomicItem operation(@NonNull IAnyAtomicItem dividend, @NonNull IAnyAtomicItem divisor) {
     return divide(dividend, divisor);
   }
 
@@ -79,9 +79,9 @@ class Division
    *          the item to divide by
    * @return the quotient result
    */
-  @NotNull
-  public static IAnyAtomicItem divide(@NotNull IAnyAtomicItem dividend, // NOPMD - intentional
-      @NotNull IAnyAtomicItem divisor) {
+  @NonNull
+  public static IAnyAtomicItem divide(@NonNull IAnyAtomicItem dividend, // NOPMD - intentional
+      @NonNull IAnyAtomicItem divisor) {
     IAnyAtomicItem retval = null;
     if (dividend instanceof IYearMonthDurationItem) {
       IYearMonthDurationItem left = (IYearMonthDurationItem) dividend;

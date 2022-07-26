@@ -30,5 +30,5 @@ import gov.nist.secauto.metaschema.binding.model.annotations.MetaschemaAssembly;
 
 @MetaschemaAssembly(name = "empty-bound-assembly", rootName = "root", metaschema = TestMetaschema.class)
 public class EmptyBoundAssembly {
-
+  // no fields
 }

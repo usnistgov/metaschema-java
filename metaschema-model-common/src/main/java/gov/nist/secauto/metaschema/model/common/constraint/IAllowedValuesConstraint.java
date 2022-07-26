@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.model.common.constraint;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Map;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Represents a rule requiring the value of a field or flag to match the name of one entry in a set
@@ -37,7 +37,7 @@ import java.util.Map;
  */
 public interface IAllowedValuesConstraint extends IConstraint {
   boolean DEFAULT_ALLOW_OTHER = false;
-  @NotNull
+  @NonNull
   Extensible DEFAULT_EXTENSIBLE = Extensible.MODEL;
 
   enum Extensible {
@@ -60,8 +60,8 @@ public interface IAllowedValuesConstraint extends IConstraint {
    * 
    * @return a mapping of value to the associated {@link IAllowedValue} item
    */
-  @NotNull
-  Map<@NotNull String, @NotNull ? extends IAllowedValue> getAllowedValues();
+  @NonNull
+  Map<String, ? extends IAllowedValue> getAllowedValues();
 
   /**
    * Get a specific allowed value by name, if it is defined for this constraint.
@@ -90,5 +90,6 @@ public interface IAllowedValuesConstraint extends IConstraint {
    * 
    * @return the enumeration value
    */
+  @NonNull
   Extensible getExtensible();
 }

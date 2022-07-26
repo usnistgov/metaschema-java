@@ -33,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,7 +41,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-public class IBooleanItemTest {
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+class IBooleanItemTest {
   @Test
   void testValueOf() {
     Assertions.assertAll(
@@ -63,8 +64,8 @@ public class IBooleanItemTest {
         Arguments.of(IBooleanItem.FALSE, IBooleanItem.FALSE),
         Arguments.of(integer(1), IBooleanItem.TRUE),
         Arguments.of(integer(0), IBooleanItem.FALSE),
-        Arguments.of(decimal(1d), IBooleanItem.TRUE),
-        Arguments.of(decimal(0d), IBooleanItem.FALSE),
+        Arguments.of(decimal("1"), IBooleanItem.TRUE),
+        Arguments.of(decimal("0"), IBooleanItem.FALSE),
         Arguments.of(string("1"), IBooleanItem.TRUE),
         Arguments.of(string("654321"), IBooleanItem.TRUE),
         Arguments.of(string("0"), IBooleanItem.FALSE),
@@ -75,7 +76,7 @@ public class IBooleanItemTest {
 
   @ParameterizedTest
   @MethodSource("provideValuesForCast")
-  void testCast(@NotNull IAnyAtomicItem item, @NotNull IBooleanItem expected) {
+  void testCast(@NonNull IAnyAtomicItem item, @NonNull IBooleanItem expected) {
     IBooleanItem result = IBooleanItem.cast(item);
     assertEquals(expected, result);
   }

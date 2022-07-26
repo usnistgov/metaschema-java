@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.model.common.datatype.adapter;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IEmailAddressItem;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class EmailAddressAdapter
     extends AbstractStringAdapter<IEmailAddressItem> {
@@ -44,7 +44,7 @@ public class EmailAddressAdapter
 
   @SuppressWarnings("null")
   @Override
-  public @NotNull Class<IEmailAddressItem> getItemClass() {
+  public @NonNull Class<IEmailAddressItem> getItemClass() {
     return IEmailAddressItem.class;
   }
 

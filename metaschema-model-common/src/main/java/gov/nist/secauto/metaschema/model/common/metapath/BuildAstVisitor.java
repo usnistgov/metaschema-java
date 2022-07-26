@@ -64,7 +64,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -76,12 +75,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class BuildAstVisitor
     extends AbstractAstVisitor<IExpression> {
 
   @SuppressWarnings("null")
   @Override
-  @NotNull
+  @NonNull
   public IExpression visit(ParseTree tree) {
     return super.visit(tree);
   }
@@ -106,15 +107,15 @@ class BuildAstVisitor
    *          a supplier that will instantiate an expression based on the provided collection
    * @return the left expression or the supplied expression for a collection
    */
-  @NotNull
+  @NonNull
   protected <CONTEXT extends ParserRuleContext, NODE extends IExpression> IExpression
-      handleNAiryCollection(@NotNull CONTEXT context,
-          @NotNull Function<@NotNull List<NODE>, IExpression> supplier) {
+      handleNAiryCollection(@NonNull CONTEXT context,
+          @NonNull Function<List<NODE>, IExpression> supplier) {
     return handleNAiryCollection(context, 2, (ctx, idx) -> {
       // skip operator, since we know what it is
       ParseTree tree = ctx.getChild(idx + 1);
       @SuppressWarnings({ "unchecked", "null" })
-      @NotNull
+      @NonNull
       NODE node = (NODE) tree.accept(this);
       return node;
     }, supplier);
@@ -142,11 +143,11 @@ class BuildAstVisitor
    *          a supplier that will instantiate an expression based on the provided collection
    * @return the left expression or the supplied expression for a collection
    */
-  @NotNull
+  @NonNull
   protected <CONTEXT extends ParserRuleContext, EXPRESSION extends IExpression> IExpression handleNAiryCollection(
-      @NotNull CONTEXT context, int step,
-      @NotNull BiFunction<@NotNull CONTEXT, @NotNull Integer, @NotNull EXPRESSION> parser,
-      @NotNull Function<@NotNull List<EXPRESSION>, IExpression> supplier) {
+      @NonNull CONTEXT context, int step,
+      @NonNull BiFunction<CONTEXT, Integer, EXPRESSION> parser,
+      @NonNull Function<List<EXPRESSION>, IExpression> supplier) {
     int numChildren = context.getChildCount();
 
     if (numChildren == 0) {
@@ -155,7 +156,7 @@ class BuildAstVisitor
 
     ParseTree leftTree = context.getChild(0);
     @SuppressWarnings({ "unchecked", "null" })
-    @NotNull
+    @NonNull
     EXPRESSION leftResult = (EXPRESSION) leftTree.accept(this);
 
     IExpression retval;
@@ -193,8 +194,8 @@ class BuildAstVisitor
    *          a trinary function used to parse the context children and supply a result
    * @return the left expression or the supplied expression
    */
-  protected <CONTEXT extends ParserRuleContext> IExpression handleGroupedNAiry(@NotNull CONTEXT context, int step,
-      @NotNull ITriFunction<@NotNull CONTEXT, @NotNull Integer, @NotNull IExpression, @NotNull IExpression> parser) {
+  protected <CONTEXT extends ParserRuleContext> IExpression handleGroupedNAiry(@NonNull CONTEXT context, int step,
+      @NonNull ITriFunction<CONTEXT, Integer, IExpression, IExpression> parser) {
     int numChildren = context.getChildCount();
 
     IExpression retval;
@@ -400,7 +401,7 @@ class BuildAstVisitor
       FunctioncallContext fcCtx = ctx.getChild(FunctioncallContext.class, idx + 1);
       String name = fcCtx.eqname().getText();
 
-      Stream<@NotNull IExpression> args = parseArgumentList(fcCtx.argumentlist());
+      Stream<IExpression> args = parseArgumentList(fcCtx.argumentlist());
       args = Stream.concat(Stream.of(left), args);
 
       return new FunctionCall(name, args.collect(Collectors.toUnmodifiableList()));
@@ -429,7 +430,7 @@ class BuildAstVisitor
 
     ParseTree expr = ctx.getChild(0);
     IExpression retval = expr.accept(this);
-    if (negateCount % 2 == 1) {
+    if (negateCount % 2 != 0) {
       retval = new Negate(retval);
     }
     return retval;
@@ -496,19 +497,19 @@ class BuildAstVisitor
   }
 
   @SuppressWarnings("null")
-  @NotNull
-  protected IExpression parsePredicate(@NotNull PredicateContext context) {
+  @NonNull
+  protected IExpression parsePredicate(@NonNull PredicateContext context) {
     // the expression is always the second child
     ParseTree tree = context.getChild(1);
     return tree.accept(this);
   }
 
-  @NotNull
-  protected List<@NotNull IExpression> parsePredicates(@NotNull ParseTree context, int staringChild) {
+  @NonNull
+  protected List<IExpression> parsePredicates(@NonNull ParseTree context, int staringChild) {
     int numChildren = context.getChildCount();
     int numPredicates = numChildren - staringChild;
 
-    List<@NotNull IExpression> predicates;
+    List<IExpression> predicates;
     if (numPredicates == 0) {
       // no predicates
       predicates = CollectionUtil.emptyList();
@@ -533,7 +534,7 @@ class BuildAstVisitor
     ParseTree primaryTree = ctx.getChild(0);
     IExpression retval = ObjectUtils.notNull(primaryTree.accept(this));
 
-    List<@NotNull IExpression> predicates = numChildren > 1 ? parsePredicates(ctx, 1) : CollectionUtil.emptyList();
+    List<IExpression> predicates = numChildren > 1 ? parsePredicates(ctx, 1) : CollectionUtil.emptyList();
 
     if (!predicates.isEmpty()) {
       retval = new Predicate(retval, predicates);
@@ -547,7 +548,7 @@ class BuildAstVisitor
     IExpression step = ctx.getChild(0).accept(this);
 
     ParseTree predicateTree = ctx.getChild(1);
-    List<@NotNull IExpression> predicates = parsePredicates(predicateTree, 0);
+    List<IExpression> predicates = parsePredicates(predicateTree, 0);
 
     return predicates.isEmpty() ? step : new Predicate(step, predicates);
   }
@@ -652,11 +653,11 @@ class BuildAstVisitor
     return ContextItem.instance();
   }
 
-  protected Stream<@NotNull IExpression>
+  protected Stream<IExpression>
       parseArgumentList(ArgumentlistContext context) {
     int numChildren = context.getChildCount();
 
-    Stream<@NotNull IExpression> retval;
+    Stream<IExpression> retval;
     if (numChildren == 2) {
       // just the OP CP tokens, which is an empty list
       retval = Stream.empty();

@@ -27,14 +27,16 @@
 package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.model.common.util.CollectionUtil;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.jdom2.Element;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractXmlMarkupDatatypeProvider
     extends AbstractXmlDatatypeProvider {
@@ -45,29 +47,29 @@ public abstract class AbstractXmlMarkupDatatypeProvider
         .getResourceAsStream(getSchemaResourcePath());
   }
 
-  @NotNull
+  @NonNull
   protected abstract String getSchemaResourcePath();
 
   @Override
-  protected List<@NotNull Element> queryElements(JDom2XmlSchemaLoader loader) {
+  protected List<Element> queryElements(JDom2XmlSchemaLoader loader) {
     return loader.getContent(
         "/xs:schema/*",
         CollectionUtil.singletonMap("xs", JDom2XmlSchemaLoader.NS_XML_SCHEMA));
   }
 
-  @NotNull
+  @NonNull
   protected abstract String getDataTypeName();
 
   @Override
-  protected @NotNull Map<@NotNull String, IDatatypeContent> handleResults(@NotNull List<@NotNull Element> items) {
+  protected Map<String, IDatatypeContent> handleResults(@NonNull List<Element> items) {
     String dataTypeName = getDataTypeName();
     return CollectionUtil.singletonMap(
         dataTypeName,
         new JDom2DatatypeContent(
             dataTypeName,
-            items.stream()
+            ObjectUtils.notNull(items.stream()
                 .filter(element -> !("include".equals(element.getName())))
-                .collect(Collectors.toList()),
+                .collect(Collectors.toList())),
             CollectionUtil.emptyList()));
   }
 

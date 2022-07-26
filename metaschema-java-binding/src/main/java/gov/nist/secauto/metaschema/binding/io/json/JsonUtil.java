@@ -33,14 +33,16 @@ import com.fasterxml.jackson.core.JsonToken;
 import gov.nist.secauto.metaschema.binding.model.IBoundNamedInstance;
 import gov.nist.secauto.metaschema.binding.model.IClassBinding;
 import gov.nist.secauto.metaschema.model.common.util.CustomCollectors;
+import gov.nist.secauto.metaschema.model.common.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public final class JsonUtil {
   private static final Logger LOGGER = LogManager.getLogger(JsonUtil.class);
@@ -139,13 +141,13 @@ public final class JsonUtil {
     return retval;
   }
 
-  public static void assertCurrent(@NotNull JsonParser parser, @NotNull JsonToken... expectedTokens) {
+  public static void assertCurrent(@NonNull JsonParser parser, @NonNull JsonToken... expectedTokens) {
     JsonToken current = parser.currentToken();
     assert Arrays.stream(expectedTokens).anyMatch(expected -> expected.equals(current)) : getAssertMessage(
         Arrays.asList(expectedTokens), parser.currentToken(), parser.getCurrentLocation());
   }
 
-  public static void assertCurrentIsFieldValue(@NotNull JsonParser parser) {
+  public static void assertCurrentIsFieldValue(@NonNull JsonParser parser) {
     JsonToken token = parser.currentToken();
     assert token.isStructStart() || token.isScalarValue() : String.format(
         "Expected a START_OBJECT, START_ARRAY, or VALUE_xxx token, but found JsonToken '%s' at '%s'.",
@@ -153,39 +155,41 @@ public final class JsonUtil {
         JsonUtil.toString(parser.getCurrentLocation()));
   }
 
-  public static JsonToken assertAndAdvance(@NotNull JsonParser parser, @NotNull JsonToken expectedToken)
+  public static JsonToken assertAndAdvance(@NonNull JsonParser parser, @NonNull JsonToken expectedToken)
       throws IOException {
     JsonToken token = parser.currentToken();
     assert expectedToken.equals(token) : getAssertMessage(expectedToken, token, parser.getCurrentLocation());
     return parser.nextToken();
   }
 
-  public static JsonToken advanceAndAssert(@NotNull JsonParser parser, @NotNull JsonToken expectedToken)
+  public static JsonToken advanceAndAssert(@NonNull JsonParser parser, @NonNull JsonToken expectedToken)
       throws IOException {
     JsonToken token = parser.nextToken();
     assert expectedToken.equals(token) : getAssertMessage(expectedToken, token, parser.getCurrentLocation());
     return token;
   }
 
-  @NotNull
-  public static String getAssertMessage(@NotNull JsonToken expected, JsonToken actual, @NotNull JsonLocation location) {
-    return String.format("Expected JsonToken '%s', but found JsonToken '%s' at '%s'.",
-        expected,
-        actual,
-        JsonUtil.toString(location));
+  @NonNull
+  public static String getAssertMessage(@NonNull JsonToken expected, JsonToken actual, @NonNull JsonLocation location) {
+    return ObjectUtils.notNull(
+        String.format("Expected JsonToken '%s', but found JsonToken '%s' at '%s'.",
+            expected,
+            actual,
+            JsonUtil.toString(location)));
   }
 
-  @NotNull
-  public static String getAssertMessage(@NotNull Collection<@NotNull JsonToken> expected, JsonToken actual,
-      @NotNull JsonLocation location) {
-    return String.format("Expected JsonToken(s) '%s', but found JsonToken '%s' at '%s'.",
-        expected.stream().map(token -> token.name()).collect(CustomCollectors.joiningWithOxfordComma("and")),
-        actual,
-        JsonUtil.toString(location));
+  @NonNull
+  public static String getAssertMessage(@NonNull Collection<JsonToken> expected, JsonToken actual,
+      @NonNull JsonLocation location) {
+    return ObjectUtils.notNull(
+        String.format("Expected JsonToken(s) '%s', but found JsonToken '%s' at '%s'.",
+            expected.stream().map(token -> token.name()).collect(CustomCollectors.joiningWithOxfordComma("and")),
+            actual,
+            JsonUtil.toString(location)));
   }
 
-  @NotNull
-  public static String toLocationContext(@NotNull JsonParser parser, @NotNull IClassBinding classBinding,
+  @NonNull
+  public static String toLocationContext(@NonNull JsonParser parser, @NonNull IClassBinding classBinding,
       IBoundNamedInstance property) {
     StringBuilder builder = new StringBuilder(64);
     builder
@@ -200,7 +204,7 @@ public final class JsonUtil {
         .append(':')
         .append(location.getColumnNr())
         .append('\'');
-    return builder.toString();
+    return ObjectUtils.notNull(builder.toString());
   }
 
 }

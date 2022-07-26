@@ -28,18 +28,18 @@ package gov.nist.secauto.metaschema.binding.model;
 
 import gov.nist.secauto.metaschema.model.common.IModelDefinition;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public interface IBoundModelDefinition extends IModelDefinition {
 
   @Override
-  default @NotNull Map<@NotNull QName, Set<@NotNull String>> getProperties() {
+  default @NonNull Map<QName, Set<String>> getProperties() {
     // TODO: implement
     throw new UnsupportedOperationException();
   }
@@ -48,5 +48,5 @@ public interface IBoundModelDefinition extends IModelDefinition {
   IBoundFlagInstance getFlagInstanceByName(String name);
 
   @Override
-  Collection<@NotNull ? extends IBoundFlagInstance> getFlagInstances();
+  Collection<? extends IBoundFlagInstance> getFlagInstances();
 }

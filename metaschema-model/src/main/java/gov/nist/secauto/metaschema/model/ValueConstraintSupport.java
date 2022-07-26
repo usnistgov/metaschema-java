@@ -50,25 +50,26 @@ import gov.nist.secauto.metaschema.model.xmlbeans.ScopedMatchesConstraintType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - intentional
   private static final String PATH = "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
       + "$this/m:allowed-values|$this/m:matches|$this/m:index-has-key|$this/m:expect";
 
-  @NotNull
-  private final List<@NotNull IConstraint> constraints = new LinkedList<>();
-  @NotNull
-  private final List<@NotNull IAllowedValuesConstraint> allowedValuesConstraints = new LinkedList<>();
-  @NotNull
-  private final List<@NotNull IMatchesConstraint> matchesConstraints = new LinkedList<>();
-  @NotNull
-  private final List<@NotNull IIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
-  @NotNull
-  private final List<@NotNull IExpectConstraint> expectConstraints = new LinkedList<>();
+  @NonNull
+  private final List<IConstraint> constraints = new LinkedList<>();
+  @NonNull
+  private final List<IAllowedValuesConstraint> allowedValuesConstraints = new LinkedList<>();
+  @NonNull
+  private final List<IMatchesConstraint> matchesConstraints = new LinkedList<>();
+  @NonNull
+  private final List<IIndexHasKeyConstraint> indexHasKeyConstraints = new LinkedList<>();
+  @NonNull
+  private final List<IExpectConstraint> expectConstraints = new LinkedList<>();
 
   public ValueConstraintSupport() {
     // do nothing
@@ -83,8 +84,8 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
    *          information about the source of the constraints
    */
   public ValueConstraintSupport( // NOPMD - intentional
-      @NotNull DefineFlagConstraintsType xmlConstraints,
-      @NotNull ISource source) {
+      @NonNull DefineFlagConstraintsType xmlConstraints,
+      @NonNull ISource source) {
     XmlCursor cursor = xmlConstraints.newCursor();
     cursor.selectPath(PATH);
     while (cursor.toNextSelection()) {
@@ -117,8 +118,8 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
    *          information about the source of the constraints
    */
   public ValueConstraintSupport( // NOPMD - intentional
-      @NotNull DefineFieldConstraintsType xmlConstraints,
-      @NotNull ISource source) {
+      @NonNull DefineFieldConstraintsType xmlConstraints,
+      @NonNull ISource source) {
     XmlCursor cursor = xmlConstraints.newCursor();
     cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';"
         + "$this/m:allowed-values|$this/m:matches|$this/m:index-has-key|$this/m:expect");
@@ -146,42 +147,42 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
   }
 
   @Override
-  public List<@NotNull IConstraint> getConstraints() {
+  public List<IConstraint> getConstraints() {
     synchronized (this) {
       return constraints;
     }
   }
 
   @Override
-  public List<@NotNull IAllowedValuesConstraint> getAllowedValuesConstraints() {
+  public List<IAllowedValuesConstraint> getAllowedValuesConstraints() {
     synchronized (this) {
       return allowedValuesConstraints;
     }
   }
 
   @Override
-  public List<@NotNull IMatchesConstraint> getMatchesConstraints() {
+  public List<IMatchesConstraint> getMatchesConstraints() {
     synchronized (this) {
       return matchesConstraints;
     }
   }
 
   @Override
-  public List<@NotNull IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
+  public List<IIndexHasKeyConstraint> getIndexHasKeyConstraints() {
     synchronized (this) {
       return indexHasKeyConstraints;
     }
   }
 
   @Override
-  public List<@NotNull IExpectConstraint> getExpectConstraints() {
+  public List<IExpectConstraint> getExpectConstraints() {
     synchronized (this) {
       return expectConstraints;
     }
   }
 
   @Override
-  public final void addConstraint(@NotNull IAllowedValuesConstraint constraint) {
+  public final void addConstraint(@NonNull IAllowedValuesConstraint constraint) {
     synchronized (this) {
       constraints.add(constraint);
       allowedValuesConstraints.add(constraint);
@@ -189,7 +190,7 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
   }
 
   @Override
-  public final void addConstraint(@NotNull IMatchesConstraint constraint) {
+  public final void addConstraint(@NonNull IMatchesConstraint constraint) {
     synchronized (this) {
       constraints.add(constraint);
       matchesConstraints.add(constraint);
@@ -197,7 +198,7 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
   }
 
   @Override
-  public final void addConstraint(@NotNull IIndexHasKeyConstraint constraint) {
+  public final void addConstraint(@NonNull IIndexHasKeyConstraint constraint) {
     synchronized (this) {
       constraints.add(constraint);
       indexHasKeyConstraints.add(constraint);
@@ -205,7 +206,7 @@ class ValueConstraintSupport implements IValueConstraintSupport { // NOPMD - int
   }
 
   @Override
-  public final void addConstraint(@NotNull IExpectConstraint constraint) {
+  public final void addConstraint(@NonNull IExpectConstraint constraint) {
     synchronized (this) {
       constraints.add(constraint);
       expectConstraints.add(constraint);

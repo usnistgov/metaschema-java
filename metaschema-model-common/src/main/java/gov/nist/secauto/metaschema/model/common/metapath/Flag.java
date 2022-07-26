@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.model.common.metapath;
 
 import gov.nist.secauto.metaschema.model.common.metapath.item.IFlagNodeItem;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.stream.Stream;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class Flag // NOPMD - intentional name
     extends AbstractNamedInstanceExpression<IFlagNodeItem> {
@@ -42,12 +42,12 @@ class Flag // NOPMD - intentional name
    * @param test
    *          the test to use to match
    */
-  protected Flag(@NotNull IExpression test) {
+  protected Flag(@NonNull IExpression test) {
     super(test);
   }
 
   @Override
-  public Class<@NotNull IFlagNodeItem> getBaseResultType() {
+  public Class<IFlagNodeItem> getBaseResultType() {
     return IFlagNodeItem.class;
   }
 
@@ -69,9 +69,9 @@ class Flag // NOPMD - intentional name
    * @return the stream of matching node items
    */
   @SuppressWarnings("null")
-  @NotNull
-  protected Stream<@NotNull ? extends IFlagNodeItem> matchFlags(@NotNull INodeContext context) {
-    Stream<@NotNull ? extends IFlagNodeItem> retval;
+  @NonNull
+  protected Stream<? extends IFlagNodeItem> matchFlags(@NonNull INodeContext context) {
+    Stream<? extends IFlagNodeItem> retval;
     if (getTest() instanceof Name) {
       String name = ((Name) getTest()).getValue();
       IFlagNodeItem item = context.getFlagByName(name);

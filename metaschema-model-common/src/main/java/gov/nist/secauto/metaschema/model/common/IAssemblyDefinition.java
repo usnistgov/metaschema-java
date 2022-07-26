@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.model.common;
 
 import gov.nist.secauto.metaschema.model.common.constraint.IAssemblyConstraintSupport;
 
+import java.net.URI;
+
 import javax.xml.namespace.QName;
 
 public interface IAssemblyDefinition
@@ -57,12 +59,7 @@ public interface IAssemblyDefinition
     QName retval = null;
     String rootName = getRootName();
     if (rootName != null) {
-      String namespace = getContainingMetaschema().getXmlNamespace().toASCIIString();
-      if (namespace != null) {
-        retval = new QName(namespace, rootName);
-      } else {
-        retval = new QName(rootName);
-      }
+      retval = new QName(getContainingMetaschema().getXmlNamespace().toASCIIString(), rootName);
     }
     return retval;
   }
