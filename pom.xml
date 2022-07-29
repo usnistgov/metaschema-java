@@ -136,7 +136,7 @@
 		<dependency.junit5-platform-launcher.version>1.8.2</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.18.0</dependency.log4j2.version>
 		<dependency.moxy.version>3.0.2</dependency.moxy.version>
-		<dependency.saxon.version>11.3</dependency.saxon.version>
+		<dependency.saxon.version>11.4</dependency.saxon.version>
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
 		<dependency.thymeleaf.version>3.0.15.RELEASE</dependency.thymeleaf.version>
 		<dependency.woodstox.version>6.3.0</dependency.woodstox.version>
