@@ -133,10 +133,10 @@
 		<dependency.jetbrains-annotation.version>23.0.0</dependency.jetbrains-annotation.version>
 		<dependency.jmock-junit5.version>2.12.0</dependency.jmock-junit5.version>
 		<dependency.junit5.version>5.8.2</dependency.junit5.version>
-		<dependency.junit5-platform-launcher.version>1.8.2</dependency.junit5-platform-launcher.version>
+		<dependency.junit5-platform-launcher.version>1.9.0</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.18.0</dependency.log4j2.version>
 		<dependency.moxy.version>3.0.2</dependency.moxy.version>
-		<dependency.saxon.version>11.3</dependency.saxon.version>
+		<dependency.saxon.version>11.4</dependency.saxon.version>
 		<dependency.spotbugs-annotations.version>4.2.0</dependency.spotbugs-annotations.version>
 		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
 		<dependency.thymeleaf.version>3.0.15.RELEASE</dependency.thymeleaf.version>
@@ -149,7 +149,7 @@
 		<plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
 		<maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
 		<maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-		<checkstyle.maven-checkstyle-plugin.version>10.3.1</checkstyle.maven-checkstyle-plugin.version>
+		<checkstyle.maven-checkstyle-plugin.version>10.3.2</checkstyle.maven-checkstyle-plugin.version>
 		<spotbugs-maven-plugin.version>4.7.1.1</spotbugs-maven-plugin.version>
 	</properties>
 
